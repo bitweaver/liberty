@@ -841,7 +841,9 @@ $this->debug(0);
 
 			//print("todo el tag es: ".$page_parse."<br/>");
 			//print_r($imgdata);
-			$repl = '<img alt="' . tra('Image') . '" src="'.$imgdata["src"].'" style="border:0;" ';
+			$repl = '<img alt="' . tra('Image') . '" src="'.$imgdata["src"].'" style="border:0;'.( !empty( $imgdata["float"] ) ? ' float:'.$imgdata["float"].';' : '' ).'"';
+
+			
 
 			if ($imgdata["width"])
 				$repl .= ' width="' . $imgdata["width"] . '"';
@@ -849,13 +851,8 @@ $this->debug(0);
 			if ($imgdata["height"])
 				$repl .= ' height="' . $imgdata["height"] . '"';
 
-			if ($imgdata["align"]) {
+			if ($imgdata["align"])
 				$repl .= ' align="' . $imgdata["align"] . '"';
-			}
-
-			if ($imgdata["float"]) {
-				$repl .= ' style="float:' . $imgdata["float"] . ';"';
-			}
 
 			$repl .= ' />';
 
