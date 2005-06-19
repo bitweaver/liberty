@@ -1,0 +1,91 @@
+<?php
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2004, bitweaver.org
+// +----------------------------------------------------------------------+
+// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
+// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
+// |
+// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
+// | -> see http://phpdocu.sourceforge.net/
+// +----------------------------------------------------------------------+
+// | Author: StarRider <starrrider@sbcglobal.net>
+// | Reworked from: wikiplugin_sort.php - see deprecated code below
+// +----------------------------------------------------------------------+
+// $Id: data.sort.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
+// Initialization
+define( 'PLUGIN_GUID_DATASORT', 'datasort' );
+global $gLibertySystem;
+$pluginParams = array ( 'tag' => 'SORT',
+						'auto_activate' => TRUE,
+						'requires_pair' => TRUE,
+						'load_function' => 'data_sort',
+						'title' => 'Sort',
+						'description' => tra("This plugin sorts operates on lines of text - not the text in the lines. Every line between the ") . "~np~{SORT}~/np~" . tra(" blocks -  including the lines the blocks are on - is sorted."),
+						'help_function' => 'data__sort_help',
+						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
+						'syntax' => "{SORT sort= }" . tra("Lines to be sorted") . "{SORT}",
+						'plugin_type' => DATA_PLUGIN
+					  );
+$gLibertySystem->registerPlugin( PLUGIN_GUID_DATASORT, $pluginParams );
+$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATASORT );
+
+// Help Function
+function data_sort_help() {
+	$back = tra("^__Parameter Syntax:__ ") . "~np~{SORT" . tra("(key=>value)}~/np~\n");
+	$back.= tra("||__::key::__ | __::value::__ | __::Comments::__\n");
+	$back.= "::sort::" . tra(" | ::direction:: | will sort the lines in the desired direction. Choices are: ") . "__asc / desc / reverse / shuffle__" . tra(" The default is ") . "__asc__.||^";
+	$back.= tra("^__Example:__ ") . "~np~{SORT(sort=>shuffle)}".tra("Line 1 / Line 2 / Line 3")."{SORT}~/np~^";
+	$back.= tra("^__Note:__ Plugin's are __case sensitive__. The Name of the plugin __MUST__ be UPPERCASE. The Key(s) are __always__ lowercase. Some Values are mixed-case but most require lowercase. When in doubt - look at the Example.^");
+	return $back;
+}
+
+// Load Function
+function data_sort($data, $params) {
+	extract ($params);
+	$sort = (isset($sort)) ? $sort : "asc";
+	$lines = explode("\n", $data); // separate lines into array
+	// $lines = array_filter( $lines, "chop" ); // remove \n
+	srand ((float)microtime() * 1000000); // needed for shuffle;
+	if ($sort == "asc") {
+		sort ($lines);
+	} else if ($sort == "desc") {
+		rsort ($lines);
+	} else if ($sort == "reverse") {
+		$lines = array_reverse($lines);
+	} else if ($sort == "shuffle") {
+		shuffle ($lines);
+	}
+	reset ($lines);
+	if (is_array($lines)) {
+		$data = implode("\n", $lines);
+	}
+	$data = trim($data);
+	return $data;
+}
+/******************************************************************************
+The code below is from the deprecated SORT plugin. All comments and the help routines have been removed. - StarRider
+
+function wikiplugin_sort($data, $params) {
+	extract ($params);
+	$sort = (isset($sort)) ? $sort : "asc";
+	$lines = explode("\n", $data); // separate lines into array
+	// $lines = array_filter( $lines, "chop" ); // remove \n
+	srand ((float)microtime() * 1000000); // needed for shuffle;
+	if ($sort == "asc") {
+		sort ($lines);
+	} else if ($sort == "desc") {
+		rsort ($lines);
+	} else if ($sort == "reverse") {
+		$lines = array_reverse($lines);
+	} else if ($sort == "shuffle") {
+		shuffle ($lines);
+	}
+	reset ($lines);
+	if (is_array($lines)) {
+		$data = implode("\n", $lines);
+	}
+	$data = trim($data);
+	return $data;
+}
+*/
+?>

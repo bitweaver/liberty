@@ -1,0 +1,85 @@
+<?php
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2004, bitweaver.org
+// +----------------------------------------------------------------------+
+// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
+// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
+// |
+// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
+// | -> see http://phpdocu.sourceforge.net/
+// +----------------------------------------------------------------------+
+// | Author: StarRider <starrrider@sbcglobal.net>
+// | Reworked from: wikiplugin_include.php - see deprecated code below
+// +----------------------------------------------------------------------+
+// $Id: data.include.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
+// Initialization
+define( 'PLUGIN_GUID_DATAINCLUDE', 'datainclude' );
+global $gLibertySystem;
+$pluginParams = array ( 'tag' => 'INCLUDE',
+						'auto_activate' => FALSE,
+						'requires_pair' => FALSE,
+						'load_function' => 'data_include',
+						'title' => 'Include',
+						'description' => tra("This plugin is used to include the contents of one Wiki page in another Wiki page."),
+						'help_function' => 'data_include_help',
+						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
+						'syntax' => "{INCLUDE content_id= }",
+						'plugin_type' => DATA_PLUGIN
+					  );
+$gLibertySystem->registerPlugin( PLUGIN_GUID_DATAINCLUDE, $pluginParams );
+$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAINCLUDE );
+
+// Help Function
+function data_include_help() {
+	$help = '
+		<table class="plugin help">
+			<tr>
+				<th>'.tra( 'key' ).'</th>
+				<th>'.tra( 'type' ).'</th>
+				<th>'.tra( 'comments' ).'</th>
+			</tr>
+			<tr class="odd">
+				<td>page_name</td>
+				<td>'.tra( 'string (optional)' ).'</td>
+				<td>'.tra( 'To include any wiki page you can use it\'s page name (this has to be a unique name. if it\'s not unique, use the page_id instead) (this method is deprecated).' ).'</td>
+			</tr>
+			<tr class="even">
+				<td>page_id</td>
+				<td>'.tra( 'numeric (optional)' ).'</td>
+				<td>'.tra( 'To include any wiki page you can use it\'s page_id number.' ).'</td>
+			</tr>
+			<tr class="odd">
+				<td>content_id</td>
+				<td>'.tra( 'numeric (optional)' ).'</td>
+				<td>'.tra( 'To include any content from tikipro insert the apprpropriate numeric content id. This can include blog posts, images, wiki texts...<br />
+					Avaliable content can be viewed <a href="'.LIBERTY_PKG_URL.'list_content.php">here</a>' ).'</td>
+			</tr>
+		</table>
+		Example: {include page_name=15}
+		Example: {include page_id=15}
+		Example: {include content_id=15}';
+	return $help;
+}
+
+function data_include($data, $params) {
+	$ret = "<p>Please enter a valid 'page_name', 'page_id' or 'content_id' to include in this page.</p>";
+	// load page by page_id
+	if( isset( $params['page_id'] ) && is_numeric( $params['page_id'] ) ) {
+		require_once( WIKI_PKG_PATH.'BitPage.php');
+		$wp = new BitPage( $params['page_id'] );
+		if( $wp->load() ) {
+			$ret = $wp->mInfo['data'];
+		}
+	// load page by content_id
+	} elseif( isset( $params['content_id'] ) && is_numeric( $params['content_id'] ) ) {
+		$obj = LibertyBase::getLibertyObject( $params['content_id'] );
+		if( $obj->load() ) {
+			$ret = $obj->parseData();
+		}
+	// load page by page_name
+	} elseif( isset( $params['page_name'] ) ) {
+		$ret = "page_name isn't working yet, please use page_id or content_id";
+	}
+	return $ret;
+}
+?>
