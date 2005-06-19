@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2004, bitweaver.org
+// | Copyright (c) 2004, TikiPro.org
 // +----------------------------------------------------------------------+
 // | All Rights Reserved. See copyright.txt for details and a complete list of authors.
 // | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@sbcglobal.net>
 // +----------------------------------------------------------------------+
-// $Id: data.example.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
+// $Id: data.example.php,v 1.2 2005/06/19 22:37:52 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAEXAMPLE', 'dataexample' );
 global $gLibertySystem;
@@ -46,8 +46,21 @@ function data_example_help() { // Specified by $pluginParams['help_function']
 				.'<td>p2</td>'
 				.'<td>' . tra( "anything") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "The second parameter. There is no Default") . '</td>'
+// At times there is more reference data available than the Help Function should display
+// When this happens - provide a link in the Help Function as shown below
+// This adds a link (in a new window - so the user is not taken from his work) to a listing of ISO Country Codes
+/*
+				. tra("<br /><strong>Note:</strong> 2-Digit ISO Country Codes are available from ")
+				. "<a class='wiki' target=" . '"_blank"' . " href=http://www.bcpl.net/~j1m5path/isocodes-table.html>" . tra("ISO Country Codes</a> ")
+*/
+// This adds 2 links (in a new window - so the user is not taken from his work) to a TikiPro.Org Page or to PageTutor.com's Color Picker II
+/*				. tra("<strong>Note:</strong> Browser Safe Colornames are available on the ") 
+				. "<a class='wiki' target=" . '"_blank"' . " href=http://www.tikipro.org/wiki/index.php?page=Web-Safe+HTML+Colors>" . tra("TiKiPro Web Site</a> ")
+				. tra("Another useful site for obtaining HTML colors is ") . "<a class='wiki' target=" . '"_blank"' . " href='http://www.pagetutor.com/pagetutor/makapage/picker/'>" 
+				. tra("The Color Picker II</a>");
+*/
 			.'</tr>'
-		.'</table>'
+ 		.'</table>'
 		. tra("Example: ") . "{EXAMPLE p1='7' p2='8' }<br />"
 		. tra("This will display - P1 was set to = 7 & P2 was set to = 8");
 	return $help;
@@ -118,7 +131,7 @@ Next - Change the Help Function so that all of the parameters are all listed / w
 have - be sure to mention if it is a Manditory Parameter or an Optional Parameter
 NOTE: The Help Function uses Wiki-Syntax to improve the appearance of the help message. By this point, you should be able to
 see your plugin in the Wiki Page Editor / Plugin Tab of Help - so make it look good.
-NOTE 2: Part of the reason the help routine looks as complex as it does is the fact that bitweaver is an international program. The 
+NOTE 2: Part of the reason the help routine looks as complex as it does is the fact that TikiPro is an international program. The 
 tra( function is used to convert text from one language to another. Most of the text can be changed for clarity - but some like the name 
 of the plugin / the parameter names and some specific values can not be change - so keep that in mind when adding to the Help - 
 Function. This also applies to Error Messages. 

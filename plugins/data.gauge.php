@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2004, bitweaver.org
+// | Copyright (c) 2004, TikiPro.org
 // +----------------------------------------------------------------------+
 // | All Rights Reserved. See copyright.txt for details and a complete list of authors.
 // | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
@@ -11,7 +11,7 @@
 // | Author: StarRider <starrrider@sbcglobal.net>
 // | Reworked from: wikiplugin_gauge.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.gauge.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
+// $Id: data.gauge.php,v 1.2 2005/06/19 22:37:52 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAGAUGE', 'datagauge' );
 global $gLibertySystem;
@@ -22,7 +22,7 @@ $pluginParams = array ( 'tag' => 'GAUGE',
 						'title' => 'Gauge',
 						'description' => tra("This plugin displays a graphical GAUGE."),
 						'help_function' => 'data_gauge_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
+						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on BitWeaver.Org exists
 						'syntax' => "{GAUGE color= bgcolor= max= value= size= perc= height= }" . tra("Description") . "{GAUGE}",
 						'plugin_type' => DATA_PLUGIN
 					  );
@@ -81,8 +81,8 @@ function data_gauge_help() {
 		.'</table>'
 		. tra("Example: ") . "{GAUGE color='red' bgcolor='blue' value='25' perc='True' }A Simple Gauge{GAUGE}" . '<br />'
 		. tra("<strong>Note:</strong> Browser Safe Colornames are available on the ") 
-			. "<a class='wiki' target=" . '"_blank"' . " http://www.bitweaver.org/wiki/index.php?page=Web-Safe+HTML+Colors'>" . tra("TiKiPro</a> Web Site. ")
-			. tra("A useful site for obtaining HTML colors is ") . "<a class='wiki' target=" . '"_blank"' . " href='http://www.pagetutor.com/pagetutor/makapage/picker/'>" 
+			. "<a class='wiki' target=" . '"_blank"' . " href=http://www.tikipro.org/wiki/index.php?page=Web-Safe+HTML+Colors>" . tra("TiKiPro Web Site</a> ")
+			. tra("Another useful site for obtaining HTML colors is ") . "<a class='wiki' target=" . '"_blank"' . " href='http://www.pagetutor.com/pagetutor/makapage/picker/'>" 
 			. tra("The Color Picker II</a>");
 	return $help;
 }
