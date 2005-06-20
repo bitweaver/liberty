@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2004, TikiPro.org
+// | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
 // | All Rights Reserved. See copyright.txt for details and a complete list of authors.
 // | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@sbcglobal.net>
 // +----------------------------------------------------------------------+
-// $Id: data.example.php,v 1.2 2005/06/19 22:37:52 starrrider Exp $
+// $Id: data.example.php,v 1.3 2005/06/20 06:50:38 lsces Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAEXAMPLE', 'dataexample' );
 global $gLibertySystem;
