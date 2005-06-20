@@ -38,7 +38,7 @@ function bit_files_store( &$pStoreRow ) {
 			$sql = "UPDATE `".BIT_DB_PREFIX."tiki_files SET `storage_path`=?, `mime_type`=?, `size`=? WHERE `file_id` = ?";
 			$gBitSystem->query( $sql, array( $pStoreRow['dest_file_path'], $pStoreRow['type'], $pStoreRow['size'], $pStoreRow['foreign_id'] ) );
 		} else {
-			$pStoreRow['file_id'] = $gBitSystem->GenID( 'bit_files_file_id_seq' );
+			$pStoreRow['file_id'] = $gBitSystem->GenID( 'tiki_files_file_id_seq' );
 			$sql = "INSERT INTO `".BIT_DB_PREFIX."tiki_files` ( `storage_path`, `file_id`, `mime_type`, `size`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
 			$userId = !empty( $pStoreRow['upload']['user_id'] ) ? $pStoreRow['upload']['user_id'] : $gBitUser->mUserId;
 			$gBitSystem->query($sql, array( $pStoreRow['upload']['dest_path'].$pStoreRow['upload']['name'], $pStoreRow['file_id'],  $pStoreRow['upload']['type'],  $pStoreRow['upload']['size'], $userId ) );
