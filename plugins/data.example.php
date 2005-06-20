@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@sbcglobal.net>
 // +----------------------------------------------------------------------+
-// $Id: data.example.php,v 1.3 2005/06/20 06:50:38 lsces Exp $
+// $Id: data.example.php,v 1.4 2005/06/20 07:27:12 lsces Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAEXAMPLE', 'dataexample' );
 global $gLibertySystem;
@@ -53,9 +53,9 @@ function data_example_help() { // Specified by $pluginParams['help_function']
 				. tra("<br /><strong>Note:</strong> 2-Digit ISO Country Codes are available from ")
 				. "<a class='wiki' target=" . '"_blank"' . " href=http://www.bcpl.net/~j1m5path/isocodes-table.html>" . tra("ISO Country Codes</a> ")
 */
-// This adds 2 links (in a new window - so the user is not taken from his work) to a TikiPro.Org Page or to PageTutor.com's Color Picker II
+// This adds 2 links (in a new window - so the user is not taken from his work) to a bitweaver.org Page or to PageTutor.com's Color Picker II
 /*				. tra("<strong>Note:</strong> Browser Safe Colornames are available on the ") 
-				. "<a class='wiki' target=" . '"_blank"' . " href=http://www.tikipro.org/wiki/index.php?page=Web-Safe+HTML+Colors>" . tra("TiKiPro Web Site</a> ")
+				. "<a class='wiki' target=" . '"_blank"' . " href=http://www.bitweaver.org/wiki/index.php?page=Web-Safe+HTML+Colors>" . tra("bitweaver Web Site</a> ")
 				. tra("Another useful site for obtaining HTML colors is ") . "<a class='wiki' target=" . '"_blank"' . " href='http://www.pagetutor.com/pagetutor/makapage/picker/'>" 
 				. tra("The Color Picker II</a>");
 */
@@ -131,7 +131,7 @@ Next - Change the Help Function so that all of the parameters are all listed / w
 have - be sure to mention if it is a Manditory Parameter or an Optional Parameter
 NOTE: The Help Function uses Wiki-Syntax to improve the appearance of the help message. By this point, you should be able to
 see your plugin in the Wiki Page Editor / Plugin Tab of Help - so make it look good.
-NOTE 2: Part of the reason the help routine looks as complex as it does is the fact that TikiPro is an international program. The 
+NOTE 2: Part of the reason the help routine looks as complex as it does is the fact that bitWeaver is an international program. The 
 tra( function is used to convert text from one language to another. Most of the text can be changed for clarity - but some like the name 
 of the plugin / the parameter names and some specific values can not be change - so keep that in mind when adding to the Help - 
 Function. This also applies to Error Messages. 

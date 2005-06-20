@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/Attic/edit_help.tpl,v 1.1 2005/06/19 04:55:51 bitweaver Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/Attic/edit_help.tpl,v 1.2 2005/06/20 07:27:12 lsces Exp $ *}
 {* Show wiki syntax and plugins help *}
 {* TODO: Add links to add samples to edit form *}
 
@@ -53,7 +53,7 @@
 		{/box}
 
 		{box title="Combinations of Tags" class="help box"}
-			{tr}Tikipro gives you even more choices by allowing you to simply combine tags to form different formatting combinations. For example, ''__<i><b>this text is both italicized &amp; bold</b></i>__''. __===<b><u>This text is both bold &amp; underlined</u></b>===__. ''__<i><u>This text is both italicized &amp; underlined</u></i>__''.{/tr}
+			{tr}bitweaver gives you even more choices by allowing you to simply combine tags to form different formatting combinations. For example, ''__<i><b>this text is both italicized &amp; bold</b></i>__''. __===<b><u>This text is both bold &amp; underlined</u></b>===__. ''__<i><u>This text is both italicized &amp; underlined</u></i>__''.{/tr}
 		{/box}
 	{/jstab}
 

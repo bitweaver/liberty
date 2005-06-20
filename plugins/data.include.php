@@ -11,7 +11,7 @@
 // | Author: StarRider <starrrider@sbcglobal.net>
 // | Reworked from: wikiplugin_include.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.include.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
+// $Id: data.include.php,v 1.2 2005/06/20 07:27:12 lsces Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAINCLUDE', 'datainclude' );
 global $gLibertySystem;
@@ -51,7 +51,7 @@ function data_include_help() {
 			<tr class="odd">
 				<td>content_id</td>
 				<td>'.tra( 'numeric (optional)' ).'</td>
-				<td>'.tra( 'To include any content from tikipro insert the apprpropriate numeric content id. This can include blog posts, images, wiki texts...<br />
+				<td>'.tra( 'To include any content from bitweaver insert the apprpropriate numeric content id. This can include blog posts, images, wiki texts...<br />
 					Avaliable content can be viewed <a href="'.LIBERTY_PKG_URL.'list_content.php">here</a>' ).'</td>
 			</tr>
 		</table>
