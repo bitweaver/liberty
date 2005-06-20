@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------+
-// | Copyright (c) 2004, TikiPro.org
+// | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
 // | All Rights Reserved. See copyright.txt for details and a complete list of authors.
 // | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
@@ -11,7 +11,7 @@
 // | Author: StarRider <starrrider@sbcglobal.net>
 // | New Code
 // +----------------------------------------------------------------------+
-// $Id: data.mapquest.php,v 1.1 2005/06/19 22:37:09 starrrider Exp $
+// $Id: data.mapquest.php,v 1.2 2005/06/20 07:34:17 lsces Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAMAPQUEST', 'datamapquest' );
 global $gLibertySystem;
@@ -22,7 +22,7 @@ $pluginParams = array ( 'tag' => 'MAPQUEST',
 						'title' => 'MapQuest',
 						'description' => tra("Creates an Icon link to MapQuest and/or a link to a Specific Map based on an Address."),
 						'help_function' => 'data_mapquest_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on BitWeaver.Org exists
+						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on bitweaver.org exists
 						'syntax' => "{MAPQUEST icon= myicon= text= address= city= state= zip= country= title= style= }",
 						'plugin_type' => DATA_PLUGIN
 					  );
