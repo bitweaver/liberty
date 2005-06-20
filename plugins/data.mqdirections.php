@@ -11,7 +11,7 @@
 // | Author: StarRider <starrrider@sbcglobal.net>
 // | New Code
 // +----------------------------------------------------------------------+
-// $Id: data.mqdirections.php,v 1.1 2005/06/20 08:24:05 starrrider Exp $
+// $Id: data.mqdirections.php,v 1.2 2005/06/20 16:00:47 spiderr Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAMQDIR', 'datamqdir' );
 global $gLibertySystem;
@@ -26,8 +26,8 @@ $pluginParams = array ( 'tag' => 'MQDIR',
 						'syntax' => "{MQDIR icon= myicon= text= address= city= state= zip= country= }",
 						'plugin_type' => DATA_PLUGIN
 					  );
-$gLibertySystem->registerPlugin( PLUGIN_GUID_DATAMAPQUEST, $pluginParams );
-$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAMAPQUEST );
+$gLibertySystem->registerPlugin( PLUGIN_GUID_DATAMQDIR , $pluginParams );
+$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAMQDIR );
 
 // Help Function
 function data_mqdir_help() {
