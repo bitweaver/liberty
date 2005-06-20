@@ -11,7 +11,7 @@
 // | Author: StarRider <starrrider@sbcglobal.net>
 // | Reworked from: wikiplugin_sf.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.sf.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
+// $Id: data.sf.php,v 1.2 2005/06/20 15:06:25 lsces Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATASF', 'datasf' );
 define('SF_CACHE',48); # in hours
@@ -39,7 +39,7 @@ function data_sf_help() {
 	$back.= "::adit::" . tra(" | ::number:: | is number identifies the section to be looked at. The choices are Bugs, Support, Patches & RFE's and are unique for each project.\n");
 	$back.= "::aid::" . tra(" | ::number:: | is the Tracker in question. For a bug report labled ~034~__~091~ 123456 ~093~ I'm a bug!__~034~ - the ") . "aid" . tra(" number is 123456\n");
 	$back.= "::tag::" . tra(" | ::name:: | is a short cut that allows the plugin to work automatically. The ") . "groupid & adit" . tra(" are supplied if these ") . "tags" . tra(" are used: ") . "__bugs / rfe / patches / support__" . tra(" are for ))bitweaver(( - ") . "__twbugs / twrfe / twpatches / twsupport__" . tra(" are for ))TikiWiki(( - ") . "__jgbugs / jgsupport / jgrfe__" . tra(" are for JGraph.||^");
-	$back.= tra("^__Example:__ ") . "~np~{SF(groupid=>101599,adit=>630083,aid=>928215)}~/np~\n";
+	$back.= tra("^__Example:__ ") . "~np~{SF(groupid=>141359,adit=>749177,aid=>928215)}~/np~\n";
 	$back.= tra("This is a ))bitweaver(( bug report named ~034~Lost in Space - errrr - bitweaver~034~^");
 	return $back;
 }
