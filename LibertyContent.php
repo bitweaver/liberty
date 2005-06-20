@@ -11,7 +11,7 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertyContent.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
+// $Id: LibertyContent.php,v 1.2 2005/06/20 04:56:53 spiderr Exp $
 
 /**
 * Virtual base class (as much as one can have such things in PHP) for all
@@ -19,7 +19,7 @@
 *
 * @abstract
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.1 $
+* @version  $Revision: 1.2 $
 * @package  BitBase
 */
 
@@ -160,7 +160,7 @@ class LibertyContent extends LibertyBase {
 				$pParamHash['content_id'] = $pParamHash['content_store']['content_id'];
 				$result = $this->associateInsert( $table, $pParamHash['content_store'] );
 			} else {
-				if( !empty( $pParamHash['content_store']['title'] ) ) {
+				if( !empty( $pParamHash['content_store']['title'] ) && !empty( $this->mInfo['title'] ) ) {
 					$renamed = $pParamHash['content_store']['title'] != $this->mInfo['title'];
 				}
 				$locId = array ( "name" => "content_id", "value" => $pParamHash['content_id'] );
