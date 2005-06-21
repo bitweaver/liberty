@@ -7,11 +7,11 @@
 		{if $plugin.is_active eq 'y' and $plugin.edit_field and $plugin.plugin_type eq 'format'}
 			{forminput}
 				<label>
-					{$plugin.edit_field} 
+					{$plugin.edit_field}
 					{if $pageInfo.format_guid eq $plugin.plugin_guid}
-						checked="checked" 
+						checked="checked"
 					{elseif !$pageInfo.format_guid and $plugin.plugin_guid eq $default_format}
-						checked="checked" 
+						checked="checked"
 					{/if}
 					 onclick="
 						{if $gBitSystem->isPackageActive('quicktags')}
@@ -26,7 +26,8 @@
 								{/if}
 							{/foreach}
 						{/if}
-					" 
+					"
+				id="editformatguid"
 				/> {$plugin.edit_label}</label>
 				{formhelp note=`$plugin.edit_help`}
 			{/forminput}
