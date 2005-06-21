@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
+// $Id: data.maketoc.php,v 1.1.1.1.2.1 2005/06/21 22:26:31 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAMAKETOC', 'datamaketoc' );
 global $gLibertySystem;
@@ -195,7 +195,7 @@ function maketoc_create_list( $pTocHash, $pParams ) {
 		$toplink = '';
 	}
 
-	$list = '<div class="tikitoc"><h3>'.( !empty( $pParams['title'] ) ? $pParams['title'] : tra( 'Page Contents' ) ).'</h3>'.$list.$toplink.'</div>';
+	$list = '<div class="maketoc"><h3>'.( !empty( $pParams['title'] ) ? $pParams['title'] : tra( 'Page Contents' ) ).'</h3>'.$list.$toplink.'</div>';
 
 	return $list;
 }
