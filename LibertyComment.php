@@ -210,16 +210,17 @@ class LibertyComment extends LibertyContent {
 		if ($contentId) {
 			$sql = "SELECT tcm.`comment_id` FROM `".BIT_DB_PREFIX."tiki_comments` tcm, `".BIT_DB_PREFIX."tiki_content` tc
 					WHERE tcm.`parent_id` = ? AND tcm.`content_id` = tc.`content_id` ORDER BY tc.`created`";
-			$rs = $this->query( $sql, array($contentId), $pMaxComments, $pOffset );
-			$rows = $rs->getRows();
-			foreach ($rows as $row) {
-				$comment = new LibertyComment($row['comment_id']);
-				$comment->mInfo['level'] = $curLevel;
-				$curLevel++;
-				$comment->mInfo['children'] = $this->getComments($comment->mInfo['content_id']);
-				$comment->mInfo['parsed_data'] = $this->parseData($comment->mInfo['data'], $comment->mInfo['format_guid']);
-				$curLevel--;
-				$ret[] = $comment->mInfo;
+			if( $rs = $this->query( $sql, array($contentId), $pMaxComments, $pOffset ) ) {
+				$rows = $rs->getRows();
+				foreach ($rows as $row) {
+					$comment = new LibertyComment($row['comment_id']);
+					$comment->mInfo['level'] = $curLevel;
+					$curLevel++;
+					$comment->mInfo['children'] = $this->getComments($comment->mInfo['content_id']);
+					$comment->mInfo['parsed_data'] = $this->parseData($comment->mInfo['data'], $comment->mInfo['format_guid']);
+					$curLevel--;
+					$ret[] = $comment->mInfo;
+				}
 			}
 		}
 		return $ret;
