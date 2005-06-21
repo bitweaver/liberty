@@ -11,7 +11,7 @@
 // | Author: StarRider <starrrider@sbcglobal.net>
 // | Reworked from: wikiplugin_include.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.addtabs.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
+// $Id: data.addtabs.php,v 1.1.1.1.2.1 2005/06/21 23:19:18 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAADDTABS', 'dataaddtabs' );
 global $gLibertySystem;
@@ -42,7 +42,10 @@ function data_addtabs_help() {
 			.'<tr class="odd">'
 				.'<td>tab1 - tab99</td>'
 				.'<td>' . tra( "numeric") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( 'Will create a Tab interface on a page. The name on each tab is the name given to the imported page.The value sent with the TabX parameter is a bitweaver Numeric Content Id. This allows blog posts, images, wiki pages...and more to be added<br /><strong>Note:</strong> The order used when the tabs are specified does not matter. The Tabname does - Tab1 is always first and Tab99 will always be last. Avaliable content can be viewed ') . '<a href="'.LIBERTY_PKG_URL.'list_content.php" title="Opens content browser in new window" onkeypress="popUpWin(this.href,\'standard\',600,400);" onclick="popUpWin(this.href,\'standard\',600,400);return false;">' . tra( "here" ) . '</a></td>'
+				.'<td>' . tra( "Will create a Tab interface on a page. The name on each tab is the name given to the imported page.The value sent with the TabX parameter is a Numeric Content Id. This allows blog posts, images, wiki pages . . . (and more) to be added.")
+				. tra("<br /><strong>Note 1:</strong> A listing of Content Id's can be found ") 
+				. '<a href="'.LIBERTY_PKG_URL.'list_content.php" title="Launch BitWeaver Content Browser in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "Here" ) . '</a>'
+				. tra("<br /><strong>Note 2:</strong> The order used when the tabs are specified does not matter. The Tabname does - Tab1 is always first and Tab99 will always be last.</td>")
 			.'</tr>'
 		.'</table>'
 		. tra("Example: ") . '{addtabs tab1=15 tab2=12 tab3=11}';

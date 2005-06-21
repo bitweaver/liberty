@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@sbcglobal.net>
 // +----------------------------------------------------------------------+
-// $Id: data.example.php,v 1.4 2005/06/20 07:27:12 lsces Exp $
+// $Id: data.example.php,v 1.4.2.1 2005/06/21 23:19:18 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAEXAMPLE', 'dataexample' );
 global $gLibertySystem;
@@ -46,19 +46,31 @@ function data_example_help() { // Specified by $pluginParams['help_function']
 				.'<td>p2</td>'
 				.'<td>' . tra( "anything") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "The second parameter. There is no Default") . '</td>'
-// At times there is more reference data available than the Help Function should display
+
+// At times there is more reference data available than the Help Function can readilly display
 // When this happens - provide a link in the Help Function as shown below
-// This adds a link (in a new window - so the user is not taken from his work) to a listing of ISO Country Codes
+
+// This link creates a new window (so the user is not taken from his work) to a listing of ISO Country Codes
 /*
 				. tra("<br /><strong>Note:</strong> 2-Digit ISO Country Codes are available from ")
-				. "<a class='wiki' target=" . '"_blank"' . " href=http://www.bcpl.net/~j1m5path/isocodes-table.html>" . tra("ISO Country Codes</a> ")
+				. '<a href="http://www.bcpl.net/~j1m5path/isocodes-table.html" title="Launch BCPL.net in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "ISO Country Codes" ) . '</a>'
 */
-// This adds 2 links (in a new window - so the user is not taken from his work) to a bitweaver.org Page or to PageTutor.com's Color Picker II
-/*				. tra("<strong>Note:</strong> Browser Safe Colornames are available on the ") 
-				. "<a class='wiki' target=" . '"_blank"' . " href=http://www.bitweaver.org/wiki/index.php?page=Web-Safe+HTML+Colors>" . tra("bitweaver Web Site</a> ")
-				. tra("Another useful site for obtaining HTML colors is ") . "<a class='wiki' target=" . '"_blank"' . " href='http://www.pagetutor.com/pagetutor/makapage/picker/'>" 
-				. tra("The Color Picker II</a>");
+
+// These links create a new windows (so the user is not taken from his work) to a BitWeaver.org Page or to PageTutor.com's Color Picker II
+/*
+				. tra("<strong>Note:</strong> Browser Safe Colornames are available on the ") 
+				. '<a href="http://www.bitweaver.org/wiki/index.php?page=Web-Safe+HTML+Colors" title="Launch BitWeaver.Org in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "BitWeaver Web Site" ) . '</a>'
+				. tra(" Another useful site for obtaining HTML colors is ")
+ 				. '<a href="http://www.pagetutor.com/pagetutor/makapage/picker" title="Launch PageTutor.com in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "The Color Picker II" ) . '</a>';
 */
+
+// This link creates a new window (so the user is not taken from his work) to a listing of BitWeaver's Content Browser
+/*
+				. tra("This a Numeric Content Id. This allows blog posts, images, wiki pages . . . (and more) to be added.")
+				. tra("<br /><strong>Note 1:</strong> A listing of Content Id's can be found ") 
+				. '<a href="'.LIBERTY_PKG_URL.'list_content.php" title="Launch BitWeaver Content Browser in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "Here" ) . '</a>'
+*/
+
 			.'</tr>'
  		.'</table>'
 		. tra("Example: ") . "{EXAMPLE p1='7' p2='8' }<br />"

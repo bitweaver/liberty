@@ -11,7 +11,7 @@
 // | Author: StarRider <starrrider@sbcglobal.net>
 // | Reworked from: wikiplugin_gauge.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.gauge.php,v 1.4 2005/06/20 07:27:12 lsces Exp $
+// $Id: data.gauge.php,v 1.4.2.1 2005/06/21 23:19:18 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAGAUGE', 'datagauge' );
 global $gLibertySystem;
@@ -81,9 +81,9 @@ function data_gauge_help() {
 		.'</table>'
 		. tra("Example: ") . "{GAUGE color='red' bgcolor='blue' value='25' perc='True' }A Simple Gauge{GAUGE}" . '<br />'
 		. tra("<strong>Note:</strong> Browser Safe Colornames are available on the ") 
-			. "<a class='wiki' target=" . '"_blank"' . " href=http://www.bitweaver.org/wiki/index.php?page=Web-Safe+HTML+Colors>" . tra("bitweaver Web Site</a> ")
-			. tra("Another useful site for obtaining HTML colors is ") . "<a class='wiki' target=" . '"_blank"' . " href='http://www.pagetutor.com/pagetutor/makapage/picker/'>" 
-			. tra("The Color Picker II</a>");
+		. '<a href="http://www.bitweaver.org/wiki/index.php?page=Web-Safe+HTML+Colors" title="Launch BitWeaver.Org in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "BitWeaver Web Site" ) . '</a>'
+		. tra(" Another useful site for obtaining HTML colors is ")
+		. '<a href="http://www.pagetutor.com/pagetutor/makapage/picker" title="Launch PageTutor.com in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "The Color Picker II" ) . '</a>';
 	return $help;
 }
 

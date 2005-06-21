@@ -11,7 +11,7 @@
 // | Author: StarRider <starrrider@sbcglobal.net>
 // | New Code
 // +----------------------------------------------------------------------+
-// $Id: data.mapquest.php,v 1.2 2005/06/20 07:34:17 lsces Exp $
+// $Id: data.mapquest.php,v 1.2.2.1 2005/06/21 23:19:18 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAMAPQUEST', 'datamapquest' );
 global $gLibertySystem;
@@ -93,7 +93,7 @@ function data_mapquest_help() {
 				.'<td>' . tra( "The Country (Uses 2-digit ISO Codes)")
 				. tra("<br />The Default = ") . '<strong>US</strong>'
 				. tra("<br /><strong>Note:</strong> 2-Digit ISO Country Codes are available from ")
-				. "<a class='wiki' target=" . '"_blank"' . " href=http://www.bcpl.net/~j1m5path/isocodes-table.html>" . tra("ISO Country Codes</a> ")
+				. '<a href="http://www.bcpl.net/~j1m5path/isocodes-table.html" title="Launch BCPL.net in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "ISO Country Codes" ) . '</a>'
 			.'</tr>'
 			.'<tr class="odd">'
 				.'<td>title</td>'
@@ -113,7 +113,7 @@ function data_mapquest_help() {
 				.'</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . "{code source='php' num='on' }" . tra("Sorce Code Snippet") . "{code}";
+		. tra("Example: ") . "{MAPQUEST icon=sm address='1730 Blake St' city=Denver state=CO zip=80202 }";
 	return $help;
 }
 
@@ -121,32 +121,36 @@ function data_mapquest_help() {
 function data_mapquest( $data, $params ) { 
 	extract ($params);
 
+	$ret = '<a href="http://www.mapquest.com" title="Launch Map Quest in a New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">';
+
+	$text = isset($text) ? $text : 'Get Map'; // Set the Link Text
     $icon = isset($icon) ? $icon : "SM"; // Test for the MapQuest Icon
 	switch(strtoupper($icon)) {
 		case 'SM':
-   			$ret = '<a class="wiki" target=' . '"_blank"' . ' href="http://www.mapquest.com/?cid=lfhplink"><img border="0" src="http://cdn.mapquest.com/mqstyleguide/ws_wt_sm" alt="MapQuest"></a>';
+   			$ret = $ret . '<img border="0" src="http://cdn.mapquest.com/mqstyleguide/ws_wt_sm" alt="MapQuest"></a><br/>';
 			break;
 		case 'MED':
-   			$ret = '<a class="wiki" target=' . '"_blank"' . ' href="http://www.mapquest.com/?cid=lfhplink"><img border="0" src="http://cdn.mapquest.com/mqstyleguide/ws_wt_md" alt="MapQuest"></a>';
+   			$ret = $ret . '<img border="0" src="http://cdn.mapquest.com/mqstyleguide/ws_wt_md" alt="MapQuest"></a><br/>';
 			break;
 		case 'LG':
-   			$ret = '<a class="wiki" target=' . '"_blank"' . ' href="http://www.mapquest.com/?cid=lfhplink"><img border="0" src="http://cdn.mapquest.com/mqstyleguide/ws_wt_lg" alt="MapQuest"></a>';
+   			$ret = $ret . '<img border="0" src="http://cdn.mapquest.com/mqstyleguide/ws_wt_lg" alt="MapQuest"></a><br/>';
 			break;
 		case 'NONE':
    			$ret = ' ';
 			break;
 	}
-	$text = isset($text) ? $text : 'Get Map'; // Set the Link Text
-	
-	$map = '<a class="wiki" target=' . '"_blank"' . ' href="http://www.mapquest.com/maps/map.adp?cid=lfmaplink" alt="' . $text . '"'; // Set up Link to a Specific Map
+	$map = 'http://www.mapquest.com/maps/map.adp?';
 	$map = isset($address) ? $map . '&address=' . implode('+', explode(' ',$address)) : $map;
 	$map = isset($city) ? $map . '&city=' . implode('+', explode(' ',$city)) : $map;
 	$map = isset($state) ? $map . '&state=' . $state : $map;
 	$map = isset($zip) ? $map . '&zipcode=' . $zip : $map;
 	$map = isset($country) ? $map . '&country=' . $country : $map . '&country=US';
 	$map = isset($style) ? $map . '&style=' . $style : $map;
-	$map = isset($title) ? $map . '&title=' . implode('+', explode(' ',$title)) . '">' : $map . '">';
-
+	$map = isset($title) ? $map . '&title=' . implode('+', explode(' ',$title)) : $map;
+	$map = '"' . $map . '&cid=lfmaplink"';
+	
+	$map = '<a href=' . $map . ' title="Launch Map Quest in a New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">';
+	
     if (isset($myicon)) { // Test for the existance of MyIcon
 		$ret = $map . '<img border="0" src="' . $myicon . '"></a>';
 	} else {
