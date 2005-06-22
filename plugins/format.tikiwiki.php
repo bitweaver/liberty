@@ -337,18 +337,18 @@ $this->debug(0);
 	}
 
 	function get_language($user = false) {
-		static $tikiLanguage = false;
+		static $bitLanguage = false;
 		global $gBitUser, $gBitSystem;
 
-		if( empty( $tikiLanguage ) ) {
+		if( empty( $bitLanguage ) ) {
 			if( $gBitUser->isValid() ) {
-				$tikiLanguage = $gBitUser->getPreference('tikiLanguage', 'en');
+				$bitLanguage = $gBitUser->getPreference('bitLanguage', 'en');
 			} else {
-				$tikiLanguage = $this->getPreference('tikiLanguage', 'en');
+				$bitLanguage = $this->getPreference('bitLanguage', 'en');
 			}
 		}
 
-		return $tikiLanguage;
+		return $bitLanguage;
 	}
 
 	function get_locale($user = false) {
@@ -653,7 +653,7 @@ $this->debug(0);
 		}
 
 		// Replace boxes
-		$data = preg_replace("/\^([^\^]+)\^/", "<div class=\"tikibox\">$1</div>", $data);
+		$data = preg_replace("/\^([^\^]+)\^/", "<div class=\"bitbox\">$1</div>", $data);
 		// Replace colors ~~color:text~~
 		$data = preg_replace("/\~\~([^\:]+):([^\~]+)\~\~/", "<span style=\"color:$1;\">$2</span>", $data);
 		// Replace background colors ++color:text++
@@ -895,7 +895,7 @@ $this->debug(0);
 
 			if( $gBitSystem->isFeatureActive( 'cachepages') && $pCommonObject->isCached( $link ) ) {
 				//use of urlencode for using cached versions of dynamic sites
-				$cosa = "<a class=\"tikicache\" href=\"".KERNEL_PKG_URL."view_cache.php?url=".urlencode($link)."\">(cache)</a>";
+				$cosa = "<a class=\"bitcache\" href=\"".KERNEL_PKG_URL."view_cache.php?url=".urlencode($link)."\">(cache)</a>";
 
 				//$link2 = str_replace("/","\/",$link);
 				//$link2 = str_replace("?","\?",$link2);
@@ -944,7 +944,7 @@ $this->debug(0);
 				}
 
 				for ($i = 0; $i < count($tables[0]); $i++) {
-				$repl = '<table class="tikitable">';
+				$repl = '<table class="bittable">';
 
 				for ($j = 0; $j < count($cols[$i]); $j++) {
 					$ncols = count($cols[$i][$j]);
@@ -991,7 +991,7 @@ $this->debug(0);
 				}
 
 				for ($i = 0; $i < count($tables[0]); $i++) {
-				$repl = '<table class="tikitable">';
+				$repl = '<table class="bittable">';
 
 				for ($j = 0; $j < count($cols[$i]); $j++) {
 					$ncols = count($cols[$i][$j]);
@@ -1078,7 +1078,7 @@ $this->debug(0);
 				}
 				//
 				$line = trim($line);
-				$line = '<div class="tikibar"' . $align . '>' . substr($line, 2, strlen($line) - 4). '</div>';
+				$line = '<div class="bitbar"' . $align . '>' . substr($line, 2, strlen($line) - 4). '</div>';
 				$data .= $line;
 				// TODO: Case is handled ...  no need to check other conditions
 				//	   (it is apriory known all they false, moreover sometimes
@@ -1089,7 +1089,7 @@ $this->debug(0);
 			}
 
 			// Replace old styled titlebars
-			if (strlen($line) != strlen($line = preg_replace("/-=(.+?)=-/", "<div class='tikibar'>$1</div>", $line))) {
+			if (strlen($line) != strlen($line = preg_replace("/-=(.+?)=-/", "<div class='bitbar'>$1</div>", $line))) {
 				$data .= $line;
 				continue;
 			}
@@ -1129,7 +1129,7 @@ $this->debug(0);
 
 				// Segundo intento reemplazar los [link] comunes
 				$line = preg_replace("/\[([^\]]+)\]/", "<a $class href='$1'>$1</a>", $line);
-				$line = preg_replace("/\-\=([^=]+)\=\-/", "<div class='tikibar'>$1</div>", $line);
+				$line = preg_replace("/\-\=([^=]+)\=\-/", "<div class='bitbar'>$1</div>", $line);
 			}
 
 			// This line is parseable then we have to see what we have
