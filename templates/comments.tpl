@@ -62,7 +62,7 @@
 						<input type="submit" name="post_comment_submit" value="{tr}post{/tr}"/>
 					</div>
 				{/legend}
-			{else}
+			{elseif $gBitUser->hasPermission( 'bit_p_post_comments' )}
 				<div class="row">
 					<input type="submit" name="post_comment_request" value="{tr}Add Comment{/tr}" />
 				</div>
