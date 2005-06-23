@@ -180,7 +180,7 @@ class LibertyComment extends LibertyContent {
 		$commentCount = 0;
 		if ($contentId) {
 			$sql = "SELECT tcm.*, tcmc.`parent_id` AS `child_content_id`
-					FROM `tiki_comments` tcm LEFT OUTER JOIN `tiki_comments` tcmc ON (tcm.`content_id`=tcmc.`parent_id`)
+					FROM `".BIT_DB_PREFIX."tiki_comments` tcm LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_comments` tcmc ON (tcm.`content_id`=tcmc.`parent_id`)
 					WHERE tcm.`parent_id` = ?";
 			$rows = $this->GetAssoc($sql, array($contentId));
 			$commentCount += count($rows);
