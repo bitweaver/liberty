@@ -8,10 +8,12 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): Sylvie Greverend <sylvieg@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_lang.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.lang.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
+// $Id: data.lang.php,v 1.1.1.1.2.1 2005/06/24 08:26:50 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATALANG', 'datalang' );
 global $gLibertySystem;

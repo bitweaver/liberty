@@ -8,10 +8,9 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
-// | New Code
+// | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mapquest.php,v 1.2.2.1 2005/06/21 23:19:18 starrrider Exp $
+// $Id: data.mapquest.php,v 1.2.2.2 2005/06/24 08:26:50 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAMAPQUEST', 'datamapquest' );
 global $gLibertySystem;

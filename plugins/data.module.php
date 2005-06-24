@@ -1,5 +1,20 @@
 <?php
-/* $Id: data.module.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2004, bitweaver.org
+// +----------------------------------------------------------------------+
+// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
+// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
+// |
+// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
+// | -> see http://phpdocu.sourceforge.net/
+// +----------------------------------------------------------------------+
+// | Author (TikiWiki): Mose <mose@users.sourceforge.net>
+// | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
+// +----------------------------------------------------------------------+
+// $Id: data.module.php,v 1.1.1.1.2.1 2005/06/24 08:26:50 starrrider Exp $
+// Initialization
+
+/* 
 Displays a module inlined in page
 Parameters
 module name : module=>lambda

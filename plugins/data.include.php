@@ -8,10 +8,12 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): Marc Laporte <marclaporte@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_include.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.include.php,v 1.2 2005/06/20 07:27:12 lsces Exp $
+// $Id: data.include.php,v 1.2.2.1 2005/06/24 08:26:50 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAINCLUDE', 'datainclude' );
 global $gLibertySystem;

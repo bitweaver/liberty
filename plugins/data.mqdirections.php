@@ -8,10 +8,9 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
-// | New Code
+// | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mqdirections.php,v 1.2 2005/06/20 16:00:47 spiderr Exp $
+// $Id: data.mqdirections.php,v 1.2.2.1 2005/06/24 08:26:50 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAMQDIR', 'datamqdir' );
 global $gLibertySystem;

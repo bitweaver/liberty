@@ -8,9 +8,10 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: xing <xing@synapse.plus.com>
+// | Author (TikiWiki): Sylvie Greverend <sylvieg@users.sourceforge.net>
+// | Reworked for Bitweaver by: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.1.1.1.2.1 2005/06/21 22:26:31 squareing Exp $
+// $Id: data.maketoc.php,v 1.1.1.1.2.2 2005/06/24 08:26:50 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAMAKETOC', 'datamaketoc' );
 global $gLibertySystem;

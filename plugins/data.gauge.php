@@ -8,10 +8,12 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): Luis Argerich <lrargerich@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_gauge.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.gauge.php,v 1.4.2.1 2005/06/21 23:19:18 starrrider Exp $
+// $Id: data.gauge.php,v 1.4.2.2 2005/06/24 08:26:49 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAGAUGE', 'datagauge' );
 global $gLibertySystem;
