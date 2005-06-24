@@ -8,10 +8,12 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): Ricardo Gladwell <axonrg@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_copyright.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.copyright.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
+// $Id: data.copyright.php,v 1.1.1.1.2.1 2005/06/24 07:50:59 starrrider Exp $
 // Initialization
 global $gBitSystem;
 if( ( $gBitSystem->isPackageActive( 'wiki' ) ) && ( $gBitSystem->isFeatureActive( 'wiki_feature_copyrights' ) ) ) { // Do not include this Plugin if this Package and Feature are not active

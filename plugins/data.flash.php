@@ -8,10 +8,12 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): Damian Parker <damosoft@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_flash.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.flash.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
+// $Id: data.flash.php,v 1.1.1.1.2.1 2005/06/24 07:50:59 starrrider Exp $
 // Initialization
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'wiki' ) ) { // Do not include this Plugin if the Package is not active
