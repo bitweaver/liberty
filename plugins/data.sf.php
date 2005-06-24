@@ -10,9 +10,9 @@
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Mose <mose@sourceforge.net>
 // | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
-// | by: StarRider <starrrider@sbcglobal.net>
+// | by: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.sf.php,v 1.2.2.1 2005/06/24 06:37:58 starrrider Exp $
+// $Id: data.sf.php,v 1.2.2.2 2005/06/24 14:37:08 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATASF', 'datasf' );
 define('SF_CACHE',48); # in hours

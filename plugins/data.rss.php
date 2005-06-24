@@ -1,4 +1,19 @@
 <?php
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2004, bitweaver.org
+// +----------------------------------------------------------------------+
+// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
+// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
+// |
+// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
+// | -> see http://phpdocu.sourceforge.net/
+// +----------------------------------------------------------------------+
+// | Author (TikiWiki): Oliver Hertel <ohertel@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
+// +----------------------------------------------------------------------+
+// $Id: data.rss.php,v 1.1.1.1.2.1 2005/06/24 14:37:08 starrrider Exp $
+// Initialization
 global $gLibertySystem;
 
 define( 'PLUGIN_GUID_RSS', 'datarss' );

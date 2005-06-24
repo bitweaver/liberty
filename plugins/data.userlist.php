@@ -8,10 +8,12 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): sQuare
+// | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
+// | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_userlist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.userlist.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
+// $Id: data.userlist.php,v 1.1.1.1.2.1 2005/06/24 14:37:08 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAUSERLIST', 'datauserlist' );
 global $gLibertySystem;

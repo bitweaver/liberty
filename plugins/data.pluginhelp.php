@@ -8,10 +8,11 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
-// | Reworked from: wikiplugin_pluginhelp.php - see deprecated code below
+// | Author: StarRider <starrrider@sbcglobal.net> 
+// | Rewritten for bitweaver by Author
+// | wikiplugin_pluginhelp.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.pluginhelp.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
+// $Id: data.pluginhelp.php,v 1.1.1.1.2.1 2005/06/24 14:37:08 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAPLUGINHELP', 'datapluginhelp' );
 global $gLibertySystem;

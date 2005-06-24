@@ -8,7 +8,7 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: Spiderr
+// | Author: Southpaw <southpawz@users.sourceforge.net>
 // +----------------------------------------------------------------------+
 global $gLibertySystem;
 
