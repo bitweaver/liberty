@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_code.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.1.1.1.2.3 2005/06/25 12:01:33 starrrider Exp $
+// $Id: data.code.php,v 1.1.1.1.2.4 2005/06/25 13:08:25 wolff_borg Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATACODE', 'datacode' );
 global $gLibertySystem;
@@ -67,6 +67,7 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 // Parameters were $In & $Colors
 // Added testing to maintain Pre-Clyde compatability
 	$num = NULL;
+	$add_tags = false;
 	extract ($params);
 	// This maintains Pre-Clyde Parameters
 	if (isset($colors) and ($colors == 'php') ) $source = 'HTML';
