@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/Attic/edit_help.tpl,v 1.2 2005/06/20 07:27:12 lsces Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/Attic/edit_help.tpl,v 1.2.2.1 2005/06/25 05:24:23 starrrider Exp $ *}
 {* Show wiki syntax and plugins help *}
 {* TODO: Add links to add samples to edit form *}
 
@@ -7,7 +7,8 @@
 {jstabs}
 	{jstab title="Help"}
 		{box title="Wiki Help" class="help box"}
-			For more information, please see <a href="http://www.bitweaver.org/wiki/WikiSyntax">WikiSyntax</a> on <a href="http://www.bitweaver.org">bitweaver.org</a>.
+			For more information, please see <a href="http://www.bitweaver.org/wiki/WikiSyntax" title="Launch Bitweaver in a New Window" onkeypress="popUpWin(this.href,\'full\',800,800);" onclick="popUpWin(this.href,\'full\',800,800);return false;">WikiSyntax</a> on 
+<a href="http://www.bitweaver.org" title="Launch Bitweaver in a New Window" onkeypress="popUpWin(this.href,\'full\',800,800);" onclick="popUpWin(this.href,\'full\',800,800);return false;">BitWeaver.org</a>
 		{/box}
 	{/jstab}
 
@@ -25,7 +26,7 @@
 		{tr}Example:  ~~blue:Text to be colored~~ will produce <font color="blue">Text to be colored</font>{/tr}<br />
 		{tr}HTML Colors can also be specified by placing a # character with the HTML Color where the color name should be.{/tr}<br />
 		{tr}Example:  ~~#FF0060:Text to be colored~~ will produce <font color="#FF0060">Text to be colored</font>.{/tr}<br />
-		{tr}For Web-Safe Color Names see <a class='wiki' target=_blank href='http://www.bitweaver.org/wiki/Browser+ColorNames'>bitweaver</a> or for HTML Color numbers see <a class='wiki' target=_blank href='http://www.pagetutor.com/pagetutor/makapage/picker/'>The Color Picker II</a>{/tr}
+		{tr}<strong>Note:</strong> For Web-Safe Color Names see <a href="http://www.bitweaver.org/wiki/index.php?page=Web-Safe+HTML+Colors" title="Launch BitWeaver.Org in New Window" onkeypress="popUpWin(this.href,full,800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false";>the Bitweaver Web Site</a> or for HTML Color numbers see <a href="http://www.pagetutor.com/pagetutor/makapage/picker" title="Launch PageTutor.com in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">The Color Picker II</a>{/tr}
 		{/box}
 
 		{box title="Italics" class="help box"}
@@ -122,9 +123,9 @@
 			{foreach from=$plugins item=p}
 				{box title=`$p.name` class="help box"}
 					{if $p.help eq ''}{tr}No description available{/tr}{else}{$p.help}{/if}
-					{if $p.syntax}<br/><strong>{tr}Example Syntax{/tr}:</strong>{$p.syntax}<br/>{/if}
+					{if $p.syntax}<br/><strong>{tr}Syntax{/tr}:</strong>{$p.syntax}<br/>{/if}
 					{if $p.exthelp ne ''}<a title="{tr}More Details{/tr}" href="javascript:flip('help-{$p.name}');">{tr}More Details{/tr}</a>
-					{if $p.tpopg}<br/>{tr}For additional information about this plugin - see bitweaver.Org or click <a class='wiki' target=_blank href='{$p.tpopg}'><strong>Here</strong></a> to visit.{/tr}<br/>{/if}
+					{if $p.tpopg}{tr} For additional information about this plugin - see <a href="{$p.tpopg}" title="Launch Bitweaver in a New Window" onkeypress="popUpWin(this.href,\'full\',800,800);" onclick="popUpWin(this.href,\'full\',800,800);return false;">Bitweaver.Org</a>.{/tr}<br/>{/if}
 					<div id="help-{$p.name}" style="display: none;">{tr}{$p.exthelp}{/tr}</div>{/if}
 				{/box}
 			{/foreach}
