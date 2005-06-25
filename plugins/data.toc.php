@@ -9,9 +9,8 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
-// | Reworked from: wikiplugin_sort.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.1.1.1.2.3 2005/06/25 12:01:33 starrrider Exp $
+// $Id: data.toc.php,v 1.1.1.1.2.4 2005/06/25 15:18:17 starrrider Exp $
 // Initialization
 global $gLibertySystem;
 
@@ -60,5 +59,4 @@ function toc_parse_data( $data, $params ) {
 
 	return $repl;
 }
-
 ?>

@@ -11,9 +11,8 @@
 // | Author (TikiWiki): Damian Parker <damosoft@users.sourceforge.net>
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
-// | Reworked from: wikiplugin_agentinfo.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.agentinfo.php,v 1.1.1.1.2.3 2005/06/25 12:01:32 starrrider Exp $
+// $Id: data.agentinfo.php,v 1.1.1.1.2.4 2005/06/25 15:18:17 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAAGENTINFO', 'dataagentinfo' );
 global $gLibertySystem;
@@ -71,27 +70,4 @@ function data_agentinfo($data, $params) {
 	}
 
 }
-/******************************************************************************
-The code below is from the deprecated AGENTINFO plugin. All comments and the help routines have been removed. - StarRider
-// Wiki plugin to display a browser client information
-// damian aka damosoft May 2004
-
-function wikiplugin_agentinfo($data, $params) {
-	extract ($params);
-	$ret = '';
-	if (!isset($info)) {
-		$info = 'IP';
-	}
-	if ($info == 'IP') {
-		$ret = $_SERVER["REMOTE_ADDR"];
-	}
-	if ($info == 'SVRSW') {
-		$ret = $_SERVER["SERVER_SOFTWARE"];
-	}
-	if ($info == 'BROWSER') {
-		$ret = $_SERVER["HTTP_USER_AGENT"];
-	}
-	return $ret;
-}
-*/
 ?>

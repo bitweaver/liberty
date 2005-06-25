@@ -11,9 +11,8 @@
 // | Author (TikiWiki): Ricardo Gladwell <axonrg@users.sourceforge.net>
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
-// | Reworked from: wikiplugin_copyright.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.copyright.php,v 1.1.1.1.2.4 2005/06/25 12:01:33 starrrider Exp $
+// $Id: data.copyright.php,v 1.1.1.1.2.5 2005/06/25 15:18:17 starrrider Exp $
 // Initialization
 global $gBitSystem;
 if( ( $gBitSystem->isPackageActive( 'wiki' ) ) && ( $gBitSystem->isFeatureActive( 'wiki_feature_copyrights' ) ) ) { // Do not include this Plugin if this Package and Feature are not active
@@ -93,32 +92,4 @@ function data_copyright($data, $params) { // Pre-Clyde Changes
 	return $ret;
 }
 }
-/******************************************************************************
-The code below is from the deprecated COPYRIGHT plugin. All comments and the help routines have been removed. - StarRider
-
-require_once( KERNEL_PKG_PATH.'BitBase.php' );
-require_once( WIKI_PKG_PATH.'copyrights_lib.php' );
-
-
-function wikiplugin_copyright($data, $params) {
-	$copyrightslib = new CopyrightsLib();
-	if (!isset($_REQUEST['copyrightpage'])) {
-		return '';
-	}
-	//extract($params);
-	$result = '';
-	$copyrights = $copyrightslib->list_copyrights($_REQUEST['copyrightpage']);
-	for ($i = 0; $i < $copyrights['cant']; $i++) {
-		$notice = str_replace("~title~", $copyrights['data'][$i]['title'], $data);
-		$notice = str_replace("~year~", $copyrights['data'][$i]['year'], $notice);
-		$notice = str_replace("~authors~", $copyrights['data'][$i]['authors'], $notice);
-		$result = $result . $notice;
-	}
-	global $bit_p_edit_copyrights;
-	if ((isset($bit_p_edit_copyrights)) && ($gBitUser->hasPermission( 'bit_p_edit_copyrights' ))) {
-		$result = $result . "\n<a href=\"copyrights.php?page=" . $_REQUEST['copyrightpage'] . "\">Edit copyrights</a> for ((" . $_REQUEST['copyrightpage'] . "))\n";
-	}
-	return $result;
-}
-*/
 ?>

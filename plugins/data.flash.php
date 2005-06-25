@@ -11,9 +11,8 @@
 // | Author (TikiWiki): Damian Parker <damosoft@users.sourceforge.net>
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
-// | Reworked from: wikiplugin_flash.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.flash.php,v 1.1.1.1.2.3 2005/06/25 12:01:33 starrrider Exp $
+// $Id: data.flash.php,v 1.1.1.1.2.4 2005/06/25 15:18:17 starrrider Exp $
 // Initialization
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'wiki' ) ) { // Do not include this Plugin if the Package is not active
@@ -85,23 +84,4 @@ function data_flash($data, $params) {
 	return $asetup;
 }
 }
-/******************************************************************************
-The code below is from the deprecated FLASH plugin. All comments and the help routines have been removed. - StarRider
-// Wiki plugin to display a SWF file - by damian aka damosoft 30 March 2004
-
-function wikiplugin_flash($data, $params) {
-	
-	extract ($params);
-	$w	= (isset($width)) 	?	$width : "";
-	$h	= (isset($height))	?	$height : "";
-	$q	= (isset($quality))	?	$quality : "high";
-
-	$asetup = "<OBJECT CLASSID=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\" codebase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,29,0\" WIDTH=\"$w\" HEIGHT=\"$h\">";
-	$asetup .= "<PARAM NAME=\"movie\" VALUE=\"$movie\">";
-	$asetup .= "<PARAM NAME=\"quality\" VALUE=\$q\">";
-	$asetup .= "<embed src=\"$movie\" quality=\"$q\" pluginspage=\"http://www.macromedia.com/go/getflashplayer\" type=\"application/x-shockwave-flash\" width=\"$w\" height=\"$h\"></embed></object>";
-
-	return $asetup;
-}
-*/
 ?>

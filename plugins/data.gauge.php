@@ -11,9 +11,8 @@
 // | Author (TikiWiki): Luis Argerich <lrargerich@users.sourceforge.net>
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
-// | Reworked from: wikiplugin_gauge.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.gauge.php,v 1.4.2.4 2005/06/25 12:01:33 starrrider Exp $
+// $Id: data.gauge.php,v 1.4.2.5 2005/06/25 15:18:17 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAGAUGE', 'datagauge' );
 global $gLibertySystem;
@@ -127,45 +126,4 @@ function data_gauge($data, $params) {
 	$html .= "</table>";
 	return $html;
 }
-/******************************************************************************
-The code below is from the deprecated GAUGE plugin. All comments and the help routines have been removed. - StarRider
-
-function wikiplugin_gauge($data, $params) {
-	extract ($params);
-	if (!isset($max)) {
-		$max = 100;
-	}
-	if (!isset($value)) {
-		return tra("<b>ERROR</b> - Missing parameter. The ") . "__Gauge__" . tra(" plugin requires a value in the parameter ") . "__value__.";
-	}
-	if (!isset($size)) {
-		$size = 150;
-	}
-	if (!isset($bgcolor)) {
-		$bgcolor = '#0000FF';
-	}
-	if (!isset($color)) {
-		$color = '#FF0000';
-	}
-	if (!isset($perc)) {
-		$perc = false;
-	}
-	if ($perc) {
-		$perc = number_format($value / $max * 100, 2);
-		$perc = '&nbsp;&nbsp;' . $perc . '%';
-	} else {
-		$perc = '';
-	}
-	$h_size = floor($value / $max * $size);
-	if (!isset($height)) {
-		$height = 14;
-	}
-	$html = "<table border='0' cellpadding='0' cellspacing='0'><tr><td><table border='0' height='$height' cellpadding='0' cellspacing='0' width='$size' style='background-color:$bgcolor;'><tr><td style='background-color:$color;' width='$h_size'>&nbsp;</td><td>&nbsp;</td></tr></table></td><td>$perc</td></tr>";
-	if (!empty($data)) {
-		$html .= "<tr><td colspan='2'><small>$data</small></td></tr>";
-	}
-	$html .= "</table>";
-	return $html;
-}
-*/
 ?>

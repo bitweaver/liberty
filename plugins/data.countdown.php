@@ -11,9 +11,8 @@
 // | Author (TikiWiki): Stephan Borg <wolff_borg@users.sourceforge.net>
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
-// | Reworked from: wikiplugin_countdown.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.countdown.php,v 1.1.1.1.2.3 2005/06/25 12:01:33 starrrider Exp $
+// $Id: data.countdown.php,v 1.1.1.1.2.4 2005/06/25 15:18:17 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATACOUNTDOWN', 'datacountdown' );
 global $gLibertySystem;
@@ -90,30 +89,4 @@ function data_countdown($data, $params) {
    	$ret = "$days ".tra("days").", $hours ".tra("hours").", $mins ".tra("minutes")." ".tra("and")." $secs ".tra("seconds")." $data";
 	return $ret;
 }
-/******************************************************************************
-The code below is from the deprecated COUNTDOWN plugin. All comments and the help routines have been removed. - StarRider
-function wikiplugin_countdown($data, $params) {
-	extract ($params);
-	if (!isset($enddate)) {
-		return ("<b>COUNTDOWN: Missing 'enddate' parameter for plugin</b><br/>");
-	}
-	if (isset($localtime) && $localtime == 'on')
-		$tz = $_COOKIE['tz_offset'];
-	else
-		$tz = 0;
-	$now = strtotime ("now") + $tz;
-	$then = strtotime ($enddate);
-	$difference = $then - $now;
-	$num = $difference/86400;
-	$days = intval($num);
-	$num2 = ($num - $days)*24;
-	$hours = intval($num2);
-	$num3 = ($num2 - $hours)*60;
-	$mins = intval($num3);
-	$num4 = ($num3 - $mins)*60;
-	$secs = intval($num4);
-	$ret = "$days ".tra("days").", $hours ".tra("hours").", $mins ".tra("minutes")." ".tra("and")." $secs ".tra("seconds")." $data";
-	return $ret;
-}
-*/
 ?>

@@ -11,9 +11,8 @@
 // | Author (TikiWiki): Marc Laporte <marclaporte@users.sourceforge.net>
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
-// | Reworked from: wikiplugin_include.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.include.php,v 1.2.2.4 2005/06/25 12:01:33 starrrider Exp $
+// $Id: data.include.php,v 1.2.2.5 2005/06/25 15:18:17 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAINCLUDE', 'datainclude' );
 global $gLibertySystem;

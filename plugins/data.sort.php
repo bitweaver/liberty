@@ -11,9 +11,8 @@
 // | Author (TikiWiki): Oliver Hertel <ohertel@users.sourceforge.net>
 // | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
 // | by: StarRider <starrrider@sourceforge.net>
-// | Reworked from: wikiplugin_sort.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.sort.php,v 1.1.1.1.2.4 2005/06/25 12:01:33 starrrider Exp $
+// $Id: data.sort.php,v 1.1.1.1.2.5 2005/06/25 15:18:17 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATASORT', 'datasort' );
 global $gLibertySystem;
@@ -64,30 +63,4 @@ function data_sort($data, $params) {
 	$data = trim($data);
 	return $data;
 }
-/******************************************************************************
-The code below is from the deprecated SORT plugin. All comments and the help routines have been removed. - StarRider
-
-function wikiplugin_sort($data, $params) {
-	extract ($params);
-	$sort = (isset($sort)) ? $sort : "asc";
-	$lines = explode("\n", $data); // separate lines into array
-	// $lines = array_filter( $lines, "chop" ); // remove \n
-	srand ((float)microtime() * 1000000); // needed for shuffle;
-	if ($sort == "asc") {
-		sort ($lines);
-	} else if ($sort == "desc") {
-		rsort ($lines);
-	} else if ($sort == "reverse") {
-		$lines = array_reverse($lines);
-	} else if ($sort == "shuffle") {
-		shuffle ($lines);
-	}
-	reset ($lines);
-	if (is_array($lines)) {
-		$data = implode("\n", $lines);
-	}
-	$data = trim($data);
-	return $data;
-}
-*/
 ?>
