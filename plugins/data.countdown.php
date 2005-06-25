@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_countdown.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.countdown.php,v 1.1.1.1.2.1 2005/06/24 07:50:59 starrrider Exp $
+// $Id: data.countdown.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATACOUNTDOWN', 'datacountdown' );
 global $gLibertySystem;
@@ -24,7 +24,6 @@ $pluginParams = array ( 'tag' => 'COUNTDOWN',
 						'title' => 'CountDown',
 						'description' => tra("Displays a Count-Down until a date:time is reached - then - negative numbers indicate how long it has been since that date. The Count-Down is displayed in the format of (X days, X hours, X minutes and X seconds)."),
 						'help_function' => 'data_countdown_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{countdown enddate= localtime= }" . tra("Text") . "{countdown}",
 						'plugin_type' => DATA_PLUGIN
 					  );

@@ -21,7 +21,6 @@ $pluginParams = array ( 'tag' => 'MM',
 						'title' => 'FreeMind',
 						'description' => tra("Displays a Freemind mindmap"),
 						'help_function' => 'data_freemind_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/DataPluginFreeMind",
 						'syntax' => "{MM src= height= width= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

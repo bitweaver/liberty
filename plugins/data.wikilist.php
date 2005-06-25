@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_wikilist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikilist.php,v 1.1.1.1.2.1 2005/06/24 14:37:08 starrrider Exp $
+// $Id: data.wikilist.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAWIKILIST', 'datawikilist' );
 global $gLibertySystem;
@@ -25,7 +25,6 @@ $pluginParams = array ( 'tag' => 'WIKILIST',
 //						'title' => 'WikiList',                                                                             // and Remove the comment from the start of this line
 						'description' => tra("Displays an alphabetically sorted list of WikiPages"),
 						'help_function' => 'data__wikilist_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{WIKILIST num= alpha= total= list= }Group Name{WIKILIST} ",
 						'plugin_type' => DATA_PLUGIN
 					  );

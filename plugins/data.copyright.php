@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_copyright.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.copyright.php,v 1.1.1.1.2.2 2005/06/25 08:58:10 squareing Exp $
+// $Id: data.copyright.php,v 1.1.1.1.2.3 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 global $gBitSystem;
 if( ( $gBitSystem->isPackageActive( 'wiki' ) ) && ( $gBitSystem->isFeatureActive( 'wiki_feature_copyrights' ) ) ) { // Do not include this Plugin if this Package and Feature are not active
@@ -27,7 +27,6 @@ $pluginParams = array ( 'tag' => 'COPYRIGHT',
 						'title' => 'CopyRight',
 						'description' => tra("This plugin is used to insert CopyRight notices."),
 						'help_function' => 'data_copyright_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{COPYRIGHT title= year= authors= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

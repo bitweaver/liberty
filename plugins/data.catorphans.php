@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_catorphans.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.catorphans.php,v 1.1.1.1.2.1 2005/06/24 07:50:59 starrrider Exp $
+// $Id: data.catorphans.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'categories' ) ) { // Do not include this Plugin if the Package is not active
@@ -27,7 +27,6 @@ $pluginParams = array ( 'tag' => 'CATORPHANS',
 //						'title' => 'CatOrphans',                                                                             // and Remove the comment from the start of this line
 						'description' => tra("Creates a listing of bitweaver objects that have not been categorized."),
 						'help_function' => 'data_catorphans_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{catorphans objects= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

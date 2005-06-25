@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_catpath.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.catpath.php,v 1.1.1.1.2.1 2005/06/24 07:50:59 starrrider Exp $
+// $Id: data.catpath.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'categories' ) ) { // Do not include this Plugin if the Package is not active
@@ -27,7 +27,6 @@ $pluginParams = array ( 'tag' => 'CATPATH',
 //						'title' => 'CatPath',																						  // and Remove the comment from the start of this line
 						'description' => tra("This plugin insert the full category path for each category that the page belongs to."),
 						'help_function' => 'data_catpath_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{CATPATH divider= top= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

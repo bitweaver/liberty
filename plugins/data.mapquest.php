@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mapquest.php,v 1.2.2.2 2005/06/24 08:26:50 starrrider Exp $
+// $Id: data.mapquest.php,v 1.2.2.3 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAMAPQUEST', 'datamapquest' );
 global $gLibertySystem;
@@ -21,7 +21,6 @@ $pluginParams = array ( 'tag' => 'MAPQUEST',
 						'title' => 'MapQuest',
 						'description' => tra("Creates an Icon link to MapQuest and/or a link to a Specific Map based on an Address."),
 						'help_function' => 'data_mapquest_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on bitweaver.org exists
 						'syntax' => "{MAPQUEST icon= myicon= text= address= city= state= zip= country= title= style= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

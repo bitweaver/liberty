@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_code.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.1.1.1.2.1 2005/06/24 07:50:59 starrrider Exp $
+// $Id: data.code.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATACODE', 'datacode' );
 global $gLibertySystem;
@@ -24,7 +24,6 @@ $pluginParams = array ( 'tag' => 'CODE',
 						'title' => 'Code',
 						'description' => tra("Displays the Source Code Snippet between {Code} blocks."),
 						'help_function' => 'data_code_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => " {code source= num= }". tra("Sorce Code Snippet") . "{code}",
 						'plugin_type' => DATA_PLUGIN
 					  );

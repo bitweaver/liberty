@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_agentinfo.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.agentinfo.php,v 1.1.1.1.2.1 2005/06/24 07:50:58 starrrider Exp $
+// $Id: data.agentinfo.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAAGENTINFO', 'dataagentinfo' );
 global $gLibertySystem;
@@ -24,7 +24,6 @@ $pluginParams = array ( 'tag' => 'AGENTINFO',
 						'title' => 'AgentInfo',
 						'description' => tra("This plugin will display the viewer's IP address, the Browser they are using, or the info about the site's Server software."),
 						'help_function' => 'data_agentinfo_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{agentinfo info= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

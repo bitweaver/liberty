@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_article.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.article.php,v 1.1.1.1.2.1 2005/06/24 07:50:58 starrrider Exp $
+// $Id: data.article.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'articles' ) ) { // Do not include this Plugin if the Package is not active
@@ -27,7 +27,6 @@ $pluginParams = array ( 'tag' => 'ARTICLE',
 //						'title' => 'Article',                                                                             // and Remove the comment from the start of this line
 						'description' => tra("This plugin will display the data from a single field in the specified Article."),
 						'help_function' => 'data_article_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{article id= field=}",
 						'plugin_type' => DATA_PLUGIN
 					  );

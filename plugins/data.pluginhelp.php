@@ -12,7 +12,7 @@
 // | Rewritten for bitweaver by Author
 // | wikiplugin_pluginhelp.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.pluginhelp.php,v 1.1.1.1.2.2 2005/06/25 08:58:10 squareing Exp $
+// $Id: data.pluginhelp.php,v 1.1.1.1.2.3 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAPLUGINHELP', 'datapluginhelp' );
 global $gLibertySystem;
@@ -24,7 +24,6 @@ $pluginParams = array ( 'tag' => 'PLUGINHELP',
 //						'title' => 'PluginHelp',                                                                             // and Remove the comment from the start of this line
 						'description' => tra("This plugin will display the plugin's Help."),
 						'help_function' => 'data__pluginhelp_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{PLUGINHELP plugin= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_titlesearch.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.titlesearch.php,v 1.1.1.1.2.2 2005/06/25 08:58:10 squareing Exp $
+// $Id: data.titlesearch.php,v 1.1.1.1.2.3 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATATITLESEARCH', 'datatitlesearch' );
 global $gLibertySystem;
@@ -25,7 +25,6 @@ $pluginParams = array ( 'tag' => 'TITLESEARCH',
 //						'title' => 'TitleSearch',                                                                                         // and Remove the comment from the start of this line
 						'description' => tra("This plugin search the titles of all pages in this wiki."),
 						'help_function' => 'data__titlesearch_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{TITLESEARCH search= info= exclude= noheader= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

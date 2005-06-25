@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_sort.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.sort.php,v 1.1.1.1.2.2 2005/06/25 08:58:10 squareing Exp $
+// $Id: data.sort.php,v 1.1.1.1.2.3 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATASORT', 'datasort' );
 global $gLibertySystem;
@@ -24,7 +24,6 @@ $pluginParams = array ( 'tag' => 'SORT',
 						'title' => 'Sort',
 						'description' => tra("This plugin sorts operates on lines of text - not the text in the lines. Every line between the ") . "~np~{SORT}~/np~" . tra(" blocks -  including the lines the blocks are on - is sorted."),
 						'help_function' => 'data__sort_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{SORT sort= }" . tra("Lines to be sorted") . "{SORT}",
 						'plugin_type' => DATA_PLUGIN
 					  );

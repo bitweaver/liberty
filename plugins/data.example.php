@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.example.php,v 1.4.2.3 2005/06/25 08:58:10 squareing Exp $
+// $Id: data.example.php,v 1.4.2.4 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAEXAMPLE', 'dataexample' );
 global $gLibertySystem;
@@ -21,7 +21,6 @@ $pluginParams = array ( 'tag' => 'EXAMPLE',
 						'title' => 'Example', // Name of the Plugin
 						'description' => tra("This plugin is an example to show how plugins operate. It can also function as a template for the creation of new plugins since it contains a lot of spare code and explanations about how - and when - they should be used."), // What it does
 						'help_function' => 'data_example_help', // Points to the Help Function
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // This is a URL to a page on bitweaver.Org for additional information about the plugin - if it exists
 						'syntax' => "{EXAMPLE p1= p2= }", // A listing of parameters
 						'plugin_type' => DATA_PLUGIN // Don't Touch 
 					  );

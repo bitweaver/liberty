@@ -11,7 +11,7 @@
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
 // | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.module.php,v 1.1.1.1.2.2 2005/06/25 08:58:10 squareing Exp $
+// $Id: data.module.php,v 1.1.1.1.2.3 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 
 /* 
@@ -46,7 +46,6 @@ $pluginParams = array ( 'tag' => 'MODULE',
 						'title' => 'Module',
 						'description' => tra("Display a module block in content"),
 						'help_function' => 'datamodule_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => '{MODULE module= align="right"}',
 						'plugin_type' => DATA_PLUGIN
 					  );

@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_avatar.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.avatar.php,v 1.1.1.1.2.2 2005/06/25 08:58:10 squareing Exp $
+// $Id: data.avatar.php,v 1.1.1.1.2.3 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'wiki' ) ) { // Do not include this Plugin if the Package is not active
@@ -27,7 +27,6 @@ $pluginParams = array ( 'tag' => 'AVATAR',
 //						'title' => 'Avatar',                                                                             // and Remove the comment from the start of this line
 						'description' => tra("This plugin will display a User's Avatar as a Link to a page."),
 						'help_function' => 'data_avatar_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{avatar user= page= float= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

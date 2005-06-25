@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_include.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.include.php,v 1.2.2.2 2005/06/25 08:58:10 squareing Exp $
+// $Id: data.include.php,v 1.2.2.3 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAINCLUDE', 'datainclude' );
 global $gLibertySystem;
@@ -24,7 +24,6 @@ $pluginParams = array ( 'tag' => 'INCLUDE',
 						'title' => 'Include',
 						'description' => tra("This plugin is used to include the contents of one Wiki page in another Wiki page."),
 						'help_function' => 'data_include_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{INCLUDE content_id= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

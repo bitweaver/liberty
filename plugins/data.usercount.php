@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_usercount.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.usercount.php,v 1.1.1.1.2.1 2005/06/24 14:37:08 starrrider Exp $
+// $Id: data.usercount.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAUSERCOUNT', 'datausercount' );
 global $gLibertySystem;
@@ -25,7 +25,6 @@ $pluginParams = array ( 'tag' => 'USERCOUNT',
 //						'title' => 'UserCount',                                                                                       // and Remove the comment from the start of this line
 						'description' => tra("Will show the number of users. If a Group Name can be included to filter the Groups."),
 						'help_function' => 'data__usercount_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{USERCOUNT}Group Name{USERCOUNT}",
 						'plugin_type' => DATA_PLUGIN
 					  );

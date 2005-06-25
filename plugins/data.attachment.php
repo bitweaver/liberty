@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
+// $Id: data.attachment.php,v 1.1.1.1.2.1 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 global $gBitSystem;
 
@@ -23,7 +23,6 @@ $pluginParams = array ( 'tag' => 'ATTACHMENT',
 						'title' => 'Attachment',
 						'description' => tra("Display attachment in content"),
 						'help_function' => 'data_attachment_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => '{attachment id= size= align= }',
 						'plugin_type' => DATA_PLUGIN
 					  );

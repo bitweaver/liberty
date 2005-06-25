@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_articles.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.articles.php,v 1.1.1.1.2.1 2005/06/24 07:50:58 starrrider Exp $
+// $Id: data.articles.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'articles' ) ) { // Do not include this Plugin if the Package is not active
@@ -27,7 +27,6 @@ $pluginParams = array ( 'tag' => 'ARTICLES',
 //						'title' => 'Articles',                                                                             // and Remove the comment from the start of this line
 						'description' => tra("This plugin will display several Articles."),
 						'help_function' => 'data_articles_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{articles max= topic= type= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

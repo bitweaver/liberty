@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_backlinks.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.backlinks.php,v 1.1.1.1.2.1 2005/06/24 07:50:58 starrrider Exp $
+// $Id: data.backlinks.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 global $gBitSystem;
 if( ( $gBitSystem->isPackageActive( 'wiki' ) ) && ( $gBitSystem->isFeatureActive('feature_backlinks') ) ) { // Do not include this Plugin if the Package or the Feature is not active
@@ -27,7 +27,6 @@ $pluginParams = array ( 'tag' => 'BACKLINKS',
 //						'title' => 'BackLinks',                                                                             // and Remove the comment from the start of this line
 						'description' => tra("This plugin will list all Wiki pages which contains a link to the specified page."),
 						'help_function' => 'data_backlinks_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{backlinks page= info= exclude= self= header= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_userlist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.userlist.php,v 1.1.1.1.2.1 2005/06/24 14:37:08 starrrider Exp $
+// $Id: data.userlist.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAUSERLIST', 'datauserlist' );
 global $gLibertySystem;
@@ -25,7 +25,6 @@ $pluginParams = array ( 'tag' => 'USERLIST',
 //						'title' => 'UserList',,                                                                                       // and Remove the comment from the start of this line
 						'description' => tra("This plugin will displays an alphabetically sorted list of registered users. A Group Name can be included to filter Groups to be listed."),
 						'help_function' => 'data__userlist_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{USERLIST num= userspage= alpha= total= email= }GroupName{USERLIST}",
 						'plugin_type' => DATA_PLUGIN
 					  );

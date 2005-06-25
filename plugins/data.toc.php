@@ -11,7 +11,7 @@
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // | Reworked from: wikiplugin_sort.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.1.1.1.2.1 2005/06/24 14:37:08 starrrider Exp $
+// $Id: data.toc.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 global $gLibertySystem;
 
@@ -25,7 +25,6 @@ $pluginParams = array ( 'tag' => 'toc',
 						'title' => 'Table Of Contents',
 						'description' => tra("Display a Table Of Contents for Structures"),
 						'help_function' => 'toc_extended_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => '{TOC sturcture_id= }',
 						'plugin_type' => DATA_PLUGIN
 					  );

@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_flash.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.flash.php,v 1.1.1.1.2.1 2005/06/24 07:50:59 starrrider Exp $
+// $Id: data.flash.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'wiki' ) ) { // Do not include this Plugin if the Package is not active
@@ -27,7 +27,6 @@ $pluginParams = array ( 'tag' => 'FLASH',
 						'title' => 'Flash',
 						'description' => tra("This plugin allows a Flash SWF file to be displayed."),
 						'help_function' => 'data_flash_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{FLASH movie= width= height= quality= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

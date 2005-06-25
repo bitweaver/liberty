@@ -11,7 +11,7 @@
 // | Author: StarRider <starrrider@sbcglobal.net>
 // +----------------------------------------------------------------------+
 //
-// $Id: data.tp.php,v 1.1.1.1.2.1 2005/06/25 08:58:10 squareing Exp $
+// $Id: data.tp.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 global $gBitSystem;
 
@@ -25,7 +25,6 @@ $pluginParams = array ( 'tag' => 'TP',
 						'title' => 'TestParms',
 						'description' => tra("This plugin will display the parameters passed to it."),
 						'help_function' => 'datatp_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "~np~{TP(p1= ,p2= ,p3= )}~/np~",
 						'plugin_type' => DATA_PLUGIN
 					  );

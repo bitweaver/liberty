@@ -12,7 +12,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.rss.php,v 1.1.1.1.2.1 2005/06/24 14:37:08 starrrider Exp $
+// $Id: data.rss.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
 // Initialization
 global $gLibertySystem;
 
@@ -26,7 +26,6 @@ $pluginParams = array ( 'tag' => 'RSS',
 						'title' => 'RSS Feed',
 						'description' => tra("Display RSS Feeds"),
 						'help_function' => 'rss_extended_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{RSS id= max= }",
 						'plugin_type' => DATA_PLUGIN
 					  );
