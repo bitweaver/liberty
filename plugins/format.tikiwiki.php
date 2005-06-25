@@ -13,6 +13,7 @@ $pluginParams = array ( 'store_function' => 'tikiwiki_save_data',
 						'description' => 'TikiWiki Syntax Format Parser',
 						'edit_label' => 'Tiki Wiki Syntax',
 						'edit_field' => '<input type="radio" name="format_guid" value="'.PLUGIN_GUID_TIKIWIKI.'"',
+						'help_page' => 'TikiWikiSyntax',
 						'plugin_type' => FORMAT_PLUGIN
 					  );
 

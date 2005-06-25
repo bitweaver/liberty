@@ -11,6 +11,7 @@ if( @include_once( 'Text/Wiki.php' ) ) {
 							'description' => 'Pear Wiki Parser for TikiWiki Syntax. Requires Text_Wiki Pear extension. More info <a href="http://wiki.ciaweb.net/yawiki/index.php?area=Text_Wiki&page=SamplePage">here</a>',
 							'edit_label' => 'Tiki Wiki Syntax, parsed by Pear::Text_Wiki',
 							'edit_field' => '<input type="radio" name="format_guid" value="'.PLUGIN_GUID_PEARWIKI_TIKI.'"',
+							'help_page' => 'TikiWikiSyntax',
 							'plugin_type' => FORMAT_PLUGIN
 						  );
 	

@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.1.2.1 2005/06/25 11:11:11 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.1.2.2 2005/06/25 11:25:39 squareing Exp $ *}
 
 {strip}
 {if $gBitSystem->isFeatureActive( 'feature_wikihelp' )}
@@ -13,7 +13,9 @@
 							{$p.help}
 						{/if}
 
-						<br />{tr}To view syntax help, please visit <a onkeypress="popUpWin(this.href,'standard',600,400);" onclick="popUpWin(this.href,'standard',600,400);return false;" class="external" href="http://bitweaver.org/wiki/index.php?page={$p.guid|capitalize}Syntax">{$p.guid|capitalize}Syntax</a>.{/tr}
+						{if $p.help_page}
+							<br />{tr}To view syntax help, please visit <a onkeypress="popUpWin(this.href,'standard',600,400);" onclick="popUpWin(this.href,'standard',600,400);return false;" class="external" href="http://bitweaver.org/wiki/index.php?page={$p.help_page}">{$p.help_page}</a>.{/tr}
+						{/if}
 					{/box}
 				{/if}
 			{/foreach}
@@ -43,7 +45,9 @@
 								<div id="help-{$p.name}" style="display: none;">{$p.exthelp}</div>
 							{/if}
 
-							<br />{tr}for additional information about this plugin, see <a class="external" href="http://bitweaver.org/wiki/index.php?page=DataPlugin{$p.guid|capitalize}">DataPlugin{$p.guid|capitalize}</a>.{/tr}<br/>
+							{if $p.help_page}
+								<br />{tr}for additional information about this plugin, see <a class="external" href="http://bitweaver.org/wiki/index.php?page=DataPlugin{$p.help_page}">{$p.help_page}</a>.{/tr}<br/>
+							{/if}
 						{/box}
 					{/if}
 				{/foreach}
