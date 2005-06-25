@@ -11,7 +11,7 @@
 // | Author: StarRider <starrrider@sbcglobal.net>
 // +----------------------------------------------------------------------+
 //
-// $Id: data.tp.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
+// $Id: data.tp.php,v 1.1.1.1.2.1 2005/06/25 08:58:10 squareing Exp $
 // Initialization
 global $gBitSystem;
 
@@ -19,7 +19,7 @@ define( 'PLUGIN_GUID_DATATP', 'datatp' );
 
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'TP',
-						'auto_activate' => TRUE,
+						'auto_activate' => FALSE,
 						'requires_pair' => FALSE,
 						'load_function' => 'datatp',
 						'title' => 'TestParms',

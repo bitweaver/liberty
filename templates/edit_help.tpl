@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/Attic/edit_help.tpl,v 1.2.2.1 2005/06/25 05:24:23 starrrider Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/Attic/edit_help.tpl,v 1.2.2.2 2005/06/25 08:58:10 squareing Exp $ *}
 {* Show wiki syntax and plugins help *}
 {* TODO: Add links to add samples to edit form *}
 
@@ -8,7 +8,7 @@
 	{jstab title="Help"}
 		{box title="Wiki Help" class="help box"}
 			For more information, please see <a href="http://www.bitweaver.org/wiki/WikiSyntax" title="Launch Bitweaver in a New Window" onkeypress="popUpWin(this.href,\'full\',800,800);" onclick="popUpWin(this.href,\'full\',800,800);return false;">WikiSyntax</a> on 
-<a href="http://www.bitweaver.org" title="Launch Bitweaver in a New Window" onkeypress="popUpWin(this.href,\'full\',800,800);" onclick="popUpWin(this.href,\'full\',800,800);return false;">BitWeaver.org</a>
+			<a class="external" href="http://www.bitweaver.org">bitweaver.org</a>
 		{/box}
 	{/jstab}
 
@@ -125,8 +125,8 @@
 					{if $p.help eq ''}{tr}No description available{/tr}{else}{$p.help}{/if}
 					{if $p.syntax}<br/><strong>{tr}Syntax{/tr}:</strong>{$p.syntax}<br/>{/if}
 					{if $p.exthelp ne ''}<a title="{tr}More Details{/tr}" href="javascript:flip('help-{$p.name}');">{tr}More Details{/tr}</a>
-					{if $p.tpopg}{tr} For additional information about this plugin - see <a href="{$p.tpopg}" title="Launch Bitweaver in a New Window" onkeypress="popUpWin(this.href,\'full\',800,800);" onclick="popUpWin(this.href,\'full\',800,800);return false;">Bitweaver.Org</a>.{/tr}<br/>{/if}
-					<div id="help-{$p.name}" style="display: none;">{tr}{$p.exthelp}{/tr}</div>{/if}
+					{tr} For additional information about this plugin, see <a href="http://bitweaver.org/wiki/DataPlugin{$p.name}">DataPlugin{$p.name}</a>.{/tr}<br/>
+					<div id="help-{$p.name}" style="display: none;">{$p.exthelp}</div>{/if}
 				{/box}
 			{/foreach}
 		{/jstab}

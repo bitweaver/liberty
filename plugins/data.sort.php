@@ -13,12 +13,12 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_sort.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.sort.php,v 1.1.1.1.2.1 2005/06/24 14:37:08 starrrider Exp $
+// $Id: data.sort.php,v 1.1.1.1.2.2 2005/06/25 08:58:10 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATASORT', 'datasort' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'SORT',
-						'auto_activate' => TRUE,
+						'auto_activate' => FALSE,
 						'requires_pair' => TRUE,
 						'load_function' => 'data_sort',
 						'title' => 'Sort',

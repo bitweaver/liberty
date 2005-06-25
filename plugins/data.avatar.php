@@ -13,14 +13,14 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_avatar.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.avatar.php,v 1.1.1.1.2.1 2005/06/24 07:50:58 starrrider Exp $
+// $Id: data.avatar.php,v 1.1.1.1.2.2 2005/06/25 08:58:10 squareing Exp $
 // Initialization
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'wiki' ) ) { // Do not include this Plugin if the Package is not active
 define( 'PLUGIN_GUID_DATAAVATAR', 'dataavatar' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'AVATAR',
-						'auto_activate' => TRUE,
+						'auto_activate' => FALSE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_avatar',
 						'title' => 'Avatar<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational

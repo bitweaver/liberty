@@ -10,12 +10,12 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.example.php,v 1.4.2.2 2005/06/24 07:50:59 starrrider Exp $
+// $Id: data.example.php,v 1.4.2.3 2005/06/25 08:58:10 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAEXAMPLE', 'dataexample' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'EXAMPLE',
-						'auto_activate' => TRUE,
+						'auto_activate' => FALSE,
 						'requires_pair' => FALSE, // Make this TRUE if the plugin needs to operate on free form text
 						'load_function' => 'data_example', // Points to the Load Function
 						'title' => 'Example', // Name of the Plugin

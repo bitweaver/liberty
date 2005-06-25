@@ -12,12 +12,12 @@
 // | Rewritten for bitweaver by Author
 // | wikiplugin_pluginhelp.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.pluginhelp.php,v 1.1.1.1.2.1 2005/06/24 14:37:08 starrrider Exp $
+// $Id: data.pluginhelp.php,v 1.1.1.1.2.2 2005/06/25 08:58:10 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAPLUGINHELP', 'datapluginhelp' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'PLUGINHELP',
-						'auto_activate' => TRUE,
+						'auto_activate' => FALSE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_pluginhelp',
 						'title' => 'PluginHelp<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational

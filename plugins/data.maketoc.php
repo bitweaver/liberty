@@ -11,13 +11,13 @@
 // | Author (TikiWiki): Sylvie Greverend <sylvieg@users.sourceforge.net>
 // | Reworked for Bitweaver by: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.1.1.1.2.2 2005/06/24 08:26:50 starrrider Exp $
+// $Id: data.maketoc.php,v 1.1.1.1.2.3 2005/06/25 08:58:10 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAMAKETOC', 'datamaketoc' );
 global $gLibertySystem;
 global $gContent;
 $pluginParams = array ( 'tag' => 'MAKETOC',
-						'auto_activate' => FALSE,
+						'auto_activate' => TRUE,
 						'requires_pair' => FALSE,
 						'load_function' => '',
 						'title' => 'MakeTOC',

@@ -13,12 +13,12 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_titlesearch.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.titlesearch.php,v 1.1.1.1.2.1 2005/06/24 14:37:08 starrrider Exp $
+// $Id: data.titlesearch.php,v 1.1.1.1.2.2 2005/06/25 08:58:10 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATATITLESEARCH', 'datatitlesearch' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'TITLESEARCH',
-						'auto_activate' => TRUE,
+						'auto_activate' => FALSE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_titlesearch',
 						'title' => 'TitleSearch<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational

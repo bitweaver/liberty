@@ -11,14 +11,14 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertySystem.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
+// $Id: LibertySystem.php,v 1.1.1.1.2.1 2005/06/25 08:58:09 squareing Exp $
 
 /**
 * System class for handling the common package
 *
 * @abstract
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.1 $
+* @version  $Revision: 1.1.1.1.2.1 $
 * @package  Common
 */
 
@@ -78,9 +78,9 @@ class LibertySystem extends LibertyBase {
 				$handler['is_active'] = 'y';
 			} elseif( empty( $handler['verified'] ) && !isset( $handler['is_active'] ) ) {
 				//We found a missing plugin - insert it
-				$sql = "INSERT INTO `".BIT_DB_PREFIX."tiki_plugins` ( `plugin_guid`, `plugin_type`, `plugin_description`, `is_active` ) VALUES ( ?, ?, ?, 'y' )";
-				$this->query( $sql, array( $guid, $handler['plugin_type'], $handler['description'] ) );
-				$handler['is_active'] = 'y';
+				$handler['is_active'] = ( ( isset( $handler['auto_activate'] ) && $handler['auto_activate'] == FALSE ) ? 'n' : 'y' );
+				$sql = "INSERT INTO `".BIT_DB_PREFIX."tiki_plugins` ( `plugin_guid`, `plugin_type`, `plugin_description`, `is_active` ) VALUES ( ?, ?, ?, ? )";
+				$this->query( $sql, array( $guid, $handler['plugin_type'], $handler['description'], $handler['is_active'] ) );
 			}
 		}
 		asort( $this->mPlugins );

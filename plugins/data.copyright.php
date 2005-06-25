@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_copyright.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.copyright.php,v 1.1.1.1.2.1 2005/06/24 07:50:59 starrrider Exp $
+// $Id: data.copyright.php,v 1.1.1.1.2.2 2005/06/25 08:58:10 squareing Exp $
 // Initialization
 global $gBitSystem;
 if( ( $gBitSystem->isPackageActive( 'wiki' ) ) && ( $gBitSystem->isFeatureActive( 'wiki_feature_copyrights' ) ) ) { // Do not include this Plugin if this Package and Feature are not active
@@ -21,7 +21,7 @@ if( ( $gBitSystem->isPackageActive( 'wiki' ) ) && ( $gBitSystem->isFeatureActive
 define( 'PLUGIN_GUID_DATACOPYRIGHT', 'datacopyright' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'COPYRIGHT',
-						'auto_activate' => FALSE,
+						'auto_activate' => TRUE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_copyright',
 						'title' => 'CopyRight',

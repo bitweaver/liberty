@@ -13,12 +13,12 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_include.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.include.php,v 1.2.2.1 2005/06/24 08:26:50 starrrider Exp $
+// $Id: data.include.php,v 1.2.2.2 2005/06/25 08:58:10 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAINCLUDE', 'datainclude' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'INCLUDE',
-						'auto_activate' => FALSE,
+						'auto_activate' => TRUE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_include',
 						'title' => 'Include',

@@ -11,13 +11,13 @@
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_include.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.addtabs.php,v 1.1.1.1.2.2 2005/06/24 07:50:58 starrrider Exp $
+// $Id: data.addtabs.php,v 1.1.1.1.2.3 2005/06/25 08:58:10 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAADDTABS', 'dataaddtabs' );
 global $gLibertySystem;
 global $gContent;
 $pluginParams = array ( 'tag' => 'ADDTABS',
-						'auto_activate' => FALSE,
+						'auto_activate' => TRUE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_addtabs',
 						'title' => 'AddTabs',

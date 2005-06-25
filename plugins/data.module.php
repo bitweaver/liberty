@@ -11,7 +11,7 @@
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
 // | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.module.php,v 1.1.1.1.2.1 2005/06/24 08:26:50 starrrider Exp $
+// $Id: data.module.php,v 1.1.1.1.2.2 2005/06/25 08:58:10 squareing Exp $
 // Initialization
 
 /* 
@@ -40,7 +40,7 @@ define( 'PLUGIN_GUID_DATAMODULE', 'datamodule' );
 
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'MODULE',
-						'auto_activate' => TRUE,
+						'auto_activate' => FALSE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_datamodule',
 						'title' => 'Module',
