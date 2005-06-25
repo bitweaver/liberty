@@ -8,10 +8,10 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author (TikiWiki): Sylvie Greverend <sylvieg@users.sourceforge.net>
-// | Reworked for Bitweaver by: xing <xing@synapse.plus.com>
+// | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.1.1.1.2.3 2005/06/25 08:58:10 squareing Exp $
+// $Id: data.maketoc.php,v 1.1.1.1.2.4 2005/06/25 09:05:45 squareing Exp $
+
 // Initialization
 define( 'PLUGIN_GUID_DATAMAKETOC', 'datamaketoc' );
 global $gLibertySystem;
@@ -23,7 +23,7 @@ $pluginParams = array ( 'tag' => 'MAKETOC',
 						'title' => 'MakeTOC',
 						'description' => tra("Will create a table of contents of the WikiPage based on the headings below."),
 						'help_function' => 'data_maketoc_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/DataPluginMaketoc",
+
 						'syntax' => "{maketoc}",
 						'plugin_type' => DATA_PLUGIN
 					  );
