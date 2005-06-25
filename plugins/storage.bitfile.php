@@ -10,6 +10,7 @@ $pluginParams = array (
 	'expunge_function' => 'bit_files_expunge',
 	'description' => 'Upload File To Server',
 	'plugin_type' => STORAGE_PLUGIN,
+	'auto_activate' => TRUE,
 	'edit_label' => 'Upload File',
 	'edit_field' => '<input type="file" name="upload" size="40" />',
 	'edit_help' => 'This file will be uploaded to your personal storage area.<br />After selecting the file you want to upload, please return to the edit area and click the save button.'

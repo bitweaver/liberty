@@ -7,7 +7,7 @@ if( @include_once( 'Text/Wiki.php' ) ) {
 	$pluginParams = array ( 'store_function' => 'pearwiki_save_data',
 							'load_function' => 'pearwiki_parse_data',
 							'verify_function' => 'pearwiki_verify_data',
-							'auto_activate' => FALSE,
+							'auto_activate' => TRUE,
 							'description' => 'Pear Wiki Syntax Format Parser. Requires Text_Wiki Pear extension. If you are running linux you can try running: su -c \'pear install Text_Wiki\'. More info <a href="http://wiki.ciaweb.net/yawiki/index.php?area=Text_Wiki&page=SamplePage">here</a>',
 							'edit_label' => 'Pear Text_Wiki Syntax',
 							'edit_field' => '<input type="radio" name="format_guid" value="'.PLUGIN_GUID_PEARWIKI.'"',

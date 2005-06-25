@@ -10,6 +10,7 @@ $pluginParams = array (
 	'expunge_function' => 'pbase_expunge',
 	'description' => 'PBase Image ID',
 	'plugin_type' => STORAGE_PLUGIN,
+	'auto_activate' => FALSE,
 	'edit_label' => 'Enter <a href="http://www.pbase.com">PBase</a> Image ID',
 	'edit_field' => '<input type="text" name="STORAGE['.PLUGIN_GUID_PBASE.']" size="40" /> 
 		<a href="http://www.pbase.com">{biticon ipackage=liberty iname=pbase iexplain=pbase}</a>',
