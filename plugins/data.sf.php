@@ -12,7 +12,7 @@
 // | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
 // | by: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.sf.php,v 1.2.2.3 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.sf.php,v 1.2.2.4 2005/06/25 12:01:33 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATASF', 'datasf' );
 define('SF_CACHE',48); # in hours
@@ -23,6 +23,7 @@ $pluginParams = array ( 'tag' => 'SF',
 						'requires_pair' => FALSE,
 						'load_function' => 'data_sf',
 						'title' => 'SourceForge (SF)',
+						'help_page' => 'DataPluginSourceForge',
 						'description' => tra("Creates a link to SourceForge. Can be to the Bugs / RFEs / Patches / Support pages. Can also be to individual item.."),
 						'help_function' => 'data__sf_help',
 						'syntax' => "{SF tag= aid= groupid= atid= }",

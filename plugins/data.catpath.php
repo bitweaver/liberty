@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_catpath.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.catpath.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.catpath.php,v 1.1.1.1.2.3 2005/06/25 12:01:33 starrrider Exp $
 // Initialization
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'categories' ) ) { // Do not include this Plugin if the Package is not active
@@ -25,6 +25,7 @@ $pluginParams = array ( 'tag' => 'CATPATH',
 						'load_function' => 'data_catpath',
 						'title' => 'CatPath<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'CatPath',																						  // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginCatPath',
 						'description' => tra("This plugin insert the full category path for each category that the page belongs to."),
 						'help_function' => 'data_catpath_help',
 						'syntax' => "{CATPATH divider= top= }",

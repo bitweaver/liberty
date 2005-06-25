@@ -11,7 +11,7 @@
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // | Reworked from: wikiplugin_sort.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.toc.php,v 1.1.1.1.2.3 2005/06/25 12:01:33 starrrider Exp $
 // Initialization
 global $gLibertySystem;
 
@@ -23,6 +23,7 @@ $pluginParams = array ( 'tag' => 'toc',
 						'requires_pair' => FALSE,
 						'load_function' => 'toc_parse_data',
 						'title' => 'Table Of Contents',
+						'help_page' => 'DataPluginTOC',
 						'description' => tra("Display a Table Of Contents for Structures"),
 						'help_function' => 'toc_extended_help',
 						'syntax' => '{TOC sturcture_id= }',

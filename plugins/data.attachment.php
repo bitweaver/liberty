@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.1.1.1.2.1 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.attachment.php,v 1.1.1.1.2.2 2005/06/25 12:01:32 starrrider Exp $
 // Initialization
 global $gBitSystem;
 
@@ -21,6 +21,7 @@ $pluginParams = array ( 'tag' => 'ATTACHMENT',
 						'requires_pair' => FALSE,
 						'load_function' => 'data_attachment',
 						'title' => 'Attachment',
+						'help_page' => 'DataPluginAttachment',
 						'description' => tra("Display attachment in content"),
 						'help_function' => 'data_attachment_help',
 						'syntax' => '{attachment id= size= align= }',

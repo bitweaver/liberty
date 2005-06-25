@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mapquest.php,v 1.2.2.3 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.mapquest.php,v 1.2.2.4 2005/06/25 12:01:33 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAMAPQUEST', 'datamapquest' );
 global $gLibertySystem;
@@ -19,6 +19,7 @@ $pluginParams = array ( 'tag' => 'MAPQUEST',
 						'requires_pair' => FALSE,
 						'load_function' => 'data_mapquest',
 						'title' => 'MapQuest',
+						'help_page' => 'DataPluginMapQuest',
 						'description' => tra("Creates an Icon link to MapQuest and/or a link to a Specific Map based on an Address."),
 						'help_function' => 'data_mapquest_help',
 						'syntax' => "{MAPQUEST icon= myicon= text= address= city= state= zip= country= title= style= }",

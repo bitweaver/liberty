@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_translated.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.translated.php,v 1.1.1.1.2.3 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.translated.php,v 1.1.1.1.2.4 2005/06/25 12:01:33 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATATRANSLATED', 'datatranslated' );
 global $gLibertySystem;
@@ -23,6 +23,7 @@ $pluginParams = array ( 'tag' => 'TRANSLATED',
 						'load_function' => 'data_translated',
 						'title' => 'Translated<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'Translated',                                                                                       // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginTranslated',
 						'description' => tra("This plugin is used to create a link to a page that contains a translation. The link can be shown as an Icon for the country or as an abreviation for the language."),
 						'help_function' => 'data__translated_help',
 						'syntax' => "{TRANSLATED page= lang= flag= }",

@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_titlesearch.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.titlesearch.php,v 1.1.1.1.2.3 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.titlesearch.php,v 1.1.1.1.2.4 2005/06/25 12:01:33 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATATITLESEARCH', 'datatitlesearch' );
 global $gLibertySystem;
@@ -23,6 +23,7 @@ $pluginParams = array ( 'tag' => 'TITLESEARCH',
 						'load_function' => 'data_titlesearch',
 						'title' => 'TitleSearch<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'TitleSearch',                                                                                         // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginTitleSearch',
 						'description' => tra("This plugin search the titles of all pages in this wiki."),
 						'help_function' => 'data__titlesearch_help',
 						'syntax' => "{TITLESEARCH search= info= exclude= noheader= }",

@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_split.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.split.php,v 1.1.1.1.2.3 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.split.php,v 1.1.1.1.2.4 2005/06/25 12:01:33 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATASPLIT', 'datasplit' );
 global $gLibertySystem;
@@ -23,6 +23,7 @@ $pluginParams = array ( 'tag' => 'SPLIT',
 						'load_function' => 'data_split',
 						'title' => 'Split<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'Split',                                                                             // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginSplit',
 						'description' => tra("This plugin is used to split a page in two or more columns using __-~045~-__ as a seperator."),
 						'help_function' => 'data__split_help',
 						'syntax' => "{SPLIT joincols= fixedsize= }{SPLIT}",

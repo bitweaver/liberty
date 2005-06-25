@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_sort.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.sort.php,v 1.1.1.1.2.3 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.sort.php,v 1.1.1.1.2.4 2005/06/25 12:01:33 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATASORT', 'datasort' );
 global $gLibertySystem;
@@ -22,6 +22,7 @@ $pluginParams = array ( 'tag' => 'SORT',
 						'requires_pair' => TRUE,
 						'load_function' => 'data_sort',
 						'title' => 'Sort',
+						'help_page' => 'DataPluginSort',
 						'description' => tra("This plugin sorts operates on lines of text - not the text in the lines. Every line between the ") . "~np~{SORT}~/np~" . tra(" blocks -  including the lines the blocks are on - is sorted."),
 						'help_function' => 'data__sort_help',
 						'syntax' => "{SORT sort= }" . tra("Lines to be sorted") . "{SORT}",

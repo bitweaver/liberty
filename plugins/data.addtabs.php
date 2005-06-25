@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.addtabs.php,v 1.1.1.1.2.5 2005/06/25 09:33:47 squareing Exp $
+// $Id: data.addtabs.php,v 1.1.1.1.2.6 2005/06/25 12:01:32 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAADDTABS', 'dataaddtabs' );
 global $gLibertySystem;
@@ -20,6 +20,7 @@ $pluginParams = array ( 'tag' => 'ADDTABS',
 						'requires_pair' => FALSE,
 						'load_function' => 'data_addtabs',
 						'title' => 'AddTabs',
+						'help_page' => 'DataPluginAddTabs',
 						'description' => tra("Will join the contents from several sources in a Tabbed Interface."),
 						'help_function' => 'data_addtabs_help',
 						'syntax' => "{addtabs tab1= tab2= tab3= . . . tab99= }",

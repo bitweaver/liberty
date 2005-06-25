@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_gauge.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.gauge.php,v 1.4.2.3 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.gauge.php,v 1.4.2.4 2005/06/25 12:01:33 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAGAUGE', 'datagauge' );
 global $gLibertySystem;
@@ -22,6 +22,7 @@ $pluginParams = array ( 'tag' => 'GAUGE',
 						'requires_pair' => TRUE,
 						'load_function' => 'data_gauge',
 						'title' => 'Gauge',
+						'help_page' => 'DataPluginGauge',
 						'description' => tra("This plugin displays a graphical GAUGE."),
 						'help_function' => 'data_gauge_help',
 						'syntax' => "{GAUGE color= bgcolor= max= value= size= perc= height= }" . tra("Description") . "{GAUGE}",

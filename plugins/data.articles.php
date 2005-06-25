@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_articles.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.articles.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.articles.php,v 1.1.1.1.2.3 2005/06/25 12:01:32 starrrider Exp $
 // Initialization
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'articles' ) ) { // Do not include this Plugin if the Package is not active
@@ -25,6 +25,7 @@ $pluginParams = array ( 'tag' => 'ARTICLES',
 						'load_function' => 'data_articles',
 						'title' => 'Articles<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'Articles',                                                                             // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginArticles',
 						'description' => tra("This plugin will display several Articles."),
 						'help_function' => 'data_articles_help',
 						'syntax' => "{articles max= topic= type= }",

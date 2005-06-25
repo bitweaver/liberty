@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_include.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.include.php,v 1.2.2.3 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.include.php,v 1.2.2.4 2005/06/25 12:01:33 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAINCLUDE', 'datainclude' );
 global $gLibertySystem;
@@ -22,6 +22,7 @@ $pluginParams = array ( 'tag' => 'INCLUDE',
 						'requires_pair' => FALSE,
 						'load_function' => 'data_include',
 						'title' => 'Include',
+						'help_page' => 'DataPluginInclude',
 						'description' => tra("This plugin is used to include the contents of one Wiki page in another Wiki page."),
 						'help_function' => 'data_include_help',
 						'syntax' => "{INCLUDE content_id= }",

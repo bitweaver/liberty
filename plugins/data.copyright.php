@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_copyright.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.copyright.php,v 1.1.1.1.2.3 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.copyright.php,v 1.1.1.1.2.4 2005/06/25 12:01:33 starrrider Exp $
 // Initialization
 global $gBitSystem;
 if( ( $gBitSystem->isPackageActive( 'wiki' ) ) && ( $gBitSystem->isFeatureActive( 'wiki_feature_copyrights' ) ) ) { // Do not include this Plugin if this Package and Feature are not active
@@ -25,6 +25,7 @@ $pluginParams = array ( 'tag' => 'COPYRIGHT',
 						'requires_pair' => FALSE,
 						'load_function' => 'data_copyright',
 						'title' => 'CopyRight',
+						'help_page' => 'DataPluginCopyRight',
 						'description' => tra("This plugin is used to insert CopyRight notices."),
 						'help_function' => 'data_copyright_help',
 						'syntax' => "{COPYRIGHT title= year= authors= }",

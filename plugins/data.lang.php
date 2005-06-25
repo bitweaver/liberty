@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_lang.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.lang.php,v 1.1.1.1.2.3 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.lang.php,v 1.1.1.1.2.4 2005/06/25 12:01:33 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATALANG', 'datalang' );
 global $gLibertySystem;
@@ -23,6 +23,7 @@ $pluginParams = array ( 'tag' => 'LANG',
 						'load_function' => 'data_lang',
 						'title' => 'Lang<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'Lang',                                                                             // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginLang',
 						'description' => tra("This plugin will attempt to translate the text between the ") . "{LANG}" . tra(" blocks to the current language. If the translation fails - nothing is displayed."),
 						'help_function' => 'data__lang_help',
 						'syntax' => "{LANG lang= }" . tra("Text to be translated") . "{LANG}",

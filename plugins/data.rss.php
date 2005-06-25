@@ -12,7 +12,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.rss.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.rss.php,v 1.1.1.1.2.3 2005/06/25 12:01:33 starrrider Exp $
 // Initialization
 global $gLibertySystem;
 
@@ -24,6 +24,7 @@ $pluginParams = array ( 'tag' => 'RSS',
 						'requires_pair' => FALSE,
 						'load_function' => 'rss_parse_data',
 						'title' => 'RSS Feed',
+						'help_page' => 'DataPluginRSS',
 						'description' => tra("Display RSS Feeds"),
 						'help_function' => 'rss_extended_help',
 						'syntax' => "{RSS id= max= }",

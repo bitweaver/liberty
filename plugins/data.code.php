@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_code.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.code.php,v 1.1.1.1.2.3 2005/06/25 12:01:33 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATACODE', 'datacode' );
 global $gLibertySystem;
@@ -22,6 +22,7 @@ $pluginParams = array ( 'tag' => 'CODE',
 						'requires_pair' => TRUE,
 						'load_function' => 'data_code',
 						'title' => 'Code',
+						'help_page' => 'DataPluginCode',
 						'description' => tra("Displays the Source Code Snippet between {Code} blocks."),
 						'help_function' => 'data_code_help',
 						'syntax' => " {code source= num= }". tra("Sorce Code Snippet") . "{code}",

@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_article.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.article.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.article.php,v 1.1.1.1.2.3 2005/06/25 12:01:32 starrrider Exp $
 // Initialization
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'articles' ) ) { // Do not include this Plugin if the Package is not active
@@ -25,6 +25,7 @@ $pluginParams = array ( 'tag' => 'ARTICLE',
 						'load_function' => 'data_article',
 						'title' => 'Article<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin
 //						'title' => 'Article',                                                                             // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginArticle',
 						'description' => tra("This plugin will display the data from a single field in the specified Article."),
 						'help_function' => 'data_article_help',
 						'syntax' => "{article id= field=}",

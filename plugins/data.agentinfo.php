@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_agentinfo.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.agentinfo.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.agentinfo.php,v 1.1.1.1.2.3 2005/06/25 12:01:32 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAAGENTINFO', 'dataagentinfo' );
 global $gLibertySystem;
@@ -22,6 +22,7 @@ $pluginParams = array ( 'tag' => 'AGENTINFO',
 						'requires_pair' => FALSE,
 						'load_function' => 'data_agentinfo',
 						'title' => 'AgentInfo',
+						'help_page' => 'DataPluginAgentInfo',
 						'description' => tra("This plugin will display the viewer's IP address, the Browser they are using, or the info about the site's Server software."),
 						'help_function' => 'data_agentinfo_help',
 						'syntax' => "{agentinfo info= }",

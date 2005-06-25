@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_usercount.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.usercount.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.usercount.php,v 1.1.1.1.2.3 2005/06/25 12:01:33 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAUSERCOUNT', 'datausercount' );
 global $gLibertySystem;
@@ -23,6 +23,7 @@ $pluginParams = array ( 'tag' => 'USERCOUNT',
 						'load_function' => 'data_usercount',
 						'title' => 'UserCount<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'UserCount',                                                                                       // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginUserCount',
 						'description' => tra("Will show the number of users. If a Group Name can be included to filter the Groups."),
 						'help_function' => 'data__usercount_help',
 						'syntax' => "{USERCOUNT}Group Name{USERCOUNT}",

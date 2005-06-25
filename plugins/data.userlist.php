@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_userlist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.userlist.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.userlist.php,v 1.1.1.1.2.3 2005/06/25 12:01:33 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAUSERLIST', 'datauserlist' );
 global $gLibertySystem;
@@ -23,6 +23,7 @@ $pluginParams = array ( 'tag' => 'USERLIST',
 						'load_function' => 'data_userlist',
 						'title' => 'UserList<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'UserList',,                                                                                       // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginUserList',
 						'description' => tra("This plugin will displays an alphabetically sorted list of registered users. A Group Name can be included to filter Groups to be listed."),
 						'help_function' => 'data__userlist_help',
 						'syntax' => "{USERLIST num= userspage= alpha= total= email= }GroupName{USERLIST}",

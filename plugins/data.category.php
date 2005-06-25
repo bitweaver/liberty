@@ -13,7 +13,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_category.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.category.php,v 1.1.1.1.2.2 2005/06/25 09:29:25 squareing Exp $
+// $Id: data.category.php,v 1.1.1.1.2.3 2005/06/25 12:01:32 starrrider Exp $
 // Initialization
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'categories' ) ) { // Do not include this Plugin if the Package is not active
@@ -25,6 +25,7 @@ $pluginParams = array ( 'tag' => 'CATEGORY',
 						'load_function' => 'data_category',
 						'title' => 'Category<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'Category',                                                                             // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginCategory',
 						'description' => tra("This plugin insert a list of items for the current category or a given category."),
 						'help_function' => 'data_category_help',
 						'syntax' => "{category id= types= sort= sub= split= }",

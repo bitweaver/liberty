@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.1.1.1.2.4 2005/06/25 09:05:45 squareing Exp $
+// $Id: data.maketoc.php,v 1.1.1.1.2.5 2005/06/25 12:01:33 starrrider Exp $
 
 // Initialization
 define( 'PLUGIN_GUID_DATAMAKETOC', 'datamaketoc' );
@@ -21,6 +21,7 @@ $pluginParams = array ( 'tag' => 'MAKETOC',
 						'requires_pair' => FALSE,
 						'load_function' => '',
 						'title' => 'MakeTOC',
+						'help_page' => 'DataPluginMakeTOC',
 						'description' => tra("Will create a table of contents of the WikiPage based on the headings below."),
 						'help_function' => 'data_maketoc_help',
 
