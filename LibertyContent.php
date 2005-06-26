@@ -11,7 +11,7 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertyContent.php,v 1.2 2005/06/20 04:56:53 spiderr Exp $
+// $Id: LibertyContent.php,v 1.2.2.1 2005/06/26 15:19:47 spiderr Exp $
 
 /**
 * Virtual base class (as much as one can have such things in PHP) for all
@@ -19,7 +19,7 @@
 *
 * @abstract
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.2 $
+* @version  $Revision: 1.2.2.1 $
 * @package  BitBase
 */
 
@@ -143,6 +143,12 @@ class LibertyContent extends LibertyBase {
 				$this->mErrors['format'] = $error;
 			}
 		}
+
+		if( empty( $pParamHash['edit'] ) && !empty( $this->mInfo['data'] ) ) {
+			// someone has deleted the data entirely - common for fisheye
+			$pParamHash['content_store']['data'] = NULL;
+		}
+		$pParamHash['content_store']['format_guid'] = $pParamHash['format_guid'];
 
 		return( count( $this->mErrors ) == 0 );
 
