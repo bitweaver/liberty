@@ -4,10 +4,23 @@
 <div class="display comment">
 	<div class="header">
 		{if !( $post_comment_request || $post_comment_preview )}
-			<a name="bitcomments"></a>
+			<a name="editcomments"></a>
 		{/if}
-		<h2>{tr}Comments{/tr}</h2>
+		<h2>
+			<a onclick="icntoggle('bitcomments');">
+				{biticon ipackage=liberty iname="collapsed" id="bitcommentsimg" iexplain="folder"} {tr}Comments{/tr}
+			</a>
+		</h2>
 	</div>
+
+{/strip}
+	<script type="text/javascript">
+	//<![CDATA[
+		setfoldericonstate('bitcomments');
+		document.write('<div id="bitcomments" style="display:{if $smarty.cookies.bitcomments eq 'o'}block{else}none{/if};">');
+	//]]>
+	</script>
+{strip}
 
 	<div class="body">
 		{formfeedback hash=$formfeedback}
@@ -25,9 +38,9 @@
 			</div><!-- end .preview -->
 		{/if}
 
-		{form action="`$comments_return_url`#bitcomments"}
+		{form action="`$comments_return_url`#editcomments"}
 			{if $post_comment_request || $post_comment_preview}
-				<a name="bitcomments"></a>
+				<a name="editcomments"></a>
 				{legend legend="Post Comment"}
 					<input type="hidden" name="post_comment_reply_id" value="{$post_comment_reply_id}" />
 				    <input type="hidden" name="post_comment_id" value="{$post_comment_id}" />
@@ -69,5 +82,11 @@
 			{/if}
 		{/form}
 	</div><!-- end .body -->
-</div><!-- end .comment -->
+
 {/strip}
+	<script type="text/javascript">
+	//<![CDATA[
+		document.write('<\/div>');
+	//]]>
+	</script>
+</div><!-- end .comment -->
