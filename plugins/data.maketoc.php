@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.6 $
+ * @version  $Revision: 1.1.1.1.2.7 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -15,9 +15,11 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.1.1.1.2.6 2005/06/27 10:08:37 lsces Exp $
+// $Id: data.maketoc.php,v 1.1.1.1.2.7 2005/06/27 14:13:14 lsces Exp $
 
-// Initialization
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAMAKETOC', 'datamaketoc' );
 global $gLibertySystem;
 global $gContent;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.3 $
+ * @version  $Revision: 1.1.1.1.2.4 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -15,8 +15,11 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.1.1.1.2.3 2005/06/27 10:08:38 lsces Exp $
-// Initialization
+// $Id: data.attachment.php,v 1.1.1.1.2.4 2005/06/27 14:13:14 lsces Exp $
+
+/**
+ * definitions
+ */
 global $gBitSystem;
 
 define( 'PLUGIN_GUID_DATAATTACHMENT', 'dataattachment' );

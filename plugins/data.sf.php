@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.5 $
+ * @version  $Revision: 1.2.2.6 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -17,8 +17,11 @@
 // | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
 // | by: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.sf.php,v 1.2.2.5 2005/06/27 10:08:38 lsces Exp $
-// Initialization
+// $Id: data.sf.php,v 1.2.2.6 2005/06/27 14:13:14 lsces Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATASF', 'datasf' );
 define('SF_CACHE',48); # in hours
 define('DEF_TAG','bugs');

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.5 $
+ * @version  $Revision: 1.1.1.1.2.6 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -15,6 +15,10 @@
 // +----------------------------------------------------------------------+
 // | Author: Southpaw <southpawz@users.sourceforge.net>
 // +----------------------------------------------------------------------+
+
+/**
+ * definitions
+ */
 global $gLibertySystem;
 
 define( 'PLUGIN_GUID_FREEMIND', 'datafreemind' );

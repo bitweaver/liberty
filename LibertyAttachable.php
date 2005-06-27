@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.1 $
+ * @version  $Revision: 1.1.1.1.2.2 $
  * @package  Liberty
  */
 // +----------------------------------------------------------------------+
@@ -18,8 +18,11 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertyAttachable.php,v 1.1.1.1.2.1 2005/06/27 10:08:41 lsces Exp $
+// $Id: LibertyAttachable.php,v 1.1.1.1.2.2 2005/06/27 14:13:22 lsces Exp $
 
+/**
+ * required setup
+ */
 require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
 require_once( LIBERTY_PKG_PATH.'LibertySystem.php' );
 
@@ -27,7 +30,7 @@ require_once( LIBERTY_PKG_PATH.'LibertySystem.php' );
  * LibertyAttachable classes.
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.1 $
+ * @version  $Revision: 1.1.1.1.2.2 $
  * @package  BitBase
  */
 class LibertyAttachable extends LibertyContent {

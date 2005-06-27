@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.2.2.2 $
+* @version  $Revision: 1.2.2.3 $
 * @package  Liberty
 */
 
@@ -19,7 +19,7 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertyContent.php,v 1.2.2.2 2005/06/27 10:08:41 lsces Exp $
+// $Id: LibertyContent.php,v 1.2.2.3 2005/06/27 14:13:22 lsces Exp $
 
 // define( 'CONTENT_TYPE_WIKI', '1' );
 // define( 'CONTENT_TYPE_COMMENT', '3' );
@@ -27,12 +27,15 @@
 
 /**
  * Maximum lengths for database fields
-  */
+ */
 define( 'BIT_CONTENT_MAX_TITLE_LEN', 160);
 define( 'BIT_CONTENT_MAX_LANGUAGE_LEN', 4);
 define( 'BIT_CONTENT_MAX_IP_LEN', 39);
 define( 'BIT_CONTENT_MAX_FORMAT_GUID_LEN', 16);
 
+/**
+ * required setup
+ */
 require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
 
 /**

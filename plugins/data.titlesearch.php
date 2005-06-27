@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.5 $
+ * @version  $Revision: 1.1.1.1.2.6 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,8 +18,11 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_titlesearch.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.titlesearch.php,v 1.1.1.1.2.5 2005/06/27 10:08:37 lsces Exp $
-// Initialization
+// $Id: data.titlesearch.php,v 1.1.1.1.2.6 2005/06/27 14:13:14 lsces Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATATITLESEARCH', 'datatitlesearch' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'TITLESEARCH',

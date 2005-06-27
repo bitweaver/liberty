@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.4 $
+ * @version  $Revision: 1.1.1.1.2.5 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -17,8 +17,11 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.rss.php,v 1.1.1.1.2.4 2005/06/27 10:08:38 lsces Exp $
-// Initialization
+// $Id: data.rss.php,v 1.1.1.1.2.5 2005/06/27 14:13:14 lsces Exp $
+
+/**
+ * definitions
+ */
 global $gLibertySystem;
 
 define( 'PLUGIN_GUID_RSS', 'datarss' );

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.5 $
+ * @version  $Revision: 1.1.1.1.2.6 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -15,8 +15,11 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.1.1.1.2.5 2005/06/27 10:08:38 lsces Exp $
-// Initialization
+// $Id: data.toc.php,v 1.1.1.1.2.6 2005/06/27 14:13:14 lsces Exp $
+
+/**
+ * definitions
+ */
 global $gLibertySystem;
 
 define( 'PLUGIN_GUID_TOC', 'datatoc' );

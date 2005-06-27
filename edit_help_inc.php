@@ -1,5 +1,13 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/edit_help_inc.php,v 1.1.2.1 2005/06/25 13:05:53 squareing Exp $
+/**
+ * edit_help_inc
+ *
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.1.2.2 $
+ * @package  Liberty
+ * @subpackage functions
+ */
+
 global $gLibertySystem;
 
 $dataplugins = array();

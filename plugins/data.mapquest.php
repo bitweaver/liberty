@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.5 $
+ * @version  $Revision: 1.2.2.6 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -15,8 +15,11 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mapquest.php,v 1.2.2.5 2005/06/27 10:08:37 lsces Exp $
-// Initialization
+// $Id: data.mapquest.php,v 1.2.2.6 2005/06/27 14:13:14 lsces Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAMAPQUEST', 'datamapquest' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'MAPQUEST',

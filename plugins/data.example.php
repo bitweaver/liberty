@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4.2.6 $
+ * @version  $Revision: 1.4.2.7 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -17,8 +17,11 @@
 // | Note: A plugin with this name did exist as a TikiWiki Plugin
 // | This is not that plugin. 
 // +----------------------------------------------------------------------+
-// $Id: data.example.php,v 1.4.2.6 2005/06/27 10:08:37 lsces Exp $
-// Initialization
+// $Id: data.example.php,v 1.4.2.7 2005/06/27 14:13:14 lsces Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAEXAMPLE', 'dataexample' );
 // NOTE: The GUID is used as a link to a help page on bitweaver.org
 // Please be sure to create this page when the plugin is created. 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.5 $
+ * @version  $Revision: 1.1.1.1.2.6 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,8 +18,11 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_translated.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.translated.php,v 1.1.1.1.2.5 2005/06/27 10:08:38 lsces Exp $
-// Initialization
+// $Id: data.translated.php,v 1.1.1.1.2.6 2005/06/27 14:13:14 lsces Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATATRANSLATED', 'datatranslated' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'TRANSLATED',

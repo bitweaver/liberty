@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.2 $
+ * @version  $Revision: 1.1.1.1.2.3 $
  * @package  Liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.2 2005/06/27 10:08:41 lsces Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.3 2005/06/27 14:13:22 lsces Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -23,7 +23,11 @@
 // cannot be aliased by normal Bit variables.
 // Traverse each _REQUEST data adn put them in an array
 
-//this script may only be included - so its better to die if called directly.
+// this script may only be included - so its better to die if called directly.
+
+/**
+ * required setup
+ */
 require_once (LIBERTY_PKG_PATH.'LibertyComment.php');
 
 global $commentsLib, $smarty;

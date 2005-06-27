@@ -3,9 +3,13 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.1 $
+ * @version  $Revision: 1.1.1.1.2.2 $
  * @package  Liberty
  * @subpackage functions
+ */
+
+/**
+ * required setup
  */
 require_once("../bit_setup_inc.php");
 

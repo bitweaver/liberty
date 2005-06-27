@@ -1,11 +1,14 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.2 $
+ * @version  $Revision: 1.1.1.1.2.3 $
  * @package  Liberty
  * @subpackage plugins_storage
  */
 global $gLibertySystem;
 
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_PBASE', 'pbase' );
 
 $pluginParams = array ( 

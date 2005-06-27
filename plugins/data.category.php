@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.4 $
+ * @version  $Revision: 1.1.1.1.2.5 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,8 +18,11 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_category.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.category.php,v 1.1.1.1.2.4 2005/06/27 10:08:38 lsces Exp $
-// Initialization
+// $Id: data.category.php,v 1.1.1.1.2.5 2005/06/27 14:13:14 lsces Exp $
+
+/**
+ * definitions
+ */
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'categories' ) ) { // Do not include this Plugin if the Package is not active
 define( 'PLUGIN_GUID_DATACATEGORY', 'datacategory' );

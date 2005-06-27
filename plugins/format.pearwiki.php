@@ -1,8 +1,12 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.3 $
+ * @version  $Revision: 1.1.1.1.2.4 $
  * @package  Liberty
  * @subpackage plugins_format
+ */
+
+/**
+ * definitions
  */
 if( @include_once( 'Text/Wiki.php' ) ) {
 	global $gLibertySystem;

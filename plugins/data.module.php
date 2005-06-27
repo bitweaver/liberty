@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.5 $
+ * @version  $Revision: 1.1.1.1.2.6 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -16,10 +16,9 @@
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
 // | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.module.php,v 1.1.1.1.2.5 2005/06/27 10:08:37 lsces Exp $
-// Initialization
+// $Id: data.module.php,v 1.1.1.1.2.6 2005/06/27 14:13:14 lsces Exp $
 
-/* 
+/**
 Displays a module inlined in page
 Parameters
 module name : module=>lambda
@@ -41,6 +40,9 @@ like the tracker_id in the above example.
  *   'till another solution will be implemented :)
  */
 
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAMODULE', 'datamodule' );
 
 global $gLibertySystem;
@@ -58,6 +60,9 @@ $pluginParams = array ( 'tag' => 'MODULE',
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAMODULE, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAMODULE );
 
+/**
+ * datamodule_help
+ */
 function datamodule_help() {
 	$back = tra("^__Parameter Syntax:__ ") . "~np~{MODULE" . tra("(key=>value)}~/np~\n");
 	$back.= tra("||__::key::__ | __::value::__ | __::Comments::__\n");
@@ -71,6 +76,9 @@ function datamodule_help() {
 	return $back;
 }
 
+/**
+ * data_datamodule
+ */
 function data_datamodule($data, $params) {
 	global $modlib, $cache_time, $smarty, $feature_directory, $ranklib, $feature_trackers, $bitdomain, $user,
 		$feature_tasks, $feature_user_bookmarks, $bit_p_tasks, $bit_p_create_bookmarks, $imagegallib;

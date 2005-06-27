@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.7 $
+ * @version  $Revision: 1.1.1.1.2.8 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -15,8 +15,11 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.addtabs.php,v 1.1.1.1.2.7 2005/06/27 10:08:38 lsces Exp $
-// Initialization
+// $Id: data.addtabs.php,v 1.1.1.1.2.8 2005/06/27 14:13:14 lsces Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAADDTABS', 'dataaddtabs' );
 global $gLibertySystem;
 global $gContent;
@@ -34,7 +37,9 @@ $pluginParams = array ( 'tag' => 'ADDTABS',
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAADDTABS, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAADDTABS );
 
-// Help Function
+/**
+ * Help Function
+ */
 function data_addtabs_help() {
 	$help =
 		'<table class="data help">'

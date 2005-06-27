@@ -1,14 +1,16 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.3 $
+ * @version  $Revision: 1.2.2.4 $
  * @package  Liberty
  * @subpackage plugins_format
  */
 global $gLibertySystem;
 
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_TIKIWIKI', 'tikiwiki' );
 define( 'WIKI_WORDS_REGEX', '[A-z0-9]{2}[\w\d_\-]+[A-Z_][\w\d_\-]+[A-z0-9]+' );
-
 
 $pluginParams = array ( 'store_function' => 'tikiwiki_save_data',
 						'load_function' => 'tikiwiki_parse_data',

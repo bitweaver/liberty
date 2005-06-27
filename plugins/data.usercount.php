@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.4 $
+ * @version  $Revision: 1.1.1.1.2.5 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,8 +18,11 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_usercount.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.usercount.php,v 1.1.1.1.2.4 2005/06/27 10:08:37 lsces Exp $
-// Initialization
+// $Id: data.usercount.php,v 1.1.1.1.2.5 2005/06/27 14:13:14 lsces Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAUSERCOUNT', 'datausercount' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'USERCOUNT',

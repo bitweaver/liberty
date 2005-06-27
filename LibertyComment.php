@@ -3,8 +3,12 @@
  * Management of Liberty Content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.2.2.2 $
+ * @version  $Revision: 1.2.2.3 $
  * @package  Liberty
+ */
+
+/**
+ * required setup
  */
 require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
 
