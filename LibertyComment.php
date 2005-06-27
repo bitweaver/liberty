@@ -1,8 +1,23 @@
 <?php
+/**
+ * Management of Liberty Content
+ *
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.2.2.2 $
+ * @package  Liberty
+ */
 require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
 
 define( 'BITCOMMENT_CONTENT_TYPE_GUID', 'bitcomment' );
 
+/**
+* Virtual base class (as much as one can have such things in PHP) for all
+* derived tikiwiki classes that require database access.
+*
+* @author   spider <spider@steelsun.com>
+* @package  Liberty
+* @subpackage  LibertyComment
+*/
 class LibertyComment extends LibertyContent {
 	var $mCommentId;
 

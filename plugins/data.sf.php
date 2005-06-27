@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2.2.5 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -12,7 +17,7 @@
 // | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
 // | by: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.sf.php,v 1.2.2.4 2005/06/25 12:01:33 starrrider Exp $
+// $Id: data.sf.php,v 1.2.2.5 2005/06/27 10:08:38 lsces Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATASF', 'datasf' );
 define('SF_CACHE',48); # in hours

@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.1.1.1.2.4 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -13,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_backlinks.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.backlinks.php,v 1.1.1.1.2.3 2005/06/25 12:01:32 starrrider Exp $
+// $Id: data.backlinks.php,v 1.1.1.1.2.4 2005/06/27 10:08:38 lsces Exp $
 // Initialization
 global $gBitSystem;
 if( ( $gBitSystem->isPackageActive( 'wiki' ) ) && ( $gBitSystem->isFeatureActive('feature_backlinks') ) ) { // Do not include this Plugin if the Package or the Feature is not active

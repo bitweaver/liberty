@@ -1,6 +1,14 @@
 <?php
+/**
+ * comment_inc
+ *
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.1.1.1.2.2 $
+ * @package  Liberty
+ * @subpackage functions
+ */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.1 2005/06/23 22:45:30 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.2 2005/06/27 10:08:41 lsces Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.

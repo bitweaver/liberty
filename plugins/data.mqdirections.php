@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2.2.4 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -10,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mqdirections.php,v 1.2.2.3 2005/06/25 12:01:33 starrrider Exp $
+// $Id: data.mqdirections.php,v 1.2.2.4 2005/06/27 10:08:38 lsces Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAMQDIR', 'datamqdir' );
 global $gLibertySystem;

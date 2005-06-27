@@ -1,5 +1,14 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/edit_structure_inc.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
+/**
+ * edit_structure_inc
+ *
+ * @author   Christian Fowler>
+ * @version  $Revision: 1.1.1.1.2.1 $
+ * @package  Liberty
+ * @subpackage functions
+ */
+
+// $Header: /cvsroot/bitweaver/_bit_liberty/edit_structure_inc.php,v 1.1.1.1.2.1 2005/06/27 10:08:41 lsces Exp $
 
 // Copyright (c) 2004, Christian Fowler, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.

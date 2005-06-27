@@ -1,5 +1,22 @@
 <?php
+/**
+ * Management of Liberty Content
+ *
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.1.1.1.2.1 $
+ * @package  Liberty
+ */
+
 require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
+
+/**
+* System class for handling the liberty package
+*
+* @author   spider <spider@steelsun.com>
+* @version  $Revision: 1.1.1.1.2.1 $
+* @package  Liberty
+* @subpackage  LibertyStructure
+*/
 class LibertyStructure extends LibertyBase {
 	var $mStructureId;
 

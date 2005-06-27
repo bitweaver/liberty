@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.1.1.1.2.6 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -10,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.1.1.1.2.5 2005/06/25 12:01:33 starrrider Exp $
+// $Id: data.maketoc.php,v 1.1.1.1.2.6 2005/06/27 10:08:37 lsces Exp $
 
 // Initialization
 define( 'PLUGIN_GUID_DATAMAKETOC', 'datamaketoc' );

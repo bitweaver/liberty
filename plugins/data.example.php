@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.4.2.6 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -12,7 +17,7 @@
 // | Note: A plugin with this name did exist as a TikiWiki Plugin
 // | This is not that plugin. 
 // +----------------------------------------------------------------------+
-// $Id: data.example.php,v 1.4.2.5 2005/06/25 12:01:33 starrrider Exp $
+// $Id: data.example.php,v 1.4.2.6 2005/06/27 10:08:37 lsces Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAEXAMPLE', 'dataexample' );
 // NOTE: The GUID is used as a link to a help page on bitweaver.org

@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.1.1.1.2.6 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -12,7 +17,7 @@
 // | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
 // | by: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.sort.php,v 1.1.1.1.2.5 2005/06/25 15:18:17 starrrider Exp $
+// $Id: data.sort.php,v 1.1.1.1.2.6 2005/06/27 10:08:38 lsces Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATASORT', 'datasort' );
 global $gLibertySystem;
@@ -30,7 +35,9 @@ $pluginParams = array ( 'tag' => 'SORT',
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATASORT, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATASORT );
 
-// Help Function
+/**
+ * Help Function
+ */
 function data_sort_help() {
 	$back = tra("^__Parameter Syntax:__ ") . "~np~{SORT" . tra("(key=>value)}~/np~\n");
 	$back.= tra("||__::key::__ | __::value::__ | __::Comments::__\n");
@@ -40,7 +47,9 @@ function data_sort_help() {
 	return $back;
 }
 
-// Load Function
+/**
+ * Load Function
+ */
 function data_sort($data, $params) {
 	extract ($params);
 	$sort = (isset($sort)) ? $sort : "asc";

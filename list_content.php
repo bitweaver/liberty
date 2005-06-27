@@ -1,4 +1,12 @@
 <?php
+/**
+ * list_content
+ *
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.1.1.1.2.1 $
+ * @package  Liberty
+ * @subpackage functions
+ */
 require_once("../bit_setup_inc.php");
 
 // some content specific offsets and pagination settings

@@ -1,4 +1,12 @@
 <?php
+/**
+ * get_content_list
+ *
+ * @author   Christian Fowler>
+ * @version  $Revision: 1.1.1.1.2.1 $
+ * @package  Liberty
+ * @subpackage functions
+ */
 require_once( LIBERTY_PKG_PATH."LibertyContent.php" );
 global $gContent;
 global $gLibertySystem;

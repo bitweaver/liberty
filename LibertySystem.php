@@ -1,4 +1,12 @@
 <?php
+/**
+* System class for handling the liberty package
+*
+* @author   spider <spider@steelsun.com>
+* @version  $Revision: 1.1.1.1.2.2 $
+* @package  Liberty
+*/
+
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -11,17 +19,10 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertySystem.php,v 1.1.1.1.2.1 2005/06/25 08:58:09 squareing Exp $
-
+// $Id: LibertySystem.php,v 1.1.1.1.2.2 2005/06/27 10:08:41 lsces Exp $
 /**
-* System class for handling the common package
-*
-* @abstract
-* @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.1.1.1.2.1 $
-* @package  Common
-*/
-
+ * Local base defines
+ */
 define( 'STORAGE_PLUGIN', 'storage' );
 define( 'FORMAT_PLUGIN', 'format' );
 define( 'DATA_PLUGIN', 'data' );
@@ -30,8 +31,19 @@ define( 'DEFAULT_ACCEPTABLE_TAGS', '<a><br><b><blockquote><cite><code><div><dd><
 				 .' <i><it><img><li><ol><p><pre><span><strong><table><tbody><div><tr><td><th><u><ul>'
 				 .' <button><fieldset><form><label><input><option><select><textarea>' );
 
+/**
+ * Link to base class
+ */
 require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
 
+/**
+ * System class for handling the liberty package
+ *
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.1.1.1.2.2 $
+ * @package  Liberty
+ * @subpackage LibertySystem
+ */
 class LibertySystem extends LibertyBase {
 
 	var $mPlugins;

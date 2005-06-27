@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.1.1.1.2.2 $
+ * @package  Liberty
+ * @subpackage plugins_storage
+ */
 global $gLibertySystem;
 
 define( 'PLUGIN_GUID_LULU', 'lulu' );

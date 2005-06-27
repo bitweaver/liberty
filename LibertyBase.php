@@ -1,4 +1,11 @@
 <?php
+/**
+ * Management of Liberty Content
+ *
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.1.1.1.2.1 $
+ * @package  Liberty
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -11,20 +18,20 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertyBase.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
-
-/**
-* Virtual base class (as much as one can have such things in PHP) for all
-* derived tikiwiki classes that require database access.
-*
-* @abstract
-* @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.1 $
-* @package  BitBase
-*/
+// $Id: LibertyBase.php,v 1.1.1.1.2.1 2005/06/27 10:08:41 lsces Exp $
 
 require_once( KERNEL_PKG_PATH.'BitBase.php' );
 
+/**
+ * Virtual base class (as much as one can have such things in PHP) for all
+ * derived bitweaver classes that manage content.
+ *
+ * @abstract
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.1.1.1.2.1 $
+ * @package  Liberty
+ * @subpackage LibertyBase
+ */
 class LibertyBase extends BitBase {
 
 	function LibertyBase () {

@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.1.1.1.2.5 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -13,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_avatar.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.avatar.php,v 1.1.1.1.2.4 2005/06/25 12:01:32 starrrider Exp $
+// $Id: data.avatar.php,v 1.1.1.1.2.5 2005/06/27 10:08:37 lsces Exp $
 // Initialization
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'wiki' ) ) { // Do not include this Plugin if the Package is not active

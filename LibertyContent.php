@@ -1,4 +1,12 @@
 <?php
+/**
+* Management of Liberty content
+*
+* @author   spider <spider@steelsun.com>
+* @version  $Revision: 1.2.2.2 $
+* @package  Liberty
+*/
+
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -11,23 +19,15 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertyContent.php,v 1.2.2.1 2005/06/26 15:19:47 spiderr Exp $
-
-/**
-* Virtual base class (as much as one can have such things in PHP) for all
-* derived tikiwiki classes that require database access.
-*
-* @abstract
-* @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.2.2.1 $
-* @package  BitBase
-*/
+// $Id: LibertyContent.php,v 1.2.2.2 2005/06/27 10:08:41 lsces Exp $
 
 // define( 'CONTENT_TYPE_WIKI', '1' );
 // define( 'CONTENT_TYPE_COMMENT', '3' );
 // define( 'CONTENT_TYPE_USER', '4' );
 
-// Maximum lengths for database fields
+/**
+ * Maximum lengths for database fields
+  */
 define( 'BIT_CONTENT_MAX_TITLE_LEN', 160);
 define( 'BIT_CONTENT_MAX_LANGUAGE_LEN', 4);
 define( 'BIT_CONTENT_MAX_IP_LEN', 39);
@@ -35,6 +35,14 @@ define( 'BIT_CONTENT_MAX_FORMAT_GUID_LEN', 16);
 
 require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
 
+/**
+* Virtual base class (as much as one can have such things in PHP) for all
+* derived tikiwiki classes that require database access.
+*
+* @author   spider <spider@steelsun.com>
+* @package  Liberty
+* @subpackage  LibertyContent
+*/
 class LibertyContent extends LibertyBase {
 	var $mContentId;
     /**

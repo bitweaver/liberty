@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.1.1.1.2.7 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -10,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.addtabs.php,v 1.1.1.1.2.6 2005/06/25 12:01:32 starrrider Exp $
+// $Id: data.addtabs.php,v 1.1.1.1.2.7 2005/06/27 10:08:38 lsces Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAADDTABS', 'dataaddtabs' );
 global $gLibertySystem;

@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2.2.3 $
+ * @package  Liberty
+ * @subpackage plugins_format
+ */
 global $gLibertySystem;
 
 define( 'PLUGIN_GUID_TIKIWIKI', 'tikiwiki' );

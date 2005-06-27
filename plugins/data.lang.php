@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.1.1.1.2.5 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -13,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_lang.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.lang.php,v 1.1.1.1.2.4 2005/06/25 12:01:33 starrrider Exp $
+// $Id: data.lang.php,v 1.1.1.1.2.5 2005/06/27 10:08:38 lsces Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATALANG', 'datalang' );
 global $gLibertySystem;
