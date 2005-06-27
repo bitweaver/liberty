@@ -1,8 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.4 $
+ * @version  $Revision: 1.2.2.5 $
  * @package  Liberty
- * @subpackage plugins_format
  */
 global $gLibertySystem;
 
@@ -12,6 +11,10 @@ global $gLibertySystem;
 define( 'PLUGIN_GUID_TIKIWIKI', 'tikiwiki' );
 define( 'WIKI_WORDS_REGEX', '[A-z0-9]{2}[\w\d_\-]+[A-Z_][\w\d_\-]+[A-z0-9]+' );
 
+/**
+ * @package  Liberty
+ * @subpackage plugins_format
+ */
 $pluginParams = array ( 'store_function' => 'tikiwiki_save_data',
 						'load_function' => 'tikiwiki_parse_data',
 						'verify_function' => 'tikiwiki_verify_data',
@@ -26,6 +29,9 @@ $pluginParams = array ( 'store_function' => 'tikiwiki_save_data',
 
 $gLibertySystem->registerPlugin( PLUGIN_GUID_TIKIWIKI, $pluginParams );
 
+/**
+ * tikiwiki_save_data
+ */
 function tikiwiki_save_data( &$pParamHash ) {
 	static $parser;
 	if( empty( $parser ) ) {
@@ -74,6 +80,10 @@ function tikiwiki_parse_data( &$pData, &$pCommonObject ) {
 	return $parser->parse_data( $pData, $pCommonObject );
 }
 
+/**
+ * @package Liberty
+ * @subpackage TikiWikiParser
+ */
 class TikiWikiParser extends BitBase {
 	var $mWikiWordRegex;
 	var $mUseWikiWords;
