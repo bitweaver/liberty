@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.1.2.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -11,8 +16,11 @@
 // | Author: StarRider <starrrider@sourceforge.net>
 // | Wrote it but didn't think of it :-)
 // +----------------------------------------------------------------------+
-// $Id: data.comment.php,v 1.1.2.1 2005/06/28 13:42:43 starrrider Exp $
-// Initialization
+// $Id: data.comment.php,v 1.1.2.2 2005/06/28 15:51:56 lsces Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_COMMENT', 'comment' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'COMMENT',
