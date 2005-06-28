@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.2.2.4 $
+* @version  $Revision: 1.2.2.5 $
 * @package  Liberty
 */
 
@@ -19,7 +19,7 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertyContent.php,v 1.2.2.4 2005/06/28 06:54:21 spiderr Exp $
+// $Id: LibertyContent.php,v 1.2.2.5 2005/06/28 07:03:10 spiderr Exp $
 
 // define( 'CONTENT_TYPE_WIKI', '1' );
 // define( 'CONTENT_TYPE_COMMENT', '3' );
@@ -169,7 +169,6 @@ class LibertyContent extends LibertyBase {
 
 	// Things to be stored should be shoved in the array $pParamHash['STORAGE']
 	function store( &$pParamHash ) {
-$this->debug();
 		global $gBitSystem;
 		global $gLibertySystem;
 		if( LibertyContent::verify( $pParamHash ) ) {
