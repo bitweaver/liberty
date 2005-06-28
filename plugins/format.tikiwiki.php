@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.5 $
+ * @version  $Revision: 1.2.2.6 $
  * @package  Liberty
  */
 global $gLibertySystem;
@@ -968,17 +968,17 @@ $this->debug(0);
 					$ncols = count($cols[$i][$j]);
 
 					if ($ncols == 1 && !$cols[$i][$j][0])
-					continue;
+						continue;
 
-					$repl .= '<tr>';
+					$repl .= '<tr class="'.( ( $j % 2 ) ? 'even' : 'odd' ).'">';
 
 					for ($k = 0; $k < $ncols; $k++) {
-					$repl .= '<td ';
+						$repl .= '<td ';
 
-					if ($k == $ncols - 1 && $ncols < $maxcols)
-						$repl .= ' colspan="' . ($maxcols - $k).'"';
+						if ($k == $ncols - 1 && $ncols < $maxcols)
+							$repl .= ' colspan="' . ($maxcols - $k).'"';
 
-					$repl .= '>' . $cols[$i][$j][$k] . '</td>';
+						$repl .= '>' . $cols[$i][$j][$k] . '</td>';
 					}
 
 					$repl .= '</tr>';
@@ -1015,17 +1015,17 @@ $this->debug(0);
 					$ncols = count($cols[$i][$j]);
 
 					if ($ncols == 1 && !$cols[$i][$j][0])
-					continue;
+						continue;
 
-					$repl .= '<tr>';
+					$repl .= '<tr class="'.( ( $j % 2 ) ? 'even' : 'odd' ).'">';
 
 					for ($k = 0; $k < $ncols; $k++) {
-					$repl .= '<td ';
+						$repl .= '<td ';
 
-					if ($k == $ncols - 1 && $ncols < $maxcols)
-						$repl .= ' colspan="' . ($maxcols - $k).'"';
+						if ($k == $ncols - 1 && $ncols < $maxcols)
+							$repl .= ' colspan="' . ($maxcols - $k).'"';
 
-					$repl .= '>' . $cols[$i][$j][$k] . '</td>';
+						$repl .= '>' . $cols[$i][$j][$k] . '</td>';
 					}
 
 					$repl .= '</tr>';
