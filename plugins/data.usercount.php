@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,11 +13,16 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): Damian Parker <damosoft@users.sourceforge.net>
+// | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
+// | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_usercount.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.usercount.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
-// Initialization
+// $Id: data.usercount.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAUSERCOUNT', 'datausercount' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'USERCOUNT',
@@ -21,9 +31,9 @@ $pluginParams = array ( 'tag' => 'USERCOUNT',
 						'load_function' => 'data_usercount',
 						'title' => 'UserCount<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'UserCount',                                                                                       // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginUserCount',
 						'description' => tra("Will show the number of users. If a Group Name can be included to filter the Groups."),
 						'help_function' => 'data__usercount_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{USERCOUNT}Group Name{USERCOUNT}",
 						'plugin_type' => DATA_PLUGIN
 					  );

@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,22 +13,27 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): Mose <mose@users.sourceforge.net>
+// | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
+// | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_translated.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.translated.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
-// Initialization
+// $Id: data.translated.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATATRANSLATED', 'datatranslated' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'TRANSLATED',
-						'auto_activate' => TRUE,
+						'auto_activate' => FALSE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_translated',
 						'title' => 'Translated<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'Translated',                                                                                       // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginTranslated',
 						'description' => tra("This plugin is used to create a link to a page that contains a translation. The link can be shown as an Icon for the country or as an abreviation for the language."),
 						'help_function' => 'data__translated_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{TRANSLATED page= lang= flag= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

@@ -1,6 +1,14 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_storage
+ */
 global $gLibertySystem;
 
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_LULU', 'lulu' );
 
 $pluginParams = array ( 
@@ -10,6 +18,7 @@ $pluginParams = array (
 	'verify_function' => 'lulu_verify',
 	'description' => 'Lulu Content ID',
 	'plugin_type' => STORAGE_PLUGIN,
+	'auto_activate' => FALSE,
 	'edit_label' => 'Enter <a href="http://www.lulu.com">Lulu</a> Content ID',
 	'edit_field' => '<input type="text" name="STORAGE['.PLUGIN_GUID_LULU.']" size="40" /> 
 		<a href="http://www.lulu.com">{biticon ipackage=liberty iname=lulu iexplain=lulu}</a>',

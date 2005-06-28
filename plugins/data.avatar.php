@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,24 +13,29 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): Luis Argerich <lrargerich@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_avatar.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.avatar.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
-// Initialization
+// $Id: data.avatar.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'wiki' ) ) { // Do not include this Plugin if the Package is not active
 define( 'PLUGIN_GUID_DATAAVATAR', 'dataavatar' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'AVATAR',
-						'auto_activate' => TRUE,
+						'auto_activate' => FALSE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_avatar',
 						'title' => 'Avatar<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'Avatar',                                                                             // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginAvatar',
 						'description' => tra("This plugin will display a User's Avatar as a Link to a page."),
 						'help_function' => 'data_avatar_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{avatar user= page= float= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

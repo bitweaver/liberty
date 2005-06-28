@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,11 +13,15 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
-// | Reworked from: wikiplugin_countdown.php - see deprecated code below
+// | Author (TikiWiki): Stephan Borg <wolff_borg@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.countdown.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
-// Initialization
+// $Id: data.countdown.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATACOUNTDOWN', 'datacountdown' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'COUNTDOWN',
@@ -20,9 +29,9 @@ $pluginParams = array ( 'tag' => 'COUNTDOWN',
 						'requires_pair' => TRUE,
 						'load_function' => 'data_countdown',
 						'title' => 'CountDown',
+						'help_page' => 'DataPluginCountDown',
 						'description' => tra("Displays a Count-Down until a date:time is reached - then - negative numbers indicate how long it has been since that date. The Count-Down is displayed in the format of (X days, X hours, X minutes and X seconds)."),
 						'help_function' => 'data_countdown_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{countdown enddate= localtime= }" . tra("Text") . "{countdown}",
 						'plugin_type' => DATA_PLUGIN
 					  );
@@ -88,30 +97,4 @@ function data_countdown($data, $params) {
    	$ret = "$days ".tra("days").", $hours ".tra("hours").", $mins ".tra("minutes")." ".tra("and")." $secs ".tra("seconds")." $data";
 	return $ret;
 }
-/******************************************************************************
-The code below is from the deprecated COUNTDOWN plugin. All comments and the help routines have been removed. - StarRider
-function wikiplugin_countdown($data, $params) {
-	extract ($params);
-	if (!isset($enddate)) {
-		return ("<b>COUNTDOWN: Missing 'enddate' parameter for plugin</b><br/>");
-	}
-	if (isset($localtime) && $localtime == 'on')
-		$tz = $_COOKIE['tz_offset'];
-	else
-		$tz = 0;
-	$now = strtotime ("now") + $tz;
-	$then = strtotime ($enddate);
-	$difference = $then - $now;
-	$num = $difference/86400;
-	$days = intval($num);
-	$num2 = ($num - $days)*24;
-	$hours = intval($num2);
-	$num3 = ($num2 - $hours)*60;
-	$mins = intval($num3);
-	$num4 = ($num3 - $mins)*60;
-	$secs = intval($num4);
-	$ret = "$days ".tra("days").", $hours ".tra("hours").", $mins ".tra("minutes")." ".tra("and")." $secs ".tra("seconds")." $data";
-	return $ret;
-}
-*/
 ?>

@@ -1,4 +1,12 @@
 <?php
+/**
+* Management of Liberty content
+*
+* @author   spider <spider@steelsun.com>
+* @version  $Revision: 1.3 $
+* @package  Liberty
+*/
+
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -11,30 +19,33 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertyContent.php,v 1.2 2005/06/20 04:56:53 spiderr Exp $
-
-/**
-* Virtual base class (as much as one can have such things in PHP) for all
-* derived tikiwiki classes that require database access.
-*
-* @abstract
-* @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.2 $
-* @package  BitBase
-*/
+// $Id: LibertyContent.php,v 1.3 2005/06/28 07:45:47 spiderr Exp $
 
 // define( 'CONTENT_TYPE_WIKI', '1' );
 // define( 'CONTENT_TYPE_COMMENT', '3' );
 // define( 'CONTENT_TYPE_USER', '4' );
 
-// Maximum lengths for database fields
+/**
+ * Maximum lengths for database fields
+ */
 define( 'BIT_CONTENT_MAX_TITLE_LEN', 160);
 define( 'BIT_CONTENT_MAX_LANGUAGE_LEN', 4);
 define( 'BIT_CONTENT_MAX_IP_LEN', 39);
 define( 'BIT_CONTENT_MAX_FORMAT_GUID_LEN', 16);
 
+/**
+ * required setup
+ */
 require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
 
+/**
+* Virtual base class (as much as one can have such things in PHP) for all
+* derived tikiwiki classes that require database access.
+*
+* @author   spider <spider@steelsun.com>
+* @package  Liberty
+* @subpackage  LibertyContent
+*/
 class LibertyContent extends LibertyBase {
 	var $mContentId;
     /**
@@ -98,6 +109,8 @@ class LibertyContent extends LibertyBase {
 		// check some lengths, if too long, then truncate
 		if( !empty( $pParamHash['title'] ) ) {
 			$pParamHash['content_store']['title'] = substr( $pParamHash['title'], 0, 160 );
+		} elseif( isset( $pParamHash['title'] ) ) {
+			$pParamHash['content_store']['title'] = NULL;
 		}
 
 		$pParamHash['content_store']['last_modified'] = !empty( $pParamHash['last_modified'] ) ? $pParamHash['last_modified'] : date("U");
@@ -143,6 +156,12 @@ class LibertyContent extends LibertyBase {
 				$this->mErrors['format'] = $error;
 			}
 		}
+
+		if( empty( $pParamHash['edit'] ) && !empty( $this->mInfo['data'] ) ) {
+			// someone has deleted the data entirely - common for fisheye
+			$pParamHash['content_store']['data'] = NULL;
+		}
+		$pParamHash['content_store']['format_guid'] = $pParamHash['format_guid'];
 
 		return( count( $this->mErrors ) == 0 );
 

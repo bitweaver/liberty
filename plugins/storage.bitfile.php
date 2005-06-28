@@ -1,6 +1,14 @@
 <?php
+/**
+ * @version  $Revision: 1.3 $
+ * @package  Liberty
+ * @subpackage plugins_storage
+ */
 global $gLibertySystem;
 
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_BIT_FILES', 'bitfile' );
 
 $pluginParams = array ( 
@@ -10,6 +18,7 @@ $pluginParams = array (
 	'expunge_function' => 'bit_files_expunge',
 	'description' => 'Upload File To Server',
 	'plugin_type' => STORAGE_PLUGIN,
+	'auto_activate' => TRUE,
 	'edit_label' => 'Upload File',
 	'edit_field' => '<input type="file" name="upload" size="40" />',
 	'edit_help' => 'This file will be uploaded to your personal storage area.<br />After selecting the file you want to upload, please return to the edit area and click the save button.'

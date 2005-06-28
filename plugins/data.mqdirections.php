@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.3 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,11 +13,13 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
-// | New Code
+// | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mqdirections.php,v 1.2 2005/06/20 16:00:47 spiderr Exp $
-// Initialization
+// $Id: data.mqdirections.php,v 1.3 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAMQDIR', 'datamqdir' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'MQDIR',
@@ -20,9 +27,9 @@ $pluginParams = array ( 'tag' => 'MQDIR',
 						'requires_pair' => FALSE,
 						'load_function' => 'data_mqdir',
 						'title' => 'MapQuest Directions',
+						'help_page' => 'DataPluginMapQuestDirections',
 						'description' => tra("Creates an Icon link to MapQuest with a form to get Directions from MapQuest based on a Destination Address."),
 						'help_function' => 'data_mqdir_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on BitWeaver.Org exists
 						'syntax' => "{MQDIR icon= myicon= text= address= city= state= zip= country= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

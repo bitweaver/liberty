@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,11 +13,15 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
-// | Reworked from: wikiplugin_agentinfo.php - see deprecated code below
+// | Author (TikiWiki): Damian Parker <damosoft@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.agentinfo.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
-// Initialization
+// $Id: data.agentinfo.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAAGENTINFO', 'dataagentinfo' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'AGENTINFO',
@@ -20,16 +29,18 @@ $pluginParams = array ( 'tag' => 'AGENTINFO',
 						'requires_pair' => FALSE,
 						'load_function' => 'data_agentinfo',
 						'title' => 'AgentInfo',
+						'help_page' => 'DataPluginAgentInfo',
 						'description' => tra("This plugin will display the viewer's IP address, the Browser they are using, or the info about the site's Server software."),
 						'help_function' => 'data_agentinfo_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{agentinfo info= }",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAAGENTINFO, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAAGENTINFO );
 
-// Help Function
+/**
+ * Help Function
+ */
 function data_agentinfo_help() {
 	$help =
 		'<table class="data help">'
@@ -69,27 +80,4 @@ function data_agentinfo($data, $params) {
 	}
 
 }
-/******************************************************************************
-The code below is from the deprecated AGENTINFO plugin. All comments and the help routines have been removed. - StarRider
-// Wiki plugin to display a browser client information
-// damian aka damosoft May 2004
-
-function wikiplugin_agentinfo($data, $params) {
-	extract ($params);
-	$ret = '';
-	if (!isset($info)) {
-		$info = 'IP';
-	}
-	if ($info == 'IP') {
-		$ret = $_SERVER["REMOTE_ADDR"];
-	}
-	if ($info == 'SVRSW') {
-		$ret = $_SERVER["SERVER_SOFTWARE"];
-	}
-	if ($info == 'BROWSER') {
-		$ret = $_SERVER["HTTP_USER_AGENT"];
-	}
-	return $ret;
-}
-*/
 ?>

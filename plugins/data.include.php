@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.3 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,21 +13,25 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
-// | Reworked from: wikiplugin_include.php - see deprecated code below
+// | Author (TikiWiki): Marc Laporte <marclaporte@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.include.php,v 1.2 2005/06/20 07:27:12 lsces Exp $
-// Initialization
+// $Id: data.include.php,v 1.3 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAINCLUDE', 'datainclude' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'INCLUDE',
-						'auto_activate' => FALSE,
+						'auto_activate' => TRUE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_include',
 						'title' => 'Include',
+						'help_page' => 'DataPluginInclude',
 						'description' => tra("This plugin is used to include the contents of one Wiki page in another Wiki page."),
 						'help_function' => 'data_include_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{INCLUDE content_id= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

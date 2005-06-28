@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,11 +13,16 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): sQuare
+// | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
+// | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_userlist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.userlist.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
-// Initialization
+// $Id: data.userlist.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAUSERLIST', 'datauserlist' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'USERLIST',
@@ -21,9 +31,9 @@ $pluginParams = array ( 'tag' => 'USERLIST',
 						'load_function' => 'data_userlist',
 						'title' => 'UserList<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'UserList',,                                                                                       // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginUserList',
 						'description' => tra("This plugin will displays an alphabetically sorted list of registered users. A Group Name can be included to filter Groups to be listed."),
 						'help_function' => 'data__userlist_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{USERLIST num= userspage= alpha= total= email= }GroupName{USERLIST}",
 						'plugin_type' => DATA_PLUGIN
 					  );

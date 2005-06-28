@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,24 +13,28 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
-// | Reworked from: wikiplugin_copyright.php - see deprecated code below
+// | Author (TikiWiki): Ricardo Gladwell <axonrg@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.copyright.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
-// Initialization
+// $Id: data.copyright.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 global $gBitSystem;
 if( ( $gBitSystem->isPackageActive( 'wiki' ) ) && ( $gBitSystem->isFeatureActive( 'wiki_feature_copyrights' ) ) ) { // Do not include this Plugin if this Package and Feature are not active
 
 define( 'PLUGIN_GUID_DATACOPYRIGHT', 'datacopyright' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'COPYRIGHT',
-						'auto_activate' => FALSE,
+						'auto_activate' => TRUE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_copyright',
 						'title' => 'CopyRight',
+						'help_page' => 'DataPluginCopyRight',
 						'description' => tra("This plugin is used to insert CopyRight notices."),
 						'help_function' => 'data_copyright_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{COPYRIGHT title= year= authors= }",
 						'plugin_type' => DATA_PLUGIN
 					  );
@@ -91,32 +100,4 @@ function data_copyright($data, $params) { // Pre-Clyde Changes
 	return $ret;
 }
 }
-/******************************************************************************
-The code below is from the deprecated COPYRIGHT plugin. All comments and the help routines have been removed. - StarRider
-
-require_once( KERNEL_PKG_PATH.'BitBase.php' );
-require_once( WIKI_PKG_PATH.'copyrights_lib.php' );
-
-
-function wikiplugin_copyright($data, $params) {
-	$copyrightslib = new CopyrightsLib();
-	if (!isset($_REQUEST['copyrightpage'])) {
-		return '';
-	}
-	//extract($params);
-	$result = '';
-	$copyrights = $copyrightslib->list_copyrights($_REQUEST['copyrightpage']);
-	for ($i = 0; $i < $copyrights['cant']; $i++) {
-		$notice = str_replace("~title~", $copyrights['data'][$i]['title'], $data);
-		$notice = str_replace("~year~", $copyrights['data'][$i]['year'], $notice);
-		$notice = str_replace("~authors~", $copyrights['data'][$i]['authors'], $notice);
-		$result = $result . $notice;
-	}
-	global $bit_p_edit_copyrights;
-	if ((isset($bit_p_edit_copyrights)) && ($gBitUser->hasPermission( 'bit_p_edit_copyrights' ))) {
-		$result = $result . "\n<a href=\"copyrights.php?page=" . $_REQUEST['copyrightpage'] . "\">Edit copyrights</a> for ((" . $_REQUEST['copyrightpage'] . "))\n";
-	}
-	return $result;
-}
-*/
 ?>

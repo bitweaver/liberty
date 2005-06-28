@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,11 +13,16 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): TeeDog <teedog@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_catpath.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.catpath.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
-// Initialization
+// $Id: data.catpath.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'categories' ) ) { // Do not include this Plugin if the Package is not active
 define( 'PLUGIN_GUID_DATACATPATH', 'datacatpath' );
@@ -23,9 +33,9 @@ $pluginParams = array ( 'tag' => 'CATPATH',
 						'load_function' => 'data_catpath',
 						'title' => 'CatPath<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'CatPath',																						  // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginCatPath',
 						'description' => tra("This plugin insert the full category path for each category that the page belongs to."),
 						'help_function' => 'data_catpath_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{CATPATH divider= top= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

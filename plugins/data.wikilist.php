@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,11 +13,16 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): Unknown
+// | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
+// | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_wikilist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikilist.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
-// Initialization
+// $Id: data.wikilist.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAWIKILIST', 'datawikilist' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'WIKILIST',
@@ -21,9 +31,9 @@ $pluginParams = array ( 'tag' => 'WIKILIST',
 						'load_function' => 'data_wikilist',
 						'title' => 'WikiList<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'WikiList',                                                                             // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginWikiList',
 						'description' => tra("Displays an alphabetically sorted list of WikiPages"),
 						'help_function' => 'data__wikilist_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{WIKILIST num= alpha= total= list= }Group Name{WIKILIST} ",
 						'plugin_type' => DATA_PLUGIN
 					  );

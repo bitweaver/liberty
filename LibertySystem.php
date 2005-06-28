@@ -1,4 +1,12 @@
 <?php
+/**
+* System class for handling the liberty package
+*
+* @author   spider <spider@steelsun.com>
+* @version  $Revision: 1.2 $
+* @package  Liberty
+*/
+
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -11,17 +19,10 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertySystem.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
-
+// $Id: LibertySystem.php,v 1.2 2005/06/28 07:45:47 spiderr Exp $
 /**
-* System class for handling the common package
-*
-* @abstract
-* @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.1 $
-* @package  Common
-*/
-
+ * Local base defines
+ */
 define( 'STORAGE_PLUGIN', 'storage' );
 define( 'FORMAT_PLUGIN', 'format' );
 define( 'DATA_PLUGIN', 'data' );
@@ -30,8 +31,19 @@ define( 'DEFAULT_ACCEPTABLE_TAGS', '<a><br><b><blockquote><cite><code><div><dd><
 				 .' <i><it><img><li><ol><p><pre><span><strong><table><tbody><div><tr><td><th><u><ul>'
 				 .' <button><fieldset><form><label><input><option><select><textarea>' );
 
+/**
+ * Link to base class
+ */
 require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
 
+/**
+ * System class for handling the liberty package
+ *
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage LibertySystem
+ */
 class LibertySystem extends LibertyBase {
 
 	var $mPlugins;
@@ -78,9 +90,9 @@ class LibertySystem extends LibertyBase {
 				$handler['is_active'] = 'y';
 			} elseif( empty( $handler['verified'] ) && !isset( $handler['is_active'] ) ) {
 				//We found a missing plugin - insert it
-				$sql = "INSERT INTO `".BIT_DB_PREFIX."tiki_plugins` ( `plugin_guid`, `plugin_type`, `plugin_description`, `is_active` ) VALUES ( ?, ?, ?, 'y' )";
-				$this->query( $sql, array( $guid, $handler['plugin_type'], $handler['description'] ) );
-				$handler['is_active'] = 'y';
+				$handler['is_active'] = ( ( isset( $handler['auto_activate'] ) && $handler['auto_activate'] == FALSE ) ? 'n' : 'y' );
+				$sql = "INSERT INTO `".BIT_DB_PREFIX."tiki_plugins` ( `plugin_guid`, `plugin_type`, `plugin_description`, `is_active` ) VALUES ( ?, ?, ?, ? )";
+				$this->query( $sql, array( $guid, $handler['plugin_type'], $handler['description'], $handler['is_active'] ) );
 			}
 		}
 		asort( $this->mPlugins );

@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -10,19 +15,23 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
-// Initialization
+// $Id: data.maketoc.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAMAKETOC', 'datamaketoc' );
 global $gLibertySystem;
 global $gContent;
 $pluginParams = array ( 'tag' => 'MAKETOC',
-						'auto_activate' => FALSE,
+						'auto_activate' => TRUE,
 						'requires_pair' => FALSE,
 						'load_function' => '',
 						'title' => 'MakeTOC',
+						'help_page' => 'DataPluginMakeTOC',
 						'description' => tra("Will create a table of contents of the WikiPage based on the headings below."),
 						'help_function' => 'data_maketoc_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/DataPluginMaketoc",
+
 						'syntax' => "{maketoc}",
 						'plugin_type' => DATA_PLUGIN
 					  );
@@ -195,7 +204,7 @@ function maketoc_create_list( $pTocHash, $pParams ) {
 		$toplink = '';
 	}
 
-	$list = '<div class="tikitoc"><h3>'.( !empty( $pParams['title'] ) ? $pParams['title'] : tra( 'Page Contents' ) ).'</h3>'.$list.$toplink.'</div>';
+	$list = '<div class="maketoc"><h3>'.( !empty( $pParams['title'] ) ? $pParams['title'] : tra( 'Page Contents' ) ).'</h3>'.$list.$toplink.'</div>';
 
 	return $list;
 }

@@ -33,7 +33,14 @@
 
 				{assign var=prev_type value=$plugin.plugin_type}
 				<tr class="{cycle values="odd,even"}">
-					<td><label for="{$guid}">{$plugin.plugin_description}</label></td>
+					<td>
+						{if $plugin.plugin_type eq 'data'}
+							<h3>{$plugin.title}</h3>
+						{/if}
+						<label for="{$guid}">
+							{$plugin.plugin_description}
+						</label>
+					</td>
 					{if $plugin.plugin_type eq 'format'}
 						<td align="center">{if $plugin.is_active == 'y'}{html_radios values=$guid name="default_format" checked=$default_format}{/if}</td>
 					{/if}

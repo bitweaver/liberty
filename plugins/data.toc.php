@@ -1,4 +1,25 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2004, bitweaver.org
+// +----------------------------------------------------------------------+
+// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
+// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
+// |
+// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
+// | -> see http://phpdocu.sourceforge.net/
+// +----------------------------------------------------------------------+
+// | Author: Christian Fowler <spiderr@users.sourceforge.net>
+// +----------------------------------------------------------------------+
+// $Id: data.toc.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 global $gLibertySystem;
 
 define( 'PLUGIN_GUID_TOC', 'datatoc' );
@@ -9,9 +30,9 @@ $pluginParams = array ( 'tag' => 'toc',
 						'requires_pair' => FALSE,
 						'load_function' => 'toc_parse_data',
 						'title' => 'Table Of Contents',
+						'help_page' => 'DataPluginTOC',
 						'description' => tra("Display a Table Of Contents for Structures"),
 						'help_function' => 'toc_extended_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => '{TOC sturcture_id= }',
 						'plugin_type' => DATA_PLUGIN
 					  );
@@ -46,5 +67,4 @@ function toc_parse_data( $data, $params ) {
 
 	return $repl;
 }
-
 ?>

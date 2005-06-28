@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,22 +13,26 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
-// | Reworked from: wikiplugin_pluginhelp.php - see deprecated code below
+// | Author: StarRider <starrrider@sbcglobal.net> 
+// | Rewritten for bitweaver by Author
+// | wikiplugin_pluginhelp.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.pluginhelp.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
-// Initialization
+// $Id: data.pluginhelp.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAPLUGINHELP', 'datapluginhelp' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'PLUGINHELP',
-						'auto_activate' => TRUE,
+						'auto_activate' => FALSE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_pluginhelp',
 						'title' => 'PluginHelp<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'PluginHelp',                                                                             // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginPluginHelp',
 						'description' => tra("This plugin will display the plugin's Help."),
 						'help_function' => 'data__pluginhelp_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{PLUGINHELP plugin= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

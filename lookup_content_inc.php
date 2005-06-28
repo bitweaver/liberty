@@ -1,7 +1,18 @@
 <?php
+/**
+ * lookup_content_inc
+ *
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage functions
+ */
 	global $gContent;
 	
 	if( !empty( $_REQUEST['structure_id'] ) ) {
+		/**
+		 * required setup
+		 */
 		require_once( LIBERTY_PKG_PATH.'LibertyStructure.php');
 		$gStructure = new LibertyStructure( $_REQUEST['structure_id'] );
 		if( $gStructure->load() ) {

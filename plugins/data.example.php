@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.5 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,25 +13,45 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author: StarRider <starrrider@users.sourceforge.net>
+// | Note: A plugin with this name did exist as a TikiWiki Plugin
+// | This is not that plugin. 
 // +----------------------------------------------------------------------+
-// $Id: data.example.php,v 1.4 2005/06/20 07:27:12 lsces Exp $
-// Initialization
+// $Id: data.example.php,v 1.5 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAEXAMPLE', 'dataexample' );
+// NOTE: The GUID is used as a link to a help page on bitweaver.org
+// Please be sure to create this page when the plugin is created. 
+// In this case - the pagename should be "DataPluginExample"
+						
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'EXAMPLE',
-						'auto_activate' => TRUE,
+						'auto_activate' => FALSE,
 						'requires_pair' => FALSE, // Make this TRUE if the plugin needs to operate on free form text
 						'load_function' => 'data_example', // Points to the Load Function
 						'title' => 'Example', // Name of the Plugin
+						'help_page' => 'DataPluginExample', // Name of Help Page on Bitweaver.org
 						'description' => tra("This plugin is an example to show how plugins operate. It can also function as a template for the creation of new plugins since it contains a lot of spare code and explanations about how - and when - they should be used."), // What it does
 						'help_function' => 'data_example_help', // Points to the Help Function
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // This is a URL to a page on bitweaver.Org for additional information about the plugin - if it exists
 						'syntax' => "{EXAMPLE p1= p2= }", // A listing of parameters
 						'plugin_type' => DATA_PLUGIN // Don't Touch 
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAEXAMPLE, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAEXAMPLE );
+
+/**************** Lets talk about what all of this means.
+The GUID ----> define( 'PLUGIN_GUID_DATAEXAMPLE', 'dataexample' );  <------- Line 17
+The GUID does several thing. First - it identifies the plugin to the Liberty System so that it can be found
+Second - The GUID (in this case 'dataexample') is used as a link to a help page on bitweaver.org
+The pagename should be "DataPluginExample"
+// Please be sure to create this page when the plugin is created. 
+*/
+
+
+
 
 // Help Function
 function data_example_help() { // Specified by $pluginParams['help_function']
@@ -46,19 +71,32 @@ function data_example_help() { // Specified by $pluginParams['help_function']
 				.'<td>p2</td>'
 				.'<td>' . tra( "anything") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "The second parameter. There is no Default") . '</td>'
-// At times there is more reference data available than the Help Function should display
-// When this happens - provide a link in the Help Function as shown below
-// This adds a link (in a new window - so the user is not taken from his work) to a listing of ISO Country Codes
+
+// At times there is more reference data available than the Help Function can readilly display
+// When this happens - we provide a link in the Help Function. Each of the following snippets
+// Creates a link that opens a new window (so the user is not taken from his work) - HTML Compliant
+
+// This creates a link for ISO Country Codes
 /*
 				. tra("<br /><strong>Note:</strong> 2-Digit ISO Country Codes are available from ")
-				. "<a class='wiki' target=" . '"_blank"' . " href=http://www.bcpl.net/~j1m5path/isocodes-table.html>" . tra("ISO Country Codes</a> ")
+				. '<a href="http://www.bcpl.net/~j1m5path/isocodes-table.html" title="Launch BCPL.net in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "ISO Country Codes" ) . '</a>'
 */
-// This adds 2 links (in a new window - so the user is not taken from his work) to a bitweaver.org Page or to PageTutor.com's Color Picker II
-/*				. tra("<strong>Note:</strong> Browser Safe Colornames are available on the ") 
-				. "<a class='wiki' target=" . '"_blank"' . " href=http://www.bitweaver.org/wiki/index.php?page=Web-Safe+HTML+Colors>" . tra("bitweaver Web Site</a> ")
-				. tra("Another useful site for obtaining HTML colors is ") . "<a class='wiki' target=" . '"_blank"' . " href='http://www.pagetutor.com/pagetutor/makapage/picker/'>" 
-				. tra("The Color Picker II</a>");
+
+// This creates 2 links / 1- to a BitWeaver.org Page     2- to PageTutor.com's Color Picker II
+/*
+				. tra("<strong>Note:</strong> Browser Safe Colornames are available on the ") 
+				. '<a href="http://www.bitweaver.org/wiki/index.php?page=Web-Safe+HTML+Colors" title="Launch BitWeaver.Org in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "BitWeaver Web Site" ) . '</a>'
+				. tra(" Another useful site for obtaining HTML colors is ")
+ 				. '<a href="http://www.pagetutor.com/pagetutor/makapage/picker" title="Launch PageTutor.com in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "The Color Picker II" ) . '</a>';
 */
+
+// This creates a link to the user's site to get BitWeaver's Content ID Numbers
+/*
+				. tra("This a Numeric Content Id. This allows blog posts, images, wiki pages . . . (and more) to be added.")
+				. tra("<br /><strong>Note 1:</strong> A listing of Content Id's can be found ") 
+				. '<a href="'.LIBERTY_PKG_URL.'list_content.php" title="Launch BitWeaver Content Browser in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "Here" ) . '</a>'
+*/
+
 			.'</tr>'
  		.'</table>'
 		. tra("Example: ") . "{EXAMPLE p1='7' p2='8' }<br />"
@@ -68,18 +106,22 @@ function data_example_help() { // Specified by $pluginParams['help_function']
 
 // Load Function
 function data_example($data, $params) { // Specified by $pluginParams['load_function']
-	extract ($params);
-// Use this if you have a Manditory Parameter
+	extract ($params); // This extracts any parameter and creates a variable with the same name
+
+// Use this if you need to a Manditory Parameter
     if (!isset($p1) ) {  // The Manditory Parameter is missing
         $ret = tra("The parameter ") . "__p1__" . tra(" was missing from the plugin ") . "__~np~{EXAMPLE}~/np~__.";
 		$ret.= data_example_help();
 	    return $ret;
 	}
+
 // Of course - any Manditory Parameter needs to be tested to see if it is valid - and provide an error message if it isn't
 	if( $p1 == 5) {
-	    $ret = tra("__Error__ - The plugin ") . "__~np~{EXAMPLE}~/np~__" . tra(" was given the parameter ") . "p1=$p1" . tra(" which is not valid.");
+	    $ret = '<strong>Error</strong> ' . tra("- The plugin ") . '<strong>~np~{EXAMPLE}~/np~</strong>' . tra(" was given the parameter ") . '<strong>p1=' . $p1 . '</strong> ' . tra("which is not valid.");
    	    return $ret;
    	}
+	
+// Some plugin are designed to opperate with a lot of text. To do this the 'requires_pair' should be set to TRUE
 // Use this if the plugin needs to operate on text - the 'requires_pair' should be set to TRUE - so the text will be between {plugin()} Blocks {plugin}
 	if (!isset($data)) { // There is no data between the Plugin Blocks
 		$ret = tra("__Error__ - There was no data between the ") . "__~np~{EXAMPLE}~/np~__" . tra(" blocks for the plugin to operate on.");

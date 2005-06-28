@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,22 +13,27 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): Luis Argerich <lrargerich@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_split.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.split.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
-// Initialization
+// $Id: data.split.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATASPLIT', 'datasplit' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'SPLIT',
-						'auto_activate' => TRUE,
+						'auto_activate' => FALSE,
 						'requires_pair' => TRUE,
 						'load_function' => 'data_split',
 						'title' => 'Split<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'Split',                                                                             // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginSplit',
 						'description' => tra("This plugin is used to split a page in two or more columns using __-~045~-__ as a seperator."),
 						'help_function' => 'data__split_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{SPLIT joincols= fixedsize= }{SPLIT}",
 						'plugin_type' => DATA_PLUGIN
 					  );

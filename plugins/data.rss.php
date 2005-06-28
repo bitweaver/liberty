@@ -1,4 +1,27 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2004, bitweaver.org
+// +----------------------------------------------------------------------+
+// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
+// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
+// |
+// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
+// | -> see http://phpdocu.sourceforge.net/
+// +----------------------------------------------------------------------+
+// | Author (TikiWiki): Oliver Hertel <ohertel@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
+// +----------------------------------------------------------------------+
+// $Id: data.rss.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 global $gLibertySystem;
 
 define( 'PLUGIN_GUID_RSS', 'datarss' );
@@ -9,9 +32,9 @@ $pluginParams = array ( 'tag' => 'RSS',
 						'requires_pair' => FALSE,
 						'load_function' => 'rss_parse_data',
 						'title' => 'RSS Feed',
+						'help_page' => 'DataPluginRSS',
 						'description' => tra("Display RSS Feeds"),
 						'help_function' => 'rss_extended_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{RSS id= max= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,11 +13,16 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): Gustavo Muslera <gmuslera@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_articles.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.articles.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
-// Initialization
+// $Id: data.articles.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'articles' ) ) { // Do not include this Plugin if the Package is not active
 define( 'PLUGIN_GUID_DATAARTICLES', 'dataarticles' );
@@ -23,9 +33,9 @@ $pluginParams = array ( 'tag' => 'ARTICLES',
 						'load_function' => 'data_articles',
 						'title' => 'Articles<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'Articles',                                                                             // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginArticles',
 						'description' => tra("This plugin will display several Articles."),
 						'help_function' => 'data_articles_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{articles max= topic= type= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

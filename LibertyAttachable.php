@@ -1,4 +1,11 @@
 <?php
+/**
+ * Management of Liberty Content
+ *
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -11,22 +18,22 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertyAttachable.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
+// $Id: LibertyAttachable.php,v 1.2 2005/06/28 07:45:47 spiderr Exp $
 
 /**
-* Virtual base class (as much as one can have such things in PHP) for all
-* derived tikiwiki classes that require database access.
-*
-* @abstract
-* @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.1 $
-* @package  BitBase
-*/
-
-
+ * required setup
+ */
 require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
 require_once( LIBERTY_PKG_PATH.'LibertySystem.php' );
 
+/**
+ * LibertyAttachable classes.
+ *
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage  LibertyAttachable
+ */
 class LibertyAttachable extends LibertyContent {
 	var $mContentId;
 	var $mStorage;

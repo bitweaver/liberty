@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.3 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,24 +13,28 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
-// | Reworked from: wikiplugin_sf.php - see deprecated code below
+// | Author (TikiWiki): Mose <mose@sourceforge.net>
+// | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
+// | by: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.sf.php,v 1.2 2005/06/20 15:06:25 lsces Exp $
-// Initialization
+// $Id: data.sf.php,v 1.3 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATASF', 'datasf' );
 define('SF_CACHE',48); # in hours
-define('DEFAULT_TAG','bugs');
+define('DEF_TAG','bugs');
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'SF',
 						'auto_activate' => TRUE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_sf',
-						'title' => 'Sf',
-						'description' => tra("This plugin automatically creates a link to the appropriate ))SourceForge(( object for ))bitweaver((."),
+						'title' => 'SourceForge (SF)',
+						'help_page' => 'DataPluginSourceForge',
+						'description' => tra("Creates a link to SourceForge. Can be to the Bugs / RFEs / Patches / Support pages. Can also be to individual item.."),
 						'help_function' => 'data__sf_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
-						'syntax' => "{SF groupid= adit= aid= tag= }",
+						'syntax' => "{SF tag= aid= groupid= atid= }",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATASF, $pluginParams );
@@ -33,143 +42,84 @@ $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATASF );
 
 // Help Function
 function data_sf_help() {
-	$back = tra("^__Parameter Syntax:__ ") . "~np~{SF" . tra("(key=>value)}~/np~\n");
-	$back.= tra("||__::key::__ | __::value::__ | __::Comments::__\n");
-	$back.= "::groupid::" . tra(" | ::number:: | every ))SourceForge(( project has one. This identifies the project and can be found in the URL.\n");
-	$back.= "::adit::" . tra(" | ::number:: | is number identifies the section to be looked at. The choices are Bugs, Support, Patches & RFE's and are unique for each project.\n");
-	$back.= "::aid::" . tra(" | ::number:: | is the Tracker in question. For a bug report labled ~034~__~091~ 123456 ~093~ I'm a bug!__~034~ - the ") . "aid" . tra(" number is 123456\n");
-	$back.= "::tag::" . tra(" | ::name:: | is a short cut that allows the plugin to work automatically. The ") . "groupid & adit" . tra(" are supplied if these ") . "tags" . tra(" are used: ") . "__bugs / rfe / patches / support__" . tra(" are for ))bitweaver(( - ") . "__twbugs / twrfe / twpatches / twsupport__" . tra(" are for ))TikiWiki(( - ") . "__jgbugs / jgsupport / jgrfe__" . tra(" are for JGraph.||^");
-	$back.= tra("^__Example:__ ") . "~np~{SF(groupid=>141359,adit=>749177,aid=>928215)}~/np~\n";
-	$back.= tra("This is a ))bitweaver(( bug report named ~034~Lost in Space - errrr - bitweaver~034~^");
-	return $back;
-}
-
-function get_artifact_label($gid,$atid,$aid,$reload=false) {
-	$agent = $_SERVER['HTTP_USER_AGENT'];
-	$cachefile = TEMP_PKG_PATH."cache/".$bitdomain."sftrackers.cache.$gid.$atid.$aid";
-	$cachelimit = time() - 60*60*SF_CACHE;
-	$url = "http://sourceforge.net/tracker/index.php?func=detail&amp;aid=$aid&amp;group_id=$gid&amp;atid=$atid";
-	if (!is_file($cachefile)) $reload = true;
-	$back = false;
-	if ($reload or (filemtime($cachefile) < $cachelimit)) {
-		$ch = curl_init($url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_USERAGENT, $agent);
-		curl_setopt($ch, CURLOPT_REFERER, $url);
-		$buffer = curl_exec ($ch);
-		curl_close ($ch);
-		if (preg_match("/<title>[^-]*-([^<]*)<\/title>/i",$buffer,$match)) {
-			$fp = fopen($cachefile,"wb");
-			fputs($fp,$match[1]);
-			fclose($fp);
-		} elseif (is_file($cachefile)) {
-			$fp = fopen($cachefile,"rb");
-			$back = fgets($fp);
-			fclose($fp);
-		}
-	} else {
-		$fp = fopen($cachefile,"rb");
-		$back = fgets($fp,4096);
-		fclose($fp);
-	}
-	return $back;
+	$help =
+		'<table class="data help">'
+			.'<tr>'
+				.'<th>' . tra( "Key" ) . '</th>'
+				.'<th>' . tra( "Type" ) . '</th>'
+				.'<th>' . tra( "Comments" ) . '</th>'
+			.'</tr>'
+			.'<tr class="odd">'
+				.'<td>tag</td>'
+				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "The") . ' <strong>tag</strong> ' . tra("is a short-cut that allows you to use this plugin without having to look up the SourceForge") 
+				.' <strong>groupid or adit</strong> ' . tra("numbers for specific projects.") 
+				.'</br>' . tra("Possible values for BitWeaver are:") . '<strong>bugs / rfe / patches / support</strong>'
+				.'</br>' . tra("Possible values for TikiWiki are:") . '<strong>twbugs / twrfe / twpatches / twsupport</strong>'
+				.'</br>' . tra("Possible values for JGraph are:") . '<strong>jgbugs / jgrfe / jgsupport</strong>'
+				.'</br>' . tra("Possible values for PhpBB are:") . '<strong>pbbrfe</strong></td>'
+			.'</tr>'
+			.'<tr class="even">'
+				.'<td>aid</td>'
+				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "By supplying an") . ' <strong>aid</strong> ' . tra("value - the link will be to a specific Bug/RFE/Patch/ or /Support item.")
+				.tra(" If not given - the link will be to the index page for the project in question.") . '</td>'
+			.'</tr>'
+			.'<tr class="odd">'
+				.'<td>groupid</td>'
+				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "Every SourceForge project has an") . ' <strong>groupid</strong> ' . tra(". This number can be aquired by looking at the URLwhen looking at the project.") . '</td>'
+			.'</tr>'
+			.'<tr class="even">'
+				.'<td>atid</td>'
+				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "Only") . ' <strong>Tracker</strong> ' . tra("pages on SourceForge used a") . ' <strong>adit</strong> ' 
+				.tra("number. These pages are: Bugs / RFE / Patches / and ") . '<strong>3</strong></td>'
+			.'</tr>'
+		.'</table>'
+		. tra("Example: ") . "{SF tag=bugs } - Link to BitWeaver's Bug Index Page<br />"
+		. tra("Example: ") . "{SF tag=bugs aid=1226624  } - Link to a BitWeaver Bug<br />"
+		. tra("Example: ") . "{SF groupid=141358 atid=749176 aid=1226624 } - Same as Last Example only done the hard way";
+	return $help;
 }
 
 // Load Function
 function data_sf($data, $params) {
 	# customize that (or extract it in a db)
-	$sftags['bugs'] = array('101599','630083');
-	$sftags['rfe'] = array('101599','630086');
-	$sftags['patches'] = array('101599','630085');
-	$sftags['support'] = array('101599','630084');
-	$sftags['twbugs'] = array('64258','506846');
-	$sftags['twrfe'] = array('64258','506849');
-	$sftags['twpatches'] = array('64258','506848');
-	$sftags['twsupport'] = array('64258','506847');
-	$sftags['jgbugs'] = array('43118','435210');
-	$sftags['jgsupport'] = array('43118','435211');
-	$sftags['jgrfe'] = array('43118','435213');
+	// [tag]     = array(  groupid , atid , ProjectName , TrackerName , IndexName ) 
+// BitWeaver ******************************************************
+	$sftags['bugs'] = array('141358','749176','BitWeaver',' Bug #',' Bug Index');
+	$sftags['rfe'] = array('141358','749179','BitWeaver',' RFE #',' RFE Index');
+	$sftags['patches'] = array('141358','749178','BitWeaver',' Patch #',' Patch Index');
+	$sftags['support'] = array('141358','749177','BitWeaver',' Support #',' Support Index');
+// TikiWiki ******************************************************
+	$sftags['twbugs'] = array('64258','506846','TikiWiki',' Bug #',' Bug Index');
+	$sftags['twrfe'] = array('64258','506849','TikiWiki',' RFE #',' RFE Index');
+	$sftags['twpatches'] = array('64258','506848','TikiWiki',' Patch #',' Patch Index');
+	$sftags['twsupport'] = array('64258','506847','TikiWiki',' Support #',' Support Index');
+// JGraph ******************************************************
+	$sftags['jgbugs'] = array('43118','435210','JGraph',' Bug #',' Bug Index');
+	$sftags['jgrfe'] = array('43118','435213','JGraph',' RFE #',' RFE Index');
+	$sftags['jgsupport'] = array('43118','435211','JGraph',' Support #',' Support Index');
+// JGraph ******************************************************
+	$sftags['pbbrfe'] = array('7885','58021','PhpBB',' Bug #',' Bug Index');
+	
 	extract ($params);
-	if (isset($tag) and isset($sftags["$tag"]) and is_array($sftags["$tag"])) {
-		list($sf_group_id,$sf_atid) = $sftags["$tag"];
-	} else {
-		$sf_group_id = (isset($groupid)) ? "$groupid" : $sftags[DEFAULT_TAG][0];
-		$sf_atid = (isset($atid)) ? "$atid" : $sftags[DEFAULT_TAG][1];
-		$tag = DEFAULT_TAG;
-	}
-	if (!isset($aid)) {
-		//return "__please use (aid=>xxx) as parameters__";
-		return "<b>please use (aid=>xxx) as parameters</b>";
-	}
-	$label = get_artifact_label($sf_group_id,$sf_atid,$aid);
-	//$back = "[http://sf.net/tracker/index.php?func=detail&amp;aid=$aid&amp;group_id=$sf_group_id&amp;atid=$sf_atid|$tag:#$aid: $label|nocache]";
-	$back = "<a href='http://sf.net/tracker/index.php?func=detail&amp;aid=$aid&amp;group_id=$sf_group_id&amp;atid=$sf_atid' target='_blank' title='$tag:#$aid' class='wiki'>$label</a>";
-	return $back;
-}
-/******************************************************************************
-The code below is from the deprecated SF plugin. All comments and the help routines have been removed. - StarRider
-define('SF_CACHE',48); # in hours
-define('DEFAULT_TAG','bugs');
+	$tag = (isset($tag)) ? strtolower($tag) : ' '; // Just to be sure no caps
+	if (isset($sftags["$tag"]) and (is_array($sftags["$tag"])) ) { // is $tag in the array 
+		list($groupid,$atid,$proj,$tag1,$tag2) = $sftags["$tag"];
+		$tag = (isset($aid)) ? $proj . $tag1 . $aid : $proj . $tag2;
+	} else { // So their must be doing it the hard way
+		if ((!isset($groupid)) or (!isset($atid))) { // If not given set $group_id & $atid to default
+			list($groupid,$atid,$proj,$tag1,$tag2) = $sftags[DEF_TAG];
+			$tag = (isset($aid)) ? $proj . $tag1 . $aid : $proj . $tag2;
+		} else { // Both groupid & atid are present / but project is unknown - so
+			$tag = (isset($aid)) ? 'Unknown Project / ID #' . $aid : 'Unknown Project Index Page';
+	}	}
+	$url = (isset($aid)) ? 'http://sourceforge.net/tracker/index.php?func=detail&aid=' . $aid . '&' : 'http://sourceforge.net/tracker/?'; 
+	$url = $url . 'group_id=' . $groupid . '&atid=' . $atid;
 
-function get_artifact_label($gid,$atid,$aid,$reload=false) {
-	$agent = $_SERVER['HTTP_USER_AGENT'];
-	$cachefile = TEMP_PKG_PATH."cache/".$bitdomain."sftrackers.cache.$gid.$atid.$aid";
-	$cachelimit = time() - 60*60*SF_CACHE;
-	$url = "http://sourceforge.net/tracker/index.php?func=detail&amp;aid=$aid&amp;group_id=$gid&amp;atid=$atid";
-	if (!is_file($cachefile)) $reload = true;
-	$back = false;
-	if ($reload or (filemtime($cachefile) < $cachelimit)) {
-		$ch = curl_init($url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_USERAGENT, $agent);
-		curl_setopt($ch, CURLOPT_REFERER, $url);
-		$buffer = curl_exec ($ch);
-		curl_close ($ch);
-		if (preg_match("/<title>[^-]*-([^<]*)<\/title>/i",$buffer,$match)) {
-			$fp = fopen($cachefile,"wb");
-			fputs($fp,$match[1]);
-			fclose($fp);
-		} elseif (is_file($cachefile)) {
-			$fp = fopen($cachefile,"rb");
-			$back = fgets($fp);
-			fclose($fp);
-		}
-	} else {
-		$fp = fopen($cachefile,"rb");
-		$back = fgets($fp,4096);
-		fclose($fp);
-	}
-	return $back;
+	$ret = '<a href="' . $url . '" title="Launch Source Forge.net in a New Window" onkeypress="popUpWin(this.href,\'full\',800,800);" onclick="popUpWin(this.href,\'full\',800,800);return false;">' . $tag . '</a>';
+
+	return $ret;
 }
-function wikiplugin_sf($data, $params) {
-	# customize that (or extract it in a db)
-	$sftags['bugs'] = array('101599','630083');
-	$sftags['rfe'] = array('101599','630086');
-	$sftags['patches'] = array('101599','630085');
-	$sftags['support'] = array('101599','630084');
-	$sftags['twbugs'] = array('64258','506846');
-	$sftags['twrfe'] = array('64258','506849');
-	$sftags['twpatches'] = array('64258','506848');
-	$sftags['twsupport'] = array('64258','506847');
-	$sftags['jgbugs'] = array('43118','435210');
-	$sftags['jgsupport'] = array('43118','435211');
-	$sftags['jgrfe'] = array('43118','435213');
-	extract ($params);
-	if (isset($tag) and isset($sftags["$tag"]) and is_array($sftags["$tag"])) {
-		list($sf_group_id,$sf_atid) = $sftags["$tag"];
-	} else {
-		$sf_group_id = (isset($groupid)) ? "$groupid" : $sftags[DEFAULT_TAG][0];
-		$sf_atid = (isset($atid)) ? "$atid" : $sftags[DEFAULT_TAG][1];
-		$tag = DEFAULT_TAG;
-	}
-	if (!isset($aid)) {
-		//return "__please use (aid=>xxx) as parameters__";
-		return "<b>please use (aid=>xxx) as parameters</b>";
-	}
-	$label = get_artifact_label($sf_group_id,$sf_atid,$aid);
-	//$back = "[http://sf.net/tracker/index.php?func=detail&amp;aid=$aid&amp;group_id=$sf_group_id&amp;atid=$sf_atid|$tag:#$aid: $label|nocache]";
-	$back = "<a href='http://sf.net/tracker/index.php?func=detail&amp;aid=$aid&amp;group_id=$sf_group_id&amp;atid=$sf_atid' target='_blank' title='$tag:#$aid' class='wiki'>$label</a>";
-	return $back;
-}
-*/
-?>

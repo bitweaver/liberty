@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,11 +13,16 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): Oliver Hertel <ohertel@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_category.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.category.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
-// Initialization
+// $Id: data.category.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'categories' ) ) { // Do not include this Plugin if the Package is not active
 define( 'PLUGIN_GUID_DATACATEGORY', 'datacategory' );
@@ -23,9 +33,9 @@ $pluginParams = array ( 'tag' => 'CATEGORY',
 						'load_function' => 'data_category',
 						'title' => 'Category<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'Category',                                                                             // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginCategory',
 						'description' => tra("This plugin insert a list of items for the current category or a given category."),
 						'help_function' => 'data_category_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{category id= types= sort= sub= split= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

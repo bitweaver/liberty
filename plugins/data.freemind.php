@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.3 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,8 +13,12 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: Spiderr
+// | Author: Southpaw <southpawz@users.sourceforge.net>
 // +----------------------------------------------------------------------+
+
+/**
+ * definitions
+ */
 global $gLibertySystem;
 
 define( 'PLUGIN_GUID_FREEMIND', 'datafreemind' );
@@ -18,10 +27,10 @@ $pluginParams = array ( 'tag' => 'MM',
 						'auto_activate' => TRUE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_freemind',
-						'title' => 'FreeMind',
+						'title' => 'FreeMind (MM)',
+						'help_page' => 'DataPluginFreeMind',
 						'description' => tra("Displays a Freemind mindmap"),
 						'help_function' => 'data_freemind_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/DataPluginFreeMind",
 						'syntax' => "{MM src= height= width= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

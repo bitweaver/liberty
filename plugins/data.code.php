@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,11 +13,15 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
-// | Reworked from: wikiplugin_code.php - see deprecated code below
+// | Author (TikiWiki): Luis Argerich <lrargerich@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
-// Initialization
+// $Id: data.code.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATACODE', 'datacode' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'CODE',
@@ -20,9 +29,9 @@ $pluginParams = array ( 'tag' => 'CODE',
 						'requires_pair' => TRUE,
 						'load_function' => 'data_code',
 						'title' => 'Code',
+						'help_page' => 'DataPluginCode',
 						'description' => tra("Displays the Source Code Snippet between {Code} blocks."),
 						'help_function' => 'data_code_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => " {code source= num= }". tra("Sorce Code Snippet") . "{code}",
 						'plugin_type' => DATA_PLUGIN
 					  );
@@ -65,6 +74,7 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 // Parameters were $In & $Colors
 // Added testing to maintain Pre-Clyde compatability
 	$num = NULL;
+	$add_tags = false;
 	extract ($params);
 	// This maintains Pre-Clyde Parameters
 	if (isset($colors) and ($colors == 'php') ) $source = 'HTML';
@@ -125,18 +135,6 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 				break;
 			case 'PHP':
 			   $code = highlight_string($code, true);
-	/*
-				SPIDERKILL this code was not properly checking and doing the right stuff. just removed for now
-			   if (substr($code, 0, 6) == '<code>') // Remove the first <code>" tags
-				   $code = substr($code, 6, (strlen($code) - 13));
-				if ($add_tags) { //strip the PHP tags if they were added by the script
-					if ($num) { // Line Numbering has been added
-						$code = substr($code, 50, (strlen($code) -125));
-					} else {
-						$code = substr($code, 63, (strlen($code) -125));
-					}
-				}
-	*/
 			   $convmap = array( // Replacement-map to replace Colors
 					'#000000">' => '#004A4A">', // The Default Color
 					'#006600">' => '#2020FF">', // Color for Functions/Variables/Numbers/&/Constants
@@ -161,40 +159,4 @@ function unhtmlentities($string) {
 	$trans_tbl = array_flip($trans_tbl);
 	return strtr($string, $trans_tbl);
 }
-
-/******************************************************************************
-The code below is from the deprecated CODE plugin. All comments and the help routines have been removed. - StarRider
-
-function wikiplugin_code($data, $params) {
-	$code = $data;
-	extract ($params);
-	if (isset($colors) and ($colors == 'php')) {
-		$data = "<div class='codelisting'><pre>".highlight_string(decodeHTML($code),1)."</pre></div>";
-	} else {
-		if (isset($in) && $in == 1) {
-			$lines = explode("\n", $code);
-			$i = 1; // The current line number
-			$code = '';
-			// This will skip leading and trailing empty lines to make snippet look better :)
-			$fl = 0; // first code line printed' flag
-			$ae = '';
-			foreach ($lines as $line) {
-				$len = strlen($line);
-				if (!($len || $fl))	continue; // skip leading empty lines
-				if ($len) {	// OK len >0
-					$code .= $ae . ($fl ? "\n" : '') . sprintf("%3d", $i). ':  ' . $line;
-					$fl = 1; // first line already printed
-					$ae = '';
-				} else {
-					$ae .= "\n" . sprintf("%3d", $i). ':  ' . $line;
-				}
-				$i++;
-			}
-			$code = rtrim($code);
-		}
-		$data = "<div class='codelisting'><pre>" . $code . "</pre></div>";
-	}
-	return $data;
-}
-*/
 ?>

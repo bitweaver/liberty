@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,11 +13,15 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
-// | Reworked from: wikiplugin_flash.php - see deprecated code below
+// | Author (TikiWiki): Damian Parker <damosoft@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.flash.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
-// Initialization
+// $Id: data.flash.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'wiki' ) ) { // Do not include this Plugin if the Package is not active
 
@@ -23,9 +32,9 @@ $pluginParams = array ( 'tag' => 'FLASH',
 						'requires_pair' => FALSE,
 						'load_function' => 'data_flash',
 						'title' => 'Flash',
+						'help_page' => 'DataPluginFlash',
 						'description' => tra("This plugin allows a Flash SWF file to be displayed."),
 						'help_function' => 'data_flash_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{FLASH movie= width= height= quality= }",
 						'plugin_type' => DATA_PLUGIN
 					  );
@@ -83,23 +92,4 @@ function data_flash($data, $params) {
 	return $asetup;
 }
 }
-/******************************************************************************
-The code below is from the deprecated FLASH plugin. All comments and the help routines have been removed. - StarRider
-// Wiki plugin to display a SWF file - by damian aka damosoft 30 March 2004
-
-function wikiplugin_flash($data, $params) {
-	
-	extract ($params);
-	$w	= (isset($width)) 	?	$width : "";
-	$h	= (isset($height))	?	$height : "";
-	$q	= (isset($quality))	?	$quality : "high";
-
-	$asetup = "<OBJECT CLASSID=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\" codebase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,29,0\" WIDTH=\"$w\" HEIGHT=\"$h\">";
-	$asetup .= "<PARAM NAME=\"movie\" VALUE=\"$movie\">";
-	$asetup .= "<PARAM NAME=\"quality\" VALUE=\$q\">";
-	$asetup .= "<embed src=\"$movie\" quality=\"$q\" pluginspage=\"http://www.macromedia.com/go/getflashplayer\" type=\"application/x-shockwave-flash\" width=\"$w\" height=\"$h\"></embed></object>";
-
-	return $asetup;
-}
-*/
 ?>

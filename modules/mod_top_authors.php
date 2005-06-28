@@ -1,9 +1,11 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_top_authors.php,v 1.1 2005/06/19 04:55:51 bitweaver Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_top_authors.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
 /**
-* Params:
-* - content_type_guid : if set, show only those content_type_guid's
-*/
+ * Params:
+ * - content_type_guid : if set, show only those content_type_guid's
+ * @package Liberty
+ * @subpackage modules
+ */
 
 
 global $gQueryUser, $gBitUser, $module_rows, $module_params, $module_title, $gLibertySystem;

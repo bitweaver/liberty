@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,29 +13,33 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
-// | Reworked from: wikiplugin_include.php - see deprecated code below
+// | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.addtabs.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
-// Initialization
+// $Id: data.addtabs.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAADDTABS', 'dataaddtabs' );
 global $gLibertySystem;
 global $gContent;
 $pluginParams = array ( 'tag' => 'ADDTABS',
-						'auto_activate' => FALSE,
+						'auto_activate' => TRUE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_addtabs',
 						'title' => 'AddTabs',
+						'help_page' => 'DataPluginAddTabs',
 						'description' => tra("Will join the contents from several sources in a Tabbed Interface."),
 						'help_function' => 'data_addtabs_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/DataPluginAddtabs",
 						'syntax' => "{addtabs tab1= tab2= tab3= . . . tab99= }",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAADDTABS, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAADDTABS );
 
-// Help Function
+/**
+ * Help Function
+ */
 function data_addtabs_help() {
 	$help =
 		'<table class="data help">'
@@ -42,7 +51,10 @@ function data_addtabs_help() {
 			.'<tr class="odd">'
 				.'<td>tab1 - tab99</td>'
 				.'<td>' . tra( "numeric") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( 'Will create a Tab interface on a page. The name on each tab is the name given to the imported page.The value sent with the TabX parameter is a bitweaver Numeric Content Id. This allows blog posts, images, wiki pages...and more to be added<br /><strong>Note:</strong> The order used when the tabs are specified does not matter. The Tabname does - Tab1 is always first and Tab99 will always be last. Avaliable content can be viewed ') . '<a href="'.LIBERTY_PKG_URL.'list_content.php" title="Opens content browser in new window" onkeypress="popUpWin(this.href,\'standard\',600,400);" onclick="popUpWin(this.href,\'standard\',600,400);return false;">' . tra( "here" ) . '</a></td>'
+				.'<td>' . tra( "Will create a Tab interface on a page. The name on each tab is the name given to the imported page.The value sent with the TabX parameter is a Numeric Content Id. This allows blog posts, images, wiki pages . . . (and more) to be added.")
+				. tra("<br /><strong>Note 1:</strong> A listing of Content Id's can be found ") 
+				. '<a href="'.LIBERTY_PKG_URL.'list_content.php" title="Launch BitWeaver Content Browser in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "Here" ) . '</a>'
+				. tra("<br /><strong>Note 2:</strong> The order used when the tabs are specified does not matter. The Tabname does - Tab1 is always first and Tab99 will always be last.</td>")
 			.'</tr>'
 		.'</table>'
 		. tra("Example: ") . '{addtabs tab1=15 tab2=12 tab3=11}';

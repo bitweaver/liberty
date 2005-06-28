@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,22 +13,27 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): Claudio Bustos <cdx@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_titlesearch.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.titlesearch.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
-// Initialization
+// $Id: data.titlesearch.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATATITLESEARCH', 'datatitlesearch' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'TITLESEARCH',
-						'auto_activate' => TRUE,
+						'auto_activate' => FALSE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_titlesearch',
 						'title' => 'TitleSearch<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'TitleSearch',                                                                                         // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginTitleSearch',
 						'description' => tra("This plugin search the titles of all pages in this wiki."),
 						'help_function' => 'data__titlesearch_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{TITLESEARCH search= info= exclude= noheader= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

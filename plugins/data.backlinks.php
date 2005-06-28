@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -8,11 +13,16 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author (TikiWiki): Claudio Bustos <cdx@users.sourceforge.net>
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_backlinks.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.backlinks.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
-// Initialization
+// $Id: data.backlinks.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 global $gBitSystem;
 if( ( $gBitSystem->isPackageActive( 'wiki' ) ) && ( $gBitSystem->isFeatureActive('feature_backlinks') ) ) { // Do not include this Plugin if the Package or the Feature is not active
 define( 'PLUGIN_GUID_DATABACKLINKS', 'databacklinks' );
@@ -23,9 +33,9 @@ $pluginParams = array ( 'tag' => 'BACKLINKS',
 						'load_function' => 'data_backlinks',
 						'title' => 'BackLinks<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
 //						'title' => 'BackLinks',                                                                             // and Remove the comment from the start of this line
+						'help_page' => 'DataPluginBackLinks',
 						'description' => tra("This plugin will list all Wiki pages which contains a link to the specified page."),
 						'help_function' => 'data_backlinks_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => "{backlinks page= info= exclude= self= header= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

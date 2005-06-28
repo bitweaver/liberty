@@ -1,11 +1,20 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/edit_structure_inc.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
+/**
+ * edit_structure_inc
+ *
+ * @author   Christian Fowler>
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage functions
+ */
 
 // Copyright (c) 2004, Christian Fowler, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
 // Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
 
-// Initialization
+/**
+ * required setup
+ */
 require_once( '../bit_setup_inc.php' );
 include_once( LIBERTY_PKG_PATH.'LibertyStructure.php');
 

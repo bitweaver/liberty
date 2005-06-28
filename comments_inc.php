@@ -1,6 +1,14 @@
 <?php
+/**
+ * comment_inc
+ *
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage functions
+ */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.2 2005/06/28 07:45:47 spiderr Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -12,27 +20,30 @@
 // using this information
 
 // Setup URLS for the Comments next and prev buttons and use variables that
-// cannot be aliased by normal tiki variables.
+// cannot be aliased by normal Bit variables.
 // Traverse each _REQUEST data adn put them in an array
 
-//this script may only be included - so its better to die if called directly.
+// this script may only be included - so its better to die if called directly.
+
+/**
+ * required setup
+ */
 require_once (LIBERTY_PKG_PATH.'LibertyComment.php');
 
-global $commentsLib;
-global $smarty;
+global $commentsLib, $smarty;
 
 $postComment = array();
 $formfeedback = array();
 $smarty->assign_by_ref('formfeedback', $formfeedback);
 
-if (!empty($_REQUEST['delete_comment_id'])) {
+if (!empty($_REQUEST['delete_comment_id']) && $gBitUser->hasPermission( 'bit_p_post_comments' )) {
 	$deleteComment = new LibertyComment($_REQUEST['delete_comment_id']);
 	if (!empty ($deleteComment->mInfo['content_id'])) {
 		$deleteComment->deleteComment();
 	}
 }
 
-if (!empty($_REQUEST['post_comment_id'])) {
+if (!empty($_REQUEST['post_comment_id']) && $gBitUser->hasPermission( 'bit_p_post_comments' )) {
 	$post_comment_id = $_REQUEST['post_comment_id'];
 	$editComment = new LibertyComment($post_comment_id);
 	if ($editComment->mInfo['content_id']) {
@@ -56,7 +67,7 @@ if (!empty($_REQUEST['post_comment_id'])) {
 $smarty->assign('post_comment_id', $post_comment_id);
 
 // Store comment posts
-if (!empty($_REQUEST['post_comment_submit'])) {
+if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'bit_p_post_comments' )) {
 	$storeComment = new LibertyComment(!empty($editComment->mCommentId) ? $editComment->mCommentId : NULL);
 	$storeRow = array();
 	$storeRow['title'] = $_REQUEST['comment_title'];
@@ -69,7 +80,7 @@ if (!empty($_REQUEST['post_comment_submit'])) {
 // $post_comment_request is a flag indicating whether or not to display the comment input form
 if (empty($_REQUEST['post_comment_request'])) {
 	$post_comment_request = NULL;
-} elseif ($_REQUEST['post_comment_request']) {
+} elseif( $gBitUser->hasPermission( 'bit_p_post_comments' ) ) {
 	$post_comment_request = TRUE;
 }
 $smarty->assign_by_ref('post_comment_request', $post_comment_request);
@@ -78,7 +89,7 @@ $smarty->assign_by_ref('post_comment_request', $post_comment_request);
 if( !empty( $_REQUEST['post_comment_preview'] ) ) {
 	$postComment['title'] = $_REQUEST['comment_title'];
 	$postComment['data'] = $_REQUEST['comment_data'];
-	$postComment['parsed_data'] = LibertyComment::parseData( $_REQUEST['comment_data'], 'tikiwiki' );
+	$postComment['parsed_data'] = LibertyComment::parseData( $_REQUEST['comment_data'], 'bitwiki' );
 	$smarty->assign('post_comment_preview', TRUE);
 }
 

@@ -1,5 +1,24 @@
 <?php
-/* $Id: data.module.php,v 1.1 2005/06/19 04:55:48 bitweaver Exp $
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2004, bitweaver.org
+// +----------------------------------------------------------------------+
+// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
+// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
+// |
+// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
+// | -> see http://phpdocu.sourceforge.net/
+// +----------------------------------------------------------------------+
+// | Author (TikiWiki): Mose <mose@users.sourceforge.net>
+// | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
+// +----------------------------------------------------------------------+
+// $Id: data.module.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
 Displays a module inlined in page
 Parameters
 module name : module=>lambda
@@ -21,23 +40,29 @@ like the tracker_id in the above example.
  *   'till another solution will be implemented :)
  */
 
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAMODULE', 'datamodule' );
 
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'MODULE',
-						'auto_activate' => TRUE,
+						'auto_activate' => FALSE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_datamodule',
 						'title' => 'Module',
+						'help_page' => 'DataPluginModule',
 						'description' => tra("Display a module block in content"),
 						'help_function' => 'datamodule_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => '{MODULE module= align="right"}',
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAMODULE, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAMODULE );
 
+/**
+ * datamodule_help
+ */
 function datamodule_help() {
 	$back = tra("^__Parameter Syntax:__ ") . "~np~{MODULE" . tra("(key=>value)}~/np~\n");
 	$back.= tra("||__::key::__ | __::value::__ | __::Comments::__\n");
@@ -51,6 +76,9 @@ function datamodule_help() {
 	return $back;
 }
 
+/**
+ * data_datamodule
+ */
 function data_datamodule($data, $params) {
 	global $modlib, $cache_time, $smarty, $feature_directory, $ranklib, $feature_trackers, $bitdomain, $user,
 		$feature_tasks, $feature_user_bookmarks, $bit_p_tasks, $bit_p_create_bookmarks, $imagegallib;

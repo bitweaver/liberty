@@ -1,4 +1,16 @@
 <?php
+/**
+ * attachment_browser
+ *
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage functions
+ */
+
+/**
+ * bit setup
+ */
 include("../bit_setup_inc.php");
 
 $userAttachments = $gBitUser->getUserAttachments();

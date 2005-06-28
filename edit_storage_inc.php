@@ -1,9 +1,17 @@
 <?php
-/* This file is automatically included by edit_storage.tpl - All you need to do is include edit_storage.tpl
-   from your template file.
-*/
-
-// Calculate a base URL for the attachment deletion/removal icons to use
+/**
+ * edit_storage_inc
+ *
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage functions
+ *
+ * This file is automatically included by edit_storage.tpl - All you need to do is include edit_storage.tpl
+ * from your template file.
+ *
+ * Calculate a base URL for the attachment deletion/removal icons to use
+ */
 global $smarty, $gContent, $gBitUser;
 $attachmentActionBaseURL = $_SERVER['PHP_SELF'].'?';
 $GETArgs = split('&',$_SERVER['QUERY_STRING']);

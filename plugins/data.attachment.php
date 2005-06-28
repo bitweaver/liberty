@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  Liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -10,8 +15,11 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.1 2005/06/19 04:55:47 bitweaver Exp $
-// Initialization
+// $Id: data.attachment.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+
+/**
+ * definitions
+ */
 global $gBitSystem;
 
 define( 'PLUGIN_GUID_DATAATTACHMENT', 'dataattachment' );
@@ -21,9 +29,9 @@ $pluginParams = array ( 'tag' => 'ATTACHMENT',
 						'requires_pair' => FALSE,
 						'load_function' => 'data_attachment',
 						'title' => 'Attachment',
+						'help_page' => 'DataPluginAttachment',
 						'description' => tra("Display attachment in content"),
 						'help_function' => 'data_attachment_help',
-						'tp_helppage' => "http://www.bitweaver.org/wiki/index.php", // Update this URL when a page on TP.O exists
 						'syntax' => '{attachment id= size= align= }',
 						'plugin_type' => DATA_PLUGIN
 					  );

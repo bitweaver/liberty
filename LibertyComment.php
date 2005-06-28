@@ -1,8 +1,27 @@
 <?php
+/**
+ * Management of Liberty Content
+ *
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.3 $
+ * @package  Liberty
+ */
+
+/**
+ * required setup
+ */
 require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
 
 define( 'BITCOMMENT_CONTENT_TYPE_GUID', 'bitcomment' );
 
+/**
+* Virtual base class (as much as one can have such things in PHP) for all
+* derived tikiwiki classes that require database access.
+*
+* @author   spider <spider@steelsun.com>
+* @package  Liberty
+* @subpackage  LibertyComment
+*/
 class LibertyComment extends LibertyContent {
 	var $mCommentId;
 
@@ -180,7 +199,7 @@ class LibertyComment extends LibertyContent {
 		$commentCount = 0;
 		if ($contentId) {
 			$sql = "SELECT tcm.*, tcmc.`parent_id` AS `child_content_id`
-					FROM `tiki_comments` tcm LEFT OUTER JOIN `tiki_comments` tcmc ON (tcm.`content_id`=tcmc.`parent_id`)
+					FROM `".BIT_DB_PREFIX."tiki_comments` tcm LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_comments` tcmc ON (tcm.`content_id`=tcmc.`parent_id`)
 					WHERE tcm.`parent_id` = ?";
 			$rows = $this->GetAssoc($sql, array($contentId));
 			$commentCount += count($rows);
