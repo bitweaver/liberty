@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.6 $
+ * @version  $Revision: 1.1.1.1.2.7 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_translated.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.translated.php,v 1.1.1.1.2.6 2005/06/27 14:13:14 lsces Exp $
+// $Id: data.translated.php,v 1.1.1.1.2.7 2005/06/29 05:57:16 starrrider Exp $
 
 /**
  * definitions
@@ -33,7 +33,7 @@ $pluginParams = array ( 'tag' => 'TRANSLATED',
 //						'title' => 'Translated',                                                                                       // and Remove the comment from the start of this line
 						'help_page' => 'DataPluginTranslated',
 						'description' => tra("This plugin is used to create a link to a page that contains a translation. The link can be shown as an Icon for the country or as an abreviation for the language."),
-						'help_function' => 'data__translated_help',
+						'help_function' => 'data_translated_help',
 						'syntax' => "{TRANSLATED page= lang= flag= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

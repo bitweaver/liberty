@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.5 $
+ * @version  $Revision: 1.1.1.1.2.6 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_category.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.category.php,v 1.1.1.1.2.5 2005/06/27 14:13:14 lsces Exp $
+// $Id: data.category.php,v 1.1.1.1.2.6 2005/06/29 05:57:16 starrrider Exp $
 
 /**
  * definitions
@@ -36,7 +36,7 @@ $pluginParams = array ( 'tag' => 'CATEGORY',
 						'help_page' => 'DataPluginCategory',
 						'description' => tra("This plugin insert a list of items for the current category or a given category."),
 						'help_function' => 'data_category_help',
-						'syntax' => "{category id= types= sort= sub= split= }",
+						'syntax' => "{CATEGORY id= types= sort= sub= split= }",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACATEGORY, $pluginParams );

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.6 $
+ * @version  $Revision: 1.1.1.1.2.7 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.1.1.1.2.6 2005/06/27 14:13:14 lsces Exp $
+// $Id: data.toc.php,v 1.1.1.1.2.7 2005/06/29 05:57:16 starrrider Exp $
 
 /**
  * definitions
@@ -28,22 +28,22 @@ global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'toc',
 						'auto_activate' => TRUE,
 						'requires_pair' => FALSE,
-						'load_function' => 'toc_parse_data',
-						'title' => 'Table Of Contents',
+						'load_function' => 'data_toc',
+						'title' => 'Table Of Contents (TOC)',
 						'help_page' => 'DataPluginTOC',
 						'description' => tra("Display a Table Of Contents for Structures"),
-						'help_function' => 'toc_extended_help',
+						'help_function' => 'data_toc_help',
 						'syntax' => '{TOC sturcture_id= }',
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_TOC, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_TOC );
 
-function toc_extended_help() {
-	return 'NO HELP WRITTEN FOR {toc}';
+function data_toc_help() {
+	return 'NO HELP WRITTEN FOR {TOC}';
 }
 
-function toc_parse_data( $data, $params ) {
+function data_toc( $data, $params ) {
 	$repl = '';
 	include_once( LIBERTY_PKG_PATH.'LibertyStructure.php' );
 	global $gStructure, $gContent;

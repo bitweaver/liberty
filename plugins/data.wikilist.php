@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.5 $
+ * @version  $Revision: 1.1.1.1.2.6 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_wikilist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikilist.php,v 1.1.1.1.2.5 2005/06/27 14:13:14 lsces Exp $
+// $Id: data.wikilist.php,v 1.1.1.1.2.6 2005/06/29 05:57:16 starrrider Exp $
 
 /**
  * definitions
@@ -33,7 +33,7 @@ $pluginParams = array ( 'tag' => 'WIKILIST',
 //						'title' => 'WikiList',                                                                             // and Remove the comment from the start of this line
 						'help_page' => 'DataPluginWikiList',
 						'description' => tra("Displays an alphabetically sorted list of WikiPages"),
-						'help_function' => 'data__wikilist_help',
+						'help_function' => 'data_wikilist_help',
 						'syntax' => "{WIKILIST num= alpha= total= list= }Group Name{WIKILIST} ",
 						'plugin_type' => DATA_PLUGIN
 					  );

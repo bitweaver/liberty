@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.7 $
+ * @version  $Revision: 1.1.1.1.2.8 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.1.1.1.2.7 2005/06/27 14:13:14 lsces Exp $
+// $Id: data.maketoc.php,v 1.1.1.1.2.8 2005/06/29 05:57:16 starrrider Exp $
 
 /**
  * definitions
@@ -32,7 +32,7 @@ $pluginParams = array ( 'tag' => 'MAKETOC',
 						'description' => tra("Will create a table of contents of the WikiPage based on the headings below."),
 						'help_function' => 'data_maketoc_help',
 
-						'syntax' => "{maketoc}",
+						'syntax' => "{MAKETOC}",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAMAKETOC, $pluginParams );
@@ -63,7 +63,7 @@ function data_maketoc_help() {
 				.'<td>' . tra( 'if you set backtotop <strong>' ).'true'.( '</strong>, it will insert a "back to the top" link.' ) . '</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . '{maketoc maxdepth=3 include=all backtotop=true}';
+		. tra("Example: ") . '{MAKETOC maxdepth=3 include=all backtotop=true}';
 	return $help;
 }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.8 $
+ * @version  $Revision: 1.1.1.1.2.9 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.addtabs.php,v 1.1.1.1.2.8 2005/06/27 14:13:14 lsces Exp $
+// $Id: data.addtabs.php,v 1.1.1.1.2.9 2005/06/29 05:57:16 starrrider Exp $
 
 /**
  * definitions
@@ -31,7 +31,7 @@ $pluginParams = array ( 'tag' => 'ADDTABS',
 						'help_page' => 'DataPluginAddTabs',
 						'description' => tra("Will join the contents from several sources in a Tabbed Interface."),
 						'help_function' => 'data_addtabs_help',
-						'syntax' => "{addtabs tab1= tab2= tab3= . . . tab99= }",
+						'syntax' => "{ADDTABS tab1= tab2= tab3= . . . tab99= }",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAADDTABS, $pluginParams );
@@ -57,7 +57,7 @@ function data_addtabs_help() {
 				. tra("<br /><strong>Note 2:</strong> The order used when the tabs are specified does not matter. The Tabname does - Tab1 is always first and Tab99 will always be last.</td>")
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . '{addtabs tab1=15 tab2=12 tab3=11}';
+		. tra("Example: ") . '{ADDTABS tab1=15 tab2=12 tab3=11}';
 	return $help;
 }
 

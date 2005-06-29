@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.7 $
+ * @version  $Revision: 1.2.2.8 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.include.php,v 1.2.2.7 2005/06/27 14:13:14 lsces Exp $
+// $Id: data.include.php,v 1.2.2.8 2005/06/29 05:57:16 starrrider Exp $
 
 /**
  * definitions
@@ -64,9 +64,9 @@ function data_include_help() {
 					Avaliable content can be viewed <a href="'.LIBERTY_PKG_URL.'list_content.php">here</a>' ).'</td>
 			</tr>
 		</table>
-		Example: {include page_name=15}
-		Example: {include page_id=15}
-		Example: {include content_id=15}';
+		Example: {INCLUDE page_name=15}
+		Example: {INCLUDE page_id=15}
+		Example: {INCLUDE content_id=15}';
 	return $help;
 }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.6 $
+ * @version  $Revision: 1.1.1.1.2.7 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.countdown.php,v 1.1.1.1.2.6 2005/06/27 14:13:14 lsces Exp $
+// $Id: data.countdown.php,v 1.1.1.1.2.7 2005/06/29 05:57:16 starrrider Exp $
 
 /**
  * definitions
@@ -32,7 +32,7 @@ $pluginParams = array ( 'tag' => 'COUNTDOWN',
 						'help_page' => 'DataPluginCountDown',
 						'description' => tra("Displays a Count-Down until a date:time is reached - then - negative numbers indicate how long it has been since that date. The Count-Down is displayed in the format of (X days, X hours, X minutes and X seconds)."),
 						'help_function' => 'data_countdown_help',
-						'syntax' => "{countdown enddate= localtime= }" . tra("Text") . "{countdown}",
+						'syntax' => "{COUNTDOWN enddate= localtime= }" . tra("Text") . "{countdown}",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACOUNTDOWN, $pluginParams );
@@ -58,7 +58,7 @@ function data_countdown_help() {
 				.'<td>' . tra( "Determins if Local Time is displayed or not. Passing any value in this parameter will make it <strong>TRUE</strong>. The Default = <strong>FALSE</strong> so Local Time will not be displayed") . '</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . "{countdown enddate='8:02pm May 10 2004' localtime='on'}" . tra(" - Time Passes So Slowly") . "{countdown}<br />"
+		. tra("Example: ") . "{COUNTDOWN enddate='8:02pm May 10 2004' localtime='on'}" . tra(" - Time Passes So Slowly") . "{countdown}<br />"
 		. tra("Displays: <strong>82 days, 23 hours, 37 minutes and 31 seconds - Time Passes So Slowly</strong>");
 	return $help;
 }

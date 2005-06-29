@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.5 $
+ * @version  $Revision: 1.1.1.1.2.6 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_articles.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.articles.php,v 1.1.1.1.2.5 2005/06/27 14:13:14 lsces Exp $
+// $Id: data.articles.php,v 1.1.1.1.2.6 2005/06/29 05:57:16 starrrider Exp $
 
 /**
  * definitions
@@ -36,7 +36,7 @@ $pluginParams = array ( 'tag' => 'ARTICLES',
 						'help_page' => 'DataPluginArticles',
 						'description' => tra("This plugin will display several Articles."),
 						'help_function' => 'data_articles_help',
-						'syntax' => "{articles max= topic= type= }",
+						'syntax' => "{ARTICLES max= topic= type= }",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAARTICLES, $pluginParams );
@@ -67,8 +67,8 @@ function data_articles_help() {
 				.'<td>' . tra( "Filters the Articles so that only the Type specified is displayed") . '</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . "{articles max=5 topic='some_topic'}<br />"
-		. tra("Example: ") . "{articles max=5 type='some_type'}";
+		. tra("Example: ") . "{ARTICLES max=5 topic='some_topic'}<br />"
+		. tra("Example: ") . "{ARTICLES max=5 type='some_type'}";
 	return $help;
 }
 
