@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.1.2.3 2005/06/25 12:35:34 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.1.2.4 2005/06/29 05:05:18 starrrider Exp $ *}
 
 {strip}
 {if $gBitSystem->isFeatureActive( 'feature_wikihelp' )}
@@ -7,21 +7,21 @@
 			{foreach from=$formatplugins item=p}
 				{if $p.is_active eq 'y'}
 					{box title=`$p.name` class="help box"}
-						{if $p.help eq ''}
-							{tr}No description available{/tr}
+						{if $p.description eq ''}
+							{tr}There's no description available for {$p.name}{/tr}
 						{else}
-							{$p.help}
+							{$p.description}
 						{/if}
 
 						{if $p.help_page}
-							<br />{tr}To view syntax help, please visit <a onkeypress="popUpWin(this.href,'standard',600,400);" onclick="popUpWin(this.href,'standard',600,400);return false;" class="external" href="http://www.bitweaver.org/wiki/index.php?page={$p.help_page}">{$p.help_page}</a>.{/tr}
+							<br />{tr}To view syntax help, please visit <a onkeypress="popUpWin(this.href,'full',800,800);" onclick="popUpWin(this.href,'full',800,800);return false;" class="external" href="http://www.bitweaver.org/wiki/index.php?page={$p.help_page}">{$p.help_page}</a>.{/tr}
 						{/if}
 					{/box}
 				{/if}
 			{/foreach}
 
 			{box title="Syntax Help" class="help box"}
-				{tr}For more information, please visit <a class="external" href="http://www.bitweaver.org">bitweaver.org</a>{/tr}
+				{tr}For more information, please visit <a onkeypress="popUpWin(this.href,'full',800,800);" onclick="popUpWin(this.href,'full',800,800);return false;" class="external" href="http://www.bitweaver.org">bitweaver.org</a>{/tr}
 			{/box}
 		{/jstab}
 
@@ -30,10 +30,10 @@
 				{foreach from=$dataplugins item=p}
 					{if $p.is_active eq 'y'}
 						{box title=`$p.name` class="help box"}
-							{if $p.help eq ''}
-								{tr}no description available{/tr}
+							{if $p.description eq ''}
+								{tr}There's no description available for the plugin {$p.name}{/tr}
 							{else}
-								{$p.help}
+								{$p.description}
 							{/if}
 
 							{if $p.syntax}
@@ -46,7 +46,7 @@
 							{/if}
 
 							{if $p.help_page}
-								<br />{tr}for additional information about this plugin, see <a class="external" href="http://www.bitweaver.org/wiki/index.php?page={$p.help_page}">{$p.help_page}</a>.{/tr}<br/>
+								<br />{tr}for additional information about this plugin, see <a onkeypress="popUpWin(this.href,'full',800,800);" onclick="popUpWin(this.href,'full',800,800);return false;" class="external" href="http://www.bitweaver.org/wiki/index.php?page={$p.help_page}">{$p.help_page}</a>.{/tr}<br/> 
 							{/if}
 						{/box}
 					{/if}
