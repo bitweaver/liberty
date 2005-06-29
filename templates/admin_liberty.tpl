@@ -26,6 +26,22 @@
 			{/legend}
 		{/jstab}
 
+		{jstab title="Comment Settings"}
+			{legend legend="Comment Settings"}
+				<div class="row">
+					{foreach from=$formCommentFeatures key=item item=output}
+						<div class="row">
+							{formlabel label=`$output.label` for=$item}
+							{forminput}
+								{html_checkboxes name="$item" values="y" checked=`$gBitSystemPrefs.$item` labels=false id=$item}
+								{formhelp note=`$output.note` page=`$output.page`}
+							{/forminput}
+						</div>
+					{/foreach}
+				</div>
+			{/legend}
+		{/jstab}
+
 		{jstab title="Image Processing"}
 			{legend legend="Image Processing System"}
 				<input type="hidden" name="page" value="{$page}" />

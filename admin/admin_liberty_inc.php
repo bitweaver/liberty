@@ -9,8 +9,9 @@ $formLibertyFeatures = array(
 		'label' => 'Auto-Display Attachment Thumbnails',
 		'note' => 'This will automatically display thumbnails of all attachments of a given page (usually in the top right corner of the page). You can still display the items inline as well.',
 		'page' => '',
-	)
+	),
 );
+
 if( $gBitSystem->isPackageActive( 'tinymce' ) ) {
 	$formLibertyFeatures["tinymce_ask"] = array(
 		'label' => 'WYSIWYG confirmation',
@@ -19,10 +20,25 @@ if( $gBitSystem->isPackageActive( 'tinymce' ) ) {
 	);
 }
 $smarty->assign('formLibertyFeatures', $formLibertyFeatures);
-//vd($_REQUEST);
+
+$formCommentFeatures = array(
+	"comments_reorganise_page_layout" => array(
+		'label' => 'Position Comments at top of page',
+		'note' => 'When posting a comment, comments are moved to the top of the page. This can be very disorienting and is only recommended when your site uses comments extensively.',
+		'page' => '',
+	),
+	"comments_display_option_bar" => array(
+		'label' => 'Display Comments option bar',
+		'note' => 'Display an option bar above comments to specify how they should be sorted and how they should be displayed. Useful if your site uses comments extensively.',
+		'page' => '',
+	),
+);
+$smarty->assign('formCommentFeatures', $formCommentFeatures);
+
 if (!empty($_REQUEST['change_prefs'])) {
 	$errors = array();
-	foreach( $formLibertyFeatures as $item => $data ) {
+	$formFeatures = array_merge( $formLibertyFeatures, $formCommentFeatures );
+	foreach( $formFeatures as $item => $data ) {
 		simple_set_toggle( $item );
 	}
 

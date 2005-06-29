@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.2.2.4 $
+ * @version  $Revision: 1.2.2.5 $
  * @package  Liberty
  */
 
@@ -231,22 +231,18 @@ class LibertyComment extends LibertyContent {
 
 	// Returns a hash containing the comment tree of comments related to this content
 	function getComments( $pContentId = NULL, $pMaxComments = NULL, $pOffset = NULL, $pSortOrder = NULL, $pDisplayMode = NULL ) {
-
-		if ($pDisplayMode == "flat") {
+		if( $pDisplayMode == "flat" ) {
 			return $this->getComments_flat ($pContentId, $pMaxComments, $pOffset, $pSortOrder);
-		}
-		else {
+		} else {
 			#return $this->getComments_threaded ($pContentId, $pMaxComments, $pOffset, $pSortOrder);
 			//use flat mode retreival so we get exactly the number of messages requested.
 			if ($pSortOrder == "commentDate_asc") {
 				return $this->getComments_flat ($pContentId, $pMaxComments, $pOffset, 'thread_asc');
-			}
-			else {	
+			} else {	
 				//descending thread order is not currently supported correctly, but we make an attempt anyway
 				return $this->getComments_flat ($pContentId, $pMaxComments, $pOffset, 'thread_desc');
 			}
 		}	 	
-
 	}
 
 	// returns a set of nested hashes
@@ -266,11 +262,10 @@ class LibertyComment extends LibertyContent {
 		if (!empty($pSortOrder)) {
 			if ($pSortOrder == 'commentDate_desc') {
 				$sort_order = 'DESC';
-				}
-			elseif ($pSortOrder == 'commentDate_asc') {
+			} elseif ($pSortOrder == 'commentDate_asc') {
 				$sort_order = 'ASC';
-				}
 			}
+		}
 
 		if ($contentId) {
 			$sql = "SELECT tcm.`comment_id` FROM `".BIT_DB_PREFIX."tiki_comments` tcm, `".BIT_DB_PREFIX."tiki_content` tc
@@ -287,10 +282,7 @@ class LibertyComment extends LibertyContent {
 					$ret[] = $comment->mInfo;
 				}
 			}
-
 		}
-	
-
 		return $ret;
 	}
 
