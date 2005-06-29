@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.5 $
+ * @version  $Revision: 1.1.1.1.2.6 $
  * @package  Liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.5 2005/06/29 19:29:52 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.6 2005/06/29 21:15:36 squareing Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -148,6 +148,7 @@ $commentsPgnHash = array(
 	'maxComments' => $maxComments,
 	'comments_sort_mode' => $comments_sort_mode,
 	'comments_style' => $comments_display_style,
+	'ianchor' => 'editcomments',
 );
 $smarty->assign( 'commentsPgnHash', $commentsPgnHash );
 $smarty->assign('postComment', $postComment);
