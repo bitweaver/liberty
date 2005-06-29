@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.2.2.3 $
+ * @version  $Revision: 1.2.2.4 $
  * @package  Liberty
  */
 
@@ -203,20 +203,54 @@ class LibertyComment extends LibertyContent {
 					WHERE tcm.`parent_id` = ?";
 			$rows = $this->GetAssoc($sql, array($contentId));
 			$commentCount += count($rows);
-/* We do not want to count the children since they will be displayed on the page and it would mess up pagination - spiderr
-   I may be wrong, so I'll leave the complete code in for now
 			foreach ($rows as $row) {
 				if( !empty( $row['child_content_id'] ) ) {
 					$commentCount += $this->getNumComments( $row['child_content_id'] );
 				}
 			}
-*/
 		}
 		return $commentCount;
 	}
 
+
+	//input is a set of nested hashes
+	//output is a single flat hash of comments in thread order
+	function flatten_threads($threaded_comments = NULL) {
+		$flat_comments = array();
+		foreach ($threaded_comments as $threaded_comment) {
+			$flat_comments[] = $threaded_comment;
+			if (!empty($threaded_comment['children'])) {
+				$children = $this->flatten_threads($threaded_comment['children']);
+				foreach ($children as $child) {
+					array_push($flat_comments, $child );
+				}
+			}
+		}
+		return $flat_comments;	
+	}
+
 	// Returns a hash containing the comment tree of comments related to this content
-	function getComments( $pContentId = NULL, $pMaxComments = NULL, $pOffset = NULL ) {
+	function getComments( $pContentId = NULL, $pMaxComments = NULL, $pOffset = NULL, $pSortOrder = NULL, $pDisplayMode = NULL ) {
+
+		if ($pDisplayMode == "flat") {
+			return $this->getComments_flat ($pContentId, $pMaxComments, $pOffset, $pSortOrder);
+		}
+		else {
+			#return $this->getComments_threaded ($pContentId, $pMaxComments, $pOffset, $pSortOrder);
+			//use flat mode retreival so we get exactly the number of messages requested.
+			if ($pSortOrder == "commentDate_asc") {
+				return $this->getComments_flat ($pContentId, $pMaxComments, $pOffset, 'thread_asc');
+			}
+			else {	
+				//descending thread order is not currently supported correctly, but we make an attempt anyway
+				return $this->getComments_flat ($pContentId, $pMaxComments, $pOffset, 'thread_desc');
+			}
+		}	 	
+
+	}
+
+	// returns a set of nested hashes
+	function getComments_threaded( $pContentId = NULL, $pMaxComments = NULL, $pOffset = NULL, $pSortOrder = NULL ) {
 		static $curLevel = 0;
 
 		$contentId = NULL;
@@ -226,24 +260,113 @@ class LibertyComment extends LibertyContent {
 		} elseif ($pContentId) {
 			$contentId = $pContentId;
 		}
+
+
+		$sort_order = "ASC";
+		if (!empty($pSortOrder)) {
+			if ($pSortOrder == 'commentDate_desc') {
+				$sort_order = 'DESC';
+				}
+			elseif ($pSortOrder == 'commentDate_asc') {
+				$sort_order = 'ASC';
+				}
+			}
+
 		if ($contentId) {
 			$sql = "SELECT tcm.`comment_id` FROM `".BIT_DB_PREFIX."tiki_comments` tcm, `".BIT_DB_PREFIX."tiki_content` tc
-					WHERE tcm.`parent_id` = ? AND tcm.`content_id` = tc.`content_id` ORDER BY tc.`created`";
+					WHERE tcm.`parent_id` = ? AND tcm.`content_id` = tc.`content_id` ORDER BY tc.`created` $sort_order";
 			if( $rs = $this->query( $sql, array($contentId), $pMaxComments, $pOffset ) ) {
 				$rows = $rs->getRows();
 				foreach ($rows as $row) {
 					$comment = new LibertyComment($row['comment_id']);
 					$comment->mInfo['level'] = $curLevel;
 					$curLevel++;
-					$comment->mInfo['children'] = $this->getComments($comment->mInfo['content_id']);
+					$comment->mInfo['children'] = $this->getComments_threaded($comment->mInfo['content_id']);
 					$comment->mInfo['parsed_data'] = $this->parseData($comment->mInfo['data'], $comment->mInfo['format_guid']);
 					$curLevel--;
 					$ret[] = $comment->mInfo;
 				}
 			}
+
 		}
+	
+
 		return $ret;
 	}
+
+
+	// Returns a hash containing the comment tree of comments related to this content
+	function getComments_flat( $pContentId = NULL, $pMaxComments = NULL, $pOffset = NULL, $pSortOrder = NULL ) {
+		static $curLevel = 0;
+
+		$contentId = NULL;
+		$ret = array();
+		if (!$pContentId && $this->mContentId) {
+			$contentId = $this->mContentId;
+		} elseif ($pContentId) {
+			$contentId = $pContentId;
+		}
+
+		$sort_order = "ASC";
+		if (!empty($pSortOrder)) {
+			if ($pSortOrder == 'commentDate_desc') {
+				$sort_order = 'DESC';
+				}
+			if ($pSortOrder == 'commentDate_asc') {
+				$sort_order = 'ASC';
+				}
+			if ($pSortOrder == 'thread_asc') {
+				$sort_order = 'TASC';
+				}
+			// thread newest first is harder...
+			if ($pSortOrder == 'thread_desc') {
+				$sort_order = 'TDESC';
+				}
+			}
+
+		if ($contentId) {
+
+			if ($sort_order == 'TDESC') {
+			
+				$threaded_comments = $this->getComments_threaded($pContentId, 999999, 0, 'commentDate_desc');
+				}
+			else {
+				$threaded_comments = $this->getComments_threaded($pContentId, 999999, 0);
+				}
+	
+			# DB not structured to make FLAT easy
+			# have to retreive entire threaded comment set and then date sort in memory
+			# then take the chunk of N comments wanted.
+
+			# now flatten into a linear array
+			$flat_comments = $this->flatten_threads($threaded_comments);
+
+			# now sort by date
+			$last_modified = array();
+			foreach ($flat_comments as $key => $comment) {
+				if (!empty( $comment['last_modified'])) {
+				   $last_modified[$key]  = $comment['last_modified'];
+				}
+				   $comment['children'] = array();
+			}
+
+			if ($sort_order == 'ASC') {
+				array_multisort($last_modified, SORT_ASC, $flat_comments);
+				}
+			elseif ($sort_order == 'DESC') {
+				array_multisort($last_modified, SORT_DESC, $flat_comments);
+				}
+			// else default order
+	
+			# now select comments wanted
+			$ret = array_slice($flat_comments,$pOffset,$pMaxComments);
+
+			}					
+
+		return $ret;
+	}
+
+
 
  	// Basic formatting for quoting comments
  	function quoteComment($commentData) {

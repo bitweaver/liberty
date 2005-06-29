@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.3 $
+ * @version  $Revision: 1.1.1.1.2.4 $
  * @package  Liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.3 2005/06/27 14:13:22 lsces Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.4 2005/06/29 07:09:11 jht001 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -102,6 +102,9 @@ if (!empty($_REQUEST['post_comment_reply_id'])) {
 	$smarty->assign('post_comment_reply_id', $post_comment_reply_id);
 }
 
+if (!empty($_REQUEST['comment_page'])) {
+	$comments_at_top_of_page = 'y';
+	}
 $commentOffset = !empty( $_REQUEST['comment_page'] ) ? ($_REQUEST['comment_page'] - 1) * $maxComments : 0;
 
 $gComment = new LibertyComment( NULL, $gContent->mContentId );
@@ -110,10 +113,12 @@ if (empty($commentsParentId)) {
 	$comments = NULL;
 	$numComments = 0;
 } else {
-	$comments = $gComment->getComments($commentsParentId, $maxComments, $commentOffset );
+	$comments = $gComment->getComments($commentsParentId, $maxComments, $commentOffset, $comments_sort_mode, $comments_display_style);
 	$numComments = $gComment->getNumComments($commentsParentId);
 }
+
 $smarty->assign('comments', $comments);
+$smarty->assign('maxComments', $maxComments);
 
 $numCommentPages = ceil( $numComments / $maxComments );
 $currentPage = !empty( $_REQUEST['comment_page'] ) ? $_REQUEST['comment_page'] : 1;
@@ -123,10 +128,17 @@ $commentsPgnHash = array(
 	'pgnName' => 'comment_page',
 	'page' => $currentPage,
 	'url' => $comments_return_url,
+	'maxComments' => $maxComments,
+	'comments_sort_mode' => $comments_sort_mode,
+	'comments_style' => $comments_display_style,
 );
 $smarty->assign( 'commentsPgnHash', $commentsPgnHash );
 $smarty->assign('postComment', $postComment);
 
 $smarty->assign('currentTimestamp', time());
 $smarty->assign('comments_return_url', $comments_return_url);
+$smarty->assign('comments_at_top_of_page', $comments_at_top_of_page);
+$smarty->assign('comments_style', $comments_display_style);
+$smarty->assign('comments_sort_mode', $comments_sort_mode);
+
 ?>
