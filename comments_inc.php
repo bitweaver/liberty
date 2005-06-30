@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.6 $
+ * @version  $Revision: 1.1.1.1.2.7 $
  * @package  Liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.6 2005/06/29 21:15:36 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.7 2005/06/30 02:56:19 jht001 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -102,6 +102,7 @@ if (!empty($_REQUEST['post_comment_reply_id'])) {
 	$smarty->assign('post_comment_reply_id', $post_comment_reply_id);
 }
 
+$maxComments = $gBitSystem->getPreference( 'wiki_comments_per_page' );
 if (!empty($_REQUEST["comments_maxComments"])) {
 	$maxComments = $_REQUEST["comments_maxComments"];
 	$comments_at_top_of_page = 'y';
@@ -113,7 +114,7 @@ if (!empty($_REQUEST["comments_sort_mode"])) {
 	$comments_at_top_of_page = 'y';
 }
 
-$comments_display_style = 'threaded';
+$comments_display_style = $gBitSystem->getPreference( 'wiki_comments_default_display_mode' );
 if (!empty($_REQUEST["comments_style"])) {
 	$comments_display_style = $_REQUEST["comments_style"];
 	$comments_at_top_of_page = 'y';
@@ -133,7 +134,6 @@ if (empty($commentsParentId)) {
 	$comments = $gComment->getComments( $commentsParentId, $maxComments, $commentOffset, $comments_sort_mode, $comments_display_style );
 	$numComments = $gComment->getNumComments( $commentsParentId );
 }
-
 $smarty->assign('comments', $comments);
 $smarty->assign('maxComments', $maxComments);
 
