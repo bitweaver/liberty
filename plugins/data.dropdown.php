@@ -1,19 +1,22 @@
 <?php
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2004, bitweaver.org
-// +----------------------------------------------------------------------+
-// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
-// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
-// |
-// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
-// | -> see http://phpdocu.sourceforge.net/
-// +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sourceforge.net>
-// +----------------------------------------------------------------------+
-// $Id: data.dropdown.php,v 1.1.2.1 2005/06/30 03:36:35 starrrider Exp $
-// Initialization
-define( 'PLUGIN_GUID_DROPDOWN', 'dropdown' );
+// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.dropdown.php,v 1.1.2.2 2005/06/30 06:50:22 lsces Exp $
+/**
+ * assigned_modules
+ *
+ * @author   StarRider <starrrider@sourceforge.net>
+ * @version  $Revision: 1.1.2.2 $
+ * @package  liberty
+ * @subpackage plugins_data
+ * @copyright Copyright (c) 2004, bitweaver.org
+ * All Rights Reserved. See copyright.txt for details and a complete list of authors.
+ * @license Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
+ */
 global $gLibertySystem;
+
+/**
+ * Initialization
+ */
+define( 'PLUGIN_GUID_DROPDOWN', 'dropdown' );
 $pluginParams = array ( 'tag' => 'DD',
 						'auto_activate' => TRUE,
 						'requires_pair' => TRUE,
@@ -28,7 +31,9 @@ $pluginParams = array ( 'tag' => 'DD',
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DROPDOWN, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DROPDOWN );
 
-// Help Function
+/**
+ * Help Function
+ */
 function data_dropdown_help() {
 	$help =
 		'<table class="data help">'
@@ -53,7 +58,9 @@ function data_dropdown_help() {
 	return $help;
 }
 
-// Load Function
+/**
+ * Load Function
+ */
 function data_dropdown($data, $params) {
 	extract ($params);
     $title = (isset($title)) ? $title : 'For More Information';
