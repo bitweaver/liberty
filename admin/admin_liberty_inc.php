@@ -19,7 +19,7 @@ if( $gBitSystem->isPackageActive( 'tinymce' ) ) {
 		'page' => '',
 	);
 }
-$smarty->assign('formLibertyFeatures', $formLibertyFeatures);
+$smarty->assign( 'formLibertyFeatures', $formLibertyFeatures );
 
 $formCommentFeatures = array(
 	"comments_reorganise_page_layout" => array(
@@ -33,9 +33,11 @@ $formCommentFeatures = array(
 		'page' => '',
 	),
 );
-$smarty->assign('formCommentFeatures', $formCommentFeatures);
+$smarty->assign( 'formCommentFeatures', $formCommentFeatures );
 
-if (!empty($_REQUEST['change_prefs'])) {
+$formValues = array( 'image_processor', 'liberty_attachment_link_format', 'comments_per_page', 'comments_default_ordering', 'comments_default_display_mode' );
+
+if( !empty( $_REQUEST['change_prefs'] ) ) {
 	$errors = array();
 	$formFeatures = array_merge( $formLibertyFeatures, $formCommentFeatures );
 	foreach( $formFeatures as $item => $data ) {
@@ -50,16 +52,16 @@ if (!empty($_REQUEST['change_prefs'])) {
 			$tags = substr( $tags, 0, $lastAngle );
 			$errors['warning'] = 'The approved tags list has been shortened. You can only have 250 characters for approved tags.';
 		}
-		
 		$gBitSystem->storePreference('approved_html_tags', $tags , LIBERTY_PKG_NAME );
 	}
 	$smarty->assign_by_ref( 'errors', $errors );
 
-	$gBitSystem->storePreference('image_processor', (!empty( $_REQUEST['image_processor'] ) ? $_REQUEST['image_processor'] : NULL ) , LIBERTY_PKG_NAME );
-	$gBitSystem->storePreference('liberty_attachment_link_format', ( !empty( $_REQUEST['liberty_auto_display_attachment_thumbs'] ) ? $_REQUEST['liberty_auto_display_attachment_thumbs'] : NULL ), LIBERTY_PKG_NAME );
+	foreach( $formValues as $item ) {
+		simple_set_value( $item );
+	}
 }
 
 $tags = $gBitSystem->getPreference( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
 
-$smarty->assign('approved_html_tags', $tags );
+$smarty->assign( 'approved_html_tags', $tags );
 ?>
