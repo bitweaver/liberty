@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.8 $
+ * @version  $Revision: 1.1.1.1.2.9 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.1.1.1.2.8 2005/06/30 19:24:12 squareing Exp $
+// $Id: data.toc.php,v 1.1.1.1.2.9 2005/07/01 07:22:41 spiderr Exp $
 
 /**
  * definitions
@@ -48,7 +48,7 @@ function data_toc( $data, $params ) {
 	include_once( LIBERTY_PKG_PATH.'LibertyStructure.php' );
 	global $gStructure, $gContent;
 	$struct = NULL;
-	if( ( empty( $gStructure ) || !$gStructure->isValid() ) && !empty( $gContent ) ) {
+	if( is_object( $gContent ) && (empty( $gStructure ) || !$gStructure->isValid()) ) {
 		$structures = $gContent->getStructures();
 		// We take the first structure. not good, but works for now - spiderr
 		if( !empty( $structures[0] ) ) {
