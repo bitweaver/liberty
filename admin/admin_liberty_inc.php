@@ -12,13 +12,6 @@ $formLibertyFeatures = array(
 	),
 );
 
-if( $gBitSystem->isPackageActive( 'tinymce' ) ) {
-	$formLibertyFeatures["tinymce_ask"] = array(
-		'label' => 'WYSIWYG confirmation',
-		'note' => 'Ask before using the WYSIWYG editor tinymce when clicking on a textarea. If you disable this feature, we strongly suggest you enable HTML content format as the only content format and also disable quicktags.',
-		'page' => '',
-	);
-}
 $smarty->assign( 'formLibertyFeatures', $formLibertyFeatures );
 
 $formCommentFeatures = array(
