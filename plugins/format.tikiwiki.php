@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.6 $
+ * @version  $Revision: 1.2.2.7 $
  * @package  Liberty
  */
 global $gLibertySystem;
@@ -143,6 +143,7 @@ class TikiWikiParser extends BitBase {
 
 
 	function storeLinks( &$pParamHash ) {
+		$links_already_inserted_table = array();
 		if( !empty( $pParamHash['content_id'] ) ) {
 			$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_links` WHERE `from_content_id`=?";
 			$result = $this->query( $query, array( $pParamHash['content_id'] ) );
@@ -156,8 +157,12 @@ class TikiWikiParser extends BitBase {
 						$result = $this->query( $query, array( $page ) );
 						if( $result->numRows() ) {
 							$res = $result->fetchRow();
-							$query = "insert into `".BIT_DB_PREFIX."tiki_links`(`from_content_id`,`to_content_id`) values(?, ?)";
-							$result = $this->query($query, array( $pParamHash['content_id'], $res['content_id'] ) );
+							$key = $pParamHash['content_id'] . "-" . $res['content_id'];
+							if (empty($links_already_inserted_table[$key])) {
+								$query = "insert into `".BIT_DB_PREFIX."tiki_links`(`from_content_id`,`to_content_id`) values(?, ?)";
+								$result = $this->query($query, array( $pParamHash['content_id'], $res['content_id'] ) );
+							}
+							$links_already_inserted_table[$key] = 1;
 						}
 					}
 				}
