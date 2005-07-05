@@ -8,7 +8,7 @@
 		{/if}
 		<h2>
 			<a onclick="icntoggle('bitcomments');">
-				{biticon ipackage=liberty iname="collapsed" id="bitcommentsimg" iexplain="folder"} {tr}Comments{/tr}
+				{biticon ipackage=liberty iname="collapsed" id="bitcommentsimg" iexplain=""} {tr}Comments{/tr}
 			</a>
 		</h2>
 	</div>
