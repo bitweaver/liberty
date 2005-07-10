@@ -1,7 +1,7 @@
 {strip}
 
 {jstabs}
-	{jstab title="{tr}Edit{/tr} {tr}`$gStructure->mInfo.content_type.content_description`{/tr}"}
+	{jstab title="Edit Structure"}
 
 		{*
 		 * before editing and committing this template, please make sure it is XHMTL standard compliant on W3C
@@ -45,7 +45,7 @@
 		</ul><!-- end outermost .toc -->
 	{/jstab}
 
-	{jstab title="{tr}`$gStructure->mInfo.content_type.content_description`{/tr} {tr}Content{/tr}"}
+	{jstab title="Structure Content"}
 		{include file="bitpackage:liberty/edit_structure_content.tpl"}
 	{/jstab}
 
