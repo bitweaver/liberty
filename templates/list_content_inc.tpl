@@ -1,5 +1,6 @@
 {strip}
 {form legend="Select Content Type"}
+	<input type="hidden" name="user_id" value="{$user_id}" />
 	<div class="row">
 		{formlabel label="Restrict listing" for="content_type"}
 		{forminput}
@@ -25,8 +26,8 @@
 <table class="data">
 	<caption>{tr}Available Content{/tr}</caption>
 	<tr>
-		<th>{smartlink ititle="Title" isort=title page=$page idefault=1}</th>
-		<th>{smartlink ititle="Content Type" isort=content_type_guid page=$page}</th>
+		<th>{smartlink ititle="Title" isort=title page=$page user_id=$user_id idefault=1}</th>
+		<th>{smartlink ititle="Content Type" isort=content_type_guid page=$page user_id=$user_id}</th>
 		<th>{tr}Author{/tr}</th>
 		<th>{tr}Most Recent Editor{/tr}</th>
 		<th>&nbsp;</th>
