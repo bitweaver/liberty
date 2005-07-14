@@ -4,7 +4,7 @@
  * assigned_modules
  *
  * @author   StarRider starrrider@sourceforge.net
- * @version  $Revision: 1.1.2.4 $
+ * @version  $Revision: 1.1.2.5 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -266,7 +266,8 @@ function data_spytext($data, $params) {
 					$toBox = ($addSenderLine) ? $toBox . $senderLine : $toBox; // Drop fromLine if nothing on it
 				$toBox = $toBox . '</table></div>';
 			$toBox = $toBox . '</div>';
-	}	}
+		}
+	}
 
 	$mt = (microtime() * 1000000);
 	$hidden = (isset($hidden)) ? TRUE : FALSE;
@@ -276,6 +277,7 @@ function data_spytext($data, $params) {
 			if ((strtoupper(trim($icon))) == 'TRUE') {
 				$spyLink = '<a href="javascript:flip('.$mt.')"><img src="'.LIBERTY_PKG_URL.'icons/spy.gif"></img></a>'; // Default
 			}
+		}
             // --------------------------> TODO - Need Same thing with Content Id No's
             if (!isset($spyLink)) {
 				$spyLink = '<a href="javascript:flip('.$mt.')"><img src="'.$icon.'"></img></a>'; // Last Choice - A URL
