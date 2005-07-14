@@ -4,7 +4,7 @@
  * assigned_modules
  *
  * @author   StarRider starrrider@sourceforge.net
- * @version  $Revision: 1.1.2.1 $
+ * @version  $Revision: 1.1.2.2 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -93,7 +93,7 @@ function data_spytext_help() {
 					.tra( "can be quite extensive on large sites. A better way of viewing this information is to visit ")
 					.'<a href="'.USERS_PKG_URL.'index.php" title="Launch User Listing Browser in New Window" '
 					.'onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">'
-					.tra( "User Index" ) . '</a> ' 
+					.tra( "User Index" ) . '</a> '
 					.'<br />' . tra( "The Default =") . ' <strong>FALSE</strong> ' . tra( "Members are <strong>NOT</strong> displayed.")
 				.'</td>'
 			.'<tr class="even">'
@@ -110,7 +110,7 @@ function data_spytext_help() {
 				.'<td>title</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "The Title Bar is something like a Horizontal Rule with the Text Centered on it. It is used as a link to")
-					.tra( " <strong>Expand/Contract</strong> a") .' <strong>hidden</strong> ' . tra( "Message Box.") 
+					.tra( " <strong>Expand/Contract</strong> a") .' <strong>hidden</strong> ' . tra( "Message Box.")
 					.'<br />' . tra( "The Title Bar is only visible when the Message Box is") . ' <strong>hidden</strong> '
 					.'<br />' . tra( "By Default Title used by the Title Bar is") . ' <strong>"A Hidden Message"</strong>. '
 					.'<br />' . tra( "Specifying any value in this parameter will change the Default Title.")
@@ -134,7 +134,7 @@ function data_spytext_help() {
 					.tra( "can be used by specifing it's Content Id Number like this:")
 					."<br /><strong>icon='#125'</strong> ". tra( "<strong>Please Note:</strong> the # character Must be included.")
 					.tra( "Any other value specified in this parameter is assumed to be a <strong>Valid URL</strong>.")
-					.'<br />' . tra( "<strong>Note:</strong> - a listing of Content Id's can be found ") 
+					.'<br />' . tra( "<strong>Note:</strong> - a listing of Content Id's can be found ")
 					.'<a href="'.LIBERTY_PKG_URL.'list_content.php" title="Launch BitWeaver Content Browser in New Window" '
 					.'onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">'
 					.tra( "Here" ) . '</a> '
@@ -163,7 +163,7 @@ function data_spytext_help() {
  * Load Function *
  *****************/
 function data_spytext($data, $params) {
-	global $gLibertySystem; 
+	global $gLibertySystem;
 	global $gBitUser;
 	global $gBitInstaller;
 
@@ -171,11 +171,11 @@ function data_spytext($data, $params) {
 //	$icon = FALSE;
 //	$alert = TRUE;
 	extract ($params);
-	
+
 	if (empty($data)) { // If there is NO data to display - why do anything - get out of here
 		return " ";
 	} // **************** Elvis has left the building!
-  
+
 	$isSpy = ($gBitUser->isAdmin()) ? TRUE : FALSE; // Admin should always see SpyText
     $isRealSpy = FALSE; // But Admin should not have to see all the damn Alerts
 	if (isset($spy)) { // Is the current user on the Spy List
@@ -185,7 +185,7 @@ function data_spytext($data, $params) {
 				$isSpy = TRUE;
 				$isRealSpy = TRUE;
 	}	}	}
-    
+
 	if (isset($agency)) { // Is the current user in one of the Spy Agencies
 		$spyArray = explode("|", trim(strtolower($agency))); // create an array from the string
 		$groups = $gBitUser->getGroups();
@@ -209,21 +209,19 @@ function data_spytext($data, $params) {
 		$toLine     = (isset($header[0]) && (($header[0] != '*') && ($header[0] != 'TRUE'))) ? $header[0] .' ' : $toLine;
 		$agencyLine = (isset($header[1]) && ($header[1] != '*')) ? $header[1] .' ' : $agencyLine;
 		$senderLine = (isset($header[2]) && ($header[2] != '*')) ? $header[2] .' ' : $senderLine;
-			
+
 		$addToLine = FALSE;
 		if (isset($spy)) { // Provide a Listing of all spys tested
 			$spyArray = explode("|", $spy); // Strip Out the | character
 			natcasesort ($spyArray); // Sort it
 	        foreach ($spyArray as $i) { // TODO - Remove All Non-valid users - ($i == $i)
-				if ($i == $i) {
-					$toLine = ($addToLine) ? $toLine . ', ' : $toLine; // misses the first and last Spy
-					$toLine = $toLine.'<a href="'.USERS_PKG_URL.'index.php?home='
-						.$i.'" title="Home Page for '.$i.'"><strong>'.$i.'</strong></a>';
-					$addToLine = True;
-			}	}
+				$toLine = ($addToLine) ? $toLine . ', ' : $toLine; // misses the first and last Spy
+				$toLine = $toLine.($gBitUser->userExists( array( 'login' => $i ) ) ? BitUser::getDisplayName( TRUE, array( 'login' => $i ) ) : $i );
+				$addToLine = True;
+			}
 			$toLine = '<tr><td style="vertical-align: top;">' .$toLine. '</td></tr>';
 		}
-			
+
 		$addAgencyLine = FALSE;
 		if (isset($agency)) { // Provide a Listing of all agencies tested
 			$agency_array = explode("|", $agency); // Strip Out the | character
@@ -243,7 +241,7 @@ function data_spytext($data, $params) {
 			}	}	}
 			$agencyLine = '<tr><td style="vertical-align: top;">' . $agencyLine . '</td></tr>';
 		}
-			
+
 		$addSenderLine = FALSE;
 		if (isset($sender)) { // Provide a Listing of all senders tested
 			$spyArray = explode("|", $sender); // Strip Out the | character
@@ -257,7 +255,7 @@ function data_spytext($data, $params) {
 			}	}
 			$senderLine = '<tr><td style="vertical-align: top;">' . $senderLine . '</td></tr>';
 		}
-			
+
 		$ab = (microtime() * 1000000);
 		$toHeader = '<div>'
 			.'<table width="100%" border="0" cellspacing="0" cellpadding="0">'
@@ -270,7 +268,7 @@ function data_spytext($data, $params) {
 				.'</tr>'
 			.'</table>'
 		.'</div>';
-			
+
 		$addToBox = ($addToBox && ($addToLine || ($addAgencyLine || $addSenderLine))) ? TRUE : FALSE;
 		if ($addToBox) {
 			$toBox = '<div>'; // Wrap's Arround Everything in toBox
@@ -281,7 +279,7 @@ function data_spytext($data, $params) {
 				$toBox = $toBox . '</table></div>';
 			$toBox = $toBox . '</div>';
 	}	}
-		
+
 	$mt = (microtime() * 1000000);
 	$hidden = (isset($hidden)) ? TRUE : FALSE;
 	$useIcon = (isset($icon)) ? TRUE : FALSE;
@@ -315,7 +313,7 @@ function data_spytext($data, $params) {
 //	$ret = $ret .'<div class="help box">';
     $ret = ($addToBox) ? $ret.$toBox : $ret;
 	$ret = $ret .'<div class="help box" style="text-align:left;">'.$data.'</div>';
-//    $ret = $ret.'</div>'; 
+//    $ret = $ret.'</div>';
     $ret = ($hidden) ? $ret.'</div>' : $ret;
 
 
@@ -340,7 +338,7 @@ function data_spytext($data, $params) {
 			$spyArray[$i] = (trim(strtoupper($spyArray[$i])) == 'USERNAME') ? $gBitUser->getTitle() : $spyArray[$i];
 		}
 		$spyMsg = implode(" ", $spyArray);
-		echo "<script>window.alert(\"" .$spyMsg. "\");</script>";
+//		echo "<script>window.alert(\"" .$spyMsg. "\");</script>";
 	}
 
 /* The following is the testing page used for this plugin - copy it into a page
@@ -368,62 +366,62 @@ So Lets Play a Buildup Game - Each Call Adds to the Original
 
 ))SpyText(( w/ to='TRUE'
 __Note__ The address box is not displayed because spy/agency/& sender are not defined - so there is nothing to put in it
-{SPYTEXT to='TRUE' }Data{SPYTEXT} 
+{SPYTEXT to='TRUE' }Data{SPYTEXT}
 
 ))SpyText(( w/ spy='Spider|Xing|Confusus'
 (On TODO List) Confusus is not a user so he should not be displayed
-{SPYTEXT spy='Spider|Xing|Confusus' to='TRUE' }Data{SPYTEXT} 
+{SPYTEXT spy='Spider|Xing|Confusus' to='TRUE' }Data{SPYTEXT}
 
 ))SpyText(( w/ agency='Aardvarks|Testing'
 (On TODO List) Aardvarks is not a Group so it should not be displayed
-{SPYTEXT spy='Spider|Xing|Confusus' agency='Aardvarks|Testing' to='TRUE' }Data{SPYTEXT} 
+{SPYTEXT spy='Spider|Xing|Confusus' agency='Aardvarks|Testing' to='TRUE' }Data{SPYTEXT}
 
-))SpyText(( w/ sender='StarRider|Wolffy' {SPYTEXT spy='Spider|Xing|Confusus' agency='Aardvarks|Testing' sender='StarRider|Wolffy' to='TRUE' }Data{SPYTEXT} 
+))SpyText(( w/ sender='StarRider|Wolffy' {SPYTEXT spy='Spider|Xing|Confusus' agency='Aardvarks|Testing' sender='StarRider|Wolffy' to='TRUE' }Data{SPYTEXT}
 
 Testing the parameter to / Was True / Replacing a single Header
 ))SpyText(( w/ to='*|*|The Sexiest Spy Ever:'
-{SPYTEXT spy='Spider|Xing|Confusus' agency='Aardvarks|Testing' sender='StarRider|Wolffy' to='*|*|The Sexiest Spy Ever:' }Data{SPYTEXT} 
+{SPYTEXT spy='Spider|Xing|Confusus' agency='Aardvarks|Testing' sender='StarRider|Wolffy' to='*|*|The Sexiest Spy Ever:' }Data{SPYTEXT}
 
 Testing the parameter to / Assigning all new Headers
 ))SpyText(( w/ to='To:|Groups:|From:'
-{SPYTEXT spy='Spider|Xing|Confusus' agency='Aardvarks|Testing' sender='StarRider|Wolffy' to='To:|Groups:|From:' }Data{SPYTEXT} 
+{SPYTEXT spy='Spider|Xing|Confusus' agency='Aardvarks|Testing' sender='StarRider|Wolffy' to='To:|Groups:|From:' }Data{SPYTEXT}
 
 
 Testing the parameter to / Not Assigning Enough Headers
 ))SpyText(( w/ to='To:'
-{SPYTEXT spy='Spider|Xing|Confusus' agency='Aardvarks|Testing' sender='StarRider|Wolffy' to='To:' }Data{SPYTEXT} 
+{SPYTEXT spy='Spider|Xing|Confusus' agency='Aardvarks|Testing' sender='StarRider|Wolffy' to='To:' }Data{SPYTEXT}
 
 Turning On Members - this time only
 Another item on the TODO List - but Sectioning has been added
-{SPYTEXT spy='Spider|Xing|Confusus' agency='Aardvarks|Testing' sender='StarRider|Wolffy' to='To:' members='TRUE' }Data{SPYTEXT} 
+{SPYTEXT spy='Spider|Xing|Confusus' agency='Aardvarks|Testing' sender='StarRider|Wolffy' to='To:' members='TRUE' }Data{SPYTEXT}
 
 -=::OK - Lets Get Hidden::=-
 This Should display only the Title Bar - Everything else is collapsed
 ))SpyText(( Parameter List = spy='Spider|Xing' agency='Aardvarks|Testing' sender='StarRider|Wolffy' hidden='TRUE'
-{SPYTEXT spy='Spider|Xing' agency='Aardvarks|Testing' sender='StarRider|Wolffy' hidden='TRUE' }Data{SPYTEXT} 
+{SPYTEXT spy='Spider|Xing' agency='Aardvarks|Testing' sender='StarRider|Wolffy' hidden='TRUE' }Data{SPYTEXT}
 
 Added to=TRUE
 ))SpyText(( Parameter List = spy='Spider|Xing' agency='Aardvarks|Testing' sender='StarRider|Wolffy' hidden='TRUE' to='TRUE'
-{SPYTEXT spy='Spider|Xing' agency='Aardvarks|Testing' sender='StarRider|Wolffy' hidden='TRUE' to='TRUE' }Data{SPYTEXT} 
+{SPYTEXT spy='Spider|Xing' agency='Aardvarks|Testing' sender='StarRider|Wolffy' hidden='TRUE' to='TRUE' }Data{SPYTEXT}
 
 Added title='Aardvarks' & width='25'
 ))SpyText(( Parameter List = spy='Spider|Xing' agency='Aardvarks|Testing' sender='StarRider|Wolffy' hidden='TRUE' to='TRUE' title='Aardvarks' width='25'
-{SPYTEXT spy='Spider|Xing' agency='Aardvarks|Testing' sender='StarRider|Wolffy' hidden='TRUE' to='TRUE' title='Aardvarks' width='25'}Data{SPYTEXT} 
+{SPYTEXT spy='Spider|Xing' agency='Aardvarks|Testing' sender='StarRider|Wolffy' hidden='TRUE' to='TRUE' title='Aardvarks' width='25'}Data{SPYTEXT}
 
 -=::OK - Lets Do Icons::=-
 Starting Over - Added icon=TRUE
 ))SpyText(( Parameter List = spy='Spider|Xing' agency='Aardvarks|Testing' sender='StarRider|Wolffy' hidden='TRUE' to='TRUE' icon='TRUE'
-{SPYTEXT spy='Spider|Xing' agency='Aardvarks|Testing' sender='StarRider|Wolffy' hidden='TRUE' to='TRUE' icon='TRUE' }Data{SPYTEXT} 
+{SPYTEXT spy='Spider|Xing' agency='Aardvarks|Testing' sender='StarRider|Wolffy' hidden='TRUE' to='TRUE' icon='TRUE' }Data{SPYTEXT}
 
 An Icon can still be placed in the middle {SPYTEXT spy='Spider|Xing' agency='Aardvarks|Testing' sender='StarRider|Wolffy' hidden='TRUE' to='TRUE' icon='TRUE' }Data{SPYTEXT} of a line? Dosen't look too bad expanded either.
 
-Changed icon to a URL 
+Changed icon to a URL
 ))SpyText(( Parameter List = spy='Spider|Xing' agency='Aardvarks|Testing' sender='StarRider|Wolffy' hidden='TRUE' to='TRUE' icon='http://localhost/Bitweaver/liberty/icons/imagick_logo.jpg'
-{SPYTEXT spy='Spider|Xing' agency='Aardvarks|Testing' sender='StarRider|Wolffy' hidden='TRUE' to='TRUE' icon='http://localhost/Bitweaver/liberty/icons/imagick_logo.jpg' }Data{SPYTEXT} 
+{SPYTEXT spy='Spider|Xing' agency='Aardvarks|Testing' sender='StarRider|Wolffy' hidden='TRUE' to='TRUE' icon='http://localhost/Bitweaver/liberty/icons/imagick_logo.jpg' }Data{SPYTEXT}
 
 
 *////////////////////////////////////////////////////////////
-	 
+
 	return $ret;
 }
 ?>
