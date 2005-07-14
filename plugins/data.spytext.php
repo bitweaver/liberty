@@ -4,7 +4,7 @@
  * assigned_modules
  *
  * @author   StarRider starrrider@sourceforge.net
- * @version  $Revision: 1.1.2.2 $
+ * @version  $Revision: 1.1.2.3 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -214,7 +214,7 @@ function data_spytext($data, $params) {
 		if (isset($spy)) { // Provide a Listing of all spys tested
 			$spyArray = explode("|", $spy); // Strip Out the | character
 			natcasesort ($spyArray); // Sort it
-	        foreach ($spyArray as $i) { // TODO - Remove All Non-valid users - ($i == $i)
+	        foreach ($spyArray as $i) {
 				$toLine = ($addToLine) ? $toLine . ', ' : $toLine; // misses the first and last Spy
 				$toLine = $toLine.($gBitUser->userExists( array( 'login' => $i ) ) ? BitUser::getDisplayName( TRUE, array( 'login' => $i ) ) : $i );
 				$addToLine = True;
@@ -226,18 +226,28 @@ function data_spytext($data, $params) {
 		if (isset($agency)) { // Provide a Listing of all agencies tested
 			$agency_array = explode("|", $agency); // Strip Out the | character
 			natcasesort ($agency_array); // Sort it
+			$listHash = array( 'sort_mode' => 'group_name_asc' );
+			$groups = $gBitUser->getAllGroups( $listHash );
             foreach ($agency_array as $i) { // TODO - Remove all Non-valid groups - ($i == $i)
-				if ($i == $i) {
+				if( $groupId = $gBitUser->groupExists( $i ) ) {
+					$validGroups[$groupId] = $i;
 					$agencyLine = ($addAgencyLine) ? $agencyLine .', ' : $agencyLine; // misses the first and last Agency
 					$agencyLine = $agencyLine . '<strong>' .$i. '</strong>';
 					$addAgencyLine = True;
-			}	}
+				} else {
+					$k = key( $agency_array );
+					unset( $agency_array[$k] );
+				}
+			}
 			$addMembers = (isset($members)) ? TRUE : FALSE;
-			if ($addMembers) { // TODO
-	            foreach ($agency_array as $i) { // TODO - Remove all Non-valid groups - ($i == $i)
-					if ($i == $i) {
+			if ($addMembers && !empty( $validGroups ) ) { // TODO
+	            foreach( $validGroups as $groupId => $groupName ) { // TODO - Remove all Non-valid groups - ($i == $i)
+					if( $members = $gBitUser->get_group_users( $groupId ) ) {
 						$agencyLine = $agencyLine . '<br /><strong>' .$i. '</strong> Members: ';
 						// TODO - Add each member of valid Group Here
+						foreach( array_keys( $members ) as $userId ) {
+							$agencyLine .= BitUser::getDisplayName( TRUE, $members[$userId] ).', ';
+						}
 			}	}	}
 			$agencyLine = '<tr><td style="vertical-align: top;">' . $agencyLine . '</td></tr>';
 		}
