@@ -19,7 +19,7 @@
 					{formlabel label="Acceptable HTML tags" for="approved_html_tags"}
 					{formfeedback warning=$errors.warning}
 					{forminput}
-						<input type="text" id="approved_html_tags" name="approved_html_tags" size="60" maxlength="250" value="{$approved_html_tags|escape}" />
+						<input type="text" id="approved_html_tags" name="approved_html_tags" size="50" maxlength="250" value="{$approved_html_tags|escape}" />
 						{formhelp note="List of allowed HTML tags. All other tags will be stripped when users save content. This will affect all format plugins."}
 					{/forminput}
 				</div>
