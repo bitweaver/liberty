@@ -16,7 +16,7 @@
 
 	<br />
 
-	{if $gBitSystemPrefs.direct_pagination eq 'y'}
+	{if $gBitSystem->isFeatureActive( 'direct_pagination' )}
 		{foreach from=$pgnPages item=link}
 			{$link}&nbsp;
 		{/foreach}

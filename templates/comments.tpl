@@ -51,11 +51,11 @@
 					</div>
 
 					{assign var=textarea_id value="commentpost"}
-					{if $gBitSystemPrefs.package_smileys eq 'y'}
+					{if $gBitSystem->isPackageActive( 'smileys' )}
 						{include file="bitpackage:smileys/smileys_full.tpl"}
 					{/if}
 
-					{if $gBitSystemPrefs.package_quicktags eq 'y'}
+					{if $gBitSystem->isPackageActive( 'quicktags' )}
 						{include file="bitpackage:quicktags/quicktags_full.tpl" formId="commentpost"}
 					{/if}
 
@@ -79,7 +79,7 @@
 			{/if}
 		{/form}
 
-		{if $comments and $gBitSystemPrefs.comments_display_option_bar eq 'y'}
+		{if $comments and $gBitSystem->isFeatureActive( 'comments_display_option_bar' )}
 			{form action="`$comments_return_url`#editcomments"}
 				<input type="hidden" name="post_comment_reply_id" value="{$post_comment_reply_id}" />
 				<input type="hidden" name="post_comment_id" value="{$post_comment_id}" />
