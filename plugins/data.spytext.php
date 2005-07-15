@@ -4,7 +4,7 @@
  * assigned_modules
  *
  * @author   StarRider starrrider@sourceforge.net
- * @version  $Revision: 1.1.2.5 $
+ * @version  $Revision: 1.1.2.6 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -153,19 +153,14 @@ function data_spytext_help() {
 function data_spytext($data, $params) {
 	global $gLibertySystem;
 	global $gBitUser;
-	global $gBitInstaller;
-
-//	$to = FALSE;
-//	$icon = FALSE;
-//	$alert = TRUE;
 	extract ($params);
-
+		
 	if (empty($data)) { // If there is NO data to display - why do anything - get out of here
 		return " ";
 	} // **************** Elvis has left the building!
-
+		
 	$isSpy = ($gBitUser->isAdmin()) ? TRUE : FALSE; // Admin should always see SpyText
-    $isRealSpy = FALSE; // But Admin should not have to see all the damn Alerts
+    $isRealSpy = FALSE; // So Admin does not see EVERY Alert
 	if (isset($spy)) { // Is the current user on the Spy List
 		$spyArray = explode("|", trim(strtolower($spy))); // spy's allowed to see the message
 		foreach ($spyArray as $i) {
@@ -173,7 +168,7 @@ function data_spytext($data, $params) {
 				$isSpy = TRUE;
 				$isRealSpy = TRUE;
 	}	}	}
-
+		
 	if (isset($agency)) { // Is the current user in one of the Spy Agencies
 		$spyArray = explode("|", trim(strtolower($agency))); // create an array from the string
 		$groups = $gBitUser->getGroups();
@@ -183,11 +178,11 @@ function data_spytext($data, $params) {
 					$isSpy = TRUE;
 					$isRealSpy = TRUE;
 	}	}	}	}
-
+		
 	if (!$isSpy) { // The current user is NOT a Spy - get out of here
 		return " ";
 	} // **************** Elvis has left the building!
-
+		
 	$addToBox = (isset($to)) ? TRUE : FALSE;
 	if ($addToBox) {
         $toLine = 'To the Spy: '; // Set Default
@@ -197,7 +192,7 @@ function data_spytext($data, $params) {
 		$toLine     = (isset($header[0]) && (($header[0] != '*') && ($header[0] != 'TRUE'))) ? $header[0] .' ' : $toLine;
 		$agencyLine = (isset($header[1]) && ($header[1] != '*')) ? $header[1] .' ' : $agencyLine;
 		$senderLine = (isset($header[2]) && ($header[2] != '*')) ? $header[2] .' ' : $senderLine;
-
+		
 		$addToLine = FALSE;
 		if (isset($spy)) { // Provide a Listing of all spys tested
 			$spyArray = explode("|", $spy); // Strip Out the | character
@@ -207,10 +202,10 @@ function data_spytext($data, $params) {
 					$toLine = ($addToLine) ? $toLine . ', ' : $toLine; // misses the first and last Spy
 					$toLine = $toLine.(BitUser::getDisplayName( TRUE, array('login' => $i)));
 					$addToLine = True;
-			}
+			}	}
 			$toLine = '<tr><td style="vertical-align: top;">' .$toLine. '</td></tr>';
 		}
-
+			
 		$addAgencyLine = FALSE;
 		if (isset($agency)) { // Provide a Listing of all agencies tested
 			$agency_array = explode("|", $agency); // Strip Out the | character
@@ -226,11 +221,10 @@ function data_spytext($data, $params) {
 				} else {
 					$k = key( $agency_array );
 					unset( $agency_array[$k] );
-				}
-			}
+			}	}
 			$agencyLine = '<tr><td style="vertical-align: top;">' . $agencyLine . '</td></tr>';
 		}
-
+			
 		$addSenderLine = FALSE;
 		if (isset($sender)) { // Provide a Listing of all senders tested
 			$spyArray = explode("|", $sender); // Strip Out the | character
@@ -243,7 +237,7 @@ function data_spytext($data, $params) {
 			}	}
 			$senderLine = '<tr><td style="vertical-align: top;">' . $senderLine . '</td></tr>';
 		}
-
+			
 		$ab = (microtime() * 1000000);
 		$toHeader = '<div>'
 			.'<table width="100%" border="0" cellspacing="0" cellpadding="0">'
@@ -256,7 +250,7 @@ function data_spytext($data, $params) {
 				.'</tr>'
 			.'</table>'
 		.'</div>';
-
+			
 		$addToBox = ($addToBox && ($addToLine || ($addAgencyLine || $addSenderLine))) ? TRUE : FALSE;
 		if ($addToBox) {
 			$toBox = '<div>'; // Wrap's Arround Everything in toBox
@@ -266,22 +260,21 @@ function data_spytext($data, $params) {
 					$toBox = ($addSenderLine) ? $toBox . $senderLine : $toBox; // Drop fromLine if nothing on it
 				$toBox = $toBox . '</table></div>';
 			$toBox = $toBox . '</div>';
-		}
-	}
-
+	}	}
+		
 	$mt = (microtime() * 1000000);
 	$hidden = (isset($hidden)) ? TRUE : FALSE;
-	$useIcon = (isset($icon)) ? TRUE : FALSE;
 	if ($hidden) {
+		$useIcon = (isset($icon)) ? TRUE : FALSE;
 		if ($useIcon) {
-			if ((strtoupper(trim($icon))) == 'TRUE') {
+			if ((trim(strtoupper($icon))) == 'TRUE')
 				$spyLink = '<a href="javascript:flip('.$mt.')"><img src="'.LIBERTY_PKG_URL.'icons/spy.gif"></img></a>'; // Default
-			}
-		}
-            // --------------------------> TODO - Need Same thing with Content Id No's
+            // --------------------------> TODO - Need to set with Content Id No's
             if (!isset($spyLink)) {
 				$spyLink = '<a href="javascript:flip('.$mt.')"><img src="'.$icon.'"></img></a>'; // Last Choice - A URL
-			}
+			} else {
+				$spyLink = '<a href="javascript:flip('.$mt.')"><img src="'.LIBERTY_PKG_URL.'icons/spy.gif"></img></a>'; // Default
+			} // Place the default last
 		} else { // It's not linked to an Icon - so - It needs Title Bar
 			$width = (isset($width)) ? $width : '20';
 			$width = ((100 - $width) / 2) . '%';
@@ -297,14 +290,12 @@ function data_spytext($data, $params) {
 					.'</tr>'
 				.'</table>'
 			.'</div>';
-		}
-	}
+	}	}
     $ret = ($hidden) ? $spyLink. '<div class="help box" style="display:none;" id="' .$mt. '">' : '';
     $ret = ($addToBox) ? $ret.$toBox : $ret;
 	$ret = $ret .'<div class="help box" style="text-align:left;">'.$data.'</div>';
     $ret = ($hidden) ? $ret.'</div>' : $ret;
-
-
+		
 // I'm NOT Sure if this should be include or not - especially the way I have it set up
 // I have reduced the number of Alerts that an Admin would recieve - Only Hidden Messages
 	$spyAlert = FALSE;
