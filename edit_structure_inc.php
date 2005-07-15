@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.1.1.1.2.2 $
+ * @version  $Revision: 1.1.1.1.2.3 $
  * @package  Liberty
  * @subpackage functions
  */
@@ -140,7 +140,7 @@ if( empty( $gContent ) ) {
 	}
 
 	$smarty->assign( (!empty( $_REQUEST['tab'] ) ? $_REQUEST['tab'] : 'body').'TabSelect', 'tdefault' );
-	$smarty->assign('subtree', $rootStructure->getSubTree( $rootStructure->mStructureId ));
+	$smarty->assign('subtree', $rootTree = $rootStructure->getSubTree( $rootStructure->mStructureId ));
 
 }
 
