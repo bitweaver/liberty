@@ -1,21 +1,22 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.dropdown.php,v 1.1.2.2 2005/06/30 06:50:22 lsces Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.dropdown.php,v 1.1.2.3 2005/07/16 03:52:25 starrrider Exp $
 /**
  * assigned_modules
  *
  * @author   StarRider <starrrider@sourceforge.net>
- * @version  $Revision: 1.1.2.2 $
+ * @version  $Revision: 1.1.2.3 $
  * @package  liberty
  * @subpackage plugins_data
+ * 
  * @copyright Copyright (c) 2004, bitweaver.org
  * All Rights Reserved. See copyright.txt for details and a complete list of authors.
  * @license Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
  */
-global $gLibertySystem;
 
 /**
  * Initialization
  */
+global $gLibertySystem;
 define( 'PLUGIN_GUID_DROPDOWN', 'dropdown' );
 $pluginParams = array ( 'tag' => 'DD',
 						'auto_activate' => TRUE,
