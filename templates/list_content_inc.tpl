@@ -29,8 +29,7 @@
 		<th>{smartlink ititle="Title" isort=title page=$page user_id=$user_id idefault=1}</th>
 		<th>{smartlink ititle="Content Type" isort=content_type_guid page=$page user_id=$user_id}</th>
 		<th>{tr}Author{/tr}</th>
-		<th>{tr}Most Recent Editor{/tr}</th>
-		<th>&nbsp;</th>
+		<th colspan="2">{tr}Most Recent Editor{/tr}</th>
 	</tr>
 	{foreach from=$contentList item=item}
 		<tr class="{cycle values='odd,even'}">
