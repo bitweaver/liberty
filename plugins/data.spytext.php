@@ -1,10 +1,10 @@
 <?php
-// $Header:
+// $id:
 /**
  * assigned_modules
  *
  * @author   StarRider starrrider@sourceforge.net
- * @version  $Revision: 1.1.2.6 $
+ * @version  $Revision: 1.1.2.7 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
