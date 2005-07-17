@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.maketoc.php,v 1.3 2005/07/17 17:36:10 squareing Exp $
 
 /**
  * definitions
@@ -32,7 +32,7 @@ $pluginParams = array ( 'tag' => 'MAKETOC',
 						'description' => tra("Will create a table of contents of the WikiPage based on the headings below."),
 						'help_function' => 'data_maketoc_help',
 
-						'syntax' => "{maketoc}",
+						'syntax' => "{MAKETOC}",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAMAKETOC, $pluginParams );
@@ -63,7 +63,7 @@ function data_maketoc_help() {
 				.'<td>' . tra( 'if you set backtotop <strong>' ).'true'.( '</strong>, it will insert a "back to the top" link.' ) . '</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . '{maketoc maxdepth=3 include=all backtotop=true}';
+		. tra("Example: ") . '{MAKETOC maxdepth=3 include=all backtotop=true}';
 	return $help;
 }
 
@@ -75,13 +75,13 @@ function data_maketoc( $data ) {
 	}
 
 	// get all headers into an array
-	preg_match_all( "/<h(\d).*?>.*?<\/h.>/i", $data, $headers );
+	preg_match_all( "/<h(\d).*?>(.*?)<\/h.>/i", $data, $headers );
 
 	// remove any html tags from the output text and generate link ids
-	foreach( $headers[0] as $output ) {
-		$output = preg_replace( "/<.*?>/", '', $output );
-		$outputs[] = $output;
-		$anchors[] = 'id'.microtime() * 1000000;
+	foreach( $headers[2] as $output ) {
+		$outputs[] = preg_replace( "/<.*?>/", "", $output );
+		$anchor = preg_replace( "/[^\w|\d]*/", "", $output );
+		$anchors[] = !empty( $anchor) ? $anchor : 'id'.microtime() * 1000000;
 	}
 
 	// insert the <a name> tags in the right places

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.addtabs.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.addtabs.php,v 1.3 2005/07/17 17:36:09 squareing Exp $
 
 /**
  * definitions
@@ -31,7 +31,7 @@ $pluginParams = array ( 'tag' => 'ADDTABS',
 						'help_page' => 'DataPluginAddTabs',
 						'description' => tra("Will join the contents from several sources in a Tabbed Interface."),
 						'help_function' => 'data_addtabs_help',
-						'syntax' => "{addtabs tab1= tab2= tab3= . . . tab99= }",
+						'syntax' => "{ADDTABS tab1= tab2= tab3= . . . tab99= }",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAADDTABS, $pluginParams );
@@ -57,24 +57,23 @@ function data_addtabs_help() {
 				. tra("<br /><strong>Note 2:</strong> The order used when the tabs are specified does not matter. The Tabname does - Tab1 is always first and Tab99 will always be last.</td>")
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . '{addtabs tab1=15 tab2=12 tab3=11}';
+		. tra("Example: ") . '{ADDTABS tab1=15 tab2=12 tab3=11}';
 	return $help;
 }
 
 function data_addtabs($data, $params) {
 	extract ($params);
-	$ret = "<div id='tab-system' class='tabsystem'>";
+	$ret = '<div class="tabpane">';
 	for ($i = 1; $i <= 99; $i++) {
 		if( isset( ${'tab'.$i} ) && is_numeric( ${'tab'.$i} ) ) {
 			$obj = LibertyBase::getLibertyObject( ${'tab'.$i} );
 			if( $obj->load() ) {
-				$ret .= "<div class='tabpage '><h3>" .$obj->getTitle() . "</h3><div class='contents'>" . $obj->parseData() . "</div></div><!-- end .tabpage -->";
-//				$ret .= "<div class='tabpage '><h3>" . ${'tab'.$i} . "</h3><div class='contents'>" . $obj->parseData() . "</div></div><!-- end .tabpage -->";
+				$ret .= '<div class="tabpage"><h4 class="tab">'.$obj->getTitle().'</h4>'.$obj->parseData().'</div>';
 				$good=True;
 			}
 		}
 	}
-	$ret .= "</div>";
+	$ret .= "</div><script type=\"text/javascript\">//<![CDATA[\nsetupAllTabs();\n//]]></script>";
 	if( !$good ) {
 		$ret = "The Plugin AddTabs requires valid parameters. Numeric content id numbers can use the parameter names 'tab1' thru 'tab99'";
 	}

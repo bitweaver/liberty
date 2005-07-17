@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.attachment.php,v 1.3 2005/07/17 17:36:09 squareing Exp $
 
 /**
  * definitions
@@ -32,7 +32,7 @@ $pluginParams = array ( 'tag' => 'ATTACHMENT',
 						'help_page' => 'DataPluginAttachment',
 						'description' => tra("Display attachment in content"),
 						'help_function' => 'data_attachment_help',
-						'syntax' => '{attachment id= size= align= }',
+						'syntax' => '{ATTACHMENT id= size= align= }',
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAATTACHMENT, $pluginParams );
@@ -77,7 +77,7 @@ function data_attachment_help() {
 				. tra("(Default = ") . '<strong>'.tra( 'none - attachment is shown inline' ).'</strong>)</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . "{attachment id='13' size='small' align='center' link='http://www.google.com'}";
+		. tra("Example: ") . "{ATTACHMENT id='13' size='small' align='center' link='http://www.google.com'}";
 	return $help;
 }
 

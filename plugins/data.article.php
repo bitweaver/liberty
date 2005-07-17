@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_article.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.article.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.article.php,v 1.3 2005/07/17 17:36:09 squareing Exp $
 
 /**
  * definitions
@@ -36,7 +36,7 @@ $pluginParams = array ( 'tag' => 'ARTICLE',
 						'help_page' => 'DataPluginArticle',
 						'description' => tra("This plugin will display the data from a single field in the specified Article."),
 						'help_function' => 'data_article_help',
-						'syntax' => "{article id= field=}",
+						'syntax' => "{ARTICLE id= field=}",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAARTICLE, $pluginParams );
@@ -63,7 +63,7 @@ function data_article_help() {
 				. tra("This includes (in order of usefulnes):") . '<strong>title, heading, body, author, size, reads, votes, points, type and rating</strong>' . '</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . "{article id=14 field='heading'}";
+		. tra("Example: ") . "{ARTICLE id=14 field='heading'}";
 	return $help;
 }
 

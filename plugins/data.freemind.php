@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -27,7 +27,7 @@ $pluginParams = array ( 'tag' => 'MM',
 						'auto_activate' => TRUE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_freemind',
-						'title' => 'FreeMind (MM)',
+						'title' => 'FreeMind (Mind Map)',
 						'help_page' => 'DataPluginFreeMind',
 						'description' => tra("Displays a Freemind mindmap"),
 						'help_function' => 'data_freemind_help',

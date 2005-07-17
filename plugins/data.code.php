@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.code.php,v 1.3 2005/07/17 17:36:09 squareing Exp $
 
 /**
  * definitions
@@ -32,7 +32,7 @@ $pluginParams = array ( 'tag' => 'CODE',
 						'help_page' => 'DataPluginCode',
 						'description' => tra("Displays the Source Code Snippet between {Code} blocks."),
 						'help_function' => 'data_code_help',
-						'syntax' => " {code source= num= }". tra("Sorce Code Snippet") . "{code}",
+						'syntax' => " {CODE source= num= }". tra("Sorce Code Snippet") . "{code}",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACODE, $pluginParams );
@@ -59,7 +59,7 @@ function data_code_help() {
 				.'<td>' . tra( "Determins if line numbers are displayed. Passing") . ' <strong>TRUE, ON, or YES</strong> ' . tra("in this parameter will make it") . ' <strong>TRUE</strong>. ' . tra("Any ohter value will make it") . ' <strong>FALSE</strong>' . tra("The Default =") . ' <strong>FALSE</strong> ' . tra("so Line Numbers are not displayed.") . '</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . "{code source='php' num='on' }" . tra("Sorce Code Snippet") . "{code}";
+		. tra("Example: ") . "{CODE source='php' num='on' }" . tra("Sorce Code Snippet") . "{code}";
 	return $help;
 }
 

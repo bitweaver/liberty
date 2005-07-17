@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_backlinks.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.backlinks.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.backlinks.php,v 1.3 2005/07/17 17:36:09 squareing Exp $
 
 /**
  * definitions
@@ -36,7 +36,7 @@ $pluginParams = array ( 'tag' => 'BACKLINKS',
 						'help_page' => 'DataPluginBackLinks',
 						'description' => tra("This plugin will list all Wiki pages which contains a link to the specified page."),
 						'help_function' => 'data_backlinks_help',
-						'syntax' => "{backlinks page= info= exclude= self= header= }",
+						'syntax' => "{BACKLINKS page= info= exclude= self= header= }",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATABACKLINKS, $pluginParams );
@@ -79,8 +79,8 @@ function data_backlinks_help() {
 				.'<td>' . tra( "Causes a heading to be displayed above the list. Any value results in TRUE. (Default = FALSE)") . '</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . "{backlinks page='MyHomePage' info='hits|user' exclude='HomePage|SandBox'}<br />"
-		. tra("Example: ") . "{backlinks page='MyHomePage' info='hits|user' exclude='HomePage|SandBox' self='Yes' header='Yes'}";
+		. tra("Example: ") . "{BACKLINKS page='MyHomePage' info='hits|user' exclude='HomePage|SandBox'}<br />"
+		. tra("Example: ") . "{BACKLINKS page='MyHomePage' info='hits|user' exclude='HomePage|SandBox' self='Yes' header='Yes'}";
 	return $help;
 }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_avatar.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.avatar.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.avatar.php,v 1.3 2005/07/17 17:36:09 squareing Exp $
 
 /**
  * definitions
@@ -36,7 +36,7 @@ $pluginParams = array ( 'tag' => 'AVATAR',
 						'help_page' => 'DataPluginAvatar',
 						'description' => tra("This plugin will display a User's Avatar as a Link to a page."),
 						'help_function' => 'data_avatar_help',
-						'syntax' => "{avatar user= page= float= }",
+						'syntax' => "{AVATAR user= page= float= }",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAAVATAR, $pluginParams );
@@ -69,7 +69,7 @@ function data_avatar_help() {
 				. ' <strong>left or right</strong> ' . tra("(Default = ") . '<strong>NOT SET</strong>)</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . "{include user='admin' page='home' float='right'}";
+		. tra("Example: ") . "{AVATAR user='admin' page='home' float='right'}";
 	return $help;
 }
 

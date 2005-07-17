@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  */
 
@@ -16,7 +16,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
 * System class for handling the liberty package
 *
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.2 $
+* @version  $Revision: 1.3 $
 * @package  Liberty
 * @subpackage  LibertyStructure
 */
@@ -140,6 +140,7 @@ class LibertyStructure extends LibertyBase {
 				$struct_info = $this->getNode( $pStructureId );
 				$aux["first"]       = true;
 				$aux["last"]        = true;
+				$aux["level"]       = $level;
 				$aux["pos"]         = '';
 				$aux["structure_id"] = $struct_info["structure_id"];
 				$aux["title"]    = $struct_info["title"];
@@ -161,6 +162,7 @@ class LibertyStructure extends LibertyBase {
 				$aux = $res;
 				$aux["first"]       = ($pos == 1);
 				$aux["last"]        = false;
+				$aux["level"]       = $level;
 				if (strlen($parent_pos) == 0) {
 					$aux["pos"] = "$pos";
 				}
@@ -289,7 +291,7 @@ class LibertyStructure extends LibertyBase {
 			$this->mDb->CompleteTrans();
 			$ret = $pParamHash['structure_id'];
 		} else {
-//vd( $this->mErrors );
+			//vd( $this->mErrors );
 		}
 		return $ret;
 	}

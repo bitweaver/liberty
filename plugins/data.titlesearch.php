@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_titlesearch.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.titlesearch.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.titlesearch.php,v 1.3 2005/07/17 17:36:10 squareing Exp $
 
 /**
  * definitions
@@ -33,7 +33,7 @@ $pluginParams = array ( 'tag' => 'TITLESEARCH',
 //						'title' => 'TitleSearch',                                                                                         // and Remove the comment from the start of this line
 						'help_page' => 'DataPluginTitleSearch',
 						'description' => tra("This plugin search the titles of all pages in this wiki."),
-						'help_function' => 'data__titlesearch_help',
+						'help_function' => 'data_titlesearch_help',
 						'syntax' => "{TITLESEARCH search= info= exclude= noheader= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

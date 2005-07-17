@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.toc.php,v 1.3 2005/07/17 17:36:10 squareing Exp $
 
 /**
  * definitions
@@ -28,27 +28,27 @@ global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'toc',
 						'auto_activate' => TRUE,
 						'requires_pair' => FALSE,
-						'load_function' => 'toc_parse_data',
-						'title' => 'Table Of Contents',
+						'load_function' => 'data_toc',
+						'title' => 'Table Of Contents (TOC)',
 						'help_page' => 'DataPluginTOC',
 						'description' => tra("Display a Table Of Contents for Structures"),
-						'help_function' => 'toc_extended_help',
+						'help_function' => 'data_toc_help',
 						'syntax' => '{TOC sturcture_id= }',
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_TOC, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_TOC );
 
-function toc_extended_help() {
-	return 'NO HELP WRITTEN FOR {toc}';
+function data_toc_help() {
+	return 'NO HELP WRITTEN FOR {TOC}';
 }
 
-function toc_parse_data( $data, $params ) {
+function data_toc( $data, $params ) {
 	$repl = '';
 	include_once( LIBERTY_PKG_PATH.'LibertyStructure.php' );
 	global $gStructure, $gContent;
 	$struct = NULL;
-	if( empty( $gStructure ) || !$gStructure->isValid() ) {
+	if( is_object( $gContent ) && (empty( $gStructure ) || !$gStructure->isValid()) ) {
 		$structures = $gContent->getStructures();
 		// We take the first structure. not good, but works for now - spiderr
 		if( !empty( $structures[0] ) ) {

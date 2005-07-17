@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Rewritten for bitweaver by Author
 // | wikiplugin_pluginhelp.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.pluginhelp.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.pluginhelp.php,v 1.3 2005/07/17 17:36:10 squareing Exp $
 
 /**
  * definitions
@@ -32,7 +32,7 @@ $pluginParams = array ( 'tag' => 'PLUGINHELP',
 //						'title' => 'PluginHelp',                                                                             // and Remove the comment from the start of this line
 						'help_page' => 'DataPluginPluginHelp',
 						'description' => tra("This plugin will display the plugin's Help."),
-						'help_function' => 'data__pluginhelp_help',
+						'help_function' => 'data_pluginhelp_help',
 						'syntax' => "{PLUGINHELP plugin= }",
 						'plugin_type' => DATA_PLUGIN
 					  );

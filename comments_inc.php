@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.2 2005/06/28 07:45:47 spiderr Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.3 2005/07/17 17:36:08 squareing Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -102,18 +102,40 @@ if (!empty($_REQUEST['post_comment_reply_id'])) {
 	$smarty->assign('post_comment_reply_id', $post_comment_reply_id);
 }
 
+$maxComments = $gBitSystem->getPreference( 'comments_per_page', 10 );
+if (!empty($_REQUEST["comments_maxComments"])) {
+	$maxComments = $_REQUEST["comments_maxComments"];
+	$comments_at_top_of_page = 'y';
+}
+
+$comments_sort_mode = $gBitSystem->getPreference( 'comments_default_ordering', 'commentDate_desc' );
+if (!empty($_REQUEST["comments_sort_mode"])) {
+	$comments_sort_mode = $_REQUEST["comments_sort_mode"];
+	$comments_at_top_of_page = 'y';
+}
+
+$comments_display_style = $gBitSystem->getPreference( 'comments_default_display_mode', 'threaded' );
+if( !empty( $_REQUEST["comments_style"] ) ) {
+	$comments_display_style = $_REQUEST["comments_style"];
+	$comments_at_top_of_page = 'y';
+}
+
+if( !empty( $_REQUEST['comment_page'] ) || !empty( $_REQUEST['post_comment_request'] ) ) {
+	$comments_at_top_of_page = 'y';
+}
 $commentOffset = !empty( $_REQUEST['comment_page'] ) ? ($_REQUEST['comment_page'] - 1) * $maxComments : 0;
 
 $gComment = new LibertyComment( NULL, $gContent->mContentId );
 // $commentsParentId is the content_id which the comment tree is attached to
-if (empty($commentsParentId)) {
+if( empty( $commentsParentId ) ) {
 	$comments = NULL;
 	$numComments = 0;
 } else {
-	$comments = $gComment->getComments($commentsParentId, $maxComments, $commentOffset );
-	$numComments = $gComment->getNumComments($commentsParentId);
+	$comments = $gComment->getComments( $commentsParentId, $maxComments, $commentOffset, $comments_sort_mode, $comments_display_style );
+	$numComments = $gComment->getNumComments( $commentsParentId );
 }
 $smarty->assign('comments', $comments);
+$smarty->assign('maxComments', $maxComments);
 
 $numCommentPages = ceil( $numComments / $maxComments );
 $currentPage = !empty( $_REQUEST['comment_page'] ) ? $_REQUEST['comment_page'] : 1;
@@ -123,10 +145,17 @@ $commentsPgnHash = array(
 	'pgnName' => 'comment_page',
 	'page' => $currentPage,
 	'url' => $comments_return_url,
+	'maxComments' => $maxComments,
+	'comments_sort_mode' => $comments_sort_mode,
+	'comments_style' => $comments_display_style,
+	'ianchor' => 'editcomments',
 );
 $smarty->assign( 'commentsPgnHash', $commentsPgnHash );
 $smarty->assign('postComment', $postComment);
 
 $smarty->assign('currentTimestamp', time());
 $smarty->assign('comments_return_url', $comments_return_url);
+$smarty->assign('comments_at_top_of_page', ( isset( $comments_at_top_of_page ) && $gBitSystem->getPreference( 'comments_reorganise_page_layout', 'n' ) == 'y' ) ? $comments_at_top_of_page : NULL );
+$smarty->assign('comments_style', $comments_display_style);
+$smarty->assign('comments_sort_mode', $comments_sort_mode);
 ?>

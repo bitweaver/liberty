@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
 // | by: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.sort.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.sort.php,v 1.3 2005/07/17 17:36:10 squareing Exp $
 
 /**
  * definitions
@@ -31,7 +31,7 @@ $pluginParams = array ( 'tag' => 'SORT',
 						'title' => 'Sort',
 						'help_page' => 'DataPluginSort',
 						'description' => tra("This plugin sorts operates on lines of text - not the text in the lines. Every line between the ") . "~np~{SORT}~/np~" . tra(" blocks -  including the lines the blocks are on - is sorted."),
-						'help_function' => 'data__sort_help',
+						'help_function' => 'data_sort_help',
 						'syntax' => "{SORT sort= }" . tra("Lines to be sorted") . "{SORT}",
 						'plugin_type' => DATA_PLUGIN
 					  );

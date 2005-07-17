@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_catorphans.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.catorphans.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.catorphans.php,v 1.3 2005/07/17 17:36:09 squareing Exp $
 
 /**
  * definitions
@@ -36,7 +36,7 @@ $pluginParams = array ( 'tag' => 'CATORPHANS',
 						'help_page' => 'DataPluginCatOrphans',
 						'description' => tra("Creates a listing of bitweaver objects that have not been categorized."),
 						'help_function' => 'data_catorphans_help',
-						'syntax' => "{catorphans objects= }",
+						'syntax' => "{CATORPHANS objects= }",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACATORPHANS, $pluginParams );
@@ -57,7 +57,7 @@ function data_catorphans_help() {
 				.'<td>' . tra("Most bitweaver Objects can be selected, including") . " <strong>article, blog, faq, fgal, igal, newsletter, poll, quiz, survey, tracker, & wiki</strong>. " . tra("Multiple objects can be entered bu using the character + between object names, like this") . " <strong>blog+faq</strong>. " . tra(". The default is <strong>wiki</strong> objects.") . '</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . "{catorphans objects='wiki+blog+faq'}";
+		. tra("Example: ") . "{CATORPHANS objects='wiki+blog+faq'}";
 	return $help;
 }
 

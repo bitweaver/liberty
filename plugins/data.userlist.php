@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_userlist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.userlist.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.userlist.php,v 1.3 2005/07/17 17:36:10 squareing Exp $
 
 /**
  * definitions
@@ -33,7 +33,7 @@ $pluginParams = array ( 'tag' => 'USERLIST',
 //						'title' => 'UserList',,                                                                                       // and Remove the comment from the start of this line
 						'help_page' => 'DataPluginUserList',
 						'description' => tra("This plugin will displays an alphabetically sorted list of registered users. A Group Name can be included to filter Groups to be listed."),
-						'help_function' => 'data__userlist_help',
+						'help_function' => 'data_userlist_help',
 						'syntax' => "{USERLIST num= userspage= alpha= total= email= }GroupName{USERLIST}",
 						'plugin_type' => DATA_PLUGIN
 					  );

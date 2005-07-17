@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_catpath.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.catpath.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.catpath.php,v 1.3 2005/07/17 17:36:09 squareing Exp $
 
 /**
  * definitions
@@ -62,7 +62,7 @@ function data_catpath_help() {
 				.'<td>' . tra( "Determins if the TOP category is displayed or not. Passing any value in this parameter will make it <strong>TRUE</strong>. The Default = <strong>FALSE</strong> so the TOP category will not be displayed") . '</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . "{catpath divider='->' top='yes' }";
+		. tra("Example: ") . "{CATPATH divider='->' top='yes' }";
 	return $help;
 }
 

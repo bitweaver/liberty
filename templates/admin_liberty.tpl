@@ -19,8 +19,58 @@
 					{formlabel label="Acceptable HTML tags" for="approved_html_tags"}
 					{formfeedback warning=$errors.warning}
 					{forminput}
-						<input type="text" id="approved_html_tags" name="approved_html_tags" size="60" maxlength="250" value="{$approved_html_tags|escape}" />
+						<input type="text" id="approved_html_tags" name="approved_html_tags" size="50" maxlength="250" value="{$approved_html_tags|escape}" />
 						{formhelp note="List of allowed HTML tags. All other tags will be stripped when users save content. This will affect all format plugins."}
+					{/forminput}
+				</div>
+			{/legend}
+		{/jstab}
+
+		{jstab title="Comment Settings"}
+			{legend legend="Comment Settings"}
+				{foreach from=$formCommentFeatures key=item item=output}
+					<div class="row">
+						{formlabel label=`$output.label` for=$item}
+						{forminput}
+							{html_checkboxes name="$item" values="y" checked=`$gBitSystemPrefs.$item` labels=false id=$item}
+							{formhelp note=`$output.note` page=`$output.page`}
+						{/forminput}
+					</div>
+				{/foreach}
+
+				<div class="row">
+					{formlabel label="Comments per Page" for="comments_per_page"}
+					{forminput}
+						<select name="comments_per_page" id="comments_per_page">
+							<option value="10" {if $gBitSystemPrefs.comments_per_page eq 10}selected="selected"{/if}>10</option>
+							<option value="20" {if $gBitSystemPrefs.comments_per_page eq 20}selected="selected"{/if}>20</option>
+							<option value="50" {if $gBitSystemPrefs.comments_per_page eq 50}selected="selected"{/if}>50</option>
+							<option value="100" {if $gBitSystemPrefs.comments_per_page eq 100}selected="selected"{/if}>100</option>
+							<option value="999999" {if $gBitSystemPrefs.comments_per_page eq 999999}selected="selected"{/if}>All</option>
+						</select>
+						{formhelp note="Default number of comments per page."}
+					{/forminput}
+				</div>
+
+				<div class="row">
+					{formlabel label="Default Sort Mode" for="comments_default_ordering"}
+					{forminput}
+						<select name="comments_default_ordering" id="comments_default_ordering">
+							<option value="commentDate_desc" {if $gBitSystemPrefs.comments_default_ordering eq 'commentDate_desc'}selected="selected"{/if}>{tr}Newest first{/tr}</option>
+							<option value="commentDate_asc" {if $gBitSystemPrefs.comments_default_ordering eq 'commentDate_asc'}selected="selected"{/if}>{tr}Oldest first{/tr}</option>
+							{*<option value="points_desc" {if $gBitSystemPrefs.comments_default_ordering eq 'points_desc'}selected="selected"{/if}>{tr}Points{/tr}</option>*}
+						</select>
+						{formhelp note="Select the default sort mode for comments."}
+					{/forminput}
+				</div>
+
+				<div class="row">
+					{formlabel label="Comments default display mode" for="comments_default_display_mode"}
+					{forminput}
+						<select name="comments_default_display_mode" id="comments_default_display_mode">
+							<option value="threaded" {if $gBitSystemPrefs.comments_default_display_mode eq 'threaded'}selected="selected"{/if}>{tr}Threaded{/tr}</option>
+							<option value="flat" {if $gBitSystemPrefs.comments_default_display_mode eq 'flat'}selected="selected"{/if}>{tr}Flat{/tr}</option>
+						</select>
 					{/forminput}
 				</div>
 			{/legend}
@@ -65,6 +115,7 @@
 			{/legend}
 		{/jstab}
 	{/jstabs}
+
 	<div class="row submit">
 		<input type="submit" name="change_prefs" value="{tr}Change preferences{/tr}" />
 	</div>

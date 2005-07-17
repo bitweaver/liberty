@@ -1,7 +1,9 @@
 <?php
+// $Id: data.comment.php,v 1.3 2005/07/17 17:36:09 squareing Exp $
 /**
- * @version  $Revision: 1.2 $
- * @package  Liberty
+ * @author   StarRider <starrrider@sourceforge.net>
+ * @version  $Revision: 1.3 $
+ * @package  liberty
  * @subpackage plugins_data
  */
 // +----------------------------------------------------------------------+
@@ -16,11 +18,14 @@
 // | Author: StarRider <starrrider@sourceforge.net>
 // | Wrote it but didn't think of it :-)
 // +----------------------------------------------------------------------+
-// $Id: data.comment.php,v 1.2 2005/06/29 05:43:38 spiderr Exp $
+// $Id: data.comment.php,v 1.3 2005/07/17 17:36:09 squareing Exp $
 
 /**
  * definitions
  */
+/******************
+ * Initialization *
+ ******************/
 define( 'PLUGIN_GUID_COMMENT', 'comment' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'COMMENT',
@@ -29,15 +34,16 @@ $pluginParams = array ( 'tag' => 'COMMENT',
 						'load_function' => 'data_comment',
 						'title' => 'Comment',
 						'help_page' => 'DataPluginComment',
-						'description' => tra("This plugin allows comments (Text that is not displayed) to be stored."),
+						'description' => tra("This plugin allows Comments (Text that will not be displayed) to be added to a page."),
 						'help_function' => 'data__comment_help',
-						'syntax' => "{COMMENT}",
+						'syntax' => "{COMMENT}Data Not Displayed{COMMENT}",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_COMMENT, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_COMMENT );
-
-// Help Function
+/*****************
+ * Help Function *
+ *****************/
 function data_comment_help() {
 	$help =
 		'<table class="data help">'
@@ -47,15 +53,16 @@ function data_comment_help() {
 				.'<th>' . tra( "Comments" ) . '</th>'
 			.'</tr>'
 			.'<tr class="odd">'
-				.'<td>' . tra("This plugin uses no parameters. All data located between the") . ' <strong>{COMMENT}</strong> ' 
-				.tra("is simply not displayed.") . '</td>'
+				.'<td>' . tra("This plugin uses no parameters. Anything located between the two")
+				. ' <strong>{COMMENT}</strong> ' . tra("Blocks is not displayed.") . '</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . "{COMMENT}" . tra("Anything a user wants included but not displayed.") . "{COMMENT}";
+		. tra("Example: ") . "{COMMENT}" . tra("Everything in here is not displayed.") . "{COMMENT}";
 	return $help;
 }
-
-// Load Function
+/****************
+* Load Function *
+ ****************/
 function data_comment($data, $params) {
 	return ' ';
 }

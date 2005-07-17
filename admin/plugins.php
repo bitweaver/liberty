@@ -15,12 +15,14 @@ if( isset( $_REQUEST['pluginsave'] ) && !empty( $_REQUEST['pluginsave'] ) ) {
 
 // Sort the plugins to avoild splitting tables
 foreach( $gLibertySystem->mPlugins as $key => $row ) {
+   $types[ucfirst( $row['plugin_type'] )]  = $row['plugin_type'];
    $type[$key]  = $row['plugin_type'];
    $guid[$key] = $row['plugin_guid'];
 }
 array_multisort( $type, SORT_ASC, $guid, SORT_ASC, $gLibertySystem->mPlugins );
-
 $smarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
+ksort( $types );
+$smarty->assign_by_ref( 'pluginTypes', $types );
 
 //vd( $gLibertySystem->mPlugins );
 

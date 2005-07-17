@@ -16,12 +16,17 @@
 
 	<br />
 
-	{if $gBitSystemPrefs.direct_pagination eq 'y'}
+	{if $gBitSystem->isFeatureActive( 'direct_pagination' )}
 		{foreach from=$pgnPages item=link}
 			{$link}&nbsp;
 		{/foreach}
 	{else}
 		{form id="fPageSelect"}
+
+			<input type="hidden" name="comments_maxComments" value="{$maxComments}" />
+			<input type="hidden" name="comments_style" value="{$comments_style}" />
+			<input type="hidden" name="comments_sort_mode" value="{$comments_sort_mode}" />
+
 			<input type="hidden" name="find" value="{$find}" />
 			<input type="hidden" name="sort_mode" value="{$sort_mode}" />
 			{foreach from=$pgnHidden key=name item=value}
