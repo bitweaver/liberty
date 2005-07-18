@@ -33,7 +33,7 @@
 {/if}
 
 <table class="data">
-	<caption>{tr}Available Content{/tr}</caption>
+	<caption>{tr}Available Content{/tr} <span class="total">[ {$contentCount} ]</span></caption>
 	<tr>
 		<th>{smartlink ititle="Title" isort=title page=$page user_id=$user_id idefault=1}</th>
 		<th>{smartlink ititle="Content Type" isort=content_type_guid page=$page user_id=$user_id}</th>
