@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.2.2.5 $
+* @version  $Revision: 1.2.2.6 $
 * @package  Liberty
 */
 
@@ -19,7 +19,7 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertyContent.php,v 1.2.2.5 2005/06/28 07:03:10 spiderr Exp $
+// $Id: LibertyContent.php,v 1.2.2.6 2005/07/18 08:44:21 squareing Exp $
 
 // define( 'CONTENT_TYPE_WIKI', '1' );
 // define( 'CONTENT_TYPE_COMMENT', '3' );
@@ -609,6 +609,20 @@ class LibertyContent extends LibertyBase {
 			$bindVars[] = $pContentGuid;
 		}
 
+		if( in_array( $sort_mode, array(
+				'modifier_user_desc',
+				'modifier_user_asc',
+				'modifier_real_name_desc',
+				'modifier_real_name_asc',
+				'creator_user_desc',
+				'creator_user_asc',
+				'creator_real_name_desc',
+				'creator_real_name_asc',
+		))) {
+			$orderTable = '';
+		} else {
+			$orderTable = 'tc.';
+		}
 
 
 		// If sort mode is versions then offset is 0, maxRecords is -1 (again) and sort_mode is nil
@@ -617,7 +631,7 @@ class LibertyContent extends LibertyBase {
 		$query = "SELECT uue.`login` AS `modifier_user`, uue.`real_name` AS `modifier_real_name`, uue.`user_id` AS `modifier_user_id`, uuc.`login` AS`creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`, `hits`, tc.`title`, tc.`last_modified`, tc.`content_type_guid`, `ip`, tc.`content_id` $gateSelect
 				  FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom, `".BIT_DB_PREFIX."users_users` uue, `".BIT_DB_PREFIX."users_users` uuc
 				  ".(!empty( $mid ) ? $mid.' AND ' : ' WHERE ')." tc.`modifier_user_id`=uue.`user_id` AND tc.`user_id`=uuc.`user_id`
-				  ORDER BY tc.".$this->convert_sortmode($sort_mode);
+				  ORDER BY ".$orderTable.$this->convert_sortmode($sort_mode);
 		$query_cant = "select count(*) FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom $mid";
 		// previous cant query - updated by xing
 		// $query_cant = "select count(*) from `".BIT_DB_PREFIX."tiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id` = tp.`content_id`) $mid";

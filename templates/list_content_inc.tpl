@@ -23,13 +23,22 @@
 	</div>
 {/form}
 
+{* assign the correct sort columns for user name sorting *}
+{if $gBitSystem->isFeatureActive( 'display_name' ) eq login}
+	{assign var=isort_author value=creator_user}
+	{assign var=isort_editor value=modifier_user}
+{else}
+	{assign var=isort_author value=creator_real_name}
+	{assign var=isort_editor value=modifier_real_name}
+{/if}
+
 <table class="data">
 	<caption>{tr}Available Content{/tr}</caption>
 	<tr>
 		<th>{smartlink ititle="Title" isort=title page=$page user_id=$user_id idefault=1}</th>
 		<th>{smartlink ititle="Content Type" isort=content_type_guid page=$page user_id=$user_id}</th>
-		<th>{tr}Author{/tr}</th>
-		<th colspan="2">{tr}Most Recent Editor{/tr}</th>
+		<th>{smartlink ititle="Author" isort=$isort_author page=$page}</th>
+		<th colspan="2">{smartlink ititle="Most recent editor" isort=$isort_editor page=$page}</th>
 	</tr>
 	{foreach from=$contentList item=item}
 		<tr class="{cycle values='odd,even'}">
