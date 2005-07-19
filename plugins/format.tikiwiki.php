@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.7 $
+ * @version  $Revision: 1.2.2.8 $
  * @package  Liberty
  */
 global $gLibertySystem;
@@ -1338,7 +1338,7 @@ $this->debug(0);
 		global $gLibertySystem;
 		// create a table of contents for this page
 		// this function is called manually, since it processes the HTML code
-		if( preg_match( "/\{maketoc.*?\}/", $data ) && @$gLibertySystem->mPlugins['datamaketoc']['is_active'] == 'y' ) {
+		if( preg_match( "/\{maketoc.*?\}/i", $data ) && @$gLibertySystem->mPlugins['datamaketoc']['is_active'] == 'y' ) {
 			$data = data_maketoc($data);
 		}
 

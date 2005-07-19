@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.5 $
+ * @version  $Revision: 1.1.1.1.2.6 $
  * @package  Liberty
  * @subpackage plugins_format
  */
@@ -62,7 +62,7 @@ function pearwiki_tiki_parse_data( &$pData, &$pCommonObject ) {
 	global $gLibertySystem;
 	// create a table of contents for this page
 	// this function is called manually, since it processes the HTML code
-	/*if( preg_match( "/\{maketoc.*?\}/", $xhtml ) && @$gLibertySystem->mPlugins['datamaketoc']['is_active'] == 'y' ) {
+	/*if( preg_match( "/\{maketoc.*?\}/i", $xhtml ) && @$gLibertySystem->mPlugins['datamaketoc']['is_active'] == 'y' ) {
 		$xhtml= data_maketoc($xhtml);
 	}*/
 	return $xhtml;
