@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.9 $
+ * @version  $Revision: 1.1.1.1.2.10 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.1.1.1.2.9 2005/07/19 00:55:45 starrrider Exp $
+// $Id: data.code.php,v 1.1.1.1.2.10 2005/07/20 09:06:59 starrrider Exp $
 
 /**
  * definitions
@@ -97,7 +97,7 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 	if (isset($in) ) $source = $in;
 	$source = isset($source) ? strtolower($source) : 'php'; // if not specified the default is HTML
 	if (isset($in)) $num = $in; // This maintains Pre-Clyde Parameters
-    if (!is_numeric ($num)) {
+    if (isset($num) && (!is_numeric ($num))) {
 		switch (strtoupper($num)) {
 		    case 'TRUE': case 'ON': case 'YES':
 			    $num = 1;
