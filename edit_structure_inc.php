@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.1.1.1.2.3 $
+ * @version  $Revision: 1.1.1.1.2.4 $
  * @package  Liberty
  * @subpackage functions
  */
@@ -39,48 +39,32 @@ if( empty( $_REQUEST["structure_id"] ) ) {
 		$rootStructure->loadPath();
 	}
 
-	if( ($gBitUser->mUserId!=$rootStructure->mInfo['user_id']) ) {
-		$gBitSystem->verifyPermission( 'bit_p_admin_books' );
+	if( ( $gBitUser->mUserId != $rootStructure->mInfo['user_id'] ) ) {
+		$gBitSystem->verifyPermission( !empty( $verifyStructurePermission ) ? $verifyStructurePermission : 'bit_p_admin' );
 	}
 	$smarty->assign_by_ref( 'gStructure', $gStructure );
 	$smarty->assign('structureInfo', $gStructure->mInfo);
-
-	if (isset($_REQUEST["find_objects"])) {
-		$find_objects = $_REQUEST["find_objects"];
-	} else {
-		$find_objects = '';
-	}
 
 	// Store the actively stored structure name
 	$gBitUser->storePreference( 'edit_structure_name', $rootStructure->mInfo['title'] );
 	$gBitUser->storePreference( 'edit_structure_id', $rootStructure->mStructureId );
 
-	// Get all wiki pages for the dropdown menu
-	$contentSelect = !isset( $_REQUEST['content_type'] ) ? 'bitpage' : $_REQUEST['content_type'];
-if( empty( $gContent ) ) {
-	require_once( WIKI_PKG_PATH.'lookup_page_inc.php' );
-}
-
-	$listpages = $gContent->getContentList( $contentSelect, 0, 500, 'title_asc', $find_objects);
-	$smarty->assign_by_ref('listContent', $listpages["data"]);
-	$smarty->assign('contentSelect', $contentSelect);
-
-	$contentTypes = array();
-	foreach( $gLibertySystem->mContentTypes as $cType ) {
-		$contentTypes[$cType['content_type_guid']] = $cType['content_description'];
+	include_once( LIBERTY_PKG_PATH.'get_content_list_inc.php' );
+	foreach( $contentList['data'] as $cItem ) {
+		$cList[$contentTypes[$cItem['content_type_guid']]][$cItem['content_id']] = $cItem['title'].' [id: '.$cItem['content_id'].']';
 	}
-	$smarty->assign_by_ref('contentTypes', $contentTypes);
-
-
+	$smarty->assign( 'contentList', $cList );
+	$smarty->assign( 'contentSelect', $contentSelect );
+	$smarty->assign( 'contentTypes', $contentTypes );
+	$smarty->assign( 'contentTypes', $contentTypes );
 
 	$subpages = $gStructure->s_get_pages($_REQUEST["structure_id"]);
 	$max = count($subpages);
 	$smarty->assign_by_ref('subpages', $subpages);
 	if ($max != 0) {
-	$last_child = $subpages[$max - 1];
-	$smarty->assign('insert_after', $last_child["structure_id"]);
+		$last_child = $subpages[$max - 1];
+		$smarty->assign('insert_after', $last_child["structure_id"]);
 	}
-	$smarty->assign('find_objects', $find_objects);
 
 	if( ( isset( $_REQUEST["action"] ) && ( $_REQUEST["action"] == 'remove' ) ) || isset( $_REQUEST["confirm"] ) ) {
 		
