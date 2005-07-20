@@ -1,10 +1,10 @@
 <?php
-// $id:
+// $id: data.example.php,v 1.4.2.9 2005/07/14 09:03:36 starrider Exp $
 /**
  * assigned_modules
  *
  * @author   StarRider starrrider@sourceforge.net
- * @version  $Revision: 1.4.2.9 $
+ * @version  $Revision: 1.4.2.10 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -16,17 +16,17 @@
  ******************/
 define( 'PLUGIN_GUID_DATAEXAMPLE', 'dataexample' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'EXAMPLE',
-						'auto_activate' => FALSE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_example',
-						'title' => 'Example',
-						'help_page' => 'DataPluginExample',
-						'description' => tra("This plugin is an example that does nothing but function as a template for the creation of new plugins."),
-						'help_function' => 'data_example_help',
-						'syntax' => "{EXAMPLE x1= xp2= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array ( 'tag' => 'EXAM',
+	'auto_activate' => FALSE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_example',
+	'title' => 'Example (EXAM)',
+	'help_page' => 'DataPluginExample',
+	'description' => tra("This Plugin is an Example that does nothing. It functions as a template for the creation of new plugins."),
+	'help_function' => 'data_example_help',
+	'syntax' => "{EXAM x1= x2= }",
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAEXAMPLE, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAEXAMPLE );
 /*****************
@@ -40,8 +40,22 @@ function data_example_help() {
 				.'<th>' . tra( "Type" ) . '</th>'
 				.'<th>' . tra( "Comments" ) . '</th>'
 			.'</tr>'
+			.'<tr class="odd">'
+				.'<td>x1</td>'
+				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "Specifies something / probably to be displayed.")
+					.'<br />' . tra( "The Default = <strong>Sorry About That</strong>")
+				.'</td>'
+			.'</tr>'
+			.'<tr class="even">'
+				.'<td>XXX</td>'
+				.'<td>' . tra( "number") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "Specifies something / probably to be displayed.")
+					.'<br />' . tra( "The Default =") . ' <strong>3</strong> ' . tra( "Which means - What")
+				.'</td>'
+			.'</tr>'
  		.'</table>'
-		. tra("Example: ") . "{EXAMPLE ' }<br />"
+		. tra("Example: ") . "{EXAM x1=' ' x2=5 }<br />"
 		. tra("This will display");
 	return $help;
 }
@@ -51,7 +65,7 @@ function data_example_help() {
 function data_example($data, $params) {
 	extract ($params);
 	$ret = ' ';
-	
+
 	return $ret;
 }
 ?>
