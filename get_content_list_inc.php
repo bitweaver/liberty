@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.1.1.1.2.2 $
+ * @version  $Revision: 1.1.1.1.2.3 $
  * @package  Liberty
  * @subpackage functions
  */
@@ -24,7 +24,7 @@ $contentSelect = empty( $_REQUEST['content_type'] ) ? NULL : $_REQUEST['content_
 // get_content_list_inc doesn't use $_REQUEST parameters as it might not be the only list in the page that needs sorting and limiting
 $contentList = $gContent->getContentList( $contentSelect, isset( $offset_content ) ? $offset_content : 0, isset( $max_content ) ? $max_content : 500, isset( $content_sort_mode ) ? $content_sort_mode : 'title_asc', empty( $_REQUEST["find_objects"] ) ? NULL : $_REQUEST["find_objects"], isset( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : NULL );
 
-$contentTypes = array();
+$contentTypes = array( '' => tra( 'All Content' ) );
 foreach( $gLibertySystem->mContentTypes as $cType ) {
 	$contentTypes[$cType['content_type_guid']] = $cType['content_description'];
 }

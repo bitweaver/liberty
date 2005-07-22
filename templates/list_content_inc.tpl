@@ -4,12 +4,7 @@
 	<div class="row">
 		{formlabel label="Restrict listing" for="content_type"}
 		{forminput}
-			<select name="content_type" id="content_type" onchange="submit();">
-				<option {if !$contentSelect}selected="selected"{/if} value="">All Content</option>
-				{foreach from=$contentTypes key=guid item=description}
-					<option value="{$guid}" {if $contentSelect eq $guid}selected="selected"{assign var=selectDescription value=$description}{/if}>{$description}</option>
-				{/foreach}
-			</select>
+			{html_options onchange="submit();" values=$contentTypes options=$contentTypes name=content_type id=content_type selected=$contentSelect}
 			<noscript>
 				<div><input type="submit" name="content_switch" value="{tr}change content type{/tr}" /></div>
 			</noscript>
