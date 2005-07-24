@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.10 $
+ * @version  $Revision: 1.1.1.1.2.11 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.1.1.1.2.10 2005/07/20 09:06:59 starrrider Exp $
+// $Id: data.code.php,v 1.1.1.1.2.11 2005/07/24 10:04:18 wolff_borg Exp $
 
 /**
  * definitions
@@ -123,7 +123,7 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 			$geshi->enable_line_numbers(GESHI_FANCY_LINE_NUMBERS);
 			if (is_numeric($num)) $geshi->start_line_numbers_at($num);
 		}
-		$code = $geshi->parse_code();
+		$code = decodeHTML(htmlentities($geshi->parse_code()));
 	} else {
 		if ($num) { // Line Numbering has been requested
 			$lines = explode("\n", $code);
