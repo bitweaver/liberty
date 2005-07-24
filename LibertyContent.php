@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.2.2.7 $
+* @version  $Revision: 1.2.2.8 $
 * @package  Liberty
 */
 
@@ -19,7 +19,7 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertyContent.php,v 1.2.2.7 2005/07/24 12:18:21 squareing Exp $
+// $Id: LibertyContent.php,v 1.2.2.8 2005/07/24 18:52:05 spiderr Exp $
 
 // define( 'CONTENT_TYPE_WIKI', '1' );
 // define( 'CONTENT_TYPE_COMMENT', '3' );
@@ -663,9 +663,7 @@ class LibertyContent extends LibertyBase {
 					$contentHash['content_object']->getTitle( $aux ).
 					'</a>';
 //				$aux['display_url'] = $contentType['content_object']->getDisplayUrl( $aux['title'], $aux );
-				if( $aux['content_type_guid'] == BITUSER_CONTENT_TYPE_GUID ) {
-					$aux['title'] = $gBitUser->getDisplayName( FALSE, $aux );
-				}
+				$aux['title'] = $contentHash['content_object']->getTitle( $aux );
 				$ret[] = $aux;
 			}
 		}
