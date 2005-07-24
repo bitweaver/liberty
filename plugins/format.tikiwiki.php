@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.8 $
+ * @version  $Revision: 1.2.2.9 $
  * @package  Liberty
  */
 global $gLibertySystem;
@@ -222,9 +222,9 @@ $this->debug(0);
 	// This recursive function handles pre- and no-parse sections and plugins
 	function parse_first(&$data, &$preparsed, &$noparsed) {
 		global $gLibertySystem;
+		$this->parse_pp_np($data, $preparsed, $noparsed);
 		// Handle pre- and no-parse sections
 		parse_data_plugins( $data, $preparsed, $noparsed, $this );
-		$this->parse_pp_np($data, $preparsed, $noparsed);
 	}
 
 
