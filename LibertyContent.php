@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.2.2.8 $
+* @version  $Revision: 1.2.2.9 $
 * @package  Liberty
 */
 
@@ -19,7 +19,7 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertyContent.php,v 1.2.2.8 2005/07/24 18:52:05 spiderr Exp $
+// $Id: LibertyContent.php,v 1.2.2.9 2005/07/25 12:21:28 spiderr Exp $
 
 // define( 'CONTENT_TYPE_WIKI', '1' );
 // define( 'CONTENT_TYPE_COMMENT', '3' );
@@ -643,27 +643,25 @@ class LibertyContent extends LibertyBase {
 			$aux = array();
 			$aux = $res;
 			if( !empty( $contentTypes[$res['content_type_guid']] ) ) {
-				$contentHash = &$contentTypes[$res['content_type_guid']];
-				if( empty( $contentHash['content_object'] ) ) {
-					include_once( $gBitSystem->mPackages[$contentHash['handler_package']]['path'].$contentHash['handler_file'] );
-					$contentHash['content_object'] = new $contentHash['handler_class']();
+				// quick alias for code readability
+				$type = &$contentTypes[$res['content_type_guid']];
+				if( empty( $type['content_object'] ) ) {
+					// create *one* object for each object *type* to call virtual methods.
+					include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
+					$type['content_object'] = new $type['handler_class']();
 				}
 				$aux['creator'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
 				$aux['real_name'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
 				$aux['editor'] = (isset( $res['modifier_real_name'] ) ? $res['modifier_real_name'] : $res['modifier_user'] );
-				$aux['content_description'] = $contentHash['content_description'];
+				$aux['content_description'] = $type['content_description'];
 //WIKI_PKG_URL."index.php?page_d=".$res['page_id'];
 				$aux['user'] = $res['creator_user'];
 				$aux['real_name'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
 				$aux['user_id'] = $res['creator_user_id'];
 				require_once $smarty->_get_plugin_filepath( 'modifier', 'bit_long_date' );
-				$aux['display_link'] =
-					'<a title="'.tra( 'Last modified by' ).': '.$gBitUser->getDisplayName( FALSE, $aux ).' - '.smarty_modifier_bit_long_date( $aux['last_modified'], $smarty ).
-					'" href="'.BIT_ROOT_URL.'index.php?content_id='.$aux['content_id'].'">'.
-					$contentHash['content_object']->getTitle( $aux ).
-					'</a>';
-//				$aux['display_url'] = $contentType['content_object']->getDisplayUrl( $aux['title'], $aux );
-				$aux['title'] = $contentHash['content_object']->getTitle( $aux );
+				$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
+				$aux['display_url'] = $type['content_object']->getDisplayUrl( $aux['title'], $aux );
+				$aux['title'] = $type['content_object']->getTitle( $aux );
 				$ret[] = $aux;
 			}
 		}
