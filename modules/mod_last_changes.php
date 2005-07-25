@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.php,v 1.1.1.1.2.1 2005/06/27 10:08:41 lsces Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.php,v 1.1.1.1.2.2 2005/07/25 14:40:23 spiderr Exp $
 /**
  * Params:
  * - content_type_guid : if set, show only those content_type_guid's
@@ -20,8 +20,9 @@ if( !empty( $gQueryUser->mUserId ) ) {
 if( empty( $module_title ) ) {
 	if( !empty( $module_params['content_type_guid'] ) && !empty( $gLibertySystem->mContentTypes[$module_params['content_type_guid']] ) ) {
 		$title = tra( "Last Changes" ).': '.tra( $gLibertySystem->mContentTypes[$module_params['content_type_guid']]['content_description'] );
+		$smarty->assign( 'contentType', $module_params['content_type_guid'] );
 	} else {
-		$smarty->assign( 'showContentType', TRUE );
+		$smarty->assign( 'contentType', FALSE );
 		$title = tra( "Last Changes" );
 	}
 	$smarty->assign( 'moduleTitle', $title );

@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.2.2.10 $
+* @version  $Revision: 1.2.2.11 $
 * @package  Liberty
 */
 
@@ -19,7 +19,7 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertyContent.php,v 1.2.2.10 2005/07/25 12:23:45 spiderr Exp $
+// $Id: LibertyContent.php,v 1.2.2.11 2005/07/25 14:40:22 spiderr Exp $
 
 // define( 'CONTENT_TYPE_WIKI', '1' );
 // define( 'CONTENT_TYPE_COMMENT', '3' );
@@ -582,31 +582,40 @@ class LibertyContent extends LibertyBase {
 		$gateFrom = '';
 
 		if (is_array($find)) { // you can use an array of pages
-			$mid = " WHERE tc.`title` IN (".implode(',',array_fill(0,count($find),'?')).")";
+			$mid = " tc.`title` IN (".implode(',',array_fill(0,count($find),'?')).")";
 			$bindVars[] = $find;
 		} elseif (!empty($find) && is_string($find)) { // or a string
-			$mid = " WHERE UPPER(tc.`title`) like ? ";
+			$mid = " UPPER(tc.`title`) like ? ";
 			$bindVars[] = ('%' . strtoupper( $find ) . '%');
 		}
 
-		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
-			empty( $mid ) ? $mid = ' WHERE ' : $mid .= ' AND ';
-			$gateSelect .= ' ,ts.`security_id`, ts.`security_description`, ts.`is_private`, ts.`is_hidden`, ts.`access_question`, ts.`access_answer` ';
-			$gateFrom .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_content_security_map` tcs ON (tc.`content_id`=tcs.`content_id`) LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_security` ts ON (ts.`security_id`=tcs.`security_id` )";
-			$mid .= ' (tcs.`security_id` IS NULL OR tc.`user_id`=?) ';
-			$bindVars[] = $gBitUser->mUserId;
-		}
-
 		if( !empty( $pUserId ) ) {
-			empty( $mid ) ? $mid = ' WHERE ' : $mid .= ' AND ';
-			$mid .= " tc.`user_id` = ? ";
+			$mid .= " AND tc.`user_id` = ? ";
 			$bindVars[] = $pUserId;
 		}
 
 		if( !empty( $pContentGuid ) ) {
-			empty( $mid ) ? $mid = ' WHERE ' : $mid .= ' AND ';
-			$mid .= ' `content_type_guid`=? ';
+			$mid .= ' AND `content_type_guid`=? ';
 			$bindVars[] = $pContentGuid;
+		}
+
+
+		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
+			$gateSelect .= ' ,ts.`security_id`, ts.`security_description`, ts.`is_private`, ts.`is_hidden`, ts.`access_question`, ts.`access_answer` ';
+			$gateFrom .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_content_security_map` tcs ON (tc.`content_id`=tcs.`content_id`) LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_security` ts ON (ts.`security_id`=tcs.`security_id` )";
+			$mid .= ' AND (tcs.`security_id` IS NULL OR tc.`user_id`=?) ';
+			$bindVars[] = $gBitUser->mUserId;
+			if( $gBitSystem->isPackageActive( 'fisheye' ) ) {
+				// This is really ugly to have in here, and really would be better off somewhere else.
+				// However, because of the specific nature of the current implementation of fisheye galleries, I am afraid
+				// this is the only place it can go to properly enforce gatekeeper protections. Hopefully a new content generic
+				// solution will be available in ReleaseTwo - spiderr
+				if( $this->mDb->isAdvancedPostgresEnabled() ) {
+// 					$gateFrom .= " LEFT OUTER JOIN  `".BIT_DB_PREFIX."tiki_fisheye_gallery_image_map` tfgim ON (tfgim.`item_content_id`=tc.`content_id`)";
+					$mid .= " AND (SELECT ts.`security_id` FROM connectby('tiki_fisheye_gallery_image_map', 'gallery_content_id', 'item_content_id', tc.`content_id`, 0, '/')  AS t(`cb_gallery_content_id` int, `cb_item_content_id` int, level int, branch text), `".BIT_DB_PREFIX."tiki_content_security_map` tcsm,  `".BIT_DB_PREFIX."tiki_security` ts
+							WHERE ts.`security_id`=tcsm.`security_id` AND tcsm.`content_id`=`cb_gallery_content_id` LIMIT 1) IS NULL";
+				}
+			}
 		}
 
 		if( in_array( $sort_mode, array(
@@ -630,7 +639,7 @@ class LibertyContent extends LibertyBase {
 		// If sort mode is backlinks then offset is 0, maxRecords is -1 (again) and sort_mode is nil
 		$query = "SELECT uue.`login` AS `modifier_user`, uue.`real_name` AS `modifier_real_name`, uue.`user_id` AS `modifier_user_id`, uuc.`login` AS`creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`, `hits`, tc.`title`, tc.`last_modified`, tc.`content_type_guid`, `ip`, tc.`content_id` $gateSelect
 				  FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom, `".BIT_DB_PREFIX."users_users` uue, `".BIT_DB_PREFIX."users_users` uuc
-				  ".(!empty( $mid ) ? $mid.' AND ' : ' WHERE ')." tc.`modifier_user_id`=uue.`user_id` AND tc.`user_id`=uuc.`user_id`
+				  WHERE tc.`modifier_user_id`=uue.`user_id` AND tc.`user_id`=uuc.`user_id` $mid
 				  ORDER BY ".$orderTable.$this->convert_sortmode($sort_mode);
 		$query_cant = "select count(*) FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom $mid";
 		// previous cant query - updated by xing

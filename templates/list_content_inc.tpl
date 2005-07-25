@@ -2,9 +2,9 @@
 {form legend="Select Content Type"}
 	<input type="hidden" name="user_id" value="{$user_id}" />
 	<div class="row">
-		{formlabel label="Restrict listing" for="content_type"}
+		{formlabel label="Restrict listing" for="content_type_guid"}
 		{forminput}
-			{html_options onchange="submit();" values=$contentTypes options=$contentTypes name=content_type id=content_type selected=$contentSelect}
+			{html_options onchange="submit();" values=$contentTypes options=$contentTypes name=content_type_guid id=content_type selected=$contentSelect}
 			<noscript>
 				<div><input type="submit" name="content_switch" value="{tr}change content type{/tr}" /></div>
 			</noscript>
