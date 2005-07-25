@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.2.2.9 $
+* @version  $Revision: 1.2.2.10 $
 * @package  Liberty
 */
 
@@ -19,7 +19,7 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertyContent.php,v 1.2.2.9 2005/07/25 12:21:28 spiderr Exp $
+// $Id: LibertyContent.php,v 1.2.2.10 2005/07/25 12:23:45 spiderr Exp $
 
 // define( 'CONTENT_TYPE_WIKI', '1' );
 // define( 'CONTENT_TYPE_COMMENT', '3' );
@@ -643,10 +643,10 @@ class LibertyContent extends LibertyBase {
 			$aux = array();
 			$aux = $res;
 			if( !empty( $contentTypes[$res['content_type_guid']] ) ) {
-				// quick alias for code readability
+   	// quick alias for code readability
 				$type = &$contentTypes[$res['content_type_guid']];
 				if( empty( $type['content_object'] ) ) {
-					// create *one* object for each object *type* to call virtual methods.
+					// create *one* object for each object *type* to  call virtual methods.
 					include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
 					$type['content_object'] = new $type['handler_class']();
 				}
@@ -660,7 +660,8 @@ class LibertyContent extends LibertyBase {
 				$aux['user_id'] = $res['creator_user_id'];
 				require_once $smarty->_get_plugin_filepath( 'modifier', 'bit_long_date' );
 				$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
-				$aux['display_url'] = $type['content_object']->getDisplayUrl( $aux['title'], $aux );
+				// getDisplayUrl is currently a pure virtual method in LibertyContent, so this cannot be called currently
+// 				$aux['display_url'] = $type['content_object']->getDisplayUrl( $aux['title'], $aux );
 				$aux['title'] = $type['content_object']->getTitle( $aux );
 				$ret[] = $aux;
 			}
