@@ -19,30 +19,26 @@
 		{/if}
 
 		<div class="row">
-			{formlabel label="Add" for="content_type"}
+			{formlabel label="Content" for="content"}
 			{forminput}
-				<select name="content_type" id="content_type" onchange="submit();">
+				<select name="content_type" onchange="submit();">
 					<option {if !$contentSelect}selected="selected"{/if} value="">All Content</option>
 					{foreach from=$contentTypes key=guid item=description}
-						<option value="{$guid}" {if $contentSelect == $guid}selected="selected"{assign var=selectDescription value=$description}{/if}>{$description}</option>
+						<option value="{$guid}" {if $contentSelect eq $guid}selected="selected"{assign var=selectDescription value=$description}{/if}>{$description}</option>
 					{/foreach}
 				</select>
+				<noscript>
+					<div><input type="submit" name="content_switch" value="{tr}change content type{/tr}" /></div>
+				</noscript>
 			{/forminput}
 
 			{forminput}
-				<select name="content[]" multiple="multiple" size="8">
-					{section name=list loop=$listContent}
-						{assign var=guid value=$listContent[list].content_type_guid}
-						<option value="{$listContent[list].content_id}">{$contentTypes.$guid} {$listContent[list].content_id}{if $listContent[list]}: "{$listContent[list].title|truncate:40:"(...)":true}"{/if}</option>
-					{sectionelse}
-						<option disabled="disabled">{tr}No {$selectDescription} content found{/tr}</option>
-					{/section}
-				</select>
+				{html_options multiple="multiple" id="content" size="12" name="content[]" values=$contentList options=$contentList selected=$pigeonInfo.selected_content}
 			{/forminput}
 
 			{forminput}
 				<input type="text" name="find_objects" /> 
-				<input type="submit" value="{tr}filter{/tr}" name="search_objects" />
+				<input type="submit" value="{tr}Apply filter{/tr}" name="search_objects" />
 				{formhelp note=""}
 			{/forminput}
 		</div>

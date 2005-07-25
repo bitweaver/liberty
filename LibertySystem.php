@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.2 $
+* @version  $Revision: 1.3 $
 * @package  Liberty
 */
 
@@ -19,7 +19,7 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertySystem.php,v 1.2 2005/06/28 07:45:47 spiderr Exp $
+// $Id: LibertySystem.php,v 1.3 2005/07/25 20:02:13 squareing Exp $
 /**
  * Local base defines
  */
@@ -40,7 +40,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  * System class for handling the liberty package
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage LibertySystem
  */
@@ -283,11 +283,11 @@ function parse_data_plugins(&$data, &$preparsed, &$noparsed, &$pParser ) {
 				if( $ret = $loadFunc( $plugin_data, $arguments ) ) {
 					// temporarily replace end of lines so tables and other things render properly
 //					$ret = preg_replace( "/\n/", '#EOL', $ret );
+
 					// Handle pre- & no-parse sections and plugins inserted by this plugin
 					if( is_object( $pParser ) ) {
 						// we were passed in a parser object, assume tikiwiki that has parse_first method
-						// SPIDERKILL - this was causing apache segfaults. ~np~'s are caught on the way out of parse_first anyway
-//						$pParser->parse_pp_np( $ret, $preparsed, $noparsed );
+						$pParser->parse_pp_np( $ret, $preparsed, $noparsed );
 					} else {
 						// just nuke all np/pp for now in non tikiwiki formats
 						$ret = preg_replace( "/\~(\/?)[np]p\~/", '', $ret );

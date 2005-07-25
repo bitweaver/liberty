@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  Liberty
  * @subpackage functions
  */
@@ -36,6 +36,7 @@ $smarty->assign( 'numPages', $numPages );
 $smarty->assign( 'contentSelect', $contentSelect );
 $smarty->assign( 'contentTypes', $contentTypes );
 $smarty->assign( 'contentList', $contentList['data'] );
+$smarty->assign( 'contentCount', $contentList['cant'] );
 
 $gBitSystem->setBrowserTitle( 'List Content' );
 $gBitSystem->display( 'bitpackage:liberty/list_content.tpl' );

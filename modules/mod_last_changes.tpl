@@ -1,11 +1,11 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.tpl,v 1.1 2005/06/19 04:55:51 bitweaver Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.tpl,v 1.2 2005/07/25 20:02:13 squareing Exp $ *}
 {strip}
 {if $modLastContent}
 	{bitmodule title="$moduleTitle" name="last_changes"}
 		<ol>
 			{section name=ix loop=$modLastContent}
 				<li>
-					{if $showContentType }
+					{if !$contentType }
 						<strong>{tr}{$modLastContent[ix].content_description}{/tr}: </strong>
 					{/if}
 					{$modLastContent[ix].display_link}
@@ -17,7 +17,7 @@
 				<li></li>
 			{/section}
 		</ol>
-		<a href="{$gBitLoc.LIBERTY_PKG_URL}list_content.php?user_id={$gQueryUserId}&amp;sort_mode=last_modified_desc">{tr}View more{/tr}&hellip;</a>
+		<a href="{$gBitLoc.LIBERTY_PKG_URL}list_content.php?user_id={$gQueryUserId}&amp;sort_mode=last_modified_desc{if $contentType}&content_type_guid={$contentType}{/if}">{tr}View more{/tr}&hellip;</a>
 	{/bitmodule}
 {/if}
 {/strip}

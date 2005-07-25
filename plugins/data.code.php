@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.3 2005/07/17 17:36:09 squareing Exp $
+// $Id: data.code.php,v 1.4 2005/07/25 20:02:13 squareing Exp $
 
 /**
  * definitions
@@ -50,13 +50,29 @@ function data_code_help() {
 			.'<tr class="odd">'
 				.'<td>source</td>'
 				.'<td>' . tra( "key-word") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Defines the format of the Source Code Snippet. Possible values are:") . ' <strong>HTML or PHP</strong>. '
-				. tra("The Default = ") . '<strong>HTML</strong></td>'
+				.'<td>' . tra( "Defines the format of the Source Code Snippet. Possible values are:");
+	if( file_exists( UTIL_PKG_PATH.'geshi/geshi.php' ) ) {
+		$help = $help . '<br /><strong>ActionScript / Ada / Apache Log File=Apache / ASM (NASM based)=Asm / ASP / Bash / C '
+						.'/ C for Macs=C_Mac / AutoCAD DCL=CadDcl / AutoCAD LISP=CadLisp / C++=Cpp / C#=CSharp / CSS / D '
+						.'/ Delphi / Diff Output=Diff / HTML (4.0.1)=Html4Strict / Java / JavaScript / Lisp / Lua / MatLab '
+						.'/ MpAsm / NullSoft Installer=Niss / Objective C=ObjC / OpenOffice.org Basic=OoBas / Oracle8'
+						.'/ Pascal / Perl / Php / Php_Brief / Python / QuickBasic=QBasic / Smarty / SQL / VisualBasic=Vb '
+						.'/ VB.NET=VbNet / VHDL / VisualFoxPro / XML</strong>. ';
+	} else {
+		$help = $help .'HTML or PHP</strong>. ';
+	}
+	$help = $help . '<br />' . tra("The Default = ") . '<strong>PHP</strong></td>'
 			.'</tr>'
 			.'<tr class="even">'
 				.'<td>num</td>'
-				.'<td>' . tra( "boolean") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Determins if line numbers are displayed. Passing") . ' <strong>TRUE, ON, or YES</strong> ' . tra("in this parameter will make it") . ' <strong>TRUE</strong>. ' . tra("Any ohter value will make it") . ' <strong>FALSE</strong>' . tra("The Default =") . ' <strong>FALSE</strong> ' . tra("so Line Numbers are not displayed.") . '</td>'
+				.'<td>' .tra( "boolean/number") .'<br />'. tra("(optional)") . '</td>'
+				.'<td>' .tra( "Determins if Line Numbers are displayed with the code. Specifing:")
+					.'<strong>TRUE / ON / YES /</strong> or a <strong>Number</strong> '
+					.tra("will turn <strong>Line Numbering On</strong>. When a Number is specified - the Number is used for the first ")
+					.tra("line instead of <strong>1</strong>. Any ohter value will turn <strong>Line Numbering OFF</strong> ")
+					.tra("and only the <strong>Code</strong> will be displayed.")
+					.'<br />' . tra("The Default =") .' <strong>FALSE</strong> ' .tra("Line Numbers are <strong>Not</strong> displayed.")
+				.'</td>'
 			.'</tr>'
 		.'</table>'
 		. tra("Example: ") . "{CODE source='php' num='on' }" . tra("Sorce Code Snippet") . "{code}";
@@ -73,41 +89,46 @@ function decodeHTML($string) {
 function data_code( $data, $params ) { // Pre-Clyde Changes
 // Parameters were $In & $Colors
 // Added testing to maintain Pre-Clyde compatability
-	$num = NULL;
+//	$num = NULL;
 	$add_tags = false;
 	extract ($params);
 	// This maintains Pre-Clyde Parameters
-	if (isset($colors) and ($colors == 'php') ) $source = 'HTML';
+	if (isset($colors) and ($colors == 'php') ) $source = 'php';
 	if (isset($in) ) $source = $in;
-	$source = isset($source) ? strtoupper($source) : 'HTML'; // if not specified the default is HTML
-	if (isset($in) and ($in == 1) ) $num = 'ON'; // This maintains Pre-Clyde Parameters
-	switch (strtoupper($num)) {
-	    case 'TRUE': case 'ON': case 'YES':
-		    $num = 1;
-			break;
-		default: // could have done FALSE/OFF/NO but we want any other value to be False
-		    $num = 0;
-			break;
-	}
+	$source = isset($source) ? strtolower($source) : 'php'; // if not specified the default is HTML
+	if (isset($in)) $num = $in; // This maintains Pre-Clyde Parameters
+    if (isset($num) && (!is_numeric ($num))) {
+		switch (strtoupper($num)) {
+		    case 'TRUE': case 'ON': case 'YES':
+			    $num = 1;
+				break;
+			default: // could have done FALSE/OFF/NO but we want any other value to be False
+			    $num = 0;
+				break;
+	}	}
+	$num = (isset($num)) ? $num : FALSE;
+
 	$code = ''; // Lets make it pretty by eliminating all empty lines
 	$lines = explode("\n", $data);
 	foreach ($lines as $line) {
 		if (strlen($line) > 1)
 			$code .=  rtrim($line) . "\n"; // The Strings length is > 1
 	}
+
 	if( file_exists( UTIL_PKG_PATH.'geshi/geshi.php' ) ) {
 		// Include the GeSHi library
 		include_once( UTIL_PKG_PATH.'geshi/geshi.php' );
 		$geshi = new GeSHi($code, $source, UTIL_PKG_PATH.'geshi/geshi' );
 		if ($num) { // Line Numbering has been requested
 			$geshi->enable_line_numbers(GESHI_FANCY_LINE_NUMBERS);
+			if (is_numeric($num)) $geshi->start_line_numbers_at($num);
 		}
-		$code = $geshi->parse_code();
+		$code = decodeHTML(htmlentities($geshi->parse_code()));
 	} else {
 		if ($num) { // Line Numbering has been requested
 			$lines = explode("\n", $code);
 			$code = '';
-			$i = 1; // The current line number
+			$i = (is_numeric($num)) ? $num : 1; //Line Number
 			foreach ($lines as $line) {
 				if (strlen($line) > 1) {
 				$code .= sprintf("%3d", $i) . ": " . $line . "\n";
@@ -119,7 +140,6 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 			$code = "<?php\n".$code."\n?>"; // The require these tags to function
 			$add_tags = true;
 		}
-	// To Here
 		switch ($source) { 	// I used a switch here to make it easy to expand this plugin for other kinds of source code
 			case 'HTML':
 				$code = highlight_string(decodeHTML($code),true);

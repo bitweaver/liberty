@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.3 $
+* @version  $Revision: 1.4 $
 * @package  Liberty
 */
 
@@ -19,7 +19,7 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertyContent.php,v 1.3 2005/06/28 07:45:47 spiderr Exp $
+// $Id: LibertyContent.php,v 1.4 2005/07/25 20:02:12 squareing Exp $
 
 // define( 'CONTENT_TYPE_WIKI', '1' );
 // define( 'CONTENT_TYPE_COMMENT', '3' );
@@ -582,33 +582,56 @@ class LibertyContent extends LibertyBase {
 		$gateFrom = '';
 
 		if (is_array($find)) { // you can use an array of pages
-			$mid = " WHERE tc.`title` IN (".implode(',',array_fill(0,count($find),'?')).")";
+			$mid = " tc.`title` IN (".implode(',',array_fill(0,count($find),'?')).")";
 			$bindVars[] = $find;
 		} elseif (!empty($find) && is_string($find)) { // or a string
-			$mid = " WHERE UPPER(tc.`title`) like ? ";
+			$mid = " UPPER(tc.`title`) like ? ";
 			$bindVars[] = ('%' . strtoupper( $find ) . '%');
 		}
 
-		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
-			empty( $mid ) ? $mid = ' WHERE ' : $mid .= ' AND ';
-			$gateSelect .= ' ,ts.`security_id`, ts.`security_description`, ts.`is_private`, ts.`is_hidden`, ts.`access_question`, ts.`access_answer` ';
-			$gateFrom .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_content_security_map` tcs ON (tc.`content_id`=tcs.`content_id`) LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_security` ts ON (ts.`security_id`=tcs.`security_id` )";
-			$mid .= ' (tcs.`security_id` IS NULL OR tc.`user_id`=?) ';
-			$bindVars[] = $gBitUser->mUserId;
-		}
-
 		if( !empty( $pUserId ) ) {
-			empty( $mid ) ? $mid = ' WHERE ' : $mid .= ' AND ';
-			$mid .= " tc.`user_id` = ? ";
+			$mid .= " AND tc.`user_id` = ? ";
 			$bindVars[] = $pUserId;
 		}
 
 		if( !empty( $pContentGuid ) ) {
-			empty( $mid ) ? $mid = ' WHERE ' : $mid .= ' AND ';
-			$mid .= ' `content_type_guid`=? ';
+			$mid .= ' AND `content_type_guid`=? ';
 			$bindVars[] = $pContentGuid;
 		}
 
+
+		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
+			$gateSelect .= ' ,ts.`security_id`, ts.`security_description`, ts.`is_private`, ts.`is_hidden`, ts.`access_question`, ts.`access_answer` ';
+			$gateFrom .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_content_security_map` tcs ON (tc.`content_id`=tcs.`content_id`) LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_security` ts ON (ts.`security_id`=tcs.`security_id` )";
+			$mid .= ' AND (tcs.`security_id` IS NULL OR tc.`user_id`=?) ';
+			$bindVars[] = $gBitUser->mUserId;
+			if( $gBitSystem->isPackageActive( 'fisheye' ) ) {
+				// This is really ugly to have in here, and really would be better off somewhere else.
+				// However, because of the specific nature of the current implementation of fisheye galleries, I am afraid
+				// this is the only place it can go to properly enforce gatekeeper protections. Hopefully a new content generic
+				// solution will be available in ReleaseTwo - spiderr
+				if( $this->mDb->isAdvancedPostgresEnabled() ) {
+// 					$gateFrom .= " LEFT OUTER JOIN  `".BIT_DB_PREFIX."tiki_fisheye_gallery_image_map` tfgim ON (tfgim.`item_content_id`=tc.`content_id`)";
+					$mid .= " AND (SELECT ts.`security_id` FROM connectby('tiki_fisheye_gallery_image_map', 'gallery_content_id', 'item_content_id', tc.`content_id`, 0, '/')  AS t(`cb_gallery_content_id` int, `cb_item_content_id` int, level int, branch text), `".BIT_DB_PREFIX."tiki_content_security_map` tcsm,  `".BIT_DB_PREFIX."tiki_security` ts
+							WHERE ts.`security_id`=tcsm.`security_id` AND tcsm.`content_id`=`cb_gallery_content_id` LIMIT 1) IS NULL";
+				}
+			}
+		}
+
+		if( in_array( $sort_mode, array(
+				'modifier_user_desc',
+				'modifier_user_asc',
+				'modifier_real_name_desc',
+				'modifier_real_name_asc',
+				'creator_user_desc',
+				'creator_user_asc',
+				'creator_real_name_desc',
+				'creator_real_name_asc',
+		))) {
+			$orderTable = '';
+		} else {
+			$orderTable = 'tc.';
+		}
 
 
 		// If sort mode is versions then offset is 0, maxRecords is -1 (again) and sort_mode is nil
@@ -616,8 +639,8 @@ class LibertyContent extends LibertyBase {
 		// If sort mode is backlinks then offset is 0, maxRecords is -1 (again) and sort_mode is nil
 		$query = "SELECT uue.`login` AS `modifier_user`, uue.`real_name` AS `modifier_real_name`, uue.`user_id` AS `modifier_user_id`, uuc.`login` AS`creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`, `hits`, tc.`title`, tc.`last_modified`, tc.`content_type_guid`, `ip`, tc.`content_id` $gateSelect
 				  FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom, `".BIT_DB_PREFIX."users_users` uue, `".BIT_DB_PREFIX."users_users` uuc
-				  ".(!empty( $mid ) ? $mid.' AND ' : ' WHERE ')." tc.`modifier_user_id`=uue.`user_id` AND tc.`user_id`=uuc.`user_id`
-				  ORDER BY tc.".$this->convert_sortmode($sort_mode);
+				  WHERE tc.`modifier_user_id`=uue.`user_id` AND tc.`user_id`=uuc.`user_id` $mid
+				  ORDER BY ".$orderTable.$this->convert_sortmode($sort_mode);
 		$query_cant = "select count(*) FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom $mid";
 		// previous cant query - updated by xing
 		// $query_cant = "select count(*) from `".BIT_DB_PREFIX."tiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id` = tp.`content_id`) $mid";
@@ -629,26 +652,26 @@ class LibertyContent extends LibertyBase {
 			$aux = array();
 			$aux = $res;
 			if( !empty( $contentTypes[$res['content_type_guid']] ) ) {
-				$contentHash = &$contentTypes[$res['content_type_guid']];
-				if( empty( $contentHash['content_object'] ) ) {
-					include_once( $gBitSystem->mPackages[$contentHash['handler_package']]['path'].$contentHash['handler_file'] );
-					$contentHash['content_object'] = new $contentHash['handler_class']();
+   	// quick alias for code readability
+				$type = &$contentTypes[$res['content_type_guid']];
+				if( empty( $type['content_object'] ) ) {
+					// create *one* object for each object *type* to  call virtual methods.
+					include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
+					$type['content_object'] = new $type['handler_class']();
 				}
 				$aux['creator'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
 				$aux['real_name'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
 				$aux['editor'] = (isset( $res['modifier_real_name'] ) ? $res['modifier_real_name'] : $res['modifier_user'] );
-				$aux['content_description'] = $contentHash['content_description'];
+				$aux['content_description'] = $type['content_description'];
 //WIKI_PKG_URL."index.php?page_d=".$res['page_id'];
 				$aux['user'] = $res['creator_user'];
 				$aux['real_name'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
 				$aux['user_id'] = $res['creator_user_id'];
 				require_once $smarty->_get_plugin_filepath( 'modifier', 'bit_long_date' );
-				$aux['display_link'] =
-					'<a title="'.tra( 'Last modified by' ).': '.$gBitUser->getDisplayName( FALSE, $aux ).' - '.smarty_modifier_bit_long_date( $aux['last_modified'], $smarty ).
-					'" href="'.BIT_ROOT_URL.'index.php?content_id='.$aux['content_id'].'">'.
-					$contentHash['content_object']->getTitle( $aux ).
-					'</a>';
-//				$aux['display_url'] = $contentType['content_object']->getDisplayUrl( $aux['title'], $aux );
+				$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
+				// getDisplayUrl is currently a pure virtual method in LibertyContent, so this cannot be called currently
+// 				$aux['display_url'] = $type['content_object']->getDisplayUrl( $aux['title'], $aux );
+				$aux['title'] = $type['content_object']->getTitle( $aux );
 				$ret[] = $aux;
 			}
 		}
