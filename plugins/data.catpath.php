@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.6 $
+ * @version  $Revision: 1.1.1.1.2.7 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_catpath.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.catpath.php,v 1.1.1.1.2.6 2005/06/29 05:57:16 starrrider Exp $
+// $Id: data.catpath.php,v 1.1.1.1.2.7 2005/07/26 15:50:22 drewslater Exp $
 
 /**
  * definitions
@@ -79,7 +79,7 @@ function data_catpath($data, $params) { // Pre-Clyde Changes
 /******************************************************************************
 The code below is from the deprecated CATPATH plugin. All comments and the help routines have been removed. - StarRider
 function wikiplugin_catpath($data, $params) {
-	global $smarty;
+	global $gBitSmarty;
 	global $gBitSystem;
 	global $package_categories;
 	global $categlib;

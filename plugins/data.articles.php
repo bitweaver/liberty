@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.6 $
+ * @version  $Revision: 1.1.1.1.2.7 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_articles.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.articles.php,v 1.1.1.1.2.6 2005/06/29 05:57:16 starrrider Exp $
+// $Id: data.articles.php,v 1.1.1.1.2.7 2005/07/26 15:50:22 drewslater Exp $
 
 /**
  * definitions
@@ -91,7 +91,7 @@ if( $gBitSystem->isPackageActive( 'articles' ) ) {
 	include_once( ARTICLES_PKG_PATH . 'art_lib.php' );
 
 	function wikiplugin_articles($data,$params) {
-		global $smarty;
+		global $gBitSmarty;
 		global $artlib;
 		global $feature_articles;
 		global $bit_p_read_article;
@@ -115,10 +115,10 @@ if( $gBitSystem->isPackageActive( 'articles' ) ) {
 			//print_r($listpages["data"][$i]['title']);
 		}
 			$topics = $artlib->list_topics();
-			$smarty->assign_by_ref('topics', $topics);
+			$gBitSmarty->assign_by_ref('topics', $topics);
 		// If there're more records then assign next_offset
-		$smarty->assign_by_ref('listpages', $listpages["data"]);
-		return "~np~ ".$smarty->fetch('bitpackage:articles/center_list_articles.tpl')." ~/np~";
+		$gBitSmarty->assign_by_ref('listpages', $listpages["data"]);
+		return "~np~ ".$gBitSmarty->fetch('bitpackage:articles/center_list_articles.tpl')." ~/np~";
 	}
 }
 */

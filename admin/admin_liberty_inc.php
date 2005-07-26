@@ -12,7 +12,7 @@ $formLibertyFeatures = array(
 	),
 );
 
-$smarty->assign( 'formLibertyFeatures', $formLibertyFeatures );
+$gBitSmarty->assign( 'formLibertyFeatures', $formLibertyFeatures );
 
 $formCommentFeatures = array(
 	"comments_reorganise_page_layout" => array(
@@ -26,7 +26,7 @@ $formCommentFeatures = array(
 		'page' => '',
 	),
 );
-$smarty->assign( 'formCommentFeatures', $formCommentFeatures );
+$gBitSmarty->assign( 'formCommentFeatures', $formCommentFeatures );
 
 $formValues = array( 'image_processor', 'liberty_attachment_link_format', 'comments_per_page', 'comments_default_ordering', 'comments_default_display_mode' );
 
@@ -47,7 +47,7 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 		}
 		$gBitSystem->storePreference('approved_html_tags', $tags , LIBERTY_PKG_NAME );
 	}
-	$smarty->assign_by_ref( 'errors', $errors );
+	$gBitSmarty->assign_by_ref( 'errors', $errors );
 
 	foreach( $formValues as $item ) {
 		simple_set_value( $item );
@@ -56,5 +56,5 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 
 $tags = $gBitSystem->getPreference( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
 
-$smarty->assign( 'approved_html_tags', $tags );
+$gBitSmarty->assign( 'approved_html_tags', $tags );
 ?>

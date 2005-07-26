@@ -7,9 +7,9 @@ if( isset( $_REQUEST['pluginsave'] ) && !empty( $_REQUEST['pluginsave'] ) ) {
 	if( !empty( $_REQUEST['default_format'] ) && !empty( $_REQUEST['PLUGINS'][$_REQUEST['default_format']][0] ) ) {
 		$gLibertySystem->setActivePlugins( $_REQUEST['PLUGINS'] );
 		$gBitSystem->storePreference( 'default_format',$_REQUEST['default_format'] );
-		$smarty->assign( 'default_format',$_REQUEST['default_format'] );
+		$gBitSmarty->assign( 'default_format',$_REQUEST['default_format'] );
 	} else {
-		$smarty->assign( 'errorMsg', 'You cannot disable the default format');
+		$gBitSmarty->assign( 'errorMsg', 'You cannot disable the default format');
 	}
 }
 
@@ -20,9 +20,9 @@ foreach( $gLibertySystem->mPlugins as $key => $row ) {
    $guid[$key] = $row['plugin_guid'];
 }
 array_multisort( $type, SORT_ASC, $guid, SORT_ASC, $gLibertySystem->mPlugins );
-$smarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
+$gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
 ksort( $types );
-$smarty->assign_by_ref( 'pluginTypes', $types );
+$gBitSmarty->assign_by_ref( 'pluginTypes', $types );
 
 //vd( $gLibertySystem->mPlugins );
 

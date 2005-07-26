@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.8 $
+ * @version  $Revision: 1.1.1.1.2.9 $
  * @package  Liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.8 2005/06/30 18:14:40 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.9 2005/07/26 15:50:21 drewslater Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -30,11 +30,11 @@
  */
 require_once (LIBERTY_PKG_PATH.'LibertyComment.php');
 
-global $commentsLib, $smarty;
+global $commentsLib, $gBitSmarty;
 
 $postComment = array();
 $formfeedback = array();
-$smarty->assign_by_ref('formfeedback', $formfeedback);
+$gBitSmarty->assign_by_ref('formfeedback', $formfeedback);
 
 if (!empty($_REQUEST['delete_comment_id']) && $gBitUser->hasPermission( 'bit_p_post_comments' )) {
 	$deleteComment = new LibertyComment($_REQUEST['delete_comment_id']);
@@ -64,7 +64,7 @@ if (!empty($_REQUEST['post_comment_id']) && $gBitUser->hasPermission( 'bit_p_pos
 	$post_comment_id = NULL;
 	$editComment = NULL;
 }
-$smarty->assign('post_comment_id', $post_comment_id);
+$gBitSmarty->assign('post_comment_id', $post_comment_id);
 
 // Store comment posts
 if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'bit_p_post_comments' )) {
@@ -83,14 +83,14 @@ if (empty($_REQUEST['post_comment_request'])) {
 } elseif( $gBitUser->hasPermission( 'bit_p_post_comments' ) ) {
 	$post_comment_request = TRUE;
 }
-$smarty->assign_by_ref('post_comment_request', $post_comment_request);
+$gBitSmarty->assign_by_ref('post_comment_request', $post_comment_request);
 
 // $post_comment_preview is a flag indicating that the user wants to preview their comment prior to saving it
 if( !empty( $_REQUEST['post_comment_preview'] ) ) {
 	$postComment['title'] = $_REQUEST['comment_title'];
 	$postComment['data'] = $_REQUEST['comment_data'];
 	$postComment['parsed_data'] = LibertyComment::parseData( $_REQUEST['comment_data'], 'bitwiki' );
-	$smarty->assign('post_comment_preview', TRUE);
+	$gBitSmarty->assign('post_comment_preview', TRUE);
 }
 
 // $post_comment_reply_id is the content_id which a post is replying to
@@ -99,7 +99,7 @@ if (!empty($_REQUEST['post_comment_reply_id'])) {
 	$tmpComment = new LibertyComment(NULL, $post_comment_reply_id);
 	//$postComment['data'] = $commentsLib->quoteComment($tmpComment->mInfo['data']);  // This is super-ugly, better to just not quote at all, the indented comment indicates what comment it is replying to
 	$postComment['title'] = tra('Re:')." ".$tmpComment->mInfo['title'];
-	$smarty->assign('post_comment_reply_id', $post_comment_reply_id);
+	$gBitSmarty->assign('post_comment_reply_id', $post_comment_reply_id);
 }
 
 $maxComments = $gBitSystem->getPreference( 'comments_per_page', 10 );
@@ -134,8 +134,8 @@ if( empty( $commentsParentId ) ) {
 	$comments = $gComment->getComments( $commentsParentId, $maxComments, $commentOffset, $comments_sort_mode, $comments_display_style );
 	$numComments = $gComment->getNumComments( $commentsParentId );
 }
-$smarty->assign('comments', $comments);
-$smarty->assign('maxComments', $maxComments);
+$gBitSmarty->assign('comments', $comments);
+$gBitSmarty->assign('maxComments', $maxComments);
 
 $numCommentPages = ceil( $numComments / $maxComments );
 $currentPage = !empty( $_REQUEST['comment_page'] ) ? $_REQUEST['comment_page'] : 1;
@@ -150,12 +150,12 @@ $commentsPgnHash = array(
 	'comments_style' => $comments_display_style,
 	'ianchor' => 'editcomments',
 );
-$smarty->assign( 'commentsPgnHash', $commentsPgnHash );
-$smarty->assign('postComment', $postComment);
+$gBitSmarty->assign( 'commentsPgnHash', $commentsPgnHash );
+$gBitSmarty->assign('postComment', $postComment);
 
-$smarty->assign('currentTimestamp', time());
-$smarty->assign('comments_return_url', $comments_return_url);
-$smarty->assign('comments_at_top_of_page', ( isset( $comments_at_top_of_page ) && $gBitSystem->getPreference( 'comments_reorganise_page_layout', 'n' ) == 'y' ) ? $comments_at_top_of_page : NULL );
-$smarty->assign('comments_style', $comments_display_style);
-$smarty->assign('comments_sort_mode', $comments_sort_mode);
+$gBitSmarty->assign('currentTimestamp', time());
+$gBitSmarty->assign('comments_return_url', $comments_return_url);
+$gBitSmarty->assign('comments_at_top_of_page', ( isset( $comments_at_top_of_page ) && $gBitSystem->getPreference( 'comments_reorganise_page_layout', 'n' ) == 'y' ) ? $comments_at_top_of_page : NULL );
+$gBitSmarty->assign('comments_style', $comments_display_style);
+$gBitSmarty->assign('comments_sort_mode', $comments_sort_mode);
 ?>

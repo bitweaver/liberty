@@ -3,7 +3,7 @@
  * edit_help_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.2.2 $
+ * @version  $Revision: 1.1.2.3 $
  * @package  Liberty
  * @subpackage functions
  */
@@ -39,6 +39,6 @@ foreach( array_keys( $gLibertySystem->mPlugins ) as $pluginGuid ) {
 		}
 	}
 }
-$smarty->assign_by_ref( 'formatplugins', $formatplugins );
-$smarty->assign_by_ref( 'dataplugins', $dataplugins );
+$gBitSmarty->assign_by_ref( 'formatplugins', $formatplugins );
+$gBitSmarty->assign_by_ref( 'dataplugins', $dataplugins );
 ?>

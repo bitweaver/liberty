@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.6 $
+ * @version  $Revision: 1.1.1.1.2.7 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_catorphans.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.catorphans.php,v 1.1.1.1.2.6 2005/06/29 05:57:16 starrrider Exp $
+// $Id: data.catorphans.php,v 1.1.1.1.2.7 2005/07/26 15:50:22 drewslater Exp $
 
 /**
  * definitions
@@ -78,7 +78,7 @@ Note: I changed the seperator from | to +
 
 require_once( WIKI_PKG_PATH.'BitPage.php' );
 function wikiplugin_catorphans($data, $params) {
-	global $smarty;
+	global $gBitSmarty;
 	global $wikilib;
 	global $package_categories;
 	global $categlib;
