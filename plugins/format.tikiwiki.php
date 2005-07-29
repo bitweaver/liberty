@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.9 $
+ * @version  $Revision: 1.2.2.10 $
  * @package  Liberty
  */
 global $gLibertySystem;
@@ -516,7 +516,7 @@ $this->debug(0);
 		}
 
 		// convert HTML to chars
-		$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
+		//$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
 
 		// Process pre_handlers here
 		foreach ($this->pre_handlers as $handler) {
