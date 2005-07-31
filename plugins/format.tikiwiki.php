@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.10 $
+ * @version  $Revision: 1.2.2.11 $
  * @package  Liberty
  */
 global $gLibertySystem;
@@ -348,10 +348,10 @@ $this->debug(0);
 	function parse_comment_data($data) {
 		// rel=\"nofollow\" is support fo Google's Preventing comment spam
 		// http://www.google.com/googleblog/2005/01/preventing-comment-spam.html
-		$data = preg_replace("/\[([^\|\]]+)\|([^\]]+)\]/", "<a rel=\"nofollow\" class=\"commentslink\" href=\"$1\">$2</a>", $data);
+		$data = preg_replace("/\[([^\|\]]+)\|([^\]]+)\]/", "<a rel=\"nofollow\" href=\"$1\">$2</a>", $data);
 
 		// Segundo intento reemplazar los [link] comunes
-		$data = preg_replace("/\[([^\]\|]+)\]/", "<a rel=\"nofollow\" class=\"commentslink\" href=\"$1\">$1</a>", $data);
+		$data = preg_replace("/\[([^\]\|]+)\]/", "<a rel=\"nofollow\" href=\"$1\">$1</a>", $data);
 		// Llamar aqui a parse smileys
 		$data = $this->parse_smileys($data);
 		$data = preg_replace("/---/", "<hr/>", $data);
