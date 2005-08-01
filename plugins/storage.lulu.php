@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.3 $
+ * @version  $Revision: 1.1.1.1.2.4 $
  * @package  Liberty
  * @subpackage plugins_storage
  */
@@ -58,9 +58,9 @@ $gLibertySystem->registerPlugin( PLUGIN_GUID_LULU, $pluginParams );
 		if( $pRow['foreign_id'] ) {
 			$cidGroup = ((int)($pRow['foreign_id'] / 1000)) * 1000;
 			$ret['source_url'] = 'http://www.lulu.com/content/'.$pRow['foreign_id'];
-			$ret['thumbnail_url']['small'] = 'http://www.lulu.com/items/'.$cidGroup.'/'.$pRow['foreign_id'].'/current/preview/detail_'.$pRow['foreign_id'].'.jpg';
-			$ret['thumbnail_url']['medium'] = 'http://www.lulu.com/items/'.$cidGroup.'/'.$pRow['foreign_id'].'/current/preview/320_'.$pRow['foreign_id'].'.jpg';
-			$ret['thumbnail_url']['large'] = 'http://www.lulu.com/items/'.$cidGroup.'/'.$pRow['foreign_id'].'/current/preview/zoom_'.$pRow['foreign_id'].'.jpg';
+			$ret['thumbnail_url']['small']  = 'http://www.lulu.com/author/display_thumbnail.php?fSize=promo_&fCID='.$pRow['foreign_id'];
+			$ret['thumbnail_url']['medium'] = 'http://www.lulu.com/author/display_thumbnail.php?fSize=detail_&fCID='.$pRow['foreign_id'];
+			$ret['thumbnail_url']['large']  = 'http://www.lulu.com/author/display_thumbnail.php?fSize=320_&fCID='.$pRow['foreign_id'];
 			$ret['attachment_id'] = $pRow['attachment_id'];
 			$ret['wiki_plugin_link'] = "{ATTACHMENT(id=>".$ret['attachment_id'].")}{ATTACHMENT}";
 		}
