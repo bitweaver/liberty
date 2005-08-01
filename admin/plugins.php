@@ -1,5 +1,6 @@
 <?php
 require_once( '../../bit_setup_inc.php' );
+include_once( KERNEL_PKG_PATH.'simple_form_functions_lib.php' );
 
 $gBitSystem->verifyPermission( 'bit_p_admin' );
 
@@ -10,6 +11,11 @@ if( isset( $_REQUEST['pluginsave'] ) && !empty( $_REQUEST['pluginsave'] ) ) {
 		$gBitSmarty->assign( 'default_format',$_REQUEST['default_format'] );
 	} else {
 		$gBitSmarty->assign( 'errorMsg', 'You cannot disable the default format');
+	}
+
+	$formToggles = array( 'allow_html' );
+	foreach( $formToggles as $item ) {
+		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
 }
 
