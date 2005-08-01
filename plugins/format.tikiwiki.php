@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.12 $
+ * @version  $Revision: 1.2.2.13 $
  * @package  Liberty
  */
 global $gLibertySystem;
@@ -507,7 +507,7 @@ $this->debug(0);
 			global $wikilib;
 		}
 
-		if( $allow_html ) {
+		if( !empty( $allow_html ) ) {
 			// this is copied and pasted from format.bithtml.php - xing
 			// Strip all evil tags that remain
 			// this comes out of gBitSystem->getPreference() set in Liberty Admin
