@@ -1,11 +1,11 @@
 <?php
-// $Id: data.comment.php,v 1.1.2.3 2005/07/16 03:52:25 starrrider Exp $
+// $Id: data.comment.php,v 1.1.2.4 2005/08/01 15:52:31 lsces Exp $
 /**
  * assigned_modules
  *
  * @author   StarRider <starrrider@sourceforge.net>
- * @version  $Revision: 1.1.2.3 $
- * @package  liberty
+ * @version  $Revision: 1.1.2.4 $
+ * @package  Liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
  * All Rights Reserved. See copyright.txt for details and a complete list of authors.

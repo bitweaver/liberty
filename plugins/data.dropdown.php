@@ -4,8 +4,8 @@
  * assigned_modules
  *
  * @author   StarRider <starrrider@sourceforge.net>
- * @version  $Revision: 1.1.2.4 $
- * @package  liberty
+ * @version  $Revision: 1.1.2.5 $
+ * @package  Liberty
  * @subpackage plugins_data
  * 
  * @copyright Copyright (c) 2004, bitweaver.org
