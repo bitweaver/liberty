@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.11 $
+ * @version  $Revision: 1.2.2.12 $
  * @package  Liberty
  */
 global $gLibertySystem;
@@ -500,23 +500,29 @@ $this->debug(0);
 	function parse_data( $data, &$pCommonObject ) {
 		global $gBitSystem;
 		global $gBitUser;
-		global $slidemode;
-		global $cachepages;
-		global $ownurl_father;
 		global $page;
-		global $gStructure;
-		global $rsslib;
-		global $structlib;
-		global $user;
-		global $bitdomain;
 		global $wikilib;
 		if( empty( $wikilib ) ) {
 			require_once( WIKI_PKG_PATH.'BitPage.php' );
 			global $wikilib;
 		}
 
-		// convert HTML to chars
-		//$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
+		if( $allow_html ) {
+			// this is copied and pasted from format.bithtml.php - xing
+			// Strip all evil tags that remain
+			// this comes out of gBitSystem->getPreference() set in Liberty Admin
+			$acceptableTags = $gBitSystem->getPreference( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
+
+			// Destroy all script code "manually" - strip_tags will leave code inline as plain text
+			if( !preg_match( '/\<script\>/', $acceptableTags ) ) {
+				$data = preg_replace( "/(\<script)(.*?)(script\>)/si", '', $data );
+			}
+
+			$data = strip_tags( $data, $acceptableTags );
+		} else {
+			// convert HTML to chars
+			$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
+		}
 
 		// Process pre_handlers here
 		foreach ($this->pre_handlers as $handler) {
