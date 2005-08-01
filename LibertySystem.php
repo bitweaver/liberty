@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.3 $
+* @version  $Revision: 1.4 $
 * @package  Liberty
 */
 
@@ -19,7 +19,7 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertySystem.php,v 1.3 2005/07/25 20:02:13 squareing Exp $
+// $Id: LibertySystem.php,v 1.4 2005/08/01 18:40:47 squareing Exp $
 /**
  * Local base defines
  */
@@ -40,7 +40,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  * System class for handling the liberty package
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  Liberty
  * @subpackage LibertySystem
  */
@@ -185,8 +185,8 @@ class LibertySystem extends LibertyBase {
 		$ret = NULL;
 		$parts = split('/',$pMimeType);
 		if (count($parts) > 1) {
-			global $smarty;
-			require_once $smarty->_get_plugin_filepath('function','biticon');
+			global $gBitSmarty;
+			require_once $gBitSmarty->_get_plugin_filepath('function','biticon');
 
 			$ext = $parts[1];
 			$biticon = array(
@@ -196,9 +196,9 @@ class LibertySystem extends LibertyBase {
 				'iexplain' => $ext,
 				'url' => 'only',
 			);
-			if( !$ret = smarty_function_biticon( $biticon,$smarty ) ) {
+			if( !$ret = smarty_function_biticon( $biticon,$gBitSmarty ) ) {
 				$biticon['iname'] = 'generic';
-				$ret = smarty_function_biticon( $biticon,$smarty );
+				$ret = smarty_function_biticon( $biticon,$gBitSmarty );
 			}
 		}
 		return $ret;
@@ -310,6 +310,6 @@ function parse_data_plugins(&$data, &$preparsed, &$noparsed, &$pParser ) {
 
 global $gLibertySystem;
 $gLibertySystem = new LibertySystem();
-$smarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
+$gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
 
 ?>

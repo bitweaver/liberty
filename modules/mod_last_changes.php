@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.php,v 1.3 2005/07/25 20:02:13 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.php,v 1.4 2005/08/01 18:40:50 squareing Exp $
 /**
  * Params:
  * - content_type_guid : if set, show only those content_type_guid's
@@ -20,18 +20,18 @@ if( !empty( $gQueryUser->mUserId ) ) {
 if( empty( $module_title ) ) {
 	if( !empty( $module_params['content_type_guid'] ) && !empty( $gLibertySystem->mContentTypes[$module_params['content_type_guid']] ) ) {
 		$title = tra( "Last Changes" ).': '.tra( $gLibertySystem->mContentTypes[$module_params['content_type_guid']]['content_description'] );
-		$smarty->assign( 'contentType', $module_params['content_type_guid'] );
+		$gBitSmarty->assign( 'contentType', $module_params['content_type_guid'] );
 	} else {
-		$smarty->assign( 'contentType', FALSE );
+		$gBitSmarty->assign( 'contentType', FALSE );
 		$title = tra( "Last Changes" );
 	}
-	$smarty->assign( 'moduleTitle', $title );
+	$gBitSmarty->assign( 'moduleTitle', $title );
 }
 
 if( !empty( $module_params['show_date'] ) ) {
-	$smarty->assign( 'showDate' , TRUE );
+	$gBitSmarty->assign( 'showDate' , TRUE );
 }
 
 $modLastContent = $gBitUser->getContentList( !empty( $module_params['content_type_guid'] ) ? $module_params['content_type_guid'] : NULL, 0, $module_rows, 'last_modified_desc', NULL, $userId );
-$smarty->assign_by_ref( 'modLastContent', $modLastContent['data'] );
+$gBitSmarty->assign_by_ref( 'modLastContent', $modLastContent['data'] );
 ?>

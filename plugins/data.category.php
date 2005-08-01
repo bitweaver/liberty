@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_category.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.category.php,v 1.3 2005/07/17 17:36:09 squareing Exp $
+// $Id: data.category.php,v 1.4 2005/08/01 18:41:06 squareing Exp $
 
 /**
  * definitions
@@ -111,7 +111,7 @@ function in_multi_array($needle, $haystack) {
 	return $in_multi_array;
 }
 function wikiplugin_category($data, $params) {
-	global $smarty;
+	global $gBitSmarty;
 	global $package_categories;
 	global $categlib;
 	if (!is_object($categlib)) {
@@ -229,9 +229,9 @@ function wikiplugin_category($data, $params) {
 		}
 		// split mode: appending onto $out each time
 		if ($split == 'y' or $split == 'yes' or $split == 'true') {
-			$smarty->assign("title", $title);
-			$smarty->assign("listcat", $listcat);
-			$out .= $smarty->fetch("bitpackage:wiki/simple_plugin.tpl");
+			$gBitSmarty->assign("title", $title);
+			$gBitSmarty->assign("listcat", $listcat);
+			$out .= $gBitSmarty->fetch("bitpackage:wiki/simple_plugin.tpl");
 			// reset array for next loop
 			$listcat = array();
 			// reset title
@@ -241,9 +241,9 @@ function wikiplugin_category($data, $params) {
 	}
 	// non-split mode
 	if ($split == 'n' or $split == 'no' or $split == 'false') {
-		$smarty->assign("title", $title);
-		$smarty->assign("listcat", $listcat);
-		$out = $smarty->fetch("bitpackage:wiki/simple_plugin.tpl");
+		$gBitSmarty->assign("title", $title);
+		$gBitSmarty->assign("listcat", $listcat);
+		$out = $gBitSmarty->fetch("bitpackage:wiki/simple_plugin.tpl");
 	}
 	return '~np~'.$out.'~/np~';
 }

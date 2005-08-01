@@ -1,31 +1,20 @@
 <?php
-// $Id: data.comment.php,v 1.3 2005/07/17 17:36:09 squareing Exp $
+// $Id: data.comment.php,v 1.4 2005/08/01 18:41:06 squareing Exp $
 /**
+ * assigned_modules
+ *
  * @author   StarRider <starrrider@sourceforge.net>
- * @version  $Revision: 1.3 $
- * @package  liberty
+ * @version  $Revision: 1.4 $
+ * @package  Liberty
  * @subpackage plugins_data
- */
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2004, bitweaver.org
-// +----------------------------------------------------------------------+
-// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
-// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
-// |
-// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
-// | -> see http://phpdocu.sourceforge.net/
-// +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sourceforge.net>
-// | Wrote it but didn't think of it :-)
-// +----------------------------------------------------------------------+
-// $Id: data.comment.php,v 1.3 2005/07/17 17:36:09 squareing Exp $
-
-/**
- * definitions
+ * @copyright Copyright (c) 2004, bitweaver.org
+ * All Rights Reserved. See copyright.txt for details and a complete list of authors.
+ * @license Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
  */
 /******************
  * Initialization *
  ******************/
+global $gLibertySystem;
 define( 'PLUGIN_GUID_COMMENT', 'comment' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'COMMENT',

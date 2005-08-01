@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.4 $
+* @version  $Revision: 1.5 $
 * @package  Liberty
 */
 
@@ -19,7 +19,7 @@
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
 //
-// $Id: LibertyContent.php,v 1.4 2005/07/25 20:02:12 squareing Exp $
+// $Id: LibertyContent.php,v 1.5 2005/08/01 18:40:46 squareing Exp $
 
 // define( 'CONTENT_TYPE_WIKI', '1' );
 // define( 'CONTENT_TYPE_COMMENT', '3' );
@@ -549,7 +549,7 @@ class LibertyContent extends LibertyBase {
 	* Get a list of all structures this content is a member of
 	**/
 	function getContentList( $pContentGuid=NULL, $offset = 0, $maxRecords = -1, $sort_mode = 'title_desc', $find = NULL, $pUserId=NULL ) {
-		global $gLibertySystem, $gBitSystem, $gBitUser, $smarty;
+		global $gLibertySystem, $gBitSystem, $gBitUser, $gBitSmarty;
 		if ($sort_mode == 'size_desc') {
 			$sort_mode = 'page_size_desc';
 		}
@@ -667,7 +667,7 @@ class LibertyContent extends LibertyBase {
 				$aux['user'] = $res['creator_user'];
 				$aux['real_name'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
 				$aux['user_id'] = $res['creator_user_id'];
-				require_once $smarty->_get_plugin_filepath( 'modifier', 'bit_long_date' );
+				require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'bit_long_date' );
 				$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
 				// getDisplayUrl is currently a pure virtual method in LibertyContent, so this cannot be called currently
 // 				$aux['display_url'] = $type['content_object']->getDisplayUrl( $aux['title'], $aux );

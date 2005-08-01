@@ -2,8 +2,8 @@
 /**
  * edit_structure_inc
  *
- * @author   Christian Fowler
- * @version  $Revision: 1.4 $
+ * @author   Christian Fowler>
+ * @version  $Revision: 1.5 $
  * @package  Liberty
  * @subpackage functions
  */
@@ -42,8 +42,8 @@ if( empty( $_REQUEST["structure_id"] ) ) {
 	if( ( $gBitUser->mUserId != $rootStructure->mInfo['user_id'] ) ) {
 		$gBitSystem->verifyPermission( !empty( $verifyStructurePermission ) ? $verifyStructurePermission : 'bit_p_admin' );
 	}
-	$smarty->assign_by_ref( 'gStructure', $gStructure );
-	$smarty->assign('structureInfo', $gStructure->mInfo);
+	$gBitSmarty->assign_by_ref( 'gStructure', $gStructure );
+	$gBitSmarty->assign('structureInfo', $gStructure->mInfo);
 
 	// Store the actively stored structure name
 	$gBitUser->storePreference( 'edit_structure_name', $rootStructure->mInfo['title'] );
@@ -53,17 +53,17 @@ if( empty( $_REQUEST["structure_id"] ) ) {
 	foreach( $contentList['data'] as $cItem ) {
 		$cList[$contentTypes[$cItem['content_type_guid']]][$cItem['content_id']] = $cItem['title'].' [id: '.$cItem['content_id'].']';
 	}
-	$smarty->assign( 'contentList', $cList );
-	$smarty->assign( 'contentSelect', $contentSelect );
-	$smarty->assign( 'contentTypes', $contentTypes );
-	$smarty->assign( 'contentTypes', $contentTypes );
+	$gBitSmarty->assign( 'contentList', $cList );
+	$gBitSmarty->assign( 'contentSelect', $contentSelect );
+	$gBitSmarty->assign( 'contentTypes', $contentTypes );
+	$gBitSmarty->assign( 'contentTypes', $contentTypes );
 
 	$subpages = $gStructure->s_get_pages($_REQUEST["structure_id"]);
 	$max = count($subpages);
-	$smarty->assign_by_ref('subpages', $subpages);
+	$gBitSmarty->assign_by_ref('subpages', $subpages);
 	if ($max != 0) {
 		$last_child = $subpages[$max - 1];
-		$smarty->assign('insert_after', $last_child["structure_id"]);
+		$gBitSmarty->assign('insert_after', $last_child["structure_id"]);
 	}
 
 	if( ( isset( $_REQUEST["action"] ) && ( $_REQUEST["action"] == 'remove' ) ) || isset( $_REQUEST["confirm"] ) ) {
@@ -123,8 +123,8 @@ if( empty( $_REQUEST["structure_id"] ) ) {
 		}
 	}
 
-	$smarty->assign( (!empty( $_REQUEST['tab'] ) ? $_REQUEST['tab'] : 'body').'TabSelect', 'tdefault' );
-	$smarty->assign('subtree', $rootTree = $rootStructure->getSubTree( $rootStructure->mStructureId ));
+	$gBitSmarty->assign( (!empty( $_REQUEST['tab'] ) ? $_REQUEST['tab'] : 'body').'TabSelect', 'tdefault' );
+	$gBitSmarty->assign('subtree', $rootTree = $rootStructure->getSubTree( $rootStructure->mStructureId ));
 
 }
 

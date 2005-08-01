@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  Liberty
  */
 global $gLibertySystem;
@@ -222,9 +222,9 @@ $this->debug(0);
 	// This recursive function handles pre- and no-parse sections and plugins
 	function parse_first(&$data, &$preparsed, &$noparsed) {
 		global $gLibertySystem;
+		$this->parse_pp_np($data, $preparsed, $noparsed);
 		// Handle pre- and no-parse sections
 		parse_data_plugins( $data, $preparsed, $noparsed, $this );
-		$this->parse_pp_np($data, $preparsed, $noparsed);
 	}
 
 
@@ -348,10 +348,10 @@ $this->debug(0);
 	function parse_comment_data($data) {
 		// rel=\"nofollow\" is support fo Google's Preventing comment spam
 		// http://www.google.com/googleblog/2005/01/preventing-comment-spam.html
-		$data = preg_replace("/\[([^\|\]]+)\|([^\]]+)\]/", "<a rel=\"nofollow\" class=\"commentslink\" href=\"$1\">$2</a>", $data);
+		$data = preg_replace("/\[([^\|\]]+)\|([^\]]+)\]/", "<a rel=\"nofollow\" href=\"$1\">$2</a>", $data);
 
 		// Segundo intento reemplazar los [link] comunes
-		$data = preg_replace("/\[([^\]\|]+)\]/", "<a rel=\"nofollow\" class=\"commentslink\" href=\"$1\">$1</a>", $data);
+		$data = preg_replace("/\[([^\]\|]+)\]/", "<a rel=\"nofollow\" href=\"$1\">$1</a>", $data);
 		// Llamar aqui a parse smileys
 		$data = $this->parse_smileys($data);
 		$data = preg_replace("/---/", "<hr/>", $data);
@@ -500,23 +500,29 @@ $this->debug(0);
 	function parse_data( $data, &$pCommonObject ) {
 		global $gBitSystem;
 		global $gBitUser;
-		global $slidemode;
-		global $cachepages;
-		global $ownurl_father;
 		global $page;
-		global $gStructure;
-		global $rsslib;
-		global $structlib;
-		global $user;
-		global $bitdomain;
 		global $wikilib;
 		if( empty( $wikilib ) ) {
 			require_once( WIKI_PKG_PATH.'BitPage.php' );
 			global $wikilib;
 		}
 
-		// convert HTML to chars
-		$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
+		if( $gBitSystem->isFeatureActive( 'allow_html' ) ) {
+			// this is copied and pasted from format.bithtml.php - xing
+			// Strip all evil tags that remain
+			// this comes out of gBitSystem->getPreference() set in Liberty Admin
+			$acceptableTags = $gBitSystem->getPreference( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
+
+			// Destroy all script code "manually" - strip_tags will leave code inline as plain text
+			if( !preg_match( '/\<script\>/', $acceptableTags ) ) {
+				$data = preg_replace( "/(\<script)(.*?)(script\>)/si", '', $data );
+			}
+
+			$data = strip_tags( $data, $acceptableTags );
+		} else {
+			// convert HTML to chars
+			$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
+		}
 
 		// Process pre_handlers here
 		foreach ($this->pre_handlers as $handler) {

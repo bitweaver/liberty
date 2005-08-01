@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  Liberty
  * @subpackage plugins_data
  */
@@ -16,7 +16,7 @@
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
 // | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.module.php,v 1.2 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.module.php,v 1.3 2005/08/01 18:41:07 squareing Exp $
 
 /**
 Displays a module inlined in page
@@ -80,7 +80,7 @@ function datamodule_help() {
  * data_datamodule
  */
 function data_datamodule($data, $params) {
-	global $modlib, $cache_time, $smarty, $feature_directory, $ranklib, $feature_trackers, $bitdomain, $user,
+	global $modlib, $cache_time, $gBitSmarty, $feature_directory, $ranklib, $feature_trackers, $bitdomain, $user,
 		$feature_tasks, $feature_user_bookmarks, $bit_p_tasks, $bit_p_create_bookmarks, $imagegallib;
 	require_once( KERNEL_PKG_PATH.'mod_lib.php' );
 	$out = '';
@@ -113,17 +113,17 @@ function data_datamodule($data, $params) {
 			$args = '';
 		}
 //		if ((!file_exists($cachefile)) || (file_exists($nocache)) || ((time() - filemtime($cachefile)) > $cache_time)) {
-            $smarty->assign('no_module_controls', 'y');
-			if( $out = $smarty->fetch( $module ) ) {
+            $gBitSmarty->assign('no_module_controls', 'y');
+			if( $out = $gBitSmarty->fetch( $module ) ) {
 			} else {
 				if ($modlib->is_user_module($module)) {
 					$info = $modlib->get_user_module($module);
-					$smarty->assign_by_ref('user_title', $info["title"]);
-					$smarty->assign_by_ref('user_data', $info["data"]);
-					$out = $smarty->fetch('modules/user_module.tpl');
+					$gBitSmarty->assign_by_ref('user_title', $info["title"]);
+					$gBitSmarty->assign_by_ref('user_data', $info["data"]);
+					$out = $gBitSmarty->fetch('modules/user_module.tpl');
 				}
 			}
-           	$smarty->clear_assign('no_module_controls');
+           	$gBitSmarty->clear_assign('no_module_controls');
 //		} else {
 //			$fp = fopen($cachefile, "r");
 //			$out = fread($fp, filesize($cachefile));

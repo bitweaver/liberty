@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  Liberty
  */
 
@@ -16,7 +16,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
 * System class for handling the liberty package
 *
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.3 $
+* @version  $Revision: 1.4 $
 * @package  Liberty
 * @subpackage  LibertyStructure
 */
@@ -580,22 +580,22 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	function fetch_toc($structure_tree,$showdesc,$numbering) {
-		global $smarty;
+		global $gBitSmarty;
 		$ret='';
 		if ($structure_tree != '') {
-			$smarty->verifyCompileDir();
-			$ret.=$smarty->fetch( "bitpackage:wiki/book_toc_startul.tpl");
+			$gBitSmarty->verifyCompileDir();
+			$ret.=$gBitSmarty->fetch( "bitpackage:wiki/book_toc_startul.tpl");
 			foreach($structure_tree as $leaf) {
 				//echo "<br />";print_r($leaf);echo "<br />";
-				$smarty->assign_by_ref('structure_tree',$leaf);
-				$smarty->assign('showdesc',$showdesc);
-				$smarty->assign('numbering',$numbering);
-				$ret.=$smarty->fetch( "bitpackage:wiki/book_toc_leaf.tpl");
+				$gBitSmarty->assign_by_ref('structure_tree',$leaf);
+				$gBitSmarty->assign('showdesc',$showdesc);
+				$gBitSmarty->assign('numbering',$numbering);
+				$ret.=$gBitSmarty->fetch( "bitpackage:wiki/book_toc_leaf.tpl");
 				if(isset($leaf["sub"]) && is_array($leaf["sub"])) {
 					$ret.=$this->fetch_toc($leaf["sub"],$showdesc,$numbering);
 				}
 			}
-			$ret.=$smarty->fetch( "bitpackage:wiki/book_toc_endul.tpl");
+			$ret.=$gBitSmarty->fetch( "bitpackage:wiki/book_toc_endul.tpl");
 		}
 		return $ret;
 	}
