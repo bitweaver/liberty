@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.8 $
+ * @version  $Revision: 1.1.1.1.2.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_avatar.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.avatar.php,v 1.1.1.1.2.8 2005/08/03 07:43:55 lsces Exp $
+// $Id: data.avatar.php,v 1.1.1.1.2.9 2005/08/03 15:27:56 lsces Exp $
 
 /**
  * definitions
@@ -97,7 +97,7 @@ function wikiplugin_avatar($data, $params) {
 		$avatar = $gBitSystem->get_user_avatar($data);
 	if (isset($page)) {
 		$avatar = "<a href=\"".WIKI_PKG_URL."index.php?page=$page'>" . $avatar . '</a>';
-	} else if ($gBitUser->userExists( array( 'login' => $data ) ) && $gBitSystem->get_user_preference($data, 'user_information', 'public') == 'public') {
+	} else if ($gBitUser->userExists( array( 'login' => $data ) ) && $gBitSystem->getPreference('user_information', 'public', $data ) == 'public') {
 		$avatar = "<a href=\"".USERS_PKG_URL."\"index.php?fHomepage=$data\">" . $avatar . '</a>';
 	}
 	return $avatar;
