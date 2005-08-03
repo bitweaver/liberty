@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.15 2005/08/03 16:53:56 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.16 2005/08/03 22:14:14 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -40,7 +40,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  * Virtual base class (as much as one can have such things in PHP) for all
  * derived tikiwiki classes that require database access.
  *
- * @package kernel
+ * @package liberty
  */
 class LibertyContent extends LibertyBase {
 	var $mContentId;
