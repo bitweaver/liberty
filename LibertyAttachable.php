@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.4 2005/08/03 07:43:54 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.5 2005/08/03 16:53:56 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -27,6 +27,7 @@ require_once( LIBERTY_PKG_PATH.'LibertySystem.php' );
 /**
  * LibertyAttachable class
  *
+ * @package kernel
  */
 class LibertyAttachable extends LibertyContent {
 	var $mContentId;

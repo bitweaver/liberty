@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.5 2005/08/03 07:43:54 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.6 2005/08/03 16:53:57 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -13,9 +13,10 @@
 require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
 
 /**
-* System class for handling the liberty package
-*
-*/
+ * System class for handling the liberty package
+ *
+ * @package kernel
+ */
 class LibertyStructure extends LibertyBase {
 	var $mStructureId;
 

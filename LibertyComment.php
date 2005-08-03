@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.2.2.6 2005/08/03 07:43:54 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.2.2.7 2005/08/03 16:53:57 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -15,10 +15,11 @@ require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
 define( 'BITCOMMENT_CONTENT_TYPE_GUID', 'bitcomment' );
 
 /**
-* Virtual base class (as much as one can have such things in PHP) for all
-* derived tikiwiki classes that require database access.
-*
-*/
+ * Virtual base class (as much as one can have such things in PHP) for all
+ * derived tikiwiki classes that require database access.
+ *
+ * @package kernel
+ */
 class LibertyComment extends LibertyContent {
 	var $mCommentId;
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.15 $
+ * @version  $Revision: 1.2.2.16 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -82,6 +82,8 @@ function tikiwiki_parse_data( &$pData, &$pCommonObject ) {
 
 /**
  * TikiWikiParser 
+ *
+ * @package kernel
  */
 class TikiWikiParser extends BitBase {
 	var $mWikiWordRegex;
