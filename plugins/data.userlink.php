@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.1.2.1 $
- * @package  Liberty
+ * @version  $Revision: 1.1.2.2 $
+ * @package  liberty
  * @subpackage plugins_data
  * @author bigwasp bigwasp@sourceforge.net
  */
@@ -19,7 +19,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_usercount.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.userlink.php,v 1.1.2.1 2005/08/02 14:43:30 bigwasp Exp $
+// $Id: data.userlink.php,v 1.1.2.2 2005/08/03 07:43:55 lsces Exp $
 
 /**
  * definitions

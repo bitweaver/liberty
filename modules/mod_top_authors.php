@@ -1,9 +1,9 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_top_authors.php,v 1.1.1.1.2.2 2005/07/26 15:50:21 drewslater Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_top_authors.php,v 1.1.1.1.2.3 2005/08/03 07:43:55 lsces Exp $
 /**
  * Params:
  * - content_type_guid : if set, show only those content_type_guid's
- * @package Liberty
+ * @package liberty
  * @subpackage modules
  */
 

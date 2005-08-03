@@ -2,9 +2,9 @@
 /**
 * Management of Liberty content
 *
+* @package  liberty
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.14 2005/08/03 07:43:54 lsces Exp $
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.2.2.13 $
-* @package  Liberty
 */
 
 // +----------------------------------------------------------------------+
@@ -18,8 +18,6 @@
 // +----------------------------------------------------------------------+
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
-//
-// $Id: LibertyContent.php,v 1.2.2.13 2005/08/02 02:55:57 wolff_borg Exp $
 
 // define( 'CONTENT_TYPE_WIKI', '1' );
 // define( 'CONTENT_TYPE_COMMENT', '3' );
@@ -42,9 +40,6 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
 * Virtual base class (as much as one can have such things in PHP) for all
 * derived tikiwiki classes that require database access.
 *
-* @author   spider <spider@steelsun.com>
-* @package  Liberty
-* @subpackage  LibertyContent
 */
 class LibertyContent extends LibertyBase {
 	var $mContentId;

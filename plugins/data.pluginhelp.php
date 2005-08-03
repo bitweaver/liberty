@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.7 $
- * @package  Liberty
+ * @version  $Revision: 1.1.1.1.2.8 $
+ * @package  liberty
  * @subpackage plugins_data
  */
 // +----------------------------------------------------------------------+
@@ -17,7 +17,7 @@
 // | Rewritten for bitweaver by Author
 // | wikiplugin_pluginhelp.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.pluginhelp.php,v 1.1.1.1.2.7 2005/06/29 05:57:16 starrrider Exp $
+// $Id: data.pluginhelp.php,v 1.1.1.1.2.8 2005/08/03 07:43:55 lsces Exp $
 
 /**
  * definitions

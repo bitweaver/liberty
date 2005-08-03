@@ -1,6 +1,6 @@
 <?php
 /**
- * @package Liberty
+ * @package liberty
  * @subpackage modules
  */
 ?>

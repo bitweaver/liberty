@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.9 $
- * @package  Liberty
+ * @version  $Revision: 1.1.1.1.2.10 $
+ * @package  liberty
  * @subpackage plugins_data
  */
 // +----------------------------------------------------------------------+
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.1.1.1.2.9 2005/07/03 11:11:34 squareing Exp $
+// $Id: data.maketoc.php,v 1.1.1.1.2.10 2005/08/03 07:43:55 lsces Exp $
 
 /**
  * definitions

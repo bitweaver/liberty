@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.5 $
- * @package  Liberty
+ * @version  $Revision: 1.1.1.1.2.6 $
+ * @package  liberty
  * @subpackage plugins_data
  */
 // +----------------------------------------------------------------------+
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.1.1.1.2.5 2005/06/29 05:57:16 starrrider Exp $
+// $Id: data.attachment.php,v 1.1.1.1.2.6 2005/08/03 07:43:55 lsces Exp $
 
 /**
  * definitions

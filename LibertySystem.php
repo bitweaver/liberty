@@ -2,9 +2,9 @@
 /**
 * System class for handling the liberty package
 *
+* @package  liberty
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.6 2005/08/03 07:43:54 lsces Exp $
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.1.1.1.2.5 $
-* @package  Liberty
 */
 
 // +----------------------------------------------------------------------+
@@ -18,8 +18,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
-//
-// $Id: LibertySystem.php,v 1.1.1.1.2.5 2005/07/26 15:50:21 drewslater Exp $
+
 /**
  * Local base defines
  */
@@ -39,10 +38,6 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
 /**
  * System class for handling the liberty package
  *
- * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.5 $
- * @package  Liberty
- * @subpackage LibertySystem
  */
 class LibertySystem extends LibertyBase {
 

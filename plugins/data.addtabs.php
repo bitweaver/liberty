@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.10 $
- * @package  Liberty
+ * @version  $Revision: 1.1.1.1.2.11 $
+ * @package  liberty
  * @subpackage plugins_data
  */
 // +----------------------------------------------------------------------+
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.addtabs.php,v 1.1.1.1.2.10 2005/07/14 09:03:36 squareing Exp $
+// $Id: data.addtabs.php,v 1.1.1.1.2.11 2005/08/03 07:43:55 lsces Exp $
 
 /**
  * definitions

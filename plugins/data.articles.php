@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.7 $
- * @package  Liberty
+ * @version  $Revision: 1.1.1.1.2.8 $
+ * @package  liberty
  * @subpackage plugins_data
  */
 // +----------------------------------------------------------------------+
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_articles.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.articles.php,v 1.1.1.1.2.7 2005/07/26 15:50:22 drewslater Exp $
+// $Id: data.articles.php,v 1.1.1.1.2.8 2005/08/03 07:43:55 lsces Exp $
 
 /**
  * definitions

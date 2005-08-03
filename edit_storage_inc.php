@@ -3,8 +3,8 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.2 $
- * @package  Liberty
+ * @version  $Revision: 1.1.1.1.2.3 $
+ * @package  liberty
  * @subpackage functions
  *
  * This file is automatically included by edit_storage.tpl - All you need to do is include edit_storage.tpl

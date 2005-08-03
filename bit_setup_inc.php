@@ -3,8 +3,8 @@
  * base package include
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.2 $
- * @package  Liberty
+ * @version  $Revision: 1.1.1.1.2.3 $
+ * @package  liberty
  * @subpackage functions
  */
 

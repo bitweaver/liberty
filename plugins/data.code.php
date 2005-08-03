@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.11 $
- * @package  Liberty
+ * @version  $Revision: 1.1.1.1.2.12 $
+ * @package  liberty
  * @subpackage plugins_data
  */
 // +----------------------------------------------------------------------+
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.1.1.1.2.11 2005/07/24 10:04:18 wolff_borg Exp $
+// $Id: data.code.php,v 1.1.1.1.2.12 2005/08/03 07:43:55 lsces Exp $
 
 /**
  * definitions

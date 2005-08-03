@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.8 $
- * @package  Liberty
+ * @version  $Revision: 1.1.1.1.2.9 $
+ * @package  liberty
  * @subpackage plugins_data
  */
 // +----------------------------------------------------------------------+
@@ -17,7 +17,7 @@
 // | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
 // | by: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.sort.php,v 1.1.1.1.2.8 2005/06/29 05:57:16 starrrider Exp $
+// $Id: data.sort.php,v 1.1.1.1.2.9 2005/08/03 07:43:55 lsces Exp $
 
 /**
  * definitions
