@@ -3,7 +3,7 @@
  * attachment_browser
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.3 $
+ * @version  $Revision: 1.1.1.1.2.4 $
  * @package  liberty
  * @subpackage functions
  */
@@ -15,12 +15,15 @@ include("../bit_setup_inc.php");
 
 $userAttachments = $gBitUser->getUserAttachments();
 $gBitSmarty->assign('userAttachments', $userAttachments);
-if (empty($gBitLoc['styleSheet'])) {
-	$gBitLoc['styleSheet'] = $gBitSystem->getStyleCss();
+if (empty($gBitSystem->mStyles['styleSheet'])) {
+	$gBitSystem->mStyles['styleSheet'] = $gBitSystem->getStyleCss();
 }
-$gBitLoc['browserStyleSheet'] = $gBitSystem->getBrowserStyleCss();
-$gBitLoc['customStyleSheet'] = $gBitSystem->getCustomStyleCss();
-$gBitLoc['THEMES_STYLE_URL'] = $gBitSystem->getStyleUrl();
+$gBitSystem->mStyles['browserStyleSheet'] = $gBitSystem->getBrowserStyleCss();
+$gBitSystem->mStyles['customStyleSheet'] = $gBitSystem->getCustomStyleCss();
+if( !defined( 'THEMES_STYLE_URL' ) ) {
+	define( 'THEMES_STYLE_URL', $gBitSystem->getStyleUrl() );
+}
+
 //vd($userAttachments);
 $gBitSmarty->display('bitpackage:liberty/attachment_browser.tpl');
 ?>

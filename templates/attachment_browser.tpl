@@ -3,26 +3,26 @@
 <head>
 	<title>{tr}Attachment Browser{/tr}</title>
 
-	{if $gBitLoc.styleSheet}
-		<link rel="stylesheet" title="{$style}" type="text/css" href="{$gBitLoc.styleSheet}" media="all" />
+	{if $gBitSystem->mStyles.styleSheet}
+		<link rel="stylesheet" title="{$style}" type="text/css" href="{$gBitSystem->mStyles.styleSheet}" media="all" />
 	{/if}
-	{if $gBitLoc.browserStyleSheet}
-		<link rel="stylesheet" title="{$style}" type="text/css" href="{$gBitLoc.browserStyleSheet}" media="all" />
+	{if $gBitSystem->mStyles.browserStyleSheet}
+		<link rel="stylesheet" title="{$style}" type="text/css" href="{$gBitSystem->mStyles.browserStyleSheet}" media="all" />
 	{/if}
-	{if $gBitLoc.customStyleSheet}
-		<link rel="stylesheet" title="{$style}" type="text/css" href="{$gBitLoc.custumStyleSheet}" media="all" />
+	{if $gBitSystem->mStyles.customStyleSheet}
+		<link rel="stylesheet" title="{$style}" type="text/css" href="{$gBitSystem->mStyles.custumStyleSheet}" media="all" />
 	{/if}
-	{foreach from=$gBitLoc.altStyleSheets item=alt_path key=alt_name}
+	{foreach from=$gBitSystem->mStyles.altStyleSheets item=alt_path key=alt_name}
 		<link rel="alternate stylesheet" title="{$alt_name}" type="text/css" href="{$alt_path}" media="screen" />
 	{/foreach}
 
 	<script type="text/javascript"><!--
-		var tikiCookiePath = "{$gBitLoc.cookie_path}";
-		var tikiCookieDomain = "{$gBitLoc.cookie_domain}";
-		var tikiIconDir = "{$gBitLoc.LIBERTY_PKG_URL}icons";
-		var tikiRootUrl = "{$gBitLoc.BIT_ROOT_URL}";
+		var tikiCookiePath = "{$gBitSystemPrefs.cookie_path}";
+		var tikiCookieDomain = "{$gBitSystemPrefs.cookie_domain}";
+		var tikiIconDir = "{$smarty.const.LIBERTY_PKG_URL}icons";
+		var tikiRootUrl = "{$smarty.const.BIT_ROOT_URL}";
 	--></script>
-	<script type="text/javascript" src="{$gBitLoc.KERNEL_PKG_URL}bitweaver.js"></script>
+	<script type="text/javascript" src="{$smarty.const.KERNEL_PKG_URL}bitweaver.js"></script>
 
 	{literal}
 		<script type="text/javascript"><!--
@@ -34,7 +34,7 @@
 	{/literal}
 
 	<!--[if gte IE 5.5000]>
-		<script type="text/javascript" src="{$gBitLoc.THEMES_PKG_URL}js/pngfix.js"></script>
+		<script type="text/javascript" src="{$smarty.const.THEMES_PKG_URL}js/pngfix.js"></script>
 	<![endif]-->
 
 {strip}

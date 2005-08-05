@@ -83,7 +83,7 @@
 				<div class="row">
 					{formlabel label="
 						<a href='http://www.boutell.com/gd/'>
-							<img class='icon' src=\"`$gBitLoc.LIBERTY_PKG_URL`icons/gd_logo.jpg\" alt='GD' />
+							<img class='icon' src=\"`$smarty.const.LIBERTY_PKG_URL`icons/gd_logo.jpg\" alt='GD' />
 						</a>
 					"}
 					{forminput}
@@ -100,7 +100,7 @@
 				<div class="row">
 					{formlabel label="
 						<a href='http://www.imagemagick.org/'>
-							<img class='icon' src=\"`$gBitLoc.LIBERTY_PKG_URL`icons/imagick_logo.jpg\" alt='ImageMagick' />
+							<img class='icon' src=\"`$smarty.const.LIBERTY_PKG_URL`icons/imagick_logo.jpg\" alt='ImageMagick' />
 						</a>
 					"}
 					{forminput}

@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.tpl,v 1.1.1.1.2.1 2005/07/25 14:40:23 spiderr Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.tpl,v 1.1.1.1.2.2 2005/08/05 23:00:01 squareing Exp $ *}
 {strip}
 {if $modLastContent}
 	{bitmodule title="$moduleTitle" name="last_changes"}
@@ -17,7 +17,7 @@
 				<li></li>
 			{/section}
 		</ol>
-		<a href="{$gBitLoc.LIBERTY_PKG_URL}list_content.php?user_id={$gQueryUserId}&amp;sort_mode=last_modified_desc{if $contentType}&content_type_guid={$contentType}{/if}">{tr}View more{/tr}&hellip;</a>
+		<a href="{$smarty.const.LIBERTY_PKG_URL}list_content.php?user_id={$gQueryUserId}&amp;sort_mode=last_modified_desc{if $contentType}&content_type_guid={$contentType}{/if}">{tr}View more{/tr}&hellip;</a>
 	{/bitmodule}
 {/if}
 {/strip}

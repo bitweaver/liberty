@@ -6,7 +6,7 @@
 				{if $structureInfo.structure_id eq $subtree[ix].structure_id}<div class="highlight">{/if}
 					{if !$hide_extended}
 						<div style="float:right;">
-							<a href="{$gBitLoc.WIKI_PKG_URL}index.php?structure_id={$subtree[ix].structure_id}">{biticon iforce=icon ipackage=liberty iname="view" iexplain="view page"}</a>
+							<a href="{$smarty.const.WIKI_PKG_URL}index.php?structure_id={$subtree[ix].structure_id}">{biticon iforce=icon ipackage=liberty iname="view" iexplain="view page"}</a>
 							<a href="{$PHP_SELF}?structure_id={$subtree[ix].structure_id}">{biticon iforce=icon ipackage=liberty iname="settings" iexplain="edit book"}</a>
 							{biticon iforce=icon ipackage=liberty iname="spacer" iexplain=""}
 						</div>
@@ -28,7 +28,7 @@
 
 							{if !$hide_extended}
 								{biticon iforce=icon ipackage=liberty iname="spacer" iexplain=""}
-								<a href="{$gBitLoc.WIKI_PKG_URL}index.php?structure_id={$subtree[ix].structure_id}">{biticon iforce=icon ipackage=liberty iname="view" iexplain="view page"}</a>
+								<a href="{$smarty.const.WIKI_PKG_URL}index.php?structure_id={$subtree[ix].structure_id}">{biticon iforce=icon ipackage=liberty iname="view" iexplain="view page"}</a>
 								<a href="{$PHP_SELF}?structure_id={$subtree[ix].structure_id}&amp;action=edit">{biticon iforce=icon ipackage=liberty iname="settings" iexplain="edit book"}</a>
 								<a href="{$PHP_SELF}?structure_id={$subtree[ix].structure_id}&amp;action=remove">{biticon iforce=icon ipackage=liberty iname="delete" iexplain="remove page"}</a>
 							{/if}
