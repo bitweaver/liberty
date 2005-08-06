@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.6 2005/08/03 22:14:14 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.7 2005/08/06 04:19:57 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -212,8 +212,8 @@ class LibertyAttachable extends LibertyContent {
 	// Things to be stored should be shoved in the array $pParamHash['STORAGE']
 	function store ( &$pParamHash ) {
 		global $gLibertySystem;
+		$this->mDb->StartTrans();
 		if( LibertyAttachable::verify( $pParamHash ) && LibertyContent::store( $pParamHash ) && !empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] ) ) {
-			$this->mDb->StartTrans();
 			foreach( array_keys( $pParamHash['STORAGE'] ) as $guid ) {
 				$storeRow = &$pParamHash['STORAGE'][$guid]; // short hand variable assignment
 				$storeRow['plugin_guid'] = $guid;
@@ -256,8 +256,8 @@ class LibertyAttachable extends LibertyContent {
 				} else {
 				}
 			}
-			$this->mDb->CompleteTrans();
 		}
+		$this->mDb->CompleteTrans();
 
 		if( !empty( $pParamHash['existing_attachment_id'] ) ) {
 			foreach($pParamHash['existing_attachment_id'] as $existingAttachmentId) {
