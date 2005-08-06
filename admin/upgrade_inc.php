@@ -169,7 +169,7 @@ array( 'PHP' => '
 	if( $rs = $gBitSystem->query( $query ) ) {
 		while( !$rs->EOF ) {
 			$commentId = $rs->fields["comment_id"]; unset( $rs->fields["comment_id"] );
-			$conId = $gBitSystem->mDb->mDb->GenID( "tiki_content_id_seq" );
+			$conId = $gBitSystem->mDb->GenID( "tiki_content_id_seq" );
 			$rs->fields["content_id"] = $conId;
 			$rs->fields["content_type_guid"] = BITCOMMENT_CONTENT_TYPE_GUID;
 			$rs->fields["format_guid"] = PLUGIN_GUID_TIKIWIKI;

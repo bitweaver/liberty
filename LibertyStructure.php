@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.7 2005/08/03 22:14:14 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.8 2005/08/06 18:31:24 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -276,7 +276,7 @@ class LibertyStructure extends LibertyBase {
 //		$created = $this->create_page($name, 0, '', $now, tra('created from structure'), 'system', '0.0.0.0', '');
 		// if were not trying to add a duplicate structure head
 		if ( $this->verifyNode( $pParamHash ) ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 
             //Create a new structure entry
 			$pParamHash['structure_id'] = $this->GenID( 'tiki_structures_id_seq' );
@@ -285,7 +285,7 @@ class LibertyStructure extends LibertyBase {
 			}
 			$query = "INSERT INTO `".BIT_DB_PREFIX."tiki_structures`( `structure_id`, `parent_id`,`content_id`, `root_structure_id`, `page_alias`, `pos` ) values(?,?,?,?,?,?)";
 			$result = $this->query( $query, array( $pParamHash['structure_id'], $pParamHash['parent_id'], (int)$pParamHash['content_id'], (int)$pParamHash['root_structure_id'], $pParamHash['alias'], $pParamHash['max'] ) );
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 			$ret = $pParamHash['structure_id'];
 		} else {
 			//vd( $this->mErrors );
@@ -296,7 +296,7 @@ class LibertyStructure extends LibertyBase {
 	function moveNodeWest() {
 		if( $this->isValid() ) {
 			//If there is a parent and the parent isnt the structure root node.
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			if( !empty( $this->mInfo["parent_id"] ) ) {
 				$parentNode = $this->getNode( $this->mInfo["parent_id"] );
 				if( !empty( $parentNode['parent_id'] ) ) {
@@ -308,13 +308,13 @@ class LibertyStructure extends LibertyBase {
 					$this->query($query, array( $parentNode['parent_id'], $parentNode['pos'], $this->mStructureId ) );
 				}
 			}
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 	}
 
 	function moveNodeEast() {
 		if( $this->isValid() ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$query = "select `structure_id`, `pos` from `".BIT_DB_PREFIX."tiki_structures` where `pos`<? and `parent_id`=? order by `pos` desc";
 			$result = $this->query($query,array($this->mInfo["pos"], (int)$this->mInfo["parent_id"]));
 			if ($previous = $result->fetchRow()) {
@@ -332,13 +332,13 @@ class LibertyStructure extends LibertyBase {
 				$query = "update `".BIT_DB_PREFIX."tiki_structures` set `pos`=`pos`-1 where `pos`>? and `parent_id`=?";
 				$this->query( $query, array( $this->mInfo['pos'], $this->mInfo['parent_id'] ) );
 			}
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 	}
 
 	function moveNodeSouth() {
 		if( $this->isValid() ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$query = "select `structure_id`, `pos` from `".BIT_DB_PREFIX."tiki_structures` where `pos`>? and `parent_id`=? order by `pos` asc";
 			$result = $this->query($query,array((int)$this->mInfo["pos"], (int)$this->mInfo["parent_id"]));
 			$res = $result->fetchRow();
@@ -348,13 +348,13 @@ class LibertyStructure extends LibertyBase {
 				$this->query($query,array((int)$this->mInfo["pos"], (int)$res["structure_id"]) );
 				$this->query($query,array((int)$res["pos"], (int)$this->mInfo["structure_id"]) );
 			}
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 	}
 
 	function moveNodeNorth() {
 		if( $this->isValid() ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$query = "select `structure_id`, `pos` from `".BIT_DB_PREFIX."tiki_structures` where `pos`<? and `parent_id`=? order by `pos` desc";
 			$result = $this->query($query,array((int)$this->mInfo["pos"], (int)$this->mInfo["parent_id"]));
 			$res = $result->fetchRow();
@@ -364,7 +364,7 @@ class LibertyStructure extends LibertyBase {
 				$this->query($query,array((int)$res["pos"], (int)$this->mInfo["structure_id"]) );
 				$this->query($query,array((int)$this->mInfo["pos"], (int)$res["structure_id"]) );
 			}
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 	}
 

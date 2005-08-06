@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.16 $
+ * @version  $Revision: 1.2.2.17 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -173,9 +173,9 @@ class TikiWikiParser extends BitBase {
 
 	function expungeLinks( $pContentId ) {
 		if( !empty( $pContentId ) ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$this->query( "DELETE FROM `".BIT_DB_PREFIX."tiki_links` WHERE from_content_id=? OR to_content_id=?", array( $pContentId, $pContentId ) );
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 	}
 

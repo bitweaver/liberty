@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.18 2005/08/06 09:52:01 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.19 2005/08/06 18:31:13 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -168,7 +168,7 @@ class LibertyContent extends LibertyBase {
 		global $gBitSystem;
 		global $gLibertySystem;
 		if( LibertyContent::verify( $pParamHash ) ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$table = BIT_DB_PREFIX."tiki_content";
 			if( empty( $pParamHash['content_id'] ) ) {
 				$pParamHash['content_store']['content_id'] = $this->GenID( 'tiki_content_id_seq' );
@@ -201,7 +201,7 @@ class LibertyContent extends LibertyBase {
 			if( !empty( $renamed ) && $func = $gLibertySystem->getPluginFunction( $pParamHash['format_guid'], 'rename_function' ) ) {
 				$ret = $func( $this->mContentId, $this->mInfo['title'], $pParamHash['content_store']['title'], $this );
 			}
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 		return( count( $this->mErrors ) == 0 );
 	}
@@ -223,7 +223,7 @@ class LibertyContent extends LibertyBase {
 		global $gBitSystem;
 		$ret = FALSE;
 		if( $this->isValid() ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$this->expungeComments();
 
 			if( $gBitSystem->isPackageActive( 'categories' ) ) {
@@ -240,7 +240,7 @@ class LibertyContent extends LibertyBase {
 
 			$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_content` WHERE `content_id` = ?";
 			$result = $this->query( $query, array( $this->mContentId ) );
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 			$ret = TRUE;
 		}
 /*
