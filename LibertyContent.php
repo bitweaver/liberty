@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.16 2005/08/03 22:14:14 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.17 2005/08/06 04:16:59 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -271,7 +271,7 @@ class LibertyContent extends LibertyBase {
 	}
 
 	function isValid() {
-		return( !empty( $this->mContentId ) && is_numeric( $this->mContentId ) );
+		return( !empty( $this->mContentId ) && is_numeric( $this->mContentId ) && $this->mContentId );
 	}
 
 	function isOwner() {
