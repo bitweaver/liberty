@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.17 2005/08/06 04:16:59 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.18 2005/08/06 09:52:01 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -578,10 +578,10 @@ class LibertyContent extends LibertyBase {
 		$gateFrom = '';
 
 		if (is_array($find)) { // you can use an array of pages
-			$mid = " tc.`title` IN (".implode(',',array_fill(0,count($find),'?')).")";
+			$mid = " AND tc.`title` IN (".implode(',',array_fill(0,count($find),'?')).")";
 			$bindVars[] = $find;
 		} elseif (!empty($find) && is_string($find)) { // or a string
-			$mid = " UPPER(tc.`title`) like ? ";
+			$mid = " AND UPPER(tc.`title`) like ? ";
 			$bindVars[] = ('%' . strtoupper( $find ) . '%');
 		}
 
