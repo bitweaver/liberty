@@ -3,7 +3,7 @@
  * Base class for Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.1.1.1.2.5 2005/08/03 22:14:14 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.1.1.1.2.6 2005/08/07 13:19:07 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -32,7 +32,7 @@ require_once( KERNEL_PKG_PATH.'BitBase.php' );
 class LibertyBase extends BitBase {
 
 	function LibertyBase () {
-		// we need to init our mDb early
+		// we need to init our database connection early
 		BitBase::BitBase();
 	}
 
