@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.1.1.1.2.8 $
+ * @version  $Revision: 1.1.1.1.2.9 $
  * @package  liberty
  * @subpackage functions
  */
@@ -23,7 +23,7 @@ if( empty( $_REQUEST["structure_id"] ) ) {
 } else {
 	global $gStructure;
 	$gStructure = new LibertyStructure( $_REQUEST["structure_id"] );
-	$gStructure->StartTrans();
+	$gStructure->mDb->StartTrans();
 	$gStructure->load();
 	
 	// order matters for these conditionals
@@ -126,7 +126,7 @@ if( empty( $_REQUEST["structure_id"] ) ) {
 
 	$gBitSmarty->assign( (!empty( $_REQUEST['tab'] ) ? $_REQUEST['tab'] : 'body').'TabSelect', 'tdefault' );
 	$gBitSmarty->assign('subtree', $rootTree = $rootStructure->getSubTree( $rootStructure->mStructureId ));
-	$gStructure->CompleteTrans();
+	$gStructure->mDb->CompleteTrans();
 }
 
 ?>
