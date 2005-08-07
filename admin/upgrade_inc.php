@@ -159,9 +159,9 @@ array( 'PHP' => '
 	$gBitSystem->mDb->CreateSequence( "tiki_attachments_id_seq", 1 );
 	$gBitSystem->mDb->CreateSequence( "tiki_content_id_seq", 1 );
 	$gBitSystem->mDb->CreateSequence( "tiki_files_file_id_seq", 1 );
-	$max = $gBitSystem->GetOne( "SELECT MAX(`comment_id`) FROM `'.BIT_DB_PREFIX.'tiki_comments`" );
+	$max = $gBitSystem->mDb->getOne( "SELECT MAX(`comment_id`) FROM `'.BIT_DB_PREFIX.'tiki_comments`" );
 	$gBitSystem->mDb->CreateSequence( "tiki_comments_comment_id_seq", $max + 1 );
-	$max = $gBitSystem->GetOne( "SELECT MAX(`structure_id`) FROM `'.BIT_DB_PREFIX.'tiki_structures`" );
+	$max = $gBitSystem->mDb->getOne( "SELECT MAX(`structure_id`) FROM `'.BIT_DB_PREFIX.'tiki_structures`" );
 	$gBitSystem->mDb->CreateSequence( "tiki_structures_id_seq", $max + 1 );
 
 	$query = "SELECT `comment_id`, uu.`user_id`, uu.`user_id` AS `modifier_user_id`, `commentDate` AS `created`, `commentDate` AS `last_modified`, `hits`, `data`, `title`, `user_ip` AS `ip`
