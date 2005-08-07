@@ -3,7 +3,7 @@
  * Base class for Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.1.1.1.2.7 2005/08/07 15:45:48 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.1.1.1.2.8 2005/08/07 16:22:44 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -48,7 +48,7 @@ class LibertyBase extends BitBase {
 
 		if( BitBase::verifyId( $pContentId ) ) {
 			if( empty( $pContentGuid ) ) {
-				$pContentGuid = $gLibertySystem->getDb()->getOne( "SELECT `content_type_guid` FROM `".BIT_DB_PREFIX."tiki_content` WHERE `content_id`=?", array( $pContentId ) );
+				$pContentGuid = $gLibertySystem->mDb->GetOne( "SELECT `content_type_guid` FROM `".BIT_DB_PREFIX."tiki_content` WHERE `content_id`=?", array( $pContentId ) );
 			}
 			if( !empty( $pContentGuid) && isset( $gLibertySystem->mContentTypes[$pContentGuid] ) ) {
 				$type = $gLibertySystem->mContentTypes[$pContentGuid];

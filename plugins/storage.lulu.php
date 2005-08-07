@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.6 $
+ * @version  $Revision: 1.1.1.1.2.7 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -45,7 +45,7 @@ $gLibertySystem->registerPlugin( PLUGIN_GUID_LULU, $pluginParams );
 		global $gBitSystem;
 		
 		$sql = "DELETE FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id` = ?";
-		$gBitSystem->getDb()->query($sql, array($pAttachmentId));
+		$gBitSystem->mDb->query($sql, array($pAttachmentId));
 		
 		return TRUE;
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.8 $
+ * @version  $Revision: 1.1.1.1.2.9 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -51,7 +51,7 @@ function pearwiki_tiki_parse_data( &$pData, &$pCommonObject ) {
 		$parser->setRenderConf('xhtml', 'table', 'css_td', 'wikicell');
 		//$parser->setFormatConf('Xhtml', 'translate', false);
 		/*$extwiki = array();
-		$extwikiSth = $this->getDb()->query('SELECT `extwiki`, `name` FROM `tiki_extwiki`');
+		$extwikiSth = $this->mDb->query('SELECT `extwiki`, `name` FROM `tiki_extwiki`');
 		while ($rec = $extwikiSth->fetchRow()) {
 			$extwiki[$rec['name']] = str_replace('$page', '%s', $rec['extwiki']);
 		}

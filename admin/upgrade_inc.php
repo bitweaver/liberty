@@ -156,25 +156,25 @@ user_ip
 // STEP 2
 array( 'PHP' => '
 	global $gBitSystem;
-	$gBitSystem->getDb()->CreateSequence( "tiki_attachments_id_seq", 1 );
-	$gBitSystem->getDb()->CreateSequence( "tiki_content_id_seq", 1 );
-	$gBitSystem->getDb()->CreateSequence( "tiki_files_file_id_seq", 1 );
+	$gBitSystem->mDb->CreateSequence( "tiki_attachments_id_seq", 1 );
+	$gBitSystem->mDb->CreateSequence( "tiki_content_id_seq", 1 );
+	$gBitSystem->mDb->CreateSequence( "tiki_files_file_id_seq", 1 );
 	$max = $gBitSystem->GetOne( "SELECT MAX(`comment_id`) FROM `'.BIT_DB_PREFIX.'tiki_comments`" );
-	$gBitSystem->getDb()->CreateSequence( "tiki_comments_comment_id_seq", $max + 1 );
+	$gBitSystem->mDb->CreateSequence( "tiki_comments_comment_id_seq", $max + 1 );
 	$max = $gBitSystem->GetOne( "SELECT MAX(`structure_id`) FROM `'.BIT_DB_PREFIX.'tiki_structures`" );
-	$gBitSystem->getDb()->CreateSequence( "tiki_structures_id_seq", $max + 1 );
+	$gBitSystem->mDb->CreateSequence( "tiki_structures_id_seq", $max + 1 );
 
 	$query = "SELECT `comment_id`, uu.`user_id`, uu.`user_id` AS `modifier_user_id`, `commentDate` AS `created`, `commentDate` AS `last_modified`, `hits`, `data`, `title`, `user_ip` AS `ip`
 			  FROM `'.BIT_DB_PREFIX.'tiki_comments` tc INNER JOIN `'.BIT_DB_PREFIX.'users_users` uu ON( tc.`userName`=uu.`login` )";
-	if( $rs = $gBitSystem->getDb()->query( $query ) ) {
+	if( $rs = $gBitSystem->mDb->query( $query ) ) {
 		while( !$rs->EOF ) {
 			$commentId = $rs->fields["comment_id"]; unset( $rs->fields["comment_id"] );
-			$conId = $gBitSystem->getDb()->GenID( "tiki_content_id_seq" );
+			$conId = $gBitSystem->mDb->GenID( "tiki_content_id_seq" );
 			$rs->fields["content_id"] = $conId;
 			$rs->fields["content_type_guid"] = BITCOMMENT_CONTENT_TYPE_GUID;
 			$rs->fields["format_guid"] = PLUGIN_GUID_TIKIWIKI;
-			$gBitSystem->getDb()->associateInsert( "tiki_content", $rs->fields );
-			$gBitSystem->getDb()->query( "UPDATE `'.BIT_DB_PREFIX.'tiki_comments` SET `content_id`=? WHERE `comment_id`=?", array( $conId, $commentId ) );
+			$gBitSystem->mDb->associateInsert( "tiki_content", $rs->fields );
+			$gBitSystem->mDb->query( "UPDATE `'.BIT_DB_PREFIX.'tiki_comments` SET `content_id`=? WHERE `comment_id`=?", array( $conId, $commentId ) );
 			$rs->MoveNext();
 		}
 	}

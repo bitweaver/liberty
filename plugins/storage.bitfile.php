@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.5 $
+ * @version  $Revision: 1.2.2.6 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -45,15 +45,15 @@ function bit_files_store( &$pStoreRow ) {
 		if( !empty( $pStoreRow['foreign_id'] ) ) {
 			//$sql = "UPDATE tiki_attachment SET `binary_id`=NULL, `storage_path`=? WHERE `user_id`=? AND storage_id=?";
 			$sql = "UPDATE `".BIT_DB_PREFIX."tiki_files SET `storage_path`=?, `mime_type`=?, `size`=? WHERE `file_id` = ?";
-			$gBitSystem->getDb()->query( $sql, array( $pStoreRow['dest_file_path'], $pStoreRow['type'], $pStoreRow['size'], $pStoreRow['foreign_id'] ) );
+			$gBitSystem->mDb->query( $sql, array( $pStoreRow['dest_file_path'], $pStoreRow['type'], $pStoreRow['size'], $pStoreRow['foreign_id'] ) );
 		} else {
 			$pStoreRow['file_id'] = $gBitSystem->GenID( 'tiki_files_file_id_seq' );
 			$sql = "INSERT INTO `".BIT_DB_PREFIX."tiki_files` ( `storage_path`, `file_id`, `mime_type`, `size`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
 			$userId = !empty( $pStoreRow['upload']['user_id'] ) ? $pStoreRow['upload']['user_id'] : $gBitUser->mUserId;
-			$gBitSystem->getDb()->query($sql, array( $pStoreRow['upload']['dest_path'].$pStoreRow['upload']['name'], $pStoreRow['file_id'],  $pStoreRow['upload']['type'],  $pStoreRow['upload']['size'], $userId ) );
+			$gBitSystem->mDb->query($sql, array( $pStoreRow['upload']['dest_path'].$pStoreRow['upload']['name'], $pStoreRow['file_id'],  $pStoreRow['upload']['type'],  $pStoreRow['upload']['size'], $userId ) );
 		}
 		$sql = "UPDATE `".BIT_DB_PREFIX."tiki_attachments` SET `foreign_id`=? WHERE `attachment_id` = ?";
-		$gBitSystem->getDb()->query( $sql, array( $pStoreRow['file_id'], $pStoreRow['attachment_id'] ) );
+		$gBitSystem->mDb->query( $sql, array( $pStoreRow['file_id'], $pStoreRow['attachment_id'] ) );
 	}
 	return $ret;
 }
@@ -67,7 +67,7 @@ function bit_files_load( $pRow ) {
 		$query = "SELECT * 
 				  FROM `".BIT_DB_PREFIX."tiki_attachments` ta INNER JOIN `".BIT_DB_PREFIX."tiki_files` tf ON (tf.`file_id` = ta.`foreign_id`)
 				  WHERE ta.`foreign_id` = ? AND ta.`content_id` = ?";
-		if( $rs = $gBitSystem->getDb()->query($query, array( $pRow['foreign_id'], $pRow['content_id'] )) ) {
+		if( $rs = $gBitSystem->mDb->query($query, array( $pRow['foreign_id'], $pRow['content_id'] )) ) {
 			$ret = $rs->fields;
 			if (preg_match ( '/image\//', $ret['mime_type'] )) { 
 				$ret['thumbnail_url']['avatar'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/avatar.jpg';
@@ -95,11 +95,11 @@ function bit_files_expunge( $pStorageId ) {
 	
 	if (is_numeric($pStorageId)) {
 		$sql = "SELECT * FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id` = ?";
-		$rs = $gBitSystem->getDb()->query($sql, array($pStorageId));
+		$rs = $gBitSystem->mDb->query($sql, array($pStorageId));
 		$row = &$rs->fields;
 		if ($row) {
 			$sql = "SELECT * FROM `".BIT_DB_PREFIX."tiki_files` WHERE `file_id` = ?";
-			$fileRs = $gBitSystem->getDb()->query($sql, array($row['foreign_id']) );
+			$fileRs = $gBitSystem->mDb->query($sql, array($row['foreign_id']) );
 			$fileRow = &$fileRs->fields;
 			if ($fileRow) {
 				$absolutePath = BIT_ROOT_PATH.'/'.$fileRow['storage_path'];
@@ -109,9 +109,9 @@ function bit_files_expunge( $pStorageId ) {
 						unlink($absolutePath);
 					}
 					$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id` = ?";
-					$gBitSystem->getDb()->query($query, array($pStorageId));
+					$gBitSystem->mDb->query($query, array($pStorageId));
 					$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_files` WHERE `file_id` = ?";
-					$gBitSystem->getDb()->query($query, array($row['foreign_id']) );
+					$gBitSystem->mDb->query($query, array($row['foreign_id']) );
 					$ret = TRUE;
 				}
 			}
