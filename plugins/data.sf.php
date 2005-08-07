@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
- * @package  Liberty
+ * @version  $Revision: 1.5 $
+ * @package  liberty
  * @subpackage plugins_data
  */
 // +----------------------------------------------------------------------+
@@ -17,7 +17,7 @@
 // | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
 // | by: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.sf.php,v 1.4 2005/07/17 17:36:10 squareing Exp $
+// $Id: data.sf.php,v 1.5 2005/08/07 17:40:31 squareing Exp $
 
 /**
  * definitions

@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
- * @package  Liberty
+ * @version  $Revision: 1.8 $
+ * @package  liberty
  */
 global $gLibertySystem;
 
@@ -12,7 +12,7 @@ define( 'PLUGIN_GUID_TIKIWIKI', 'tikiwiki' );
 define( 'WIKI_WORDS_REGEX', '[A-z0-9]{2}[\w\d_\-]+[A-Z_][\w\d_\-]+[A-z0-9]+' );
 
 /**
- * @package  Liberty
+ * @package  liberty
  * @subpackage plugins_format
  */
 $pluginParams = array ( 'store_function' => 'tikiwiki_save_data',
@@ -81,8 +81,9 @@ function tikiwiki_parse_data( &$pData, &$pCommonObject ) {
 }
 
 /**
- * @package Liberty
- * @subpackage TikiWikiParser
+ * TikiWikiParser 
+ *
+ * @package kernel
  */
 class TikiWikiParser extends BitBase {
 	var $mWikiWordRegex;
@@ -146,7 +147,7 @@ class TikiWikiParser extends BitBase {
 		$links_already_inserted_table = array();
 		if( !empty( $pParamHash['content_id'] ) ) {
 			$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_links` WHERE `from_content_id`=?";
-			$result = $this->query( $query, array( $pParamHash['content_id'] ) );
+			$result = $this->mDb->query( $query, array( $pParamHash['content_id'] ) );
 
 			$linkPages = $this->extractWikiWords( $pParamHash['edit'] );
 			if( is_array( $linkPages ) && count( $linkPages ) ) {
@@ -154,13 +155,13 @@ class TikiWikiParser extends BitBase {
 					if( !empty( $page ) ) {
 // SPIDERFKILL - this query is guaranteed to die - i forget where it came from and why it's here. will debug soon enough...
 						$query = "SELECT tp.`content_id` FROM `".BIT_DB_PREFIX."tiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id` = tp.`content_id`) WHERE tc.`title`=?";
-						$result = $this->query( $query, array( $page ) );
+						$result = $this->mDb->query( $query, array( $page ) );
 						if( $result->numRows() ) {
 							$res = $result->fetchRow();
 							$key = $pParamHash['content_id'] . "-" . $res['content_id'];
 							if (empty($links_already_inserted_table[$key])) {
 								$query = "insert into `".BIT_DB_PREFIX."tiki_links`(`from_content_id`,`to_content_id`) values(?, ?)";
-								$result = $this->query($query, array( $pParamHash['content_id'], $res['content_id'] ) );
+								$result = $this->mDb->query($query, array( $pParamHash['content_id'], $res['content_id'] ) );
 							}
 							$links_already_inserted_table[$key] = 1;
 						}
@@ -173,7 +174,7 @@ class TikiWikiParser extends BitBase {
 	function expungeLinks( $pContentId ) {
 		if( !empty( $pContentId ) ) {
 			$this->mDb->StartTrans();
-			$this->query( "DELETE FROM `".BIT_DB_PREFIX."tiki_links` WHERE from_content_id=? OR to_content_id=?", array( $pContentId, $pContentId ) );
+			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."tiki_links` WHERE from_content_id=? OR to_content_id=?", array( $pContentId, $pContentId ) );
 			$this->mDb->CompleteTrans();
 		}
 	}
@@ -188,7 +189,7 @@ class TikiWikiParser extends BitBase {
 						  	INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON( tl.`to_content_id`=tc.`content_id` )
 						  	INNER JOIN `".BIT_DB_PREFIX."tiki_pages` tp ON( tp.`content_id`=tc.`content_id` )
 						  WHERE tl.`from_content_id`=? ORDER BY tc.`title`";
-				if( $result = $this->query( $query, array( $pContentId ) ) ) {
+				if( $result = $this->mDb->query( $query, array( $pContentId ) ) ) {
 					$lastTitle = '';
 					while( !$result->EOF ) {
 						if( $result->fields['title'] == $lastTitle ) {
@@ -203,7 +204,7 @@ class TikiWikiParser extends BitBase {
 			if( !isset( $this->mPageLookup[$pTitle] ) ) {
 				$this->mPageLookup[$pTitle] = $pCommonObject->pageExists( $pTitle );
 				if( !empty( $this->mPageLookup[$pTitle] ) && ( count( $this->mPageLookup[$pTitle] ) == 1 ) ) {
-//  					$this->query( "INSERT INTO `".BIT_DB_PREFIX."tiki_links` ( `from_content_id`, `to_content_id` ) VALUES ( ?, ? )" , array( $pContentId, $this->mPageLookup[$pTitle][0]['content_id'] ) );
+//  					$this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."tiki_links` ( `from_content_id`, `to_content_id` ) VALUES ( ?, ? )" , array( $pContentId, $this->mPageLookup[$pTitle][0]['content_id'] ) );
 				}
 			}
 		}
@@ -632,7 +633,7 @@ $this->debug(0);
 			// variable value and a text field to edit the variable. Each
 			foreach($dvars as $dvar) {
 				$query = "select `data` from `".BIT_DB_PREFIX."tiki_dynamic_variables` where `name`=?";
-				$result = $this->query($query,Array($dvar));
+				$result = $this->mDb->query($query,Array($dvar));
 				if($result->numRows()) {
 				$value = $result->fetchRow();
 				$value = $value["data"];
@@ -711,8 +712,8 @@ $this->debug(0);
 				if (count($wexs) == 2) {
 					$wkname = $wexs[0];
 
-					if ($this->getOne("select count(*) from `".BIT_DB_PREFIX."tiki_extwiki` where `name`=?",array($wkname)) == 1) {
-						$wkurl = $this->getOne("select `extwiki`  from `".BIT_DB_PREFIX."tiki_extwiki` where `name`=?",array($wkname));
+					if ($this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."tiki_extwiki` where `name`=?",array($wkname)) == 1) {
+						$wkurl = $this->mDb->getOne("select `extwiki`  from `".BIT_DB_PREFIX."tiki_extwiki` where `name`=?",array($wkname));
 						$wkurl = '<a href="' . str_replace('$page', urlencode($wexs[1]), $wkurl). '">' . $wexs[1] . '</a>';
 						$data = preg_replace($pattern, "$wkurl", $data);
 						$repl2 = false;
@@ -762,8 +763,8 @@ $this->debug(0);
 				if (count($wexs) == 2) {
 					$wkname = $wexs[0];
 
-					if ($this->getOne("select count(*) from `".BIT_DB_PREFIX."tiki_extwiki` where `name`=?",array($wkname)) == 1) {
-						$wkurl = $this->getOne("select `extwiki`  from `".BIT_DB_PREFIX."tiki_extwiki` where `name`=?",array($wkname));
+					if ($this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."tiki_extwiki` where `name`=?",array($wkname)) == 1) {
+						$wkurl = $this->mDb->getOne("select `extwiki`  from `".BIT_DB_PREFIX."tiki_extwiki` where `name`=?",array($wkname));
 
 						$wkurl = '<a href="' . str_replace('$page', urlencode($wexs[1]), $wkurl). '">' . $wexs[1] . '</a>';
 						$data = preg_replace("/\(\($page_parse\)\)/", "$wkurl", $data);

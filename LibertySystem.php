@@ -2,9 +2,9 @@
 /**
 * System class for handling the liberty package
 *
+* @package  liberty
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.5 2005/08/07 17:40:29 squareing Exp $
 * @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.4 $
-* @package  Liberty
 */
 
 // +----------------------------------------------------------------------+
@@ -18,8 +18,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
-//
-// $Id: LibertySystem.php,v 1.4 2005/08/01 18:40:47 squareing Exp $
+
 /**
  * Local base defines
  */
@@ -39,10 +38,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
 /**
  * System class for handling the liberty package
  *
- * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.4 $
- * @package  Liberty
- * @subpackage LibertySystem
+ * @package liberty
  */
 class LibertySystem extends LibertyBase {
 
@@ -58,7 +54,7 @@ class LibertySystem extends LibertyBase {
 	}
 
 	function loadPlugins() {
-		$rs = $this->query( "SELECT * FROM `".BIT_DB_PREFIX."tiki_plugins`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT );
+		$rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."tiki_plugins`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT );
 		while( $rs && !$rs->EOF ) {
 			$this->mPlugins[$rs->fields['plugin_guid']] = $rs->fields;
 			$rs->MoveNext();
@@ -81,25 +77,25 @@ class LibertySystem extends LibertyBase {
 			if( !isset( $handler['verified'] ) && $handler['is_active'] =='y' ) {
 				// We are missing a plugin!
 				$sql = "UPDATE `".BIT_DB_PREFIX."tiki_plugins` SET `is_active`='x' WHERE `plugin_guid`=?";
-				$this->query( $sql, array( $guid ) );
+				$this->mDb->query( $sql, array( $guid ) );
 				$handler['is_active'] = 'n';
 			} elseif( !empty( $handler['verified'] ) && $handler['is_active'] =='x' ) {
 				//We found a formally missing plugin - re-enable it
 				$sql = "UPDATE `".BIT_DB_PREFIX."tiki_plugins` SET `is_active`='y' WHERE `plugin_guid`=?";
-				$this->query( $sql, array( $guid ) );
+				$this->mDb->query( $sql, array( $guid ) );
 				$handler['is_active'] = 'y';
 			} elseif( empty( $handler['verified'] ) && !isset( $handler['is_active'] ) ) {
 				//We found a missing plugin - insert it
 				$handler['is_active'] = ( ( isset( $handler['auto_activate'] ) && $handler['auto_activate'] == FALSE ) ? 'n' : 'y' );
 				$sql = "INSERT INTO `".BIT_DB_PREFIX."tiki_plugins` ( `plugin_guid`, `plugin_type`, `plugin_description`, `is_active` ) VALUES ( ?, ?, ?, ? )";
-				$this->query( $sql, array( $guid, $handler['plugin_type'], $handler['description'], $handler['is_active'] ) );
+				$this->mDb->query( $sql, array( $guid, $handler['plugin_type'], $handler['description'], $handler['is_active'] ) );
 			}
 		}
 		asort( $this->mPlugins );
 	}
 
 	function loadContentTypes( $pCacheTime=BIT_QUERY_CACHE_TIME ) {
-		$rs = $this->query( "SELECT * FROM `".BIT_DB_PREFIX."tiki_content_types`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT );
+		$rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."tiki_content_types`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT );
 		while( $rs && !$rs->EOF ) {
 			$this->mContentTypes[$rs->fields['content_type_guid']] = $rs->fields;
 			$rs->MoveNext();
@@ -112,12 +108,12 @@ class LibertySystem extends LibertyBase {
 		}
 		$pTypeParams['content_type_guid'] = $pGuid;
 		if( empty( $this->mContentTypes[$pGuid] ) && !empty( $pTypeParams ) ) {
-			$result = $this->associateInsert( BIT_DB_PREFIX."tiki_content_types", $pTypeParams );
+			$result = $this->mDb->associateInsert( BIT_DB_PREFIX."tiki_content_types", $pTypeParams );
 			// we just ran some SQL - let's flush the loadContentTypes query cache
 			$this->loadContentTypes( 0 );
 		} else {
 			if( $pTypeParams['handler_package'] != $this->mContentTypes[$pGuid]['handler_package'] || $pTypeParams['handler_file'] != $this->mContentTypes[$pGuid]['handler_file'] || $pTypeParams['handler_class'] != $this->mContentTypes[$pGuid]['handler_class'] ) {
-				$result = $this->associateUpdate( BIT_DB_PREFIX."tiki_content_types", $pTypeParams, array( 'name'=>'content_type_guid', 'value'=>$pGuid ) );
+				$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."tiki_content_types", $pTypeParams, array( 'name'=>'content_type_guid', 'value'=>$pGuid ) );
 			}
 		}
 	}
@@ -143,14 +139,14 @@ class LibertySystem extends LibertyBase {
 	function setActivePlugins( $pPluginGuids ) {
 		if( is_array( $pPluginGuids ) ) {
 			$sql = "UPDATE `".BIT_DB_PREFIX."tiki_plugins` SET `is_active`='n' WHERE `is_active`!='x'";
-			$this->query( $sql );
+			$this->mDb->query( $sql );
 			foreach( array_keys( $this->mPlugins ) as $guid ) {
 				$this->mPlugins[$guid]['is_active'] = 'n';
 			}
 
 			foreach( array_keys( $pPluginGuids ) as $guid ) {
 				$sql = "UPDATE `".BIT_DB_PREFIX."tiki_plugins` SET `is_active`='y' WHERE `plugin_guid`=?";
-				$this->query( $sql, array( $guid ) );
+				$this->mDb->query( $sql, array( $guid ) );
 				$this->mPlugins[$guid]['is_active'] = 'y';
 			}
 			// we just ran some SQL - let's flush the loadPlugins query cache

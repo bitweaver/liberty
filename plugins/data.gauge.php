@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
- * @package  Liberty
+ * @version  $Revision: 1.6 $
+ * @package  liberty
  * @subpackage plugins_data
  */
 // +----------------------------------------------------------------------+
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.gauge.php,v 1.5 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.gauge.php,v 1.6 2005/08/07 17:40:31 squareing Exp $
 
 /**
  * definitions

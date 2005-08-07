@@ -2,9 +2,9 @@
 /**
  * Management of Liberty Content
  *
+ * @package  liberty
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.5 2005/08/07 17:40:29 squareing Exp $
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.4 $
- * @package  Liberty
  */
 
 /**
@@ -13,18 +13,15 @@
 require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
 
 /**
-* System class for handling the liberty package
-*
-* @author   spider <spider@steelsun.com>
-* @version  $Revision: 1.4 $
-* @package  Liberty
-* @subpackage  LibertyStructure
-*/
+ * System class for handling the liberty package
+ *
+ * @package liberty
+ */
 class LibertyStructure extends LibertyBase {
 	var $mStructureId;
 
 	function LibertyStructure ( $pStructureId=NULL, $pContentId=NULL ) {
-		// we need to init our mDb early
+		// we need to init our database connection early
 		LibertyBase::LibertyBase();
 		$this->mStructureId = $pStructureId;
 		$this->mContentId = $pContentId;
@@ -53,7 +50,7 @@ class LibertyStructure extends LibertyBase {
 			$query .= ' WHERE ts.`content_id`=?';
 			$bindVars = array( $pContentId );
 		}
-		if( $result = $this->query( $query, $bindVars ) ) {
+		if( $result = $this->mDb->query( $query, $bindVars ) ) {
 			$ret = $result->fields;
 		}
 		return $ret;
@@ -78,7 +75,7 @@ class LibertyStructure extends LibertyBase {
 	// This is a utility function mainly used for upgrading sites.
 	function setTreeRoot( $pRootId, $pTree ) {
 		foreach( $pTree as $structRow ) {
-			$this->query( "UPDATE `".BIT_DB_PREFIX."tiki_structures` SET `root_structure_id`=? WHERE `structure_id`=?", array( $pRootId, $structRow["structure_id"] ) );
+			$this->mDb->query( "UPDATE `".BIT_DB_PREFIX."tiki_structures` SET `root_structure_id`=? WHERE `structure_id`=?", array( $pRootId, $structRow["structure_id"] ) );
 			if( !empty( $structRow["sub"] ) ) {
 				$this->setTreeRoot( $pRootId, $structRow["sub"] );
 			}
@@ -153,7 +150,7 @@ class LibertyStructure extends LibertyBase {
 			$query = "SELECT ts.`content_id`, ts.`structure_id`, ts.`page_alias`, tc.`title`
 					  FROM `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_content` tc
 					  WHERE tc.`content_id` = ts.`content_id` AND `parent_id`=? ORDER BY `pos` asc";
-			$result = $this->query($query,array( $pStructureId ) );
+			$result = $this->mDb->query($query,array( $pStructureId ) );
 
 			$subs = array();
 			$row_max = $result->numRows();
@@ -216,12 +213,12 @@ class LibertyStructure extends LibertyBase {
 		$query = "SELECT ts.`structure_id`, ts.`parent_id`, ts.`content_id`, `page_alias`, `pos`, tc.`title`, `hits`, `data`, `last_modified`, tc.`modifier_user_id`, `ip`, tc.`user_id` AS `creator_user_id`, uu.`login` AS `user`, uu.`real_name` , uu.`email`
 		          FROM `".BIT_DB_PREFIX."tiki_structures` ts INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON ( ts.`content_id` = tc.`content_id` ) INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON ( tc.`user_id` = uu.`user_id` )
 				  WHERE $mid
-				  ORDER BY ".$this->convert_sortmode($pListHash['sort_mode']);
+				  ORDER BY ".$this->mDb->convert_sortmode($pListHash['sort_mode']);
 		$query_cant = "SELECT count(*)
 					   FROM `".BIT_DB_PREFIX."tiki_structures` ts INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON ( ts.`content_id` = tc.`content_id` )
 					   WHERE $mid";
-		$result = $this->query($query,$bindVars,$pListHash['max_records'],$pListHash['offset']);
-		$cant = $this->getOne($query_cant,$bindVars);
+		$result = $this->mDb->query($query,$bindVars,$pListHash['max_records'],$pListHash['offset']);
+		$cant = $this->mDb->getOne($query_cant,$bindVars);
 		$ret = array();
 
 		while ($res = $result->fetchRow()) {
@@ -250,15 +247,15 @@ class LibertyStructure extends LibertyBase {
 				$pParamHash['alias'] = '';
 			}
 			if( isset( $pParamHash['after_ref_id'] ) ) {
-				$pParamHash['max'] = $this->getOne("select `pos` from `".BIT_DB_PREFIX."tiki_structures` where `structure_id`=?",array((int)$pParamHash['after_ref_id']));
+				$pParamHash['max'] = $this->mDb->getOne("select `pos` from `".BIT_DB_PREFIX."tiki_structures` where `structure_id`=?",array((int)$pParamHash['after_ref_id']));
 			} else {
-				$pParamHash['max'] = $this->getOne("select max(`pos`) from `".BIT_DB_PREFIX."tiki_structures` where `parent_id`=?",array((int)$pParamHash['parent_id']));
+				$pParamHash['max'] = $this->mDb->getOne("select max(`pos`) from `".BIT_DB_PREFIX."tiki_structures` where `parent_id`=?",array((int)$pParamHash['parent_id']));
 			}
 			if( $pParamHash['max'] > 0 ) {
 				//If max is 5 then we are inserting after position 5 so we'll insert 5 and move all
 				// the others
 				$query = "update `".BIT_DB_PREFIX."tiki_structures` set `pos`=`pos`+1 where `pos`>? and `parent_id`=?";
-				$result = $this->query($query,array((int)$pParamHash['max'], (int)$pParamHash['parent_id']));
+				$result = $this->mDb->query($query,array((int)$pParamHash['max'], (int)$pParamHash['parent_id']));
 			}
 			$pParamHash['max']++;
 		}
@@ -282,12 +279,12 @@ class LibertyStructure extends LibertyBase {
 			$this->mDb->StartTrans();
 
             //Create a new structure entry
-			$pParamHash['structure_id'] = $this->GenID( 'tiki_structures_id_seq' );
+			$pParamHash['structure_id'] = $this->mDb->GenID( 'tiki_structures_id_seq' );
 			if( empty( $pParamHash['root_structure_id'] ) || !is_numeric( $pParamHash['root_structure_id'] ) ) {
 				$pParamHash['root_structure_id'] = $pParamHash['structure_id'];
 			}
 			$query = "INSERT INTO `".BIT_DB_PREFIX."tiki_structures`( `structure_id`, `parent_id`,`content_id`, `root_structure_id`, `page_alias`, `pos` ) values(?,?,?,?,?,?)";
-			$result = $this->query( $query, array( $pParamHash['structure_id'], $pParamHash['parent_id'], (int)$pParamHash['content_id'], (int)$pParamHash['root_structure_id'], $pParamHash['alias'], $pParamHash['max'] ) );
+			$result = $this->mDb->query( $query, array( $pParamHash['structure_id'], $pParamHash['parent_id'], (int)$pParamHash['content_id'], (int)$pParamHash['root_structure_id'], $pParamHash['alias'], $pParamHash['max'] ) );
 			$this->mDb->CompleteTrans();
 			$ret = $pParamHash['structure_id'];
 		} else {
@@ -305,10 +302,10 @@ class LibertyStructure extends LibertyBase {
 				if( !empty( $parentNode['parent_id'] ) ) {
 					//Make a space for the node after its parent
 					$query = "update `".BIT_DB_PREFIX."tiki_structures` set `pos`=`pos`+1 where `pos`>? and `parent_id`=?";
-					$this->query( $query, array( $parentNode['pos'], $parentNode['parent_id'] ) );
+					$this->mDb->query( $query, array( $parentNode['pos'], $parentNode['parent_id'] ) );
 					//Move the node up one level
 					$query = "update `".BIT_DB_PREFIX."tiki_structures` set `parent_id`=?, `pos`=(? + 1) where `structure_id`=?";
-					$this->query($query, array( $parentNode['parent_id'], $parentNode['pos'], $this->mStructureId ) );
+					$this->mDb->query($query, array( $parentNode['parent_id'], $parentNode['pos'], $this->mStructureId ) );
 				}
 			}
 			$this->mDb->CompleteTrans();
@@ -319,21 +316,21 @@ class LibertyStructure extends LibertyBase {
 		if( $this->isValid() ) {
 			$this->mDb->StartTrans();
 			$query = "select `structure_id`, `pos` from `".BIT_DB_PREFIX."tiki_structures` where `pos`<? and `parent_id`=? order by `pos` desc";
-			$result = $this->query($query,array($this->mInfo["pos"], (int)$this->mInfo["parent_id"]));
+			$result = $this->mDb->query($query,array($this->mInfo["pos"], (int)$this->mInfo["parent_id"]));
 			if ($previous = $result->fetchRow()) {
 				//Get last child nodes for previous sibling
 				$query = "select `pos` from `".BIT_DB_PREFIX."tiki_structures` where `parent_id`=? order by `pos` desc";
-				$result = $this->query($query,array((int)$previous["structure_id"]));
+				$result = $this->mDb->query($query,array((int)$previous["structure_id"]));
 				if ($res = $result->fetchRow()) {
 					$pos = $res["pos"];
 				} else{
 					$pos = 0;
 				}
 				$query = "update `".BIT_DB_PREFIX."tiki_structures` set `parent_id`=?, `pos`=(? + 1) where `structure_id`=?";
-				$this->query( $query, array((int)$previous["structure_id"], (int)$pos, (int)$this->mStructureId) );
+				$this->mDb->query( $query, array((int)$previous["structure_id"], (int)$pos, (int)$this->mStructureId) );
 				//Move nodes up below that had previous parent and pos
 				$query = "update `".BIT_DB_PREFIX."tiki_structures` set `pos`=`pos`-1 where `pos`>? and `parent_id`=?";
-				$this->query( $query, array( $this->mInfo['pos'], $this->mInfo['parent_id'] ) );
+				$this->mDb->query( $query, array( $this->mInfo['pos'], $this->mInfo['parent_id'] ) );
 			}
 			$this->mDb->CompleteTrans();
 		}
@@ -343,13 +340,13 @@ class LibertyStructure extends LibertyBase {
 		if( $this->isValid() ) {
 			$this->mDb->StartTrans();
 			$query = "select `structure_id`, `pos` from `".BIT_DB_PREFIX."tiki_structures` where `pos`>? and `parent_id`=? order by `pos` asc";
-			$result = $this->query($query,array((int)$this->mInfo["pos"], (int)$this->mInfo["parent_id"]));
+			$result = $this->mDb->query($query,array((int)$this->mInfo["pos"], (int)$this->mInfo["parent_id"]));
 			$res = $result->fetchRow();
 			if ($res) {
 				//Swap position values
 				$query = "update `".BIT_DB_PREFIX."tiki_structures` set `pos`=? where `structure_id`=?";
-				$this->query($query,array((int)$this->mInfo["pos"], (int)$res["structure_id"]) );
-				$this->query($query,array((int)$res["pos"], (int)$this->mInfo["structure_id"]) );
+				$this->mDb->query($query,array((int)$this->mInfo["pos"], (int)$res["structure_id"]) );
+				$this->mDb->query($query,array((int)$res["pos"], (int)$this->mInfo["structure_id"]) );
 			}
 			$this->mDb->CompleteTrans();
 		}
@@ -359,13 +356,13 @@ class LibertyStructure extends LibertyBase {
 		if( $this->isValid() ) {
 			$this->mDb->StartTrans();
 			$query = "select `structure_id`, `pos` from `".BIT_DB_PREFIX."tiki_structures` where `pos`<? and `parent_id`=? order by `pos` desc";
-			$result = $this->query($query,array((int)$this->mInfo["pos"], (int)$this->mInfo["parent_id"]));
+			$result = $this->mDb->query($query,array((int)$this->mInfo["pos"], (int)$this->mInfo["parent_id"]));
 			$res = $result->fetchRow();
 			if ($res) {
 				//Swap position values
 				$query = "update `".BIT_DB_PREFIX."tiki_structures` set `pos`=? where `structure_id`=?";
-				$this->query($query,array((int)$res["pos"], (int)$this->mInfo["structure_id"]) );
-				$this->query($query,array((int)$this->mInfo["pos"], (int)$res["structure_id"]) );
+				$this->mDb->query($query,array((int)$res["pos"], (int)$this->mInfo["structure_id"]) );
+				$this->mDb->query($query,array((int)$this->mInfo["pos"], (int)$res["structure_id"]) );
 			}
 			$this->mDb->CompleteTrans();
 		}
@@ -445,7 +442,7 @@ class LibertyStructure extends LibertyBase {
 			$query = "SELECT `structure_id`, ts.`content_id`
 					  FROM `".BIT_DB_PREFIX."tiki_structures` ts
 					  WHERE `parent_id`=?";
-			$result = $this->query( $query,array( (int)$structure_id) );
+			$result = $this->mDb->query( $query,array( (int)$structure_id) );
 			//Iterate down through the child nodes
 			while ($res = $result->fetchRow()) {
 				$this->s_remove_page($res["structure_id"], $delete);
@@ -455,7 +452,7 @@ class LibertyStructure extends LibertyBase {
 			if ($delete) {
 				$page_info = $this->getNode($structure_id);
 				$query = "select count(*) from `".BIT_DB_PREFIX."tiki_structures` where `content_id`=?";
-				$count = $this->getOne($query, array((int)$page_info["page_id"]));
+				$count = $this->mDb->getOne($query, array((int)$page_info["page_id"]));
 				if ($count = 1) {
 					$this->remove_all_versions($page_info["page_id"]);
 				}
@@ -464,7 +461,7 @@ class LibertyStructure extends LibertyBase {
 			//Remove the structure node
 			$query = "delete from `".BIT_DB_PREFIX."tiki_structures` where `structure_id`=?";
 
-			$result = $this->query($query, array( (int)$structure_id) );
+			$result = $this->mDb->query($query, array( (int)$structure_id) );
 			return true;
 		}
 	}
@@ -475,14 +472,14 @@ class LibertyStructure extends LibertyBase {
 		$query  = "select `structure_id` ";
 		$query .= "from `".BIT_DB_PREFIX."tiki_structures` as ts, `".BIT_DB_PREFIX."tiki_pages` as tp ";
 		  $query .= "where tp.`content_id`=ts.`content_id` and `parent_id`=?";
-		$result = $this->query($query, array( $structure_id ) );
+		$result = $this->mDb->query($query, array( $structure_id ) );
 
 		while ($res = $result->fetchRow()) {
 			$this->remove_from_structure($res["structure_id"]);
 		}
 
 		$query = "delete from `".BIT_DB_PREFIX."tiki_structures` where `structure_id`=?";
-		$result = $this->query($query, array( $structure_id ) );
+		$result = $this->mDb->query($query, array( $structure_id ) );
 		return true;
 	}
 
@@ -493,7 +490,7 @@ class LibertyStructure extends LibertyBase {
   */
 	function s_get_parent_info($structure_id) {
 		// Try to get the parent of this page
-		$parent_id = $this->getOne("select `parent_id` from `".BIT_DB_PREFIX."tiki_structures` where `structure_id`=?",array((int)$structure_id));
+		$parent_id = $this->mDb->getOne("select `parent_id` from `".BIT_DB_PREFIX."tiki_structures` where `structure_id`=?",array((int)$structure_id));
 
     if (!$parent_id)
       return null;
@@ -505,7 +502,7 @@ class LibertyStructure extends LibertyBase {
 		$ret = array();
 
 		$query = "SELECT * from `".BIT_DB_PREFIX."tiki_structures` where `parent_id`=? ORDER BY pos, page_alias, content_id";
-		$result = $this->query( $query, array( (int)$pStructureId ) );
+		$result = $this->mDb->query( $query, array( (int)$pStructureId ) );
 		while ( !$result->EOF ) {
 			array_push( $pToc, $result->fields['content_id'] );
 			$this->getContentIds( $result->fields['structure_id'], $pToc, ++$pLevel );
@@ -515,7 +512,7 @@ class LibertyStructure extends LibertyBase {
 
 	function getContentArray( $pStructureId, &$pToc, $pLevel=0 ) {
 		$query = "SELECT * from `".BIT_DB_PREFIX."tiki_structures` where `structure_id`=?";
-		$result = $this->query( $query, array( (int)$pStructureId ) );
+		$result = $this->mDb->query( $query, array( (int)$pStructureId ) );
 		if( !$result->EOF ) {
 			array_push( $pToc, $result->fields['content_id'] );
 			$this->getContentIds( $pStructureId, $pToc, $pLevel );
@@ -545,13 +542,13 @@ class LibertyStructure extends LibertyBase {
 	// the $tocPrefix can be used to Prefix a subtree as it would start from a given number (e.g. 2.1.3)
 	function build_subtree_toc($id,$slide=false,$order='asc',$tocPrefix='') {
 		$ret = array();
-		$cant = $this->getOne("select count(*) from `".BIT_DB_PREFIX."tiki_structures` where `parent_id`=?",array((int)$id));
+		$cant = $this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."tiki_structures` where `parent_id`=?",array((int)$id));
 		if ($cant) {
 			$query = "SELECT `structure_id`, tc.`title`, `page_alias`
 					  FROM `".BIT_DB_PREFIX."tiki_structures` ts INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON ( tc.`content_id`=ts.`content_id` )
 					  WHERE `parent_id`=?
-					  ORDER BY ".$this->convert_sortmode("pos_".$order);
-			$result = $this->query($query,array((int)$id));
+					  ORDER BY ".$this->mDb->convert_sortmode("pos_".$order);
+			$result = $this->mDb->query($query,array((int)$id));
 			$prefix=1;
 			while ($res = $result->fetchRow()) {
 				$res['prefix']=($tocPrefix=='')?'':"$tocPrefix.";
@@ -608,7 +605,7 @@ class LibertyStructure extends LibertyBase {
     $query =  "SELECT `structure_id`
 			   FROM `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_pages` tp,`".BIT_DB_PREFIX."tiki_content` tc
 			   WHERE tp.`content_id`=ts.`content_id` AND tc.`content_id` = tp.`content_id` AND (`parent_id` is null or `parent_id`=0) and tc.`title`=?";
-		$structure_id = $this->getOne($query,array($title));
+		$structure_id = $this->mDb->getOne($query,array($title));
 		return $structure_id;
 	}
 */
@@ -618,8 +615,8 @@ class LibertyStructure extends LibertyBase {
 			$query  = "SELECT `structure_id`
 					   FROM `".BIT_DB_PREFIX."tiki_structures` ts
 					   WHERE `parent_id`=?
-					   ORDER BY ".$this->convert_sortmode("pos_asc");
-			$result1 = $this->query($query,array((int)$structure_id));
+					   ORDER BY ".$this->mDb->convert_sortmode("pos_asc");
+			$result1 = $this->mDb->query($query,array((int)$structure_id));
 
 			if ($result1->numRows()) {
 				$res = $result1->fetchRow();
@@ -638,8 +635,8 @@ class LibertyStructure extends LibertyBase {
 		$query  = "SELECT `structure_id`
 				   FROM `".BIT_DB_PREFIX."tiki_structures` ts
 				   WHERE `parent_id`=? and `pos`>?
-				   ORDER BY ".$this->convert_sortmode("pos_asc");
-		$result2 = $this->query($query,array((int)$parent_id, (int)$page_pos));
+				   ORDER BY ".$this->mDb->convert_sortmode("pos_asc");
+		$result2 = $this->mDb->query($query,array((int)$parent_id, (int)$page_pos));
 
 		if ($result2->numRows()) {
 			$res = $result2->fetchRow();
@@ -657,8 +654,8 @@ class LibertyStructure extends LibertyBase {
   	        $query  = "select `structure_id` ";
 		    $query .= "from `".BIT_DB_PREFIX."tiki_structures` ts ";
 			$query .= "where `parent_id`=? ";
-			$query .= "order by ".$this->convert_sortmode("pos_desc");
-			$result = $this->query($query,array($structure_id));
+			$query .= "order by ".$this->mDb->convert_sortmode("pos_desc");
+			$result = $this->mDb->query($query,array($structure_id));
 
 			if ($result->numRows()) {
 				//There are more children
@@ -679,8 +676,8 @@ class LibertyStructure extends LibertyBase {
 		$query  = "select `structure_id` ";
 		$query .= "from `".BIT_DB_PREFIX."tiki_structures` ts ";
 		$query .= "where `parent_id`=? and `pos`<? ";
-		$query .= "order by ".$this->convert_sortmode("pos_desc");
-		$result =  $this->query($query,array((int)$parent_id, (int)$pos));
+		$query .= "order by ".$this->mDb->convert_sortmode("pos_desc");
+		$result =  $this->mDb->query($query,array((int)$parent_id, (int)$pos));
 
 		if ($result->numRows()) {
 			//There is a previous sibling
@@ -702,8 +699,8 @@ class LibertyStructure extends LibertyBase {
 	  $query =  "SELECT `pos`, `structure_id`, `parent_id`, ts.`content_id`, tc.`title`, `page_alias`
 				 FROM `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_content` tc
 				 WHERE ts.`content_id` = tc.`content_id` AND `parent_id`=? ";
-		$query .= "order by ".$this->convert_sortmode("pos_asc");
-        $result = $this->query($query,array((int)$parent_id));
+		$query .= "order by ".$this->mDb->convert_sortmode("pos_asc");
+        $result = $this->mDb->query($query,array((int)$parent_id));
 		while ($res = $result->fetchRow()) {
 			//$ret[] = $this->populate_page_info($res);
 			$ret[] = $res;
@@ -714,7 +711,7 @@ class LibertyStructure extends LibertyBase {
 	function get_max_children($structure_id) {
 
 		$query = "select `structure_id` from `".BIT_DB_PREFIX."tiki_structures` where `parent_id`=?";
-		$result = $this->query($query,array((int)$structure_id));
+		$result = $this->mDb->query($query,array((int)$structure_id));
 		if (!$result->numRows()) {
 			return '';
 		}
@@ -753,9 +750,9 @@ class LibertyStructure extends LibertyBase {
 		$query =  "select `pos`, `structure_id`, `parent_id`, ts.`content_id`, tc.`title`, `page_alias`
 				   FROM `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_content` tc
 				   WHERE tc.`content_id` = tp.`content_id` AND tp.`content_id`=ts.`content_id` AND `parent_id`=?
-				   ORDER by ".$this->convert_sortmode("pos_asc");
+				   ORDER by ".$this->mDb->convert_sortmode("pos_asc");
 
-		$result = $this->query($query,array((int)$structure_id));
+		$result = $this->mDb->query($query,array((int)$structure_id));
 		while ($res = $result->fetchRow()) {
 			//$ret[] = $this->populate_page_info($res);
 			$ret2 = $this->_s_get_structure_pages($res["structure_id"]);
@@ -766,13 +763,13 @@ class LibertyStructure extends LibertyBase {
 
   function get_page_alias($structure_id) {
 		$query = "select `page_alias` from `".BIT_DB_PREFIX."tiki_structures` where `structure_id`=?";
-		$res = $this->getOne($query, array((int)$structure_id));
+		$res = $this->mDb->getOne($query, array((int)$structure_id));
     return $res;
   }
 
   function set_page_alias($structure_id, $pageAlias) {
 		$query = "update `".BIT_DB_PREFIX."tiki_structures` set `page_alias`=? where `structure_id`=?";
-		$this->query($query, array($pageAlias, (int)$structure_id));
+		$this->mDb->query($query, array($pageAlias, (int)$structure_id));
   }
 
 
@@ -812,7 +809,7 @@ class LibertyStructure extends LibertyBase {
 		$query = "SELECT *
 				  FROM `".BIT_DB_PREFIX."tiki_pages` tp, `".BIT_DB_PREFIX."tiki_content` tc
 				  WHERE tc.`content_id` = tp.`content_id` AND tc.`title`=?";
-		$result = $this->query($query,array($page));
+		$result = $this->mDb->query($query,array($page));
 		$res = $result->fetchRow();
 		$docs[] = $res["title"];
 		if(empty($res["description"])) $res["description"]=$res["title"];
@@ -863,14 +860,14 @@ class LibertyStructure extends LibertyBase {
 
 	function structure_to_tree($structure_id) {
 		$query = "select * from `".BIT_DB_PREFIX."tiki_structures` ts,`".BIT_DB_PREFIX."tiki_pages` tp where tp.`content_id`=ts.`content_id` and `structure_id`=?";
-		$result = $this->query($query,array((int)$structure_id));
+		$result = $this->mDb->query($query,array((int)$structure_id));
 		$res = $result->fetchRow();
 		if(empty($res['description'])) $res['description']=$res['title'];
 		$name = $res['description'].'|'.$res['title'];
 		$code = '';
 		$code.= "'$name'=>";
 		$query = "select * from `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_pages` tp  where tp.`content_id`=ts.`content_id` and `parent_id`=?";
-		$result = $this->query($query,array((int)$structure_id));
+		$result = $this->mDb->query($query,array((int)$structure_id));
 		if($result->numRows()) {
 			$code.="Array(";
 			$first = true;

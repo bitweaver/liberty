@@ -2,9 +2,9 @@
 /**
  * Management of Liberty Content
  *
+ * @package  liberty
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.3 2005/08/07 17:40:29 squareing Exp $
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.2 $
- * @package  Liberty
  */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
@@ -17,8 +17,6 @@
 // +----------------------------------------------------------------------+
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
-//
-// $Id: LibertyAttachable.php,v 1.2 2005/06/28 07:45:47 spiderr Exp $
 
 /**
  * required setup
@@ -27,12 +25,9 @@ require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
 require_once( LIBERTY_PKG_PATH.'LibertySystem.php' );
 
 /**
- * LibertyAttachable classes.
+ * LibertyAttachable class
  *
- * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.2 $
- * @package  Liberty
- * @subpackage  LibertyAttachable
+ * @package liberty
  */
 class LibertyAttachable extends LibertyContent {
 	var $mContentId;
@@ -217,8 +212,8 @@ class LibertyAttachable extends LibertyContent {
 	// Things to be stored should be shoved in the array $pParamHash['STORAGE']
 	function store ( &$pParamHash ) {
 		global $gLibertySystem;
+		$this->mDb->StartTrans();
 		if( LibertyAttachable::verify( $pParamHash ) && LibertyContent::store( $pParamHash ) && !empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] ) ) {
-			$this->mDb->StartTrans();
 			foreach( array_keys( $pParamHash['STORAGE'] ) as $guid ) {
 				$storeRow = &$pParamHash['STORAGE'][$guid]; // short hand variable assignment
 				$storeRow['plugin_guid'] = $guid;
@@ -230,11 +225,11 @@ class LibertyAttachable extends LibertyContent {
 					if( empty( $pParamHash['attachment_id'] ) ) {
 						$sql = "SELECT `attachment_id` FROM `".BIT_DB_PREFIX."tiki_attachments`
 								WHERE `attachment_plugin_guid` = ? AND `content_id` = ? AND `foreign_id`=?";
-						$rs = $this->query( $sql, array( $storeRow['plugin_guid'], (int)$storeRow['content_id'], (int)$storeRow['foreign_id'] ) );
+						$rs = $this->mDb->query( $sql, array( $storeRow['plugin_guid'], (int)$storeRow['content_id'], (int)$storeRow['foreign_id'] ) );
 						if( empty( $rs ) || !$rs->NumRows() ) {
-							$pParamHash['attachment_id'] = $this->GenID( 'tiki_attachments_id_seq' );
+							$pParamHash['attachment_id'] = $this->mDb->GenID( 'tiki_attachments_id_seq' );
 							$sql = "INSERT INTO `".BIT_DB_PREFIX."tiki_attachments` ( `attachment_id`, `attachment_plugin_guid`, `content_id`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
-							$rs = $this->query( $sql, array( $pParamHash['attachment_id'], $storeRow['plugin_guid'], $pParamHash['content_id'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
+							$rs = $this->mDb->query( $sql, array( $pParamHash['attachment_id'], $storeRow['plugin_guid'], $pParamHash['content_id'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
 						} else {
 							$this->mErrors['storage'] = $guid.' '.$storeRow['foreign_id'].' has already been added to this content.';
 							$pParamHash['attachment_id'] = NULL;
@@ -261,8 +256,8 @@ class LibertyAttachable extends LibertyContent {
 				} else {
 				}
 			}
-			$this->mDb->CompleteTrans();
 		}
+		$this->mDb->CompleteTrans();
 
 		if( !empty( $pParamHash['existing_attachment_id'] ) ) {
 			foreach($pParamHash['existing_attachment_id'] as $existingAttachmentId) {
@@ -280,13 +275,13 @@ class LibertyAttachable extends LibertyContent {
 		global $gBitUser;
 
 		$sql = "SELECT * FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id` = ?";
-		$rs = $this->query($sql, array( $pAttachmentId ));
+		$rs = $this->mDb->query($sql, array( $pAttachmentId ));
 		$tmpAttachment = $rs->fields;
 
 		if ( !empty($tmpAttachment['attachment_id']) ) {
-			$newAttachmentId = $this->GenID( 'tiki_attachments_id_seq' );
+			$newAttachmentId = $this->mDb->GenID( 'tiki_attachments_id_seq' );
 			$sql = "INSERT INTO `".BIT_DB_PREFIX."tiki_attachments` ( `attachment_id`, `attachment_plugin_guid`, `content_id`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
-			$rs = $this->query( $sql, array( $newAttachmentId, $tmpAttachment['attachment_plugin_guid'], $pNewContentId, $tmpAttachment['foreign_id'], $gBitUser->mUserId ) );
+			$rs = $this->mDb->query( $sql, array( $newAttachmentId, $tmpAttachment['attachment_plugin_guid'], $pNewContentId, $tmpAttachment['foreign_id'], $gBitUser->mUserId ) );
 		}
 	}
 
@@ -307,7 +302,7 @@ class LibertyAttachable extends LibertyContent {
 
 		if( is_numeric( $pAttachmentId ) ) {
 			$sql = "SELECT `attachment_plugin_guid`, `user_id` FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id`=?";
-			$rs = $this->query( $sql, array( $pAttachmentId ) );
+			$rs = $this->mDb->query( $sql, array( $pAttachmentId ) );
 			$guid = $rs->fields['attachment_plugin_guid'];
 			$user_id = $rs->fields['user_id'];
 
@@ -316,7 +311,7 @@ class LibertyAttachable extends LibertyContent {
 					$expungeFunc = $gLibertySystem->mPlugins[$guid]['expunge_function'];
 					if( $expungeFunc( $pAttachmentId ) ) {
 						$sql = "DELETE FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id`=?";
-						$this->query( $sql, array( $pAttachmentId ) );
+						$this->mDb->query( $sql, array( $pAttachmentId ) );
 					}
 				} else {
 					print("Expunge function not found for this content!");
@@ -336,7 +331,7 @@ class LibertyAttachable extends LibertyContent {
 				$attachmentOwner->load();
 				if ($attachmentOwner->mContentId) {
 					$query = "UPDATE `".BIT_DB_PREFIX."tiki_attachments` SET `content_id` = ? WHERE `attachment_id` = ?";
-					$result = $this->query($query, array($attachmentOwner->mContentId, $pAttachmentId));
+					$result = $this->mDb->query($query, array($attachmentOwner->mContentId, $pAttachmentId));
 				} else {
 					$this->mErrors[] = "Unable to detach this attachment because the owner does not have a content row";
 				}
@@ -357,7 +352,7 @@ class LibertyAttachable extends LibertyContent {
 			LibertyContent::load($pContentId);
 			$query = "SELECT * FROM `".BIT_DB_PREFIX."tiki_attachments` ta
 					  WHERE ta.`content_id`=?";
-			if( $result = $this->query($query,array((int) $conId)) ) {
+			if( $result = $this->mDb->query($query,array((int) $conId)) ) {
 				$this->mStorage = array();
 				while( !$result->EOF ) {
 					$row = &$result->fields;
@@ -382,7 +377,7 @@ class LibertyAttachable extends LibertyContent {
 		if( is_numeric( $pAttachmentId ) ) {
 			$query = "SELECT * FROM `".BIT_DB_PREFIX."tiki_attachments` ta
 					  WHERE ta.`attachment_id`=?";
-			if( $result = $this->query($query,array((int) $pAttachmentId)) ) {
+			if( $result = $this->mDb->query($query,array((int) $pAttachmentId)) ) {
 				$ret = array();
 				if( !$result->EOF ) {
 					$row = &$result->fields;
@@ -403,7 +398,7 @@ class LibertyAttachable extends LibertyContent {
 
 		if (!empty($attachmentInfo['attachment_id']) && !empty($attachmentInfo['foreign_id']) && !empty($attachmentInfo['attachment_plugin_guid']) ) {
 			$query = "SELECT  * FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `foreign_id` = ? AND `attachment_plugin_guid` = ? AND `attachment_id` <> ?";
-			$result = $this->query($query, array($attachmentInfo['foreign_id'], $attachmentInfo['attachment_plugin_guid'], $attachment['attachment_id']));
+			$result = $this->mDb->query($query, array($attachmentInfo['foreign_id'], $attachmentInfo['attachment_plugin_guid'], $attachment['attachment_id']));
 			$ret = $result->getRows();
 		}
 

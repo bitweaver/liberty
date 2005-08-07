@@ -1,9 +1,9 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_top_authors.php,v 1.3 2005/08/01 18:40:50 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_top_authors.php,v 1.4 2005/08/07 17:40:30 squareing Exp $
 /**
  * Params:
  * - content_type_guid : if set, show only those content_type_guid's
- * @package Liberty
+ * @package liberty
  * @subpackage modules
  */
 

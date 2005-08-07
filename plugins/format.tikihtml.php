@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
- * @package  Liberty
+ * @version  $Revision: 1.4 $
+ * @package  liberty
  * @subpackage plugins_format
  */
 global $gLibertySystem;

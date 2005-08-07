@@ -1,10 +1,10 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.php,v 1.4 2005/08/01 18:40:50 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.php,v 1.5 2005/08/07 17:40:30 squareing Exp $
 /**
  * Params:
  * - content_type_guid : if set, show only those content_type_guid's
  * - show_date : if set, show date of last modification
- * @package Liberty
+ * @package liberty
  * @subpackage modules
  */
 

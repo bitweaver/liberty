@@ -3,8 +3,8 @@
  * display_structure_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.2 $
- * @package  Liberty
+ * @version  $Revision: 1.3 $
+ * @package  liberty
  * @subpackage functions
  */
 

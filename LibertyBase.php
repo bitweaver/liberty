@@ -1,10 +1,10 @@
 <?php
 /**
- * Management of Liberty Content
+ * Base class for Management of Liberty Content
  *
+ * @package  liberty
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.3 2005/08/07 17:40:29 squareing Exp $
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.2 $
- * @package  Liberty
  */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
@@ -17,8 +17,6 @@
 // +----------------------------------------------------------------------+
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
-//
-// $Id: LibertyBase.php,v 1.2 2005/06/28 07:45:47 spiderr Exp $
 
 /**
  * required setup
@@ -29,16 +27,12 @@ require_once( KERNEL_PKG_PATH.'BitBase.php' );
  * Virtual base class (as much as one can have such things in PHP) for all
  * derived bitweaver classes that manage content.
  *
- * @abstract
- * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.2 $
- * @package  Liberty
- * @subpackage LibertyBase
+ * @package liberty
  */
 class LibertyBase extends BitBase {
 
 	function LibertyBase () {
-		// we need to init our mDb early
+		// we need to init our database connection early
 		BitBase::BitBase();
 	}
 
@@ -54,7 +48,7 @@ class LibertyBase extends BitBase {
 
 		if( BitBase::verifyId( $pContentId ) ) {
 			if( empty( $pContentGuid ) ) {
-				$pContentGuid = $gLibertySystem->GetOne( "SELECT `content_type_guid` FROM `".BIT_DB_PREFIX."tiki_content` WHERE `content_id`=?", array( $pContentId ) );
+				$pContentGuid = $gLibertySystem->mDb->GetOne( "SELECT `content_type_guid` FROM `".BIT_DB_PREFIX."tiki_content` WHERE `content_id`=?", array( $pContentId ) );
 			}
 			if( !empty( $pContentGuid) && isset( $gLibertySystem->mContentTypes[$pContentGuid] ) ) {
 				$type = $gLibertySystem->mContentTypes[$pContentGuid];

@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
- * @package  Liberty
+ * @version  $Revision: 1.5 $
+ * @package  liberty
  * @subpackage plugins_data
  */
 // +----------------------------------------------------------------------+
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_catpath.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.catpath.php,v 1.4 2005/08/01 18:41:06 squareing Exp $
+// $Id: data.catpath.php,v 1.5 2005/08/07 17:40:31 squareing Exp $
 
 /**
  * definitions

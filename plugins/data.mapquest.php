@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
- * @package  Liberty
+ * @version  $Revision: 1.4 $
+ * @package  liberty
  * @subpackage plugins_data
  */
 // +----------------------------------------------------------------------+
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mapquest.php,v 1.3 2005/06/28 07:45:48 spiderr Exp $
+// $Id: data.mapquest.php,v 1.4 2005/08/07 17:40:31 squareing Exp $
 
 /**
  * definitions
