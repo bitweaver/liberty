@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.19 $
+ * @version  $Revision: 1.2.2.20 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -60,7 +60,7 @@ function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
 			  FROM `".BIT_DB_PREFIX."tiki_links` tl
 				INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON( tl.`from_content_id`=tc.`content_id` )
 			  WHERE `to_content_id` = ?";
-	if( $result = $pCommonObject->query($query, array( $pContentId ) ) ) {
+	if( $result = $pCommonObject->mDb->query($query, array( $pContentId ) ) ) {
 		while( !$result->EOF ) {
 			$data = preg_replace( '/(\W|\(\()('.$pOldName.')(\W|\)\))/', '\\1'.$pNewName.'\\3', $result->fields['data'] );
 			if( md5( $data ) != md5( $result->fields['data'] ) ) {
