@@ -21,15 +21,7 @@
 		<div class="row">
 			{formlabel label="Content" for="content"}
 			{forminput}
-				<select name="content_type" onchange="submit();">
-					<option {if !$contentSelect}selected="selected"{/if} value="">All Content</option>
-					{foreach from=$contentTypes key=guid item=description}
-						<option value="{$guid}" {if $contentSelect eq $guid}selected="selected"{assign var=selectDescription value=$description}{/if}>{$description}</option>
-					{/foreach}
-				</select>
-				<noscript>
-					<div><input type="submit" name="content_switch" value="{tr}change content type{/tr}" /></div>
-				</noscript>
+				{html_options onchange="submit();" values=$contentTypes options=$contentTypes name=content_type_guid selected=$contentSelect}
 			{/forminput}
 
 			{forminput}
