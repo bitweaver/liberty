@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.22 2005/08/10 17:21:19 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.23 2005/08/10 18:30:14 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -464,6 +464,9 @@ class LibertyContent extends LibertyBase {
 	 * 
 	 * @param string Content Type GUID
 	 * @param array Array of content type data
+	 * Populates the mType array with the following entries
+	 * string	content_type_guid
+	 * string	
 	 */
 	function registerContentType( $pContentGuid, $pTypeParams ) {
 		global $gLibertySystem;
@@ -506,7 +509,14 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
-
+	/**
+	 * Create the generic title for a content item
+	 *
+	 * This will normally be overwriten by extended classes to provide 
+	 * an appropriate title title string
+	 * @param array mInfo type hash of data to be used to provide base data
+	 * @return string Descriptive title for the object
+	 */ 
 	function getTitle( $pHash=NULL ) {
 		$ret = NULL;
 		if( empty( $pHash ) ) {
@@ -520,7 +530,11 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
-
+	/**
+	 * Access a content item type GUID
+	 *
+	 * @return string content_type_guid for the object
+	 */ 
 	function getContentType() {
 		$ret = NULL;
 		if( isset( $this->mInfo['content_type_guid'] ) ) {
@@ -528,7 +542,6 @@ class LibertyContent extends LibertyBase {
 		}
 		return $ret;
 	}
-
 
     /**
     * Pure virtual function that returns the include file that should render a page of content of this type
@@ -540,9 +553,9 @@ class LibertyContent extends LibertyBase {
 
     /**
     * Pure virtual function that returns link to display a piece of content
-    * @param pLinkText name of
-    * @param pMixed different possibilities depending on derived class
-    * @return the link to display the page.
+    * @param string Text for the link unless overriden by object title
+    * @param array different possibilities depending on derived class
+    * @return string Formated html the link to display the page.
     */
 	function getDisplayLink( $pLinkText, $pMixed ) {
 		$ret = '';
@@ -558,9 +571,9 @@ class LibertyContent extends LibertyBase {
 
     /**
     * Pure virtual function that returns Request_URI to a piece of content
-    * @param pLinkText name of
-    * @param pMixed different possibilities depending on derived class
-    * @return the link to display the page.
+    * @param string Text for DisplayLink function
+    * @param array different possibilities depending on derived class
+    * @return string Formated URL address to display the page.
     */
 	function getDisplayUrl( $pLinkText, $pMixed ) {
 		print "UNDEFINED PURE VIRTUAL FUNCTION: LibertyContent::getDisplayUrl";
@@ -596,7 +609,10 @@ class LibertyContent extends LibertyBase {
 	}
 
     /**
-	* Get a list of users this content is a member of
+	* Get a list of users who have created entries in the content table
+	*
+    * @param array hash of parameters ( content_type_guid will limit list to a single content type
+    * @return - none the hash is updated via the reference
 	**/
 	function getAuthorList( &$pListHash ) {
 		$ret = NULL;
@@ -620,10 +636,17 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
-
     /**
-	* Get a list of all structures this content is a member of
-	**/
+	 * Get a list of all structures this content is a member of
+	 *
+	 * @param string Content GUID to limit the list to
+	 * @param integer Number of the first record to access ( used to page the list )
+	 * @param integer Number of records to return
+	 * @param string Name of the field to sort by ( extended by _asc or _desc for sort direction )
+	 * @param array List of text elements to filter the results by
+	 * @param integer User ID - If set, then only the objcets created by that user will be returned
+	 * @return array An array of mInfo type arrays of content objects
+	 **/
 	function getContentList( $pContentGuid=NULL, $offset = 0, $maxRecords = -1, $sort_mode = 'title_desc', $find = NULL, $pUserId=NULL ) {
 		global $gLibertySystem, $gBitSystem, $gBitUser, $gBitSmarty;
 		if ($sort_mode == 'size_desc') {
@@ -818,12 +841,15 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
-
-
-
-
-	// This is the "object like" method. It should be more object like,
-	// but for now, we'll just point to the old lib style "parse_data" - XOXO spiderr
+	/**
+	 * Process the raw content blob using the speified content GUID processor
+	 *
+	 * This is the "object like" method. It should be more object like,
+	 * but for now, we'll just point to the old lib style "parse_data" - XOXO spiderr
+	 * @param string Data to be formated
+	 * @param string Format GUID processor to use
+	 * @return string Formated data string
+	 */
 	function parseData( $pData=NULL, $pFormatGuid=NULL ) {
 		$ret = &$pData;
 		if( empty( $pFormatGuid ) ) {
@@ -842,7 +868,16 @@ class LibertyContent extends LibertyBase {
 	}
 
 
-	//Special parsing for multipage articles
+	/**
+	 * Special parsing for multipage articles 
+	 *
+	 * Temporary remove <PRE></PRE> secions to protect
+	 * from broke <PRE> tags and leave well known <PRE>
+	 * behaviour (i.e. type all text inside AS IS w/o
+	 * any interpretation)
+	 * @param string Data to process
+	 * @return string Extracted pages
+	 */
 	function getNumberOfPages( &$data ) {
 		// Temporary remove <PRE></PRE> secions to protect
 		// from broke <PRE> tags and leave well known <PRE>
@@ -867,11 +902,18 @@ class LibertyContent extends LibertyBase {
 		return count($parts);
 	}
 
+	/**
+	 * Special parsing for a particular page of a multipage article 
+	 *
+	 * Temporary remove <PRE></PRE> secions to protect
+	 * from broke <PRE> tags and leave well known <PRE>
+	 * behaviour (i.e. type all text inside AS IS w/o
+	 * any interpretation)
+	 * @param string Data to process
+	 * @param integer Number of page to extract
+	 * @return string Extracted page
+	 */
 	function getPage( &$data, $i ) {
-		// Temporary remove <PRE></PRE> secions to protect
-		// from broke <PRE> tags and leave well known <PRE>
-		// behaviour (i.e. type all text inside AS IS w/o
-		// any interpretation)
 		$preparsed = array();
 
 		preg_match_all("/(<[Pp][Rr][Ee]>)((.|\n)*?)(<\/[Pp][Rr][Ee]>)/", $data, $preparse);
@@ -903,9 +945,13 @@ class LibertyContent extends LibertyBase {
 	}
 
 
-
-	// ****** LEGACY FUNCTIONS that need to be cleaned / moved / or deprecated & deleted
-
+	/**
+	 * Check if given url is currently cached locally
+	 *
+	 * @param string URL to check
+	 * @return integer Id of the cached item
+	 * @todo LEGACY FUNCTIONS that need to be cleaned / moved / or deprecated & deleted
+	 */
 	function isCached($url) {
 		$query = "select `cache_id`  from `".BIT_DB_PREFIX."tiki_link_cache` where `url`=?";
 		// sometimes we can have a cache_id of 0(?!) - seen it with my own eyes, spiderr
@@ -914,10 +960,14 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	 * \brief Cache given url
+	 * Cache given url
 	 * If \c $data present (passed) it is just associated \c $url and \c $data.
 	 * Else it will request data for given URL and store it in DB.
 	 * Actualy (currently) data may be proviced by TIkiIntegrator only.
+	 * @param string URL to cache
+	 * @param string Data to be cached
+	 * @return bool True if item was successfully cached
+	 * @todo LEGACY FUNCTIONS that need to be cleaned / moved / or deprecated & deleted
 	 */
 	function cacheUrl($url, $data = '') {
 		// Avoid caching internal references... (only if $data not present)
@@ -948,12 +998,23 @@ class LibertyContent extends LibertyBase {
 		else return false;
 	}
 
+	/**
+	 * Set content related mStructureId
+	 *
+	 * @param integer Structure ID
+	 */
 	function setStructure( $pStructureId ) {
 		if( $this->verifyId( $pStructureId ) ) {
 			$this->mStructureId = $pStructureId;
 		}
 	}
 
+	/**
+	 * Check the number of structures that the content object is being used in
+	 *
+	 * @param integer Structure ID ( If NULL or not supplied check all structures )
+	 * @retun integer Number of structures that this content object is located in
+	 */
 	function isInStructure( $pStructureId=NULL ) {
 		if( $this->isValid() ) {
 			$whereSql = NULL;
