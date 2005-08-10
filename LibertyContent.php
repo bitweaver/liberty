@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.21 2005/08/07 16:23:53 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.22 2005/08/10 17:21:19 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -43,6 +43,10 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  * @package liberty
  */
 class LibertyContent extends LibertyBase {
+    /**
+    * Content Id if an object has been loaded
+    * @public
+    */
 	var $mContentId;
     /**
     * If this content is being viewed within a structure
@@ -65,13 +69,18 @@ class LibertyContent extends LibertyBase {
     */
 	var $mPerms;
 
+    /**
+    * Construct an empty LibertyBase object with a blank permissions array
+    */
 	function LibertyContent () {
 		LibertyBase::LibertyBase();
 		$this->mPerms = array();
 	}
 
+    /**
+    * Assume a derived class has joined on the tiki_content table, and loaded it's columns already.
+    */
 	function load($pContentId = NULL) {
-		// assume a derived class has joined on the tiki_content table, and loaded it's columns already.
 		if( !empty( $this->mInfo['content_type_guid'] ) ) {
 			global $gLibertySystem, $gBitSystem;
 			$this->mInfo['content_type'] = $gLibertySystem->mContentTypes[$this->mInfo['content_type_guid']];
@@ -82,6 +91,11 @@ class LibertyContent extends LibertyBase {
 
 	}
 
+    /**
+     * Verify the core class data required to update the tiki_content table entries
+	 *
+	 * @param array Array of content data to be stored 
+	 */
 	function verify( &$pParamHash ) {
 		global $gLibertySystem;
 		if( empty( $pParamHash['user_id'] ) ) {
@@ -163,7 +177,11 @@ class LibertyContent extends LibertyBase {
 
 	}
 
-	// Things to be stored should be shoved in the array $pParamHash['STORAGE']
+    /**
+     * Create a new content object or update an existing one
+	 *
+	 * @param array Array of content data to be stored 
+	 */
 	function store( &$pParamHash ) {
 		global $gBitSystem;
 		global $gLibertySystem;
@@ -206,6 +224,9 @@ class LibertyContent extends LibertyBase {
 		return( count( $this->mErrors ) == 0 );
 	}
 
+	/**
+	 * Delete comment entries relating to the content object
+	 */
 	function expungeComments() {
 		require_once( LIBERTY_PKG_PATH.'LibertyComment.php' );
 		// Delete all comments associated with this piece of content
@@ -219,6 +240,9 @@ class LibertyContent extends LibertyBase {
 		return TRUE;
 	}
 
+	/**
+	 * Delete content object and all related records
+	 */
 	function expunge() {
 		global $gBitSystem;
 		$ret = FALSE;
@@ -260,6 +284,11 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
+	/**
+	 * Create an export object from the data
+	 *
+	 * @param array Not used 
+	 */
 	function exportHtml( $pData = NULL ) {
 		$ret = NULL;
 		$ret[] = array(	'type' => $this->mContentTypeGuid,
@@ -270,15 +299,24 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
+	/**
+	 * Check mContentId to establish if the object has been loaded with a valid record
+	 */
 	function isValid() {
 		return( !empty( $this->mContentId ) && is_numeric( $this->mContentId ) && $this->mContentId );
 	}
 
+	/**
+	 * Check user_id to establish if the object that has been loaded was created by the current user
+	 */
 	function isOwner() {
 		global $gBitUser;
 		return( $this->isValid() && !empty( $this->mInfo['user_id'] ) && $this->mInfo['user_id'] == $gBitUser->mUserId );
 	}
 
+	/**
+	 * Check permissions for the object that has been loaded against the permission database
+	 */
 	function loadPermissions() {
 		if( $this->isValid() && empty( $this->mPerms ) && $this->mContentTypeGuid ) {
 			//$object_id = md5($object_type . $object_id);
@@ -292,11 +330,15 @@ class LibertyContent extends LibertyBase {
 		return( count( $this->mPerms ) );
 	}
 
-
-    /**
-    * Function that determines if this content specified permission for the current gBitUser
-    * @return the fully specified path to file to be included
-    */
+	/**
+	 * Function that determines if this content specified permission for the current gBitUser
+	 *
+	 * @param string Name of the permission to check
+	 * @param bool Generate fatal message if permission denigned
+	 * @param string Message if permission denigned
+	 * @return bool true if user has permission to access file
+	 * @todo Fatal message still to be implemented
+	 */
 	function hasUserPermission( $pPermName, $pFatalIfFalse=FALSE, $pFatalMessage=NULL  ) {
 		global $gBitUser;
 		if( !$gBitUser->isRegistered() || !($ret = $this->isOwner()) ) {
@@ -312,8 +354,12 @@ class LibertyContent extends LibertyBase {
 		return( $ret );
 	}
 
-
-	// get specific permissions for the specified user for this content
+	/**
+	 * Get specific permissions for the specified user for this content
+	 *
+	 * @param integer Id of user for whom permissions are to be loaded
+	 * @return array Array of user permissions
+	 */
 	function getUserPermissions( $pUserId ) {
 		$ret = array();
 		if( $pUserId ) {
@@ -328,7 +374,15 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
-
+	/**
+	 * Store a permission for the object that has been loaded in the permission database
+	 * 
+	 * Any old copy of the permission is deleted prior to loading the new copy
+	 * @param integer Group Identifier
+	 * @param string Name of the permission
+	 * @param integer Content Itentifier
+	 * @return bool true ( will not currently report a failure )
+	 */
 	function storePermission( $pGroupId, $perm_name, $object_id=NULL ) {
 		if( empty( $object_id ) ) {
 			$object_id = $this->mContentId;
@@ -344,7 +398,15 @@ class LibertyContent extends LibertyBase {
 		return true;
 	}
 
-
+	/**
+	 * Check is a user has permission to access the object
+	 * 
+	 * @param integer User Identifier
+	 * @param integer Content Itentifier
+	 * @param string Content Type GUID
+	 * @param string Name of the permission
+	 * @return bool true if access is allowed
+	 */
 	function hasPermission( $pUserId, $object_id, $object_type, $perm_name ) {
 		$ret = FALSE;
 		$groups = $this->get_user_groups( $pUserId );
@@ -361,7 +423,13 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
-
+	/**
+	 * Remove a permission to access the object
+	 * 
+	 * @param integer Group Identifier
+	 * @param string Name of the permission
+	 * @return bool true ( will not currently report a failure )
+	 */
 	function removePermission( $pGroupId, $perm_name ) {
 		//$object_id = md5($object_type . $object_id);
 		$query = "delete from `".BIT_DB_PREFIX."users_objectpermissions`
@@ -372,7 +440,12 @@ class LibertyContent extends LibertyBase {
 		return true;
 	}
 
-
+	/**
+	 * Copy current permissions to another object
+	 * 
+	 * @param integer Content Identifier of the target object
+	 * @return bool true ( will not currently report a failure )
+	 */
 	function copyPermissions( $destinationObjectId ) {
 		//$object_id = md5($object_type.$object_id);
 		$query = "select `perm_name`, `group_name`
@@ -386,15 +459,23 @@ class LibertyContent extends LibertyBase {
 		return true;
 	}
 
-
-
-
+	/**
+	 * Copy current permissions to another object
+	 * 
+	 * @param string Content Type GUID
+	 * @param array Array of content type data
+	 */
 	function registerContentType( $pContentGuid, $pTypeParams ) {
 		global $gLibertySystem;
 		$gLibertySystem->registerContentType( $pContentGuid, $pTypeParams );
 		$this->mType = $pTypeParams;
 	}
 
+	/**
+	 * Increment the content item hit flag by 1
+	 *
+	 * @return bool true ( will not currently report a failure )
+	 */ 
 	function addHit() {
 		global $gBitUser;
 		if( $this->mContentId && ($gBitUser->mUserId != $this->mInfo['user_id'] ) ) {
@@ -403,7 +484,6 @@ class LibertyContent extends LibertyBase {
 		}
 		return true;
 	}
-
 
     /**
     * Determines if a wiki page (row in tiki_pages) exists, and returns a hash of important info. If N pages exists with $pPageName, returned existsHash has a row for each unique pPageName row.
@@ -489,7 +569,7 @@ class LibertyContent extends LibertyBase {
     /**
     * Updates results from any getList function to provide the control set
     * displaying in the smarty template
-    * @param pParamHash hash of parameters returned by any getList() function
+    * @param array hash of parameters returned by any getList() function
     * @return - none the hash is updated via the reference
     */
 	function postGetList( &$pListHash ) {
