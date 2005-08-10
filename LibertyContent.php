@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.23 2005/08/10 18:30:14 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.24 2005/08/10 19:13:30 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -879,10 +879,6 @@ class LibertyContent extends LibertyBase {
 	 * @return string Extracted pages
 	 */
 	function getNumberOfPages( &$data ) {
-		// Temporary remove <PRE></PRE> secions to protect
-		// from broke <PRE> tags and leave well known <PRE>
-		// behaviour (i.e. type all text inside AS IS w/o
-		// any interpretation)
 		$preparsed = array();
 
 		preg_match_all("/(<[Pp][Rr][Ee]>)((.|\n)*?)(<\/[Pp][Rr][Ee]>)/", $data, $preparse);
@@ -1013,7 +1009,7 @@ class LibertyContent extends LibertyBase {
 	 * Check the number of structures that the content object is being used in
 	 *
 	 * @param integer Structure ID ( If NULL or not supplied check all structures )
-	 * @retun integer Number of structures that this content object is located in
+	 * @return integer Number of structures that this content object is located in
 	 */
 	function isInStructure( $pStructureId=NULL ) {
 		if( $this->isValid() ) {
