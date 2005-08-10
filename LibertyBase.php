@@ -3,7 +3,7 @@
  * Base class for Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.1.1.1.2.9 2005/08/07 20:07:27 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.1.1.1.2.10 2005/08/10 18:35:29 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -31,17 +31,24 @@ require_once( KERNEL_PKG_PATH.'BitBase.php' );
  */
 class LibertyBase extends BitBase {
 
+	/**
+	 * Constructor building on BitBase object
+	 *
+	 * Object need to init the database connection early
+	 * Database will be linked via a previously activated BitDb object
+	 * which will provide the mDb pointer to that database
+	 */
 	function LibertyBase () {
-		// we need to init our database connection early
 		BitBase::BitBase();
 	}
 
 	/**
-	* Given a content_id, this will return and object of the proper type
-	* @param pConId content_id of the object to be returned
-	* @param pGuid optional content_type_guid of pConId. This will save a select if you happen to have this info. If not, this method will look it up for you.
-	* @returns an object of the appropriate content type class
-	*/
+	 * Given a content_id, this will return and object of the proper type
+	 *
+	 * @param integer content_id of the object to be returned
+	 * @param string optional content_type_guid of pConId. This will save a select if you happen to have this info. If not, this method will look it up for you.
+	 * @returns object of the appropriate content type class
+	 */
 	function getLibertyObject( $pContentId, $pContentGuid=NULL ) {
 		$ret = NULL;
 		global $gLibertySystem;
