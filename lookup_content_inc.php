@@ -3,7 +3,7 @@
  * lookup_content_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.4 $
+ * @version  $Revision: 1.1.1.1.2.5 $
  * @package  liberty
  * @subpackage functions
  */
@@ -22,7 +22,6 @@
 			$gBitSmarty->assign( 'structureInfo', $gStructure->mInfo );
 	//		$_REQUEST['page_id'] = $gStructure->mInfo['page_id'];
 			if( $viewContent = $gStructure->getLibertyObject( $gStructure->mInfo['content_id'], $gStructure->mInfo['content_type']['content_type_guid'] ) ) {
-				$viewContent->load();
 				$viewContent->setStructure( $_REQUEST['structure_id'] );
 				$gBitSmarty->assign_by_ref( 'pageInfo', $viewContent->mInfo );
 				$gContent = &$viewContent;
@@ -32,10 +31,8 @@
 	} elseif( !empty( $_REQUEST['content_id'] ) ) {
 		require_once( LIBERTY_PKG_PATH.'LibertyBase.php');
 		if( $gContent = LibertyBase::getLibertyObject( $_REQUEST['content_id'] ) ) {
-			if( $gContent->load() ) {
-				$gBitSmarty->assign_by_ref( 'gContent', $gContent );
-				$gBitSmarty->assign_by_ref( 'pageInfo', $gContent->mInfo );
-			}
+			$gBitSmarty->assign_by_ref( 'gContent', $gContent );
+			$gBitSmarty->assign_by_ref( 'pageInfo', $gContent->mInfo );
 		}
 	}
 
