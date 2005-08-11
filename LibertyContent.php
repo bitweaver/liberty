@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.24 2005/08/10 19:13:30 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.25 2005/08/11 07:11:16 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -542,6 +542,25 @@ class LibertyContent extends LibertyBase {
 		}
 		return $ret;
 	}
+
+	/**
+	 * Return content type description for this content object.
+	 *
+	 * @return string content_type_guid description for the object
+	 */ 
+	function getContentDescription() {
+		$ret = NULL;
+		if( isset( $this->mInfo['content_type_guid'] ) ) {
+			global $gLibertySystem;
+			if( !empty( $gLibertySystem->mContentTypes[$this->mInfo['content_type_guid']]['content_description'] ) ) {
+				$ret = $gLibertySystem->mContentTypes[$this->mInfo['content_type_guid']]['content_description'];
+			} else {
+				$ret = $this->mInfo['content_type_guid'];
+			}
+		}
+		return $ret;
+	}
+
 
     /**
     * Pure virtual function that returns the include file that should render a page of content of this type
