@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.11 $
+ * @version  $Revision: 1.1.1.1.2.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.addtabs.php,v 1.1.1.1.2.11 2005/08/03 07:43:55 lsces Exp $
+// $Id: data.addtabs.php,v 1.1.1.1.2.12 2005/08/11 14:30:10 lsces Exp $
 
 /**
  * definitions
@@ -66,8 +66,7 @@ function data_addtabs($data, $params) {
 	$ret = '<div class="tabpane">';
 	for ($i = 1; $i <= 99; $i++) {
 		if( isset( ${'tab'.$i} ) && is_numeric( ${'tab'.$i} ) ) {
-			$obj = LibertyBase::getLibertyObject( ${'tab'.$i} );
-			if( $obj->load() ) {
+			if( $obj = LibertyBase::getLibertyObject( ${'tab'.$i} ) ) {
 				$ret .= '<div class="tabpage"><h4 class="tab">'.$obj->getTitle().'</h4>'.$obj->parseData().'</div>';
 				$good=True;
 			}
