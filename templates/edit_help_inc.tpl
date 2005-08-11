@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.3 2005/07/17 17:36:11 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.4 2005/08/11 13:03:46 squareing Exp $ *}
 
 {strip}
 {if $gBitSystem->isFeatureActive( 'feature_wikihelp' )}
@@ -46,7 +46,7 @@
 							{/if}
 
 							{if $p.help_page}
-								<br />{tr}for additional information about this plugin, see <a onkeypress="popUpWin(this.href,'full',800,800);" onclick="popUpWin(this.href,'full',800,800);return false;" class="external" href="http://www.bitweaver.org/wiki/index.php?page={$p.help_page}">{$p.help_page}</a>.{/tr}<br/> 
+								<br />{tr}for additional information about this plugin, see <a title="This link will open a new window" onkeypress="popUpWin(this.href,'full',800,800);" onclick="popUpWin(this.href,'full',800,800);return false;" class="external" href="http://www.bitweaver.org/wiki/index.php?page={$p.help_page}">{$p.help_page}</a>.{/tr}<br/> 
 							{/if}
 						{/box}
 					{/if}

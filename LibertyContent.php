@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.6 2005/08/07 17:40:29 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.7 2005/08/11 13:03:45 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -43,6 +43,10 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  * @package liberty
  */
 class LibertyContent extends LibertyBase {
+    /**
+    * Content Id if an object has been loaded
+    * @public
+    */
 	var $mContentId;
     /**
     * If this content is being viewed within a structure
@@ -65,13 +69,18 @@ class LibertyContent extends LibertyBase {
     */
 	var $mPerms;
 
+    /**
+    * Construct an empty LibertyBase object with a blank permissions array
+    */
 	function LibertyContent () {
 		LibertyBase::LibertyBase();
 		$this->mPerms = array();
 	}
 
+    /**
+    * Assume a derived class has joined on the tiki_content table, and loaded it's columns already.
+    */
 	function load($pContentId = NULL) {
-		// assume a derived class has joined on the tiki_content table, and loaded it's columns already.
 		if( !empty( $this->mInfo['content_type_guid'] ) ) {
 			global $gLibertySystem, $gBitSystem;
 			$this->mInfo['content_type'] = $gLibertySystem->mContentTypes[$this->mInfo['content_type_guid']];
@@ -82,6 +91,11 @@ class LibertyContent extends LibertyBase {
 
 	}
 
+    /**
+     * Verify the core class data required to update the tiki_content table entries
+	 *
+	 * @param array Array of content data to be stored 
+	 */
 	function verify( &$pParamHash ) {
 		global $gLibertySystem;
 		if( empty( $pParamHash['user_id'] ) ) {
@@ -163,7 +177,11 @@ class LibertyContent extends LibertyBase {
 
 	}
 
-	// Things to be stored should be shoved in the array $pParamHash['STORAGE']
+    /**
+     * Create a new content object or update an existing one
+	 *
+	 * @param array Array of content data to be stored 
+	 */
 	function store( &$pParamHash ) {
 		global $gBitSystem;
 		global $gLibertySystem;
@@ -206,6 +224,9 @@ class LibertyContent extends LibertyBase {
 		return( count( $this->mErrors ) == 0 );
 	}
 
+	/**
+	 * Delete comment entries relating to the content object
+	 */
 	function expungeComments() {
 		require_once( LIBERTY_PKG_PATH.'LibertyComment.php' );
 		// Delete all comments associated with this piece of content
@@ -219,6 +240,9 @@ class LibertyContent extends LibertyBase {
 		return TRUE;
 	}
 
+	/**
+	 * Delete content object and all related records
+	 */
 	function expunge() {
 		global $gBitSystem;
 		$ret = FALSE;
@@ -260,6 +284,11 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
+	/**
+	 * Create an export object from the data
+	 *
+	 * @param array Not used 
+	 */
 	function exportHtml( $pData = NULL ) {
 		$ret = NULL;
 		$ret[] = array(	'type' => $this->mContentTypeGuid,
@@ -270,15 +299,24 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
+	/**
+	 * Check mContentId to establish if the object has been loaded with a valid record
+	 */
 	function isValid() {
 		return( !empty( $this->mContentId ) && is_numeric( $this->mContentId ) && $this->mContentId );
 	}
 
+	/**
+	 * Check user_id to establish if the object that has been loaded was created by the current user
+	 */
 	function isOwner() {
 		global $gBitUser;
 		return( $this->isValid() && !empty( $this->mInfo['user_id'] ) && $this->mInfo['user_id'] == $gBitUser->mUserId );
 	}
 
+	/**
+	 * Check permissions for the object that has been loaded against the permission database
+	 */
 	function loadPermissions() {
 		if( $this->isValid() && empty( $this->mPerms ) && $this->mContentTypeGuid ) {
 			//$object_id = md5($object_type . $object_id);
@@ -292,11 +330,15 @@ class LibertyContent extends LibertyBase {
 		return( count( $this->mPerms ) );
 	}
 
-
-    /**
-    * Function that determines if this content specified permission for the current gBitUser
-    * @return the fully specified path to file to be included
-    */
+	/**
+	 * Function that determines if this content specified permission for the current gBitUser
+	 *
+	 * @param string Name of the permission to check
+	 * @param bool Generate fatal message if permission denigned
+	 * @param string Message if permission denigned
+	 * @return bool true if user has permission to access file
+	 * @todo Fatal message still to be implemented
+	 */
 	function hasUserPermission( $pPermName, $pFatalIfFalse=FALSE, $pFatalMessage=NULL  ) {
 		global $gBitUser;
 		if( !$gBitUser->isRegistered() || !($ret = $this->isOwner()) ) {
@@ -312,8 +354,12 @@ class LibertyContent extends LibertyBase {
 		return( $ret );
 	}
 
-
-	// get specific permissions for the specified user for this content
+	/**
+	 * Get specific permissions for the specified user for this content
+	 *
+	 * @param integer Id of user for whom permissions are to be loaded
+	 * @return array Array of user permissions
+	 */
 	function getUserPermissions( $pUserId ) {
 		$ret = array();
 		if( $pUserId ) {
@@ -328,7 +374,15 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
-
+	/**
+	 * Store a permission for the object that has been loaded in the permission database
+	 * 
+	 * Any old copy of the permission is deleted prior to loading the new copy
+	 * @param integer Group Identifier
+	 * @param string Name of the permission
+	 * @param integer Content Itentifier
+	 * @return bool true ( will not currently report a failure )
+	 */
 	function storePermission( $pGroupId, $perm_name, $object_id=NULL ) {
 		if( empty( $object_id ) ) {
 			$object_id = $this->mContentId;
@@ -344,7 +398,15 @@ class LibertyContent extends LibertyBase {
 		return true;
 	}
 
-
+	/**
+	 * Check is a user has permission to access the object
+	 * 
+	 * @param integer User Identifier
+	 * @param integer Content Itentifier
+	 * @param string Content Type GUID
+	 * @param string Name of the permission
+	 * @return bool true if access is allowed
+	 */
 	function hasPermission( $pUserId, $object_id, $object_type, $perm_name ) {
 		$ret = FALSE;
 		$groups = $this->get_user_groups( $pUserId );
@@ -361,7 +423,13 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
-
+	/**
+	 * Remove a permission to access the object
+	 * 
+	 * @param integer Group Identifier
+	 * @param string Name of the permission
+	 * @return bool true ( will not currently report a failure )
+	 */
 	function removePermission( $pGroupId, $perm_name ) {
 		//$object_id = md5($object_type . $object_id);
 		$query = "delete from `".BIT_DB_PREFIX."users_objectpermissions`
@@ -372,7 +440,12 @@ class LibertyContent extends LibertyBase {
 		return true;
 	}
 
-
+	/**
+	 * Copy current permissions to another object
+	 * 
+	 * @param integer Content Identifier of the target object
+	 * @return bool true ( will not currently report a failure )
+	 */
 	function copyPermissions( $destinationObjectId ) {
 		//$object_id = md5($object_type.$object_id);
 		$query = "select `perm_name`, `group_name`
@@ -386,15 +459,26 @@ class LibertyContent extends LibertyBase {
 		return true;
 	}
 
-
-
-
+	/**
+	 * Copy current permissions to another object
+	 * 
+	 * @param string Content Type GUID
+	 * @param array Array of content type data
+	 * Populates the mType array with the following entries
+	 * string	content_type_guid
+	 * string	
+	 */
 	function registerContentType( $pContentGuid, $pTypeParams ) {
 		global $gLibertySystem;
 		$gLibertySystem->registerContentType( $pContentGuid, $pTypeParams );
 		$this->mType = $pTypeParams;
 	}
 
+	/**
+	 * Increment the content item hit flag by 1
+	 *
+	 * @return bool true ( will not currently report a failure )
+	 */ 
 	function addHit() {
 		global $gBitUser;
 		if( $this->mContentId && ($gBitUser->mUserId != $this->mInfo['user_id'] ) ) {
@@ -403,7 +487,6 @@ class LibertyContent extends LibertyBase {
 		}
 		return true;
 	}
-
 
     /**
     * Determines if a wiki page (row in tiki_pages) exists, and returns a hash of important info. If N pages exists with $pPageName, returned existsHash has a row for each unique pPageName row.
@@ -426,7 +509,14 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
-
+	/**
+	 * Create the generic title for a content item
+	 *
+	 * This will normally be overwriten by extended classes to provide 
+	 * an appropriate title title string
+	 * @param array mInfo type hash of data to be used to provide base data
+	 * @return string Descriptive title for the object
+	 */ 
 	function getTitle( $pHash=NULL ) {
 		$ret = NULL;
 		if( empty( $pHash ) ) {
@@ -440,11 +530,33 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
-
+	/**
+	 * Access a content item type GUID
+	 *
+	 * @return string content_type_guid for the object
+	 */ 
 	function getContentType() {
 		$ret = NULL;
 		if( isset( $this->mInfo['content_type_guid'] ) ) {
 			$ret = $this->mInfo['content_type_guid'];
+		}
+		return $ret;
+	}
+
+	/**
+	 * Return content type description for this content object.
+	 *
+	 * @return string content_type_guid description for the object
+	 */ 
+	function getContentDescription() {
+		$ret = NULL;
+		if( isset( $this->mInfo['content_type_guid'] ) ) {
+			global $gLibertySystem;
+			if( !empty( $gLibertySystem->mContentTypes[$this->mInfo['content_type_guid']]['content_description'] ) ) {
+				$ret = $gLibertySystem->mContentTypes[$this->mInfo['content_type_guid']]['content_description'];
+			} else {
+				$ret = $this->mInfo['content_type_guid'];
+			}
 		}
 		return $ret;
 	}
@@ -460,9 +572,9 @@ class LibertyContent extends LibertyBase {
 
     /**
     * Pure virtual function that returns link to display a piece of content
-    * @param pLinkText name of
-    * @param pMixed different possibilities depending on derived class
-    * @return the link to display the page.
+    * @param string Text for the link unless overriden by object title
+    * @param array different possibilities depending on derived class
+    * @return string Formated html the link to display the page.
     */
 	function getDisplayLink( $pLinkText, $pMixed ) {
 		$ret = '';
@@ -478,9 +590,9 @@ class LibertyContent extends LibertyBase {
 
     /**
     * Pure virtual function that returns Request_URI to a piece of content
-    * @param pLinkText name of
-    * @param pMixed different possibilities depending on derived class
-    * @return the link to display the page.
+    * @param string Text for DisplayLink function
+    * @param array different possibilities depending on derived class
+    * @return string Formated URL address to display the page.
     */
 	function getDisplayUrl( $pLinkText, $pMixed ) {
 		print "UNDEFINED PURE VIRTUAL FUNCTION: LibertyContent::getDisplayUrl";
@@ -489,7 +601,7 @@ class LibertyContent extends LibertyBase {
     /**
     * Updates results from any getList function to provide the control set
     * displaying in the smarty template
-    * @param pParamHash hash of parameters returned by any getList() function
+    * @param array hash of parameters returned by any getList() function
     * @return - none the hash is updated via the reference
     */
 	function postGetList( &$pListHash ) {
@@ -516,7 +628,10 @@ class LibertyContent extends LibertyBase {
 	}
 
     /**
-	* Get a list of users this content is a member of
+	* Get a list of users who have created entries in the content table
+	*
+    * @param array hash of parameters ( content_type_guid will limit list to a single content type
+    * @return - none the hash is updated via the reference
 	**/
 	function getAuthorList( &$pListHash ) {
 		$ret = NULL;
@@ -540,10 +655,17 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
-
     /**
-	* Get a list of all structures this content is a member of
-	**/
+	 * Get a list of all structures this content is a member of
+	 *
+	 * @param string Content GUID to limit the list to
+	 * @param integer Number of the first record to access ( used to page the list )
+	 * @param integer Number of records to return
+	 * @param string Name of the field to sort by ( extended by _asc or _desc for sort direction )
+	 * @param array List of text elements to filter the results by
+	 * @param integer User ID - If set, then only the objcets created by that user will be returned
+	 * @return array An array of mInfo type arrays of content objects
+	 **/
 	function getContentList( $pContentGuid=NULL, $offset = 0, $maxRecords = -1, $sort_mode = 'title_desc', $find = NULL, $pUserId=NULL ) {
 		global $gLibertySystem, $gBitSystem, $gBitUser, $gBitSmarty;
 		if ($sort_mode == 'size_desc') {
@@ -738,12 +860,15 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
-
-
-
-
-	// This is the "object like" method. It should be more object like,
-	// but for now, we'll just point to the old lib style "parse_data" - XOXO spiderr
+	/**
+	 * Process the raw content blob using the speified content GUID processor
+	 *
+	 * This is the "object like" method. It should be more object like,
+	 * but for now, we'll just point to the old lib style "parse_data" - XOXO spiderr
+	 * @param string Data to be formated
+	 * @param string Format GUID processor to use
+	 * @return string Formated data string
+	 */
 	function parseData( $pData=NULL, $pFormatGuid=NULL ) {
 		$ret = &$pData;
 		if( empty( $pFormatGuid ) ) {
@@ -762,12 +887,17 @@ class LibertyContent extends LibertyBase {
 	}
 
 
-	//Special parsing for multipage articles
+	/**
+	 * Special parsing for multipage articles 
+	 *
+	 * Temporary remove <PRE></PRE> secions to protect
+	 * from broke <PRE> tags and leave well known <PRE>
+	 * behaviour (i.e. type all text inside AS IS w/o
+	 * any interpretation)
+	 * @param string Data to process
+	 * @return string Extracted pages
+	 */
 	function getNumberOfPages( &$data ) {
-		// Temporary remove <PRE></PRE> secions to protect
-		// from broke <PRE> tags and leave well known <PRE>
-		// behaviour (i.e. type all text inside AS IS w/o
-		// any interpretation)
 		$preparsed = array();
 
 		preg_match_all("/(<[Pp][Rr][Ee]>)((.|\n)*?)(<\/[Pp][Rr][Ee]>)/", $data, $preparse);
@@ -787,11 +917,18 @@ class LibertyContent extends LibertyBase {
 		return count($parts);
 	}
 
+	/**
+	 * Special parsing for a particular page of a multipage article 
+	 *
+	 * Temporary remove <PRE></PRE> secions to protect
+	 * from broke <PRE> tags and leave well known <PRE>
+	 * behaviour (i.e. type all text inside AS IS w/o
+	 * any interpretation)
+	 * @param string Data to process
+	 * @param integer Number of page to extract
+	 * @return string Extracted page
+	 */
 	function getPage( &$data, $i ) {
-		// Temporary remove <PRE></PRE> secions to protect
-		// from broke <PRE> tags and leave well known <PRE>
-		// behaviour (i.e. type all text inside AS IS w/o
-		// any interpretation)
 		$preparsed = array();
 
 		preg_match_all("/(<[Pp][Rr][Ee]>)((.|\n)*?)(<\/[Pp][Rr][Ee]>)/", $data, $preparse);
@@ -823,9 +960,13 @@ class LibertyContent extends LibertyBase {
 	}
 
 
-
-	// ****** LEGACY FUNCTIONS that need to be cleaned / moved / or deprecated & deleted
-
+	/**
+	 * Check if given url is currently cached locally
+	 *
+	 * @param string URL to check
+	 * @return integer Id of the cached item
+	 * @todo LEGACY FUNCTIONS that need to be cleaned / moved / or deprecated & deleted
+	 */
 	function isCached($url) {
 		$query = "select `cache_id`  from `".BIT_DB_PREFIX."tiki_link_cache` where `url`=?";
 		// sometimes we can have a cache_id of 0(?!) - seen it with my own eyes, spiderr
@@ -834,10 +975,14 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	 * \brief Cache given url
+	 * Cache given url
 	 * If \c $data present (passed) it is just associated \c $url and \c $data.
 	 * Else it will request data for given URL and store it in DB.
 	 * Actualy (currently) data may be proviced by TIkiIntegrator only.
+	 * @param string URL to cache
+	 * @param string Data to be cached
+	 * @return bool True if item was successfully cached
+	 * @todo LEGACY FUNCTIONS that need to be cleaned / moved / or deprecated & deleted
 	 */
 	function cacheUrl($url, $data = '') {
 		// Avoid caching internal references... (only if $data not present)
@@ -868,12 +1013,23 @@ class LibertyContent extends LibertyBase {
 		else return false;
 	}
 
+	/**
+	 * Set content related mStructureId
+	 *
+	 * @param integer Structure ID
+	 */
 	function setStructure( $pStructureId ) {
 		if( $this->verifyId( $pStructureId ) ) {
 			$this->mStructureId = $pStructureId;
 		}
 	}
 
+	/**
+	 * Check the number of structures that the content object is being used in
+	 *
+	 * @param integer Structure ID ( If NULL or not supplied check all structures )
+	 * @return integer Number of structures that this content object is located in
+	 */
 	function isInStructure( $pStructureId=NULL ) {
 		if( $this->isValid() ) {
 			$whereSql = NULL;

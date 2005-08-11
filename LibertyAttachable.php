@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.3 2005/08/07 17:40:29 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.4 2005/08/11 13:03:45 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -443,6 +443,7 @@ function liberty_process_image( &$pFileHash ) {
 	$ret = NULL;
 	$resizeFunc = ($gBitSystem->getPreference( 'image_processor' ) == 'imagick' ) ? 'liberty_imagick_resize_image' : 'liberty_gd_resize_image';
 	list($type, $ext) = split( '/', strtolower( $pFileHash['type'] ) );
+	mkdir_p( BIT_PKG_PATH.$pFileHash['dest_path'] );
 
 	if( $resizePath = $resizeFunc( $pFileHash, $ext ) ) {
 		$pFileHash['source_file'] = BIT_ROOT_PATH.$resizePath;
@@ -501,6 +502,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 }
 
 function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL ) {
+	$pFileHash['error'] = NULL;
 	$ret = NULL;
 	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
 		$iImg = imagick_readimage( $pFileHash['source_file'] );
