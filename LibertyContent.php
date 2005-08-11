@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.25 2005/08/11 07:11:16 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.26 2005/08/11 16:29:29 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -95,6 +95,22 @@ class LibertyContent extends LibertyBase {
      * Verify the core class data required to update the tiki_content table entries
 	 *
 	 * @param array Array of content data to be stored 
+	 * content_id
+	 * user_id
+	 * modifier_user_id
+	 * created
+	 * last_modified
+	 * content_type_guid
+	 * format_guid
+	 * hits
+	 * language
+	 * title
+	 * ip
+	 * data
+	 *
+	 * verify will build an array [content_store] with all of the above values
+	 * and populate it with the relevent data to create/update the tiki_content 
+	 * table record
 	 */
 	function verify( &$pParamHash ) {
 		global $gLibertySystem;
