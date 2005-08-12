@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.26 2005/08/11 16:29:29 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.27 2005/08/12 10:11:51 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -94,23 +94,28 @@ class LibertyContent extends LibertyBase {
     /**
      * Verify the core class data required to update the tiki_content table entries
 	 *
-	 * @param array Array of content data to be stored 
-	 * content_id
-	 * user_id
-	 * modifier_user_id
-	 * created
-	 * last_modified
-	 * content_type_guid
-	 * format_guid
-	 * hits
-	 * language
-	 * title
-	 * ip
-	 * data
-	 *
-	 * verify will build an array [content_store] with all of the above values
+	 * Verify will build an array [content_store] with all of the required values
 	 * and populate it with the relevent data to create/update the tiki_content 
 	 * table record
+	 *
+	 * @param array Array of content data to be stored <br>
+	 * [pParamHash] <br>
+	 * content_id <br>
+	 * user_id <br>
+	 * modifier_user_id <br>
+	 * created <br>
+	 * last_modified <br>
+	 * content_type_guid <br>
+	 * format_guid <br>
+	 * hits <br>
+	 * language <br>
+	 * title <br>
+	 * ip <br>
+	 * data <br>
+	 * <br>
+	 * @return integer Count of the number of errors ( 0 for success ) <br>
+	 * [pParamHash] will be extended to include array [content_store] populated 
+	 * with the require values for LibertyContent::store()
 	 */
 	function verify( &$pParamHash ) {
 		global $gLibertySystem;
@@ -196,7 +201,8 @@ class LibertyContent extends LibertyBase {
     /**
      * Create a new content object or update an existing one
 	 *
-	 * @param array Array of content data to be stored 
+	 * @param array Array of content data to be stored <br>
+	 * See verify for details of the values required
 	 */
 	function store( &$pParamHash ) {
 		global $gBitSystem;
@@ -906,8 +912,8 @@ class LibertyContent extends LibertyBase {
 	/**
 	 * Special parsing for multipage articles 
 	 *
-	 * Temporary remove <PRE></PRE> secions to protect
-	 * from broke <PRE> tags and leave well known <PRE>
+	 * Temporary remove &lt;PRE&gt;&lt;/PRE&gt; secions to protect
+	 * from broke &lt;PRE&gt; tags and leave well known &lt;PRE&gt;
 	 * behaviour (i.e. type all text inside AS IS w/o
 	 * any interpretation)
 	 * @param string Data to process
@@ -936,8 +942,8 @@ class LibertyContent extends LibertyBase {
 	/**
 	 * Special parsing for a particular page of a multipage article 
 	 *
-	 * Temporary remove <PRE></PRE> secions to protect
-	 * from broke <PRE> tags and leave well known <PRE>
+	 * Temporary remove &lt;PRE&gt;&lt;/PRE&gt; secions to protect
+	 * from broke &lt;PRE&gt; tags and leave well known &lt;PRE&gt;
 	 * behaviour (i.e. type all text inside AS IS w/o
 	 * any interpretation)
 	 * @param string Data to process
