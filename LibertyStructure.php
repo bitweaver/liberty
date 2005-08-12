@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.10 2005/08/07 16:23:53 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.11 2005/08/12 12:33:03 wolff_borg Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -541,7 +541,7 @@ class LibertyStructure extends LibertyBase {
 	// it's used only in {toc} thing hardcoded in parse gBitSystem->parse -- (mose)
 	// the $tocPrefix can be used to Prefix a subtree as it would start from a given number (e.g. 2.1.3)
 	function build_subtree_toc($id,$slide=false,$order='asc',$tocPrefix='') {
-		$ret = array();
+		$back = array();
 		$cant = $this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."tiki_structures` where `parent_id`=?",array((int)$id));
 		if ($cant) {
 			$query = "SELECT `structure_id`, tc.`title`, `page_alias`
