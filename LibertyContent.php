@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.27 2005/08/12 10:11:51 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.28 2005/08/13 21:07:38 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -95,7 +95,7 @@ class LibertyContent extends LibertyBase {
      * Verify the core class data required to update the tiki_content table entries
 	 *
 	 * Verify will build an array [content_store] with all of the required values
-	 * and populate it with the relevent data to create/update the tiki_content 
+	 * and populate it with the relevent data to create/update the tiki_content
 	 * table record
 	 *
 	 * @param array Array of content data to be stored <br>
@@ -114,7 +114,7 @@ class LibertyContent extends LibertyBase {
 	 * data <br>
 	 * <br>
 	 * @return integer Count of the number of errors ( 0 for success ) <br>
-	 * [pParamHash] will be extended to include array [content_store] populated 
+	 * [pParamHash] will be extended to include array [content_store] populated
 	 * with the require values for LibertyContent::store()
 	 */
 	function verify( &$pParamHash ) {
@@ -309,7 +309,7 @@ class LibertyContent extends LibertyBase {
 	/**
 	 * Create an export object from the data
 	 *
-	 * @param array Not used 
+	 * @param array Not used
 	 */
 	function exportHtml( $pData = NULL ) {
 		$ret = NULL;
@@ -398,7 +398,7 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	 * Store a permission for the object that has been loaded in the permission database
-	 * 
+	 *
 	 * Any old copy of the permission is deleted prior to loading the new copy
 	 * @param integer Group Identifier
 	 * @param string Name of the permission
@@ -422,7 +422,7 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	 * Check is a user has permission to access the object
-	 * 
+	 *
 	 * @param integer User Identifier
 	 * @param integer Content Itentifier
 	 * @param string Content Type GUID
@@ -447,7 +447,7 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	 * Remove a permission to access the object
-	 * 
+	 *
 	 * @param integer Group Identifier
 	 * @param string Name of the permission
 	 * @return bool true ( will not currently report a failure )
@@ -464,7 +464,7 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	 * Copy current permissions to another object
-	 * 
+	 *
 	 * @param integer Content Identifier of the target object
 	 * @return bool true ( will not currently report a failure )
 	 */
@@ -483,12 +483,12 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	 * Copy current permissions to another object
-	 * 
+	 *
 	 * @param string Content Type GUID
 	 * @param array Array of content type data
 	 * Populates the mType array with the following entries
 	 * string	content_type_guid
-	 * string	
+	 * string
 	 */
 	function registerContentType( $pContentGuid, $pTypeParams ) {
 		global $gLibertySystem;
@@ -500,7 +500,7 @@ class LibertyContent extends LibertyBase {
 	 * Increment the content item hit flag by 1
 	 *
 	 * @return bool true ( will not currently report a failure )
-	 */ 
+	 */
 	function addHit() {
 		global $gBitUser;
 		if( $this->mContentId && ($gBitUser->mUserId != $this->mInfo['user_id'] ) ) {
@@ -534,11 +534,11 @@ class LibertyContent extends LibertyBase {
 	/**
 	 * Create the generic title for a content item
 	 *
-	 * This will normally be overwriten by extended classes to provide 
+	 * This will normally be overwriten by extended classes to provide
 	 * an appropriate title title string
 	 * @param array mInfo type hash of data to be used to provide base data
 	 * @return string Descriptive title for the object
-	 */ 
+	 */
 	function getTitle( $pHash=NULL ) {
 		$ret = NULL;
 		if( empty( $pHash ) ) {
@@ -556,7 +556,7 @@ class LibertyContent extends LibertyBase {
 	 * Access a content item type GUID
 	 *
 	 * @return string content_type_guid for the object
-	 */ 
+	 */
 	function getContentType() {
 		$ret = NULL;
 		if( isset( $this->mInfo['content_type_guid'] ) ) {
@@ -569,7 +569,7 @@ class LibertyContent extends LibertyBase {
 	 * Return content type description for this content object.
 	 *
 	 * @return string content_type_guid description for the object
-	 */ 
+	 */
 	function getContentDescription() {
 		$ret = NULL;
 		if( isset( $this->mInfo['content_type_guid'] ) ) {
@@ -910,7 +910,7 @@ class LibertyContent extends LibertyBase {
 
 
 	/**
-	 * Special parsing for multipage articles 
+	 * Special parsing for multipage articles
 	 *
 	 * Temporary remove &lt;PRE&gt;&lt;/PRE&gt; secions to protect
 	 * from broke &lt;PRE&gt; tags and leave well known &lt;PRE&gt;
@@ -940,7 +940,7 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	 * Special parsing for a particular page of a multipage article 
+	 * Special parsing for a particular page of a multipage article
 	 *
 	 * Temporary remove &lt;PRE&gt;&lt;/PRE&gt; secions to protect
 	 * from broke &lt;PRE&gt; tags and leave well known &lt;PRE&gt;
