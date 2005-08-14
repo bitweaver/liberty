@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.28 2005/08/13 21:07:38 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.29 2005/08/14 11:36:58 wolff_borg Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -993,7 +993,7 @@ class LibertyContent extends LibertyBase {
 		$query = "select `cache_id`  from `".BIT_DB_PREFIX."tiki_link_cache` where `url`=?";
 		// sometimes we can have a cache_id of 0(?!) - seen it with my own eyes, spiderr
 		$ret = $this->mDb->getOne($query, array( $url ) );
-		return( isset( $ret ) );
+		return $ret;
 	}
 
 	/**
