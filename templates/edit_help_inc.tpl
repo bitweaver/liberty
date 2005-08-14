@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.1.2.5 2005/08/09 10:22:35 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.1.2.6 2005/08/14 10:33:59 squareing Exp $ *}
 
 {strip}
 {if $gBitSystem->isFeatureActive( 'feature_wikihelp' )}
@@ -42,7 +42,7 @@
 
 							{if $p.exthelp ne ''}
 								<a title="{tr}Extended Help{/tr}" href="javascript:flip('help-{$p.name}');">{tr}Display Extended Help{/tr}</a>
-								<div id="help-{$p.name}" style="display: none;">{$p.exthelp}</div>
+								<div id="help-{$p.guid}" style="display: none;">{$p.exthelp}</div>
 							{/if}
 
 							{if $p.help_page}
