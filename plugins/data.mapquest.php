@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.7 $
+ * @version  $Revision: 1.2.2.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mapquest.php,v 1.2.2.7 2005/08/03 07:43:55 lsces Exp $
+// $Id: data.mapquest.php,v 1.2.2.8 2005/08/14 10:49:33 squareing Exp $
 
 /**
  * definitions
@@ -100,12 +100,12 @@ function data_mapquest_help() {
 				.'<td>' . tra( "The Country (Uses 2-digit ISO Codes)")
 				. tra("<br />The Default = ") . '<strong>US</strong>'
 				. tra("<br /><strong>Note:</strong> 2-Digit ISO Country Codes are available from ")
-				. '<a href="http://www.bcpl.net/~j1m5path/isocodes-table.html" title="Launch BCPL.net in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "ISO Country Codes" ) . '</a>'
+				. '<a href="http://www.bcpl.net/~j1m5path/isocodes-table.html" title="Launch BCPL.net in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "ISO Country Codes" ) . '</a></td>'
 			.'</tr>'
 			.'<tr class="odd">'
 				.'<td>title</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "MapQuest labels each Map with the Address, City, State, & Zip Code. This parameter overwrites that label when defined.")
+				.'<td>' . tra( "MapQuest labels each Map with the Address, City, State, &amp; Zip Code. This parameter overwrites that label when defined.")
 				. tra("<br />The Default = ") . '<strong>NONE</strong></td>'
 			.'</tr>'
 			.'<tr class="even">'
@@ -156,7 +156,7 @@ function data_mapquest( $data, $params ) {
 	$map = isset($title) ? $map . '&title=' . implode('+', explode(' ',$title)) : $map;
 	$map = '"' . $map . '&cid=lfmaplink"';
 	
-	$map = '<a href=' . $map . ' title="Launch Map Quest in a New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">';
+	$map = '<a href="' . $map . '" title="Launch Map Quest in a New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">';
 	
     if (isset($myicon)) { // Test for the existance of MyIcon
 		$ret = $map . '<img border="0" src="' . $myicon . '"></a>';

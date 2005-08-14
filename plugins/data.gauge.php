@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4.2.8 $
+ * @version  $Revision: 1.4.2.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.gauge.php,v 1.4.2.8 2005/08/03 07:43:55 lsces Exp $
+// $Id: data.gauge.php,v 1.4.2.9 2005/08/14 10:49:33 squareing Exp $
 
 /**
  * definitions
@@ -50,12 +50,12 @@ function data_gauge_help() {
 			.'<tr class="odd">'
 				.'<td>color</td>'
 				.'<td>' . tra( "colorname or hex color") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Specifies the color of the of the Bar in the Gauge. Colornames or HTML colors can be used. To specify HTML color the <strong>#</strong> character <strong>MUST</strong> be included like this: ( <strong>#RRGGBB </strong> ). If not specified - the <strong>Current Text Color</strong> will be used. See Note below for Colornames & HTML Colors Sources.") . '</td>'
+				.'<td>' . tra( "Specifies the color of the of the Bar in the Gauge. Colornames or HTML colors can be used. To specify HTML color the <strong>#</strong> character <strong>MUST</strong> be included like this: ( <strong>#RRGGBB </strong> ). If not specified - the <strong>Current Text Color</strong> will be used. See Note below for Colornames &amp; HTML Colors Sources.") . '</td>'
 			.'</tr>'
 			.'<tr class="even">'
 				.'<td>bgcolor</td>'
 				.'<td>' . tra( "colorname or hex color") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Specifies the color of the Gauges Background. Colornames or HTML colors can be used. To specify HTML color the <strong>#</strong> character <strong>MUST</strong> be included like this: ( <strong>#RRGGBB </strong> ). If not specified - the <strong>Current Background Color</strong> will be used. See Note below for Colornames & HTML Colors Sources.") . '</td>'
+				.'<td>' . tra( "Specifies the color of the Gauges Background. Colornames or HTML colors can be used. To specify HTML color the <strong>#</strong> character <strong>MUST</strong> be included like this: ( <strong>#RRGGBB </strong> ). If not specified - the <strong>Current Background Color</strong> will be used. See Note below for Colornames &amp; HTML Colors Sources.") . '</td>'
 			.'</tr>'
 			.'<tr class="odd">'
 				.'<td>max</td>'

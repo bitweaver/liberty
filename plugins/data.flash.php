@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.7 $
+ * @version  $Revision: 1.1.1.1.2.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.flash.php,v 1.1.1.1.2.7 2005/08/03 07:43:55 lsces Exp $
+// $Id: data.flash.php,v 1.1.1.1.2.8 2005/08/14 10:49:33 squareing Exp $
 
 /**
  * definitions
@@ -53,7 +53,7 @@ function data_flash_help() {
 			.'<tr class="odd">'
 				.'<td>movie</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(manditory)") . '</td>'
-				.'<td>' . tra( "A location where the Flash SWF file can be found. This can be any URL or a site value. See Examples.")
+				.'<td>' . tra( "A location where the Flash SWF file can be found. This can be any URL or a site value. See Examples.") . '</td>'
 			.'</tr>'
 			.'<tr class="even">'
 				.'<td>width</td>'
