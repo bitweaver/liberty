@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.10 2005/08/07 16:23:53 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.11 2005/08/14 21:29:13 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -25,6 +25,10 @@
 define( 'STORAGE_PLUGIN', 'storage' );
 define( 'FORMAT_PLUGIN', 'format' );
 define( 'DATA_PLUGIN', 'data' );
+
+define( 'LIBERTY_SERVICE_ACCESS_CONTROL', 'access_control' );
+define( 'LIBERTY_SERVICE_CATEGORIZATION', 'categorization' );
+
 
 define( 'DEFAULT_ACCEPTABLE_TAGS', '<a><br><b><blockquote><cite><code><div><dd><dl><dt><em><h1><h2><h3><h4><hr>'
 				 .' <i><it><img><li><ol><p><pre><span><strong><table><tbody><div><tr><td><th><u><ul>'
@@ -116,6 +120,28 @@ class LibertySystem extends LibertyBase {
 				$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."tiki_content_types", $pTypeParams, array( 'name'=>'content_type_guid', 'value'=>$pGuid ) );
 			}
 		}
+	}
+
+	function registerService( $pServiceName, $pPackageName, $pServiceHash ) {
+		$this->mServices[$pServiceName][$pPackageName] = $pServiceHash;
+	}
+
+	function hasService( $pServiceName ) {
+		return( !empty( $this->mServices[$pServiceName] ) );
+	}
+
+	function getServiceValue( $pServiceName, $pServiceValue ) {
+		global $gBitSystem;
+		$ret = NULL;
+		if( $this->hasService( $pServiceName ) ) {
+			if( !($package = $gBitSystem->getPreference( 'liberty_service_'.$pServiceName )) ) {
+				$package = key( $this->mServices[$pServiceName] );
+			}
+			if( !empty( $this->mServices[$pServiceName][$package] ) ) {
+				$ret = $this->mServices[$pServiceName][$package][$pServiceValue];
+			}
+		}
+		return $ret;
 	}
 
 	function isPluginActive( $pPluginGuid ) {
