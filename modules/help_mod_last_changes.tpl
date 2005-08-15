@@ -12,7 +12,7 @@
 	</tr>
 	<tr class="even">
 		<td>show_date</td>
-		<td>(boolean)</td>
+		<td>( {tr}boolean{/tr} )</td>
 		<td>{tr}Specify if you want to display the date of the last modification.{/tr}</td>
 	</tr>
 </table>
