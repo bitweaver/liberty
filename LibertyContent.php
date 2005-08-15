@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.29 2005/08/14 11:36:58 wolff_borg Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.30 2005/08/15 07:17:19 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -205,7 +205,6 @@ class LibertyContent extends LibertyBase {
 	 * See verify for details of the values required
 	 */
 	function store( &$pParamHash ) {
-		global $gBitSystem;
 		global $gLibertySystem;
 		if( LibertyContent::verify( $pParamHash ) ) {
 			$this->mDb->StartTrans();
@@ -222,13 +221,7 @@ class LibertyContent extends LibertyBase {
 				$result = $this->mDb->associateUpdate( $table, $pParamHash['content_store'], $locId );
 			}
 
-			// If a content access system is active, let's call it
-			if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
-				global $gGatekeeper;
-				if( !$gGatekeeper->storeSecurity( $pParamHash ) ) {
-					$this->mErrors['security'] = $gGatekeeper->mErrors['security'];
-				}
-			}
+			$this->invokeServices( 'content_store_function', $pParamHash );
 
 			// Call the formatter's save
 			if( !empty( $pParamHash['edit'] ) ) {
@@ -336,6 +329,40 @@ class LibertyContent extends LibertyBase {
 		return( $this->isValid() && !empty( $this->mInfo['user_id'] ) && $this->mInfo['user_id'] == $gBitUser->mUserId );
 	}
 
+
+
+	function hasAccessControl() {
+		if( $this->isValid() ) {
+			return( !empty( $this->mInfo['has_access_control'] ) );
+		}
+	}
+
+
+	function verifyAccessControl() {
+		if( $this->hasAccessControl() ) {
+			$this->invokeServices( 'content_verify_access' );
+		}
+	}
+
+
+	function invokeServices( $pServiceFunction, $pParamHash=NULL ) {
+		global $gLibertySystem;
+		$ret = NULL;
+		// Invoke any services store functions such as categorization or access control
+		if( $serviceStoreFunctions = $gLibertySystem->getServiceValues( $pServiceFunction ) ) {
+			foreach ( $serviceStoreFunctions as $func ) {
+				if( function_exists( $func ) ) {
+					if( $errors = $func( $this, $pParamHash ) ) {
+						$ret = array_merge( $ret, $errors );
+					}
+				}
+			}
+		}
+		return $ret;
+	}
+
+
+
 	/**
 	 * Check permissions for the object that has been loaded against the permission database
 	 */
@@ -365,6 +392,7 @@ class LibertyContent extends LibertyBase {
 		global $gBitUser;
 		if( !$gBitUser->isRegistered() || !($ret = $this->isOwner()) ) {
 			if( !($ret = $gBitUser->isAdmin()) ) {
+				$this->verifyAccessControl();
 				if( $this->loadPermissions() ) {
 					$userPerms = $this->getUserPermissions( $gBitUser->mUserId );
 					$ret = isset( $userPerms[$pPermName]['user_id'] ) && ( $userPerms[$pPermName]['user_id'] == $gBitUser->mUserId );
