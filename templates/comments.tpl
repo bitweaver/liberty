@@ -1,5 +1,11 @@
 {strip}
 <br />
+{if $gBitSystem->isFeatureActive( 'comments_display_expanded' )}
+	{assign var=initial value=none}{assign var=subsequent value=block}{assign var=iname value=expanded}
+{else}
+	{assign var=initial value=block}{assign var=subsequent value=none}{assign var=iname value=collapsed}
+{/if}
+
 
 <div class="display comment">
 	<div class="header">
@@ -8,18 +14,16 @@
 		{/if}
 		<h2>
 			<a onclick="icntoggle('bitcomments');">
-				{biticon ipackage=liberty iname="collapsed" id="bitcommentsimg" iexplain=""} {tr}Comments{/tr}
+				{biticon ipackage=liberty iname=$iname id="bitcommentsimg" iexplain=""} {tr}Comments{/tr}
 			</a>
 		</h2>
 	</div>
 
 {/strip}
-	<script type="text/javascript">
-	//<![CDATA[
+	<script type="text/javascript">//<![CDATA[
 		setfoldericonstate('bitcomments');
-		document.write('<div id="bitcomments" style="display:{if $smarty.cookies.bitcomments eq 'o'}block{else}none{/if};">');
-	//]]>
-	</script>
+		document.write('<div id="bitcomments" style="display:{if $smarty.cookies.bitcomments eq 'o'}{$initial}{else}{$subsequent}{/if};">');
+	//]]></script>
 {strip}
 
 	<div class="body">

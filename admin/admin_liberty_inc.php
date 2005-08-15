@@ -25,6 +25,11 @@ $formCommentFeatures = array(
 		'note' => 'Display an option bar above comments to specify how they should be sorted and how they should be displayed. Useful if your site uses comments extensively.',
 		'page' => '',
 	),
+	"comments_display_expanded" => array(
+		'label' => 'Expand Comments',
+		'note' => 'When users first visit your site, comments can be hidden or displayed by default.',
+		'page' => '',
+	),
 );
 $gBitSmarty->assign( 'formCommentFeatures', $formCommentFeatures );
 
