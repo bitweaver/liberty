@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.7 $
+ * @version  $Revision: 1.2.2.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mqdirections.php,v 1.2.2.7 2005/08/14 10:49:33 squareing Exp $
+// $Id: data.mqdirections.php,v 1.2.2.8 2005/08/15 15:41:05 squareing Exp $
 
 /**
  * definitions
@@ -85,7 +85,7 @@ function data_mqdir_help() {
 				.'<td>' . tra( "The Country (Uses 2-digit ISO Codes)")
 				. tra("<br />The Default = ") . '<strong>US</strong>'
 				. tra("<br /><strong>Note:</strong> 2-Digit ISO Country Codes are available from ")
-				. "<a target=" . '"_blank"' . " href=\"http://www.bcpl.net/~j1m5path/isocodes-table.html\">" . tra("ISO Country Codes").'</a></td>'
+				. "<a href=\"http://www.bcpl.net/~j1m5path/isocodes-table.html\">" . tra("ISO Country Codes").'</a></td>'
 			.'</tr>'
 		.'</table>'
 		. tra("Example: ") . "{MQDIR icon=sm address='1730 Blake St' city=Denver state=CO zip=80202 }";
