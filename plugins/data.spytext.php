@@ -4,7 +4,7 @@
  * assigned_modules
  *
  * @author   StarRider starrrider@sourceforge.net
- * @version  $Revision: 1.1.2.10 $
+ * @version  $Revision: 1.1.2.11 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -71,7 +71,7 @@ function data_spytext_help() {
 				.'<td>to</td>'
 				.'<td>' . tra( "boolean/string") . '<br />' .tra( "(optional)") . '</td>'
 				.'<td>' .tra( "Determines if an Address Box will be displayed before the Message. The Address Box is always in it's own ")
-					.tra( "DropDown box which contains 3 lines where the") .' <strong>spy(s) / agency(s) / & sender(s)</strong> '
+					.tra( "DropDown box which contains 3 lines where the") .' <strong>spy(s) / agency(s) / &amp; sender(s)</strong> '
 					.tra( "are identified. These lines are only displayed if a valid UserName / GroupName is found for that line. ")
 					.'<br />' . tra( "The Default Header for each line is:")
 					.'<br />Line 1 for Spy (Users) = <strong>"To the Spy:"</strong> '

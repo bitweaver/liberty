@@ -4,7 +4,7 @@
  * assigned_modules
  *
  * @author   StarRider <starrrider@sourceforge.net>
- * @version  $Revision: 1.1.2.6 $
+ * @version  $Revision: 1.1.2.7 $
  * @package  liberty
  * @subpackage plugins_data
  * 
@@ -55,7 +55,7 @@ function data_dropdown_help() {
 			.'</tr>'
 		.'</table>'
 		. tra("Example: ") . '{DD}' . tra("Text in the Drop-Down box.") . '{DD}<br />'
-		. tra("Example: ") . "{DD title='" . tra("Explaining the Lines #1 #3 & #7'} Text in the Drop-Down box") . '{DD}';
+		. tra("Example: ") . "{DD title='" . tra("Explaining the Lines #1 #3 &amp; #7'} Text in the Drop-Down box") . '{DD}';
 	return $help;
 }
 
