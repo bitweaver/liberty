@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.31 2005/08/15 12:38:16 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.32 2005/08/15 16:11:00 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -347,7 +347,7 @@ class LibertyContent extends LibertyBase {
 
 	function invokeServices( $pServiceFunction, $pParamHash=NULL ) {
 		global $gLibertySystem;
-		$ret = NULL;
+		$ret = array();
 		// Invoke any services store functions such as categorization or access control
 		if( $serviceFunctions = $gLibertySystem->getServiceValues( $pServiceFunction ) ) {
 			foreach ( $serviceFunctions as $func ) {
