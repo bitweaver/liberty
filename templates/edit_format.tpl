@@ -27,7 +27,6 @@
 							{/foreach}
 						{/if}
 					"
-				id="editformatguid"
 				/> {$plugin.edit_label}</label>
 				{formhelp note=`$plugin.edit_help`}
 			{/forminput}
