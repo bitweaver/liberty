@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.1.1.1.2.9 $
+ * @version  $Revision: 1.1.1.1.2.10 $
  * @package  liberty
  * @subpackage functions
  */
@@ -23,9 +23,8 @@ if( empty( $_REQUEST["structure_id"] ) ) {
 } else {
 	global $gStructure;
 	$gStructure = new LibertyStructure( $_REQUEST["structure_id"] );
-	$gStructure->mDb->StartTrans();
 	$gStructure->load();
-	
+
 	// order matters for these conditionals
 	if( empty( $gStructure ) || !$gStructure->isValid() ) {
 		$gBitSystem->fatalError( 'Invalid structure' );
@@ -68,7 +67,7 @@ if( empty( $_REQUEST["structure_id"] ) ) {
 	}
 
 	if( ( isset( $_REQUEST["action"] ) && ( $_REQUEST["action"] == 'remove' ) ) || isset( $_REQUEST["confirm"] ) ) {
-		
+
 		if( isset( $_REQUEST["confirm"] ) ) {
 			if( $gStructure->s_remove_page( $_REQUEST["structure_id"], false ) ) {
 				header( "Location: ".$_SERVER['PHP_SELF'].'?structure_id='.$gStructure->mInfo["parent_id"] );
@@ -99,11 +98,11 @@ if( empty( $_REQUEST["structure_id"] ) ) {
 		header( "Location: ".$_SERVER['PHP_SELF'].'?structure_id='.$gStructure->mInfo["structure_id"] );
 		die;
 	} elseif (isset($_REQUEST["create"])) {
-		
+
 		if (isset($_REQUEST["pageAlias"]))	{
 			$gStructure->set_page_alias($_REQUEST["structure_id"], $_REQUEST["pageAlias"]);
 		}
-		
+
 		$structureHash['root_structure_id'] = $rootStructure->mStructureId;
 		$structureHash['parent_id'] = $_REQUEST['structure_id'];
 
@@ -126,7 +125,6 @@ if( empty( $_REQUEST["structure_id"] ) ) {
 
 	$gBitSmarty->assign( (!empty( $_REQUEST['tab'] ) ? $_REQUEST['tab'] : 'body').'TabSelect', 'tdefault' );
 	$gBitSmarty->assign('subtree', $rootTree = $rootStructure->getSubTree( $rootStructure->mStructureId ));
-	$gStructure->mDb->CompleteTrans();
 }
 
 ?>
