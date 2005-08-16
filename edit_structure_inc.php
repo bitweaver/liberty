@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.1.1.1.2.10 $
+ * @version  $Revision: 1.1.1.1.2.11 $
  * @package  liberty
  * @subpackage functions
  */
@@ -49,21 +49,23 @@ if( empty( $_REQUEST["structure_id"] ) ) {
 	$gBitUser->storePreference( 'edit_structure_name', $rootStructure->mInfo['title'] );
 	$gBitUser->storePreference( 'edit_structure_id', $rootStructure->mStructureId );
 
-	include_once( LIBERTY_PKG_PATH.'get_content_list_inc.php' );
-	foreach( $contentList['data'] as $cItem ) {
-		$cList[$contentTypes[$cItem['content_type_guid']]][$cItem['content_id']] = $cItem['title'].' [id: '.$cItem['content_id'].']';
-	}
-	$gBitSmarty->assign( 'contentList', $cList );
-	$gBitSmarty->assign( 'contentSelect', $contentSelect );
-	$gBitSmarty->assign( 'contentTypes', $contentTypes );
-	$gBitSmarty->assign( 'contentTypes', $contentTypes );
+	if( !$gBitSystem->isFeatureActive( 'wikibook_hide_add_content' ) ) {
+		include_once( LIBERTY_PKG_PATH.'get_content_list_inc.php' );
+		foreach( $contentList['data'] as $cItem ) {
+			$cList[$contentTypes[$cItem['content_type_guid']]][$cItem['content_id']] = $cItem['title'].' [id: '.$cItem['content_id'].']';
+		}
+		$gBitSmarty->assign( 'contentList', $cList );
+		$gBitSmarty->assign( 'contentSelect', $contentSelect );
+		$gBitSmarty->assign( 'contentTypes', $contentTypes );
+		$gBitSmarty->assign( 'contentTypes', $contentTypes );
 
-	$subpages = $gStructure->s_get_pages($_REQUEST["structure_id"]);
-	$max = count($subpages);
-	$gBitSmarty->assign_by_ref('subpages', $subpages);
-	if ($max != 0) {
-		$last_child = $subpages[$max - 1];
-		$gBitSmarty->assign('insert_after', $last_child["structure_id"]);
+		$subpages = $gStructure->s_get_pages($_REQUEST["structure_id"]);
+		$max = count($subpages);
+		$gBitSmarty->assign_by_ref('subpages', $subpages);
+		if ($max != 0) {
+			$last_child = $subpages[$max - 1];
+			$gBitSmarty->assign('insert_after', $last_child["structure_id"]);
+		}
 	}
 
 	if( ( isset( $_REQUEST["action"] ) && ( $_REQUEST["action"] == 'remove' ) ) || isset( $_REQUEST["confirm"] ) ) {
