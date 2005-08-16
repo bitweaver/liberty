@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.32 2005/08/15 16:11:00 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.33 2005/08/16 04:38:46 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -330,37 +330,47 @@ class LibertyContent extends LibertyBase {
 	}
 
 
-
-	function hasAccessControl() {
-		if( $this->isValid() ) {
-			return( !empty( $this->mInfo['has_access_control'] ) );
-		}
-	}
-
-
 	function verifyAccessControl() {
-		if( $this->hasAccessControl() ) {
-			$this->invokeServices( 'content_verify_access' );
-		}
+		$this->invokeServices( 'content_verify_access' );
 	}
 
 
 	function invokeServices( $pServiceFunction, $pParamHash=NULL ) {
 		global $gLibertySystem;
-		$ret = array();
+		$errors = array();
 		// Invoke any services store functions such as categorization or access control
 		if( $serviceFunctions = $gLibertySystem->getServiceValues( $pServiceFunction ) ) {
 			foreach ( $serviceFunctions as $func ) {
 				if( function_exists( $func ) ) {
 					if( $errors = $func( $this, $pParamHash ) ) {
-						$ret = array_merge( $ret, $errors );
+						$this->mErrors = array_merge( $this->mErrors, $errors );
 					}
 				}
 			}
 		}
-		return $ret;
+		return $errors;
 	}
 
+
+	function getServicesSql( $pServiceFunction, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
+		global $gLibertySystem;
+		if( $loadFuncs = $gLibertySystem->getServiceValues( $pServiceFunction ) ) {
+			foreach( $loadFuncs as $func ) {
+				if( function_exists( $func ) ) {
+					$loadHash = $func();
+					if( !empty( $loadHash['select_sql'] ) ) {
+						$pSelectSql .= $loadHash['select_sql'];
+					}
+					if( !empty( $loadHash['join_sql'] ) ) {
+						$pJoinSql .= $loadHash['join_sql'];
+					}
+					if( !empty( $loadHash['where_sql'] ) ) {
+						$pWhereSql .= $loadHash['where_sql'];
+					}
+				}
+			}
+		}
+	}
 
 
 	/**
@@ -589,6 +599,19 @@ class LibertyContent extends LibertyBase {
 		$ret = NULL;
 		if( isset( $this->mInfo['content_type_guid'] ) ) {
 			$ret = $this->mInfo['content_type_guid'];
+		}
+		return $ret;
+	}
+
+	/**
+	 * Access a content item type GUID
+	 *
+	 * @return string content_type_guid for the object
+	 */
+	function getContentId() {
+		$ret = NULL;
+		if( isset( $this->mContentId ) ) {
+			$ret = $this->mContentId;
 		}
 		return $ret;
 	}
