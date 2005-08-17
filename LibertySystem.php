@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.14 2005/08/16 04:38:46 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.15 2005/08/17 23:42:53 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -28,6 +28,7 @@ define( 'DATA_PLUGIN', 'data' );
 
 define( 'LIBERTY_SERVICE_ACCESS_CONTROL', 'access_control' );
 define( 'LIBERTY_SERVICE_CATEGORIZATION', 'categorization' );
+define( 'LIBERTY_SERVICE_MENU', 'menu' );
 define( 'LIBERTY_SERVICE_DOCUMENT_GENERATION', 'document_generation' );
 
 
