@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.2.1 $
+ * @version  $Revision: 1.1.2.2 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,10 +18,11 @@
 // | by: wolff_borg <wolff_borg@yahoo.com.au>
 // | Reworked from: wikiplugin_wikigraph.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikigraph.php,v 1.1.2.1 2005/08/14 11:07:16 wolff_borg Exp $
+// $Id: data.wikigraph.php,v 1.1.2.2 2005/08/18 10:30:52 wolff_borg Exp $
 /**
  * definitions
  */
+if (!$gBitSystem->isPackageActive( 'wiki' ) ) { // Do not include this Plugin if the Package is not active
 define( 'PLUGIN_GUID_DATAWIKIGRAPH', 'datawikigraph' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'WIKIGRAPH',
@@ -118,5 +119,6 @@ $garg = array(
 	$mapdata = preg_replace("/\n|\r/", '', $mapdata);
 	$ret .= "<map name='$mapname'>$mapdata</map></div>";
 	return $ret;
+}
 }
 ?>
