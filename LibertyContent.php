@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.33 2005/08/16 04:38:46 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.34 2005/08/18 18:51:13 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -739,19 +739,22 @@ class LibertyContent extends LibertyBase {
 	 * @param integer User ID - If set, then only the objcets created by that user will be returned
 	 * @return array An array of mInfo type arrays of content objects
 	 **/
-	function getContentList( $pContentGuid=NULL, $offset = 0, $maxRecords = -1, $sort_mode = 'title_desc', $find = NULL, $pUserId=NULL ) {
+	function getContentList( $pListHash ) {
 		global $gLibertySystem, $gBitSystem, $gBitUser, $gBitSmarty;
-		if ($sort_mode == 'size_desc') {
-			$sort_mode = 'page_size_desc';
+
+		$this->prepGetList( $pListHash );
+
+		if( $pListHash['sort_mode'] == 'size_desc' ) {
+			$pListHash['sort_mode'] = 'page_size_desc';
 		}
 
-		if ($sort_mode == 'size_asc') {
-			$sort_mode = 'page_size_asc';
+		if( $pListHash['sort_mode'] == 'size_asc' ) {
+			$pListHash['sort_mode'] = 'page_size_asc';
 		}
 
 		$old_sort_mode = '';
 
-		if (in_array($sort_mode, array(
+		if (in_array($pListHash['sort_mode'], array(
 				'versions_desc',
 				'versions_asc',
 				'links_asc',
@@ -759,12 +762,12 @@ class LibertyContent extends LibertyBase {
 				'backlinks_asc',
 				'backlinks_desc'
 				))) {
-			$old_offset = $offset;
-			$old_maxRecords = $maxRecords;
-			$old_sort_mode = $sort_mode;
-			$sort_mode = 'modifier_user_desc';
-			$offset = 0;
-			$maxRecords = -1;
+			$old_offset = $pListHash['offset'];
+			$old_maxRecords = $pListHash['max_records'];
+			$old_sort_mode = $pListHash['sort_mode'];
+			$pListHash['sort_mode'] = 'modifier_user_desc';
+			$pListHash['offset'] = 0;
+			$pListHash['max_records'] = -1;
 		}
 
 		$bindVars = array();
@@ -772,24 +775,33 @@ class LibertyContent extends LibertyBase {
 		$gateSelect = '';
 		$gateFrom = '';
 
-		if (is_array($find)) { // you can use an array of pages
-			$mid = " AND tc.`title` IN (".implode(',',array_fill(0,count($find),'?')).")";
-			$bindVars[] = $find;
-		} elseif (!empty($find) && is_string($find)) { // or a string
+		if (is_array($pListHash['find'])) { // you can use an array of titles
+			$mid = " AND tc.`title` IN (".implode(',',array_fill(0,count($pListHash['find']),'?')).")";
+			$bindVars[] = $pListHash['find'];
+		} elseif (!empty($pListHash['find']) && is_string($pListHash['find'])) { // or a string
 			$mid = " AND UPPER(tc.`title`) like ? ";
-			$bindVars[] = ('%' . strtoupper( $find ) . '%');
+			$bindVars[] = ('%' . strtoupper( $pListHash['find'] ) . '%');
 		}
 
-		if( !empty( $pUserId ) ) {
+		// calendar specific selection method - use timestamps to limit selection
+		if( !empty( $pListHash['start'] ) && !empty( $pListHash['stop'] ) ) {
+			$mid .= " AND ( tc.`last_modified` > ? AND tc.`last_modified` < ? ) ";
+			$bindVars[] = $pListHash['start'];
+			$bindVars[] = $pListHash['stop'];
+		}
+
+		if( !empty( $pListHash['user_id'] ) ) {
 			$mid .= " AND tc.`user_id` = ? ";
-			$bindVars[] = $pUserId;
+			$bindVars[] = $pListHash['user_id'];
 		}
 
-		if( !empty( $pContentGuid ) ) {
+		if( !empty( $pListHash['content_type_guid'] ) && is_string( $pListHash['content_type_guid'] ) ) {
 			$mid .= ' AND `content_type_guid`=? ';
-			$bindVars[] = $pContentGuid;
+			$bindVars[] = $pListHash['content_type_guid'];
+		} elseif( !empty( $pListHash['content_type_guid'] ) && is_array( $pListHash['content_type_guid'] ) ) {
+			$mid .= " AND tc.`content_type_guid` IN ( ".implode( ',',array_fill ( 0, count( $pListHash['content_type_guid'] ),'?' ) )." )";
+			$bindVars = array_merge( $bindVars, $pListHash['content_type_guid'] );
 		}
-
 
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
 			$gateSelect .= ' ,ts.`security_id`, ts.`security_description`, ts.`is_private`, ts.`is_hidden`, ts.`access_question`, ts.`access_answer` ';
@@ -809,7 +821,7 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 
-		if( in_array( $sort_mode, array(
+		if( in_array( $pListHash['sort_mode'], array(
 				'modifier_user_desc',
 				'modifier_user_asc',
 				'modifier_real_name_desc',
@@ -831,11 +843,11 @@ class LibertyContent extends LibertyBase {
 		$query = "SELECT uue.`login` AS `modifier_user`, uue.`real_name` AS `modifier_real_name`, uue.`user_id` AS `modifier_user_id`, uuc.`login` AS`creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`, `hits`, tc.`title`, tc.`last_modified`, tc.`content_type_guid`, `ip`, tc.`content_id` $gateSelect
 				  FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom, `".BIT_DB_PREFIX."users_users` uue, `".BIT_DB_PREFIX."users_users` uuc
 				  WHERE tc.`modifier_user_id`=uue.`user_id` AND tc.`user_id`=uuc.`user_id` $mid
-				  ORDER BY ".$orderTable.$this->mDb->convert_sortmode($sort_mode);
+				  ORDER BY ".$orderTable.$this->mDb->convert_sortmode($pListHash['sort_mode']);
 		$query_cant = "select count(tc.`content_id`) FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom, `".BIT_DB_PREFIX."users_users` uu WHERE uu.`user_id`=tc.`user_id` $mid";
 		// previous cant query - updated by xing
 		// $query_cant = "select count(*) from `".BIT_DB_PREFIX."tiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id` = tp.`content_id`) $mid";
-		$result = $this->mDb->query($query,$bindVars,$maxRecords,$offset);
+		$result = $this->mDb->query($query,$bindVars,$pListHash['max_records'],$pListHash['offset']);
 		$cant = $this->mDb->getOne($query_cant,$bindVars);
 		$ret = array();
 		$contentTypes = $gLibertySystem->mContentTypes;
@@ -843,7 +855,7 @@ class LibertyContent extends LibertyBase {
 			$aux = array();
 			$aux = $res;
 			if( !empty( $contentTypes[$res['content_type_guid']] ) ) {
-   	// quick alias for code readability
+				// quick alias for code readability
 				$type = &$contentTypes[$res['content_type_guid']];
 				if( empty( $type['content_object'] ) ) {
 					// create *one* object for each object *type* to  call virtual methods.
@@ -854,7 +866,6 @@ class LibertyContent extends LibertyBase {
 				$aux['real_name'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
 				$aux['editor'] = (isset( $res['modifier_real_name'] ) ? $res['modifier_real_name'] : $res['modifier_user'] );
 				$aux['content_description'] = $type['content_description'];
-//WIKI_PKG_URL."index.php?page_d=".$res['page_id'];
 				$aux['user'] = $res['creator_user'];
 				$aux['real_name'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
 				$aux['user_id'] = $res['creator_user_id'];
