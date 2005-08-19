@@ -3,12 +3,12 @@
  * lookup_content_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.5 $
+ * @version  $Revision: 1.1.1.1.2.6 $
  * @package  liberty
  * @subpackage functions
  */
 	global $gContent;
-	
+
 	if( !empty( $_REQUEST['structure_id'] ) ) {
 		/**
 		 * required setup

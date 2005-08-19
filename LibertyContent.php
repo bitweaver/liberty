@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.35 2005/08/19 11:46:31 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.36 2005/08/19 14:12:14 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -327,6 +327,15 @@ class LibertyContent extends LibertyBase {
 	function isOwner() {
 		global $gBitUser;
 		return( $this->isValid() && !empty( $this->mInfo['user_id'] ) && $this->mInfo['user_id'] == $gBitUser->mUserId );
+	}
+
+
+	/**
+	 * Check user_id to establish if the object that has been loaded was created by the current user
+	 */
+	function isContentType( $pContentGuid ) {
+		global $gBitUser;
+		return( $this->isValid() && !empty( $this->mInfo['content_type_guid'] ) && $this->mInfo['content_type_guid'] == $pContentGuid );
 	}
 
 
