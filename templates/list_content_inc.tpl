@@ -30,10 +30,10 @@
 <table class="data">
 	<caption>{tr}Available Content{/tr} <span class="total">[ {$contentCount} ]</span></caption>
 	<tr>
-		<th>{smartlink ititle="Title" isort=title page=$page user_id=$user_id idefault=1}</th>
-		<th>{smartlink ititle="Content Type" isort=content_type_guid page=$page user_id=$user_id}</th>
-		<th>{smartlink ititle="Author" isort=$isort_author page=$page}</th>
-		<th>{smartlink ititle="Most recent editor" isort=$isort_editor page=$page}</th>
+		<th>{smartlink ititle="Title" isort=title page=$page user_id=$user_id idefault=1 content_type_guid=$contentSelect}</th>
+		<th>{smartlink ititle="Content Type" isort=content_type_guid page=$page user_id=$user_id content_type_guid=$contentSelect}</th>
+		<th>{smartlink ititle="Author" isort=$isort_author page=$page content_type_guid=$contentSelect}</th>
+		<th>{smartlink ititle="Most recent editor" isort=$isort_editor page=$page content_type_guid=$contentSelect}</th>
 	</tr>
 	{foreach from=$contentList item=item}
 		<tr class="{cycle values='odd,even'}">
@@ -47,5 +47,5 @@
 	{/foreach}
 </table>
 
-{libertypagination numPages=$numPages page=$curPage sort_mode=$sort_mode content_type=$contentSelect user_id=$user_id}
+{libertypagination numPages=$numPages page=$curPage sort_mode=$sort_mode content_type_guid=$contentSelect user_id=$user_id}
 {/strip}
