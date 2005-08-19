@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.34 2005/08/18 18:51:13 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.35 2005/08/19 11:46:31 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -785,7 +785,7 @@ class LibertyContent extends LibertyBase {
 
 		// calendar specific selection method - use timestamps to limit selection
 		if( !empty( $pListHash['start'] ) && !empty( $pListHash['stop'] ) ) {
-			$mid .= " AND ( tc.`last_modified` > ? AND tc.`last_modified` < ? ) ";
+			$mid .= " AND ( tc.`".$pListHash['calendar_sort_mode']."` > ? AND tc.`".$pListHash['calendar_sort_mode']."` < ? ) ";
 			$bindVars[] = $pListHash['start'];
 			$bindVars[] = $pListHash['stop'];
 		}
@@ -840,7 +840,7 @@ class LibertyContent extends LibertyBase {
 		// If sort mode is versions then offset is 0, maxRecords is -1 (again) and sort_mode is nil
 		// If sort mode is links then offset is 0, maxRecords is -1 (again) and sort_mode is nil
 		// If sort mode is backlinks then offset is 0, maxRecords is -1 (again) and sort_mode is nil
-		$query = "SELECT uue.`login` AS `modifier_user`, uue.`real_name` AS `modifier_real_name`, uue.`user_id` AS `modifier_user_id`, uuc.`login` AS`creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`, `hits`, tc.`title`, tc.`last_modified`, tc.`content_type_guid`, `ip`, tc.`content_id` $gateSelect
+		$query = "SELECT uue.`login` AS `modifier_user`, uue.`real_name` AS `modifier_real_name`, uue.`user_id` AS `modifier_user_id`, uuc.`login` AS`creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`, `hits`, tc.`title`, tc.`last_modified`, tc.`content_type_guid`, `ip`, tc.`created`, tc.`content_id` $gateSelect
 				  FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom, `".BIT_DB_PREFIX."users_users` uue, `".BIT_DB_PREFIX."users_users` uuc
 				  WHERE tc.`modifier_user_id`=uue.`user_id` AND tc.`user_id`=uuc.`user_id` $mid
 				  ORDER BY ".$orderTable.$this->mDb->convert_sortmode($pListHash['sort_mode']);
