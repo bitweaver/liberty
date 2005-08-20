@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.11 2005/08/11 07:11:16 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.12 2005/08/20 16:32:02 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -475,11 +475,11 @@ function liberty_clear_thumbnails( &$pFileHash ) {
 function liberty_generate_thumbnails( &$pFileHash ) {
 	global $gBitSystem;
 	$resizeFunc = ($gBitSystem->getPreference( 'image_processor' ) == 'imagick' ) ? 'liberty_imagick_resize_image' : 'liberty_gd_resize_image';
-	// Small thumb is 160x120
-	$pFileHash['dest_base_name'] = 'avatar';
-	$pFileHash['name'] = 'avatar.jpg';
-	$pFileHash['max_width'] = 100;
-	$pFileHash['max_height'] = 100;
+	// Avatar thumb is 48x48
+	$pFileHash['dest_base_name'] = 'icon';
+	$pFileHash['name'] = 'icon.jpg';
+	$pFileHash['max_width'] = 48;
+	$pFileHash['max_height'] = 48;
 	$pFileHash['small_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
 	// Small thumb is 160x120
 	$pFileHash['dest_base_name'] = 'small';
