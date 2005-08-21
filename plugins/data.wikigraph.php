@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.2.2 $
+ * @version  $Revision: 1.1.2.3 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,10 +18,11 @@
 // | by: wolff_borg <wolff_borg@yahoo.com.au>
 // | Reworked from: wikiplugin_wikigraph.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikigraph.php,v 1.1.2.2 2005/08/18 10:30:52 wolff_borg Exp $
+// $Id: data.wikigraph.php,v 1.1.2.3 2005/08/21 22:50:17 spiderr Exp $
 /**
  * definitions
  */
+global $gBitSystem;
 if (!$gBitSystem->isPackageActive( 'wiki' ) ) { // Do not include this Plugin if the Package is not active
 define( 'PLUGIN_GUID_DATAWIKIGRAPH', 'datawikigraph' );
 global $gLibertySystem;
