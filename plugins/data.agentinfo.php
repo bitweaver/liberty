@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.agentinfo.php,v 1.4 2005/08/07 17:40:31 squareing Exp $
+// $Id: data.agentinfo.php,v 1.5 2005/08/24 20:55:17 squareing Exp $
 
 /**
  * definitions
@@ -55,7 +55,7 @@ function data_agentinfo_help() {
 				.'<td>' . tra( "Show information about the Browser being used.") . '<br />'
 				.'<strong>ip</strong>: ' . tra( "To get the client\'s IP address (default)" ) . '<br />'
 				.'<strong>browser</strong>: ' . tra( "To get the clients Browser infromation." ) . '<br />'
-				.'<strong>server</strong>: ' . tra( "To get the site\'s server software" ) . '<br />'
+				.'<strong>server</strong>: ' . tra( "To get the site\'s server software" ) . '</td>'
 			.'</tr>'
 		.'</table>'
 		. tra("Example: ") . "{AGENTINFO info='browser'}";

@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.7 2005/08/11 13:03:45 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.8 2005/08/24 20:55:17 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -94,7 +94,28 @@ class LibertyContent extends LibertyBase {
     /**
      * Verify the core class data required to update the tiki_content table entries
 	 *
-	 * @param array Array of content data to be stored 
+	 * Verify will build an array [content_store] with all of the required values
+	 * and populate it with the relevent data to create/update the tiki_content
+	 * table record
+	 *
+	 * @param array Array of content data to be stored <br>
+	 * [pParamHash] <br>
+	 * content_id <br>
+	 * user_id <br>
+	 * modifier_user_id <br>
+	 * created <br>
+	 * last_modified <br>
+	 * content_type_guid <br>
+	 * format_guid <br>
+	 * hits <br>
+	 * language <br>
+	 * title <br>
+	 * ip <br>
+	 * data <br>
+	 * <br>
+	 * @return integer Count of the number of errors ( 0 for success ) <br>
+	 * [pParamHash] will be extended to include array [content_store] populated
+	 * with the require values for LibertyContent::store()
 	 */
 	function verify( &$pParamHash ) {
 		global $gLibertySystem;
@@ -180,10 +201,10 @@ class LibertyContent extends LibertyBase {
     /**
      * Create a new content object or update an existing one
 	 *
-	 * @param array Array of content data to be stored 
+	 * @param array Array of content data to be stored <br>
+	 * See verify for details of the values required
 	 */
 	function store( &$pParamHash ) {
-		global $gBitSystem;
 		global $gLibertySystem;
 		if( LibertyContent::verify( $pParamHash ) ) {
 			$this->mDb->StartTrans();
@@ -200,13 +221,7 @@ class LibertyContent extends LibertyBase {
 				$result = $this->mDb->associateUpdate( $table, $pParamHash['content_store'], $locId );
 			}
 
-			// If a content access system is active, let's call it
-			if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
-				global $gGatekeeper;
-				if( !$gGatekeeper->storeSecurity( $pParamHash ) ) {
-					$this->mErrors['security'] = $gGatekeeper->mErrors['security'];
-				}
-			}
+			$this->invokeServices( 'content_store_function', $pParamHash );
 
 			// Call the formatter's save
 			if( !empty( $pParamHash['edit'] ) ) {
@@ -287,7 +302,7 @@ class LibertyContent extends LibertyBase {
 	/**
 	 * Create an export object from the data
 	 *
-	 * @param array Not used 
+	 * @param array Not used
 	 */
 	function exportHtml( $pData = NULL ) {
 		$ret = NULL;
@@ -313,6 +328,59 @@ class LibertyContent extends LibertyBase {
 		global $gBitUser;
 		return( $this->isValid() && !empty( $this->mInfo['user_id'] ) && $this->mInfo['user_id'] == $gBitUser->mUserId );
 	}
+
+
+	/**
+	 * Check user_id to establish if the object that has been loaded was created by the current user
+	 */
+	function isContentType( $pContentGuid ) {
+		global $gBitUser;
+		return( $this->isValid() && !empty( $this->mInfo['content_type_guid'] ) && $this->mInfo['content_type_guid'] == $pContentGuid );
+	}
+
+
+	function verifyAccessControl() {
+		$this->invokeServices( 'content_verify_access' );
+	}
+
+
+	function invokeServices( $pServiceFunction, $pParamHash=NULL ) {
+		global $gLibertySystem;
+		$errors = array();
+		// Invoke any services store functions such as categorization or access control
+		if( $serviceFunctions = $gLibertySystem->getServiceValues( $pServiceFunction ) ) {
+			foreach ( $serviceFunctions as $func ) {
+				if( function_exists( $func ) ) {
+					if( $errors = $func( $this, $pParamHash ) ) {
+						$this->mErrors = array_merge( $this->mErrors, $errors );
+					}
+				}
+			}
+		}
+		return $errors;
+	}
+
+
+	function getServicesSql( $pServiceFunction, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
+		global $gLibertySystem;
+		if( $loadFuncs = $gLibertySystem->getServiceValues( $pServiceFunction ) ) {
+			foreach( $loadFuncs as $func ) {
+				if( function_exists( $func ) ) {
+					$loadHash = $func();
+					if( !empty( $loadHash['select_sql'] ) ) {
+						$pSelectSql .= $loadHash['select_sql'];
+					}
+					if( !empty( $loadHash['join_sql'] ) ) {
+						$pJoinSql .= $loadHash['join_sql'];
+					}
+					if( !empty( $loadHash['where_sql'] ) ) {
+						$pWhereSql .= $loadHash['where_sql'];
+					}
+				}
+			}
+		}
+	}
+
 
 	/**
 	 * Check permissions for the object that has been loaded against the permission database
@@ -343,6 +411,7 @@ class LibertyContent extends LibertyBase {
 		global $gBitUser;
 		if( !$gBitUser->isRegistered() || !($ret = $this->isOwner()) ) {
 			if( !($ret = $gBitUser->isAdmin()) ) {
+				$this->verifyAccessControl();
 				if( $this->loadPermissions() ) {
 					$userPerms = $this->getUserPermissions( $gBitUser->mUserId );
 					$ret = isset( $userPerms[$pPermName]['user_id'] ) && ( $userPerms[$pPermName]['user_id'] == $gBitUser->mUserId );
@@ -376,7 +445,7 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	 * Store a permission for the object that has been loaded in the permission database
-	 * 
+	 *
 	 * Any old copy of the permission is deleted prior to loading the new copy
 	 * @param integer Group Identifier
 	 * @param string Name of the permission
@@ -400,7 +469,7 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	 * Check is a user has permission to access the object
-	 * 
+	 *
 	 * @param integer User Identifier
 	 * @param integer Content Itentifier
 	 * @param string Content Type GUID
@@ -425,7 +494,7 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	 * Remove a permission to access the object
-	 * 
+	 *
 	 * @param integer Group Identifier
 	 * @param string Name of the permission
 	 * @return bool true ( will not currently report a failure )
@@ -442,7 +511,7 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	 * Copy current permissions to another object
-	 * 
+	 *
 	 * @param integer Content Identifier of the target object
 	 * @return bool true ( will not currently report a failure )
 	 */
@@ -461,12 +530,12 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	 * Copy current permissions to another object
-	 * 
+	 *
 	 * @param string Content Type GUID
 	 * @param array Array of content type data
 	 * Populates the mType array with the following entries
 	 * string	content_type_guid
-	 * string	
+	 * string
 	 */
 	function registerContentType( $pContentGuid, $pTypeParams ) {
 		global $gLibertySystem;
@@ -478,7 +547,7 @@ class LibertyContent extends LibertyBase {
 	 * Increment the content item hit flag by 1
 	 *
 	 * @return bool true ( will not currently report a failure )
-	 */ 
+	 */
 	function addHit() {
 		global $gBitUser;
 		if( $this->mContentId && ($gBitUser->mUserId != $this->mInfo['user_id'] ) ) {
@@ -512,11 +581,11 @@ class LibertyContent extends LibertyBase {
 	/**
 	 * Create the generic title for a content item
 	 *
-	 * This will normally be overwriten by extended classes to provide 
+	 * This will normally be overwriten by extended classes to provide
 	 * an appropriate title title string
 	 * @param array mInfo type hash of data to be used to provide base data
 	 * @return string Descriptive title for the object
-	 */ 
+	 */
 	function getTitle( $pHash=NULL ) {
 		$ret = NULL;
 		if( empty( $pHash ) ) {
@@ -534,7 +603,7 @@ class LibertyContent extends LibertyBase {
 	 * Access a content item type GUID
 	 *
 	 * @return string content_type_guid for the object
-	 */ 
+	 */
 	function getContentType() {
 		$ret = NULL;
 		if( isset( $this->mInfo['content_type_guid'] ) ) {
@@ -544,10 +613,23 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
+	 * Access a content item type GUID
+	 *
+	 * @return string content_type_guid for the object
+	 */
+	function getContentId() {
+		$ret = NULL;
+		if( isset( $this->mContentId ) ) {
+			$ret = $this->mContentId;
+		}
+		return $ret;
+	}
+
+	/**
 	 * Return content type description for this content object.
 	 *
 	 * @return string content_type_guid description for the object
-	 */ 
+	 */
 	function getContentDescription() {
 		$ret = NULL;
 		if( isset( $this->mInfo['content_type_guid'] ) ) {
@@ -666,19 +748,22 @@ class LibertyContent extends LibertyBase {
 	 * @param integer User ID - If set, then only the objcets created by that user will be returned
 	 * @return array An array of mInfo type arrays of content objects
 	 **/
-	function getContentList( $pContentGuid=NULL, $offset = 0, $maxRecords = -1, $sort_mode = 'title_desc', $find = NULL, $pUserId=NULL ) {
+	function getContentList( $pListHash ) {
 		global $gLibertySystem, $gBitSystem, $gBitUser, $gBitSmarty;
-		if ($sort_mode == 'size_desc') {
-			$sort_mode = 'page_size_desc';
+
+		$this->prepGetList( $pListHash );
+
+		if( $pListHash['sort_mode'] == 'size_desc' ) {
+			$pListHash['sort_mode'] = 'page_size_desc';
 		}
 
-		if ($sort_mode == 'size_asc') {
-			$sort_mode = 'page_size_asc';
+		if( $pListHash['sort_mode'] == 'size_asc' ) {
+			$pListHash['sort_mode'] = 'page_size_asc';
 		}
 
 		$old_sort_mode = '';
 
-		if (in_array($sort_mode, array(
+		if (in_array($pListHash['sort_mode'], array(
 				'versions_desc',
 				'versions_asc',
 				'links_asc',
@@ -686,12 +771,12 @@ class LibertyContent extends LibertyBase {
 				'backlinks_asc',
 				'backlinks_desc'
 				))) {
-			$old_offset = $offset;
-			$old_maxRecords = $maxRecords;
-			$old_sort_mode = $sort_mode;
-			$sort_mode = 'modifier_user_desc';
-			$offset = 0;
-			$maxRecords = -1;
+			$old_offset = $pListHash['offset'];
+			$old_maxRecords = $pListHash['max_records'];
+			$old_sort_mode = $pListHash['sort_mode'];
+			$pListHash['sort_mode'] = 'modifier_user_desc';
+			$pListHash['offset'] = 0;
+			$pListHash['max_records'] = -1;
 		}
 
 		$bindVars = array();
@@ -699,24 +784,33 @@ class LibertyContent extends LibertyBase {
 		$gateSelect = '';
 		$gateFrom = '';
 
-		if (is_array($find)) { // you can use an array of pages
-			$mid = " AND tc.`title` IN (".implode(',',array_fill(0,count($find),'?')).")";
-			$bindVars[] = $find;
-		} elseif (!empty($find) && is_string($find)) { // or a string
+		if (is_array($pListHash['find'])) { // you can use an array of titles
+			$mid = " AND tc.`title` IN (".implode(',',array_fill(0,count($pListHash['find']),'?')).")";
+			$bindVars[] = $pListHash['find'];
+		} elseif (!empty($pListHash['find']) && is_string($pListHash['find'])) { // or a string
 			$mid = " AND UPPER(tc.`title`) like ? ";
-			$bindVars[] = ('%' . strtoupper( $find ) . '%');
+			$bindVars[] = ('%' . strtoupper( $pListHash['find'] ) . '%');
 		}
 
-		if( !empty( $pUserId ) ) {
+		// calendar specific selection method - use timestamps to limit selection
+		if( !empty( $pListHash['start'] ) && !empty( $pListHash['stop'] ) ) {
+			$mid .= " AND ( tc.`".$pListHash['calendar_sort_mode']."` > ? AND tc.`".$pListHash['calendar_sort_mode']."` < ? ) ";
+			$bindVars[] = $pListHash['start'];
+			$bindVars[] = $pListHash['stop'];
+		}
+
+		if( !empty( $pListHash['user_id'] ) ) {
 			$mid .= " AND tc.`user_id` = ? ";
-			$bindVars[] = $pUserId;
+			$bindVars[] = $pListHash['user_id'];
 		}
 
-		if( !empty( $pContentGuid ) ) {
+		if( !empty( $pListHash['content_type_guid'] ) && is_string( $pListHash['content_type_guid'] ) ) {
 			$mid .= ' AND `content_type_guid`=? ';
-			$bindVars[] = $pContentGuid;
+			$bindVars[] = $pListHash['content_type_guid'];
+		} elseif( !empty( $pListHash['content_type_guid'] ) && is_array( $pListHash['content_type_guid'] ) ) {
+			$mid .= " AND tc.`content_type_guid` IN ( ".implode( ',',array_fill ( 0, count( $pListHash['content_type_guid'] ),'?' ) )." )";
+			$bindVars = array_merge( $bindVars, $pListHash['content_type_guid'] );
 		}
-
 
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
 			$gateSelect .= ' ,ts.`security_id`, ts.`security_description`, ts.`is_private`, ts.`is_hidden`, ts.`access_question`, ts.`access_answer` ';
@@ -736,7 +830,7 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 
-		if( in_array( $sort_mode, array(
+		if( in_array( $pListHash['sort_mode'], array(
 				'modifier_user_desc',
 				'modifier_user_asc',
 				'modifier_real_name_desc',
@@ -755,14 +849,14 @@ class LibertyContent extends LibertyBase {
 		// If sort mode is versions then offset is 0, maxRecords is -1 (again) and sort_mode is nil
 		// If sort mode is links then offset is 0, maxRecords is -1 (again) and sort_mode is nil
 		// If sort mode is backlinks then offset is 0, maxRecords is -1 (again) and sort_mode is nil
-		$query = "SELECT uue.`login` AS `modifier_user`, uue.`real_name` AS `modifier_real_name`, uue.`user_id` AS `modifier_user_id`, uuc.`login` AS`creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`, `hits`, tc.`title`, tc.`last_modified`, tc.`content_type_guid`, `ip`, tc.`content_id` $gateSelect
+		$query = "SELECT uue.`login` AS `modifier_user`, uue.`real_name` AS `modifier_real_name`, uue.`user_id` AS `modifier_user_id`, uuc.`login` AS`creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`, `hits`, tc.`title`, tc.`last_modified`, tc.`content_type_guid`, `ip`, tc.`created`, tc.`content_id` $gateSelect
 				  FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom, `".BIT_DB_PREFIX."users_users` uue, `".BIT_DB_PREFIX."users_users` uuc
 				  WHERE tc.`modifier_user_id`=uue.`user_id` AND tc.`user_id`=uuc.`user_id` $mid
-				  ORDER BY ".$orderTable.$this->mDb->convert_sortmode($sort_mode);
+				  ORDER BY ".$orderTable.$this->mDb->convert_sortmode($pListHash['sort_mode']);
 		$query_cant = "select count(tc.`content_id`) FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom, `".BIT_DB_PREFIX."users_users` uu WHERE uu.`user_id`=tc.`user_id` $mid";
 		// previous cant query - updated by xing
 		// $query_cant = "select count(*) from `".BIT_DB_PREFIX."tiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id` = tp.`content_id`) $mid";
-		$result = $this->mDb->query($query,$bindVars,$maxRecords,$offset);
+		$result = $this->mDb->query($query,$bindVars,$pListHash['max_records'],$pListHash['offset']);
 		$cant = $this->mDb->getOne($query_cant,$bindVars);
 		$ret = array();
 		$contentTypes = $gLibertySystem->mContentTypes;
@@ -770,7 +864,7 @@ class LibertyContent extends LibertyBase {
 			$aux = array();
 			$aux = $res;
 			if( !empty( $contentTypes[$res['content_type_guid']] ) ) {
-   	// quick alias for code readability
+				// quick alias for code readability
 				$type = &$contentTypes[$res['content_type_guid']];
 				if( empty( $type['content_object'] ) ) {
 					// create *one* object for each object *type* to  call virtual methods.
@@ -781,7 +875,6 @@ class LibertyContent extends LibertyBase {
 				$aux['real_name'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
 				$aux['editor'] = (isset( $res['modifier_real_name'] ) ? $res['modifier_real_name'] : $res['modifier_user'] );
 				$aux['content_description'] = $type['content_description'];
-//WIKI_PKG_URL."index.php?page_d=".$res['page_id'];
 				$aux['user'] = $res['creator_user'];
 				$aux['real_name'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
 				$aux['user_id'] = $res['creator_user_id'];
@@ -888,10 +981,10 @@ class LibertyContent extends LibertyBase {
 
 
 	/**
-	 * Special parsing for multipage articles 
+	 * Special parsing for multipage articles
 	 *
-	 * Temporary remove <PRE></PRE> secions to protect
-	 * from broke <PRE> tags and leave well known <PRE>
+	 * Temporary remove &lt;PRE&gt;&lt;/PRE&gt; secions to protect
+	 * from broke &lt;PRE&gt; tags and leave well known &lt;PRE&gt;
 	 * behaviour (i.e. type all text inside AS IS w/o
 	 * any interpretation)
 	 * @param string Data to process
@@ -918,10 +1011,10 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	 * Special parsing for a particular page of a multipage article 
+	 * Special parsing for a particular page of a multipage article
 	 *
-	 * Temporary remove <PRE></PRE> secions to protect
-	 * from broke <PRE> tags and leave well known <PRE>
+	 * Temporary remove &lt;PRE&gt;&lt;/PRE&gt; secions to protect
+	 * from broke &lt;PRE&gt; tags and leave well known &lt;PRE&gt;
 	 * behaviour (i.e. type all text inside AS IS w/o
 	 * any interpretation)
 	 * @param string Data to process
@@ -971,7 +1064,7 @@ class LibertyContent extends LibertyBase {
 		$query = "select `cache_id`  from `".BIT_DB_PREFIX."tiki_link_cache` where `url`=?";
 		// sometimes we can have a cache_id of 0(?!) - seen it with my own eyes, spiderr
 		$ret = $this->mDb->getOne($query, array( $url ) );
-		return( isset( $ret ) );
+		return $ret;
 	}
 
 	/**

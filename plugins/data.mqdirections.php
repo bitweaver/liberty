@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mqdirections.php,v 1.4 2005/08/07 17:40:31 squareing Exp $
+// $Id: data.mqdirections.php,v 1.5 2005/08/24 20:55:17 squareing Exp $
 
 /**
  * definitions
@@ -85,7 +85,7 @@ function data_mqdir_help() {
 				.'<td>' . tra( "The Country (Uses 2-digit ISO Codes)")
 				. tra("<br />The Default = ") . '<strong>US</strong>'
 				. tra("<br /><strong>Note:</strong> 2-Digit ISO Country Codes are available from ")
-				. "<a class='wiki' target=" . '"_blank"' . " href=http://www.bcpl.net/~j1m5path/isocodes-table.html>" . tra("ISO Country Codes</a> ")
+				. "<a href=\"http://www.bcpl.net/~j1m5path/isocodes-table.html\">" . tra("ISO Country Codes").'</a></td>'
 			.'</tr>'
 		.'</table>'
 		. tra("Example: ") . "{MQDIR icon=sm address='1730 Blake St' city=Denver state=CO zip=80202 }";
@@ -127,7 +127,7 @@ function data_mqdir( $data, $params ) {
 				.'<input type="hidden" name="2s" value="' . $a2s . '">'
 				.'<input type="hidden" name="2z" value="' . $a2z . '">'
 				.'<input type="hidden" name="2y" value="' . $a2y . '">'
-				.'<br>'
+				.'<br />'
 				.'<table border="0" cellpadding="0" cellspacing="0" style="font: 11px Arial,Helvetica;">'
 					.'<tr><td colspan="2" style="font-weight: bold;">'
 						.'<div align="center">'

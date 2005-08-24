@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.include.php,v 1.5 2005/08/07 17:40:31 squareing Exp $
+// $Id: data.include.php,v 1.6 2005/08/24 20:55:17 squareing Exp $
 
 /**
  * definitions
@@ -81,8 +81,7 @@ function data_include($data, $params) {
 		}
 	// load page by content_id
 	} elseif( isset( $params['content_id'] ) && is_numeric( $params['content_id'] ) ) {
-		$obj = LibertyBase::getLibertyObject( $params['content_id'] );
-		if( $obj->load() ) {
+		if( $obj = LibertyBase::getLibertyObject( $params['content_id'] ) ) {
 			$ret = $obj->parseData();
 		}
 	// load page by page_name

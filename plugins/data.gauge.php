@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.gauge.php,v 1.6 2005/08/07 17:40:31 squareing Exp $
+// $Id: data.gauge.php,v 1.7 2005/08/24 20:55:17 squareing Exp $
 
 /**
  * definitions
@@ -50,12 +50,12 @@ function data_gauge_help() {
 			.'<tr class="odd">'
 				.'<td>color</td>'
 				.'<td>' . tra( "colorname or hex color") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Specifies the color of the of the Bar in the Gauge. Colornames or HTML colors can be used. To specify HTML color the <strong>#</strong> character <strong>MUST</strong> be included like this: ( <strong>#RRGGBB </strong> ). If not specified - the <strong>Current Text Color</strong> will be used. See Note below for Colornames & HTML Colors Sources.") . '</td>'
+				.'<td>' . tra( "Specifies the color of the of the Bar in the Gauge. Colornames or HTML colors can be used. To specify HTML color the <strong>#</strong> character <strong>MUST</strong> be included like this: ( <strong>#RRGGBB </strong> ). If not specified - the <strong>Current Text Color</strong> will be used. See Note below for Colornames &amp; HTML Colors Sources.") . '</td>'
 			.'</tr>'
 			.'<tr class="even">'
 				.'<td>bgcolor</td>'
 				.'<td>' . tra( "colorname or hex color") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Specifies the color of the Gauges Background. Colornames or HTML colors can be used. To specify HTML color the <strong>#</strong> character <strong>MUST</strong> be included like this: ( <strong>#RRGGBB </strong> ). If not specified - the <strong>Current Background Color</strong> will be used. See Note below for Colornames & HTML Colors Sources.") . '</td>'
+				.'<td>' . tra( "Specifies the color of the Gauges Background. Colornames or HTML colors can be used. To specify HTML color the <strong>#</strong> character <strong>MUST</strong> be included like this: ( <strong>#RRGGBB </strong> ). If not specified - the <strong>Current Background Color</strong> will be used. See Note below for Colornames &amp; HTML Colors Sources.") . '</td>'
 			.'</tr>'
 			.'<tr class="odd">'
 				.'<td>max</td>'

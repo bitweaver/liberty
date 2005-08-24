@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage functions
  */
@@ -23,9 +23,8 @@ if( empty( $_REQUEST["structure_id"] ) ) {
 } else {
 	global $gStructure;
 	$gStructure = new LibertyStructure( $_REQUEST["structure_id"] );
-	$gStructure->mDb->StartTrans();
 	$gStructure->load();
-	
+
 	// order matters for these conditionals
 	if( empty( $gStructure ) || !$gStructure->isValid() ) {
 		$gBitSystem->fatalError( 'Invalid structure' );
@@ -50,25 +49,27 @@ if( empty( $_REQUEST["structure_id"] ) ) {
 	$gBitUser->storePreference( 'edit_structure_name', $rootStructure->mInfo['title'] );
 	$gBitUser->storePreference( 'edit_structure_id', $rootStructure->mStructureId );
 
-	include_once( LIBERTY_PKG_PATH.'get_content_list_inc.php' );
-	foreach( $contentList['data'] as $cItem ) {
-		$cList[$contentTypes[$cItem['content_type_guid']]][$cItem['content_id']] = $cItem['title'].' [id: '.$cItem['content_id'].']';
-	}
-	$gBitSmarty->assign( 'contentList', $cList );
-	$gBitSmarty->assign( 'contentSelect', $contentSelect );
-	$gBitSmarty->assign( 'contentTypes', $contentTypes );
-	$gBitSmarty->assign( 'contentTypes', $contentTypes );
+	if( !$gBitSystem->isFeatureActive( 'wikibook_hide_add_content' ) ) {
+		include_once( LIBERTY_PKG_PATH.'get_content_list_inc.php' );
+		foreach( $contentList['data'] as $cItem ) {
+			$cList[$contentTypes[$cItem['content_type_guid']]][$cItem['content_id']] = $cItem['title'].' [id: '.$cItem['content_id'].']';
+		}
+		$gBitSmarty->assign( 'contentList', $cList );
+		$gBitSmarty->assign( 'contentSelect', $contentSelect );
+		$gBitSmarty->assign( 'contentTypes', $contentTypes );
+		$gBitSmarty->assign( 'contentTypes', $contentTypes );
 
-	$subpages = $gStructure->s_get_pages($_REQUEST["structure_id"]);
-	$max = count($subpages);
-	$gBitSmarty->assign_by_ref('subpages', $subpages);
-	if ($max != 0) {
-		$last_child = $subpages[$max - 1];
-		$gBitSmarty->assign('insert_after', $last_child["structure_id"]);
+		$subpages = $gStructure->s_get_pages($_REQUEST["structure_id"]);
+		$max = count($subpages);
+		$gBitSmarty->assign_by_ref('subpages', $subpages);
+		if ($max != 0) {
+			$last_child = $subpages[$max - 1];
+			$gBitSmarty->assign('insert_after', $last_child["structure_id"]);
+		}
 	}
 
 	if( ( isset( $_REQUEST["action"] ) && ( $_REQUEST["action"] == 'remove' ) ) || isset( $_REQUEST["confirm"] ) ) {
-		
+
 		if( isset( $_REQUEST["confirm"] ) ) {
 			if( $gStructure->s_remove_page( $_REQUEST["structure_id"], false ) ) {
 				header( "Location: ".$_SERVER['PHP_SELF'].'?structure_id='.$gStructure->mInfo["parent_id"] );
@@ -99,11 +100,11 @@ if( empty( $_REQUEST["structure_id"] ) ) {
 		header( "Location: ".$_SERVER['PHP_SELF'].'?structure_id='.$gStructure->mInfo["structure_id"] );
 		die;
 	} elseif (isset($_REQUEST["create"])) {
-		
+
 		if (isset($_REQUEST["pageAlias"]))	{
 			$gStructure->set_page_alias($_REQUEST["structure_id"], $_REQUEST["pageAlias"]);
 		}
-		
+
 		$structureHash['root_structure_id'] = $rootStructure->mStructureId;
 		$structureHash['parent_id'] = $_REQUEST['structure_id'];
 
@@ -126,7 +127,6 @@ if( empty( $_REQUEST["structure_id"] ) ) {
 
 	$gBitSmarty->assign( (!empty( $_REQUEST['tab'] ) ? $_REQUEST['tab'] : 'body').'TabSelect', 'tdefault' );
 	$gBitSmarty->assign('subtree', $rootTree = $rootStructure->getSubTree( $rootStructure->mStructureId ));
-	$gStructure->mDb->CompleteTrans();
 }
 
 ?>

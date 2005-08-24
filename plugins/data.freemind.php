@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -90,7 +90,7 @@ function data_freemind( $data, $params ) {
 				 '        <param name="browsemode_initial_map" value="' . $params["src"] . '" >'.
 				 '        <param name="initial_mode" value="Browse" >'.
 				 '</applet>'.
-				 '<br>'.
+				 '<br />'.
 				 '<span class="">Download <a href="' . $params["src"] . '">this mind map</a> and use this application to edit it: <a href="http://freemind.sourceforge.net/">Freemind </a> </span>';
 		}		
 	}

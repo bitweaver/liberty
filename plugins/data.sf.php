@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
 // | by: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.sf.php,v 1.5 2005/08/07 17:40:31 squareing Exp $
+// $Id: data.sf.php,v 1.6 2005/08/24 20:55:17 squareing Exp $
 
 /**
  * definitions
@@ -54,10 +54,10 @@ function data_sf_help() {
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "The") . ' <strong>tag</strong> ' . tra("is a short-cut that allows you to use this plugin without having to look up the SourceForge") 
 				.' <strong>groupid or adit</strong> ' . tra("numbers for specific projects.") 
-				.'</br>' . tra("Possible values for BitWeaver are:") . '<strong>bugs / rfe / patches / support</strong>'
-				.'</br>' . tra("Possible values for TikiWiki are:") . '<strong>twbugs / twrfe / twpatches / twsupport</strong>'
-				.'</br>' . tra("Possible values for JGraph are:") . '<strong>jgbugs / jgrfe / jgsupport</strong>'
-				.'</br>' . tra("Possible values for PhpBB are:") . '<strong>pbbrfe</strong></td>'
+				.'<br/>' . tra("Possible values for BitWeaver are:") . '<strong>bugs / rfe / patches / support</strong>'
+				.'<br/>' . tra("Possible values for TikiWiki are:") . '<strong>twbugs / twrfe / twpatches / twsupport</strong>'
+				.'<br/>' . tra("Possible values for JGraph are:") . '<strong>jgbugs / jgrfe / jgsupport</strong>'
+				.'<br/>' . tra("Possible values for PhpBB are:") . '<strong>pbbrfe</strong></td>'
 			.'</tr>'
 			.'<tr class="even">'
 				.'<td>aid</td>'

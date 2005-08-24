@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.5 2005/08/07 17:40:29 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.6 2005/08/24 20:55:17 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -25,6 +25,12 @@
 define( 'STORAGE_PLUGIN', 'storage' );
 define( 'FORMAT_PLUGIN', 'format' );
 define( 'DATA_PLUGIN', 'data' );
+
+define( 'LIBERTY_SERVICE_ACCESS_CONTROL', 'access_control' );
+define( 'LIBERTY_SERVICE_CATEGORIZATION', 'categorization' );
+define( 'LIBERTY_SERVICE_MENU', 'menu' );
+define( 'LIBERTY_SERVICE_DOCUMENT_GENERATION', 'document_generation' );
+
 
 define( 'DEFAULT_ACCEPTABLE_TAGS', '<a><br><b><blockquote><cite><code><div><dd><dl><dt><em><h1><h2><h3><h4><hr>'
 				 .' <i><it><img><li><ol><p><pre><span><strong><table><tbody><div><tr><td><th><u><ul>'
@@ -116,6 +122,32 @@ class LibertySystem extends LibertyBase {
 				$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."tiki_content_types", $pTypeParams, array( 'name'=>'content_type_guid', 'value'=>$pGuid ) );
 			}
 		}
+	}
+
+	function registerService( $pServiceName, $pPackageName, $pServiceHash ) {
+		$this->mServices[$pServiceName][$pPackageName] = $pServiceHash;
+	}
+
+	function hasService( $pServiceName ) {
+		return( !empty( $this->mServices[$pServiceName] ) );
+	}
+
+	function getServiceValues( $pServiceValue ) {
+		global $gBitSystem;
+		$ret = NULL;
+		if( !empty( $this->mServices ) ) {
+			foreach( array_keys( $this->mServices ) as $service ) {
+				if( $this->hasService( $service ) ) {
+					if( !($package = $gBitSystem->getPreference( 'liberty_service_'.$service )) ) {
+						$package = key( $this->mServices[$service] );
+					}
+					if( !empty( $this->mServices[$service][$package][$pServiceValue] ) ) {
+						$ret[$service] = $this->mServices[$service][$package][$pServiceValue];
+					}
+				}
+			}
+		}
+		return $ret;
 	}
 
 	function isPluginActive( $pPluginGuid ) {

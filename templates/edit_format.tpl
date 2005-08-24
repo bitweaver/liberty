@@ -27,14 +27,13 @@
 							{/foreach}
 						{/if}
 					"
-				id="editformatguid"
 				/> {$plugin.edit_label}</label>
 				{formhelp note=`$plugin.edit_help`}
 			{/forminput}
 		{/if}
 	{/foreach}
 	{forminput}
-		{formhelp note="You can choose what kind of syntax you want to submit your data in. Some plugins can be used independently of format type. Please view the help at the bottom of the screen for more information."}
+		{formhelp note="Choose what kind of syntax you want to submit your data in."}
 	{/forminput}
 </div>
 

@@ -4,7 +4,7 @@
  * assigned_modules
  *
  * @author   StarRider starrrider@sourceforge.net
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -71,7 +71,7 @@ function data_spytext_help() {
 				.'<td>to</td>'
 				.'<td>' . tra( "boolean/string") . '<br />' .tra( "(optional)") . '</td>'
 				.'<td>' .tra( "Determines if an Address Box will be displayed before the Message. The Address Box is always in it's own ")
-					.tra( "DropDown box which contains 3 lines where the") .' <strong>spy(s) / agency(s) / & sender(s)</strong> '
+					.tra( "DropDown box which contains 3 lines where the") .' <strong>spy(s) / agency(s) / &amp; sender(s)</strong> '
 					.tra( "are identified. These lines are only displayed if a valid UserName / GroupName is found for that line. ")
 					.'<br />' . tra( "The Default Header for each line is:")
 					.'<br />Line 1 for Spy (Users) = <strong>"To the Spy:"</strong> '
@@ -138,7 +138,7 @@ function data_spytext_help() {
 					."<br /><strong>alert='TRUE'</strong> ". tra( "will enable the Alert Box with the Default Headers. The Default Headers is:")
 					.'<br /><strong>"Wake Up Charlie! There is a message on this page for you. Use your Secret Decoder Ring!"</strong> '
 					.tra( "<br />In this instance - <strong>Charlie</strong> is the UserName of the user viewing the page. The string:")
-					.'<br /><strong>*UserName*<strong> ' . tra("is replaced with name of the spy viewing the page every place it is found.")
+					.'<br /><strong>*UserName*</strong> ' . tra("is replaced with name of the spy viewing the page every place it is found.")
 					.tra( "Passing <strong>ANY</strong> other value will replace Default Message.")
 					.'<br />' . tra( "<strong>Note:</strong> The Administrator is a Spy and will be Alerted - with a slightly different message.")
 				.'</td>'
