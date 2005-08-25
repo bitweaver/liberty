@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.37 2005/08/25 16:43:28 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.38 2005/08/25 20:33:07 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1097,8 +1097,8 @@ class LibertyContent extends LibertyBase {
 		// If stuff inside [] is *really* malformatted, $data
 		// will be empty.  -rlpowell
 		if (!$this->isCached( $url ) && $data)
-		{
-			$refresh = date("U");
+		{	global $gBitSystem;
+			$refresh = $gBitSystem->getUTCTime();
 			$query = "insert into `".BIT_DB_PREFIX."tiki_link_cache`(`url`,`data`,`refresh`) values(?,?,?)";
 			$result = $this->mDb->query($query, array($url,BitDb::db_byte_encode($data),$refresh) );
 			return !isset($error);

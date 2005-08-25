@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.11 2005/08/12 12:33:03 wolff_borg Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.12 2005/08/25 20:33:07 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -270,9 +270,10 @@ class LibertyStructure extends LibertyBase {
 	* @return the new entries structure_id or null if not created.
 	*/
 	function storeNode( &$pParamHash ) {
+        global $gBitSystem;
         $ret = null;
         // If the page doesn't exist then create a new wiki page!
-		$now = date("U");
+		$now = $gBitSystem->getUTCTime();
 //		$created = $this->create_page($name, 0, '', $now, tra('created from structure'), 'system', '0.0.0.0', '');
 		// if were not trying to add a duplicate structure head
 		if ( $this->verifyNode( $pParamHash ) ) {
