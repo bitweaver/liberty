@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.36 2005/08/19 14:12:14 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.37 2005/08/25 16:43:28 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -118,7 +118,7 @@ class LibertyContent extends LibertyBase {
 	 * with the require values for LibertyContent::store()
 	 */
 	function verify( &$pParamHash ) {
-		global $gLibertySystem;
+		global $gLibertySystem, $gBitSystem;
 		if( empty( $pParamHash['user_id'] ) ) {
 			global $gBitUser;
 			$pParamHash['user_id'] = $gBitUser->getUserId();
@@ -127,7 +127,7 @@ class LibertyContent extends LibertyBase {
 		if( empty( $pParamHash['content_id'] ) ) {
 			if( empty( $this->mContentId ) ) {
 				// These should never be updated, only inserted
-				$pParamHash['content_store']['created'] = !empty( $pParamHash['created'] ) ? $pParamHash['created'] : date( "U" );
+				$pParamHash['content_store']['created'] = !empty( $pParamHash['created'] ) ? $pParamHash['created'] : $gBitSystem->getUTCTime();
 				$pParamHash['content_store']['user_id'] = $pParamHash['user_id'];
 			} else {
 				$pParamHash['content_id'] = $this->mContentId;
@@ -144,7 +144,7 @@ class LibertyContent extends LibertyBase {
 			$pParamHash['content_store']['title'] = NULL;
 		}
 
-		$pParamHash['content_store']['last_modified'] = !empty( $pParamHash['last_modified'] ) ? $pParamHash['last_modified'] : date("U");
+		$pParamHash['content_store']['last_modified'] = !empty( $pParamHash['last_modified'] ) ? $pParamHash['last_modified'] : $gBitSystem->getUTCTime();
 
 		// WARNING: Assume WIKI if t
 		if( isset( $pParamHash['content_id'] ) ) {
