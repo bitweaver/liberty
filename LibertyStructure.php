@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.12 2005/08/25 20:33:07 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.13 2005/08/25 21:11:31 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -386,7 +386,7 @@ class LibertyStructure extends LibertyBase {
 
 
 	function s_export_structure($structure_id) {
-		global $exportlib, $bitdomain;
+		global $exportlib, $bitdomain, $gBitSystem;
 
 		include_once( WIKI_PKG_PATH.'export_lib.php' );
 		include_once (BIT_PKG_PATH."util/tar.class.php");
@@ -399,7 +399,7 @@ class LibertyStructure extends LibertyBase {
 
 		foreach ($pages as $page) {
 			$data = $exportlib->export_wiki_page($page["title"], 0);
-			$tar->addData($page["title"], $data, date("U"));
+			$tar->addData($page["title"], $data, $gBitSystem->getUTCTime());
 		}
 		$tar->toTar("dump/$bitdomain" . $title . ".tar", FALSE);
 		header ("location: dump/$bitdomain" . $title . ".tar");
