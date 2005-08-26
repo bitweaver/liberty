@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.38 2005/08/25 20:33:07 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.39 2005/08/26 10:56:51 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -550,11 +550,13 @@ class LibertyContent extends LibertyBase {
 	 */
 	function addHit() {
 		global $gBitUser;
-		if( $this->mContentId && ($gBitUser->mUserId != $this->mInfo['user_id'] ) ) {
-			$query = "update `".BIT_DB_PREFIX."tiki_content` set `hits`=`hits`+1 where `content_id` = ?";
-			$result = $this->mDb->query( $query, array( $this->mContentId ) );
+		if( empty( $_REQUEST['post_comment_submit'] ) && empty( $_REQUEST['post_comment_request'] ) ) {
+			if( $this->mContentId && ( $gBitUser->mUserId != $this->mInfo['user_id'] ) ) {
+				$query = "UPDATE `".BIT_DB_PREFIX."tiki_content` SET `hits`=`hits`+1 WHERE `content_id` = ?";
+				$result = $this->mDb->query( $query, array( $this->mContentId ) );
+			}
 		}
-		return true;
+		return TRUE;
 	}
 
     /**
