@@ -20,7 +20,7 @@ include (LIBERTY_PKG_PATH."edit_storage_inc.php");
 		{formlabel label="Existing Attachment ID"}
 		{forminput}
 			<input type="text" name="existing_attachment_id[]" id="existing_attachment_id_input" size="6"/><br />
-			<a href="{$smarty.const.LIBERTY_PKG_URL}attachment_browser.php" title="{tr}Opens attachemnt browser in new window{/tr}" onkeypress="popUpWin(this.href,'standard',600,400);" onclick="popUpWin(this.href,'standard',600,400);return false;">{tr}Attachment Browser{/tr}</a>
+			<a href="{$smarty.const.LIBERTY_PKG_URL}attachment_browser.php" title="{tr}Opens attachment browser in new window{/tr}" onkeypress="popUpWin(this.href,'standard',600,400);" onclick="popUpWin(this.href,'standard',600,400);return false;">{tr}Attachment Browser{/tr}</a>
 		{/forminput}
 	</div>
 
