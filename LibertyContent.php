@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.39 2005/08/26 10:56:51 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.40 2005/08/29 21:50:59 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -265,11 +265,7 @@ class LibertyContent extends LibertyBase {
 			$this->mDb->StartTrans();
 			$this->expungeComments();
 
-			if( $gBitSystem->isPackageActive( 'categories' ) ) {
-				require_once( CATEGORIES_PKG_PATH.'categ_lib.php' );
-				global $categlib;
-				$categlib->uncategorize_object( $this->mType['content_type_guid'], $this->mContentId );
-			}
+			$this->invokeServices( 'content_expunge_function', $this );
 
 			/* seems out of place - xing
 			if( $func = $gLibertySystem->getPluginFunction( $pParamHash['format_guid'], 'expunge_function' ) ) {
