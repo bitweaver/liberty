@@ -33,16 +33,15 @@
 		<th>{smartlink ititle="Title" isort=title page=$page user_id=$user_id idefault=1 content_type_guid=$contentSelect}</th>
 		<th>{smartlink ititle="Content Type" isort=content_type_guid page=$page user_id=$user_id content_type_guid=$contentSelect}</th>
 		<th>{smartlink ititle="Author" isort=$isort_author page=$page content_type_guid=$contentSelect}</th>
-		<th>{smartlink ititle="Most recent editor" isort=$isort_editor page=$page content_type_guid=$contentSelect}</th>
+		<th colspan="2">{smartlink ititle="Most recent editor" isort=$isort_editor page=$page content_type_guid=$contentSelect}</th>
 	</tr>
 	{foreach from=$contentList item=item}
 		<tr class="{cycle values='odd,even'}">
 			<td>{$item.display_link}</td>
 			<td>{assign var=content_type_guid value=`$item.content_type_guid`}{$contentTypes.$content_type_guid}</td>
 			<td>{displayname real_name=$item.creator_real_name user=$item.creator_user}</td>
-			<td style="text-align:right;">
-				{displayname real_name=$item.modifier_real_name user=$item.modifier_user} {$item.last_modified|bit_short_date}
-			</td>
+			<td style="text-align:right;">{displayname real_name=$item.modifier_real_name user=$item.modifier_user}</td>
+			<td style="text-align:right;">{$item.last_modified|bit_short_date}</td>
 		</tr>
 	{/foreach}
 </table>

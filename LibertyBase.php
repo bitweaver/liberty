@@ -3,7 +3,7 @@
  * Base class for Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.5 2005/08/11 13:03:45 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.6 2005/08/30 22:25:07 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -62,8 +62,6 @@ class LibertyBase extends BitBase {
 				require_once( constant( strtoupper( $type['handler_package'] ).'_PKG_PATH' ).$type['handler_file'] );
 				$ret = new $type['handler_class']( NULL, $pContentId );
 				$ret->load();
-			} else {
-				print "UNHANDLED ERROR. UNKNOWN CONTENT: $pContentId -> $pContentGuid";
 			}
 		}
 		return $ret;

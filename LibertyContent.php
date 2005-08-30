@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.8 2005/08/24 20:55:17 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.9 2005/08/30 22:25:07 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -118,7 +118,7 @@ class LibertyContent extends LibertyBase {
 	 * with the require values for LibertyContent::store()
 	 */
 	function verify( &$pParamHash ) {
-		global $gLibertySystem;
+		global $gLibertySystem, $gBitSystem;
 		if( empty( $pParamHash['user_id'] ) ) {
 			global $gBitUser;
 			$pParamHash['user_id'] = $gBitUser->getUserId();
@@ -127,7 +127,7 @@ class LibertyContent extends LibertyBase {
 		if( empty( $pParamHash['content_id'] ) ) {
 			if( empty( $this->mContentId ) ) {
 				// These should never be updated, only inserted
-				$pParamHash['content_store']['created'] = !empty( $pParamHash['created'] ) ? $pParamHash['created'] : date( "U" );
+				$pParamHash['content_store']['created'] = !empty( $pParamHash['created'] ) ? $pParamHash['created'] : $gBitSystem->getUTCTime();
 				$pParamHash['content_store']['user_id'] = $pParamHash['user_id'];
 			} else {
 				$pParamHash['content_id'] = $this->mContentId;
@@ -144,7 +144,7 @@ class LibertyContent extends LibertyBase {
 			$pParamHash['content_store']['title'] = NULL;
 		}
 
-		$pParamHash['content_store']['last_modified'] = !empty( $pParamHash['last_modified'] ) ? $pParamHash['last_modified'] : date("U");
+		$pParamHash['content_store']['last_modified'] = !empty( $pParamHash['last_modified'] ) ? $pParamHash['last_modified'] : $gBitSystem->getUTCTime();
 
 		// WARNING: Assume WIKI if t
 		if( isset( $pParamHash['content_id'] ) ) {
@@ -265,11 +265,7 @@ class LibertyContent extends LibertyBase {
 			$this->mDb->StartTrans();
 			$this->expungeComments();
 
-			if( $gBitSystem->isPackageActive( 'categories' ) ) {
-				require_once( CATEGORIES_PKG_PATH.'categ_lib.php' );
-				global $categlib;
-				$categlib->uncategorize_object( $this->mType['content_type_guid'], $this->mContentId );
-			}
+			$this->invokeServices( 'content_expunge_function', $this );
 
 			/* seems out of place - xing
 			if( $func = $gLibertySystem->getPluginFunction( $pParamHash['format_guid'], 'expunge_function' ) ) {
@@ -550,11 +546,13 @@ class LibertyContent extends LibertyBase {
 	 */
 	function addHit() {
 		global $gBitUser;
-		if( $this->mContentId && ($gBitUser->mUserId != $this->mInfo['user_id'] ) ) {
-			$query = "update `".BIT_DB_PREFIX."tiki_content` set `hits`=`hits`+1 where `content_id` = ?";
-			$result = $this->mDb->query( $query, array( $this->mContentId ) );
+		if( empty( $_REQUEST['post_comment_submit'] ) && empty( $_REQUEST['post_comment_request'] ) ) {
+			if( $this->mContentId && ( $gBitUser->mUserId != $this->mInfo['user_id'] ) ) {
+				$query = "UPDATE `".BIT_DB_PREFIX."tiki_content` SET `hits`=`hits`+1 WHERE `content_id` = ?";
+				$result = $this->mDb->query( $query, array( $this->mContentId ) );
+			}
 		}
-		return true;
+		return TRUE;
 	}
 
     /**
@@ -1097,8 +1095,8 @@ class LibertyContent extends LibertyBase {
 		// If stuff inside [] is *really* malformatted, $data
 		// will be empty.  -rlpowell
 		if (!$this->isCached( $url ) && $data)
-		{
-			$refresh = date("U");
+		{	global $gBitSystem;
+			$refresh = $gBitSystem->getUTCTime();
 			$query = "insert into `".BIT_DB_PREFIX."tiki_link_cache`(`url`,`data`,`refresh`) values(?,?,?)";
 			$result = $this->mDb->query($query, array($url,BitDb::db_byte_encode($data),$refresh) );
 			return !isset($error);

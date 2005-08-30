@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_articles.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.articles.php,v 1.5 2005/08/07 17:40:31 squareing Exp $
+// $Id: data.articles.php,v 1.6 2005/08/30 22:25:07 squareing Exp $
 
 /**
  * definitions
@@ -92,6 +92,7 @@ if( $gBitSystem->isPackageActive( 'articles' ) ) {
 
 	function wikiplugin_articles($data,$params) {
 		global $gBitSmarty;
+		global $gBitSystem;
 		global $artlib;
 		global $feature_articles;
 		global $bit_p_read_article;
@@ -108,7 +109,7 @@ if( $gBitSystem->isPackageActive( 'articles' ) ) {
 			} else {
 			$topic = $artlib->get_topic_id($topic);
 			}
-		$now = date("U");
+		$now = $gBitSystem->getUTCTime();
 		$listpages = $artlib->list_articles(0, $max, 'publish_date_desc', '', $now, $user, '', $topic);
 		for ($i = 0; $i < count($listpages["data"]); $i++) {
 			$listpages["data"][$i]["parsed_heading"] = $artlib->parseData($listpages["data"][$i]["heading"]);

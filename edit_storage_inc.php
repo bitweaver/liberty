@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage functions
  *
@@ -12,7 +12,7 @@
  *
  * Calculate a base URL for the attachment deletion/removal icons to use
  */
-global $gBitSmarty, $gContent, $gBitUser;
+global $gBitSmarty, $gContent, $gBitUser, $gLibertySystem;
 $attachmentActionBaseURL = $_SERVER['PHP_SELF'].'?';
 $GETArgs = split('&',$_SERVER['QUERY_STRING']);
 
@@ -49,6 +49,6 @@ if (!empty($_REQUEST['deleteAttachment'])) {
 		$gContent->detachAttachment($attachmentId);
 	}
 }
-	
+$gBitSmarty->assign_by_ref('gLibertySystem', $gLibertySystem);	
 	
 ?>

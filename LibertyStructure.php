@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.6 2005/08/24 20:55:17 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.7 2005/08/30 22:25:07 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -270,9 +270,10 @@ class LibertyStructure extends LibertyBase {
 	* @return the new entries structure_id or null if not created.
 	*/
 	function storeNode( &$pParamHash ) {
+        global $gBitSystem;
         $ret = null;
         // If the page doesn't exist then create a new wiki page!
-		$now = date("U");
+		$now = $gBitSystem->getUTCTime();
 //		$created = $this->create_page($name, 0, '', $now, tra('created from structure'), 'system', '0.0.0.0', '');
 		// if were not trying to add a duplicate structure head
 		if ( $this->verifyNode( $pParamHash ) ) {
@@ -385,7 +386,7 @@ class LibertyStructure extends LibertyBase {
 
 
 	function s_export_structure($structure_id) {
-		global $exportlib, $bitdomain;
+		global $exportlib, $bitdomain, $gBitSystem;
 
 		include_once( WIKI_PKG_PATH.'export_lib.php' );
 		include_once (BIT_PKG_PATH."util/tar.class.php");
@@ -398,7 +399,7 @@ class LibertyStructure extends LibertyBase {
 
 		foreach ($pages as $page) {
 			$data = $exportlib->export_wiki_page($page["title"], 0);
-			$tar->addData($page["title"], $data, date("U"));
+			$tar->addData($page["title"], $data, $gBitSystem->getUTCTime());
 		}
 		$tar->toTar("dump/$bitdomain" . $title . ".tar", FALSE);
 		header ("location: dump/$bitdomain" . $title . ".tar");

@@ -72,8 +72,8 @@
 					</div>
 
 					<div class="row submit">
-						<input type="submit" name="post_comment_preview" value="{tr}preview{/tr}"/>&nbsp;
-						<input type="submit" name="post_comment_submit" value="{tr}post{/tr}"/>
+						<input type="submit" name="post_comment_preview" value="{tr}Preview{/tr}"/>&nbsp;
+						<input type="submit" name="post_comment_submit" value="{tr}Post{/tr}"/>
 					</div>
 				{/legend}
 			{elseif $gBitUser->hasPermission( 'bit_p_post_comments' )}
@@ -126,9 +126,7 @@
 		{libertypagination hash=$commentsPgnHash}
 	</div><!-- end .body -->
 {/strip}
-	<script type="text/javascript">
-	//<![CDATA[
+	<script type="text/javascript">//<![CDATA[
 		document.write('<\/div>');
-	//]]>
-	</script>
+	//]]></script>
 </div><!-- end .comment -->
