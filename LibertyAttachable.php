@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.14 2005/08/31 00:12:57 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.15 2005/08/31 18:17:26 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -450,7 +450,6 @@ function liberty_process_image( &$pFileHash ) {
 	$resizeFunc = ($gBitSystem->getPreference( 'image_processor' ) == 'imagick' ) ? 'liberty_imagick_resize_image' : 'liberty_gd_resize_image';
 	list($type, $ext) = split( '/', strtolower( $pFileHash['type'] ) );
 	mkdir_p( BIT_PKG_PATH.$pFileHash['dest_path'] );
-
 	if( $resizePath = $resizeFunc( $pFileHash, $ext ) ) {
 		$pFileHash['source_file'] = BIT_ROOT_PATH.$resizePath;
 		$nameHold = $pFileHash['name'];
@@ -525,6 +524,7 @@ function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL ) {
 //			$pFileHash['error'] = imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
 			$destUrl = liberty_process_generic( $pFileHash );
 		} else {
+			imagick_set_image_quality( $iImg, 85 );
 			$iwidth = imagick_getwidth( $iImg );
 			$iheight = imagick_getheight( $iImg );
 			if( (($iwidth / $iheight) > 0) && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) ) {
@@ -541,17 +541,15 @@ function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL ) {
 				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
 				$destFile = BIT_PKG_PATH.'/'.$destUrl;
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
-
-	//print "			if ( !imagick_resize( $iImg, $pFileHash[max_width], $pFileHash[max_height], IMAGICK_FILTER_LANCZOS, 0.5, $pFileHash[max_width] x $pFileHash[max_height] > ) ) {";
+//	print "			if ( !imagick_resize( $iImg, $pFileHash[max_width], $pFileHash[max_height], IMAGICK_FILTER_LANCZOS, 0.5, $pFileHash[max_width] x $pFileHash[max_height] > ) ) {";
 
 				// Alternate Filter settings can seen here http://www.dylanbeattie.net/magick/filters/result.html
 
 				if ( !imagick_resize( $iImg, $pFileHash['max_width'], $pFileHash['max_height'], IMAGICK_FILTER_CATROM, 1.00, '>' ) ) {
 					$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
 				}
-	//print "2YOYOYOYO $iwidth x $iheight $destUrl <br/>";
+// 	print "2YOYOYOYO $iwidth x $iheight $destUrl <br/>"; flush();
 
-				imagick_set_image_quality( $iImg, 85 );
 				if( function_exists( 'imagick_set_attribute' ) ) {
 					// this exists in the PECL package, but not php-imagick
 					$imagick_set_attribute($iImg,array("quality"=>1) );
@@ -561,6 +559,15 @@ function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL ) {
 					$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
 				}
 				$pFileHash['size'] = filesize( $destFile );
+			} elseif( $type = 'image' && $mimeExt != 'jpeg' && $mimeExt != 'png' && $mimeExt != 'gif' ) {
+				// reprocess any image types that are not jpeg, png, or gif.
+				$destExt = '.jpg';
+				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
+				$destFile = BIT_PKG_PATH.'/'.$destUrl;
+				if( !imagick_writeimage( $iImg, $destFile ) ) {
+					$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
+				}
+				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 			} else {
 	//print "GENERIC";
 				$destUrl = liberty_process_generic( $pFileHash );
