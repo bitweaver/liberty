@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.13 2005/08/21 22:26:07 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.14 2005/08/31 00:12:57 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -310,6 +310,12 @@ class LibertyAttachable extends LibertyContent {
 				if ( function_exists( $gLibertySystem->mPlugins[$guid]['expunge_function'])) {
 					$expungeFunc = $gLibertySystem->mPlugins[$guid]['expunge_function'];
 					if( $expungeFunc( $pAttachmentId ) ) {
+						$delDir = dirname( $this->mStorage[$pAttachmentId]['storage_path'] );
+						// add a safety precation to verify that images/123 is in the delete directory in case / got
+						// shoved into $this->mStorage[$pAttachmentId]['storage_path'] for some reason, which would nuke the entire storage directory
+						if( preg_match ( '/image\//', $this->mStorage[$pAttachmentId]['mime_type'] ) && preg_match( "/images\/$pAttachmentId/", $delDir ) ) {
+							unlink_r( BIT_ROOT_PATH.dirname( $this->mStorage[$pAttachmentId]['storage_path'] ) );
+						}
 						$sql = "DELETE FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id`=?";
 						$this->mDb->query( $sql, array( $pAttachmentId ) );
 					}
