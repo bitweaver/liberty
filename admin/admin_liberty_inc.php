@@ -33,11 +33,21 @@ $formCommentFeatures = array(
 );
 $gBitSmarty->assign( 'formCommentFeatures', $formCommentFeatures );
 
+
+$formImageFeatures = array(
+	"liberty_jpeg_originals" => array(
+		'label' => 'JPEG Originals',
+		'note' => 'Automatically create JPEG versions of original images named \'original.jpg\' in the attachment directory with other thumbnails.',
+		'page' => '',
+	),
+);
+$gBitSmarty->assign( 'formImageFeatures', $formImageFeatures );
+
 $formValues = array( 'image_processor', 'liberty_attachment_link_format', 'comments_per_page', 'comments_default_ordering', 'comments_default_display_mode' );
 
 if( !empty( $_REQUEST['change_prefs'] ) ) {
 	$errors = array();
-	$formFeatures = array_merge( $formLibertyFeatures, $formCommentFeatures );
+	$formFeatures = array_merge( $formLibertyFeatures, $formCommentFeatures, $formImageFeatures );
 	foreach( $formFeatures as $item => $data ) {
 		simple_set_toggle( $item );
 	}

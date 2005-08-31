@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.15 2005/08/31 18:17:26 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.16 2005/08/31 19:08:50 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -480,12 +480,20 @@ function liberty_clear_thumbnails( &$pFileHash ) {
 function liberty_generate_thumbnails( &$pFileHash ) {
 	global $gBitSystem;
 	$resizeFunc = ($gBitSystem->getPreference( 'image_processor' ) == 'imagick' ) ? 'liberty_imagick_resize_image' : 'liberty_gd_resize_image';
+	if( !preg_match( '/image\/(gif|jpg|jpeg|png)/', strtolower( $pFileHash['type'] ) ) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ) ) {
+		// jpeg version of original
+		$pFileHash['dest_base_name'] = 'original';
+		$pFileHash['name'] = 'original.jpg';
+		$pFileHash['max_width'] = 99999;
+		$pFileHash['max_height'] = 99999;
+		$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
+	}
 	// Icon thumb is 48x48
 	$pFileHash['dest_base_name'] = 'icon';
 	$pFileHash['name'] = 'icon.jpg';
 	$pFileHash['max_width'] = 48;
 	$pFileHash['max_height'] = 48;
-	$pFileHash['small_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
+	$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
 	// Avatar thumb is 100x100
 	$pFileHash['dest_base_name'] = 'avatar';
 	$pFileHash['name'] = 'avatar.jpg';
@@ -559,15 +567,6 @@ function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL ) {
 					$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
 				}
 				$pFileHash['size'] = filesize( $destFile );
-			} elseif( $type = 'image' && $mimeExt != 'jpeg' && $mimeExt != 'png' && $mimeExt != 'gif' ) {
-				// reprocess any image types that are not jpeg, png, or gif.
-				$destExt = '.jpg';
-				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
-				$destFile = BIT_PKG_PATH.'/'.$destUrl;
-				if( !imagick_writeimage( $iImg, $destFile ) ) {
-					$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
-				}
-				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 			} else {
 	//print "GENERIC";
 				$destUrl = liberty_process_generic( $pFileHash );
