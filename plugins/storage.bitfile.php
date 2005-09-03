@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -11,7 +11,7 @@ global $gLibertySystem;
  */
 define( 'PLUGIN_GUID_BIT_FILES', 'bitfile' );
 
-$pluginParams = array ( 
+$pluginParams = array (
 	'store_function' => 'bit_files_store',
 	'verify_function' => 'bit_files_verify',
 	'load_function' => 'bit_files_load',
@@ -64,12 +64,12 @@ function bit_files_load( $pRow ) {
 	global $gBitSystem, $gLibertySystem;
 	$ret = NULL;
 	if( !empty( $pRow['foreign_id'] ) && is_numeric( $pRow['foreign_id'] )) {
-		$query = "SELECT * 
+		$query = "SELECT *
 				  FROM `".BIT_DB_PREFIX."tiki_attachments` ta INNER JOIN `".BIT_DB_PREFIX."tiki_files` tf ON (tf.`file_id` = ta.`foreign_id`)
 				  WHERE ta.`foreign_id` = ? AND ta.`content_id` = ?";
 		if( $rs = $gBitSystem->mDb->query($query, array( $pRow['foreign_id'], $pRow['content_id'] )) ) {
 			$ret = $rs->fields;
-			if (preg_match ( '/image\//', $ret['mime_type'] )) { 
+			if (preg_match ( '/image\//', $ret['mime_type'] )) {
 				$ret['thumbnail_url']['avatar'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/avatar.jpg';
 				$ret['thumbnail_url']['small'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/small.jpg';
 				$ret['thumbnail_url']['medium'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/medium.jpg';
@@ -92,7 +92,7 @@ function bit_files_load( $pRow ) {
 function bit_files_expunge( $pStorageId ) {
 	global $gBitUser, $gBitSystem;
 	$ret = FALSE;
-	
+
 	if (is_numeric($pStorageId)) {
 		$sql = "SELECT * FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id` = ?";
 		$rs = $gBitSystem->mDb->query($sql, array($pStorageId));
@@ -103,8 +103,8 @@ function bit_files_expunge( $pStorageId ) {
 			$fileRow = &$fileRs->fields;
 			if ($fileRow) {
 				$absolutePath = BIT_ROOT_PATH.'/'.$fileRow['storage_path'];
-				
-				if ($gBitUser->isAdmin() || $gBitUser->mUserId == $row['user_id']) {				
+
+				if ($gBitUser->isAdmin() || $gBitUser->mUserId == $row['user_id']) {
 					if (file_exists($absolutePath)) {
 						unlink($absolutePath);
 					}

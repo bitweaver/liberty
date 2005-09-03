@@ -88,6 +88,7 @@
 				<input type="hidden" name="post_comment_reply_id" value="{$post_comment_reply_id}" />
 				<input type="hidden" name="post_comment_id" value="{$post_comment_id}" />
 				<table class="optionbar">
+					<caption>{tr}Comments Filter{/tr}</caption>
 					<tr>
 						<td>
 							<label for="comments-maxcomm">{tr}Messages{/tr} </label>

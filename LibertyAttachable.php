@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.5 2005/08/24 20:55:17 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.6 2005/09/03 10:20:02 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -310,6 +310,12 @@ class LibertyAttachable extends LibertyContent {
 				if ( function_exists( $gLibertySystem->mPlugins[$guid]['expunge_function'])) {
 					$expungeFunc = $gLibertySystem->mPlugins[$guid]['expunge_function'];
 					if( $expungeFunc( $pAttachmentId ) ) {
+						$delDir = dirname( $this->mStorage[$pAttachmentId]['storage_path'] );
+						// add a safety precation to verify that images/123 is in the delete directory in case / got
+						// shoved into $this->mStorage[$pAttachmentId]['storage_path'] for some reason, which would nuke the entire storage directory
+						if( preg_match ( '/image\//', $this->mStorage[$pAttachmentId]['mime_type'] ) && preg_match( "/images\/$pAttachmentId/", $delDir ) ) {
+							unlink_r( BIT_ROOT_PATH.dirname( $this->mStorage[$pAttachmentId]['storage_path'] ) );
+						}
 						$sql = "DELETE FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id`=?";
 						$this->mDb->query( $sql, array( $pAttachmentId ) );
 					}
@@ -444,7 +450,6 @@ function liberty_process_image( &$pFileHash ) {
 	$resizeFunc = ($gBitSystem->getPreference( 'image_processor' ) == 'imagick' ) ? 'liberty_imagick_resize_image' : 'liberty_gd_resize_image';
 	list($type, $ext) = split( '/', strtolower( $pFileHash['type'] ) );
 	mkdir_p( BIT_PKG_PATH.$pFileHash['dest_path'] );
-
 	if( $resizePath = $resizeFunc( $pFileHash, $ext ) ) {
 		$pFileHash['source_file'] = BIT_ROOT_PATH.$resizePath;
 		$nameHold = $pFileHash['name'];
@@ -475,12 +480,20 @@ function liberty_clear_thumbnails( &$pFileHash ) {
 function liberty_generate_thumbnails( &$pFileHash ) {
 	global $gBitSystem;
 	$resizeFunc = ($gBitSystem->getPreference( 'image_processor' ) == 'imagick' ) ? 'liberty_imagick_resize_image' : 'liberty_gd_resize_image';
+	if( !preg_match( '/image\/(gif|jpg|jpeg|png)/', strtolower( $pFileHash['type'] ) ) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ) ) {
+		// jpeg version of original
+		$pFileHash['dest_base_name'] = 'original';
+		$pFileHash['name'] = 'original.jpg';
+		$pFileHash['max_width'] = 99999;
+		$pFileHash['max_height'] = 99999;
+		$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
+	}
 	// Icon thumb is 48x48
 	$pFileHash['dest_base_name'] = 'icon';
 	$pFileHash['name'] = 'icon.jpg';
 	$pFileHash['max_width'] = 48;
 	$pFileHash['max_height'] = 48;
-	$pFileHash['small_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
+	$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
 	// Avatar thumb is 100x100
 	$pFileHash['dest_base_name'] = 'avatar';
 	$pFileHash['name'] = 'avatar.jpg';
@@ -519,6 +532,7 @@ function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL ) {
 //			$pFileHash['error'] = imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
 			$destUrl = liberty_process_generic( $pFileHash );
 		} else {
+			imagick_set_image_quality( $iImg, 85 );
 			$iwidth = imagick_getwidth( $iImg );
 			$iheight = imagick_getheight( $iImg );
 			if( (($iwidth / $iheight) > 0) && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) ) {
@@ -535,17 +549,15 @@ function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL ) {
 				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
 				$destFile = BIT_PKG_PATH.'/'.$destUrl;
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
-
-	//print "			if ( !imagick_resize( $iImg, $pFileHash[max_width], $pFileHash[max_height], IMAGICK_FILTER_LANCZOS, 0.5, $pFileHash[max_width] x $pFileHash[max_height] > ) ) {";
+//	print "			if ( !imagick_resize( $iImg, $pFileHash[max_width], $pFileHash[max_height], IMAGICK_FILTER_LANCZOS, 0.5, $pFileHash[max_width] x $pFileHash[max_height] > ) ) {";
 
 				// Alternate Filter settings can seen here http://www.dylanbeattie.net/magick/filters/result.html
 
 				if ( !imagick_resize( $iImg, $pFileHash['max_width'], $pFileHash['max_height'], IMAGICK_FILTER_CATROM, 1.00, '>' ) ) {
 					$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
 				}
-	//print "2YOYOYOYO $iwidth x $iheight $destUrl <br/>";
+// 	print "2YOYOYOYO $iwidth x $iheight $destUrl <br/>"; flush();
 
-				imagick_set_image_quality( $iImg, 85 );
 				if( function_exists( 'imagick_set_attribute' ) ) {
 					// this exists in the PECL package, but not php-imagick
 					$imagick_set_attribute($iImg,array("quality"=>1) );
