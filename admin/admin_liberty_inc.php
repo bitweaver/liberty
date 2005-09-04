@@ -14,25 +14,6 @@ $formLibertyFeatures = array(
 
 $gBitSmarty->assign( 'formLibertyFeatures', $formLibertyFeatures );
 
-$formCommentFeatures = array(
-	"comments_reorganise_page_layout" => array(
-		'label' => 'Position Comments at top of page',
-		'note' => 'When posting a comment, comments are moved to the top of the page. This can be very disorienting and is only recommended when your site uses comments extensively.',
-		'page' => '',
-	),
-	"comments_display_option_bar" => array(
-		'label' => 'Display Comments option bar',
-		'note' => 'Display an option bar above comments to specify how they should be sorted and how they should be displayed. Useful if your site uses comments extensively.',
-		'page' => '',
-	),
-	"comments_display_expanded" => array(
-		'label' => 'Expand Comments',
-		'note' => 'When users first visit your site, comments can be hidden or displayed by default.',
-		'page' => '',
-	),
-);
-$gBitSmarty->assign( 'formCommentFeatures', $formCommentFeatures );
-
 
 $formImageFeatures = array(
 	"liberty_jpeg_originals" => array(
