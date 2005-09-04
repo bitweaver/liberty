@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.21 $
+ * @version  $Revision: 1.2.2.22 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -144,6 +144,9 @@ class TikiWikiParser extends BitBase {
 
 
 	function storeLinks( &$pParamHash ) {
+		global $gBitSystem;
+		if (!$gBitSystem->isPackageActive( 'wiki') )
+			return;
 		$links_already_inserted_table = array();
 		if( !empty( $pParamHash['content_id'] ) ) {
 			$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_links` WHERE `from_content_id`=?";
@@ -502,10 +505,8 @@ $this->debug(0);
 		global $gBitSystem;
 		global $gBitUser;
 		global $page;
-		global $wikilib;
-		if( empty( $wikilib ) ) {
+		if( $gBitSystem->isPackageActive( 'wiki' ) ) {
 			require_once( WIKI_PKG_PATH.'BitPage.php' );
-			global $wikilib;
 		}
 
 		if( $gBitSystem->isFeatureActive( 'allow_html' ) ) {
