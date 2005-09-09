@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.5 $
+ * @version  $Revision: 1.1.1.1.2.6 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -35,7 +35,7 @@ function purge_html( $pText ) {
 
 	// convert all HTML entites to catch people trying to sneak stuff by with things like &#123; etc..
 	if( function_exists( 'html_entity_decode' ) ) {
-		$text = html_entity_decode( $pText );
+		$text = html_entity_decode( $pText, ENT_COMPAT, 'UTF-8' );
 	} else {
 		$trans_tbl = get_html_translation_table(HTML_ENTITIES);
 		$trans_tbl = array_flip($trans_tbl);
