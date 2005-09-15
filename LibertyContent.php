@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.40 2005/08/29 21:50:59 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.41 2005/09/15 00:33:06 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -68,13 +68,21 @@ class LibertyContent extends LibertyBase {
     * @public
     */
 	var $mPerms;
-
+    /**
+    * Admin control permission specific to this LibertyContent type
+    * @private
+    */
+	var $mAdminContentPerm;
+	
     /**
     * Construct an empty LibertyBase object with a blank permissions array
     */
 	function LibertyContent () {
 		LibertyBase::LibertyBase();
 		$this->mPerms = array();
+		if( empty( $this->mAdminContentPerm ) ) {
+			$this->mAdminContentPerm = 'bit_p_admin_content';
+		}
 	}
 
     /**
@@ -406,7 +414,7 @@ class LibertyContent extends LibertyBase {
 	function hasUserPermission( $pPermName, $pFatalIfFalse=FALSE, $pFatalMessage=NULL  ) {
 		global $gBitUser;
 		if( !$gBitUser->isRegistered() || !($ret = $this->isOwner()) ) {
-			if( !($ret = $gBitUser->isAdmin()) ) {
+			if( !($ret = $this->hasAdminPermission()) ) {
 				$this->verifyAccessControl();
 				if( $this->loadPermissions() ) {
 					$userPerms = $this->getUserPermissions( $gBitUser->mUserId );
@@ -418,6 +426,17 @@ class LibertyContent extends LibertyBase {
 		}
 		return( $ret );
 	}
+
+	/**
+	 * Determine if current user has the ability to administer this type of content
+	 *
+	 * @return bool True if user has this type of content administration permission
+	 */
+	function hasAdminPermission() {
+		global $gBitUser;
+		return( $gBitUser->isAdmin() || $gBitUser->hasPermission( $this->mAdminContentPerm ) );
+	}
+
 
 	/**
 	 * Get specific permissions for the specified user for this content
