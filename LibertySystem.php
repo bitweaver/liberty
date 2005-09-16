@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.16 2005/08/29 21:50:59 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.17 2005/09/16 16:44:22 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -126,7 +126,14 @@ class LibertySystem extends LibertyBase {
 	}
 
 	function registerService( $pServiceName, $pPackageName, $pServiceHash ) {
-		$this->mServices[$pServiceName][$pPackageName] = $pServiceHash;
+		global $gBitSystem;
+		// mark what packages are services
+		$gBitSystem->mPackages[$pPackageName]['service'] = TRUE;
+		if( $gBitSystem->isPackageActive( $pPackageName ) ) {
+			$this->mServices[$pServiceName][$pPackageName] = $pServiceHash;
+		} else {
+			$this->mServices[$pServiceName][$pPackageName] = array();
+		}
 	}
 
 	function hasService( $pServiceName ) {
@@ -233,8 +240,6 @@ class LibertySystem extends LibertyBase {
 		return $ret;
 
 	}
-
-
 }
 
 function parse_data_plugins(&$data, &$preparsed, &$noparsed, &$pParser ) {
