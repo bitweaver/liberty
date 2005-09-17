@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.13 2005/08/25 21:11:31 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.14 2005/09/17 15:41:00 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -129,6 +129,7 @@ class LibertyStructure extends LibertyBase {
 
 
 	function getSubTree( $pStructureId, $level = 0, $parent_pos = '' ) {
+		global $gLibertySystem, $gBitSystem;
 		if( !empty( $pStructureId ) ) {
 			$ret = array();
 			$pos = 1;
@@ -147,40 +148,52 @@ class LibertyStructure extends LibertyBase {
 			}
 
 				//Get all child nodes for this structure_id
-			$query = "SELECT ts.`content_id`, ts.`structure_id`, ts.`page_alias`, tc.`title`
-					  FROM `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_content` tc
-					  WHERE tc.`content_id` = ts.`content_id` AND `parent_id`=? ORDER BY `pos` asc";
+			$query = "SELECT ts.`content_id`, ts.`structure_id`, ts.`page_alias`, tc.`user_id`, tc.`title`, tc.`content_type_guid`, uu.`login`, uu.`real_name`
+				FROM `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_content` tc
+				LEFT JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = tc.`user_id` )
+				WHERE tc.`content_id` = ts.`content_id` AND `parent_id`=? ORDER BY `pos` asc";
 			$result = $this->mDb->query($query,array( $pStructureId ) );
 
 			$subs = array();
 			$row_max = $result->numRows();
+			$contentTypes = $gLibertySystem->mContentTypes;
 			while ($res = $result->fetchRow()) {
-				//Add
+				$aux = array();
 				$aux = $res;
-				$aux["first"]       = ($pos == 1);
-				$aux["last"]        = false;
-				$aux["level"]       = $level;
-				if (strlen($parent_pos) == 0) {
-					$aux["pos"] = "$pos";
-				}
-				else {
-					$aux["pos"] = $parent_pos . '.' . "$pos";
-				}
-				$ret[] = $aux;
-
-				//Recursively add any child nodes
-					$subs = $this->getSubTree($res["structure_id"], ($level + 1), $aux["pos"]);
-				if(isset($subs)) {
-					$ret = array_merge($ret, $subs);
-				}
-				// Insert a dummy entry to close table/list
-				if ($pos == $row_max) {
-					$aux["first"] = false;
-					$aux["last"]  = true;
+				if( !empty( $contentTypes[$res['content_type_guid']] ) ) {
+					// quick alias for code readability
+					$type = &$contentTypes[$res['content_type_guid']];
+					if( empty( $type['content_object'] ) ) {
+						// create *one* object for each object *type* to  call virtual methods.
+						include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
+						$type['content_object'] = new $type['handler_class']();
+					}
+					$aux['title'] = $type['content_object']->getTitle( $aux );
+					$aux["first"]       = ($pos == 1);
+					$aux["last"]        = false;
+					$aux["level"]       = $level;
+					if (strlen($parent_pos) == 0) {
+						$aux["pos"] = "$pos";
+					}
+					else {
+						$aux["pos"] = $parent_pos . '.' . "$pos";
+					}
 					$ret[] = $aux;
-				}
 
-				$pos++;
+					//Recursively add any child nodes
+						$subs = $this->getSubTree($res["structure_id"], ($level + 1), $aux["pos"]);
+					if(isset($subs)) {
+						$ret = array_merge($ret, $subs);
+					}
+					// Insert a dummy entry to close table/list
+					if ($pos == $row_max) {
+						$aux["first"] = false;
+						$aux["last"]  = true;
+						$ret[] = $aux;
+					}
+
+					$pos++;
+				}
 			}
 		}
 		return $ret;
