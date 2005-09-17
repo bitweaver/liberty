@@ -30,6 +30,9 @@
 			{legend legend="Image Processing System"}
 				<input type="hidden" name="page" value="{$page}" />
 				{php}if( extension_loaded( 'gd' ) ) {{/php}{assign var=gdInstalled value=TRUE}{php}}{/php}
+				{if !$gdInstalled}
+					{formfeedback warning='The GD library is not installed. For newer Linux systems (Fedora, etc.), you need to install the php-gd RPM with a command such as "yum install php-gd".'}
+				{/if}
 				<div class="row">
 					{formlabel label="
 						<a href='http://www.boutell.com/gd/'>
@@ -40,13 +43,13 @@
 						<label>
 							<input type="radio" name="image_processor" value="gd" {if !$gdInstalled}disabled="disabled"{/if} {if !$gBitSystemPrefs.image_processor || $gBitSystemPrefs.image_processor=='gd'}checked="checked"{/if} /> gdLibrary
 						</label>
-						{if !$gdInstalled}
-							{formfeedback warning='The GD library is not installed. For newer Linux systems (Fedora, etc.), you need to install the php-gd RPM with a command such as "yum install php-gd".'}
-						{/if}
 					{/forminput}
 				</div>
 
 				{php}if( extension_loaded( 'imagick' ) ) {{/php}{assign var=imagickInstalled value=TRUE}{php}}{/php}
+				{if !$imagickInstalled}
+					{formfeedback warning='To use <a href="http://www.imagemagick.org/www/download.html">ImageMagick</a>, you need to install the php-imagick extension. For Linux users, RPM files can be found at <a href="http://phprpms.sourceforge.net/imagick">PHPRPMs</a> (or compile a <a href="http://sourceforge.net/project/showfiles.php?group_id=112092&package_id=139307&release_id=292417">source rpm</a>). Windows users can try <a href="http://www.bitweaver.org/builds/php_imagick.dll">this dll</a> however it has not been tested well.'}
+				{/if}
 				<div class="row">
 					{formlabel label="
 						<a href='http://www.imagemagick.org/'>
@@ -57,9 +60,6 @@
 						<label>
 							<input type="radio" name="image_processor" value="imagick" {if !$imagickInstalled}disabled="disabled"{/if} {if $gBitSystemPrefs.image_processor=='imagick'}checked="checked"{/if}/> ImageMagick
 						</label>
-						{if !$imagickInstalled}
-							{formfeedback warning='To use <a href="http://www.imagemagick.org/www/download.html">ImageMagick</a>, you need to install the php-imagick extension. For Linux users, RPM files can be found at <a href="http://phprpms.sourceforge.net/imagick">PHPRPMs</a> (or compile a <a href="http://sourceforge.net/project/showfiles.php?group_id=112092&package_id=139307&release_id=292417">source rpm</a>). Windows users can try <a href="http://www.bitweaver.org/builds/php_imagick.dll">this dll</a> however it has not been tested well.'}
-						{/if}
 					{/forminput}
 				</div>
 				{foreach from=$formImageFeatures key=item item=output}
