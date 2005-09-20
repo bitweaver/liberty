@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.1.2.7 2005/08/15 22:54:52 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.1.2.8 2005/09/20 17:29:47 squareing Exp $ *}
 
 {strip}
 {if $gBitSystem->isFeatureActive( 'feature_wikihelp' )}
@@ -14,14 +14,14 @@
 						{/if}
 
 						{if $p.help_page}
-							<br />{tr}To view syntax help, please visit <a onkeypress="popUpWin(this.href,'full',800,800);" onclick="popUpWin(this.href,'full',800,800);return false;" class="external" href="http://www.bitweaver.org/wiki/index.php?page={$p.help_page}">{$p.help_page}</a>.{/tr}
+							<br />{tr}To view syntax help, please visit {jspopup href="http://www.bitweaver.org/wiki/index.php?page=`$p.help_page`" title=$p.help_page class=external}.{/tr}
 						{/if}
 					{/box}
 				{/if}
 			{/foreach}
 
 			{box title="Syntax Help" class="help box"}
-				{tr}For more information, please visit <a onkeypress="popUpWin(this.href,'full',800,800);" onclick="popUpWin(this.href,'full',800,800);return false;" class="external" href="http://www.bitweaver.org">bitweaver.org</a>{/tr}
+				{tr}For more information, please visit {jspopup href="http://www.bitweaver.org/" title="www.bitweaver.org" class=external}{/tr}
 			{/box}
 		{/jstab}
 
@@ -46,7 +46,7 @@
 							{/if}
 
 							{if $p.help_page}
-								<br />{tr}for additional information about this plugin, see <a title="This link will open a new window" onkeypress="popUpWin(this.href,'full',800,800);" onclick="popUpWin(this.href,'full',800,800);return false;" class="external" href="http://www.bitweaver.org/wiki/index.php?page={$p.help_page}">{$p.help_page}</a>.{/tr}<br/> 
+								<br />{tr}for additional information about this plugin, see {jspopup href="http://www.bitweaver.org/wiki/index.php?page=`$p.help_page`" type=fullscreen title=$p.help_page class=external}.{/tr}<br/> 
 							{/if}
 						{/box}
 					{/if}
