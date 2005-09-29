@@ -25,7 +25,7 @@
 			{/forminput}
 
 			{forminput}
-				{html_options multiple="multiple" id="content" size="12" name="content[]" values=$contentList options=$contentList selected=$pigeonInfo.selected_content}
+				{html_options multiple="multiple" id="content" size="12" name="content[]" values=$contentList options=$contentList}
 			{/forminput}
 
 			{forminput}
