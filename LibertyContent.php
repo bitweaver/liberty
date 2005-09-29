@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.42 2005/09/18 02:39:53 wolff_borg Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.43 2005/09/29 07:34:03 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -883,25 +883,24 @@ class LibertyContent extends LibertyBase {
 			if( !empty( $contentTypes[$res['content_type_guid']] ) ) {
 				// quick alias for code readability
 				$type = &$contentTypes[$res['content_type_guid']];
-				if( $gBitSystem->isPackageActive( $type['handler_package'] ) && empty( $type['content_object'] ) ) {
+				if( empty( $type['content_object'] ) ) {
 					// create *one* object for each object *type* to  call virtual methods.
 					include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
 					$type['content_object'] = new $type['handler_class']();
-
-					$aux['creator'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
-					$aux['real_name'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
-					$aux['editor'] = (isset( $res['modifier_real_name'] ) ? $res['modifier_real_name'] : $res['modifier_user'] );
-					$aux['content_description'] = $type['content_description'];
-					$aux['user'] = $res['creator_user'];
-					$aux['real_name'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
-					$aux['user_id'] = $res['creator_user_id'];
-					require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'bit_long_date' );
-					$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
-					// getDisplayUrl is currently a pure virtual method in LibertyContent, so this cannot be called currently
-//	 				$aux['display_url'] = $type['content_object']->getDisplayUrl( $aux['title'], $aux );
-					$aux['title'] = $type['content_object']->getTitle( $aux );
-					$ret[] = $aux;
 				}
+				$aux['creator'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
+				$aux['real_name'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
+				$aux['editor'] = (isset( $res['modifier_real_name'] ) ? $res['modifier_real_name'] : $res['modifier_user'] );
+				$aux['content_description'] = $type['content_description'];
+				$aux['user'] = $res['creator_user'];
+				$aux['real_name'] = (isset( $res['creator_real_name'] ) ? $res['creator_real_name'] : $res['creator_user'] );
+				$aux['user_id'] = $res['creator_user_id'];
+				require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'bit_long_date' );
+				$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
+				// getDisplayUrl is currently a pure virtual method in LibertyContent, so this cannot be called currently
+//	 				$aux['display_url'] = $type['content_object']->getDisplayUrl( $aux['title'], $aux );
+				$aux['title'] = $type['content_object']->getTitle( $aux );
+				$ret[] = $aux;
 			}
 		}
 
