@@ -24,9 +24,18 @@ $commentSettings = array(
 $gBitSmarty->assign( 'commentSettings', $commentSettings );
 
 if( !empty( $_REQUEST['change_prefs'] ) ) {
+
+
 	foreach( array_keys( $commentSettings ) as $item ) {
 		simple_set_toggle( $item );
 	}
+
+	$formValues = array('comments_per_page', 'comments_default_ordering', 'comments_default_display_mode' );
+	foreach( $formValues as $item ) {
+		simple_set_value( $item );
+	}
+
+
 }
 
 $gBitSystem->display( 'bitpackage:liberty/admin_comments.tpl');
