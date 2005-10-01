@@ -1,9 +1,13 @@
 {strip}
 <br />
-{if $gBitSystem->isFeatureActive( 'comments_display_expanded' )}
-	{assign var=initial value=none}{assign var=subsequent value=block}{assign var=iname value=expanded}
+{if $gBitSystemPrefs.comments_display_expanded eq 'y'}
+	{assign var=initial value=block}
+	{assign var=iname value=expanded}
+	{* iname=expanded displays a minus sign *}
 {else}
-	{assign var=initial value=block}{assign var=subsequent value=none}{assign var=iname value=collapsed}
+	{assign var=initial value=none}
+	{assign var=iname value=collapsed}
+	{* iname=collapsed displays a plus sign *}
 {/if}
 
 
@@ -19,10 +23,16 @@
 		</h2>
 	</div>
 
+{* 
+$smarty.cookies.bitcomments is only set if user has clicked on the +/- icon to expand/collapse the comment
+display.  Cookie values are: o=display is expanded, c=display is collapased
+If cookie is not set, then use $gBitSystemPrefs.comments_display_expanded to determine the display
+*}
+
 {/strip}
 	<script type="text/javascript">//<![CDATA[
 		setfoldericonstate('bitcomments');
-		document.write('<div id="bitcomments" style="display:{if $smarty.cookies.bitcomments eq 'o'}{$initial}{else}{$subsequent}{/if};">');
+		document.write('<div id="bitcomments" style="display:{if $smarty.cookies.bitcomments eq 'o'}block{else}{if $smarty.cookies.bitcomments eq 'c'}none{else}{$initial}{/if}{/if};">');
 	//]]></script>
 {strip}
 
@@ -83,7 +93,7 @@
 			{/if}
 		{/form}
 
-		{if $comments and $gBitSystem->isFeatureActive( 'comments_display_option_bar' )}
+		{if $comments and $gBitSystemPrefs.comments_display_option_bar eq 'y'}
 			{form action="`$comments_return_url`#editcomments"}
 				<input type="hidden" name="post_comment_reply_id" value="{$post_comment_reply_id}" />
 				<input type="hidden" name="post_comment_id" value="{$post_comment_id}" />
