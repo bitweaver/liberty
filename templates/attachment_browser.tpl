@@ -16,12 +16,6 @@
 		<link rel="alternate stylesheet" title="{$alt_name}" type="text/css" href="{$alt_path}" media="screen" />
 	{/foreach}
 
-	<script type="text/javascript"><!--
-		var tikiCookiePath = "{$gBitSystemPrefs.cookie_path}";
-		var tikiCookieDomain = "{$gBitSystemPrefs.cookie_domain}";
-		var tikiIconDir = "{$smarty.const.LIBERTY_PKG_URL}icons";
-		var tikiRootUrl = "{$smarty.const.BIT_ROOT_URL}";
-	--></script>
 	<script type="text/javascript" src="{$smarty.const.KERNEL_PKG_URL}bitweaver.js"></script>
 
 	{literal}
