@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.22 $
+ * @version  $Revision: 1.2.2.23 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -754,7 +754,6 @@ $this->debug(0);
 
 		// New syntax for wiki pages ((name)) Where name can be anything
 		preg_match_all("/\(\(([^\)][^\)]+)\)\)/", $data, $pages);
-
 		foreach (array_unique($pages[1])as $page_parse) {
 			$repl2 = true;
 
@@ -1335,7 +1334,7 @@ $this->debug(0);
 		}
 
 		foreach ($preparsed as $pp) {
-//			$data = str_replace($pp["key"], "<pre>" . $pp["data"] . "</pre>", $data);
+			$data = str_replace($pp["key"], "<pre>" . $pp["data"] . "</pre>", $data);
 		}
 
 		// Process pos_handlers here
