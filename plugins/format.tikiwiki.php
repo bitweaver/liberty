@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.23 $
+ * @version  $Revision: 1.2.2.24 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -81,7 +81,7 @@ function tikiwiki_parse_data( &$pData, &$pCommonObject ) {
 }
 
 /**
- * TikiWikiParser 
+ * TikiWikiParser
  *
  * @package kernel
  */
@@ -795,7 +795,7 @@ $this->debug(0);
 		// If they are parenthesized then don't treat as links
 		// Prevent ))PageName(( from being expanded	\"\'
 		//[A-Z][a-z0-9_\-]+[A-Z][a-z0-9_\-]+[A-Za-z0-9\-_]*
-		if ($gBitSystem->getPreference('feature_wikiwords') == 'y') {
+		if( $gBitSystem->isPackageActive( 'wiki' ) && $gBitSystem->isFeatureActive( 'feature_wikiwords' ) ) {
 			// The first part is now mandatory to prevent [Foo|MyPage] from being converted!
 			// the {2} is curious but seems to prevent things like "__Administration / Modules__" getting linked - spiderr
 			$pages = $this->extractWikiWords( $data );
@@ -873,7 +873,7 @@ $this->debug(0);
 			//print_r($imgdata);
 			$repl = '<img alt="' . tra('Image') . '" src="'.$imgdata["src"].'" style="border:0;'.( !empty( $imgdata["float"] ) ? ' float:'.$imgdata["float"].';' : '' ).'"';
 
-			
+
 
 			if ($imgdata["width"])
 				$repl .= ' width="' . $imgdata["width"] . '"';
