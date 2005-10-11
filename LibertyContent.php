@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.43 2005/09/29 07:34:03 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.44 2005/10/11 05:43:01 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -73,7 +73,7 @@ class LibertyContent extends LibertyBase {
     * @private
     */
 	var $mAdminContentPerm;
-	
+
     /**
     * Construct an empty LibertyBase object with a blank permissions array
     */
@@ -220,6 +220,9 @@ class LibertyContent extends LibertyBase {
 			if( empty( $pParamHash['content_id'] ) ) {
 				$pParamHash['content_store']['content_id'] = $this->mDb->GenID( 'tiki_content_id_seq' );
 				$pParamHash['content_id'] = $pParamHash['content_store']['content_id'];
+				// make sure some variables are stuff in case services need getObjectType, mContentId, etc...
+				$this->mInfo['content_type_guid'] = $pParamHash['content_type_guid'];
+				$this->mContentId = $pParamHash['content_store']['content_id'];
 				$result = $this->mDb->associateInsert( $table, $pParamHash['content_store'] );
 			} else {
 				if( !empty( $pParamHash['content_store']['title'] ) && !empty( $this->mInfo['title'] ) ) {
