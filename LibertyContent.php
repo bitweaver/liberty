@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.9 2005/08/30 22:25:07 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.10 2005/10/12 15:13:52 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -68,6 +68,11 @@ class LibertyContent extends LibertyBase {
     * @public
     */
 	var $mPerms;
+    /**
+    * Admin control permission specific to this LibertyContent type
+    * @private
+    */
+	var $mAdminContentPerm;
 
     /**
     * Construct an empty LibertyBase object with a blank permissions array
@@ -75,6 +80,9 @@ class LibertyContent extends LibertyBase {
 	function LibertyContent () {
 		LibertyBase::LibertyBase();
 		$this->mPerms = array();
+		if( empty( $this->mAdminContentPerm ) ) {
+			$this->mAdminContentPerm = 'bit_p_admin_content';
+		}
 	}
 
     /**
@@ -212,6 +220,9 @@ class LibertyContent extends LibertyBase {
 			if( empty( $pParamHash['content_id'] ) ) {
 				$pParamHash['content_store']['content_id'] = $this->mDb->GenID( 'tiki_content_id_seq' );
 				$pParamHash['content_id'] = $pParamHash['content_store']['content_id'];
+				// make sure some variables are stuff in case services need getObjectType, mContentId, etc...
+				$this->mInfo['content_type_guid'] = $pParamHash['content_type_guid'];
+				$this->mContentId = $pParamHash['content_store']['content_id'];
 				$result = $this->mDb->associateInsert( $table, $pParamHash['content_store'] );
 			} else {
 				if( !empty( $pParamHash['content_store']['title'] ) && !empty( $this->mInfo['title'] ) ) {
@@ -406,7 +417,7 @@ class LibertyContent extends LibertyBase {
 	function hasUserPermission( $pPermName, $pFatalIfFalse=FALSE, $pFatalMessage=NULL  ) {
 		global $gBitUser;
 		if( !$gBitUser->isRegistered() || !($ret = $this->isOwner()) ) {
-			if( !($ret = $gBitUser->isAdmin()) ) {
+			if( !($ret = $this->hasAdminPermission()) ) {
 				$this->verifyAccessControl();
 				if( $this->loadPermissions() ) {
 					$userPerms = $this->getUserPermissions( $gBitUser->mUserId );
@@ -418,6 +429,17 @@ class LibertyContent extends LibertyBase {
 		}
 		return( $ret );
 	}
+
+	/**
+	 * Determine if current user has the ability to administer this type of content
+	 *
+	 * @return bool True if user has this type of content administration permission
+	 */
+	function hasAdminPermission() {
+		global $gBitUser;
+		return( $gBitUser->isAdmin() || $gBitUser->hasPermission( $this->mAdminContentPerm ) );
+	}
+
 
 	/**
 	 * Get specific permissions for the specified user for this content
@@ -879,7 +901,7 @@ class LibertyContent extends LibertyBase {
 				require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'bit_long_date' );
 				$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
 				// getDisplayUrl is currently a pure virtual method in LibertyContent, so this cannot be called currently
-// 				$aux['display_url'] = $type['content_object']->getDisplayUrl( $aux['title'], $aux );
+//	 				$aux['display_url'] = $type['content_object']->getDisplayUrl( $aux['title'], $aux );
 				$aux['title'] = $type['content_object']->getTitle( $aux );
 				$ret[] = $aux;
 			}

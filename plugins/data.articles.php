@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_articles.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.articles.php,v 1.6 2005/08/30 22:25:07 squareing Exp $
+// $Id: data.articles.php,v 1.7 2005/10/12 15:13:52 spiderr Exp $
 
 /**
  * definitions
@@ -31,8 +31,8 @@ $pluginParams = array ( 'tag' => 'ARTICLES',
 						'auto_activate' => FALSE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_articles',
-						'title' => 'Articles<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
-//						'title' => 'Articles',                                                                             // and Remove the comment from the start of this line
+//						'title' => 'Articles<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
+						'title' => 'Articles',                                                                             // and Remove the comment from the start of this line
 						'help_page' => 'DataPluginArticles',
 						'description' => tra("This plugin will display several Articles."),
 						'help_function' => 'data_articles_help',
@@ -66,6 +66,11 @@ function data_articles_help() {
 				.'<td>' . tra( "type name") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "Filters the Articles so that only the Type specified is displayed") . '</td>'
 			.'</tr>'
+			.'<tr class="even">'
+				.'<td>format</td>'
+				.'<td>' . tra( "display format") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "Specify format for article display - default is simple title list") . '</td>'
+			.'</tr>'
 		.'</table>'
 		. tra("Example: ") . "{ARTICLES max=5 topic='some_topic'}<br />"
 		. tra("Example: ") . "{ARTICLES max=5 type='some_type'}";
@@ -77,50 +82,66 @@ function data_articles($data, $params) { // No change in the parameters with Cly
 // The next 2 lines allow access to the $pluginParams given above and may be removed when no longer needed
 	global $gLibertySystem; 
 	$pluginParams = $gLibertySystem->mPlugins[PLUGIN_GUID_DATAARTICLES];
-	$ret = 'The plugin <strong>"' . $pluginParams['tag'] . '"</strong> has not been completed as yet. ';
-	return $ret;
-}
-}
-/******************************************************************************
-The code below is from the deprecated ARTICLES plugin. All comments and the help routines have been removed. - StarRider
 
+    require_once( ARTICLES_PKG_PATH.'BitArticle.php');
+    require_once( LIBERTY_PKG_PATH.'lookup_content_inc.php' );
 
-
-global $gBitSystem;
-if( $gBitSystem->isPackageActive( 'articles' ) ) {
-	include_once( ARTICLES_PKG_PATH . 'art_lib.php' );
-
-	function wikiplugin_articles($data,$params) {
-		global $gBitSmarty;
-		global $gBitSystem;
-		global $artlib;
-		global $feature_articles;
-		global $bit_p_read_article;
-		global $user;
-		extract($params);
-		if (($feature_articles !=  'y') || (!$gBitUser->hasPermission( 'bit_p_read_article' ))) {
-	//		the feature is disabled or the user can't read articles
-			return("");
-		}
-		if(!isset($max)) {$max='3';}
-	// Addes filtering by topic if topic is passed
-			if(!isset($topic)) {
-			$topic='';
-			} else {
-			$topic = $artlib->get_topic_id($topic);
-			}
-		$now = $gBitSystem->getUTCTime();
-		$listpages = $artlib->list_articles(0, $max, 'publish_date_desc', '', $now, $user, '', $topic);
-		for ($i = 0; $i < count($listpages["data"]); $i++) {
-			$listpages["data"][$i]["parsed_heading"] = $artlib->parseData($listpages["data"][$i]["heading"]);
-			//print_r($listpages["data"][$i]['title']);
-		}
-			$topics = $artlib->list_topics();
-			$gBitSmarty->assign_by_ref('topics', $topics);
-		// If there're more records then assign next_offset
-		$gBitSmarty->assign_by_ref('listpages', $listpages["data"]);
-		return "~np~ ".$gBitSmarty->fetch('bitpackage:articles/center_list_articles.tpl')." ~/np~";
+    $module_params = $params;
+    
+	$articles = new BitArticle();
+	$stati = array( 'pending', 'approved' );
+	if( !empty( $module_params['status'] ) && in_array( $module_params['status'], $stati ) ) {
+		$status_id = constant( 'ARTICLE_STATUS_'.strtoupper( $module_params['status'] ) );
+	} else {
+		$status_id = ARTICLE_STATUS_APPROVED;
 	}
+
+	$sortOptions = array(
+		"last_modified_asc",
+		"last_modified_desc",
+		"created_asc",
+		"created_desc",
+	);
+	if( !empty( $module_params['sort_mode'] ) && in_array( $module_params['sort_mode'], $sortOptions ) ) {
+		$sort_mode = $module_params['sort_mode'];
+	} else {
+		$sort_mode = 'last_modified_desc';
+	}
+
+	$getHash = Array();
+	$getHash['status_id']     = $status_id;
+	$getHash['sort_mode']     = $sort_mode;
+	$getHash['max_records']   = empty($module_params['max']) ? 1 : $module_params['max'];
+	$getHash['topic']         = !empty( $module_params['topic'] ) ? $module_params['topic'] : NULL;
+	$articles_results = $articles->getList( $getHash );
+
+
+	$display_format = empty($module_params['format']) ? 'simple_title_list' : $module_params['format'];
+	$display_result = "";
+	
+	switch ($display_format) {
+
+	case 'simple_title_list':
+	default:
+		$display_result = "<table><tr><td>";
+		foreach ($articles_results['data'] as $article) {
+			$article_object = new BitArticle($article['article_id']);
+			$link = ""
+			. "<a href='" 
+			. $article_object->getDisplayUrl()
+			. "'>"
+			. $article['title'] 
+			. "</a>"
+			;
+
+			$display_result .= "<tr><td>$link</td></tr>\n";
+			} 
+		$display_result .= "</table>\n";
+		break;
+
+	}	
+
+	return $display_result;
 }
-*/
+}
 ?>

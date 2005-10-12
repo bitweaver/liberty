@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.7 2005/08/30 22:25:07 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.8 2005/10/12 15:13:52 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -40,9 +40,14 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	function getNode( $pStructureId=NULL, $pContentId=NULL ) {
+		global $gLibertySystem, $gBitSystem;
+		$contentTypes = $gLibertySystem->mContentTypes;
 		$ret = NULL;
-		$query = 'SELECT ts.*,tc.`title`, tc.`content_type_guid`, tc.`user_id`
-				  FROM `'.BIT_DB_PREFIX.'tiki_structures` ts INNER JOIN `'.BIT_DB_PREFIX.'tiki_content` tc ON (ts.`content_id`=tc.`content_id`)';
+		$query = 'SELECT ts.*, tc.`user_id`, tc.`title`, tc.`content_type_guid`, uu.`login`, uu.`real_name`
+				  FROM `'.BIT_DB_PREFIX.'tiki_structures` ts
+				  INNER JOIN `'.BIT_DB_PREFIX.'tiki_content` tc ON (ts.`content_id`=tc.`content_id`)
+				  LEFT JOIN `'.BIT_DB_PREFIX.'users_users` uu ON ( uu.`user_id` = tc.`user_id` )';
+
 		if( is_numeric( $pStructureId ) ) {
 			$query .= ' WHERE ts.`structure_id`=?';
 			$bindVars = array( $pStructureId );
@@ -50,9 +55,22 @@ class LibertyStructure extends LibertyBase {
 			$query .= ' WHERE ts.`content_id`=?';
 			$bindVars = array( $pContentId );
 		}
+
 		if( $result = $this->mDb->query( $query, $bindVars ) ) {
 			$ret = $result->fields;
 		}
+
+		if( !empty( $contentTypes[$ret['content_type_guid']] ) ) {
+			// quick alias for code readability
+			$type = &$contentTypes[$ret['content_type_guid']];
+			if( empty( $type['content_object'] ) ) {
+				// create *one* object for each object *type* to  call virtual methods.
+				include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
+				$type['content_object'] = new $type['handler_class']();
+			}
+			$ret['title'] = $type['content_object']->getTitle( $ret );
+		}
+
 		return $ret;
 	}
 
@@ -129,6 +147,7 @@ class LibertyStructure extends LibertyBase {
 
 
 	function getSubTree( $pStructureId, $level = 0, $parent_pos = '' ) {
+		global $gLibertySystem, $gBitSystem;
 		if( !empty( $pStructureId ) ) {
 			$ret = array();
 			$pos = 1;
@@ -147,40 +166,52 @@ class LibertyStructure extends LibertyBase {
 			}
 
 				//Get all child nodes for this structure_id
-			$query = "SELECT ts.`content_id`, ts.`structure_id`, ts.`page_alias`, tc.`title`
-					  FROM `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_content` tc
-					  WHERE tc.`content_id` = ts.`content_id` AND `parent_id`=? ORDER BY `pos` asc";
+			$query = "SELECT ts.`content_id`, ts.`structure_id`, ts.`page_alias`, tc.`user_id`, tc.`title`, tc.`content_type_guid`, uu.`login`, uu.`real_name`
+				FROM `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_content` tc
+				LEFT JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = tc.`user_id` )
+				WHERE tc.`content_id` = ts.`content_id` AND `parent_id`=? ORDER BY `pos` asc";
 			$result = $this->mDb->query($query,array( $pStructureId ) );
 
 			$subs = array();
 			$row_max = $result->numRows();
+			$contentTypes = $gLibertySystem->mContentTypes;
 			while ($res = $result->fetchRow()) {
-				//Add
+				$aux = array();
 				$aux = $res;
-				$aux["first"]       = ($pos == 1);
-				$aux["last"]        = false;
-				$aux["level"]       = $level;
-				if (strlen($parent_pos) == 0) {
-					$aux["pos"] = "$pos";
-				}
-				else {
-					$aux["pos"] = $parent_pos . '.' . "$pos";
-				}
-				$ret[] = $aux;
-
-				//Recursively add any child nodes
-					$subs = $this->getSubTree($res["structure_id"], ($level + 1), $aux["pos"]);
-				if(isset($subs)) {
-					$ret = array_merge($ret, $subs);
-				}
-				// Insert a dummy entry to close table/list
-				if ($pos == $row_max) {
-					$aux["first"] = false;
-					$aux["last"]  = true;
+				if( !empty( $contentTypes[$res['content_type_guid']] ) ) {
+					// quick alias for code readability
+					$type = &$contentTypes[$res['content_type_guid']];
+					if( empty( $type['content_object'] ) ) {
+						// create *one* object for each object *type* to  call virtual methods.
+						include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
+						$type['content_object'] = new $type['handler_class']();
+					}
+					$aux['title'] = $type['content_object']->getTitle( $aux );
+					$aux["first"]       = ($pos == 1);
+					$aux["last"]        = false;
+					$aux["level"]       = $level;
+					if (strlen($parent_pos) == 0) {
+						$aux["pos"] = "$pos";
+					}
+					else {
+						$aux["pos"] = $parent_pos . '.' . "$pos";
+					}
 					$ret[] = $aux;
-				}
 
-				$pos++;
+					//Recursively add any child nodes
+						$subs = $this->getSubTree($res["structure_id"], ($level + 1), $aux["pos"]);
+					if(isset($subs)) {
+						$ret = array_merge($ret, $subs);
+					}
+					// Insert a dummy entry to close table/list
+					if ($pos == $row_max) {
+						$aux["first"] = false;
+						$aux["last"]  = true;
+						$ret[] = $aux;
+					}
+
+					$pos++;
+				}
 			}
 		}
 		return $ret;
@@ -542,23 +573,36 @@ class LibertyStructure extends LibertyBase {
 	// it's used only in {toc} thing hardcoded in parse gBitSystem->parse -- (mose)
 	// the $tocPrefix can be used to Prefix a subtree as it would start from a given number (e.g. 2.1.3)
 	function build_subtree_toc($id,$slide=false,$order='asc',$tocPrefix='') {
+		global $gLibertySystem, $gBitSystem;
 		$back = array();
 		$cant = $this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."tiki_structures` where `parent_id`=?",array((int)$id));
 		if ($cant) {
-			$query = "SELECT `structure_id`, tc.`title`, `page_alias`
+			$query = "SELECT `structure_id`, `page_alias`, tc.`user_id`, tc.`title`, tc.`content_type_guid`, uu.`login`, uu.`real_name`
 					  FROM `".BIT_DB_PREFIX."tiki_structures` ts INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON ( tc.`content_id`=ts.`content_id` )
+					  LEFT JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = tc.`user_id` )
 					  WHERE `parent_id`=?
 					  ORDER BY ".$this->mDb->convert_sortmode("pos_".$order);
 			$result = $this->mDb->query($query,array((int)$id));
 			$prefix=1;
+			$contentTypes = $gLibertySystem->mContentTypes;
 			while ($res = $result->fetchRow()) {
 				$res['prefix']=($tocPrefix=='')?'':"$tocPrefix.";
 				$res['prefix'].=$prefix;
 				$prefix++;
-				if ($res['structure_id'] != $id) {
-					$sub = $this->build_subtree_toc($res['structure_id'],$slide,$order,$res['prefix']);
-					if (is_array($sub)) {
-						$res['sub'] = $sub;
+				if( !empty( $contentTypes[$res['content_type_guid']] ) ) {
+					// quick alias for code readability
+					$type = &$contentTypes[$res['content_type_guid']];
+					if( empty( $type['content_object'] ) ) {
+						// create *one* object for each object *type* to  call virtual methods.
+						include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
+						$type['content_object'] = new $type['handler_class']();
+					}
+					$res['title'] = $type['content_object']->getTitle( $res );
+					if ($res['structure_id'] != $id) {
+						$sub = $this->build_subtree_toc($res['structure_id'],$slide,$order,$res['prefix']);
+						if (is_array($sub)) {
+							$res['sub'] = $sub;
+						}
 					}
 				}
 				$back[] = $res;

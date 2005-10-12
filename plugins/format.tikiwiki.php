@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -81,7 +81,7 @@ function tikiwiki_parse_data( &$pData, &$pCommonObject ) {
 }
 
 /**
- * TikiWikiParser 
+ * TikiWikiParser
  *
  * @package kernel
  */
@@ -144,6 +144,9 @@ class TikiWikiParser extends BitBase {
 
 
 	function storeLinks( &$pParamHash ) {
+		global $gBitSystem;
+		if (!$gBitSystem->isPackageActive( 'wiki') )
+			return;
 		$links_already_inserted_table = array();
 		if( !empty( $pParamHash['content_id'] ) ) {
 			$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_links` WHERE `from_content_id`=?";
@@ -502,10 +505,8 @@ $this->debug(0);
 		global $gBitSystem;
 		global $gBitUser;
 		global $page;
-		global $wikilib;
-		if( empty( $wikilib ) ) {
+		if( $gBitSystem->isPackageActive( 'wiki' ) ) {
 			require_once( WIKI_PKG_PATH.'BitPage.php' );
-			global $wikilib;
 		}
 
 		if( $gBitSystem->isFeatureActive( 'allow_html' ) ) {
@@ -753,7 +754,6 @@ $this->debug(0);
 
 		// New syntax for wiki pages ((name)) Where name can be anything
 		preg_match_all("/\(\(([^\)][^\)]+)\)\)/", $data, $pages);
-
 		foreach (array_unique($pages[1])as $page_parse) {
 			$repl2 = true;
 
@@ -795,7 +795,7 @@ $this->debug(0);
 		// If they are parenthesized then don't treat as links
 		// Prevent ))PageName(( from being expanded	\"\'
 		//[A-Z][a-z0-9_\-]+[A-Z][a-z0-9_\-]+[A-Za-z0-9\-_]*
-		if ($gBitSystem->getPreference('feature_wikiwords') == 'y') {
+		if( $gBitSystem->isPackageActive( 'wiki' ) && $gBitSystem->isFeatureActive( 'feature_wikiwords' ) ) {
 			// The first part is now mandatory to prevent [Foo|MyPage] from being converted!
 			// the {2} is curious but seems to prevent things like "__Administration / Modules__" getting linked - spiderr
 			$pages = $this->extractWikiWords( $data );
@@ -873,7 +873,7 @@ $this->debug(0);
 			//print_r($imgdata);
 			$repl = '<img alt="' . tra('Image') . '" src="'.$imgdata["src"].'" style="border:0;'.( !empty( $imgdata["float"] ) ? ' float:'.$imgdata["float"].';' : '' ).'"';
 
-			
+
 
 			if ($imgdata["width"])
 				$repl .= ' width="' . $imgdata["width"] . '"';
@@ -1334,7 +1334,7 @@ $this->debug(0);
 		}
 
 		foreach ($preparsed as $pp) {
-//			$data = str_replace($pp["key"], "<pre>" . $pp["data"] . "</pre>", $data);
+			$data = str_replace($pp["key"], "<pre>" . $pp["data"] . "</pre>", $data);
 		}
 
 		// Process pos_handlers here

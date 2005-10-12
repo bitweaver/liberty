@@ -18,7 +18,7 @@
 					{if $structureInfo.prev and $structureInfo.prev.structure_id}
 						<a href="index.php?structure_id={$structureInfo.prev.structure_id}">
 							{if $wikibook_use_icons eq 'y'}
-								{biticon ipackage=liberty iname=nav_prev iexplain=previous}
+								{biticon ipackage=liberty iname=nav_prev iexplain=Previous}
 							{else}
 								&laquo;&nbsp;{$structureInfo.prev.title}
 							{/if}
@@ -30,7 +30,7 @@
 					{if $structureInfo.next and $structureInfo.next.structure_id}
 						<a href="index.php?structure_id={$structureInfo.next.structure_id}">
 							{if $wikibook_use_icons eq 'y'}
-								{biticon ipackage=liberty iname=nav_next iexplain=previous}
+								{biticon ipackage=liberty iname=nav_next iexplain=Next}
 							{else}
 								{$structureInfo.next.title}&nbsp;&raquo;
 							{/if}
