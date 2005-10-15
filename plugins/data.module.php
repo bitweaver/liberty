@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.8 $
+ * @version  $Revision: 1.1.1.1.2.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -16,29 +16,7 @@
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
 // | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.module.php,v 1.1.1.1.2.8 2005/08/03 07:43:55 lsces Exp $
-
-/**
-Displays a module inlined in page
-Parameters
-module name : module=>lambda
-align : align=>(left|center|right)
-max : max=>20
-np : np=>(0|1) # (for non-parsed content)
-module args : arg=>value (depends on module)
-Example:
-{MODULE(module=>last_modified_pages,align=>left,max=>3,maxlen=>22)}
-{/MODULE}
-about module params : all params are passed in $module_params
-so if you need to use parmas just add them in MODULE()
-like the tracker_id in the above example.
-*/
-/**
- * \warning zaufi: using cached module template is break the idea of
- *   having different (than system default) parameters for modules...
- *   so cache checking and maintaining currently commented out
- *   'till another solution will be implemented :)
- */
+// $Id: data.module.php,v 1.1.1.1.2.9 2005/10/15 08:52:01 squareing Exp $
 
 /**
  * definitions
@@ -60,9 +38,82 @@ $pluginParams = array ( 'tag' => 'MODULE',
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAMODULE, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAMODULE );
 
-/**
- * datamodule_help
- */
+function datamodule_help() {
+	$help =
+		'<table class="data help">'
+			.'<tr>'
+				.'<th>' . tra( "Key" ) . '</th>'
+				.'<th>' . tra( "Type" ) . '</th>'
+				.'<th>' . tra( "Comments" ) . '</th>'
+			.'</tr>'
+			.'<tr class="odd">'
+				.'<td>module</td>'
+				.'<td>' . tra( "string" ) . '<br />' . tra( "(required)" ) . '</td>'
+				.'<td>' . tra( "Name of module you want to display.")
+			.'</tr>'
+			.'<tr class="even">'
+				.'<td>package</td>'
+				.'<td>' . tra( "string" ) . '<br />' . tra( "(required)" ) . '</td>'
+				.'<td>' . tra( "Package the module is part of.")
+			.'</tr>'
+			.'<tr class="odd">'
+				.'<td colspan="3">' . tra( "Additional arguments and values depend on the selected module." )
+			.'</tr>'
+		.'</table>'
+		. tra( "Example: " ) . '{MODULE module=last_modified_pages package=wiki title="Recent Wiki Modifications"}';
+	return $help;
+}
+
+function data_datamodule( $data, $params ) {
+	global $modlib, $gBitSmarty;
+	require_once( KERNEL_PKG_PATH.'mod_lib.php' );
+	$out = '';
+
+	extract( $params );
+
+	if( !empty( $module ) && !empty( $package ) ) {
+		// not sure if we can use the php file, since it sets everything to NULL when passed in - xing
+		$php = constant( strtoupper( $package ).'_PKG_PATH' ).'modules/mod_'.$module.'.php';
+		// TODO: assigning variables to template doesn't work since they are replaced by module paramaters set in the php file - even when it's not in use! - xing
+		$tpl = 'bitpackage:'.$package.'/mod_'.$module.'.tpl';
+	} else {
+		$ret = '<div class="error">'.tra( "Both paramters 'module' and 'package' are required" );
+	}
+
+	if( !$out = $gBitSmarty->fetch( $tpl ) ) {
+		if( $modlib->is_user_module( $module ) ) {
+			$info = $modlib->get_user_module( $module );
+			$gBitSmarty->assign_by_ref( 'user_title', $info["title"] );
+			$gBitSmarty->assign_by_ref( 'user_data', $info["data"] );
+			$out = $gBitSmarty->fetch( 'modules/user_module.tpl' );
+		}
+	}
+	$out = eregi_replace( "\n", "", $out );
+
+	// deal with custom styling
+	$style = '';
+	$style_options = array( 'float', 'width', 'background', 'color' );
+	foreach( $params as $param => $value ) {
+		if( in_array( $param, $style_options ) ) {
+			$style .= $param.':'.$value.';';
+		}
+	}
+	if( !empty( $style ) ) {
+		$style = ' style="'.$style.'"';
+	}
+
+	if( $out ) {
+		$ret = '<div'.$style.'>'.$out.'</div>';
+	} else {
+		$ret = '<div class="error">'.tra( "Sorry no such module" ).'</div>'.$module;
+	}
+	return $ret;
+}
+
+
+
+/*
+// original code
 function datamodule_help() {
 	$back = tra("^__Parameter Syntax:__ ") . "~np~{MODULE" . tra("(key=>value)}~/np~\n");
 	$back.= tra("||__::key::__ | __::value::__ | __::Comments::__\n");
@@ -76,9 +127,6 @@ function datamodule_help() {
 	return $back;
 }
 
-/**
- * data_datamodule
- */
 function data_datamodule($data, $params) {
 	global $modlib, $cache_time, $gBitSmarty, $feature_directory, $ranklib, $feature_trackers, $bitdomain, $user,
 		$feature_tasks, $feature_user_bookmarks, $bit_p_tasks, $bit_p_create_bookmarks, $imagegallib;
@@ -142,4 +190,5 @@ function data_datamodule($data, $params) {
 	}
 	return $data;
 }
+*/
 ?>
