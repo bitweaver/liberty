@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.12 $
+ * @version  $Revision: 1.1.1.1.2.13 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,10 +14,10 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Luis Argerich <lrargerich@users.sourceforge.net>
-// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.1.1.1.2.12 2005/08/03 07:43:55 lsces Exp $
+// $Id: data.code.php,v 1.1.1.1.2.13 2005/10/26 17:49:10 spiderr Exp $
 
 /**
  * definitions
