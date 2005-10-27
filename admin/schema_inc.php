@@ -141,26 +141,26 @@ $gBitInstaller->registerSchemaSequences( LIBERTY_PKG_NAME, $sequences );
 
 // ### Default Preferences
 $gBitInstaller->registerPreferences( LIBERTY_PKG_NAME, array(
-	array('liberty', 'cacheimages','n'),
-	array('liberty', 'cachepages','n'),
-	array('liberty', 'default_format','tikiwiki'),
-	array('liberty', 'liberty_auto_display_attachment_thumbs', 'y'),
-//	array('liberty', 'liberty_attachment_link_format', 'wiki') not needed anymore since we use js in the edit page now (depends on format of content)
+	array(LIBERTY_PKG_NAME, 'cacheimages','n'),
+	array(LIBERTY_PKG_NAME, 'cachepages','n'),
+	array(LIBERTY_PKG_NAME, 'default_format','tikiwiki'),
+	array(LIBERTY_PKG_NAME, 'liberty_auto_display_attachment_thumbs', 'y'),
+//	array(LIBERTY_PKG_NAME, 'liberty_attachment_link_format', 'wiki') not needed anymore since we use js in the edit page now (depends on format of content)
 ) );
 
 // ### Default UserPermissions
 $gBitInstaller->registerUserPermissions( LIBERTY_PKG_NAME, array(
-	array('bit_p_edit_html_style', 'Can include style information in HTML', 'editors', 'liberty'),
-	array('bit_p_post_comments', 'Can post new comments', 'registered', 'liberty'),
-	array('bit_p_read_comments', 'Can read comments', 'basic', 'liberty'),
-	array('bit_p_remove_comments', 'Can delete comments', 'editors', 'liberty'),
-	array('bit_p_vote_comments', 'Can vote comments', 'registered', 'liberty'),
-	array('bit_p_edit_comments', 'Can edit all comments', 'editors', 'liberty'),
-	array('bit_p_use_content_templates', 'Can use content templates', 'registered', 'liberty'),
-	array('bit_p_edit_content_templates', 'Can edit content templates', 'editors', 'liberty'),
-	array('bit_p_content_attachments', 'Can create content attachments', 'registered', 'liberty'),
-	array('bit_p_detach_attachment', 'Can detach content attachments', 'registered', 'liberty'),
-	array('bit_p_print', 'Can print content', 'basic', 'liberty'),
+	array('bit_p_edit_html_style', 'Can include style information in HTML', 'editors', LIBERTY_PKG_NAME),
+	array('bit_p_post_comments', 'Can post new comments', 'registered', LIBERTY_PKG_NAME),
+	array('bit_p_read_comments', 'Can read comments', 'basic', LIBERTY_PKG_NAME),
+	array('bit_p_remove_comments', 'Can delete comments', 'editors', LIBERTY_PKG_NAME),
+	array('bit_p_vote_comments', 'Can vote comments', 'registered', LIBERTY_PKG_NAME),
+	array('bit_p_edit_comments', 'Can edit all comments', 'editors', LIBERTY_PKG_NAME),
+	array('bit_p_use_content_templates', 'Can use content templates', 'registered', LIBERTY_PKG_NAME),
+	array('bit_p_edit_content_templates', 'Can edit content templates', 'editors', LIBERTY_PKG_NAME),
+	array('bit_p_content_attachments', 'Can create content attachments', 'registered', LIBERTY_PKG_NAME),
+	array('bit_p_detach_attachment', 'Can detach content attachments', 'registered', LIBERTY_PKG_NAME),
+	array('bit_p_print', 'Can print content', 'basic', LIBERTY_PKG_NAME),
 ) );
 
 ?>
