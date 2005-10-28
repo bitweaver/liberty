@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.4 $
+ * @version  $Revision: 1.1.1.1.2.5 $
  * @package  liberty
  * @subpackage functions
  *
@@ -15,6 +15,9 @@
 global $gBitSmarty, $gContent, $gBitUser, $gLibertySystem;
 $attachmentActionBaseURL = $_SERVER['PHP_SELF'].'?';
 $GETArgs = split('&',$_SERVER['QUERY_STRING']);
+
+$userAttachments = $gBitUser->getUserAttachments();
+$gBitSmarty->assign('userAttachments', $userAttachments);
 
 $firstArg = TRUE;
 foreach ($GETArgs as $arg) {

@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.17 2005/10/26 17:49:10 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.18 2005/10/28 13:19:52 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -263,8 +263,13 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 		if( !empty( $pParamHash['existing_attachment_id'] ) ) {
 			foreach($pParamHash['existing_attachment_id'] as $existingAttachmentId) {
-				if( !empty($existingAttachmentId) ) {
-					$this->cloneAttachment($existingAttachmentId, $pParamHash['content_id']);
+				// allow for multiple values seperated by any non numeric character
+				$ids = preg_split( '/\D/', $existingAttachmentId );
+				foreach( $ids as $id ) {
+					$id = ( int )$id;
+					if( !empty( $id ) ) {
+						$this->cloneAttachment( $id, $pParamHash['content_id'] );
+					}
 				}
 			}
 		}
