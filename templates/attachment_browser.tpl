@@ -23,10 +23,14 @@
 			{if $cells % 2 ne 0}
 				</tr>
 			{/if}
+		{foreachelse}
+			<tr class="norecords"><td>{tr}No Records Found{/tr}</td></tr>
 		{/foreach}
 		{if $cells % 2 eq 0}
 			<td>&nbsp;</td></tr>
 		{/if}
 	</table>
-	{formhelp note="Clicking on an item will attach the item to your wiki page."}
+	{if $userAttachments}
+		{formhelp note="Clicking on an item will attach the item to your wiki page."}
+	{/if}
 {/strip}
