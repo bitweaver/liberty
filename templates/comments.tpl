@@ -76,7 +76,7 @@ If cookie is not set, then use $gBitSystemPrefs.comments_display_expanded to det
 					<div class="row">
 						{formlabel label="Comment" for="commentpost"}
 						{forminput}
-							<textarea id="commentpost" name="comment_data" rows="10" cols="80">{$postComment.data}</textarea>
+							<textarea id="commentpost" name="comment_data" rows="10" cols="50">{$postComment.data}</textarea>
 							{formhelp note="Use [http://www.foo.com] or [http://www.foo.com|description] for links.<br />HTML tags are not allowed inside comments."}
 						{/forminput}
 					</div>

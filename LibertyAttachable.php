@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.6 2005/09/03 10:20:02 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.7 2005/10/29 17:54:23 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -169,6 +169,8 @@ class LibertyAttachable extends LibertyContent {
 		if( !empty( $pParamHash['upload']['size'] ) && !empty( $pParamHash['upload'] ) && is_array( $pParamHash['upload'] ) ) {
 
 			$save = TRUE;
+/*
+Disable for now - instead fend off new uploads once quota is exceeded. Need a nice upload mechanism that can cancel uploads once the upload has begun, ala megaupload
 			if( $gBitSystem->isPackageActive( 'quota' ) && !$gBitUser->isAdmin() ) {
 				require_once( QUOTA_PKG_PATH.'LibertyQuota.php' );
 				$quota = new LibertyQuota();
@@ -180,7 +182,7 @@ class LibertyAttachable extends LibertyContent {
 					$this->mErrors['upload'] = $pParamHash['upload']['name'].' '.tra( 'could not be stored because you do not have enough disk quota.' ).' '.round(($u + $pParamHash['upload']['size'] - $q)/1000).'KB Needed' ;
 				}
 			}
-
+*/
 			if( $save ) {
 				// - TODO: get common preferences page with this as an option, but right now files are only option cuz no blobs - SPIDERR
 				$storageGuid = $gBitSystem->getPreference( 'common_storage_plugin', PLUGIN_GUID_BIT_FILES );
@@ -261,8 +263,13 @@ class LibertyAttachable extends LibertyContent {
 
 		if( !empty( $pParamHash['existing_attachment_id'] ) ) {
 			foreach($pParamHash['existing_attachment_id'] as $existingAttachmentId) {
-				if( !empty($existingAttachmentId) ) {
-					$this->cloneAttachment($existingAttachmentId, $pParamHash['content_id']);
+				// allow for multiple values seperated by any non numeric character
+				$ids = preg_split( '/\D/', $existingAttachmentId );
+				foreach( $ids as $id ) {
+					$id = ( int )$id;
+					if( !empty( $id ) ) {
+						$this->cloneAttachment( $id, $pParamHash['content_id'] );
+					}
 				}
 			}
 		}

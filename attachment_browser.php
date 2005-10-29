@@ -3,7 +3,7 @@
  * attachment_browser
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage functions
  */
@@ -11,7 +11,7 @@
 /**
  * bit setup
  */
-include("../bit_setup_inc.php");
+include_once("../bit_setup_inc.php");
 
 $userAttachments = $gBitUser->getUserAttachments();
 $gBitSmarty->assign('userAttachments', $userAttachments);
