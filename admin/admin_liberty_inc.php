@@ -28,7 +28,7 @@ $formValues = array( 'image_processor', 'liberty_attachment_link_format', 'comme
 
 if( !empty( $_REQUEST['change_prefs'] ) ) {
 	$errors = array();
-	$formFeatures = array_merge( $formLibertyFeatures, $formCommentFeatures, $formImageFeatures );
+	$formFeatures = array_merge( $formLibertyFeatures, $formImageFeatures );
 	foreach( $formFeatures as $item => $data ) {
 		simple_set_toggle( $item );
 	}

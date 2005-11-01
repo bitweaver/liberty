@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.18 2005/10/28 13:19:52 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.19 2005/11/01 18:41:57 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -425,7 +425,8 @@ function liberty_process_upload( &$pFileHash ) {
 		$pFileHash['upload']['name'] = $pFileHash['upload']['name'].'.txt';
 	}
 	// Thumbs.db is a windows My Photos/ folder file, and seems to really piss off imagick
-	if( preg_match( '/^image\/*/', $pFileHash['upload']['type'] ) && $pFileHash['upload']['name'] != 'Thumbs.db' ) {
+	if( (preg_match( '/^image\/*/', $pFileHash['upload']['type'] ) || preg_match( '/pdf/i', $pFileHash['upload']['type'] ) )
+		 && $pFileHash['upload']['name'] != 'Thumbs.db' ) {
 		$ret = liberty_process_image( $pFileHash['upload'] );
 	} else {
 		$ret = liberty_process_generic( $pFileHash['upload'] );
@@ -454,7 +455,8 @@ function liberty_process_generic( &$pFileHash ) {
 function liberty_process_image( &$pFileHash ) {
 	global $gBitSystem;
 	$ret = NULL;
-	$resizeFunc = ($gBitSystem->getPreference( 'image_processor' ) == 'imagick' ) ? 'liberty_imagick_resize_image' : 'liberty_gd_resize_image';
+	$resizeFunc = liberty_get_function( 'resize' );
+
 	list($type, $ext) = split( '/', strtolower( $pFileHash['type'] ) );
 	mkdir_p( BIT_PKG_PATH.$pFileHash['dest_path'] );
 	if( $resizePath = $resizeFunc( $pFileHash, $ext ) ) {
@@ -483,10 +485,26 @@ function liberty_clear_thumbnails( &$pFileHash ) {
 	}
 }
 
+function liberty_get_function( $pType ) {
+	global $gBitSystem;
+	$ret = NULL;
+	switch( $gBitSystem->getPreference( 'image_processor' ) ) {
+		case 'imagick':
+			$ret = 'liberty_imagick_'.$pType.'_image';
+			break;
+		case 'magickwand':
+			$ret = 'liberty_magickwand_'.$pType.'_image';
+			break;
+		default:
+			$ret = 'liberty_gd_'.$pType.'_image';
+			break;
+	}
+	return $ret;
+}
 
 function liberty_generate_thumbnails( &$pFileHash ) {
 	global $gBitSystem;
-	$resizeFunc = ($gBitSystem->getPreference( 'image_processor' ) == 'imagick' ) ? 'liberty_imagick_resize_image' : 'liberty_gd_resize_image';
+	$resizeFunc = liberty_get_function( 'resize' );
 	if( !preg_match( '/image\/(gif|jpg|jpeg|png)/', strtolower( $pFileHash['type'] ) ) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ) ) {
 		// jpeg version of original
 		$pFileHash['dest_base_name'] = 'original';
@@ -527,66 +545,8 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 	$pFileHash['large_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
 }
 
-function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL ) {
-	$pFileHash['error'] = NULL;
-	$ret = NULL;
-	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
-		$iImg = imagick_readimage( $pFileHash['source_file'] );
-		if( !$iImg ) {
-//			$pFileHash['error'] = $pFileHash['name'].' '.tra ( "is not a known image file" );
-			$destUrl = liberty_process_generic( $pFileHash );
-		} elseif( imagick_iserror( $iImg ) ) {
-//			$pFileHash['error'] = imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
-			$destUrl = liberty_process_generic( $pFileHash );
-		} else {
-			imagick_set_image_quality( $iImg, 85 );
-			$iwidth = imagick_getwidth( $iImg );
-			$iheight = imagick_getheight( $iImg );
-			if( (($iwidth / $iheight) > 0) && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) ) {
-				// we have a portrait image, flip everything
-				$temp = $pFileHash['max_width'];
-				$pFileHash['max_height'] = $pFileHash['max_width'];
-				$pFileHash['max_width'] = $temp;
-			}
-			$itype = imagick_getmimetype( $iImg );
-			list($type, $mimeExt) = split( '/', strtolower( $itype ) );
-			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || ($mimeExt != 'jpeg')) ) {
-				// We have to resize. *ALL* resizes are converted to jpeg
-				$destExt = '.jpg';
-				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
-				$destFile = BIT_PKG_PATH.'/'.$destUrl;
-				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
-//	print "			if ( !imagick_resize( $iImg, $pFileHash[max_width], $pFileHash[max_height], IMAGICK_FILTER_LANCZOS, 0.5, $pFileHash[max_width] x $pFileHash[max_height] > ) ) {";
 
-				// Alternate Filter settings can seen here http://www.dylanbeattie.net/magick/filters/result.html
-
-				if ( !imagick_resize( $iImg, $pFileHash['max_width'], $pFileHash['max_height'], IMAGICK_FILTER_CATROM, 1.00, '>' ) ) {
-					$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
-				}
-// 	print "2YOYOYOYO $iwidth x $iheight $destUrl <br/>"; flush();
-
-				if( function_exists( 'imagick_set_attribute' ) ) {
-					// this exists in the PECL package, but not php-imagick
-					$imagick_set_attribute($iImg,array("quality"=>1) );
-				}
-
-				if( !imagick_writeimage( $iImg, $destFile ) ) {
-					$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
-				}
-				$pFileHash['size'] = filesize( $destFile );
-			} else {
-	//print "GENERIC";
-				$destUrl = liberty_process_generic( $pFileHash );
-			}
-		}
-		$ret = $destUrl;
-	} else {
-		$pFileHash['error'] = "No source file to resize";
-	}
-
-	return $ret;
-}
-
+// =-=-=-=-=-=-=-=-=-=- gd functions -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 function liberty_gd_resize_image( &$pFileHash, $pFormat = NULL ) {
 	$ret = NULL;
@@ -670,33 +630,6 @@ function liberty_gd_resize_image( &$pFileHash, $pFormat = NULL ) {
 	return $ret;
 }
 
-
-function liberty_imagick_rotate_image( &$pFileHash ) {
-	$ret = FALSE;
-	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
-		$iImg = imagick_readimage( $pFileHash['source_file'] );
-		if( !$iImg ) {
-			$pFileHash['error'] = $pFileHash['name'].' '.tra ( "is not a known image file" );
-		} elseif( imagick_iserror( $iImg ) ) {
-			$pFileHash['error'] = imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
-		} elseif( empty( $pFileHash['degrees'] ) || !is_numeric( $pFileHash['degrees'] ) ) {
-			$pFileHash['error'] = tra( 'Invalid rotation amount' );
-		} else {
-			if ( !imagick_rotate( $iImg, $pFileHash['degrees'] ) ) {
-				$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
-			}
-			if( !imagick_writeimage( $iImg, $pFileHash['source_file'] ) ) {
-				$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
-			}
-		}
-	} else {
-		$pFileHash['error'] = "No source file to resize";
-	}
-
-	return( empty( $pFileHash['error'] ) );
-}
-
-
 function liberty_gd_rotate_image( &$pFileHash, $pFormat = NULL ) {
 	if( !function_exists( 'imagerotate' ) ) {
 		$pFileHash['error'] = "Rotate is not available on this webserver.";
@@ -726,5 +659,204 @@ function liberty_gd_rotate_image( &$pFileHash, $pFormat = NULL ) {
 
 	return( empty( $pFileHash['error'] ) );
 }
+
+
+
+// =-=-=-=-=-=-=-=-=-=- php-imagick functions -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL ) {
+	$pFileHash['error'] = NULL;
+	$ret = NULL;
+	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
+		$iImg = imagick_readimage( $pFileHash['source_file'] );
+		if( !$iImg ) {
+//			$pFileHash['error'] = $pFileHash['name'].' '.tra ( "is not a known image file" );
+			$destUrl = liberty_process_generic( $pFileHash );
+		} elseif( imagick_iserror( $iImg ) ) {
+//			$pFileHash['error'] = imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
+			$destUrl = liberty_process_generic( $pFileHash );
+		} else {
+			imagick_set_image_quality( $iImg, 85 );
+			$iwidth = imagick_getwidth( $iImg );
+			$iheight = imagick_getheight( $iImg );
+			if( (($iwidth / $iheight) > 0) && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) ) {
+				// we have a portrait image, flip everything
+				$temp = $pFileHash['max_width'];
+				$pFileHash['max_height'] = $pFileHash['max_width'];
+				$pFileHash['max_width'] = $temp;
+			}
+			$itype = imagick_getmimetype( $iImg );
+			list($type, $mimeExt) = split( '/', strtolower( $itype ) );
+			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || ($mimeExt != 'jpeg')) ) {
+				// We have to resize. *ALL* resizes are converted to jpeg
+				$destExt = '.jpg';
+				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
+				$destFile = BIT_PKG_PATH.'/'.$destUrl;
+				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
+//	print "			if ( !imagick_resize( $iImg, $pFileHash[max_width], $pFileHash[max_height], IMAGICK_FILTER_LANCZOS, 0.5, $pFileHash[max_width] x $pFileHash[max_height] > ) ) {";
+
+				// Alternate Filter settings can seen here http://www.dylanbeattie.net/magick/filters/result.html
+
+				if ( !imagick_resize( $iImg, $pFileHash['max_width'], $pFileHash['max_height'], IMAGICK_FILTER_CATROM, 1.00, '>' ) ) {
+					$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
+				}
+// 	print "2YOYOYOYO $iwidth x $iheight $destUrl <br/>"; flush();
+
+				if( function_exists( 'imagick_set_attribute' ) ) {
+					// this exists in the PECL package, but not php-imagick
+					$imagick_set_attribute($iImg,array("quality"=>1) );
+				}
+
+				if( !imagick_writeimage( $iImg, $destFile ) ) {
+					$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
+				}
+				$pFileHash['size'] = filesize( $destFile );
+			} else {
+	//print "GENERIC";
+				$destUrl = liberty_process_generic( $pFileHash );
+			}
+		}
+		$ret = $destUrl;
+	} else {
+		$pFileHash['error'] = "No source file to resize";
+	}
+
+	return $ret;
+}
+
+
+function liberty_imagick_rotate_image( &$pFileHash ) {
+	$ret = FALSE;
+	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
+		$iImg = imagick_readimage( $pFileHash['source_file'] );
+		if( !$iImg ) {
+			$pFileHash['error'] = $pFileHash['name'].' '.tra ( "is not a known image file" );
+		} elseif( imagick_iserror( $iImg ) ) {
+			$pFileHash['error'] = imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
+		} elseif( empty( $pFileHash['degrees'] ) || !is_numeric( $pFileHash['degrees'] ) ) {
+			$pFileHash['error'] = tra( 'Invalid rotation amount' );
+		} else {
+			if ( !imagick_rotate( $iImg, $pFileHash['degrees'] ) ) {
+				$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
+			}
+			if( !imagick_writeimage( $iImg, $pFileHash['source_file'] ) ) {
+				$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
+			}
+		}
+	} else {
+		$pFileHash['error'] = "No source file to resize";
+	}
+
+	return( empty( $pFileHash['error'] ) );
+}
+
+
+
+// =-=-=-=-=-=-=-=-=-=- magickwand functions -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
+	$magickWand = NewMagickWand();
+	$pFileHash['error'] = NULL;
+	$ret = NULL;
+	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
+		$imgFH = fopen( $pFileHash['source_file'], 'r' );
+		if( $error = liberty_magickwand_check_error( MagickReadImageFile( $magickWand, $imgFH ), $magickWand ) ) {
+			fclose( $imgFH );
+//			$pFileHash['error'] = $error;
+			$destUrl = liberty_process_generic( $pFileHash );
+		} else {
+
+			MagickSetImageCompressionQuality( $magickWand, 85 );
+			$iwidth = round( MagickGetImageWidth( $magickWand ) );
+			$iheight = round( MagickGetImageHeight( $magickWand ) );
+			if( (($iwidth / $iheight) > 0) && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) ) {
+				// we have a portrait image, flip everything
+				$temp = $pFileHash['max_width'];
+				$pFileHash['max_height'] = $pFileHash['max_width'];
+				$pFileHash['max_width'] = $temp;
+			}
+			if( floor( $iheight / $iwidth ) ) {
+				$pFileHash['max_width'] = round( $pFileHash['max_width'] * ($iwidth / $iheight) );
+			} else {
+				$pFileHash['max_height'] = round( $pFileHash['max_height'] * ($iheight / $iwidth) );
+			}
+
+			$itype = MagickGetImageMimeType( $magickWand );
+			list($type, $mimeExt) = split( '/', strtolower( $itype ) );
+			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || ($mimeExt != 'jpeg')) ) {
+				// We have to resize. *ALL* resizes are converted to jpeg
+				$destExt = '.jpg';
+				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
+				$destFile = BIT_PKG_PATH.'/'.$destUrl;
+				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
+//	print "			if ( !imagick_resize( $iImg, $pFileHash[max_width], $pFileHash[max_height], IMAGICK_FILTER_LANCZOS, 0.5, $pFileHash[max_width] x $pFileHash[max_height] > ) ) {";
+
+				// Alternate Filter settings can seen here http://www.dylanbeattie.net/magick/filters/result.html
+
+				if ( $error = liberty_magickwand_check_error( MagickResizeImage( $magickWand, $pFileHash['max_width'], $pFileHash['max_height'], MW_CatromFilter, 1.00 ), $magickWand ) ) {
+					$pFileHash['error'] .= $error;
+				}
+// 	print "2YOYOYOYO $iwidth x $iheight $destUrl <br/>"; flush();
+
+				;
+
+				if( $error = liberty_magickwand_check_error( MagickWriteImage( $magickWand, $destFile ), $magickWand ) ) {
+					$pFileHash['error'] .= $error;
+				}
+				$pFileHash['size'] = filesize( $destFile );
+			} else {
+	//print "GENERIC";
+				$destUrl = liberty_process_generic( $pFileHash );
+			}
+		}
+		fclose( $imgFH );
+		$ret = $destUrl;
+	} else {
+		$pFileHash['error'] = "No source file to resize";
+	}
+
+	return $ret;
+}
+
+
+function liberty_magickwand_rotate_image( &$pFileHash ) {
+	$ret = FALSE;
+	$magickWand = NewMagickWand();
+	$pFileHash['error'] = NULL;
+	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
+		$imgFH = fopen( $pFileHash['source_file'], 'r' );
+		if( $error = liberty_magickwand_check_error( MagickReadImageFile( $magickWand, $imgFH ), $magickWand ) ) {
+			$pFileHash['error'] = $error;
+		} elseif( empty( $pFileHash['degrees'] ) || !is_numeric( $pFileHash['degrees'] ) ) {
+			$pFileHash['error'] = tra( 'Invalid rotation amount' );
+		} else {
+			$bgWand = NewPixelWand('white');
+			if( $error = liberty_magickwand_check_error( MagickRotateImage( $magickWand, $bgWand, $pFileHash['degrees'] ), $magickWand ) ) {
+				$pFileHash['error'] .= $error;
+			}
+			if( $error = liberty_magickwand_check_error( MagickWriteImage( $magickWand, $pFileHash['source_file'] ), $magickWand ) ) {
+				$pFileHash['error'] .= $error;
+			}
+		}
+	} else {
+		$pFileHash['error'] = "No source file to resize";
+	}
+
+	return( empty( $pFileHash['error'] ) );
+}
+
+
+
+
+function liberty_magickwand_check_error( $pResult, $pWand ) {
+	$ret = FALSE;
+    if( $pResult === FALSE && WandHasException( $pWand ) ) {
+        $ret = 'An image processing error occurred : '.WandGetExceptionString($pWand);
+    }
+    return $ret;
+}
+
+
+
 
 ?>
