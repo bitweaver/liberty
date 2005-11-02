@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.20 2005/11/02 04:14:38 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.21 2005/11/02 15:56:38 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -459,7 +459,7 @@ function liberty_process_image( &$pFileHash ) {
 
 	list($type, $ext) = split( '/', strtolower( $pFileHash['type'] ) );
 	mkdir_p( BIT_PKG_PATH.$pFileHash['dest_path'] );
-	if( $resizePath = $resizeFunc( $pFileHash, $ext ) ) {
+	if( $resizePath = liberty_process_generic( $pFileHash, $ext ) ) {
 		$pFileHash['source_file'] = BIT_ROOT_PATH.$resizePath;
 		$nameHold = $pFileHash['name'];
 		$sizeHold = $pFileHash['size'];
@@ -502,6 +502,8 @@ function liberty_get_function( $pType ) {
 	return $ret;
 }
 
+define( 'MAX_THUMBNAIL_DIMENSION', 99999 );
+
 function liberty_generate_thumbnails( &$pFileHash ) {
 	global $gBitSystem;
 	$resizeFunc = liberty_get_function( 'resize' );
@@ -509,8 +511,8 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		// jpeg version of original
 		$pFileHash['dest_base_name'] = 'original';
 		$pFileHash['name'] = 'original.jpg';
-		$pFileHash['max_width'] = 99999;
-		$pFileHash['max_height'] = 99999;
+		$pFileHash['max_width'] = MAX_THUMBNAIL_DIMENSION;
+		$pFileHash['max_height'] = MAX_THUMBNAIL_DIMENSION;
 		$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
 	}
 	// Icon thumb is 48x48
@@ -758,31 +760,48 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 	$magickWand = NewMagickWand();
 	$pFileHash['error'] = NULL;
 	$ret = NULL;
+	$isPdf = preg_match( '/pdf/i', $pFileHash['type'] );
 	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
+		// This has to come BEFORE the MagickReadImage
+		if( $isPdf ) {
+			MagickSetImageColorspace( $magickWand, MW_RGBColorspace );
+			MagickSetImageUnits( $magickWand, MW_PixelsPerInchResolution );
+			$rez =  empty( $pFileHash['max_width'] ) || $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION ? 250 : 72;
+			MagickSetResolution( $magickWand, 300, 300 );
+		}
 		if( $error = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand ) ) {
 //			$pFileHash['error'] = $error;
 			$destUrl = liberty_process_generic( $pFileHash );
 		} else {
 
+			if( $isPdf ) {
+				MagickResetIterator( $magickWand );
+				MagickNextImage( $magickWand );
+			}
+
 			MagickSetImageCompressionQuality( $magickWand, 85 );
 			$iwidth = round( MagickGetImageWidth( $magickWand ) );
 			$iheight = round( MagickGetImageHeight( $magickWand ) );
-			if ( empty( $pFileHash['max_width']) ) $pFileHash['max_width'] = $iwidth;
-			if ( empty( $pFileHash['max_height']) ) $pFileHash['max_height'] = $iheight;
+			$itype = MagickGetImageMimeType( $magickWand );
 
-			if( (($iwidth / $iheight) > 0) && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) ) {
+			MagickSetImageFormat( $magickWand, 'JPG' );
+
+			if( (($iwidth / $iheight) > 1) && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) ) {
 				// we have a portrait image, flip everything
 				$temp = $pFileHash['max_width'];
 				$pFileHash['max_height'] = $pFileHash['max_width'];
 				$pFileHash['max_width'] = $temp;
 			}
-			if( floor( $iheight / $iwidth ) ) {
+
+			if( empty( $pFileHash['max_width'] ) || empty( $pFileHash['max_height'] ) || $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION || $pFileHash['max_height'] == MAX_THUMBNAIL_DIMENSION ) {
+				$pFileHash['max_width'] = $iwidth;
+				$pFileHash['max_height'] = $iheight;
+			} elseif( floor( $iheight / $iwidth ) ) {
 				$pFileHash['max_width'] = round( $pFileHash['max_width'] * ($iwidth / $iheight) );
 			} else {
 				$pFileHash['max_height'] = round( $pFileHash['max_height'] * ($iheight / $iwidth) );
 			}
 
-			$itype = MagickGetImageMimeType( $magickWand );
 			list($type, $mimeExt) = split( '/', strtolower( $itype ) );
 			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || ($mimeExt != 'jpeg')) ) {
 				// We have to resize. *ALL* resizes are converted to jpeg
@@ -790,23 +809,15 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
 				$destFile = BIT_PKG_PATH.'/'.$destUrl;
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
-//	print "			if ( !imagick_resize( $iImg, $pFileHash[max_width], $pFileHash[max_height], IMAGICK_FILTER_LANCZOS, 0.5, $pFileHash[max_width] x $pFileHash[max_height] > ) ) {";
-
 				// Alternate Filter settings can seen here http://www.dylanbeattie.net/magick/filters/result.html
-
 				if ( $error = liberty_magickwand_check_error( MagickResizeImage( $magickWand, $pFileHash['max_width'], $pFileHash['max_height'], MW_CatromFilter, 1.00 ), $magickWand ) ) {
 					$pFileHash['error'] .= $error;
 				}
-// 	print "2YOYOYOYO $iwidth x $iheight $destUrl <br/>"; flush();
-
-				;
-
 				if( $error = liberty_magickwand_check_error( MagickWriteImage( $magickWand, $destFile ), $magickWand ) ) {
 					$pFileHash['error'] .= $error;
 				}
 				$pFileHash['size'] = filesize( $destFile );
 			} else {
-	//print "GENERIC";
 				$destUrl = liberty_process_generic( $pFileHash );
 			}
 		}
@@ -814,7 +825,7 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 	} else {
 		$pFileHash['error'] = "No source file to resize";
 	}
-
+	DestroyMagickWand( $magickWand );
 	return $ret;
 }
 
