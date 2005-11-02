@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.19 2005/11/01 18:41:57 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.20 2005/11/02 04:14:38 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -759,9 +759,7 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 	$pFileHash['error'] = NULL;
 	$ret = NULL;
 	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
-		$imgFH = fopen( $pFileHash['source_file'], 'r' );
-		if( $error = liberty_magickwand_check_error( MagickReadImageFile( $magickWand, $imgFH ), $magickWand ) ) {
-			fclose( $imgFH );
+		if( $error = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand ) ) {
 //			$pFileHash['error'] = $error;
 			$destUrl = liberty_process_generic( $pFileHash );
 		} else {
@@ -769,6 +767,9 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 			MagickSetImageCompressionQuality( $magickWand, 85 );
 			$iwidth = round( MagickGetImageWidth( $magickWand ) );
 			$iheight = round( MagickGetImageHeight( $magickWand ) );
+			if ( empty( $pFileHash['max_width']) ) $pFileHash['max_width'] = $iwidth;
+			if ( empty( $pFileHash['max_height']) ) $pFileHash['max_height'] = $iheight;
+
 			if( (($iwidth / $iheight) > 0) && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) ) {
 				// we have a portrait image, flip everything
 				$temp = $pFileHash['max_width'];
@@ -809,7 +810,6 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 				$destUrl = liberty_process_generic( $pFileHash );
 			}
 		}
-		fclose( $imgFH );
 		$ret = $destUrl;
 	} else {
 		$pFileHash['error'] = "No source file to resize";
@@ -824,8 +824,7 @@ function liberty_magickwand_rotate_image( &$pFileHash ) {
 	$magickWand = NewMagickWand();
 	$pFileHash['error'] = NULL;
 	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
-		$imgFH = fopen( $pFileHash['source_file'], 'r' );
-		if( $error = liberty_magickwand_check_error( MagickReadImageFile( $magickWand, $imgFH ), $magickWand ) ) {
+		if( $error = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand ) ) {
 			$pFileHash['error'] = $error;
 		} elseif( empty( $pFileHash['degrees'] ) || !is_numeric( $pFileHash['degrees'] ) ) {
 			$pFileHash['error'] = tra( 'Invalid rotation amount' );
