@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.21 2005/11/02 15:56:38 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.22 2005/11/02 17:53:16 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -662,6 +662,15 @@ function liberty_gd_rotate_image( &$pFileHash, $pFormat = NULL ) {
 	return( empty( $pFileHash['error'] ) );
 }
 
+function liberty_gd_can_thumbnail_image( $pMimeType ) {
+	$ret = FALSE;
+	if( !empty( $pMimeType ) ) {
+		$ret = preg_match( '/^image/i', $pMimeType );
+	}
+	return $ret;
+
+}
+
 
 
 // =-=-=-=-=-=-=-=-=-=- php-imagick functions -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -752,6 +761,14 @@ function liberty_imagick_rotate_image( &$pFileHash ) {
 	return( empty( $pFileHash['error'] ) );
 }
 
+function liberty_imagick_can_thumbnail_image( $pMimeType ) {
+	$ret = FALSE;
+	if( !empty( $pMimeType ) ) {
+		$ret = preg_match( '/^image/i', $pMimeType );
+	}
+	return $ret;
+
+}
 
 
 // =-=-=-=-=-=-=-=-=-=- magickwand functions -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -866,7 +883,14 @@ function liberty_magickwand_check_error( $pResult, $pWand ) {
     return $ret;
 }
 
+function liberty_magickwand_can_thumbnail_image( $pMimeType ) {
+	$ret = FALSE;
+	if( !empty( $pMimeType ) ) {
+		$ret = preg_match( '/(^image|pdf)/i', $pMimeType );
+	}
+	return $ret;
 
+}
 
 
 ?>
