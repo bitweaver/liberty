@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.8 $
+ * @version  $Revision: 1.2.2.9 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -69,7 +69,7 @@ function bit_files_load( $pRow ) {
 				  WHERE ta.`foreign_id` = ? AND ta.`content_id` = ?";
 		if( $rs = $gBitSystem->mDb->query($query, array( $pRow['foreign_id'], $pRow['content_id'] )) ) {
 			$ret = $rs->fields;
-			if (preg_match ( '/image\//', $ret['mime_type'] )) {
+			if ( file_exists( BIT_ROOT_PATH.dirname( $ret['storage_path'] ).'/medium.jpg' ) ) {
 				$ret['thumbnail_url']['avatar'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/avatar.jpg';
 				$ret['thumbnail_url']['small'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/small.jpg';
 				$ret['thumbnail_url']['medium'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/medium.jpg';
@@ -80,6 +80,9 @@ function bit_files_load( $pRow ) {
 				$ret['thumbnail_url']['small'] = $mime_thumbnail;
 				$ret['thumbnail_url']['medium'] = $mime_thumbnail;
 				$ret['thumbnail_url']['large'] = $mime_thumbnail;
+			}
+			if ( file_exists( BIT_ROOT_PATH.dirname( $ret['storage_path'] ).'/original.jpg' ) ) {
+				$ret['thumbnail_url']['original'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/original.jpg';
 			}
 			$ret['filename'] = substr( $ret['storage_path'], strrpos($ret['storage_path'], '/')+1);
 			$ret['source_url'] = BIT_ROOT_URL.str_replace( '+', '%20', str_replace( '%2F', '/', urlencode( $ret['storage_path'] ) ) );
