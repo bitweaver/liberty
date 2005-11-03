@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.23 2005/11/03 13:23:40 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.24 2005/11/03 13:58:26 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -213,7 +213,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 	// Things to be stored should be shoved in the array $pParamHash['STORAGE']
 	function store ( &$pParamHash ) {
-		global $gLibertySystem;
+		global $gLibertySystem, $gBitSystem;
 		$this->mDb->StartTrans();
 		if( LibertyAttachable::verify( $pParamHash ) && LibertyContent::store( $pParamHash ) && !empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] ) ) {
 			foreach( array_keys( $pParamHash['STORAGE'] ) as $guid ) {
@@ -241,6 +241,10 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 					// if we have uploaded a file, we can take care of that generically
 					if( is_array( $storeRow['upload'] ) && !empty( $storeRow['upload']['size'] ) ) {
+						if( empty( $storeRow['upload']['type'] ) ) {
+							$ext = substr( $storeRow['upload']['name'], strrpos( $storeRow['upload']['name'], '.' ) + 1 );
+							$storeRow['upload']['type'] = $gBitSystem->lookupMimeType( $ext );
+						}
 						$storeRow['upload']['dest_path'] = $this->getStorageBranch( $storeRow['attachment_id'], $pParamHash['user_id'], 'images' );
 						$storagePath = liberty_process_upload( $storeRow );
 						// We're gonna store to local file system & tiki_files table
@@ -814,7 +818,7 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 			} elseif( !empty( $pFileHash['max_width'] ) ) {
 				$pFileHash['max_height'] = round( ($iheight / $iwidth) * $pFileHash['max_width'] );
 			}
-vd( "$iwidth x $iheight => $pFileHash[max_width] x $pFileHash[max_height]" );
+
 			list($type, $mimeExt) = split( '/', strtolower( $itype ) );
 			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || ($mimeExt != 'jpeg')) ) {
 				// We have to resize. *ALL* resizes are converted to jpeg
