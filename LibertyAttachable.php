@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.22 2005/11/02 17:53:16 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.23 2005/11/03 13:23:40 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -803,22 +803,18 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 
 			MagickSetImageFormat( $magickWand, 'JPG' );
 
-			if( (($iwidth / $iheight) > 1) && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) ) {
-				// we have a portrait image, flip everything
-				$temp = $pFileHash['max_width'];
-				$pFileHash['max_height'] = $pFileHash['max_width'];
-				$pFileHash['max_width'] = $temp;
-			}
-
 			if( empty( $pFileHash['max_width'] ) || empty( $pFileHash['max_height'] ) || $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION || $pFileHash['max_height'] == MAX_THUMBNAIL_DIMENSION ) {
 				$pFileHash['max_width'] = $iwidth;
 				$pFileHash['max_height'] = $iheight;
-			} elseif( floor( $iheight / $iwidth ) ) {
-				$pFileHash['max_width'] = round( $pFileHash['max_width'] * ($iwidth / $iheight) );
-			} else {
-				$pFileHash['max_height'] = round( $pFileHash['max_height'] * ($iheight / $iwidth) );
+			} elseif( (($iwidth / $iheight) < 1) && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) ) {
+				// we have a portrait image, flip everything
+				$temp = $pFileHash['max_width'];
+				$pFileHash['max_height'] = $pFileHash['max_width'];
+				$pFileHash['max_width'] = round( ($iwidth / $iheight) * $pFileHash['max_height'] );
+			} elseif( !empty( $pFileHash['max_width'] ) ) {
+				$pFileHash['max_height'] = round( ($iheight / $iwidth) * $pFileHash['max_width'] );
 			}
-
+vd( "$iwidth x $iheight => $pFileHash[max_width] x $pFileHash[max_height]" );
 			list($type, $mimeExt) = split( '/', strtolower( $itype ) );
 			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || ($mimeExt != 'jpeg')) ) {
 				// We have to resize. *ALL* resizes are converted to jpeg
