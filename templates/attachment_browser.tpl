@@ -30,7 +30,4 @@
 			<td>&nbsp;</td></tr>
 		{/if}
 	</table>
-	{if $userAttachments}
-		{formhelp note="Clicking on an item will attach the item to your wiki page."}
-	{/if}
 {/strip}
