@@ -3,6 +3,22 @@
 		<p>Please insert <strong>{ldelim}attachment id=#{rdelim}</strong> where # is the appropriate attachment ID.</p>
 	</noscript>
 
+	<div class="row">
+		{formlabel label="Attach File(s)"}
+		{forminput}
+			<input type="text" name="existing_attachment_id[]" id="existing_attachment_id_input" size="20"/>
+			{formhelp note="Attaching an item to your page will insert a small icon representing the file. Please use the attachment IDs listed below.<br />You can attach multiple items at once by seperating them with a ',' (comma)."}
+		{/forminput}
+	</div>
+
+	<div class="row">
+		{formlabel label="Insert Attachment"}
+		{forminput}
+			<input type="text" name="dummy" id="copy" size="30" class="success" />
+			<input type="button" value="{tr}Clear{/tr}" onclick="document.getElementById( 'copy' ).value = '';" />
+			{formhelp note="Clicking on any of the attachments below, will display the correct attachment syntax in the textbox above. Insert this text into the textarea where needed."}
+		{/forminput}
+	</div>
 	<table class="data">
 		<caption>{tr}Available Attachements{/tr}</caption>
 		{counter start=-1 name="cells" print=false}
@@ -32,5 +48,5 @@
 		{/if}
 	</table>
 
-	{libertypagination pgnName="pgnPage" pgnPage=$curPage numPages=$numPages offset=$smarty.request.offset open_browser=1}
+	{libertypagination pgnName="pgnPage" pgnPage=$curPage numPages=$numPages offset=$smarty.request.offset}
 {/strip}
