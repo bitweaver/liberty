@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.6 $
+ * @version  $Revision: 1.1.1.1.2.7 $
  * @package  liberty
  * @subpackage functions
  *
@@ -18,7 +18,7 @@ $listHash = array(
 	'page' => !empty( $_REQUEST['pgnPage'] ) ? $_REQUEST['pgnPage'] : NULL
 );
 $userAttachments = $gBitUser->getUserAttachments( $listHash );
-$gBitSmarty->assign( 'userAttachments', $userAttachments['data'] );
+$gBitSmarty->assign( 'userAttachments', $userAttachments );
 
 // pagination
 $offset = !empty( $_REQUEST['offset'] ) ? $_REQUEST['offset'] : 0;

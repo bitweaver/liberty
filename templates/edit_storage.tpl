@@ -13,6 +13,10 @@
 	{/foreach}
 
 	<h2><a href="javascript:sendRequest( 'attbrowser' );" onclick="javascript:document.getElementById( 'attbrowser').innerHTML = '{tr}Loading Attachment Browser...{/tr}'">{tr}Attachment Browser{/tr}</a></h2>
+	{minifind action="javascript:sendRequest( 'attbrowser' );"}
+	<noscript>
+		<div class="warning">{tr}The Attachment browser only works with javascript enabled{/tr}</div>
+	</noscript>
 	<div id="attbrowser" class="attbrowser"></div>
 
 	{if $gContent->mStorage}
