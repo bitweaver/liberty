@@ -1,6 +1,6 @@
 {strip}
 	<noscript>
-		<p>Please insert {ldelim}attachment id=#{rdelim} where # is the appropriate attachment ID.</p>
+		<p>Please insert <strong>{ldelim}attachment id=#{rdelim}</strong> where # is the appropriate attachment ID.</p>
 	</noscript>
 
 	<table class="data">
@@ -26,8 +26,11 @@
 		{foreachelse}
 			<tr class="norecords"><td>{tr}No Records Found{/tr}</td></tr>
 		{/foreach}
+
 		{if $cells % 2 eq 0}
 			<td>&nbsp;</td></tr>
 		{/if}
 	</table>
+
+	{libertypagination pgnName="pgnPage" pgnPage=$curPage numPages=$numPages offset=$smarty.request.offset open_browser=1}
 {/strip}

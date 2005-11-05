@@ -17,7 +17,7 @@
 	<h2><a href="javascript:flip( 'attbrowser' );">{tr}Attachment Browser{/tr}</a> <small>click to show / hide</small></h2>
 
 	<script type="text/javascript">//<![CDATA[
-		this.document.write( '<div class="row" style="display:none;" id="attbrowser">' );
+		this.document.write( '<div class="row" style="display:{if $smarty.request.open_browser}block{else}none{/if};" id="attbrowser">' );
 	//]]></script>
 
 		<div class="row">
