@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.7 $
+ * @version  $Revision: 1.1.1.1.2.8 $
  * @package  liberty
  * @subpackage functions
  *
@@ -13,22 +13,6 @@
  * Calculate a base URL for the attachment deletion/removal icons to use
  */
 global $gBitSmarty, $gContent, $gBitUser, $gBitSystem, $gLibertySystem;
-$listHash = $_REQUEST;
-$listHash = array(
-	'page' => !empty( $_REQUEST['pgnPage'] ) ? $_REQUEST['pgnPage'] : NULL
-);
-$userAttachments = $gBitUser->getUserAttachments( $listHash );
-$gBitSmarty->assign( 'userAttachments', $userAttachments );
-
-// pagination
-$offset = !empty( $_REQUEST['offset'] ) ? $_REQUEST['offset'] : 0;
-$gBitSmarty->assign( 'curPage', $pgnPage = !empty( $_REQUEST['pgnPage'] ) ? $_REQUEST['pgnPage'] : 1 );
-$offset = ( $pgnPage - 1 ) * $gBitSystem->mPrefs['maxRecords'];
-
-// calculate page number
-$numPages = ceil( $userAttachments['cant'] / $gBitSystem->mPrefs['maxRecords'] );
-$gBitSmarty->assign( 'numPages', $numPages );
-
 $attachmentActionBaseURL = $_SERVER['PHP_SELF'].'?';
 $GETArgs = split('&',$_SERVER['QUERY_STRING']);
 $firstArg = TRUE;

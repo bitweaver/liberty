@@ -1,8 +1,4 @@
 {strip}
-<noscript>
-	<p>Please insert <strong>{ldelim}attachment id=#{rdelim}</strong> where # is the appropriate attachment ID.</p>
-</noscript>
-
 <div class="row">
 	{formlabel label="Attach File(s)"}
 	{forminput}

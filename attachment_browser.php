@@ -3,7 +3,7 @@
  * attachment_browser
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.5 $
+ * @version  $Revision: 1.1.1.1.2.6 $
  * @package  liberty
  * @subpackage functions
  */
@@ -11,19 +11,22 @@
 /**
  * bit setup
  */
-include_once("../bit_setup_inc.php");
+require_once("../bit_setup_inc.php");
 
-$userAttachments = $gBitUser->getUserAttachments();
-$gBitSmarty->assign('userAttachments', $userAttachments);
-if (empty($gBitSystem->mStyles['styleSheet'])) {
-	$gBitSystem->mStyles['styleSheet'] = $gBitSystem->getStyleCss();
-}
-$gBitSystem->mStyles['browserStyleSheet'] = $gBitSystem->getBrowserStyleCss();
-$gBitSystem->mStyles['customStyleSheet'] = $gBitSystem->getCustomStyleCss();
-if( !defined( 'THEMES_STYLE_URL' ) ) {
-	define( 'THEMES_STYLE_URL', $gBitSystem->getStyleUrl() );
-}
+global $gBitSmarty, $gContent, $gBitUser, $gBitSystem, $gLibertySystem;
+$listHash = $_REQUEST;
+$listHash = array(
+	'page' => !empty( $_REQUEST['pgnPage'] ) ? $_REQUEST['pgnPage'] : NULL
+);
+$userAttachments = $gBitUser->getUserAttachments( $listHash );
+$gBitSmarty->assign( 'userAttachments', $userAttachments );
 
-//vd($userAttachments);
-$gBitSmarty->display('bitpackage:liberty/attachment_browser.tpl');
+// pagination
+$offset = !empty( $_REQUEST['offset'] ) ? $_REQUEST['offset'] : 0;
+$gBitSmarty->assign( 'curPage', $pgnPage = !empty( $_REQUEST['pgnPage'] ) ? $_REQUEST['pgnPage'] : 1 );
+$offset = ( $pgnPage - 1 ) * $gBitSystem->mPrefs['maxRecords'];
+
+// calculate page number
+$numPages = ceil( $userAttachments['cant'] / $gBitSystem->mPrefs['maxRecords'] );
+$gBitSmarty->assign( 'numPages', $numPages );
 ?>
