@@ -1,15 +1,15 @@
 {strip}
 <div class="pagination">
-	{if $page gt 1}
-		<a href="{$smarty.server.PHP_SELF}?{$pgnName}={$page-1}{$pgnVars}">&laquo;</a>&nbsp;
+	{if $pgnPage gt 1}
+		<a href="{$smarty.server.PHP_SELF}?{$pgnName}={$pgnPage-1}{$pgnVars}">&laquo;</a>&nbsp;
 	{else}
 		&nbsp;
 	{/if}
 
-	{tr}Page {$page} of {$numPages}{/tr}
+	{tr}Page {$pgnPage} of {$numPages}{/tr}
 
-	{if $page lt $numPages}
-		&nbsp;<a href="{$smarty.server.PHP_SELF}?{$pgnName}={$page+1}{$pgnVars}">&raquo;</a>
+	{if $pgnPage lt $numPages}
+		&nbsp;<a href="{$smarty.server.PHP_SELF}?{$pgnName}={$pgnPage+1}{$pgnVars}">&raquo;</a>
 	{else}
 		&nbsp;
 	{/if}
