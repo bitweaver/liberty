@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.11 $
+ * @version  $Revision: 1.1.1.1.2.12 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.11 2005/11/08 04:05:21 jht001 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.12 2005/11/08 04:14:32 jht001 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -99,7 +99,7 @@ if (!empty($_REQUEST['post_comment_reply_id'])) {
 	$tmpComment = new LibertyComment(NULL, $post_comment_reply_id);
 	//$postComment['data'] = $commentsLib->quoteComment($tmpComment->mInfo['data']);  // This is super-ugly, better to just not quote at all, the indented comment indicates what comment it is replying to
 
-	if (preg_match('/' . tra('Re:') . '/', $tmpComment->mInfo['title'])) {
+	if (preg_match('/^' . tra('Re:') . '/', $tmpComment->mInfo['title'])) {
 		$comment_prefix = '';
 		}
 	else {
