@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.2.4 $
+ * @version  $Revision: 1.1.2.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wolff_borg <wolff_borg@yahoo.com.au>
 // | Reworked from: wikiplugin_wikigraph.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikigraph.php,v 1.1.2.4 2005/08/26 09:29:29 wolff_borg Exp $
+// $Id: data.wikigraph.php,v 1.1.2.5 2005/11/11 22:04:09 mej Exp $
 /**
  * definitions
  */
@@ -73,7 +73,7 @@ include_once( UTIL_PKG_PATH.'GraphViz.php' );
 function data_wikigraph($data, $params) {
 	global $gContent, $wikilib;
 	$add = "";
-	extract ($params);
+	extract ($params, EXTR_SKIP);
   if(!isset($level)) $level = 0;
 	if(!isset($title)) $title = "Wiki-Graph";
 	if(isset($nodesep)) $add.="&amp;nodesep=$nodesep";

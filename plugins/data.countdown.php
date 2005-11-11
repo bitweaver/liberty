@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.8 $
+ * @version  $Revision: 1.1.1.1.2.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.countdown.php,v 1.1.1.1.2.8 2005/08/03 07:43:55 lsces Exp $
+// $Id: data.countdown.php,v 1.1.1.1.2.9 2005/11/11 22:04:09 mej Exp $
 
 /**
  * definitions
@@ -68,7 +68,7 @@ function data_countdown($data, $params) {
 // The next 2 lines allow access to the $pluginParams given above
 	global $gLibertySystem; 
 	$pluginParams = $gLibertySystem->mPlugins[PLUGIN_GUID_DATACOUNTDOWN];
-	extract ($params);
+	extract ($params, EXTR_SKIP);
     if (!isset($enddate) ) {  // The Manditory Parameter is missing
         $ret = tra("The required parameter ") . "<strong>enddate</strong>" . tra(" was missing from the plugin ") . '<strong>"' . $pluginParams['tag'] . '"</strong>';
 		$ret.= data_countdown_help();

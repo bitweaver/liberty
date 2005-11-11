@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.8 $
+ * @version  $Revision: 1.1.1.1.2.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_category.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.category.php,v 1.1.1.1.2.8 2005/08/03 07:43:55 lsces Exp $
+// $Id: data.category.php,v 1.1.1.1.2.9 2005/11/11 22:04:08 mej Exp $
 
 /**
  * definitions
@@ -120,7 +120,7 @@ function wikiplugin_category($data, $params) {
 	if ($package_categories != 'y') {
 		return "<span class='warn'>" . tra("Categories are disabled"). "</span>";
 	}
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	// array for converting long type names (as in database) to short names (as used in plugin)
 	$typetokens = array(
 		"article" => "article",

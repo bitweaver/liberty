@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.8 $
+ * @version  $Revision: 1.1.1.1.2.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.copyright.php,v 1.1.1.1.2.8 2005/08/03 07:43:55 lsces Exp $
+// $Id: data.copyright.php,v 1.1.1.1.2.9 2005/11/11 22:04:09 mej Exp $
 
 /**
  * definitions
@@ -79,7 +79,7 @@ function data_copyright($data, $params) { // Pre-Clyde Changes
 // The next 2 lines allow access to the $pluginParams given above and may be removed when no longer needed
 	global $gLibertySystem; 
 	$pluginParams = $gLibertySystem->mPlugins[PLUGIN_GUID_DATACOPYRIGHT];
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	// This maintains Pre-Clyde Parameters
 	if ( !empty( $data) ) { // The problem with this is that $authors HAS to be the last key-word
 		$pos1 = strpos( strtolower($data), '~title~') + 7;

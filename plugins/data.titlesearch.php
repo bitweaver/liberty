@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.8 $
+ * @version  $Revision: 1.1.1.1.2.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_titlesearch.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.titlesearch.php,v 1.1.1.1.2.8 2005/08/03 07:43:55 lsces Exp $
+// $Id: data.titlesearch.php,v 1.1.1.1.2.9 2005/11/11 22:04:09 mej Exp $
 
 /**
  * definitions
@@ -65,7 +65,7 @@ The code below is from the deprecated TITLESEARCH plugin. All comments and the h
             global $WikiLib;
             $aInfoPreset = array_keys($this->aInfoPresetNames);
             $params = $this->getParams($params, true);
-            extract ($params);
+            extract ($params, EXTR_SKIP);
             if (!$search) {
                 return $this->error("You have to define a search");
             }

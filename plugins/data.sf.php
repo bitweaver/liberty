@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.9 $
+ * @version  $Revision: 1.2.2.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
 // | by: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.sf.php,v 1.2.2.9 2005/08/14 10:49:33 squareing Exp $
+// $Id: data.sf.php,v 1.2.2.10 2005/11/11 22:04:09 mej Exp $
 
 /**
  * definitions
@@ -104,7 +104,7 @@ function data_sf($data, $params) {
 // JGraph ******************************************************
 	$sftags['pbbrfe'] = array('7885','58021','PhpBB',' Bug #',' Bug Index');
 	
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	$tag = (isset($tag)) ? strtolower($tag) : ' '; // Just to be sure no caps
 	if (isset($sftags["$tag"]) and (is_array($sftags["$tag"])) ) { // is $tag in the array 
 		list($groupid,$atid,$proj,$tag1,$tag2) = $sftags["$tag"];

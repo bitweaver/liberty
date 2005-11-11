@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.8 $
+ * @version  $Revision: 1.1.1.1.2.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.flash.php,v 1.1.1.1.2.8 2005/08/14 10:49:33 squareing Exp $
+// $Id: data.flash.php,v 1.1.1.1.2.9 2005/11/11 22:04:09 mej Exp $
 
 /**
  * definitions
@@ -79,7 +79,7 @@ function data_flash_help() {
 
 // Load Function
 function data_flash($data, $params) {
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	$w	= (isset($width)) 	?	$width : "";
 	$h	= (isset($height))	?	$height : "";
 	$q	= (isset($quality))	?	$quality : "high";

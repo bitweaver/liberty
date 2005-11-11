@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.8 $
+ * @version  $Revision: 1.2.2.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mqdirections.php,v 1.2.2.8 2005/08/15 15:41:05 squareing Exp $
+// $Id: data.mqdirections.php,v 1.2.2.9 2005/11/11 22:04:09 mej Exp $
 
 /**
  * definitions
@@ -94,7 +94,7 @@ function data_mqdir_help() {
 
 // Load Function
 function data_mqdir( $data, $params ) { 
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 
 	$a2a = isset($address) ? $address : ' ';
 	$a2c = isset($city) ? $city : ' ';

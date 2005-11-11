@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.7 $
+ * @version  $Revision: 1.1.1.1.2.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_lang.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.lang.php,v 1.1.1.1.2.7 2005/08/03 07:43:55 lsces Exp $
+// $Id: data.lang.php,v 1.1.1.1.2.8 2005/11/11 22:04:09 mej Exp $
 
 /**
  * definitions
@@ -53,7 +53,7 @@ function data_lang_help() {
 // Load Function
 function data_lang($data, $params) {
 	global $gBitLanguage;
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	if (!isset($lang) || $lang == $gBitLanguage->mLanguage)
 		return $data;
 	else
@@ -64,7 +64,7 @@ The code below is from the deprecated LANG plugin. All comments and the help rou
 
 function wikiplugin_lang($data, $params) {
 	global $gBitLanguage;
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	if (!isset($lang) || $lang == $gBitLanguage->mLanguage)
 		return $data;
 	else

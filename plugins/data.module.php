@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.9 $
+ * @version  $Revision: 1.1.1.1.2.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -16,7 +16,7 @@
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
 // | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.module.php,v 1.1.1.1.2.9 2005/10/15 08:52:01 squareing Exp $
+// $Id: data.module.php,v 1.1.1.1.2.10 2005/11/11 22:04:09 mej Exp $
 
 /**
  * definitions
@@ -69,7 +69,7 @@ function data_datamodule( $data, $params ) {
 	require_once( KERNEL_PKG_PATH.'mod_lib.php' );
 	$out = '';
 
-	extract( $params );
+	extract( $params , EXTR_SKIP);
 
 	if( !empty( $module ) && !empty( $package ) ) {
 		// not sure if we can use the php file, since it sets everything to NULL when passed in - xing
@@ -132,7 +132,7 @@ function data_datamodule($data, $params) {
 		$feature_tasks, $feature_user_bookmarks, $bit_p_tasks, $bit_p_create_bookmarks, $imagegallib;
 	require_once( KERNEL_PKG_PATH.'mod_lib.php' );
 	$out = '';
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	if (!isset($align)) {
 		$align = 'left';
 	}

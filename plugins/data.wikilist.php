@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.7 $
+ * @version  $Revision: 1.1.1.1.2.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_wikilist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikilist.php,v 1.1.1.1.2.7 2005/08/03 07:43:55 lsces Exp $
+// $Id: data.wikilist.php,v 1.1.1.1.2.8 2005/11/11 22:04:09 mej Exp $
 
 /**
  * definitions
@@ -85,7 +85,7 @@ function wikiplugin_wikilist($data, $params) {
 	// turn off $feature_hotwords to avoid conflicts
 	$feature_hotwords = 'n';
 
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	if(!isset($alpha))		{ $alpha = 1; }
 	if(!isset($userpages))	{ $userpages = "all"; }
 	if(!isset($num))		{ $num = 0; }

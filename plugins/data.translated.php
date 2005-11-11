@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.8 $
+ * @version  $Revision: 1.1.1.1.2.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_translated.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.translated.php,v 1.1.1.1.2.8 2005/08/03 07:43:55 lsces Exp $
+// $Id: data.translated.php,v 1.1.1.1.2.9 2005/11/11 22:04:09 mej Exp $
 
 /**
  * definitions
@@ -55,7 +55,7 @@ function data_translated_help() {
 
 // Load Function
 function data_translated($data, $params) {
-    extract ($params);
+    extract ($params, EXTR_SKIP);
     if (!isset($page) ) {  // A Manditory Parameter is missing
         $ret = 'The __page__ parameter was missing from the __~np~{TRANSLATED}~/np~__ plugin.';
 		$ret.= data_translated_help();
@@ -88,7 +88,7 @@ function data_translated($data, $params) {
 /******************************************************************************
 The code below is from the deprecated TRANSLATED plugin. All comments and the help routines have been removed. - StarRider
 function wikiplugin_translated($data, $params) {
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	$img = '';
 	$h = opendir(USERS_PKG_URL . "icons/flags/");
 	while ($file = readdir($h)) {

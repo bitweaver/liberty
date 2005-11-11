@@ -4,7 +4,7 @@
  * assigned_modules
  *
  * @author   StarRider starrrider@sourceforge.net
- * @version  $Revision: 1.1.2.11 $
+ * @version  $Revision: 1.1.2.12 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -153,7 +153,7 @@ function data_spytext_help() {
 function data_spytext($data, $params) {
 	global $gLibertySystem;
 	global $gBitUser;
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 		
 	if (empty($data)) { // If there is NO data to display - why do anything - get out of here
 		return " ";

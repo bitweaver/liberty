@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.9 $
+ * @version  $Revision: 1.1.1.1.2.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_avatar.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.avatar.php,v 1.1.1.1.2.9 2005/08/03 15:27:56 lsces Exp $
+// $Id: data.avatar.php,v 1.1.1.1.2.10 2005/11/11 22:04:08 mej Exp $
 
 /**
  * definitions
@@ -90,7 +90,7 @@ require_once( KERNEL_PKG_PATH.'BitBase.php' );
 function wikiplugin_avatar($data, $params) {
 	global $gBitSystem;
 	global $gBitUser;
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	if (isset($float))
 		$avatar = $gBitSystem->get_user_avatar($data, $float);
 	else

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.13 $
+ * @version  $Revision: 1.1.1.1.2.14 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.1.1.1.2.13 2005/10/26 17:49:10 spiderr Exp $
+// $Id: data.code.php,v 1.1.1.1.2.14 2005/11/11 22:04:09 mej Exp $
 
 /**
  * definitions
@@ -91,7 +91,7 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 // Added testing to maintain Pre-Clyde compatability
 //	$num = NULL;
 	$add_tags = false;
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	// This maintains Pre-Clyde Parameters
 	if (isset($colors) and ($colors == 'php') ) $source = 'php';
 	if (isset($in) ) $source = $in;

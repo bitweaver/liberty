@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.7 $
+ * @version  $Revision: 1.1.1.1.2.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_backlinks.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.backlinks.php,v 1.1.1.1.2.7 2005/08/03 07:43:55 lsces Exp $
+// $Id: data.backlinks.php,v 1.1.1.1.2.8 2005/11/11 22:04:08 mej Exp $
 
 /**
  * definitions
@@ -89,7 +89,7 @@ function data_backlinks($data, $params) { // Pre-Clyde Changes
 // Renamed Parameters $include_self to $self & $noheader to $header
 // Changed $header so that any value passed to it makes it True
  // Added testing to Maintain Pre-Clyde compatability
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	if (isset ($include_self) && ($include_self) ) // Maintain Pre-Clyde compatability
 		$self = TRUE;
     $self = isset($self) ? TRUE : FALSE; // Any value passed in this parameter makes it True
@@ -111,7 +111,7 @@ The code below is from the deprecated BACKLINKS plugin. All comments and the hel
         global $wikilib;
         $params = $this->getParams($params, true);
         $aInfoPreset = array_keys($this->aInfoPresetNames);
-        extract ($params);
+        extract ($params, EXTR_SKIP);
         /////////////////////////////////
         // Create a valid list for $info
         /////////////////////////////////

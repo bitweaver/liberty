@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.8 $
+ * @version  $Revision: 1.2.2.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mapquest.php,v 1.2.2.8 2005/08/14 10:49:33 squareing Exp $
+// $Id: data.mapquest.php,v 1.2.2.9 2005/11/11 22:04:09 mej Exp $
 
 /**
  * definitions
@@ -126,7 +126,7 @@ function data_mapquest_help() {
 
 // Load Function
 function data_mapquest( $data, $params ) { 
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 
 	$ret = '<a href="http://www.mapquest.com" title="Launch Map Quest in a New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">';
 
