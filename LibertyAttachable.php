@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.24 2005/11/03 13:58:26 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.25 2005/11/14 01:11:26 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -438,6 +438,68 @@ function liberty_process_upload( &$pFileHash ) {
 	return $ret;
 }
 
+function liberty_process_archive( &$pFileHash ) {
+	$cwd = getcwd();
+	$dir = dirname( $pFileHash['tmp_name'] );
+	$upExt = strtolower( substr( $pFileHash['name'], (strrpos( $pFileHash['name'], '.' ) + 1) ) );
+	$baseDir = $dir.'/';
+	if( is_uploaded_file( $pFileHash['tmp_name'] ) ) {
+		global $gBitUser;
+		$baseDir .= $gBitUser->mUserId;
+	}
+	$destDir = $baseDir.'/'.basename( $pFileHash['tmp_name'] );
+	if( (is_dir( $baseDir ) || mkdir( $baseDir )) && @mkdir( $destDir ) ) {
+		// Some commands don't nicely support extracting to other directories
+		chdir( $destDir );
+		list( $mimeType, $mimeExt ) = split( '/', $pFileHash['type'] );
+		switch( $mimeExt ) {
+			case 'x-rar-compressed':
+			case 'x-rar':
+				$shellResult = shell_exec( "unrar x $pFileHash[tmp_name] \"$destDir\"" );
+				break;
+			case 'x-bzip2':
+			case 'bzip2':
+			case 'x-gzip':
+			case 'gzip':
+			case 'x-tgz':
+			case 'x-tar':
+			case 'tar':
+				switch( $upExt ) {
+					case 'gz':
+					case 'tgz': $compressFlag = '-z'; break;
+					case 'bz2': $compressFlag = '-j'; break;
+					default: $compressFlag = ''; break;
+				}
+				$shellResult = shell_exec( "tar -x $compressFlag -f $pFileHash[tmp_name]  -C \"$destDir\"" );
+				break;
+			case 'x-zip-compressed':
+			case 'x-zip':
+			case 'zip':
+				$shellResult = shell_exec( "unzip $pFileHash[tmp_name] -d \"$destDir\"" );
+				break;
+			case 'x-stuffit':
+			case 'stuffit':
+				$shellResult = shell_exec( "unstuff -d=\"$destDir\" $pFileHash[tmp_name] " );
+				break;
+			default:
+				if( $upExt == 'zip' ) {
+					$shellResult = shell_exec( "unzip $pFileHash[tmp_name] -d \"$destDir\"" );
+				} elseif( $upExt == 'rar' ) {
+					$shellResult = shell_exec( "unrar x $pFileHash[tmp_name] \"$destDir\"" );
+				} elseif( $upExt == 'sit' || $upExt == 'sitx' ) {
+					print( "unstuff -d=\"$destDir\" $pFileHash[tmp_name] " );
+					$shellResult = shell_exec( "unstuff -d=\"$destDir\" $pFileHash[tmp_name] " );
+					vd( $shellResult );
+				} else {
+					$destDir = NULL;
+				}
+				break;
+		}
+	}
+vd( $destDir );
+	chdir( $cwd );
+	return $destDir;
+}
 
 function liberty_process_generic( &$pFileHash ) {
 	$ret = NULL;
