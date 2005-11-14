@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.25 2005/11/14 01:11:26 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.26 2005/11/14 02:29:19 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -489,14 +489,12 @@ function liberty_process_archive( &$pFileHash ) {
 				} elseif( $upExt == 'sit' || $upExt == 'sitx' ) {
 					print( "unstuff -d=\"$destDir\" $pFileHash[tmp_name] " );
 					$shellResult = shell_exec( "unstuff -d=\"$destDir\" $pFileHash[tmp_name] " );
-					vd( $shellResult );
 				} else {
 					$destDir = NULL;
 				}
 				break;
 		}
 	}
-vd( $destDir );
 	chdir( $cwd );
 	return $destDir;
 }
