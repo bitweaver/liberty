@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.24 $
+ * @version  $Revision: 1.2.2.25 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -693,6 +693,8 @@ $this->debug(0);
 		$data = preg_replace("/===([^\=]+)===/", "<span style=\"text-decoration:underline;\">$1</span>", $data);
 		// Center text
 		$data = preg_replace("/::(.+?)::/", "<div style=\"text-align:center;\">$1</div>", $data);
+		// Line breaks
+		$data = preg_replace('/%%%/', '<br />', $data);
 
 		// New syntax for wiki pages ((name|desc)) Where desc can be anything
 		preg_match_all("/\(\(($this->mWikiWordRegex)\|(.+?)\)\)/", $data, $pages);

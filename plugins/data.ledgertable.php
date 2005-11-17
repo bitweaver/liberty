@@ -1,10 +1,10 @@
 <?php
-// $Id: data.ledgertable.php,v 1.1.2.1 2005/11/11 22:04:09 mej Exp $
+// $Id: data.ledgertable.php,v 1.1.2.2 2005/11/17 23:55:55 mej Exp $
 /**
  * assigned_modules
  *
  * @author   KainX <mej@kainx.org>
- * @version  $Revision: 1.1.2.1 $
+ * @version  $Revision: 1.1.2.2 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -18,7 +18,7 @@ define( 'PLUGIN_GUID_DATALEDGERTABLE', 'dataledgertable' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'LEDGERTABLE',
 	'auto_activate' => FALSE,
-	'requires_pair' => FALSE,
+	'requires_pair' => TRUE,
 	'load_function' => 'data_ledgertable',
 	'title' => 'Ledger Table (LEDGERTABLE)',
 	'help_page' => 'DataPluginLedgertable',
@@ -43,20 +43,19 @@ function data_ledgertable_help() {
 			.'<tr class="odd">'
 				.'<td>loc</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Where to display row/column headers (\"left\" or \"top\").")
-					.'<br />' . tra( "The Default = <strong>top</strong>")
+				.'<td>' . tra( "Where to display row/column headers (\"left\" or \"top\", default <strong>top</strong>).")
 				.'</td>'
 			.'</tr>'
 			.'<tr class="even">'
 				.'<td>head</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Header(s) separated by \"~|~\".")
-					.'<br />' . tra( "The Default =") . ' <strong>none</strong> '
+				.'<td>' . tra( "Header(s) separated by \"~|~\", default <strong>none</strong>")
 				.'</td>'
 			.'</tr>'
  		.'</table>'
-		. tra("LedgerTable: ") . "{LEDGERTABLE(loc=>left,head=>Row1~|~Row2~|~Row3)}<br />"
-		. tra("This will display");
+		. tra("LedgerTable: ") . "{LEDGERTABLE loc=>left head=>Row1~|~Row2~|~Row3}<br />"
+		. tra("This will display")
+		. data_ledgertable('Example', array('loc' => 'left', 'head' => 'Row1~|~Row2~|~Row3'));
 	return $help;
 }
 /****************
@@ -65,24 +64,47 @@ function data_ledgertable_help() {
 function data_ledgertable($data, $params) {
     global $gBitSystem;
 
-	extract($params, EXTR_PREFIX_ALL, "plugdata_");
-    if (!isset($plugdata_loc)) {
-        $plugdata_loc = "top";
+	if (empty($data)) {
+		return "<!-- Error:  No data passed to LEDGERTABLE plugin. -->";
+	}
+	if (substr($data, 0, 1) == "\n") {
+		$data = substr($data, 1);
+	}
+
+	$ret = '';
+    if (isset($params['loc'])) {
+		$ret .= "<!-- Header row set to $params[loc]. -->";
+		$plugdata_loc = $params['loc'];
+	} else {
+		$ret .= "<!-- Defaulting header row to top. -->";
+        $plugdata_loc = 'top';
+    }
+    if (isset($params['head'])) {
+		$ret .= "<!-- Got headers. -->";
+		$plugdata_head = $params['head'];
+    } else {
+		$ret .= "<!-- No headers specified. -->";
+    }
+    if (isset($params['width'])) {
+		$ret .= "<!-- Got width $params[width]. -->";
+		$plugdata_width = " style=\"width: " . $params['width'] . '"';
+    } else {
+		$plugdata_width = "";
     }
 
-    $ret = "\n<table class=\"normal\">\n";
+    $ret .= "<table class=\"ledgertable\"$plugdata_width>";
 
     if (isset($plugdata_head)) {
-        $headers = explode("~|~", $plugdata_head);
-        if ($plugdata_loc == "top") {
-            $ret .= "    <!-- Placing header row on top. -->\n";
-            $ret .= "    <tr>\n";
+        $headers = explode('~|~', $plugdata_head);
+        if ($plugdata_loc == 'top') {
+            $ret .= "    <!-- Placing header row on top. -->";
+            $ret .= "    <tr class=\"ledgertable header row\">";
             foreach ($headers as $hdr) {
-                $ret .= "        <td class=\"heading\">$hdr</td>\n";
+                $ret .= "        <th class=\"header highlight\">$hdr</td>";
             }
-            $ret .= "  </tr>\n";
-        }
-    }
+            $ret .= "  </tr>";
+		}
+	}
 
     $lines = split("\n", $data);
     $line_count = 0;
@@ -93,17 +115,17 @@ function data_ledgertable($data, $params) {
         }
         $line_count++;
 
-        $ret .= "    <!-- Displaying row $line_count. -->\n";
-        $ret .= "    <tr class=\"" . (($line_count % 2) ? ("odd") : ("even")) . "\">\n";
+        $ret .= "    <!-- Displaying row $line_count. -->";
+        $ret .= "    <tr class=\"" . (($line_count % 2) ? ("odd") : ("even")) . "\">";
         if (isset($plugdata_head) && ($plugdata_loc == "left")) {
-            $ret .= "        <!-- Placing header on left. -->\n";
-            $ret .= "        <td class=\"heading\"";
+            $ret .= "        <!-- Placing header on left. -->";
+            $ret .= "        <th class=\"header highlight\"";
             $header = array_shift($headers);
             if (preg_match("/^~(row|col)span:(\d+)~(.*)$/", $header, $matches)) {
                 $ret .= " $matches[1]span=\"$matches[2]\"";
                 $header = $matches[3];
             }
-            $ret .= ">$header</td>\n";
+            $ret .= ">$header</td>";
         }
         $cells = explode("~|~", $line);
         foreach ($cells as $col) {
@@ -115,11 +137,11 @@ function data_ledgertable($data, $params) {
                 $ret .= " $matches[1]span=\"$matches[2]\"";
                 $col = $matches[3];
             }
-            $ret .= ">$col</td>\n";
+            $ret .= ">$col</td>";
         }
-        $ret .= "    </tr>\n";
+        $ret .= "    </tr>";
     }
-    $ret .= "</table>\n\n";
+    $ret .= "</table>";
 
     return $ret;
 }
