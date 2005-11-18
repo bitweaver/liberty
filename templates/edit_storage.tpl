@@ -15,35 +15,4 @@
 	<h2 class="clear"><a href="javascript:sendRequest( 'attbrowser' );" onclick="javascript:document.getElementById( 'attbrowser' ).innerHTML = '<br />{tr}Loading Attachment Browser...{/tr}'">{tr}Attachment Browser{/tr}</a></h2>
 	<noscript><div class="warning">{tr}The attachment browser only works with javascript enabled.{/tr}</div></noscript>
 	<div id="attbrowser" class="attbrowser"></div>
-
-	{if $gContent->mStorage}
-		<div class="row">
-			<table class="data" summary="List of attached files">
-				<caption>{tr}Attached Items{/tr}</caption>
-				<tr>
-					<th scope="col" title="{tr}Thumbnail{/tr}">{tr}Thumbnail{/tr}</th>
-					<th scope="col" title="{tr}File Properties{/tr}">{tr}File Properties{/tr}</th>
-				</tr>
-
-				{foreach from=$gContent->mStorage item=storage key=attachmentId}
-					<tr class="{cycle values="odd,even"}">
-						<td style="text-align:center;"><a href="{$storage.source_url}"><img src="{$storage.thumbnail_url.small}" alt="{$storage.filename}" /></a></td>
-						<td>
-							Attachment ID: {$attachmentId}
-							<br />
-							Filename: {$storage.filename}
-							<br />
-							Actions: 
-							{if $gBitUser->isAdmin() || $bit_p_detach_attachment || $storage.user_id == $gBitUser->mUserId}
-								<a href="{$attachmentActionBaseURL}&amp;detachAttachment={$storage.attachment_id}">{biticon ipackage=liberty iname="detach" iexplain="detach"}</a>
-							{/if}
-							{if $gBitUser->isAdmin() ||  $storage.user_id == $gBitUser->mUserId}
-								<a href="{$attachmentActionBaseURL}&amp;deleteAttachment={$storage.attachment_id}">{biticon ipackage=liberty iname="delete" iexplain="delete"}</a>
-							{/if}
-						</td>
-					</tr>
-				{/foreach}
-			</table>
-		</div>
-	{/if}
 {/strip}
