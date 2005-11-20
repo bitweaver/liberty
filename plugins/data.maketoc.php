@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.11 $
+ * @version  $Revision: 1.1.1.1.2.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.1.1.1.2.11 2005/11/11 22:04:09 mej Exp $
+// $Id: data.maketoc.php,v 1.1.1.1.2.12 2005/11/20 15:34:34 squareing Exp $
 
 /**
  * definitions
@@ -80,7 +80,7 @@ function data_maketoc( $data ) {
 	// remove any html tags from the output text and generate link ids
 	foreach( $headers[2] as $output ) {
 		$outputs[] = preg_replace( "/<.*?>/", "", $output );
-		$anchor = preg_replace( "/[^\w|\d]*/", "", $output );
+		$anchor = preg_replace( "/<.*?>|[^\w|\d]*/", "", $output );
 		$anchors[] = !empty( $anchor) ? $anchor : 'id'.microtime() * 1000000;
 	}
 
