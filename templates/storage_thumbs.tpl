@@ -7,7 +7,7 @@
 	<div class="storage">
 		{foreach from=$gContent->mStorage item=attachment }
 			{capture name="popup"}
-				{include file="bitpackage:kernel/popup_box.tpl" content="<div style='text-align:center'><img src='`$attachment.thumbnail_url.small`' /></div>`$attachment.filename`<br />{tr}Size{/tr}: `$attachment.size` bytes" noclose=true}
+				{include file="bitpackage:kernel/popup_box.tpl" content="`$attachment.filename`<br />{tr}Size{/tr}: `$attachment.size` bytes" noclose=true}
 			{/capture}
 				{$popup}
 			<div class="item">
