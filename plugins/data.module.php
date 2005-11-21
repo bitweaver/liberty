@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.10 $
+ * @version  $Revision: 1.1.1.1.2.11 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -16,7 +16,7 @@
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
 // | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.module.php,v 1.1.1.1.2.10 2005/11/11 22:04:09 mej Exp $
+// $Id: data.module.php,v 1.1.1.1.2.11 2005/11/21 21:25:00 squareing Exp $
 
 /**
  * definitions
@@ -56,6 +56,11 @@ function datamodule_help() {
 				.'<td>' . tra( "string" ) . '<br />' . tra( "(required)" ) . '</td>'
 				.'<td>' . tra( "Package the module is part of.")
 			.'</tr>'
+			.'<tr class="even">'
+				.'<td>rows</td>'
+				.'<td>' . tra( "numeric" ) . '<br />' . tra( "(optional)" ) . '</td>'
+				.'<td>' . tra( "Number of rows you wish to show.")
+			.'</tr>'
 			.'<tr class="odd">'
 				.'<td colspan="3">' . tra( "Additional arguments and values depend on the selected module." )
 			.'</tr>'
@@ -73,6 +78,8 @@ function data_datamodule( $data, $params ) {
 
 	if( !empty( $module ) && !empty( $package ) ) {
 		// not sure if we can use the php file, since it sets everything to NULL when passed in - xing
+		global $module_rows;
+		$module_rows = !empty( $rows ) ? $rows : 10;
 		$php = constant( strtoupper( $package ).'_PKG_PATH' ).'modules/mod_'.$module.'.php';
 		// TODO: assigning variables to template doesn't work since they are replaced by module paramaters set in the php file - even when it's not in use! - xing
 		$tpl = 'bitpackage:'.$package.'/mod_'.$module.'.tpl';
@@ -89,6 +96,7 @@ function data_datamodule( $data, $params ) {
 		}
 	}
 	$out = eregi_replace( "\n", "", $out );
+	//vd($out);
 
 	// deal with custom styling
 	$style = '';
