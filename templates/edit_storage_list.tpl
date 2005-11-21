@@ -11,7 +11,7 @@
 
 			{foreach from=$gContent->mStorage item=storage key=attachmentId}
 				<tr class="{cycle values="odd,even"}">
-					<td style="text-align:center;"><a href="{$storage.source_url}"><img src="{$storage.thumbnail_url.small}" alt="{$storage.filename}" /></a></td>
+					<td style="text-align:center;"><a href="{$storage.source_url}"><img src="{$storage.thumbnail_url.avatar}" alt="{$storage.filename}" /></a></td>
 					<td>
 						Attachment ID: {$attachmentId}
 						<br />
