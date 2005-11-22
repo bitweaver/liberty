@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.4 2005/08/07 17:40:31 squareing Exp $
+// $Id: data.maketoc.php,v 1.5 2005/11/22 07:27:18 squareing Exp $
 
 /**
  * definitions
@@ -80,7 +80,7 @@ function data_maketoc( $data ) {
 	// remove any html tags from the output text and generate link ids
 	foreach( $headers[2] as $output ) {
 		$outputs[] = preg_replace( "/<.*?>/", "", $output );
-		$anchor = preg_replace( "/[^\w|\d]*/", "", $output );
+		$anchor = preg_replace( "/<.*?>|[^\w|\d]*/", "", $output );
 		$anchors[] = !empty( $anchor) ? $anchor : 'id'.microtime() * 1000000;
 	}
 
@@ -115,7 +115,7 @@ function data_maketoc( $data ) {
 }
 
 function maketoc_create_list( $pTocHash, $pParams ) {
-	extract( $pTocHash );
+	extract( $pTocHash , EXTR_SKIP);
 
 	// previous level
 	$prev = 0;

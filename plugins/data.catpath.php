@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_catpath.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.catpath.php,v 1.5 2005/08/07 17:40:31 squareing Exp $
+// $Id: data.catpath.php,v 1.6 2005/11/22 07:27:18 squareing Exp $
 
 /**
  * definitions
@@ -89,7 +89,7 @@ function wikiplugin_catpath($data, $params) {
 	if ($package_categories != 'y') {
 		return "<span class='warn'>" . tra("Categories are disabled"). "</span>";
 	}
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	// default divider is '>'
 	if (!(isset($divider))) {
 		$divider = '>';

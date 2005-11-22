@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.agentinfo.php,v 1.5 2005/08/24 20:55:17 squareing Exp $
+// $Id: data.agentinfo.php,v 1.6 2005/11/22 07:27:18 squareing Exp $
 
 /**
  * definitions
@@ -65,7 +65,7 @@ function data_agentinfo_help() {
 // Load Function
 function data_agentinfo($data, $params) {
     $info = 'IP';
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	switch (strtoupper ($info)) {
 		case 'SVRSW': // To maintain Pre-Clyde Parameters
 	    case 'SERVER':

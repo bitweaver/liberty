@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_userlist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.userlist.php,v 1.4 2005/08/07 17:40:31 squareing Exp $
+// $Id: data.userlist.php,v 1.5 2005/11/22 07:27:18 squareing Exp $
 
 /**
  * definitions
@@ -124,7 +124,7 @@ function wikiplugin_compare_users($a, $b) {
 function wikiplugin_userlist($data, $params) {
 	global $gBitUser, $gBitSystem;
 
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	$num = (isset($num)) ? True : False;				     // Default = False 
 	$userspage = (!isset($userspage)) ? True : False;   // Default = True 
 	$alpha = (!isset($alpha)) ? True : False; 				  // Default = True 

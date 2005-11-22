@@ -1,9 +1,14 @@
 <?php
+/**
+ * @version  $Revision: 1.3 $
+ * @package  liberty
+ * @subpackage plugins_format
+ */
 
-//===================================================//
-//=========== start bitweaver configuration =========//
-//===================================================//
 
+/**
+ * Initialization
+ */
 global $gLibertySystem;
 
 /**
@@ -183,7 +188,10 @@ function smarty_modifier_markdown($text) {
 if (strcasecmp(substr(__FILE__, -16), "classTextile.php") == 0) {
 	# Try to include PHP SmartyPants. Should be in the same directory.
 	@include_once 'smartypants.php';
-	# Fake Textile class. It calls Markdown instead.
+	/**
+	 * @package liberty
+	 * Fake Textile class. It calls Markdown instead.
+	 */	
 	class Textile {
 		function TextileThis($text, $lite='', $encode='', $noimage='', $strict='') {
 			if ($lite == '' && $encode == '')   $text = Markdown($text);

@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.8 2005/10/12 15:13:52 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.9 2005/11/22 07:27:18 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -342,6 +342,5 @@ function parse_data_plugins(&$data, &$preparsed, &$noparsed, &$pParser ) {
 
 global $gLibertySystem;
 $gLibertySystem = new LibertySystem();
-$gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
 
 ?>

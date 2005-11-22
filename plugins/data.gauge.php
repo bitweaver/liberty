@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.gauge.php,v 1.7 2005/08/24 20:55:17 squareing Exp $
+// $Id: data.gauge.php,v 1.8 2005/11/22 07:27:18 squareing Exp $
 
 /**
  * definitions
@@ -98,7 +98,7 @@ function data_gauge_help() {
 
 // Load Function
 function data_gauge($data, $params) {
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	if (!isset($max)) {
 		$max = 100;
 	}

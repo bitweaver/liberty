@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.addtabs.php,v 1.5 2005/08/24 20:55:17 squareing Exp $
+// $Id: data.addtabs.php,v 1.6 2005/11/22 07:27:18 squareing Exp $
 
 /**
  * definitions
@@ -62,7 +62,7 @@ function data_addtabs_help() {
 }
 
 function data_addtabs($data, $params) {
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	$ret = '<div class="tabpane">';
 	for ($i = 1; $i <= 99; $i++) {
 		if( isset( ${'tab'.$i} ) && is_numeric( ${'tab'.$i} ) ) {

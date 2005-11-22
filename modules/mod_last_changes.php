@@ -1,14 +1,16 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.php,v 1.6 2005/08/24 20:55:17 squareing Exp $
 /**
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.php,v 1.7 2005/11/22 07:27:18 squareing Exp $
+ * @package liberty
+ * @subpackage modules
  * Params:
  * - content_type_guid : if set, show only those content_type_guid's
  * - show_date : if set, show date of last modification
- * @package liberty
- * @subpackage modules
  */
 
-
+/**
+ * Initialization
+ */
 global $gQueryUser, $gBitUser, $module_rows, $module_params, $gLibertySystem, $module_title;
 
 

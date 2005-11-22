@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
 // | by: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.sort.php,v 1.4 2005/08/07 17:40:31 squareing Exp $
+// $Id: data.sort.php,v 1.5 2005/11/22 07:27:18 squareing Exp $
 
 /**
  * definitions
@@ -54,7 +54,7 @@ function data_sort_help() {
  * Load Function
  */
 function data_sort($data, $params) {
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	$sort = (isset($sort)) ? $sort : "asc";
 	$lines = explode("\n", $data); // separate lines into array
 	// $lines = array_filter( $lines, "chop" ); // remove \n

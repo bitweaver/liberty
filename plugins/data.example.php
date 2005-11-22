@@ -4,7 +4,7 @@
  * assigned_modules
  *
  * @author   StarRider starrrider@sourceforge.net
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -63,7 +63,7 @@ function data_example_help() {
 * Load Function *
  ****************/
 function data_example($data, $params) {
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	$ret = ' ';
 
 	return $ret;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_split.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.split.php,v 1.4 2005/08/07 17:40:31 squareing Exp $
+// $Id: data.split.php,v 1.5 2005/11/22 07:27:18 squareing Exp $
 
 /**
  * definitions
@@ -64,7 +64,7 @@ function wikiplugin_split($data, $params) {
     // Remove first <ENTER> if exists...
     // it may be here if present after {SPLIT()} in original text
 	if (substr($data, 0, 1) == "\n") $data = substr($data, 1);
-	extract ($params);
+	extract ($params, EXTR_SKIP);
     $fixedsize = (!isset($fixedsize) ? true : false);
     $joincols  = (!isset($joincols) ? true : false);
     // Split data by rows and cells

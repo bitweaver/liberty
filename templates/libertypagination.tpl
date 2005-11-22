@@ -1,28 +1,36 @@
 {strip}
 <div class="pagination">
-	{if $page gt 1}
-		<a href="{$smarty.server.PHP_SELF}?{$pgnName}={$page-1}{$pgnVars}">&laquo;</a>&nbsp;
+	{if $pgnPage gt 1}
+		{if $smarty.request.ajaxid}
+			<a href="javascript:sendRequest( '{$smarty.request.ajaxid}','{$pgnName}={$pgnPage-1}{$pgnVars}' )">&laquo;</a>&nbsp;
+		{else}
+			<a href="{$smarty.server.PHP_SELF}?{$pgnName}={$pgnPage-1}{$pgnVars}">&laquo;</a>&nbsp;
+		{/if}
 	{else}
-		&nbsp;
+		&nbsp;&nbsp;
 	{/if}
 
-	{tr}Page {$page} of {$numPages}{/tr}
+	{tr}Page {$pgnPage} of {$numPages}{/tr}
 
-	{if $page lt $numPages}
-		&nbsp;<a href="{$smarty.server.PHP_SELF}?{$pgnName}={$page+1}{$pgnVars}">&raquo;</a>
+	{if $pgnPage lt $numPages}
+		{if $smarty.request.ajaxid}
+			&nbsp;<a href="javascript:sendRequest( '{$smarty.request.ajaxid}','{$pgnName}={$pgnPage+1}{$pgnVars}' )">&raquo;</a>
+		{else}
+			&nbsp;<a href="{$smarty.server.PHP_SELF}?{$pgnName}={$pgnPage+1}{$pgnVars}">&raquo;</a>
+		{/if}
 	{else}
-		&nbsp;
+		&nbsp;&nbsp;
 	{/if}
 
 	<br />
 
-	{if $gBitSystem->isFeatureActive( 'direct_pagination' )}
+	{* MSIE dies when we use a form in the pagination when doing ajax stuff *}
+	{if $gBitSystem->isFeatureActive( 'direct_pagination' ) or $smarty.request.ajaxid}
 		{foreach from=$pgnPages item=link}
 			{$link}&nbsp;
 		{/foreach}
 	{else}
 		{form id="fPageSelect"}
-
 			<input type="hidden" name="comments_maxComments" value="{$maxComments}" />
 			<input type="hidden" name="comments_style" value="{$comments_style}" />
 			<input type="hidden" name="comments_sort_mode" value="{$comments_sort_mode}" />

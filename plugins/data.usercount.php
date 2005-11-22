@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_usercount.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.usercount.php,v 1.4 2005/08/07 17:40:31 squareing Exp $
+// $Id: data.usercount.php,v 1.5 2005/11/22 07:27:18 squareing Exp $
 
 /**
  * definitions
@@ -59,7 +59,7 @@ The code below is from the deprecated USERCOUNT plugin. All comments and the hel
 
 function wikiplugin_usercount($data, $params) {
 	global $gBitUser;
-	extract ($params);
+	extract ($params, EXTR_SKIP);
 	$numusers = $gBitUser->count_users($data);
 	return $numusers;
 }

@@ -4,7 +4,7 @@
  * assigned_modules
  *
  * @author   StarRider <starrrider@sourceforge.net>
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  * 
@@ -63,7 +63,7 @@ function data_dropdown_help() {
  * Load Function
  */
 function data_dropdown($data, $params) {
-	extract ($params);
+	extract ($params, EXTR_SKIP);
     $title = (isset($title)) ? $title : 'For More Information';
     $width = (isset($width)) ? $width : '20';
 	$width = ((100 - $width) / 2) . '%';
