@@ -13,7 +13,7 @@
 			<div class="item">
 				{if $attachment.thumbnail_url.small}
 					{if $attachment.source_url}<a href="{$attachment.source_url}">{/if}
-						<img class="thumb" src="{$attachment.thumbnail_url.avatar}" alt="{$attachment.filename}" title="{$attachment.filename}" {popup fullhtml="1" text=$smarty.capture.popup|escape:"javascript"|escape:"html"}/>
+						<img class="thumb" src="{$attachment.thumbnail_url.avatar}" alt="{$attachment.filename}" title="{$attachment.filename}" {popup fullhtml=1 center=1 text=$smarty.capture.popup|escape:"javascript"|escape:"html"}/>
 					{if $attachment.source_url}</a>{/if}
 				{else}
 					{tr}No thumbnail for{/tr} {$attachment.source_url}
