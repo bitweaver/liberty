@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.25 $
+ * @version  $Revision: 1.2.2.26 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -184,6 +184,7 @@ class TikiWikiParser extends BitBase {
 
 	// Use tiki_links to get all the existing links in a single query
 	function pageExists( $pTitle, $pContentId, $pCommonObject ) {
+$this->debug(1);
 		$pTitle = strtolower( $pTitle );
 		if( !empty( $pContentId ) ) {
 			if( empty( $this->mPageLookup ) ) {
@@ -204,11 +205,11 @@ class TikiWikiParser extends BitBase {
 					}
 				}
 			}
-			if( !isset( $this->mPageLookup[$pTitle] ) ) {
-				$this->mPageLookup[$pTitle] = $pCommonObject->pageExists( $pTitle );
-				if( !empty( $this->mPageLookup[$pTitle] ) && ( count( $this->mPageLookup[$pTitle] ) == 1 ) ) {
-//  					$this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."tiki_links` ( `from_content_id`, `to_content_id` ) VALUES ( ?, ? )" , array( $pContentId, $this->mPageLookup[$pTitle][0]['content_id'] ) );
-				}
+		}
+		if( !isset( $this->mPageLookup[$pTitle] ) ) {
+			$this->mPageLookup[$pTitle] = $pCommonObject->pageExists( $pTitle );
+			if( !empty( $this->mPageLookup[$pTitle] ) && ( count( $this->mPageLookup[$pTitle] ) == 1 ) ) {
+//				$this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."tiki_links` ( `from_content_id`, `to_content_id` ) VALUES ( ?, ? )" , array( $pContentId, $this->mPageLookup[$pTitle][0]['content_id'] ) );
 			}
 		}
 $this->debug(0);
