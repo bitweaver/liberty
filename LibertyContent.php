@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.10 2005/10/12 15:13:52 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.11 2005/12/05 23:53:17 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -804,12 +804,12 @@ class LibertyContent extends LibertyBase {
 		$gateSelect = '';
 		$gateFrom = '';
 
-		if (is_array($pListHash['find'])) { // you can use an array of titles
-			$mid = " AND tc.`title` IN (".implode(',',array_fill(0,count($pListHash['find']),'?')).")";
+		if( is_array( $pListHash['find'] ) ) { // you can use an array of titles
+			$mid = " AND tc.`title` IN ( ".implode( ',',array_fill( 0,count( $pListHash['find'] ),'?' ) ).")";
 			$bindVars[] = $pListHash['find'];
-		} elseif (!empty($pListHash['find']) && is_string($pListHash['find'])) { // or a string
+		} elseif( !empty($pListHash['find'] ) && is_string( $pListHash['find'] ) ) { // or a string
 			$mid = " AND UPPER(tc.`title`) like ? ";
-			$bindVars[] = ('%' . strtoupper( $pListHash['find'] ) . '%');
+			$bindVars[] = ( '%' . strtoupper( $pListHash['find'] ) . '%' );
 		}
 
 		// calendar specific selection method - use timestamps to limit selection

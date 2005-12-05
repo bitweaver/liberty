@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -204,14 +204,13 @@ class TikiWikiParser extends BitBase {
 					}
 				}
 			}
-			if( !isset( $this->mPageLookup[$pTitle] ) ) {
-				$this->mPageLookup[$pTitle] = $pCommonObject->pageExists( $pTitle );
-				if( !empty( $this->mPageLookup[$pTitle] ) && ( count( $this->mPageLookup[$pTitle] ) == 1 ) ) {
-//  					$this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."tiki_links` ( `from_content_id`, `to_content_id` ) VALUES ( ?, ? )" , array( $pContentId, $this->mPageLookup[$pTitle][0]['content_id'] ) );
-				}
+		}
+		if( !isset( $this->mPageLookup[$pTitle] ) ) {
+			$this->mPageLookup[$pTitle] = $pCommonObject->pageExists( $pTitle );
+			if( !empty( $this->mPageLookup[$pTitle] ) && ( count( $this->mPageLookup[$pTitle] ) == 1 ) ) {
+//				$this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."tiki_links` ( `from_content_id`, `to_content_id` ) VALUES ( ?, ? )" , array( $pContentId, $this->mPageLookup[$pTitle][0]['content_id'] ) );
 			}
 		}
-$this->debug(0);
 		return( !empty( $this->mPageLookup[$pTitle] ) ? $this->mPageLookup[$pTitle] : NULL );
 	}
 
