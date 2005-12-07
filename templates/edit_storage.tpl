@@ -1,7 +1,8 @@
 {php} include (LIBERTY_PKG_PATH."edit_storage_inc.php"); {/php}
 {strip}
 	{foreach from=$gLibertySystem->mPlugins item=plugin key=guid}
-		{if $plugin.is_active eq 'y' and $plugin.edit_field and $plugin.plugin_type eq 'storage'}
+		{* $no_plugins is set by the including template *}
+		{if $plugin.is_active eq 'y' and $plugin.edit_field and $plugin.plugin_type eq 'storage' and !$no_plugins}
 			<div class="row">
 				{formlabel label=`$plugin.edit_label`}
 				{forminput}
