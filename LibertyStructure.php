@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.8 2005/10/12 15:13:52 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.9 2005/12/09 19:42:48 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -533,7 +533,7 @@ class LibertyStructure extends LibertyBase {
 	function getContentIds( $pStructureId, &$pToc, $pLevel=0 ) {
 		$ret = array();
 
-		$query = "SELECT * from `".BIT_DB_PREFIX."tiki_structures` where `parent_id`=? ORDER BY pos, page_alias, content_id";
+		$query = "SELECT * from `".BIT_DB_PREFIX."tiki_structures` where `parent_id`=? ORDER BY `pos`, `page_alias`, `content_id`";
 		$result = $this->mDb->query( $query, array( (int)$pStructureId ) );
 		while ( !$result->EOF ) {
 			array_push( $pToc, $result->fields['content_id'] );
