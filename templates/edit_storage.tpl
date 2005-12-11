@@ -13,7 +13,7 @@
 		{/if}
 	{/foreach}
 
-	<h2 class="clear"><a href="javascript:ajax_updater( 'attbrowser', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', '' );" onclick="javascript:document.getElementById( 'attbrowser' ).innerHTML = '<span class=\'loading\'>{tr}Loading Attachment Browser...{/tr}</span>'">{tr}Attachment Browser{/tr}</a></h2>
+	<h2 class="clear"><a href="javascript:ajax_updater( 'attbrowser', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', 'ajax=true' );" onclick="javascript:document.getElementById( 'attbrowser' ).innerHTML = '<span class=\'loading\'>{tr}Loading Attachment Browser...{/tr}</span>'">{tr}Attachment Browser{/tr}</a></h2>
 	<noscript><div class="warning">{tr}The attachment browser only works with javascript enabled.{/tr}</div></noscript>
 	<div id="attbrowser" class="attbrowser"></div>
 {/strip}

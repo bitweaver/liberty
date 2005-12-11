@@ -45,5 +45,5 @@
 	{/if}
 </table>
 
-{libertypagination pgnName="pgnPage" pgnPage=$curPage numPages=$numPages offset=$smarty.request.offset}
+{libertypagination pgnName="pgnPage" pgnPage=$curPage numPages=$numPages offset=$smarty.request.offset ajaxId=attbrowser}
 {/strip}
