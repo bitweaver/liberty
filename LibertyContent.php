@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.45 2005/11/22 17:24:19 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.46 2005/12/11 08:55:12 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -127,6 +127,12 @@ class LibertyContent extends LibertyBase {
 	 */
 	function verify( &$pParamHash ) {
 		global $gLibertySystem, $gBitSystem;
+
+		// It is possible a derived class set this to something different
+		if( empty( $pParamHash['content_type_guid'] ) ) {
+			$pParamHash['content_type_guid'] = $this->mContentTypeGuid;
+		}
+
 		if( empty( $pParamHash['user_id'] ) ) {
 			global $gBitUser;
 			$pParamHash['user_id'] = $gBitUser->getUserId();
@@ -284,25 +290,15 @@ class LibertyContent extends LibertyBase {
 			}
 			*/
 
+			// Remove individual permissions for this object if they exist
+			$query = "delete from `".BIT_DB_PREFIX."users_objectpermissions` where `object_id`=? and `object_type`=?";
+			$result = $this->mDb->query( $query, array( $this->mContentId, $this->mContentTypeGuid ) );
+
 			$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_content` WHERE `content_id` = ?";
 			$result = $this->mDb->query( $query, array( $this->mContentId ) );
 			$this->mDb->CompleteTrans();
 			$ret = TRUE;
 		}
-/*
-// ported from gBitSystem - this should probably be execute as well - spiderr
-	function remove_object($type, $id) {
-		$this->uncategorize_object($type, $id);
-		// Now remove comments
-		$object = $type . $id;
-		$query = "delete from `".BIT_DB_PREFIX."tiki_comments` where `object`=?  and `object_type`=?";
-		$result = $this->mDb->query($query, array( $id, $type ));
-		// Remove individual permissions for this object if they exist
-		$query = "delete from `".BIT_DB_PREFIX."users_objectpermissions` where `object_id`=? and `object_type`=?";
-		$result = $this->mDb->query($query,array((int)$object,$type));
-		return true;
-	}
-*/
 		return $ret;
 	}
 
