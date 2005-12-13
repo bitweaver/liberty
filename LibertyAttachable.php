@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.26 2005/11/14 02:29:19 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.27 2005/12/13 06:41:28 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -455,7 +455,7 @@ function liberty_process_archive( &$pFileHash ) {
 		switch( $mimeExt ) {
 			case 'x-rar-compressed':
 			case 'x-rar':
-				$shellResult = shell_exec( "unrar x $pFileHash[tmp_name] \"$destDir\"" );
+				$shellResult = shell_exec( "unrar x \"$pFileHash[tmp_name]\" \"$destDir\"" );
 				break;
 			case 'x-bzip2':
 			case 'bzip2':
@@ -470,25 +470,25 @@ function liberty_process_archive( &$pFileHash ) {
 					case 'bz2': $compressFlag = '-j'; break;
 					default: $compressFlag = ''; break;
 				}
-				$shellResult = shell_exec( "tar -x $compressFlag -f $pFileHash[tmp_name]  -C \"$destDir\"" );
+				$shellResult = shell_exec( "tar -x $compressFlag -f \"$pFileHash[tmp_name]\"  -C \"$destDir\"" );
 				break;
 			case 'x-zip-compressed':
 			case 'x-zip':
 			case 'zip':
-				$shellResult = shell_exec( "unzip $pFileHash[tmp_name] -d \"$destDir\"" );
+				$shellResult = shell_exec( "unzip \"$pFileHash[tmp_name]\" -d \"$destDir\"" );
 				break;
 			case 'x-stuffit':
 			case 'stuffit':
-				$shellResult = shell_exec( "unstuff -d=\"$destDir\" $pFileHash[tmp_name] " );
+				$shellResult = shell_exec( "unstuff -d=\"$destDir\" \"$pFileHash[tmp_name]\" " );
 				break;
 			default:
 				if( $upExt == 'zip' ) {
-					$shellResult = shell_exec( "unzip $pFileHash[tmp_name] -d \"$destDir\"" );
+					$shellResult = shell_exec( "unzip \"$pFileHash[tmp_name]\" -d \"$destDir\"" );
 				} elseif( $upExt == 'rar' ) {
-					$shellResult = shell_exec( "unrar x $pFileHash[tmp_name] \"$destDir\"" );
+					$shellResult = shell_exec( "unrar x \"$pFileHash[tmp_name]\" \"$destDir\"" );
 				} elseif( $upExt == 'sit' || $upExt == 'sitx' ) {
-					print( "unstuff -d=\"$destDir\" $pFileHash[tmp_name] " );
-					$shellResult = shell_exec( "unstuff -d=\"$destDir\" $pFileHash[tmp_name] " );
+					print( "unstuff -d=\"$destDir\" \"$pFileHash[tmp_name]\" " );
+					$shellResult = shell_exec( "unstuff -d=\"$destDir\" \"$pFileHash[tmp_name]\" " );
 				} else {
 					$destDir = NULL;
 				}
