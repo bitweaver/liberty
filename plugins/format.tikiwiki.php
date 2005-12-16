@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.27 $
+ * @version  $Revision: 1.2.2.28 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -499,6 +499,68 @@ class TikiWikiParser extends BitBase {
 		return $cant;
 	}
 
+	function parse_mediawiki_tables( $data ) {
+		//DEBUG: $data = "\n<!-- parse_mediawiki_tables() called. -->\n" . $data;
+		/* Find all matches to {|...|} with no {| inside. */
+		while (preg_match('/\n\{\|(((?<!\{)\||[^\|])+)\n\|\}/sm', $data, $matches)) {
+			//DEBUG: vd($matches);
+			$table_data = str_replace("\r", "", $matches[1]);
+			$table_data = str_replace('||', "\n|", $table_data);
+			while (preg_match('/^![^!]+!!/m', $table_data)) {
+				/* Replace !! with \n! but ONLY in !-defined header rows. */
+				$table_data = preg_replace('/^!(^!]+)!!/m', "!$1\n!", $table_data);
+			}
+			if (substr($table_data, 0, 1) != "\n") {
+				/* We have table parameters. */
+				list($table_params, $table_data) = explode("\n", $table_data, 2);
+				$table_params = trim($table_params);
+				/* FIXME:  This attempt to support foo:bar table params needs help!
+				if (strlen($table_params)) {
+					$table_params = preg_replace("/\b(\w+):/", '$1=', $table_params);
+				}
+				*/
+			} else {
+				$table_params = '';
+			}
+			$content = "<table class=\"bittable\" $table_params>";
+			$lines = explode("\n", $table_data);
+			$row = 0;
+			foreach ($lines as $line) {
+				if ((substr($line, 0, 1) == '|') || (substr($line, 0, 1) == '!')) {
+					if (preg_match('/^\|\+\s*(.+)$/', $line, $row_matches)) {
+						$content .= "<caption>$row_matches[1]</caption>";
+					} else if (preg_match('/^\|-\s*(.+)?$/', $line, $row_matches)) {
+						if ($row) {
+							$content .= '</tr>';
+							$row++;
+						} else {
+							$row = 1;
+						}
+						$content .= '<tr' . ((isset($row_matches[1])) ? ($row_matches[1]) : (""))
+						            . '>';
+					} else if (preg_match('/^([\|!])\s*([^\|]+\s*\|)?\s*(.*)$/', $line, $row_matches)) {
+						if (! $row) {
+							$content .= '<tr>';
+							$row = 1;
+						}
+						$content .= '<t' . (($row_matches[1] == '!') ? ('h') : ('d'))
+						            . ((strlen($row_matches[2])) ? (' ' . trim(substr($row_matches[2], 0, -1))) : (''))
+									. '>' . $row_matches[3] . '</t'
+						            . (($row_matches[1] == '!') ? ('h') : ('d'))
+									. '>';
+					} else {
+						$content .= "<!-- ERROR:  Ignoring invalid line \"$line\" -->";
+					}
+				} else {
+					$content .= "<!-- ERROR:  Ignoring invalid line \"$line\" -->";
+				}
+			}
+			$content .= '</table>';
+			$data = str_replace($matches[0], $content, $data);
+		}
+		//DEBUG: $data .= "\n<!-- parse_mediawiki_tables() done. -->\n";
+		return $data;
+	}
 
 	function parse_data( $data, &$pCommonObject ) {
 		global $gBitSystem;
@@ -569,6 +631,11 @@ class TikiWikiParser extends BitBase {
 		$data = preg_replace("/\{rm\}/", "&rlm;", $data);
 		// smileys
 		$data = $this->parse_smileys($data);
+
+		// Parse MediaWiki-style pipe syntax tables.
+		if ((strpos($data, "\n{|") !== FALSE) && (strpos($data, "\n|}") !== FALSE)) {
+			$data = $this->parse_mediawiki_tables($data);
+		}
 
 		// Replace links to slideshows
 		if ($gBitSystem->getPreference('feature_drawings') == 'y') {
