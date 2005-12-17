@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.22 2005/12/17 11:49:51 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.23 2005/12/17 18:41:03 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -259,7 +259,8 @@ function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser ) {
 			$plugin = $curlyTags[1][$i];
 			$pos = strpos( $data, $plugin_start ); // where plugin starts
 			$dataTag = strtolower( $plugin );
-			$pluginInfo = $gLibertySystem->getPluginInfo( $gLibertySystem->mDataTags[$dataTag] ) ;
+			// hush up the return of this in case someone uses curly braces to enclose text
+			$pluginInfo = $gLibertySystem->getPluginInfo( @$gLibertySystem->mDataTags[$dataTag] ) ;
 
 			// only process a standalone unpaired tag or the start tag for a paired tag
 			if( empty( $paired_close_tag_seen[$dataTag] ) || $paired_close_tag_seen[$dataTag] == 0 ) {
