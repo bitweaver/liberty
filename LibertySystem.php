@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.20 2005/12/17 05:26:25 jht001 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.21 2005/12/17 08:28:31 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -34,8 +34,8 @@ define( 'LIBERTY_SERVICE_DOCUMENT_GENERATION', 'document_generation' );
 
 
 define( 'DEFAULT_ACCEPTABLE_TAGS', '<a><br><b><blockquote><cite><code><div><dd><dl><dt><em><h1><h2><h3><h4><hr>'
-				 .' <i><it><img><li><ol><p><pre><span><strong><table><tbody><div><tr><td><th><u><ul>'
-				 .' <button><fieldset><form><label><input><option><select><textarea>' );
+		.' <i><it><img><li><ol><p><pre><span><strong><table><tbody><div><tr><td><th><u><ul>'
+		.' <button><fieldset><form><label><input><option><select><textarea>' );
 
 /**
  * Link to base class
@@ -240,73 +240,65 @@ class LibertySystem extends LibertyBase {
 	}
 }
 
-function parse_data_plugins(&$data, &$preparsed, &$noparsed, &$pParser ) {
+function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser ) {
 	global $gLibertySystem;
 	// Find the plugins
 	// note: $curlyTags[0] is the complete match, $curlyTags[1] is plugin name, $curlyTags[2] is plugin arguments
 	preg_match_all("/\{\/*([A-Za-z]+)([^\}]*)\}/", $data, $curlyTags);
 
-	if( count($curlyTags[0]) ) {
+	if( count( $curlyTags[0] ) ) {
 		// if true, replace only CODE plugin, if false, replace all other plugins
 		$code_first = true;
 
 		// Process plugins in reverse order, so that nested plugins are handled
 		// from the inside out.
-		$i = count($curlyTags[0]) - 1;
+		$i = count( $curlyTags[0] ) - 1;
 		$paired_tag_seen = array();
-		while ($i >= 0) {
+		while( $i >= 0 ) {
 			$plugin_start = $curlyTags[0][$i];
 			$plugin = $curlyTags[1][$i];
 			$pos = strpos( $data, $plugin_start ); // where plugin starts
 			$dataTag = strtolower( $plugin );
 			$pluginInfo = $gLibertySystem->getPluginInfo( $gLibertySystem->mDataTags[$dataTag] ) ;
-			
+
 			// only process a standalone unpaired tag or the start tag for a paired tag
-			if ( empty($paired_close_tag_seen[$dataTag]) || $paired_close_tag_seen[$dataTag] == 0 ) {
+			if( empty( $paired_close_tag_seen[$dataTag] ) || $paired_close_tag_seen[$dataTag] == 0 ) {
 				$paired_close_tag_seen[$dataTag] = 1;
-				}
-			else {
+			} else {
 				$paired_close_tag_seen[$dataTag] = 0;
-				}
+			}
 
 			$is_opening_tag = 0;
-			if (   
-			    (    
-			         empty( $pluginInfo['requires_pair'] )
-			         && (strtolower($plugin_start) != '{/'. $dataTag . '}' )
-				)
-			    || (strpos( $plugin_start, ' ' ) > 0)
-			    || (strtolower($plugin_start) == '{'.$dataTag.'}' && !$paired_close_tag_seen[$dataTag] )
-			    ) {
-			    $is_opening_tag = 1;
-			    }
+			if( ( empty( $pluginInfo['requires_pair'] ) && (strtolower($plugin_start) != '{/'. $dataTag . '}' ) )
+				|| (strpos( $plugin_start, ' ' ) > 0)
+				|| (strtolower($plugin_start) == '{'.$dataTag.'}' && !$paired_close_tag_seen[$dataTag] )
+			) {
+				$is_opening_tag = 1;
+			}
 
-			if (
+			if(
 				// when in CODE parsing mode, replace only CODE plugins
-				(  ($code_first 
-				   && ($dataTag == 'code') 
-				   )
-				   // when NOT in CODE parsing mode, replace all other plugins
-				   || (!$code_first && ($dataTag <> 'code'))
+				( ( $code_first && ( $dataTag == 'code' ) )
+					// when NOT in CODE parsing mode, replace all other plugins
+					|| ( !$code_first && ( $dataTag <> 'code' ) )
 				)
 				&& isset( $gLibertySystem->mDataTags[$dataTag] )
 				&& ( $pluginInfo )
 				&& ( $gLibertySystem->getPluginFunction( $gLibertySystem->mDataTags[$dataTag], 'load_function' ) )
 				&& ( $loadFunc = $gLibertySystem->getPluginFunction( $gLibertySystem->mDataTags[$dataTag], 'load_function' ) )
-				&& ( $is_opening_tag ) 
-			   ) {
+				&& ( $is_opening_tag )
+			) {
 
 				if( $pluginInfo['requires_pair'] ) {
 					$plugin_end = '{/'.$plugin.'}';
-					$pos_end = strpos(strtolower( $data ), strtolower( $plugin_end ), $pos); // where plugin data ends
+					$pos_end = strpos( strtolower( $data ), strtolower( $plugin_end ), $pos ); // where plugin data ends
 					$plugin_end2 = '{'.$plugin.'}';
-					$pos_end2 = strpos(strtolower( $data ), strtolower( $plugin_end2 ), $pos+1); // where plugin data ends
-					if ( ($pos_end2 > 0 && $pos_end2 > 0 && $pos_end2 < $pos_end)
-					|| $pos_end === false)
-						 {
+					$pos_end2 = strpos( strtolower( $data ), strtolower( $plugin_end2 ), $pos+1 ); // where plugin data ends
+
+					if( ( $pos_end2 > 0 && $pos_end2 > 0 && $pos_end2 < $pos_end ) || $pos_end === false ) {
 						$pos_end = $pos_end2;
 						$plugin_end = $plugin_end2;
-						}
+					}
 				} else {
 					$pos_end = $pos + strlen( $curlyTags[0][$i] );
 					$plugin_end = '';
@@ -315,27 +307,27 @@ function parse_data_plugins(&$data, &$preparsed, &$noparsed, &$pParser ) {
 //print "			if ( ((($code_first) && ($plugin == 'CODE')) || ((!$code_first) && ($plugin <> 'CODE'))) && ($pos_end > $pos)) { <br/>";
 
 				// Extract the plugin data
-				$plugin_data_len = $pos_end - $pos - strlen($curlyTags[0][$i]);
+				$plugin_data_len = $pos_end - $pos - strlen( $curlyTags[0][$i] );
 
-				$plugin_data = substr($data, $pos + strlen($plugin_start), $plugin_data_len);
+				$plugin_data = substr( $data, $pos + strlen( $plugin_start ), $plugin_data_len );
 //print "		$plugin_data_len = $pos_end - $pos - strlen(".$curlyTags[0][$i].")		substr( $pos + strlen($plugin_start), $plugin_data_len);";
 
 				$arguments = array();
 				// Construct argument list array
-				$paramString = str_replace('&gt;', '>', trim( $curlyTags[2][$i] ) );
+				$paramString = str_replace( '&gt;', '>', trim( $curlyTags[2][$i] ) );
 				if( preg_match( '/^\(.*=>.*\)$/', $paramString ) ) {
-					$paramString = preg_replace('/[\(\)]/', '', $paramString);
+					$paramString = preg_replace( '/[\(\)]/', '', $paramString );
 					//we have the old style parms like {CODE (in=>1)}
-					$params = split(',', trim( $paramString ));
+					$params = split( ',', trim( $paramString ) );
 
-					foreach ($params as $param) {
+					foreach( $params as $param ) {
 						// the following str_replace line is to decode the &gt; char when html is turned off
 						// perhaps the plugin syntax should be changed in 1.8 not to use any html special chars
 						$parts = split( '=>?', $param );
 
-						if (isset($parts[0]) && isset($parts[1])) {
-							$name = trim($parts[0]);
-							$arguments[$name] = trim($parts[1]);
+						if( isset( $parts[0] ) && isset( $parts[1] ) ) {
+							$name = trim( $parts[0] );
+							$arguments[$name] = trim( $parts[1] );
 						}
 					}
 				} else {
@@ -363,9 +355,8 @@ function parse_data_plugins(&$data, &$preparsed, &$noparsed, &$pParser ) {
 			}
 			$i--;
 			// if we are in CODE parsing mode and list is done, switch to 'parse other plugins' mode and start all over
-			if (($code_first) && ($i < 0)) {
-				$i = count($curlyTags[0]) - 1;
-
+			if( ( $code_first ) && ( $i < 0 ) ) {
+				$i = count( $curlyTags[0] ) - 1;
 				$code_first = false;
 			}
 		} // while
@@ -374,5 +365,4 @@ function parse_data_plugins(&$data, &$preparsed, &$noparsed, &$pParser ) {
 
 global $gLibertySystem;
 $gLibertySystem = new LibertySystem();
-$gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
 ?>
