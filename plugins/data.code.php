@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.14 $
+ * @version  $Revision: 1.1.1.1.2.15 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.1.1.1.2.14 2005/11/11 22:04:09 mej Exp $
+// $Id: data.code.php,v 1.1.1.1.2.15 2005/12/17 05:31:13 jht001 Exp $
 
 /**
  * definitions
@@ -90,7 +90,6 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 // Parameters were $In & $Colors
 // Added testing to maintain Pre-Clyde compatability
 //	$num = NULL;
-	$add_tags = false;
 	extract ($params, EXTR_SKIP);
 	// This maintains Pre-Clyde Parameters
 	if (isset($colors) and ($colors == 'php') ) $source = 'php';
@@ -108,12 +107,19 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 	}	}
 	$num = (isset($num)) ? $num : FALSE;
 
-	$code = ''; // Lets make it pretty by eliminating all empty lines
+	// trim any trailing spaces
+	$code = ''; 
 	$lines = explode("\n", $data);
 	foreach ($lines as $line) {
-		if (strlen($line) > 1)
-			$code .=  rtrim($line) . "\n"; // The Strings length is > 1
+		$code .=  rtrim($line) . "\n";
 	}
+
+	$code = unhtmlentities( $code );
+
+	// Trim any leading blank linkes
+	$code = preg_replace('/^[\n\r]+/', "",$code);		
+	// Trim any trailing blank linkes
+	$code = preg_replace('/[\n\r]+$/', "\n",$code);		
 
 	if( file_exists( UTIL_PKG_PATH.'geshi/geshi.php' ) ) {
 		// Include the GeSHi library
@@ -136,24 +142,17 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 				}
 			}
 		}
-		if( preg_match( '/php/i', $source ) && substr($code, 0, 2) != '<?') { // Check it if code starts with PHP tags, if not: add 'em.
-			$code = "<?php\n".$code."\n?>"; // The require these tags to function
-			$add_tags = true;
-		}
-		switch ($source) { 	// I used a switch here to make it easy to expand this plugin for other kinds of source code
+		switch (strtoupper($source)) { 	// I used a switch here to make it easy to expand this plugin for other kinds of source code
 			case 'HTML':
 				$code = highlight_string(decodeHTML($code),true);
-				if (substr($code, 0, 6) == '<code>') // Remove the first <code>" tags
+				if (substr($code, 0, 6) == '<code>') { // Remove the first <code>" tags
 					$code = substr($code, 6, (strlen($code) - 13));
-				if ($add_tags) { //strip the PHP tags if they were added by the script
-					if ($num) { // Line Numbering has been added
-						$code = substr($code, 50, (strlen($code) -125));
-					} else {
-						$code = substr($code, 63, (strlen($code) -125));
-					}
 				}
 				break;
 			case 'PHP':
+				if(!preg_match( '/^[ 0-9:]*<\?/i', $code ) ) { // Check it if code starts with PHP tags, if not: add 'em.
+					$code = "<?php\n".$code."?>"; // The require these tags to function
+				}
 			   $code = highlight_string($code, true);
 			   $convmap = array( // Replacement-map to replace Colors
 					'#000000">' => '#004A4A">', // The Default Color
@@ -169,14 +168,20 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 				$code = highlight_string( $code, true );
 				break;
 		}
+
 		$code = "<pre>$code</pre>";
 	}
-    return "~np~<div class='codelisting'>".unhtmlentities( $code )."</div>~/np~";
+
+
+	$work = "~np~<div class='codelisting'>". $code ."</div>~/np~";
+    return $work;
 }
 
 function unhtmlentities($string) {
 	$trans_tbl = get_html_translation_table(HTML_ENTITIES);
 	$trans_tbl = array_flip($trans_tbl);
-	return strtr($string, $trans_tbl);
+	$trans_tbl['&nbsp;'] = ' ';
+	$ret = strtr($string, $trans_tbl);
+	return preg_replace('/&#(\d+);/me', "chr('\\1')",$ret);
 }
 ?>
