@@ -1,10 +1,10 @@
 <?php
-// $Id: data.comment.php,v 1.1.2.5 2005/08/03 07:43:55 lsces Exp $
+// $Id: data.comment.php,v 1.1.2.6 2005/12/17 09:05:03 jht001 Exp $
 /**
  * assigned_modules
  *
  * @author   StarRider <starrrider@sourceforge.net>
- * @version  $Revision: 1.1.2.5 $
+ * @version  $Revision: 1.1.2.6 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -25,7 +25,7 @@ $pluginParams = array ( 'tag' => 'COMMENT',
 						'help_page' => 'DataPluginComment',
 						'description' => tra("This plugin allows Comments (Text that will not be displayed) to be added to a page."),
 						'help_function' => 'data__comment_help',
-						'syntax' => "{COMMENT}Data Not Displayed{COMMENT}",
+						'syntax' => "{COMMENT}Data Not Displayed{/COMMENT}",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_COMMENT, $pluginParams );
@@ -46,7 +46,7 @@ function data_comment_help() {
 				. ' <strong>{COMMENT}</strong> ' . tra("Blocks is not displayed.") . '</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . "{COMMENT}" . tra("Everything in here is not displayed.") . "{COMMENT}";
+		. tra("Example: ") . "{COMMENT}" . tra("Everything in here is not displayed.") . "{/COMMENT}";
 	return $help;
 }
 /****************
