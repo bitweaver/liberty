@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.21 2005/12/17 08:28:31 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.22 2005/12/17 11:49:51 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -244,7 +244,7 @@ function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser ) {
 	global $gLibertySystem;
 	// Find the plugins
 	// note: $curlyTags[0] is the complete match, $curlyTags[1] is plugin name, $curlyTags[2] is plugin arguments
-	preg_match_all("/\{\/*([A-Za-z]+)([^\}]*)\}/", $data, $curlyTags);
+	preg_match_all("/\{\/?([A-Za-z]+)([^\}]*)\}/", $data, $curlyTags);
 
 	if( count( $curlyTags[0] ) ) {
 		// if true, replace only CODE plugin, if false, replace all other plugins
