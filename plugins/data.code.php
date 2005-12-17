@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.15 $
+ * @version  $Revision: 1.1.1.1.2.16 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.1.1.1.2.15 2005/12/17 05:31:13 jht001 Exp $
+// $Id: data.code.php,v 1.1.1.1.2.16 2005/12/17 09:06:54 jht001 Exp $
 
 /**
  * definitions
@@ -32,7 +32,7 @@ $pluginParams = array ( 'tag' => 'CODE',
 						'help_page' => 'DataPluginCode',
 						'description' => tra("Displays the Source Code Snippet between {Code} blocks."),
 						'help_function' => 'data_code_help',
-						'syntax' => " {CODE source= num= }". tra("Sorce Code Snippet") . "{code}",
+						'syntax' => " {CODE source= num= }". tra("Sorce Code Snippet") . "{/code}",
 						'plugin_type' => DATA_PLUGIN
 					  );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACODE, $pluginParams );
@@ -75,7 +75,7 @@ function data_code_help() {
 				.'</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . "{CODE source='php' num='on' }" . tra("Sorce Code Snippet") . "{code}";
+		. tra("Example: ") . "{CODE source='php' num='on' }" . tra("Sorce Code Snippet") . "{/code}";
 	return $help;
 }
 
