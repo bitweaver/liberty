@@ -1,8 +1,8 @@
 {strip}
 <div class="pagination">
 	{if $pgnPage gt 1}
-		{if $smarty.request.ajaxid}
-			<a href="javascript:sendRequest( '{$smarty.request.ajaxid}','{$pgnName}={$pgnPage-1}{$pgnVars}' )">&laquo;</a>&nbsp;
+		{if $ajaxId}
+			<a href="javascript:ajax_updater( '{$ajaxId}', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', '{$pgnName}={$pgnPage-1}{$pgnVars}' );">&laquo;</a>&nbsp;
 		{else}
 			<a href="{$smarty.server.PHP_SELF}?{$pgnName}={$pgnPage-1}{$pgnVars}">&laquo;</a>&nbsp;
 		{/if}
@@ -13,8 +13,8 @@
 	{tr}Page {$pgnPage} of {$numPages}{/tr}
 
 	{if $pgnPage lt $numPages}
-		{if $smarty.request.ajaxid}
-			&nbsp;<a href="javascript:sendRequest( '{$smarty.request.ajaxid}','{$pgnName}={$pgnPage+1}{$pgnVars}' )">&raquo;</a>
+		{if $ajaxId}
+			<a href="javascript:ajax_updater( '{$ajaxId}', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', '{$pgnName}={$pgnPage+1}{$pgnVars}' );">&raquo;</a>
 		{else}
 			&nbsp;<a href="{$smarty.server.PHP_SELF}?{$pgnName}={$pgnPage+1}{$pgnVars}">&raquo;</a>
 		{/if}
@@ -25,7 +25,7 @@
 	<br />
 
 	{* MSIE dies when we use a form in the pagination when doing ajax stuff *}
-	{if $gBitSystem->isFeatureActive( 'direct_pagination' ) or $smarty.request.ajaxid}
+	{if $gBitSystem->isFeatureActive( 'direct_pagination' ) or $ajaxId}
 		{foreach from=$pgnPages item=link}
 			{$link}&nbsp;
 		{/foreach}

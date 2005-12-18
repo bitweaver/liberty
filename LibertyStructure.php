@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.9 2005/12/09 19:42:48 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.10 2005/12/18 22:30:21 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -468,32 +468,39 @@ class LibertyStructure extends LibertyBase {
 		}
 	}
 
-	function s_remove_page($structure_id, $delete) {
+	function s_remove_page( $structure_id, $delete ) {
 		// Now recursively remove
 		if( is_numeric( $structure_id ) ) {
 			$query = "SELECT `structure_id`, ts.`content_id`
 					  FROM `".BIT_DB_PREFIX."tiki_structures` ts
 					  WHERE `parent_id`=?";
-			$result = $this->mDb->query( $query,array( (int)$structure_id) );
+			$result = $this->mDb->query( $query, array( (int)$structure_id ) );
 			//Iterate down through the child nodes
-			while ($res = $result->fetchRow()) {
-				$this->s_remove_page($res["structure_id"], $delete);
+			while( $res = $result->fetchRow() ) {
+				$this->s_remove_page( $res["structure_id"], $delete );
 			}
 
 			//Only delete a page if other structures arent referencing it
-			if ($delete) {
-				$page_info = $this->getNode($structure_id);
-				$query = "select count(*) from `".BIT_DB_PREFIX."tiki_structures` where `content_id`=?";
-				$count = $this->mDb->getOne($query, array((int)$page_info["page_id"]));
-				if ($count = 1) {
-					$this->remove_all_versions($page_info["page_id"]);
+			if( $delete ) {
+				$page_info = $this->getNode( $structure_id );
+				$query = "SELECT COUNT(*) FROM `".BIT_DB_PREFIX."tiki_structures` WHERE `content_id`=?";
+				$count = $this->mDb->getOne( $query, array( (int)$page_info["page_id"] ) );
+				if( $count = 1 ) {
+					$this->remove_all_versions( $page_info["page_id"] );
 				}
 			}
 
-			//Remove the structure node
-			$query = "delete from `".BIT_DB_PREFIX."tiki_structures` where `structure_id`=?";
+			//Get the correct content_id and remove it from tiki_content
+			$query = "SELECT `content_id`
+					  FROM `".BIT_DB_PREFIX."tiki_structures` ts
+					  WHERE `structure_id`=?";
+			$content_id = $this->mDb->getOne( $query, array( (int)$structure_id ) );
+			$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_content` WHERE `content_id`=?";
+			$result = $this->mDb->query( $query, array( (int)$content_id) );
 
-			$result = $this->mDb->query($query, array( (int)$structure_id) );
+			//Remove the structure node
+			$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_structures` WHERE `structure_id`=?";
+			$result = $this->mDb->query( $query, array( (int)$structure_id) );
 			return true;
 		}
 	}
@@ -533,7 +540,7 @@ class LibertyStructure extends LibertyBase {
 	function getContentIds( $pStructureId, &$pToc, $pLevel=0 ) {
 		$ret = array();
 
-		$query = "SELECT * from `".BIT_DB_PREFIX."tiki_structures` where `parent_id`=? ORDER BY `pos`, `page_alias`, `content_id`";
+		$query = "SELECT * from `".BIT_DB_PREFIX."tiki_structures` where `parent_id`=? ORDER BY pos, page_alias, content_id";
 		$result = $this->mDb->query( $query, array( (int)$pStructureId ) );
 		while ( !$result->EOF ) {
 			array_push( $pToc, $result->fields['content_id'] );
