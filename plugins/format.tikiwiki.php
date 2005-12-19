@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.28 $
+ * @version  $Revision: 1.2.2.29 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -912,56 +912,48 @@ class TikiWikiParser extends BitBase {
 		// Images
 		preg_match_all("/(\{img [^\}]+})/i", $data, $pages);
 
-		foreach (array_unique($pages[1])as $page_parse) {
-			$parts = explode(" ", $page_parse);
+		foreach( array_unique( $pages[1] ) as $page_parse ) {
+			// collect all parameters into $parts
+			preg_match_all( "/(\w*)=([^=]*)(?=\s.*?|\s*\})/", $page_parse, $parts );
 
 			$imgdata = array();
-			$imgdata["src"] = '';
-			$imgdata["height"] = '';
-			$imgdata["width"] = '';
-			$imgdata["link"] = '';
-			$imgdata["align"] = '';
-			$imgdata["float"] = '';
-			$imgdata["desc"] = '';
+			$imgdata['img_style'] = '';
+			$imgdata['div_style'] = '';
 
-			foreach ($parts as $part) {
-				$part = str_replace('}', '', $part);
-				$part = str_replace('{', '', $part);
-				$part = str_replace('\'', '', $part);
-				$part = str_replace('"', '', $part);
-
-				if (strstr($part, '=')) {
-				$subs = explode("=", $part, 2);
-
-				$imgdata[$subs[0]] = $subs[1];
+			foreach( $parts[1] as $i => $key ) {
+				$value = str_replace( '"', "'", $parts[2][$i] );
+				switch( $key ) {
+					case 'width':
+					case 'height':
+						$imgdata['img_style'] .= $key.':'.$value.';';
+						break;
+					case 'float':
+						$imgdata['div_style'] .= $key.':'.$value.';';
+						break;
+					case 'align':
+						$imgdata['div_style'] .= 'text-align:'.$value.';';
+						break;
+					default:
+						$imgdata[$key] = $value;
+						break;
 				}
 			}
 
-			//print("todo el tag es: ".$page_parse."<br/>");
-			//print_r($imgdata);
-			$repl = '<img alt="' . tra('Image') . '" src="'.$imgdata["src"].'" style="border:0;'.( !empty( $imgdata["float"] ) ? ' float:'.$imgdata["float"].';' : '' ).'"';
+			// set up image first
+			$repl = '<img'.
+					' alt="'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : 'Image' ).'"'.
+					' title="'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : 'Image' ).'"'.
+					' src="'.$imgdata['src'].'"'.
+					' style="'.$imgdata['img_style'].'"'.
+				' />';
 
-
-
-			if ($imgdata["width"])
-				$repl .= ' width="' . $imgdata["width"] . '"';
-
-			if ($imgdata["height"])
-				$repl .= ' height="' . $imgdata["height"] . '"';
-
-			if ($imgdata["align"])
-				$repl .= ' align="' . $imgdata["align"] . '"';
-
-			$repl .= ' />';
-
-			if ($imgdata["link"]) {
-				$repl = '<a href="' . $imgdata["link"] . '">' . $repl . '</a>';
+			// if this image is linking to something, wrap the image with the <a>
+			if( !empty( $imgdata['link'] ) ) {
+				$repl = '<a href="'.trim( $imgdata['link'] ).'">'.$repl.'</a>';
 			}
 
-			if ($imgdata["desc"]) {
-				$repl = '<table cellpadding="0" cellspacing="0"><tr><td>' . $repl . '</td></tr><tr><td><small>' . $imgdata["desc"] . '</small></td></tr></table>';
-			}
-
+			// finally, wrap the image with a div, that does the positioning of the image in tha page
+			$repl = '<div style="'.$imgdata['div_style'].'">'.$repl.'<br />'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : '' ).'</div>';
 
 			$data = str_replace($page_parse, $repl, $data);
 		}
