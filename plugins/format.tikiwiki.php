@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.32 $
+ * @version  $Revision: 1.2.2.33 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -961,10 +961,12 @@ class TikiWikiParser extends BitBase {
 					$repl = '<a href="'.trim( $imgdata['link'] ).'">'.$repl.'</a>';
 				}
 
-				// finally, wrap the image with a div, that does the positioning of the image in tha page
-				$repl = '<div class="img-plugin" style="'.$imgdata['div_style'].'">'.$repl.'<br />'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : '' ).'</div>';
+				// finally, wrap the image with a div
+				if( !empty( $imgdata['div_style'] ) || !empty( $imgdata['desc'] ) ) {
+					$repl = '<div class="img-plugin" style="'.$imgdata['div_style'].'">'.$repl.'<br />'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : '' ).'</div>';
+				}
 			} else {
-				$repl = '<div class="warning">'.tra( 'When using <strong>{img}</strong> the <strong>src</strong> parameter is required.' ).'</div>';
+				$repl = '<span class="warning">'.tra( 'When using <strong>{img}</strong> the <strong>src</strong> parameter is required.' ).'</span>';
 			}
 
 			$data = str_replace( $page_parse, $repl, $data );
