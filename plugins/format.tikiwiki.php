@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.29 $
+ * @version  $Revision: 1.2.2.30 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -953,7 +953,7 @@ class TikiWikiParser extends BitBase {
 			}
 
 			// finally, wrap the image with a div, that does the positioning of the image in tha page
-			$repl = '<div style="'.$imgdata['div_style'].'">'.$repl.'<br />'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : '' ).'</div>';
+			$repl = '<div class="img-plugin" style="'.$imgdata['div_style'].'">'.$repl.'<br />'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : '' ).'</div>';
 
 			$data = str_replace($page_parse, $repl, $data);
 		}
