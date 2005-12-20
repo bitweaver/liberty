@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.33 $
+ * @version  $Revision: 1.2.2.34 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -320,6 +320,7 @@ class TikiWikiParser extends BitBase {
 		$data = preg_replace("/&(?!([a-z]{1,7};))/", "&amp;", $data);
 
 		// oft-used characters (case insensitive)
+		$data = preg_replace("/~bull~/i", "&bull;", $data);
 		$data = preg_replace("/~bs~/i", "&#92;", $data);
 		$data = preg_replace("/~hs~/i", "&nbsp;", $data);
 		$data = preg_replace("/~amp~/i", "&amp;", $data);
