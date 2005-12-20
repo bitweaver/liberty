@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.13 $
+ * @version  $Revision: 1.1.1.1.2.14 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.13 2005/12/20 19:31:30 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.14 2005/12/20 21:52:43 mej Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -94,7 +94,7 @@ if( !empty( $_REQUEST['post_comment_preview'] ) ) {
 }
 
 // $post_comment_reply_id is the content_id which a post is replying to
-if (@$this->verifyId($_REQUEST['post_comment_reply_id'])) {
+if (@BitBase::verifyId($_REQUEST['post_comment_reply_id'])) {
 	$post_comment_reply_id = $_REQUEST['post_comment_reply_id'];
 	$tmpComment = new LibertyComment(NULL, $post_comment_reply_id);
 	//$postComment['data'] = $commentsLib->quoteComment($tmpComment->mInfo['data']);  // This is super-ugly, better to just not quote at all, the indented comment indicates what comment it is replying to
