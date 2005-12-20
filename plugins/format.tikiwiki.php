@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.31 $
+ * @version  $Revision: 1.2.2.32 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -934,6 +934,7 @@ class TikiWikiParser extends BitBase {
 					case 'border':
 					case 'text-align':
 					case 'color':
+					case 'font':
 						$imgdata['div_style'] .= $key.':'.$value.';';
 						break;
 					case 'align':
