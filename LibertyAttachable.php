@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.27 2005/12/13 06:41:28 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.28 2005/12/20 19:31:30 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -144,14 +144,14 @@ class LibertyAttachable extends LibertyContent {
 
 	function verify( &$pParamHash ) {
 		global $gBitSystem, $gBitUser;
-		if( !empty( $pParamHash['attachment_id'] ) && !is_numeric( $pParamHash['attachment_id'] ) ) {
+		if( @$this->verifyId( $pParamHash['attachment_id'] ) ) {
 			$this->mErrors['file'] = 'System Error: Non-numeric storage_id.';
 		}
 
 		if( empty( $pParamHash['user_id'] ) ) {
 			// storage is always owned by the user that uploaded it!
 			// er... or at least admin if somehow we have a NULL mUserId - anon uploads maybe?
-			$pParamHash['user_id'] = is_numeric( $gBitUser->mUserId ) ? $gBitUser->mUserId : ROOT_USER_ID;
+			$pParamHash['user_id'] = @$this->verifyId( $gBitUser->mUserId ) ? $gBitUser->mUserId : ROOT_USER_ID;
 		}
 		if( empty( $pParamHash['process_storage'] ) ) {
 			$pParamHash['process_storage'] = NULL;
@@ -265,13 +265,13 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		}
 		$this->mDb->CompleteTrans();
 
-		if( !empty( $pParamHash['existing_attachment_id'] ) ) {
-			foreach($pParamHash['existing_attachment_id'] as $existingAttachmentId) {
+		if( @$this->verifyId( $pParamHash['existing_attachment_id'] ) ) {
+			foreach( $pParamHash['existing_attachment_id'] as $existingAttachmentId ) {
 				// allow for multiple values seperated by any non numeric character
 				$ids = preg_split( '/\D/', $existingAttachmentId );
 				foreach( $ids as $id ) {
 					$id = ( int )$id;
-					if( !empty( $id ) ) {
+					if( @$this->verifyId( $id ) ) {
 						$this->cloneAttachment( $id, $pParamHash['content_id'] );
 					}
 				}
@@ -289,7 +289,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		$rs = $this->mDb->query($sql, array( $pAttachmentId ));
 		$tmpAttachment = $rs->fields;
 
-		if ( !empty($tmpAttachment['attachment_id']) ) {
+		if ( @$this->verifyId($tmpAttachment['attachment_id']) ) {
 			$newAttachmentId = $this->mDb->GenID( 'tiki_attachments_id_seq' );
 			$sql = "INSERT INTO `".BIT_DB_PREFIX."tiki_attachments` ( `attachment_id`, `attachment_plugin_guid`, `content_id`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
 			$rs = $this->mDb->query( $sql, array( $newAttachmentId, $tmpAttachment['attachment_plugin_guid'], $pNewContentId, $tmpAttachment['foreign_id'], $gBitUser->mUserId ) );
@@ -311,7 +311,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		global $gBitUser;
 		$ret = NULL;
 
-		if( is_numeric( $pAttachmentId ) ) {
+		if( @$this->verifyId( $pAttachmentId ) ) {
 			$sql = "SELECT `attachment_plugin_guid`, `user_id` FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id`=?";
 			$rs = $this->mDb->query( $sql, array( $pAttachmentId ) );
 			$guid = $rs->fields['attachment_plugin_guid'];
@@ -341,9 +341,9 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 	}
 
 	function detachAttachment( $pAttachmentId ) {
-		if (is_numeric($pAttachmentId)) {
+		if( @$this->verifyId( $pAttachmentId ) ) {
 			$attachmentInfo = $this->getAttachment($pAttachmentId);
-			if (!empty($attachmentInfo['user_id'])) {
+			if (@$this->verifyId($attachmentInfo['user_id'] ) ) {
 				$attachmentOwner = new BitUser($attachmentInfo['user_id']);
 				$attachmentOwner->load();
 				if ($attachmentOwner->mContentId) {
@@ -363,9 +363,9 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 	function load( $pContentId=NULL ) {
 		// assume a derived class has joined on the tiki_content table, and loaded it's columns already.
 		global $gLibertySystem;
-		$conId = ( isset( $pContentId ) && is_numeric( $pContentId ) ? $pContentId : $this->mContentId );
+		$conId = ( @$this->verifyId( $pContentId ) ? $pContentId : $this->mContentId );
 
-		if( !empty( $conId ) ) {
+		if( @$this->verifyId( $conId ) ) {
 			LibertyContent::load($pContentId);
 			$query = "SELECT * FROM `".BIT_DB_PREFIX."tiki_attachments` ta
 					  WHERE ta.`content_id`=?";
@@ -391,7 +391,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		global $gLibertySystem;
 		$ret = NULL;
 
-		if( is_numeric( $pAttachmentId ) ) {
+		if( @$this->verifyId( $pAttachmentId ) ) {
 			$query = "SELECT * FROM `".BIT_DB_PREFIX."tiki_attachments` ta
 					  WHERE ta.`attachment_id`=?";
 			if( $result = $this->mDb->query($query,array((int) $pAttachmentId)) ) {
@@ -413,9 +413,9 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 		$attachmentInfo = $this->getAttachment( $pAttachmentId );
 
-		if (!empty($attachmentInfo['attachment_id']) && !empty($attachmentInfo['foreign_id']) && !empty($attachmentInfo['attachment_plugin_guid']) ) {
+		if( @$this->verifyId( $attachmentInfo['attachment_id'] ) && @$this->verifyId( $attachmentInfo['foreign_id'] ) && @$this->verifyId( $attachmentInfo['attachment_plugin_guid'] ) ) {
 			$query = "SELECT  * FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `foreign_id` = ? AND `attachment_plugin_guid` = ? AND `attachment_id` <> ?";
-			$result = $this->mDb->query($query, array($attachmentInfo['foreign_id'], $attachmentInfo['attachment_plugin_guid'], $attachment['attachment_id']));
+			$result = $this->mDb->query( $query, array ($attachmentInfo['foreign_id'], $attachmentInfo['attachment_plugin_guid'], $attachment['attachment_id'] ) );
 			$ret = $result->getRows();
 		}
 
@@ -619,7 +619,7 @@ function liberty_gd_resize_image( &$pFileHash, $pFormat = NULL ) {
 	list($iwidth, $iheight, $itype, $iattr) = @getimagesize( $pFileHash['source_file'] );
 	list($type, $ext) = split( '/', strtolower( $pFileHash['type'] ) );
 	$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'];
-	if( (empty( $pFileHash['max_width'] ) || empty( $pFileHash['max_height'] )) || ($iwidth <= $pFileHash['max_width'] && $iheight <= $pFileHash['max_height'] && ( $ext == 'gif' || $ext == 'png'  || $ext == 'jpg'   || $ext == 'jpeg' ) ) ) {
+	if( ( empty( $pFileHash['max_width'] ) || empty( $pFileHash['max_height'] ) ) || ( $iwidth <= $pFileHash['max_width'] && $iheight <= $pFileHash['max_height'] && ( $ext == 'gif' || $ext == 'png'  || $ext == 'jpg'   || $ext == 'jpeg' ) ) ) {
 		// Keep the same dimensions as input file
 		$pFileHash['max_width'] = $iwidth;
 		$pFileHash['max_height'] = $iheight;

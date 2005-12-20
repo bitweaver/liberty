@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.46 2005/12/11 08:55:12 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.47 2005/12/20 19:31:30 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -138,8 +138,8 @@ class LibertyContent extends LibertyBase {
 			$pParamHash['user_id'] = $gBitUser->getUserId();
 		}
 
-		if( empty( $pParamHash['content_id'] ) ) {
-			if( empty( $this->mContentId ) ) {
+		if( !@$this->verifyId( $pParamHash['content_id'] ) ) {
+			if( !@$this->verifyId( $this->mContentId ) ) {
 				// These should never be updated, only inserted
 				$pParamHash['content_store']['created'] = !empty( $pParamHash['created'] ) ? $pParamHash['created'] : $gBitSystem->getUTCTime();
 				$pParamHash['content_store']['user_id'] = $pParamHash['user_id'];
@@ -180,7 +180,7 @@ class LibertyContent extends LibertyBase {
 		}
 		$pParamHash['content_store']['ip'] = $pParamHash['ip'];
 
-		if( empty( $pParamHash['modifier_user_id'] ) ) {
+		if( !@$this->verifyId( $pParamHash['modifier_user_id'] ) ) {
 			global $gBitUser;
 			$pParamHash['modifier_user_id'] = $gBitUser->getUserId();
 		}
@@ -223,7 +223,7 @@ class LibertyContent extends LibertyBase {
 		if( LibertyContent::verify( $pParamHash ) ) {
 			$this->mDb->StartTrans();
 			$table = BIT_DB_PREFIX."tiki_content";
-			if( empty( $pParamHash['content_id'] ) ) {
+			if( !@$this->verifyId( $pParamHash['content_id'] ) ) {
 				$pParamHash['content_store']['content_id'] = $this->mDb->GenID( 'tiki_content_id_seq' );
 				$pParamHash['content_id'] = $pParamHash['content_store']['content_id'];
 				// make sure some variables are stuff in case services need getObjectType, mContentId, etc...
@@ -321,7 +321,7 @@ class LibertyContent extends LibertyBase {
 	 * Check mContentId to establish if the object has been loaded with a valid record
 	 */
 	function isValid() {
-		return( !empty( $this->mContentId ) && is_numeric( $this->mContentId ) && $this->mContentId );
+		return( $this->verifyId( $this->mContentId ) );
 	}
 
 	/**
@@ -329,7 +329,7 @@ class LibertyContent extends LibertyBase {
 	 */
 	function isOwner() {
 		global $gBitUser;
-		return( $this->isValid() && !empty( $this->mInfo['user_id'] ) && $this->mInfo['user_id'] == $gBitUser->mUserId );
+		return( $this->isValid() && @$this->verifyId( $this->mInfo['user_id'] ) && $this->mInfo['user_id'] == $gBitUser->mUserId );
 	}
 
 
@@ -467,7 +467,7 @@ class LibertyContent extends LibertyBase {
 	 * @return bool true ( will not currently report a failure )
 	 */
 	function storePermission( $pGroupId, $perm_name, $object_id=NULL ) {
-		if( empty( $object_id ) ) {
+		if( !@$this->verifyId( $object_id ) ) {
 			$object_id = $this->mContentId;
 		}
 		//$object_id = md5($object_type . $object_id);
@@ -815,7 +815,7 @@ class LibertyContent extends LibertyBase {
 			$bindVars[] = $pListHash['stop'];
 		}
 
-		if( !empty( $pListHash['user_id'] ) ) {
+		if( @$this->verifyId( $pListHash['user_id'] ) ) {
 			$mid .= " AND tc.`user_id` = ? ";
 			$bindVars[] = $pListHash['user_id'];
 		}
