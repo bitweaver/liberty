@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.30 $
+ * @version  $Revision: 1.2.2.31 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -913,8 +913,8 @@ class TikiWikiParser extends BitBase {
 		preg_match_all("/(\{img [^\}]+})/i", $data, $pages);
 
 		foreach( array_unique( $pages[1] ) as $page_parse ) {
-			// collect all parameters into $parts
-			preg_match_all( "/(\w*)=([^=]*)(?=\s.*?|\s*\})/", $page_parse, $parts );
+			// collect all parameters into $parts ( after we've removed whitespaces around '=' )
+			preg_match_all( "/(\w*)=([^=]*)(?=\s.*?|\s*\})/", preg_replace( "/\s+=\s+/", "=", $page_parse ), $parts );
 
 			$imgdata = array();
 			$imgdata['img_style'] = '';
@@ -928,6 +928,12 @@ class TikiWikiParser extends BitBase {
 						$imgdata['img_style'] .= $key.':'.$value.';';
 						break;
 					case 'float':
+					case 'padding':
+					case 'margin':
+					case 'background':
+					case 'border':
+					case 'text-align':
+					case 'color':
 						$imgdata['div_style'] .= $key.':'.$value.';';
 						break;
 					case 'align':
@@ -939,23 +945,28 @@ class TikiWikiParser extends BitBase {
 				}
 			}
 
-			// set up image first
-			$repl = '<img'.
-					' alt="'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : 'Image' ).'"'.
-					' title="'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : 'Image' ).'"'.
-					' src="'.$imgdata['src'].'"'.
-					' style="'.$imgdata['img_style'].'"'.
-				' />';
+			// check if we have a source to load an image from
+			if( !empty( $imgdata['src'] ) ) {
+				// set up image first
+				$repl = '<img'.
+						' alt="'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : tra( 'Image' ) ).'"'.
+						' title="'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : tra( 'Image' ) ).'"'.
+						' src="'.$imgdata['src'].'"'.
+						' style="'.$imgdata['img_style'].'"'.
+					' />';
 
-			// if this image is linking to something, wrap the image with the <a>
-			if( !empty( $imgdata['link'] ) ) {
-				$repl = '<a href="'.trim( $imgdata['link'] ).'">'.$repl.'</a>';
+				// if this image is linking to something, wrap the image with the <a>
+				if( !empty( $imgdata['link'] ) ) {
+					$repl = '<a href="'.trim( $imgdata['link'] ).'">'.$repl.'</a>';
+				}
+
+				// finally, wrap the image with a div, that does the positioning of the image in tha page
+				$repl = '<div class="img-plugin" style="'.$imgdata['div_style'].'">'.$repl.'<br />'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : '' ).'</div>';
+			} else {
+				$repl = '<div class="warning">'.tra( 'When using <strong>{img}</strong> the <strong>src</strong> parameter is required.' ).'</div>';
 			}
 
-			// finally, wrap the image with a div, that does the positioning of the image in tha page
-			$repl = '<div class="img-plugin" style="'.$imgdata['div_style'].'">'.$repl.'<br />'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : '' ).'</div>';
-
-			$data = str_replace($page_parse, $repl, $data);
+			$data = str_replace( $page_parse, $repl, $data );
 		}
 
 		$links = $this->get_links($data);
