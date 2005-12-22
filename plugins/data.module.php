@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.11 $
+ * @version  $Revision: 1.1.1.1.2.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -16,7 +16,7 @@
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
 // | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.module.php,v 1.1.1.1.2.11 2005/11/21 21:25:00 squareing Exp $
+// $Id: data.module.php,v 1.1.1.1.2.12 2005/12/22 18:44:08 squareing Exp $
 
 /**
  * definitions
@@ -65,7 +65,7 @@ function datamodule_help() {
 				.'<td colspan="3">' . tra( "Additional arguments and values depend on the selected module." )
 			.'</tr>'
 		.'</table>'
-		. tra( "Example: " ) . '{MODULE module=last_modified_pages package=wiki title="Recent Wiki Modifications"}';
+		. tra( "Example: " ) . '{MODULE module=last_changes package=liberty title="Recent Changes"}';
 	return $help;
 }
 
@@ -73,6 +73,7 @@ function data_datamodule( $data, $params ) {
 	global $modlib, $gBitSmarty;
 	require_once( KERNEL_PKG_PATH.'mod_lib.php' );
 	$out = '';
+	$ret = ' ';
 
 	extract( $params , EXTR_SKIP);
 
@@ -80,11 +81,15 @@ function data_datamodule( $data, $params ) {
 		// not sure if we can use the php file, since it sets everything to NULL when passed in - xing
 		global $module_rows;
 		$module_rows = !empty( $rows ) ? $rows : 10;
-		$php = constant( strtoupper( $package ).'_PKG_PATH' ).'modules/mod_'.$module.'.php';
+		//$php = constant( strtoupper( $package ).'_PKG_PATH' ).'modules/mod_'.$module.'.php';
 		// TODO: assigning variables to template doesn't work since they are replaced by module paramaters set in the php file - even when it's not in use! - xing
-		$tpl = 'bitpackage:'.$package.'/mod_'.$module.'.tpl';
+		if( is_file( constant( strtoupper( $package ).'_PKG_PATH' ).'modules/mod_'.$module.'.tpl' ) ) {
+			$tpl = 'bitpackage:'.$package.'/mod_'.$module.'.tpl';
+		} else {
+			return '<div class="error">'.tra( "The module / package combination you entered is not valid" ).'</div>';
+		}
 	} else {
-		$ret = '<div class="error">'.tra( "Both paramters 'module' and 'package' are required" );
+		return '<div class="error">'.tra( "Both paramters 'module' and 'package' are required" ).'</div>';
 	}
 
 	if( !$out = $gBitSmarty->fetch( $tpl ) ) {
@@ -96,7 +101,6 @@ function data_datamodule( $data, $params ) {
 		}
 	}
 	$out = eregi_replace( "\n", "", $out );
-	//vd($out);
 
 	// deal with custom styling
 	$style = '';
@@ -106,14 +110,13 @@ function data_datamodule( $data, $params ) {
 			$style .= $param.':'.$value.';';
 		}
 	}
+
 	if( !empty( $style ) ) {
 		$style = ' style="'.$style.'"';
 	}
 
 	if( $out ) {
 		$ret = '<div'.$style.'>'.$out.'</div>';
-	} else {
-		$ret = '<div class="error">'.tra( "Sorry no such module" ).'</div>'.$module;
 	}
 	return $ret;
 }
