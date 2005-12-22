@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.34 $
+ * @version  $Revision: 1.2.2.35 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -922,7 +922,7 @@ class TikiWikiParser extends BitBase {
 			$imgdata['div_style'] = '';
 
 			foreach( $parts[1] as $i => $key ) {
-				$value = str_replace( '"', "'", $parts[2][$i] );
+				$value = preg_replace( '/["\']/', "", $parts[2][$i] );
 				switch( $key ) {
 					case 'width':
 					case 'height':
