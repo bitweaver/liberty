@@ -1,9 +1,9 @@
 {strip}
-{if !$gBitSystem->isFeatureActive( 'feature_helppopup' )}
-	{popup_init src="`$smarty.const.THEMES_PKG_URL`js/overlib.js"}
-{/if}
-
 {if $gContent->mStorage}
+	{if !$gBitSystem->isFeatureActive( 'feature_helppopup' )}
+		{popup_init src="`$smarty.const.THEMES_PKG_URL`js/overlib.js"}
+	{/if}
+
 	<div class="storage">
 		{foreach from=$gContent->mStorage item=attachment }
 			{capture name="popup"}
