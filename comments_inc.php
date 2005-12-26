@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.6 2005/11/22 07:27:18 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.7 2005/12/26 12:25:03 squareing Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -36,14 +36,14 @@ $postComment = array();
 $formfeedback = array();
 $gBitSmarty->assign_by_ref('formfeedback', $formfeedback);
 
-if (!empty($_REQUEST['delete_comment_id']) && $gBitUser->hasPermission( 'bit_p_post_comments' )) {
+if( @BitBase::verifyId($_REQUEST['delete_comment_id']) && $gBitUser->hasPermission( 'bit_p_post_comments' )) {
 	$deleteComment = new LibertyComment($_REQUEST['delete_comment_id']);
-	if (!empty ($deleteComment->mInfo['content_id'])) {
+	if( @BitBase::verifyId($deleteComment->mInfo['content_id'] ) ) {
 		$deleteComment->deleteComment();
 	}
 }
 
-if (!empty($_REQUEST['post_comment_id']) && $gBitUser->hasPermission( 'bit_p_post_comments' )) {
+if( @BitBase::verifyId($_REQUEST['post_comment_id']) && $gBitUser->hasPermission( 'bit_p_post_comments' )) {
 	$post_comment_id = $_REQUEST['post_comment_id'];
 	$editComment = new LibertyComment($post_comment_id);
 	if ($editComment->mInfo['content_id']) {
@@ -68,12 +68,12 @@ $gBitSmarty->assign('post_comment_id', $post_comment_id);
 
 // Store comment posts
 if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'bit_p_post_comments' )) {
-	$storeComment = new LibertyComment(!empty($editComment->mCommentId) ? $editComment->mCommentId : NULL);
+	$storeComment = new LibertyComment(@BitBase::verifyId($editComment->mCommentId) ? $editComment->mCommentId : NULL);
 	$storeRow = array();
 	$storeRow['title'] = $_REQUEST['comment_title'];
 	$storeRow['edit'] = $_REQUEST['comment_data'];
-	$storeRow['parent_id'] = (!empty($storeComment->mInfo['parent_id']) ? $storeComment->mInfo['parent_id'] : (empty($_REQUEST['post_comment_reply_id']) ? $commentsParentId : $_REQUEST['post_comment_reply_id']));
-	$storeRow['content_id'] = (!empty($storeComment->mContentId) ? $storeComment->mContentId : NULL);
+	$storeRow['parent_id'] = (@BitBase::verifyId($storeComment->mInfo['parent_id']) ? $storeComment->mInfo['parent_id'] : (!@BitBase::verifyId($_REQUEST['post_comment_reply_id']) ? $commentsParentId : $_REQUEST['post_comment_reply_id']));
+	$storeRow['content_id'] = (@BitBase::verifyId($storeComment->mContentId) ? $storeComment->mContentId : NULL);
 	$storeComment->storeComment($storeRow);
 }
 
@@ -94,7 +94,7 @@ if( !empty( $_REQUEST['post_comment_preview'] ) ) {
 }
 
 // $post_comment_reply_id is the content_id which a post is replying to
-if (!empty($_REQUEST['post_comment_reply_id'])) {
+if (@BitBase::verifyId($_REQUEST['post_comment_reply_id'])) {
 	$post_comment_reply_id = $_REQUEST['post_comment_reply_id'];
 	$tmpComment = new LibertyComment(NULL, $post_comment_reply_id);
 	//$postComment['data'] = $commentsLib->quoteComment($tmpComment->mInfo['data']);  // This is super-ugly, better to just not quote at all, the indented comment indicates what comment it is replying to
@@ -135,7 +135,7 @@ $commentOffset = !empty( $_REQUEST['comment_page'] ) ? ($_REQUEST['comment_page'
 
 $gComment = new LibertyComment( NULL, $gContent->mContentId );
 // $commentsParentId is the content_id which the comment tree is attached to
-if( empty( $commentsParentId ) ) {
+if( !@BitBase::verifyId( $commentsParentId ) ) {
 	$comments = NULL;
 	$numComments = 0;
 } else {

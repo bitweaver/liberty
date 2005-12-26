@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.13 $
+ * @version  $Revision: 1.14 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -320,6 +320,7 @@ class TikiWikiParser extends BitBase {
 		$data = preg_replace("/&(?!([a-z]{1,7};))/", "&amp;", $data);
 
 		// oft-used characters (case insensitive)
+		$data = preg_replace("/~bull~/i", "&bull;", $data);
 		$data = preg_replace("/~bs~/i", "&#92;", $data);
 		$data = preg_replace("/~hs~/i", "&nbsp;", $data);
 		$data = preg_replace("/~amp~/i", "&amp;", $data);
@@ -912,58 +913,64 @@ class TikiWikiParser extends BitBase {
 		// Images
 		preg_match_all("/(\{img [^\}]+})/i", $data, $pages);
 
-		foreach (array_unique($pages[1])as $page_parse) {
-			$parts = explode(" ", $page_parse);
+		foreach( array_unique( $pages[1] ) as $page_parse ) {
+			// collect all parameters into $parts ( after we've removed whitespaces around '=' )
+			preg_match_all( "/(\w*)=([^=]*)(?=\s.*?|\s*\})/", preg_replace( "/\s+=\s+/", "=", $page_parse ), $parts );
 
 			$imgdata = array();
-			$imgdata["src"] = '';
-			$imgdata["height"] = '';
-			$imgdata["width"] = '';
-			$imgdata["link"] = '';
-			$imgdata["align"] = '';
-			$imgdata["float"] = '';
-			$imgdata["desc"] = '';
+			$imgdata['img_style'] = '';
+			$imgdata['div_style'] = '';
 
-			foreach ($parts as $part) {
-				$part = str_replace('}', '', $part);
-				$part = str_replace('{', '', $part);
-				$part = str_replace('\'', '', $part);
-				$part = str_replace('"', '', $part);
-
-				if (strstr($part, '=')) {
-				$subs = explode("=", $part, 2);
-
-				$imgdata[$subs[0]] = $subs[1];
+			foreach( $parts[1] as $i => $key ) {
+				$value = preg_replace( '/["\']/', "", $parts[2][$i] );
+				switch( $key ) {
+					case 'width':
+					case 'height':
+						$imgdata['img_style'] .= $key.':'.$value.';';
+						break;
+					case 'float':
+					case 'padding':
+					case 'margin':
+					case 'background':
+					case 'border':
+					case 'text-align':
+					case 'color':
+					case 'font':
+						$imgdata['div_style'] .= $key.':'.$value.';';
+						break;
+					case 'align':
+						$imgdata['div_style'] .= 'text-align:'.$value.';';
+						break;
+					default:
+						$imgdata[$key] = $value;
+						break;
 				}
 			}
 
-			//print("todo el tag es: ".$page_parse."<br/>");
-			//print_r($imgdata);
-			$repl = '<img alt="' . tra('Image') . '" src="'.$imgdata["src"].'" style="border:0;'.( !empty( $imgdata["float"] ) ? ' float:'.$imgdata["float"].';' : '' ).'"';
+			// check if we have a source to load an image from
+			if( !empty( $imgdata['src'] ) ) {
+				// set up image first
+				$repl = '<img'.
+						' alt="'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : tra( 'Image' ) ).'"'.
+						' title="'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : tra( 'Image' ) ).'"'.
+						' src="'.$imgdata['src'].'"'.
+						' style="'.$imgdata['img_style'].'"'.
+					' />';
 
+				// if this image is linking to something, wrap the image with the <a>
+				if( !empty( $imgdata['link'] ) ) {
+					$repl = '<a href="'.trim( $imgdata['link'] ).'">'.$repl.'</a>';
+				}
 
-
-			if ($imgdata["width"])
-				$repl .= ' width="' . $imgdata["width"] . '"';
-
-			if ($imgdata["height"])
-				$repl .= ' height="' . $imgdata["height"] . '"';
-
-			if ($imgdata["align"])
-				$repl .= ' align="' . $imgdata["align"] . '"';
-
-			$repl .= ' />';
-
-			if ($imgdata["link"]) {
-				$repl = '<a href="' . $imgdata["link"] . '">' . $repl . '</a>';
+				// finally, wrap the image with a div
+				if( !empty( $imgdata['div_style'] ) || !empty( $imgdata['desc'] ) ) {
+					$repl = '<div class="img-plugin" style="'.$imgdata['div_style'].'">'.$repl.'<br />'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : '' ).'</div>';
+				}
+			} else {
+				$repl = '<span class="warning">'.tra( 'When using <strong>{img}</strong> the <strong>src</strong> parameter is required.' ).'</span>';
 			}
 
-			if ($imgdata["desc"]) {
-				$repl = '<table cellpadding="0" cellspacing="0"><tr><td>' . $repl . '</td></tr><tr><td><small>' . $imgdata["desc"] . '</small></td></tr></table>';
-			}
-
-
-			$data = str_replace($page_parse, $repl, $data);
+			$data = str_replace( $page_parse, $repl, $data );
 		}
 
 		$links = $this->get_links($data);

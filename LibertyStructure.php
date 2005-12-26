@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.10 2005/12/18 22:30:21 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.11 2005/12/26 12:25:03 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -48,10 +48,10 @@ class LibertyStructure extends LibertyBase {
 				  INNER JOIN `'.BIT_DB_PREFIX.'tiki_content` tc ON (ts.`content_id`=tc.`content_id`)
 				  LEFT JOIN `'.BIT_DB_PREFIX.'users_users` uu ON ( uu.`user_id` = tc.`user_id` )';
 
-		if( is_numeric( $pStructureId ) ) {
+		if( @$this->verifyId( $pStructureId ) ) {
 			$query .= ' WHERE ts.`structure_id`=?';
 			$bindVars = array( $pStructureId );
-		} elseif( is_numeric( $pContentId ) ) {
+		} elseif( @$this->verifyId( $pContentId ) ) {
 			$query .= ' WHERE ts.`content_id`=?';
 			$bindVars = array( $pContentId );
 		}
@@ -76,7 +76,7 @@ class LibertyStructure extends LibertyBase {
 
 	function isRootNode() {
 		$ret = FALSE;
-		if( !empty( $this->mInfo['structure_id'] ) ) {
+		if( @$this->verifyId( $this->mInfo['structure_id'] ) ) {
 			$ret = $this->mInfo['root_structure_id'] == $this->mInfo['structure_id'];
 		}
 		return $ret;
@@ -102,7 +102,7 @@ class LibertyStructure extends LibertyBase {
 
 
 	function isValid() {
-		return( !empty( $this->mStructureId ) && is_numeric( $this->mStructureId ) );
+		return( $this->verifyId( $this->mStructureId ) );
 	}
 
 	function loadNavigation() {
@@ -148,7 +148,7 @@ class LibertyStructure extends LibertyBase {
 
 	function getSubTree( $pStructureId, $level = 0, $parent_pos = '' ) {
 		global $gLibertySystem, $gBitSystem;
-		if( !empty( $pStructureId ) ) {
+		if( @$this->verifyId( $pStructureId ) ) {
 			$ret = array();
 			$pos = 1;
 			//The structure page is used as a title
@@ -232,7 +232,7 @@ class LibertyStructure extends LibertyBase {
 			$bindVars=array();
 		}
 
-		if( !empty( $pListHash['user_id'] ) ) {
+		if( @$this->verifyId( $pListHash['user_id'] ) ) {
 			$mid .= " AND tc.`user_id` = ? ";
 			array_push( $bindVars, $pListHash['user_id'] );
 		}
@@ -268,10 +268,10 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	function verifyNode( &$pParamHash ) {
-		if( empty( $pParamHash['content_id'] ) || !is_numeric( $pParamHash['content_id'] ) ) {
+		if( !@$this->verifyId( $pParamHash['content_id'] ) ) {
 			$this->mErrors['content'] = 'Could not store structure. Invalid content id. '.$pParamHash['content_id'];
 		} else {
-			if( empty( $pParamHash['parent_id'] ) || !is_numeric( $pParamHash['parent_id'] ) ) {
+			if( !@$this->verifyId( $pParamHash['parent_id'] ) ) {
 				$pParamHash['parent_id'] = 0;
 			}
 			if( empty( $pParamHash['alias'] ) ) {
@@ -312,7 +312,7 @@ class LibertyStructure extends LibertyBase {
 
             //Create a new structure entry
 			$pParamHash['structure_id'] = $this->mDb->GenID( 'tiki_structures_id_seq' );
-			if( empty( $pParamHash['root_structure_id'] ) || !is_numeric( $pParamHash['root_structure_id'] ) ) {
+			if( !@$this->verifyId( $pParamHash['root_structure_id'] ) ) {
 				$pParamHash['root_structure_id'] = $pParamHash['structure_id'];
 			}
 			$query = "INSERT INTO `".BIT_DB_PREFIX."tiki_structures`( `structure_id`, `parent_id`,`content_id`, `root_structure_id`, `page_alias`, `pos` ) values(?,?,?,?,?,?)";
@@ -329,9 +329,9 @@ class LibertyStructure extends LibertyBase {
 		if( $this->isValid() ) {
 			//If there is a parent and the parent isnt the structure root node.
 			$this->mDb->StartTrans();
-			if( !empty( $this->mInfo["parent_id"] ) ) {
+			if( @$this->verifyId( $this->mInfo["parent_id"] ) ) {
 				$parentNode = $this->getNode( $this->mInfo["parent_id"] );
-				if( !empty( $parentNode['parent_id'] ) ) {
+				if( @$this->verifyId( $parentNode['parent_id'] ) ) {
 					//Make a space for the node after its parent
 					$query = "update `".BIT_DB_PREFIX."tiki_structures` set `pos`=`pos`+1 where `pos`>? and `parent_id`=?";
 					$this->mDb->query( $query, array( $parentNode['pos'], $parentNode['parent_id'] ) );
@@ -470,7 +470,7 @@ class LibertyStructure extends LibertyBase {
 
 	function s_remove_page( $structure_id, $delete ) {
 		// Now recursively remove
-		if( is_numeric( $structure_id ) ) {
+		if( @$this->verifyId( $structure_id ) ) {
 			$query = "SELECT `structure_id`, ts.`content_id`
 					  FROM `".BIT_DB_PREFIX."tiki_structures` ts
 					  WHERE `parent_id`=?";
@@ -621,7 +621,7 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	function get_toc($pStructureId=NULL,$order='asc',$showdesc=false,$numbering=true,$numberPrefix='') {
-		if( empty( $pStructureId ) ) {
+		if( !@$this->verifyId( $pStructureId ) ) {
 			$pStructureId = $this->mStructureId;
 		}
 		$structure_tree = $this->build_subtree_toc($pStructureId,false,$order,$numberPrefix);

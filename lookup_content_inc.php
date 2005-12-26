@@ -3,13 +3,13 @@
  * lookup_content_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage functions
  */
 	global $gContent;
 
-	if( !empty( $_REQUEST['structure_id'] ) ) {
+	if( @BitBase::verifyId( $_REQUEST['structure_id'] ) ) {
 		/**
 		 * required setup
 		 */
@@ -28,7 +28,7 @@
 				$gBitSmarty->assign_by_ref( 'gContent', $gContent );
 			}
 		}
-	} elseif( !empty( $_REQUEST['content_id'] ) ) {
+	} elseif( @BitBase::verifyId( $_REQUEST['content_id'] ) ) {
 		require_once( LIBERTY_PKG_PATH.'LibertyBase.php');
 		if( $gContent = LibertyBase::getLibertyObject( $_REQUEST['content_id'] ) ) {
 			$gBitSmarty->assign_by_ref( 'gContent', $gContent );

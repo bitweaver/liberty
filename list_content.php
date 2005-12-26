@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage functions
  */
@@ -20,9 +20,9 @@ if( !empty( $_REQUEST['sort_mode'] ) ) {
 }
 
 $max_content = $gBitSystem->mPrefs['maxRecords'];
-$offset_content = !empty( $_REQUEST['offset'] ) ? $_REQUEST['offset'] : 0;
-$gBitSmarty->assign( 'user_id', !empty( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : NULL );
-$gBitSmarty->assign( 'curPage', $page = !empty( $_REQUEST['page'] ) ? $_REQUEST['page'] : 1 );
+$offset_content = @BitBase::verifyId( $_REQUEST['offset'] ) ? $_REQUEST['offset'] : 0;
+$gBitSmarty->assign( 'user_id', @BitBase::verifyId( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : NULL );
+$gBitSmarty->assign( 'curPage', $page = @BitBase::verifyId( $_REQUEST['page'] ) ? $_REQUEST['page'] : 1 );
 $offset_content = ( $page - 1 ) * $gBitSystem->mPrefs['maxRecords'];
 
 // now that we have all the offsets, we can get the content list

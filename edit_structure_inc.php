@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage functions
  */
@@ -18,7 +18,7 @@
 require_once( '../bit_setup_inc.php' );
 include_once( LIBERTY_PKG_PATH.'LibertyStructure.php');
 
-if( empty( $_REQUEST["structure_id"] ) ) {
+if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 	$gBitSystem->fatalError( "No structure indicated" );
 } else {
 	global $gStructure;
@@ -125,7 +125,6 @@ if( empty( $_REQUEST["structure_id"] ) ) {
 		}
 	}
 
-	$gBitSmarty->assign( (!empty( $_REQUEST['tab'] ) ? $_REQUEST['tab'] : 'body').'TabSelect', 'tdefault' );
 	$gBitSmarty->assign('subtree', $rootTree = $rootStructure->getSubTree( $rootStructure->mStructureId ));
 }
 

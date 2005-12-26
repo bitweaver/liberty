@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.6 2005/11/22 07:27:18 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.7 2005/12/26 12:25:03 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -147,7 +147,7 @@ class LibertyComment extends LibertyContent {
 			$pMixed = &$this->mInfo;
 		}
 		$ret = NULL;
-		if( !empty( $pMixed['parent_id'] ) && $viewContent = LibertyBase::getLibertyObject( $pMixed['parent_id'] ) ) {
+		if( @$this->verifyId( $pMixed['parent_id'] ) && $viewContent = LibertyBase::getLibertyObject( $pMixed['parent_id'] ) ) {
 			$ret = $viewContent->getDisplayUrl();
 		}
 		return( $ret );
@@ -171,7 +171,7 @@ class LibertyComment extends LibertyContent {
 			$mid .= " AND tc.`content_type_guid`=? ";
 			$bindVars[] = $pParamHash['content_type_guid'];
 		}
-		if ( !empty( $pParamHash['user_id'] ) ) {
+		if ( @$this->verifyId( $pParamHash['user_id'] ) ) {
 			$mid .= " AND tc.`user_id`=? ";
 			$bindVars[] = $pParamHash['user_id'];
 		}
@@ -202,7 +202,7 @@ class LibertyComment extends LibertyContent {
 			$rows = $this->mDb->getAssoc($sql, array($contentId));
 			$commentCount += count($rows);
 			foreach ($rows as $row) {
-				if( !empty( $row['child_content_id'] ) ) {
+				if( @$this->verifyId( $row['child_content_id'] ) ) {
 					$commentCount += $this->getNumComments( $row['child_content_id'] );
 				}
 			}
