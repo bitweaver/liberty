@@ -1,4 +1,9 @@
 {php} include (LIBERTY_PKG_PATH."edit_storage_inc.php"); {/php}
+{* in preparation of prototype 1.4
+<script type="text/javascript">//<![CDATA[
+	show_spinner('spinner');
+//]]></script>
+*}
 {strip}
 	{foreach from=$gLibertySystem->mPlugins item=plugin key=guid}
 		{* $no_plugins is set by the including template *}
