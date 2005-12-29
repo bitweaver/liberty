@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.11 2005/12/26 12:25:03 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.12 2005/12/29 18:27:34 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -468,19 +468,19 @@ class LibertyStructure extends LibertyBase {
 		}
 	}
 
-	function s_remove_page( $structure_id, $delete ) {
+	function s_remove_page( $structure_id, $delete=FALSE ) {
 		// Now recursively remove
 		if( @$this->verifyId( $structure_id ) ) {
-			$query = "SELECT `structure_id`, ts.`content_id`
-					  FROM `".BIT_DB_PREFIX."tiki_structures` ts
+			$query = "SELECT *
+					  FROM `".BIT_DB_PREFIX."tiki_structures`
 					  WHERE `parent_id`=?";
 			$result = $this->mDb->query( $query, array( (int)$structure_id ) );
-			//Iterate down through the child nodes
+			// Iterate down through the child nodes
 			while( $res = $result->fetchRow() ) {
 				$this->s_remove_page( $res["structure_id"], $delete );
 			}
 
-			//Only delete a page if other structures arent referencing it
+			// Only delete a page if other structures arent referencing it
 			if( $delete ) {
 				$page_info = $this->getNode( $structure_id );
 				$query = "SELECT COUNT(*) FROM `".BIT_DB_PREFIX."tiki_structures` WHERE `content_id`=?";
@@ -490,15 +490,15 @@ class LibertyStructure extends LibertyBase {
 				}
 			}
 
-			//Get the correct content_id and remove it from tiki_content
+			// If we are removing the root node, remove the entry in tiki_content as well
 			$query = "SELECT `content_id`
-					  FROM `".BIT_DB_PREFIX."tiki_structures` ts
-					  WHERE `structure_id`=?";
+					  FROM `".BIT_DB_PREFIX."tiki_structures`
+					  WHERE `structure_id`=? AND `structure_id`=`root_structure_id`";
 			$content_id = $this->mDb->getOne( $query, array( (int)$structure_id ) );
 			$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_content` WHERE `content_id`=?";
 			$result = $this->mDb->query( $query, array( (int)$content_id) );
 
-			//Remove the structure node
+			// Remove the structure node
 			$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_structures` WHERE `structure_id`=?";
 			$result = $this->mDb->query( $query, array( (int)$structure_id) );
 			return true;
