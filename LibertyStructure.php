@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.19 2006/01/01 20:50:33 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.20 2006/01/01 22:31:05 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -208,7 +208,7 @@ class LibertyStructure extends LibertyBase {
 	* @param $pStructureHash raw structure data from database
 	* @return nicely formatted and cleaned up structure array
 	*/
-	function createSubTree( $pStructureHash, $pParentId = 0, $pParentPos = '' ) {
+	function createSubTree( $pStructureHash, $pParentId = 0, $pParentPos = '', $pLevel = 0 ) {
 		$ret = array();
 		// get all child menu Nodes for this structure_id
 		$children = $this->getChildNodes( $pStructureHash, $pParentId );
@@ -219,10 +219,11 @@ class LibertyStructure extends LibertyBase {
 		if( strlen( $pParentPos ) == 0 ) {
 			foreach( $pStructureHash as $node ) {
 				if( $node['structure_id'] == $node['root_structure_id'] ) {
-					$aux                 = $node;
-					$aux["first"]        = true;
-					$aux["last"]         = true;
-					$aux["pos"]          = '';
+					$aux          = $node;
+					$aux["first"] = true;
+					$aux["last"]  = true;
+					$aux["pos"]   = '';
+					$aux["level"] = $pLevel++;
 					$ret[] = $aux;
 				}
 			}
@@ -230,6 +231,7 @@ class LibertyStructure extends LibertyBase {
 
 		foreach( $children as $node ) {
 			$aux = $node;
+			$aux['level'] = $pLevel;
 			$aux['first'] = ( $pos == 1 );
 			$aux['last']  = FALSE;
 			if( strlen( $pParentPos ) == 0 ) {
@@ -239,7 +241,7 @@ class LibertyStructure extends LibertyBase {
 			}
 			$ret[] = $aux;
 			//Recursively add any children
-			$subs = $this->createSubTree( $pStructureHash, $node['structure_id'], $aux['pos'] );
+			$subs = $this->createSubTree( $pStructureHash, $node['structure_id'], $aux['pos'], ( $pLevel + 1 ) );
 			if( !empty( $subs ) ) {
 				$ret = array_merge( $ret, $subs );
 			}
