@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.18 2005/12/27 13:24:10 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.19 2006/01/01 20:50:33 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -145,7 +145,130 @@ class LibertyStructure extends LibertyBase {
 		return $structure_path;
 	}
 
+	/**
+	* Get full structure from database
+	* @param $pStructureId structure for which we want structure
+	* @return full structure
+	*/
+	function getStructure( $pRootStructureId = NULL ) {
+		global $gBitSystem, $gLibertySystem;
+		$ret = FALSE;
+		if( !@BitBase::verifyId( $pRootStructureId ) && @BitBase::verifyId( $this->mInfo['root_structure_id'] ) ) {
+			$pRootStructureId = $this->mInfo['root_structure_id'];
+		}
 
+		if( @BitBase::verifyId( $pRootStructureId ) ) {
+			// Get all nodes for this structure
+			$query = "SELECT ts.*, tc.`user_id`, tc.`title`, tc.`content_type_guid`, uu.`login`, uu.`real_name`
+				FROM `".BIT_DB_PREFIX."tiki_structures` ts
+				INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON ( ts.`content_id` = tc.`content_id` )
+				INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = tc.`user_id` )
+				WHERE ts.`root_structure_id` = ? ORDER BY `pos` ASC";
+			$result = $this->mDb->query( $query, array( $pRootStructureId ) );
+
+			$subs = array();
+			$row_max = $result->numRows();
+			$contentTypes = $gLibertySystem->mContentTypes;
+			while( $res = $result->fetchRow() ) {
+				$aux = array();
+				$aux = $res;
+				if( !empty( $contentTypes[$res['content_type_guid']] ) ) {
+					// quick alias for code readability
+					$type = &$contentTypes[$res['content_type_guid']];
+					if( empty( $type['content_object'] ) ) {
+						// create *one* object for each object *type* to  call virtual methods.
+						include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
+						$type['content_object'] = new $type['handler_class']();
+					}
+					$aux['title'] = $type['content_object']->getTitle( $aux );
+					$ret[] = $aux;
+				}
+			}
+		}
+		return $ret;
+	}
+
+	/**
+	* Get all structures in $pStructureHash that have a given parent_id
+	* @param $pStructureHash full menu as supplied by '$this->getItemList( $pMenuId );'
+	* @return array of nodes with a given parent_id
+	*/
+	function getChildNodes( $pStructureHash, $pParentId = 0 ) {
+		$ret = array();
+		foreach( $pStructureHash as $node ) {
+			if( $node['parent_id'] == $pParentId ) {
+				$ret[] = $node;
+			}
+		}
+		return $ret;
+	}
+
+	/**
+	* Create a usable array from the data in the database from getStructure()
+	* @param $pStructureHash raw structure data from database
+	* @return nicely formatted and cleaned up structure array
+	*/
+	function createSubTree( $pStructureHash, $pParentId = 0, $pParentPos = '' ) {
+		$ret = array();
+		// get all child menu Nodes for this structure_id
+		$children = $this->getChildNodes( $pStructureHash, $pParentId );
+		$pos = 1;
+		$row_max = count( $children );
+
+		// we need to insert the root structure item first
+		if( strlen( $pParentPos ) == 0 ) {
+			foreach( $pStructureHash as $node ) {
+				if( $node['structure_id'] == $node['root_structure_id'] ) {
+					$aux                 = $node;
+					$aux["first"]        = true;
+					$aux["last"]         = true;
+					$aux["pos"]          = '';
+					$ret[] = $aux;
+				}
+			}
+		}
+
+		foreach( $children as $node ) {
+			$aux = $node;
+			$aux['first'] = ( $pos == 1 );
+			$aux['last']  = FALSE;
+			if( strlen( $pParentPos ) == 0 ) {
+				$aux["pos"] = "$pos";
+			} else {
+				$aux["pos"] = $pParentPos . '.' . "$pos";
+			}
+			$ret[] = $aux;
+			//Recursively add any children
+			$subs = $this->createSubTree( $pStructureHash, $node['structure_id'], $aux['pos'] );
+			if( !empty( $subs ) ) {
+				$ret = array_merge( $ret, $subs );
+			}
+
+			if( $pos == $row_max ) {
+				$aux['structure_id'] = $node['structure_id'];
+				$aux['first'] = FALSE;
+				$aux['last']  = TRUE;
+				$ret[] = $aux;
+			}
+			$pos++;
+		}
+		return $ret;
+	}
+
+	// get sub tree of $pStructureId
+	function getSubTree( $pStructureId ) {
+		global $gLibertySystem, $gBitSystem;
+		$ret = array();
+		if( @BitBase::verifyId( $pStructureId ) ) {
+			$query = "SELECT ts.root_structure_id FROM `".BIT_DB_PREFIX."tiki_structures` ts WHERE ts.`structure_id` = ?";
+			$root_structure_id = $this->mDb->getOne( $query, array( $pStructureId ) );
+			$pStructureHash = $this->getStructure( $root_structure_id );
+			$ret = $this->createSubTree( $pStructureHash, $pStructureId );
+		}
+		return $ret;
+	}
+
+/* Original getSubTree() code
 	function getSubTree( $pStructureId, $level = 0, $parent_pos = '' ) {
 		global $gLibertySystem, $gBitSystem;
 		if( @$this->verifyId( $pStructureId ) ) {
@@ -165,7 +288,7 @@ class LibertyStructure extends LibertyBase {
 				$level++;
 			}
 
-				//Get all child nodes for this structure_id
+			//Get all child nodes for this structure_id
 			$query = "SELECT ts.`content_id`, ts.`structure_id`, ts.`page_alias`, tc.`user_id`, tc.`title`, tc.`content_type_guid`, uu.`login`, uu.`real_name`
 				FROM `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_content` tc
 				LEFT JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = tc.`user_id` )
@@ -187,9 +310,9 @@ class LibertyStructure extends LibertyBase {
 						$type['content_object'] = new $type['handler_class']();
 					}
 					$aux['title'] = $type['content_object']->getTitle( $aux );
-					$aux["first"]       = ($pos == 1);
-					$aux["last"]        = false;
-					$aux["level"]       = $level;
+					$aux["first"] = ($pos == 1);
+					$aux["last"]  = false;
+					$aux["level"] = $level;
 					if (strlen($parent_pos) == 0) {
 						$aux["pos"] = "$pos";
 					}
@@ -216,7 +339,7 @@ class LibertyStructure extends LibertyBase {
 		}
 		return $ret;
 	}
-
+*/
 
 	function getList( &$pListHash ) {
 		global $gBitSystem;
