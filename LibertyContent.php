@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.47 2005/12/20 19:31:30 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.48 2006/01/02 17:38:06 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -703,26 +703,28 @@ class LibertyContent extends LibertyBase {
     * @return - none the hash is updated via the reference
     */
 	function postGetList( &$pListHash ) {
-
-		$pListHash['control']['cant_pages'] = ceil($pListHash["cant"] / $pListHash['max_records']);
-
-		$pListHash['control']['actual_page'] = 1 + ($pListHash['offset'] / $pListHash['max_records']);
+		global $gBitSmarty;
+		$pListHash['control']['cant_pages'] = ceil( $pListHash["cant"] / $pListHash['max_records'] );
+		$pListHash['control']['actual_page'] = 1 + ( $pListHash['offset'] / $pListHash['max_records'] );
 
 		if ($pListHash["cant"] > ($pListHash['offset'] + $pListHash['max_records']) ) {
 			$pListHash['control']['next_offset'] = $pListHash['offset'] + $pListHash['max_records'];
 		} else {
 			$pListHash['control']['next_offset'] = -1;
 		}
+
 		// If offset is > 0 then prev_offset
 		if ($pListHash['offset'] > 0) {
 			$pListHash['control']['prev_offset'] = $pListHash['offset'] - $pListHash['max_records'];
 		} else {
 			$pListHash['control']['prev_offset'] = -1;
 		}
+
 		$pListHash['control']['offset'] = $pListHash['offset'];
 		$pListHash['control']['find'] = $pListHash['find'];
 		$pListHash['control']['sort_mode'] = $pListHash['sort_mode'];
 		$pListHash['control']['max_records'] = $pListHash['max_records'];
+		$gBitSmarty->assign_by_ref( ( !empty( $pListHash['hash_name'] ) ? $pListHash['hash_name'] : 'listControl' ), $pListHash['control'] );
 	}
 
     /**
@@ -942,6 +944,8 @@ class LibertyContent extends LibertyBase {
 		$retval = array();
 		$retval["data"] = $ret;
 		$retval["cant"] = $cant;
+		$pListHash["cant"] = $cant;
+		LibertyContent::postGetList( $pListHash );
 		return $retval;
 	}
 
