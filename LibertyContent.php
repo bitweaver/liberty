@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.48 2006/01/02 17:38:06 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.49 2006/01/04 00:15:13 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -702,8 +702,7 @@ class LibertyContent extends LibertyBase {
     * @param array hash of parameters returned by any getList() function
     * @return - none the hash is updated via the reference
     */
-	function postGetList( &$pListHash ) {
-		global $gBitSmarty;
+	function postGetList( $pListHash ) {
 		$pListHash['control']['cant_pages'] = ceil( $pListHash["cant"] / $pListHash['max_records'] );
 		$pListHash['control']['actual_page'] = 1 + ( $pListHash['offset'] / $pListHash['max_records'] );
 
@@ -724,7 +723,6 @@ class LibertyContent extends LibertyBase {
 		$pListHash['control']['find'] = $pListHash['find'];
 		$pListHash['control']['sort_mode'] = $pListHash['sort_mode'];
 		$pListHash['control']['max_records'] = $pListHash['max_records'];
-		$gBitSmarty->assign_by_ref( ( !empty( $pListHash['hash_name'] ) ? $pListHash['hash_name'] : 'listControl' ), $pListHash['control'] );
 	}
 
     /**
@@ -941,12 +939,10 @@ class LibertyContent extends LibertyBase {
 			$ret = array_slice($ret, $old_offset, $old_maxRecords);
 		}
 
-		$retval = array();
-		$retval["data"] = $ret;
-		$retval["cant"] = $cant;
+		$pListHash["data"] = $ret;
 		$pListHash["cant"] = $cant;
 		LibertyContent::postGetList( $pListHash );
-		return $retval;
+		return $pListHash;
 	}
 
 
