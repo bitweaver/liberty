@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.2.5 $
+ * @version  $Revision: 1.1.2.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wolff_borg <wolff_borg@yahoo.com.au>
 // | Reworked from: wikiplugin_wikigraph.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikigraph.php,v 1.1.2.5 2005/11/11 22:04:09 mej Exp $
+// $Id: data.wikigraph.php,v 1.1.2.6 2006/01/07 05:57:11 wolff_borg Exp $
 /**
  * definitions
  */
@@ -28,7 +28,7 @@ define( 'PLUGIN_GUID_DATAWIKIGRAPH', 'datawikigraph' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'WIKIGRAPH',
 						'auto_activate' => FALSE,
-						'requires_pair' => TRUE,
+						'requires_pair' => FALSE,
 						'load_function' => 'data_wikigraph',
 						'title' => 'WikiGraph',
 						'help_page' => 'DataPluginWikiGraph',
