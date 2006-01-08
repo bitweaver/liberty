@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.2.6 $
+ * @version  $Revision: 1.1.2.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wolff_borg <wolff_borg@yahoo.com.au>
 // | Reworked from: wikiplugin_wikigraph.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikigraph.php,v 1.1.2.6 2006/01/07 05:57:11 wolff_borg Exp $
+// $Id: data.wikigraph.php,v 1.1.2.7 2006/01/08 02:16:17 wolff_borg Exp $
 /**
  * definitions
  */
@@ -76,6 +76,7 @@ function data_wikigraph($data, $params) {
 	extract ($params, EXTR_SKIP);
   if(!isset($level)) $level = 0;
 	if(!isset($title)) $title = "Wiki-Graph";
+	if(isset($page)) $add = "&amp;page=$page";
 	if(isset($nodesep)) $add.="&amp;nodesep=$nodesep";
 	if(isset($rankdir)) $add.="&amp;rankdir=$rankdir";
 	if(isset($size)) $add.="&amp;size=$size";
@@ -116,7 +117,7 @@ $garg = array(
     'style' => isset($edgestyle) ? $edgestyle : "solid"
 ));
 	$ret .= "<div align='center'><img border='0' src=\"".WIKI_PKG_URL."wiki_graph.php?page=".urlencode($data)."&amp;level=$level$add\" alt='graph' usemap='#$mapname' />";
-	$mapdata = $wikilib->get_graph_map($data, $level, $garg);
+	$mapdata = $wikilib->get_graph_map($page, $level, $garg);
 	$mapdata = preg_replace("/\n|\r/", '', $mapdata);
 	$ret .= "<map name='$mapname'>$mapdata</map></div>";
 	return $ret;
