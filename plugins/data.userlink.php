@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.2.4 $
+ * @version  $Revision: 1.1.2.5 $
  * @package  liberty
  * @subpackage plugins_data
  * @author bigwasp bigwasp@sourceforge.net
@@ -19,7 +19,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_usercount.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.userlink.php,v 1.1.2.4 2006/01/04 22:37:10 mej Exp $
+// $Id: data.userlink.php,v 1.1.2.5 2006/01/08 16:49:00 mej Exp $
 
 /**
  * definitions
@@ -88,12 +88,11 @@ function data_userlink($data, $params) {
 	$user = $gBitUser->userExists($myHash);
 
 	if( $user != Null ) {
-		if( isset($label) ) {
-			$ret = $label;
-		} else {
-			$tmpUser = $gBitUser->getUserInfo( array( 'user_id' => $user ) );
-			$ret = $gBitUser->getDisplayName( TRUE, $tmpUser );
+		$tmpUser = $gBitUser->getUserInfo( array( 'user_id' => $user ) );
+		if ( isset( $label ) ) {
+			$tmpUser['link_label'] = $label;
 		}
+		$ret = $gBitUser->getDisplayName( TRUE, $tmpUser );
 	}
 	return $ret;
 }
