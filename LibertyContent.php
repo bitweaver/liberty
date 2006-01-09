@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.49 2006/01/04 00:15:13 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.50 2006/01/09 10:31:04 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -702,7 +702,7 @@ class LibertyContent extends LibertyBase {
     * @param array hash of parameters returned by any getList() function
     * @return - none the hash is updated via the reference
     */
-	function postGetList( $pListHash ) {
+	function postGetList( &$pListHash ) {
 		$pListHash['control']['cant_pages'] = ceil( $pListHash["cant"] / $pListHash['max_records'] );
 		$pListHash['control']['actual_page'] = 1 + ( $pListHash['offset'] / $pListHash['max_records'] );
 
