@@ -1,40 +1,12 @@
 {strip}
 <br />
-{if $gBitSystemPrefs.comments_display_expanded eq 'y'}
-	{assign var=initial value=block}
-	{assign var=iname value=expanded}
-	{* iname=expanded displays a minus sign *}
-{else}
-	{assign var=initial value=none}
-	{assign var=iname value=collapsed}
-	{* iname=collapsed displays a plus sign *}
-{/if}
-
-
 <div class="display comment">
 	<div class="header">
 		{if !( $post_comment_request || $post_comment_preview )}
 			<a name="editcomments"></a>
 		{/if}
-		<h2>
-			<a onclick="icntoggle('bitcomments');">
-				{biticon ipackage=liberty iname=$iname id="bitcommentsimg" iexplain=""} {tr}Comments{/tr}
-			</a>
-		</h2>
+		<h2>{tr}Comments{/tr}</h2>
 	</div>
-
-{* 
-$smarty.cookies.bitcomments is only set if user has clicked on the +/- icon to expand/collapse the comment
-display.  Cookie values are: o=display is expanded, c=display is collapased
-If cookie is not set, then use $gBitSystemPrefs.comments_display_expanded to determine the display
-*}
-
-{/strip}
-	<script type="text/javascript">//<![CDATA[
-		setfoldericonstate('bitcomments');
-		document.write('<div id="bitcomments" style="display:{if $smarty.cookies.bitcomments eq 'o'}block{else}{if $smarty.cookies.bitcomments eq 'c'}none{else}{$initial}{/if}{/if};">');
-	//]]></script>
-{strip}
 
 	<div class="body">
 		{formfeedback hash=$formfeedback}
@@ -136,8 +108,5 @@ If cookie is not set, then use $gBitSystemPrefs.comments_display_expanded to det
 
 		{libertypagination hash=$commentsPgnHash}
 	</div><!-- end .body -->
-{/strip}
-	<script type="text/javascript">//<![CDATA[
-		document.write('<\/div>');
-	//]]></script>
 </div><!-- end .comment -->
+{/strip}
