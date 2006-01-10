@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage functions
  */
@@ -99,8 +99,9 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 		}
 		header( "Location: ".$_SERVER['PHP_SELF'].'?structure_id='.$gStructure->mInfo["structure_id"] );
 		die;
+	} elseif( !empty( $_REQUEST['submit_structure'] ) ) {
+		$gStructure->storeStructure( $_REQUEST );
 	} elseif (isset($_REQUEST["create"])) {
-
 		if (isset($_REQUEST["pageAlias"]))	{
 			$gStructure->set_page_alias($_REQUEST["structure_id"], $_REQUEST["pageAlias"]);
 		}

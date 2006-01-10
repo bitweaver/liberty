@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -90,6 +90,17 @@ function bithtml_parse_data( &$pData, &$pCommonObject ) {
 	// this function is called manually, since it processes the HTML code
 	if( preg_match( "/\{maketoc.*?\}/i", $pData ) && @$gLibertySystem->mPlugins['datamaketoc']['is_active'] == 'y' ) {
 		$pData = data_maketoc( $pData );
+	}
+	if( preg_match("/\(\(([^\)][^\)]+)\)\)/", $pData ) ) {
+		preg_match_all("/\(\(([^\)][^\)]+)\)\)/", $pData, $pages);
+		foreach (array_unique($pages[1])as $page_parse) {
+	// This is a hack for now. page_exists_desc should not be needed here sicne blogs and articles use this function
+
+				$exists = $pCommonObject->pageExists( $page_parse, $pCommonObject->mContentId, $pCommonObject );
+				$repl = BitPage::getDisplayLink( $page_parse, $exists );
+				$page_parse_pq = preg_quote($page_parse, "/");
+				$pData = preg_replace("/\(\($page_parse_pq\)\)/", "$repl", $pData);
+		}
 	}
 	return $pData;
 }

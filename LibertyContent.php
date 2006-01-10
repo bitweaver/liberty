@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.13 2005/12/26 12:25:03 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.14 2006/01/10 21:13:43 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -703,22 +703,22 @@ class LibertyContent extends LibertyBase {
     * @return - none the hash is updated via the reference
     */
 	function postGetList( &$pListHash ) {
-
-		$pListHash['control']['cant_pages'] = ceil($pListHash["cant"] / $pListHash['max_records']);
-
-		$pListHash['control']['actual_page'] = 1 + ($pListHash['offset'] / $pListHash['max_records']);
+		$pListHash['control']['cant_pages'] = ceil( $pListHash["cant"] / $pListHash['max_records'] );
+		$pListHash['control']['actual_page'] = 1 + ( $pListHash['offset'] / $pListHash['max_records'] );
 
 		if ($pListHash["cant"] > ($pListHash['offset'] + $pListHash['max_records']) ) {
 			$pListHash['control']['next_offset'] = $pListHash['offset'] + $pListHash['max_records'];
 		} else {
 			$pListHash['control']['next_offset'] = -1;
 		}
+
 		// If offset is > 0 then prev_offset
 		if ($pListHash['offset'] > 0) {
 			$pListHash['control']['prev_offset'] = $pListHash['offset'] - $pListHash['max_records'];
 		} else {
 			$pListHash['control']['prev_offset'] = -1;
 		}
+
 		$pListHash['control']['offset'] = $pListHash['offset'];
 		$pListHash['control']['find'] = $pListHash['find'];
 		$pListHash['control']['sort_mode'] = $pListHash['sort_mode'];
@@ -939,10 +939,10 @@ class LibertyContent extends LibertyBase {
 			$ret = array_slice($ret, $old_offset, $old_maxRecords);
 		}
 
-		$retval = array();
-		$retval["data"] = $ret;
-		$retval["cant"] = $cant;
-		return $retval;
+		$pListHash["data"] = $ret;
+		$pListHash["cant"] = $cant;
+		LibertyContent::postGetList( $pListHash );
+		return $pListHash;
 	}
 
 

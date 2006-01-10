@@ -1,7 +1,7 @@
 {strip}
 {if $gContent->mStorage}
 	{if !$gBitSystem->isFeatureActive( 'feature_helppopup' )}
-		{popup_init src="`$smarty.const.THEMES_PKG_URL`js/overlib.js"}
+		{popup_init src="`$smarty.const.UTIL_PKG_URL`javascript/libs/overlib.js"}
 	{/if}
 
 	<div class="storage">

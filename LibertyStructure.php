@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.12 2005/12/29 18:27:34 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.13 2006/01/10 21:13:43 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -120,7 +120,7 @@ class LibertyStructure extends LibertyBase {
 			$this->mInfo["parent"] = $this->s_get_parent_info( $this->mStructureId );
 			$this->mInfo["home"]   = $this->getNode( $this->mStructureId );
 		}
- 		return TRUE;
+		return TRUE;
 	}
 
 	function loadPath() {
@@ -145,7 +145,135 @@ class LibertyStructure extends LibertyBase {
 		return $structure_path;
 	}
 
+	/**
+	* Get full structure from database
+	* @param $pStructureId structure for which we want structure
+	* @return full structure
+	*/
+	function getStructure( $pRootStructureId = NULL ) {
+		global $gBitSystem, $gLibertySystem;
+		$ret = FALSE;
+		if( !@BitBase::verifyId( $pRootStructureId ) && @BitBase::verifyId( $this->mInfo['root_structure_id'] ) ) {
+			$pRootStructureId = $this->mInfo['root_structure_id'];
+		}
 
+		if( @BitBase::verifyId( $pRootStructureId ) ) {
+			// Get all nodes for this structure
+			$query = "SELECT ts.*, tc.`user_id`, tc.`title`, tc.`content_type_guid`, uu.`login`, uu.`real_name`
+				FROM `".BIT_DB_PREFIX."tiki_structures` ts
+				INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON ( ts.`content_id` = tc.`content_id` )
+				INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = tc.`user_id` )
+				WHERE ts.`root_structure_id` = ? ORDER BY `pos` ASC";
+			$result = $this->mDb->query( $query, array( $pRootStructureId ) );
+
+			$subs = array();
+			$row_max = $result->numRows();
+			$contentTypes = $gLibertySystem->mContentTypes;
+			while( $res = $result->fetchRow() ) {
+				$aux = array();
+				$aux = $res;
+				if( !empty( $contentTypes[$res['content_type_guid']] ) ) {
+					// quick alias for code readability
+					$type = &$contentTypes[$res['content_type_guid']];
+					if( empty( $type['content_object'] ) ) {
+						// create *one* object for each object *type* to  call virtual methods.
+						include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
+						$type['content_object'] = new $type['handler_class']();
+					}
+					$aux['title'] = $type['content_object']->getTitle( $aux );
+					$ret[] = $aux;
+				}
+			}
+		}
+		return $ret;
+	}
+
+	/**
+	* Get all structures in $pStructureHash that have a given parent_id
+	* @param $pStructureHash full menu as supplied by '$this->getItemList( $pMenuId );'
+	* @return array of nodes with a given parent_id
+	*/
+	function getChildNodes( $pStructureHash, $pParentId = 0 ) {
+		$ret = array();
+		foreach( $pStructureHash as $node ) {
+			if( $node['parent_id'] == $pParentId ) {
+				$ret[] = $node;
+			}
+		}
+		return $ret;
+	}
+
+	/**
+	* Create a usable array from the data in the database from getStructure()
+	* @param $pStructureHash raw structure data from database
+	* @return nicely formatted and cleaned up structure array
+	*/
+	function createSubTree( $pStructureHash, $pParentId = 0, $pParentPos = '', $pLevel = 0 ) {
+		$ret = array();
+		// get all child menu Nodes for this structure_id
+		$children = $this->getChildNodes( $pStructureHash, $pParentId );
+		$pos = 1;
+		$row_max = count( $children );
+
+		// we need to insert the root structure item first
+		if( strlen( $pParentPos ) == 0 ) {
+			foreach( $pStructureHash as $node ) {
+				if( $node['structure_id'] == $node['root_structure_id'] ) {
+					$aux		  = $node;
+					$aux["first"] = true;
+					$aux["last"]  = true;
+					$aux["pos"]   = '';
+					$aux["level"] = $pLevel++;
+					$ret[] = $aux;
+				}
+			}
+		}
+
+		foreach( $children as $node ) {
+			$aux = $node;
+			$aux['level'] = $pLevel;
+			$aux['first'] = ( $pos == 1 );
+			$aux['last']  = FALSE;
+			if( strlen( $pParentPos ) == 0 ) {
+				$aux["pos"] = "$pos";
+			} else {
+				$aux["pos"] = $pParentPos . '.' . "$pos";
+			}
+			$ret[] = $aux;
+			//Recursively add any children
+			$subs = $this->createSubTree( $pStructureHash, $node['structure_id'], $aux['pos'], ( $pLevel + 1 ) );
+			if( !empty( $subs ) ) {
+				$r = array_pop( $ret );
+				$r['has_children'] = TRUE;
+				array_push( $ret, $r );
+				$ret = array_merge( $ret, $subs );
+			}
+
+			if( $pos == $row_max ) {
+				$aux['structure_id'] = $node['structure_id'];
+				$aux['first'] = FALSE;
+				$aux['last']  = TRUE;
+				$ret[] = $aux;
+			}
+			$pos++;
+		}
+		return $ret;
+	}
+
+	// get sub tree of $pStructureId
+	function getSubTree( $pStructureId ) {
+		global $gLibertySystem, $gBitSystem;
+		$ret = array();
+		if( @BitBase::verifyId( $pStructureId ) ) {
+			$query = "SELECT ts.root_structure_id FROM `".BIT_DB_PREFIX."tiki_structures` ts WHERE ts.`structure_id` = ?";
+			$root_structure_id = $this->mDb->getOne( $query, array( $pStructureId ) );
+			$pStructureHash = $this->getStructure( $root_structure_id );
+			$ret = $this->createSubTree( $pStructureHash, $pStructureId );
+		}
+		return $ret;
+	}
+
+/* Original getSubTree() code
 	function getSubTree( $pStructureId, $level = 0, $parent_pos = '' ) {
 		global $gLibertySystem, $gBitSystem;
 		if( @$this->verifyId( $pStructureId ) ) {
@@ -154,18 +282,18 @@ class LibertyStructure extends LibertyBase {
 			//The structure page is used as a title
 			if ($level == 0) {
 				$struct_info = $this->getNode( $pStructureId );
-				$aux["first"]       = true;
-				$aux["last"]        = true;
-				$aux["level"]       = $level;
-				$aux["pos"]         = '';
+				$aux["first"]	   = true;
+				$aux["last"]		= true;
+				$aux["level"]	   = $level;
+				$aux["pos"]		 = '';
 				$aux["structure_id"] = $struct_info["structure_id"];
-				$aux["title"]    = $struct_info["title"];
+				$aux["title"]	= $struct_info["title"];
 				$aux["page_alias"]  = $struct_info["page_alias"];
 				$ret[] = $aux;
 				$level++;
 			}
 
-				//Get all child nodes for this structure_id
+			//Get all child nodes for this structure_id
 			$query = "SELECT ts.`content_id`, ts.`structure_id`, ts.`page_alias`, tc.`user_id`, tc.`title`, tc.`content_type_guid`, uu.`login`, uu.`real_name`
 				FROM `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_content` tc
 				LEFT JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = tc.`user_id` )
@@ -187,9 +315,9 @@ class LibertyStructure extends LibertyBase {
 						$type['content_object'] = new $type['handler_class']();
 					}
 					$aux['title'] = $type['content_object']->getTitle( $aux );
-					$aux["first"]       = ($pos == 1);
-					$aux["last"]        = false;
-					$aux["level"]       = $level;
+					$aux["first"] = ($pos == 1);
+					$aux["last"]  = false;
+					$aux["level"] = $level;
 					if (strlen($parent_pos) == 0) {
 						$aux["pos"] = "$pos";
 					}
@@ -216,7 +344,7 @@ class LibertyStructure extends LibertyBase {
 		}
 		return $ret;
 	}
-
+*/
 
 	function getList( &$pListHash ) {
 		global $gBitSystem;
@@ -242,7 +370,7 @@ class LibertyStructure extends LibertyBase {
 			array_push( $bindVars, $pListHash['content_type_guid'] );
 		}
 		$query = "SELECT ts.`structure_id`, ts.`parent_id`, ts.`content_id`, `page_alias`, `pos`, tc.`title`, `hits`, `data`, `last_modified`, tc.`modifier_user_id`, `ip`, tc.`user_id` AS `creator_user_id`, uu.`login` AS `user`, uu.`real_name` , uu.`email`
-		          FROM `".BIT_DB_PREFIX."tiki_structures` ts INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON ( ts.`content_id` = tc.`content_id` ) INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON ( tc.`user_id` = uu.`user_id` )
+				  FROM `".BIT_DB_PREFIX."tiki_structures` ts INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON ( ts.`content_id` = tc.`content_id` ) INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON ( tc.`user_id` = uu.`user_id` )
 				  WHERE $mid
 				  ORDER BY ".$this->mDb->convert_sortmode($pListHash['sort_mode']);
 		$query_cant = "SELECT count(*)
@@ -254,9 +382,9 @@ class LibertyStructure extends LibertyBase {
 
 		while ($res = $result->fetchRow()) {
 			if( $gBitSystem->isPackageActive( 'bithelp' ) && file_exists(BITHELP_PKG_PATH.$res['title'].'/index.html')) {
-			  $res['webhelp']='y';
+				$res['webhelp']='y';
 			} else {
-			  $res['webhelp']='n';
+				$res['webhelp']='n';
 			}
 			$ret[] = $res;
 		}
@@ -293,7 +421,84 @@ class LibertyStructure extends LibertyBase {
 		return( count( $this->mErrors ) == 0 );
 	}
 
-    /**  Create a structure entry with the given name
+	// we've been given an entire structure to store in the database at once
+	// this function cleans it up and sorts out missing parameters
+	function verifyStructure( &$pParamHash ) {
+		if( !empty( $pParamHash['structure_string'] ) ) {
+			eval( $pParamHash['structure_string'] );
+			$pParamHash = array_merge( $pParamHash, $tree );
+		}
+
+		if( !empty( $pParamHash['structure'] ) && !empty( $pParamHash['root_structure_id'] ) ) {
+			$this->embelishStructureHash( $pParamHash['structure'] );
+			$structureHash = $this->flattenStructureHash( $pParamHash['structure'] );
+
+			// replace the 'tree' in the data array with the root_structure_id
+			foreach( $pParamHash['data'] as $structure_id => $node ) {
+				if( !@BitBase::verifyId( $pParamHash['data'][$structure_id]['parent_id'] ) ) {
+					$pParamHash['data'][$structure_id]['parent_id'] = $pParamHash['root_structure_id'];
+				}
+			}
+
+			foreach( $structureHash as $node ) {
+				if( @BitBase::verifyId( $node['structure_id'] ) ) {
+					$pParamHash['structure_store'][$node['structure_id']] = array_merge( $node, $pParamHash['data'][$node['structure_id']] );
+					$pParamHash['structure_store'][$node['structure_id']]['root_structure_id'] = $pParamHash['root_structure_id'];
+				}
+			}
+		} else {
+			$this->mErrors['verify_structure'] = tra( "The structure could not be stored because of missing data." );
+		}
+
+		// clear up some memory
+		if( !empty( $pParamHash['structure_string'] ) ) { unset( $pParamHash['structure_string'] ); }
+		if( !empty( $pParamHash['structure'] ) )        { unset( $pParamHash['structure'] ); }
+		if( !empty( $pParamHash['data'] ) )             { unset( $pParamHash['data'] ); }
+		return( count( $this->mErrors ) == 0 );
+	}
+
+	function storeStructure( $pParamHash ) {
+		if( $this->verifyStructure( $pParamHash ) ) {
+			// now that the structure is ready to be stored, we remove the old structure first and then insert the new one.
+			$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_structures` WHERE `root_structure_id`=? AND `structure_id`<>?";
+			$result = $this->mDb->query( $query, array( (int)$pParamHash['root_structure_id'], (int)$pParamHash['root_structure_id'] ) );
+			$query = "";
+			foreach( $pParamHash['structure_store'] as $node ) {
+				$this->mDb->associateInsert( BIT_DB_PREFIX."tiki_structures", $node );
+			}
+		}
+	}
+
+	function flattenStructureHash( $pParamHash, $i = 0 ) {
+		$ret = array();
+		foreach( $pParamHash as $key => $node ) {
+			if( count( $node ) > 2 && !empty( $node ) ) {
+				$ret = array_merge( $ret, $this->flattenStructureHash( $node, $i ) );
+				$i++;
+			} elseif( count( $node ) == 2 ) {
+				$ret[] = $node;
+				$i++;
+			} else {
+				$ret[$i][$key] = $node;
+			}
+		}
+		return $ret;
+	}
+
+	// recursively add pos values and structure id
+	function embelishStructureHash( &$pParamHash ) {
+		$pos = 1;
+		foreach( $pParamHash as $structure_id => $node ) {
+			if( !empty( $node ) ) {
+				$this->embelishStructureHash( $node );
+			}
+			$node['pos'] = $pos++;
+			$node['structure_id'] = $structure_id;
+			$pParamHash[$structure_id] = $node;
+		}
+	}
+
+	/**  Create a structure entry with the given name
 	* @param parent_id The parent entry to add this to. If NULL, create new structure.
 	* @param after_ref_id The entry to add this one after. If NULL, put it in position 0.
 	* @param name The wiki page to reference
@@ -301,16 +506,16 @@ class LibertyStructure extends LibertyBase {
 	* @return the new entries structure_id or null if not created.
 	*/
 	function storeNode( &$pParamHash ) {
-        global $gBitSystem;
-        $ret = null;
-        // If the page doesn't exist then create a new wiki page!
+		global $gBitSystem;
+		$ret = null;
+		// If the page doesn't exist then create a new wiki page!
 		$now = $gBitSystem->getUTCTime();
 //		$created = $this->create_page($name, 0, '', $now, tra('created from structure'), 'system', '0.0.0.0', '');
 		// if were not trying to add a duplicate structure head
 		if ( $this->verifyNode( $pParamHash ) ) {
 			$this->mDb->StartTrans();
 
-            //Create a new structure entry
+			//Create a new structure entry
 			$pParamHash['structure_id'] = $this->mDb->GenID( 'tiki_structures_id_seq' );
 			if( !@$this->verifyId( $pParamHash['root_structure_id'] ) ) {
 				$pParamHash['root_structure_id'] = $pParamHash['structure_id'];
@@ -449,7 +654,7 @@ class LibertyStructure extends LibertyBase {
 			}
 			elseif ($node["first"] or !$node["last"]) {
 				if ($node["first"] and !$first) {
-			        $level++;
+					$level++;
 				}
 				$first = false;
 				for ($i = 0; $i < $level; $i++) {
@@ -510,7 +715,7 @@ class LibertyStructure extends LibertyBase {
 		// Now recursively remove
 		$query  = "select `structure_id` ";
 		$query .= "from `".BIT_DB_PREFIX."tiki_structures` as ts, `".BIT_DB_PREFIX."tiki_pages` as tp ";
-		  $query .= "where tp.`content_id`=ts.`content_id` and `parent_id`=?";
+		$query .= "where tp.`content_id`=ts.`content_id` and `parent_id`=?";
 		$result = $this->mDb->query($query, array( $structure_id ) );
 
 		while ($res = $result->fetchRow()) {
@@ -522,17 +727,17 @@ class LibertyStructure extends LibertyBase {
 		return true;
 	}
 
-  /**Returns an array of info about the parent
-     structure_id
+/**Returns an array of info about the parent
+	structure_id
 
-     See get_page_info for details of array
-  */
+	See get_page_info for details of array
+*/
 	function s_get_parent_info($structure_id) {
 		// Try to get the parent of this page
 		$parent_id = $this->mDb->getOne("select `parent_id` from `".BIT_DB_PREFIX."tiki_structures` where `structure_id`=?",array((int)$structure_id));
 
-    if (!$parent_id)
-      return null;
+	if (!$parent_id)
+		return null;
 		return ($this->getNode($parent_id));
 	}
 
@@ -652,9 +857,9 @@ class LibertyStructure extends LibertyBase {
 
 
 /*
-  //Is this page the head page for a structure?
+	//Is this page the head page for a structure?
 	function get_struct_ref_if_head($title) {
-    $query =  "SELECT `structure_id`
+	$query =  "SELECT `structure_id`
 			   FROM `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_pages` tp,`".BIT_DB_PREFIX."tiki_content` tc
 			   WHERE tp.`content_id`=ts.`content_id` AND tc.`content_id` = tp.`content_id` AND (`parent_id` is null or `parent_id`=0) and tc.`title`=?";
 		$structure_id = $this->mDb->getOne($query,array($title));
@@ -701,10 +906,10 @@ class LibertyStructure extends LibertyBase {
 
 	function get_prev_page($structure_id, $deep = false) {
 
-    //Drill down to last child for this tree node
-        if ($deep) {
-  	        $query  = "select `structure_id` ";
-		    $query .= "from `".BIT_DB_PREFIX."tiki_structures` ts ";
+	//Drill down to last child for this tree node
+		if ($deep) {
+			$query  = "select `structure_id` ";
+			$query .= "from `".BIT_DB_PREFIX."tiki_structures` ts ";
 			$query .= "where `parent_id`=? ";
 			$query .= "order by ".$this->mDb->convert_sortmode("pos_desc");
 			$result = $this->mDb->query($query,array($structure_id));
@@ -719,7 +924,7 @@ class LibertyStructure extends LibertyBase {
 		// Try to get the previous page with the same parent as this
 		$page_info = $this->getNode($structure_id);
 		$parent_id = $page_info["parent_id"];
-		$pos       = $page_info["pos"];
+		$pos	   = $page_info["pos"];
 
 		//At the top of the tree
 		if (!isset($parent_id))
@@ -744,15 +949,15 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/** Return an array of subpages
-      Used by the 'After Page' select box
+	  Used by the 'After Page' select box
   */
 	function s_get_pages($parent_id) {
 		$ret = array();
-	  $query =  "SELECT `pos`, `structure_id`, `parent_id`, ts.`content_id`, tc.`title`, `page_alias`
-				 FROM `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_content` tc
-				 WHERE ts.`content_id` = tc.`content_id` AND `parent_id`=? ";
+		$query =  "SELECT `pos`, `structure_id`, `parent_id`, ts.`content_id`, tc.`title`, `page_alias`
+			FROM `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_content` tc
+			WHERE ts.`content_id` = tc.`content_id` AND `parent_id`=? ";
 		$query .= "order by ".$this->mDb->convert_sortmode("pos_asc");
-        $result = $this->mDb->query($query,array((int)$parent_id));
+		$result = $this->mDb->query($query,array((int)$parent_id));
 		while ($res = $result->fetchRow()) {
 			//$ret[] = $this->populate_page_info($res);
 			$ret[] = $res;
@@ -775,10 +980,10 @@ class LibertyStructure extends LibertyBase {
   \return An array of page_info arrays
   */
   function s_get_structure_pages($structure_id) {
-    $ret = array();
-    // Add the structure page as well
-    $ret[] = $this->getNode($structure_id);
-    $ret2  = $this->_s_get_structure_pages($structure_id);
+	$ret = array();
+	// Add the structure page as well
+	$ret[] = $this->getNode($structure_id);
+	$ret2  = $this->_s_get_structure_pages($structure_id);
 		return array_merge($ret, $ret2);
   }
 
@@ -786,10 +991,10 @@ class LibertyStructure extends LibertyBase {
   \return An array of page_info arrays
   */
 	function s_get_structure_pages_unique($structure_id) {
-    $ret = array();
-    // Add the structure page as well
-    $ret[] = $this->getNode($structure_id);
-    $ret2  = $this->_s_get_structure_pages($structure_id);
+	$ret = array();
+	// Add the structure page as well
+	$ret[] = $this->getNode($structure_id);
+	$ret2  = $this->_s_get_structure_pages($structure_id);
 		return array_unique(array_merge($ret, $ret2));
   }
 
@@ -816,7 +1021,7 @@ class LibertyStructure extends LibertyBase {
   function get_page_alias($structure_id) {
 		$query = "select `page_alias` from `".BIT_DB_PREFIX."tiki_structures` where `structure_id`=?";
 		$res = $this->mDb->getOne($query, array((int)$structure_id));
-    return $res;
+	return $res;
   }
 
   function set_page_alias($structure_id, $pageAlias) {
@@ -829,10 +1034,10 @@ class LibertyStructure extends LibertyBase {
   //This nifty function creates a static WebHelp version using a TikiStructure as
   //the base.
   function structure_to_webhelp($structure_id, $dir, $top) {
-  	global $style_base;
+	global $style_base;
 
-    //The first task is to convert the structure into an array with the
-    //proper format to produce a WebHelp project.
+	//The first task is to convert the structure into an array with the
+	//proper format to produce a WebHelp project.
 	//We have to create something in the form
 	//$pages=Array('root'=>Array('pag1'=>'','pag2'=>'','page3'=>Array(...)));
 	//Where the name is the title|description and the other side is either ''

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.8 2005/12/18 22:30:26 squareing Exp $
+// $Id: data.code.php,v 1.9 2006/01/10 21:13:43 squareing Exp $
 
 /**
  * definitions
@@ -52,12 +52,7 @@ function data_code_help() {
 				.'<td>' . tra( "key-word") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "Defines the format of the Source Code Snippet. Possible values are:");
 	if( file_exists( UTIL_PKG_PATH.'geshi/geshi.php' ) ) {
-		$help = $help . '<br /><strong>ActionScript / Ada / Apache Log File=Apache / ASM (NASM based)=Asm / ASP / Bash / C '
-						.'/ C for Macs=C_Mac / AutoCAD DCL=CadDcl / AutoCAD LISP=CadLisp / C++=Cpp / C#=CSharp / CSS / D '
-						.'/ Delphi / Diff Output=Diff / HTML (4.0.1)=Html4Strict / Java / JavaScript / Lisp / Lua / MatLab '
-						.'/ MpAsm / NullSoft Installer=Niss / Objective C=ObjC / OpenOffice.org Basic=OoBas / Oracle8'
-						.'/ Pascal / Perl / Php / Php_Brief / Python / QuickBasic=QBasic / Smarty / SQL / VisualBasic=Vb '
-						.'/ VB.NET=VbNet / VHDL / VisualFoxPro / XML</strong>. ';
+		$help = $help . '<br /><strong>ActionScript</strong> &bull; <strong>Ada</strong> &bull; Apache Log File = <strong>Apache</strong> &bull; <strong>AppleScript</strong> &bull; ASM (NASM based) = <strong>Asm</strong> &bull; <strong>ASP</strong> &bull; AutoCAD DCL = <strong>CadDcl</strong> &bull; AutoCAD LISP = <strong>CadLisp</strong> &bull; <strong>Bash</strong> &bull; <strong>BLITZ BASIC</strong> &bull; <strong>C</strong> &bull; C++ = <strong>Cpp</strong> &bull; C# = <strong>CSharp</strong> &bull; C for Macs = <strong>C_Mac</strong> &bull; <strong>CSS</strong> &bull; <strong>D</strong> &bull; <strong>Delphi</strong> &bull; Diff Output = <strong>Diff</strong> &bull; <strong>DIV</strong> &bull; <strong>DOS</strong> &bull; <strong>Eiffel</strong> &bull; <strong>FreeBasic</strong> &bull; <strong>GML</strong> &bull; HTML (4.0.1) = <strong>Html4Strict</strong> &bull; <strong>ini</strong> &bull; <strong>Inno</strong> &bull; <strong>Java</strong> &bull; <strong>JavaScript</strong> &bull; <strong>Lisp</strong> &bull; <strong>Lua</strong> &bull; <strong>MatLab</strong> &bull; <strong>MpAsm</strong> &bull; <strong>MySQL</strong> &bull; NullSoft Installer = <strong>Niss</strong> &bull; Objective C = <strong>ObjC</strong> &bull; <strong>OCaml</strong> &bull; OpenOffice.org Basic = <strong>OoBas</strong> &bull; <strong>Oracle8</strong> &bull; <strong>Pascal</strong> &bull; <strong>Perl</strong> &bull; <strong>Php</strong> &bull; <strong>Php_Brief</strong> &bull; <strong>Python</strong> &bull; QuickBasic = <strong>QBasic</strong> &bull; <strong>Ruby</strong> &bull; <strong>Scheme</strong> &bull; <strong>Smarty</strong> &bull; <strong>SQL</strong> &bull; VB.NET = <strong>VbNet</strong> &bull; <strong>VHDL</strong> &bull; <strong>Visual Basic</strong> &bull; VisualBasic = <strong>Vb</strong> &bull; <strong>VisualFoxPro</strong> &bull; <strong>XML</strong>';
 	} else {
 		$help = $help .'HTML or PHP</strong>. ';
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_data
  * @author bigwasp bigwasp@sourceforge.net
@@ -19,7 +19,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_usercount.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.userlink.php,v 1.3 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.userlink.php,v 1.4 2006/01/10 21:13:43 squareing Exp $
 
 /**
  * definitions
@@ -30,8 +30,7 @@ $pluginParams = array ( 'tag' => 'USERLINK',
 						'auto_activate' => FALSE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_userlink',
-						'title' => 'UserLink shows a link to the UserPage for a given login or email', // Remove this line when the plugin becomes operational
-//						'title' => 'User',                                                                                       // and Remove the comment from the start of this line
+						'title' => 'UserLink shows a link to the UserPage for a given login or email',
 						'help_page' => 'DataPluginUserLink',
 						'description' => tra("Will show a link to the userpage"),
 						'help_function' => 'data_userlink_help',
@@ -53,48 +52,48 @@ function data_userlink_help() {
 			.'<tr class="odd">'
 			        .'<td>login</td>' 
 			        .'<td>' . tra( "string" ) . '<br />' . tra( "(optional)") . '</td>'
-				.'<td>' . tra( "The login name to gernerate the link" ) . '</td>'
+				.'<td>' . tra( "The login name to generate the link" ) . '</td>'
 			.'</tr>'
 			.'<tr class="even">'
 			        .'<td>email</td>'
 				.'<td>' . tra( "string" ) . '<br />' . tra( "(optional)") . '</td>'
-				.'<td>' . tra( "The mailadress to gernerate the link" ) . '</td>'	
+				.'<td>' . tra( "The e-mail address to generate the link" ) . '</td>'	
+			.'</tr>'
+			.'<tr class="odd">'
+			        .'<td>label</td>'
+				.'<td>' . tra( "string" ) . '<br />' . tra( "(optional)") . '</td>'
+				.'<td>' . tra( "The label to show; default is user's name" ) . '</td>'	
 			.'</tr>'
 		.'</table>'
-		.tra("Example: ") . "{USERLINK login='admin'}";
+		.tra("Example: ") . "{USERLINK login='admin' label='Site Administrator'}";
 	return $help;			
 }
 
 // Load Function
 function data_userlink($data, $params) {
-        global $gBitUser;
-	$nFlag = 0;
+	global $gBitUser;
+
 	$myHash = array();
 	$ret = '';
 	extract ($params, EXTR_SKIP);
-	if (isset($login)) {
-	   $myHash['login'] = $login;
-	   $nFlag++;
+
+	if ( isset( $login ) ) {
+		$myHash['login'] = $login;
+	} else if ( isset( $email ) ) {
+		$myHash['email'] = $email;
+	} else if ( isset( $user_id ) ) {
+		$myHash['user_id'] = $user_id;
+	}	
+
+	$user = $gBitUser->userExists($myHash);
+
+	if( $user != Null ) {
+		$tmpUser = $gBitUser->getUserInfo( array( 'user_id' => $user ) );
+		if ( isset( $label ) ) {
+			$tmpUser['link_label'] = $label;
+		}
+		$ret = $gBitUser->getDisplayName( TRUE, $tmpUser );
 	}
-	If (isset($email)) {
-           $myHash['email'] = $email;
-	   $nFlag++;
-	}   	   
-	If (isset($user_id)) {
-	   $myHash['user_id'] = $user_id;
-	   $nFlag++;
-	}   
-	
-	// $nFlag check if only exactly one parameter was given!
-	if ($nFlag == 1) {
-	    $user = $gBitUser->userExists($myHash); 
-	    
-	    if(!$user==Null) {
-	      $tmpUser = $gBitUser->getUserInfo(array('user_id'=>$user));
-	      $ret = $gBitUser->getDisplayName(TRUE,$tmpUser) ;
-	    }
-	    
-	 }
 	return $ret;
 }
 ?>
