@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.52 2006/01/11 14:27:12 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.53 2006/01/11 19:15:17 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -97,19 +97,6 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 
-	}
-
-	/**
-	* Work out if a given user has the right to edit the viewed content
-	* @return TRUE on success, FALSE on failure
-	* @access public
-	**/
-	function canViewerEdit() {
-		global $gBitUser;
-		if( $gBitUser->isAdmin() || $this->mUserId == $gBitUser->mUserId ) {
-			return TRUE;
-		}
-		return FALSE;
 	}
 
 	/**
@@ -339,10 +326,19 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	* Check user_id to establish if the object that has been loaded was created by the current user
+	* @param $pContentCreatorId optionally specify what user id to check against
+	* @return TRUE if user owns the content
 	*/
-	function isOwner() {
+	function isOwner( $pContentCreatorId = NULL ) {
 		global $gBitUser;
-		return( $this->isValid() && @$this->verifyId( $this->mInfo['user_id'] ) && $this->mInfo['user_id'] == $gBitUser->mUserId );
+		if( !@BitBase::verifyId( $pContentCreatorId ) && $this->isValid() && @$this->verifyId( $this->mInfo['user_id'] ) ) {
+			$pContentCreatorId = $this->mInfo['user_id'];
+		}
+		if( @BitBase::verifyId( $pContentCreatorId ) ) {
+			return( $pContentCreatorId == $gBitUser->mUserId );
+		} else {
+			return FALSE;
+		}
 	}
 
 
