@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.21 2006/01/10 19:10:56 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.22 2006/01/11 11:43:49 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -430,7 +430,7 @@ class LibertyStructure extends LibertyBase {
 		}
 
 		if( !empty( $pParamHash['structure'] ) && !empty( $pParamHash['root_structure_id'] ) ) {
-			$this->embelishStructureHash( $pParamHash['structure'] );
+			$this->embellishStructureHash( $pParamHash['structure'] );
 			$structureHash = $this->flattenStructureHash( $pParamHash['structure'] );
 
 			// replace the 'tree' in the data array with the root_structure_id
@@ -469,10 +469,10 @@ class LibertyStructure extends LibertyBase {
 		}
 	}
 
-	function flattenStructureHash( $pParamHash, $i = 0 ) {
+	function flattenStructureHash( $pParamHash, $i = -10000 ) {
 		$ret = array();
 		foreach( $pParamHash as $key => $node ) {
-			if( count( $node ) > 2 && !empty( $node ) ) {
+			if( !empty( $node ) && count( $node ) > 2 ) {
 				$ret = array_merge( $ret, $this->flattenStructureHash( $node, $i ) );
 				$i++;
 			} elseif( count( $node ) == 2 ) {
@@ -486,11 +486,11 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	// recursively add pos values and structure id
-	function embelishStructureHash( &$pParamHash ) {
+	function embellishStructureHash( &$pParamHash ) {
 		$pos = 1;
 		foreach( $pParamHash as $structure_id => $node ) {
 			if( !empty( $node ) ) {
-				$this->embelishStructureHash( $node );
+				$this->embellishStructureHash( $node );
 			}
 			$node['pos'] = $pos++;
 			$node['structure_id'] = $structure_id;
