@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.11 $
+ * @version  $Revision: 1.1.1.1.2.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_articles.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.articles.php,v 1.1.1.1.2.11 2006/01/11 14:33:48 squareing Exp $
+// $Id: data.articles.php,v 1.1.1.1.2.12 2006/01/11 14:38:14 squareing Exp $
 
 /**
  * definitions
@@ -67,8 +67,8 @@ function data_articles_help() {
 			.'</tr>'
 			.'<tr class="even">'
 				.'<td>format</td>'
-				.'<td>' . tra( "display format") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Specify format for article display - default is simple title list") . '</td>'
+				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "Specify format for article display - options: full, list (default)") . '</td>'
 			.'</tr>'
 		.'</table>'
 		. tra("Example: ") . "{ARTICLES max=5 topic='some_topic'}<br />"
@@ -128,7 +128,7 @@ function data_articles($data, $params) { // No change in the parameters with Cly
 			$display_result .= '</div>';
 			$display_result = eregi_replace( "\n", "", $display_result );
 			break;
-		case 'simple_title_list':
+		case 'list':
 		default:
 			$display_result = "<ul>";
 			foreach( $articles_results['data'] as $article ) {
