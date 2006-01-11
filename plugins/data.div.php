@@ -4,12 +4,15 @@
  * assigned_modules
  *
  * @author     xing
- * @version    $Revision: 1.1.2.1 $
+ * @version    $Revision: 1.1.2.2 $
  * @package    liberty
  * @subpackage plugins_data
  * @copyright  Copyright (c) 2004, bitweaver.org
  */
 
+/**
+ * Setup Code
+ */
 define( 'PLUGIN_GUID_DATADIV', 'datadiv' );
 global $gLibertySystem;
 $pluginParams = array ( 

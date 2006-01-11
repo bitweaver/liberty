@@ -1,4 +1,10 @@
 <?php
+// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_structure_toc.php,v 1.1.2.2 2006/01/11 12:20:51 lsces Exp $
+/**
+ * Params:
+ * @package liberty
+ * @subpackage modules
+ */
 global $gStructure, $gContent;
 $struct = NULL;
 if( is_object( $gContent ) && ( empty( $gStructure ) || !$gStructure->isValid() ) ) {
