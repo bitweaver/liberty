@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.51 2006/01/11 14:24:05 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.52 2006/01/11 14:27:12 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -106,7 +106,7 @@ class LibertyContent extends LibertyBase {
 	**/
 	function canViewerEdit() {
 		global $gBitUser;
-		if( $gBitUser->isAdmin() || $gContent->mUserId == $gBitUser->mUserId ) {
+		if( $gBitUser->isAdmin() || $this->mUserId == $gBitUser->mUserId ) {
 			return TRUE;
 		}
 		return FALSE;
