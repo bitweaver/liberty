@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.1.1.1.2.13 $
+ * @version  $Revision: 1.1.1.1.2.14 $
  * @package  liberty
  * @subpackage functions
  */
@@ -17,6 +17,7 @@
  */
 require_once( '../bit_setup_inc.php' );
 include_once( LIBERTY_PKG_PATH.'LibertyStructure.php');
+$gBitSmarty->assign_by_ref( 'feedback', $feedback = array() );
 
 if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 	$gBitSystem->fatalError( "No structure indicated" );
@@ -100,7 +101,11 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 		header( "Location: ".$_SERVER['PHP_SELF'].'?structure_id='.$gStructure->mInfo["structure_id"] );
 		die;
 	} elseif( !empty( $_REQUEST['submit_structure'] ) ) {
-		$gStructure->storeStructure( $_REQUEST );
+		if( $gStructure->storeStructure( $_REQUEST ) ) {
+			$feedback['success'] = tra( "Your changes were successfully saved." );
+		} else {
+			$feedback['error'] = $gStructure->mErrors;
+		}
 	} elseif (isset($_REQUEST["create"])) {
 		if (isset($_REQUEST["pageAlias"]))	{
 			$gStructure->set_page_alias($_REQUEST["structure_id"], $_REQUEST["pageAlias"]);
