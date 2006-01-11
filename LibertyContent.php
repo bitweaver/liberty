@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.53 2006/01/11 19:15:17 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.54 2006/01/11 19:26:16 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -326,19 +326,17 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	* Check user_id to establish if the object that has been loaded was created by the current user
-	* @param $pContentCreatorId optionally specify what user id to check against
+	* @param $pParamHash optionally pass in the hash to check against
 	* @return TRUE if user owns the content
 	*/
-	function isOwner( $pContentCreatorId = NULL ) {
+	function isOwner( $pParamHash = NULL ) {
 		global $gBitUser;
-		if( !@BitBase::verifyId( $pContentCreatorId ) && $this->isValid() && @$this->verifyId( $this->mInfo['user_id'] ) ) {
-			$pContentCreatorId = $this->mInfo['user_id'];
+		if( @BitBase::verifyId( $pParamHash['user_id'] ) ) {
+			$user_id = $pParamHash['user_id'];
+		} elseif( $this->isValid() && @$this->verifyId( $this->mInfo['user_id'] ) ) {
+			$user_id = $this->mInfo['user_id'];
 		}
-		if( @BitBase::verifyId( $pContentCreatorId ) ) {
-			return( $pContentCreatorId == $gBitUser->mUserId );
-		} else {
-			return FALSE;
-		}
+		return( @BitBase::verifyId( $user_id ) && $user_id == $gBitUser->mUserId );
 	}
 
 
