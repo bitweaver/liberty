@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.23 2006/01/11 17:49:59 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.24 2006/01/11 18:54:37 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -265,7 +265,7 @@ class LibertyStructure extends LibertyBase {
 		global $gLibertySystem, $gBitSystem;
 		$ret = array();
 		if( @BitBase::verifyId( $pStructureId ) ) {
-			$query = "SELECT ts.root_structure_id FROM `".BIT_DB_PREFIX."tiki_structures` ts WHERE ts.`structure_id` = ?";
+			$query = "SELECT ts.`root_structure_id` FROM `".BIT_DB_PREFIX."tiki_structures` ts WHERE ts.`structure_id` = ?";
 			$root_structure_id = $this->mDb->getOne( $query, array( $pStructureId ) );
 			$pStructureHash = $this->getStructure( $root_structure_id );
 			$ret = $this->createSubTree( $pStructureHash, $pStructureId );
