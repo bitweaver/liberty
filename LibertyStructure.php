@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.24 2006/01/11 18:54:37 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.1.1.1.2.25 2006/01/12 10:49:11 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -234,6 +234,7 @@ class LibertyStructure extends LibertyBase {
 			$aux['level'] = $pLevel;
 			$aux['first'] = ( $pos == 1 );
 			$aux['last']  = FALSE;
+			$aux['has_children'] = FALSE;
 			if( strlen( $pParentPos ) == 0 ) {
 				$aux["pos"] = "$pos";
 			} else {
