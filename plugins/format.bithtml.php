@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.8 $
+ * @version  $Revision: 1.1.2.1 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -76,7 +76,7 @@ function purge_html( $pText ) {
 function bithtml_save_data( &$pParamHash ) {
 	static $parser;
 	if( empty( $parser ) ) {
-		$parser = new TikiWikiParser();
+		$parser = new BitWikiParser();
 	}
 	if( $pParamHash['edit'] ) {
 		$parser->storeLinks( $pParamHash );
