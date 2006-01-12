@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.55 2006/01/12 13:09:23 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.56 2006/01/12 13:32:25 bitweaver Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -618,8 +618,6 @@ class LibertyContent extends LibertyBase {
 			$ret = $pHash['title'];
 		} elseif( !empty( $pHash['content_description'] ) ) {
 			$ret = $pHash['content_description'];
-		} else {
-			$ret = "[ ".tra( "No Title" )." ]";
 		}
 		return $ret;
 	}
