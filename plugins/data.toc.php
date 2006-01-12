@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.11 $
+ * @version  $Revision: 1.1.1.1.2.13 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.1.1.1.2.11 2006/01/12 12:59:36 squareing Exp $
+// $Id: data.toc.php,v 1.1.1.1.2.13 2006/01/12 19:53:00 squareing Exp $
 
 /**
  * definitions
@@ -78,7 +78,7 @@ function data_toc( $data, $params ) {
 		}
 		$tree = $struct->getSubTree( $get_structure, ( @$display == 'full_toc' ) ); 
 		$gBitSmarty->assign( "subtree", $tree );
-		$repl = $gBitSmarty->fetch( "bitpackage:liberty/display_toc.tpl" );
+		$repl = $gBitSmarty->fetch( "bitpackage:liberty/display_toc_inc.tpl" );
 		if( empty( $repl ) ) {
 			// return blank, *not* empty, so the {toc} tag gets replaced
 			$repl = ' ';
