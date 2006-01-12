@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.2.2.11 2006/01/12 13:32:25 bitweaver Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.2.2.12 2006/01/12 14:04:34 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -100,27 +100,6 @@ class LibertyComment extends LibertyContent {
 			}
 		}
 		return (count($this->mErrors) == 0);
-	}
-
-	/**
-	* Create the generic title for a content item
-	*
-	* This will normally be overwriten by extended classes to provide
-	* an appropriate title title string
-	* @param array mInfo type hash of data to be used to provide base data
-	* @return string Descriptive title for the object
-	*/
-	function getTitle( $pHash=NULL ) {
-		$ret = NULL;
-		if( empty( $pHash ) ) {
-			$pHash = &$this->mInfo;
-		}
-		if( !empty( $pHash['title'] ) ) {
-			$ret = $pHash['title'];
-		} else {
-			$ret = "[ ".tra( "No Title" )." ]";
-		}
-		return $ret;
 	}
 
 	function deleteComment() {
