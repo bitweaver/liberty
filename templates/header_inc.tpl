@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/header_inc.tpl,v 1.1.2.3 2006/01/11 00:23:31 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/header_inc.tpl,v 1.1.2.4 2006/01/12 13:40:14 squareing Exp $ *}
 {strip}
 {if $structureInfo}
 	<link rel="index" title="{tr}Contents{/tr}" href="index.php?structure_id={$structureInfo.root_structure_id}" />
@@ -14,10 +14,10 @@
 {/if}
 {if $loadDynamicTree}
 	<!--[if lte IE 5.0]>
-		<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/jscompressor.php?jsfile=libs/mygosu/ie5.js"></script>
+		<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/libs/mygosu/ie5.js"></script>
 	<![endif]-->
-	<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/jscompressor.php?jsfile=libs/mygosu/DynamicTreeBuilder.js"></script>
-	<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/jscompressor.php?jsfile=libs/mygosu/plugins.js"></script>
+	<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/libs/mygosu/DynamicTreeBuilder.js"></script>
+	<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/libs/mygosu/plugins.js"></script>
 	<link rel="stylesheet" type="text/css" href="{$smarty.const.UTIL_PKG_URL}javascript/libs/mygosu/DynamicTree.css" />
 {/if}
 {/strip}
