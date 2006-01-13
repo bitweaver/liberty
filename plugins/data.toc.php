@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.13 $
+ * @version  $Revision: 1.1.1.1.2.14 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.1.1.1.2.13 2006/01/12 19:53:00 squareing Exp $
+// $Id: data.toc.php,v 1.1.1.1.2.14 2006/01/13 14:28:49 squareing Exp $
 
 /**
  * definitions
@@ -70,6 +70,7 @@ function data_toc( $data, $params ) {
 		$struct = &$gStructure;
 	}
 
+	$repl = '';
 	if( is_object( $struct ) && count( $struct->isValid() ) ) {
 		if( @BitBase::verifyId( $structure_id ) ) {
 			$get_structure = $structure_id;
