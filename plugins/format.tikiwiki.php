@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.39 $
+ * @version  $Revision: 1.2.2.40 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -216,8 +216,8 @@ class TikiWikiParser extends BitBase {
 	}
 	*/
 
-	function getAllToPages( $pContentId ) {
-		$ret = array();
+	function getAllPages( $pContentId, $pCommonObject ) {
+		$ret = NULL;
 		if( @BitBase::verifyId( $pContentId ) ) {
 			$query = "SELECT `page_id`, tc.`content_id`, `description`, tc.`last_modified`, tc.`title`
 				FROM `".BIT_DB_PREFIX."tiki_links` tl
@@ -238,12 +238,16 @@ class TikiWikiParser extends BitBase {
 		return $ret;
 	}
 
-	function pageExists( $pPageTitle, $pPageList ) {
+	function pageExists( $pTitle, $pPageList, $pCommonObject ) {
 		$ret = FALSE;
-		if( !empty( $pPageTitle ) ) {
-			if( array_key_exists( strtolower( $pPageTitle ), $pPageList ) ) {
-				$ret = $pPageList[strtolower( $pPageTitle )];
+		if( !empty( $pTitle ) && !empty( $pPageList ) ) {
+			if( array_key_exists( strtolower( $pTitle ), $pPageList ) ) {
+				$ret = $pPageList[strtolower( $pTitle )];
 			}
+		}
+		// final attempt to get page details
+		if( empty( $ret ) && empty( $pPageList ) ) {
+			$ret = $pCommonObject->pageExists( $pTitle );
 		}
 		return $ret;
 	}
@@ -607,7 +611,7 @@ class TikiWikiParser extends BitBase {
 		}
 
 		// get a list of pages this page links to
-		$toPageList = $this->getAllToPages( $pCommonObject->mContentId );
+		$PageList = $this->getAllPages( $pCommonObject->mContentId, $pCommonObject );
 
 		if( $gBitSystem->isFeatureActive( 'allow_html' ) ) {
 			// this is copied and pasted from format.bithtml.php - xing
@@ -838,7 +842,7 @@ class TikiWikiParser extends BitBase {
 				// text[2..N] = drop
 				$text = explode("|", $pages[5][$i]);
 
-				if( $exists = $this->pageExists( $pages[1][$i], $toPageList ) ) {
+				if( $exists = $this->pageExists( $pages[1][$i], $PageList, $pCommonObject ) ) {
 					$modTime = count( $exists ) == 1 ? (isset( $exists['last_modified'] ) ? (int)$exists['last_modified'] : 0 ) : 0;
 					$uri_ref = WIKI_PKG_URL."index.php?page=" . urlencode($pages[1][$i]);
 
@@ -881,7 +885,7 @@ class TikiWikiParser extends BitBase {
 
 			if ($repl2) {
 				// This is a hack for now. page_exists_desc should not be needed here sicne blogs and articles use this function
-				$exists = $this->pageExists( $page_parse, $toPageList );
+				$exists = $this->pageExists( $page_parse, $PageList, $pCommonObject );
 				$repl = BitPage::getDisplayLink( $page_parse, $exists );
 				$page_parse_pq = preg_quote($page_parse, "/");
 				$data = preg_replace("/\(\($page_parse_pq\)\)/", "$repl", $data);
@@ -906,7 +910,7 @@ class TikiWikiParser extends BitBase {
 			$pages = $this->extractWikiWords( $data );
 			foreach( $pages as $page_parse) {
 				if( empty( $words ) || !array_key_exists( $page_parse, $words ) ) {
-					if( $exists = $this->pageExists( $page_parse, $toPageList ) ) {
+					if( $exists = $this->pageExists( $page_parse, $PageList, $pCommonObject ) ) {
 						$repl = BitPage::getDisplayLink( $page_parse, $exists );
 					} elseif( $gBitSystem->getPreference( 'feature_wiki_plurals') == 'y' && $this->get_locale() == 'en_US' ) {
 						// Link plural topic names to singular topic names if the plural
@@ -921,7 +925,7 @@ class TikiWikiParser extends BitBase {
 						// Others, excluding ending ss like address(es)
 						$plural_tmp = preg_replace("/([A-Za-rt-z])s$/", "$1", $plural_tmp);
 						// prevent redundant pageExists calls if plurals are on, and plural is same as original word
-						$exists = $this->pageExists( $plural_tmp, $toPageList );
+						$exists = $this->pageExists( $plural_tmp, $PageList, $pCommonObject );
 						$repl = BitPage::getDisplayLink( $plural_tmp, $exists );
 					} else {
 						$repl = BitPage::getDisplayLink( $page_parse, $exists );
