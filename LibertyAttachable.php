@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.29 2006/01/14 20:07:51 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.30 2006/01/14 21:27:34 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -144,7 +144,7 @@ class LibertyAttachable extends LibertyContent {
 
 	function verify( &$pParamHash ) {
 		global $gBitSystem, $gBitUser;
-		if( @!$this->verifyId( $pParamHash['attachment_id'] ) ) {
+		if( !empty( $pParamHash['attachment_id'] ) && !$this->verifyId( $pParamHash['attachment_id'] ) ) {
 			$this->mErrors['file'] = 'System Error: Non-numeric storage_id.';
 		}
 
