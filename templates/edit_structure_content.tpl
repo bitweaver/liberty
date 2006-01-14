@@ -47,7 +47,7 @@
 			{section name=ix loop=$subtree}
 				{if $subtree[ix].pos eq ''}
 					{if $structureInfo.structure_id eq $subtree[ix].structure_id}<div class="highlight">{/if}
-						<a href="{$PHP_SELF}?structure_id={$subtree[ix].structure_id}">{$subtree[ix].title}</a>
+						<a href="{$smarty.server.PHP_SELF}?structure_id={$subtree[ix].structure_id}">{$subtree[ix].title}</a>
 					{if $structureInfo.structure_id eq $subtree[ix].structure_id}</div>{/if}
 				{else}
 					{if $subtree[ix].first}<ul>{else}</li>{/if}
@@ -55,7 +55,7 @@
 						<li>
 							{if $structureInfo.structure_id eq $subtree[ix].structure_id}<div class="highlight">{/if}
 								<strong>{$subtree[ix].pos}</strong>&nbsp;
-								<a href="{$PHP_SELF}?structure_id={$subtree[ix].structure_id}">{$subtree[ix].title}</a>
+								<a href="{$smarty.server.PHP_SELF}?structure_id={$subtree[ix].structure_id}">{$subtree[ix].title}</a>
 							{if $structureInfo.structure_id eq $subtree[ix].structure_id}</div>{/if}
 					{/if}
 				{/if}
