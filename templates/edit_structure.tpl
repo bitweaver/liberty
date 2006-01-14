@@ -1,4 +1,5 @@
 {strip}
+{formfeedback hash=$feedback}
 {jstabs}
 	{jstab title="Edit Structure"}
 		{include file="bitpackage:liberty/edit_structure_inc.tpl"}

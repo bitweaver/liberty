@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,27 +18,26 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_articles.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.articles.php,v 1.7 2005/10/12 15:13:52 spiderr Exp $
+// $Id: data.articles.php,v 1.8 2006/01/14 19:54:56 squareing Exp $
 
 /**
  * definitions
  */
-global $gBitSystem;
+global $gBitSystem, $gBitSmarty;
 if( $gBitSystem->isPackageActive( 'articles' ) ) { // Do not include this Plugin if the Package is not active
 define( 'PLUGIN_GUID_DATAARTICLES', 'dataarticles' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'ARTICLES',
-						'auto_activate' => FALSE,
+						'auto_activate' => TRUE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_articles',
-//						'title' => 'Articles<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
-						'title' => 'Articles',                                                                             // and Remove the comment from the start of this line
-						'help_page' => 'DataPluginArticles',
-						'description' => tra("This plugin will display several Articles."),
 						'help_function' => 'data_articles_help',
+						'title' => 'Articles',
+						'help_page' => 'DataPluginArticles',
+						'description' => tra( "This plugin will display several Articles." ),
 						'syntax' => "{ARTICLES max= topic= type= }",
 						'plugin_type' => DATA_PLUGIN
-					  );
+					);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAARTICLES, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAARTICLES );
 
@@ -68,8 +67,8 @@ function data_articles_help() {
 			.'</tr>'
 			.'<tr class="even">'
 				.'<td>format</td>'
-				.'<td>' . tra( "display format") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Specify format for article display - default is simple title list") . '</td>'
+				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "Specify format for article display - options: full, list (default)") . '</td>'
 			.'</tr>'
 		.'</table>'
 		. tra("Example: ") . "{ARTICLES max=5 topic='some_topic'}<br />"
@@ -79,16 +78,16 @@ function data_articles_help() {
 
 // Executable Routine
 function data_articles($data, $params) { // No change in the parameters with Clyde
-// The next 2 lines allow access to the $pluginParams given above and may be removed when no longer needed
-	global $gLibertySystem; 
+	// The next 2 lines allow access to the $pluginParams given above and may be removed when no longer needed
+	global $gLibertySystem, $gBitSmarty;
 	$pluginParams = $gLibertySystem->mPlugins[PLUGIN_GUID_DATAARTICLES];
 
-    require_once( ARTICLES_PKG_PATH.'BitArticle.php');
-    require_once( LIBERTY_PKG_PATH.'lookup_content_inc.php' );
+	require_once( ARTICLES_PKG_PATH.'BitArticle.php');
+	require_once( LIBERTY_PKG_PATH.'lookup_content_inc.php' );
 
-    $module_params = $params;
-    
-	$articles = new BitArticle();
+	$module_params = $params;
+
+	$articlesObject = new BitArticle();
 	$stati = array( 'pending', 'approved' );
 	if( !empty( $module_params['status'] ) && in_array( $module_params['status'], $stati ) ) {
 		$status_id = constant( 'ARTICLE_STATUS_'.strtoupper( $module_params['status'] ) );
@@ -113,34 +112,32 @@ function data_articles($data, $params) { // No change in the parameters with Cly
 	$getHash['sort_mode']     = $sort_mode;
 	$getHash['max_records']   = empty($module_params['max']) ? 1 : $module_params['max'];
 	$getHash['topic']         = !empty( $module_params['topic'] ) ? $module_params['topic'] : NULL;
-	$articles_results = $articles->getList( $getHash );
-
+	$articles_results = $articlesObject->getList( $getHash );
 
 	$display_format = empty($module_params['format']) ? 'simple_title_list' : $module_params['format'];
 	$display_result = "";
-	
-	switch ($display_format) {
 
-	case 'simple_title_list':
-	default:
-		$display_result = "<table><tr><td>";
-		foreach ($articles_results['data'] as $article) {
-			$article_object = new BitArticle($article['article_id']);
-			$link = ""
-			. "<a href='" 
-			. $article_object->getDisplayUrl()
-			. "'>"
-			. $article['title'] 
-			. "</a>"
-			;
-
-			$display_result .= "<tr><td>$link</td></tr>\n";
-			} 
-		$display_result .= "</table>\n";
-		break;
-
-	}	
-
+	switch( $display_format ) {
+		case 'full':
+			$display_result = '<div class="articles">';
+			$gBitSmarty->assign( 'showDescriptionsOnly', TRUE );
+			foreach( $articles_results['data'] as $article ) {
+				$gBitSmarty->assign( 'article', $article );
+				$display_result .= $gBitSmarty->fetch( 'bitpackage:articles/article_display.tpl' );
+			}
+			$display_result .= '</div>';
+			$display_result = eregi_replace( "\n", "", $display_result );
+			break;
+		case 'list':
+		default:
+			$display_result = "<ul>";
+			foreach( $articles_results['data'] as $article ) {
+				$link = $articlesObject->getdisplaylink( $article['title'], $article );
+				$display_result .= "<li>$link</li>\n";
+			}
+			$display_result .= "</ul>\n";
+			break;
+	}
 	return $display_result;
 }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.4 2005/08/07 17:40:31 squareing Exp $
+// $Id: data.toc.php,v 1.5 2006/01/14 19:54:56 squareing Exp $
 
 /**
  * definitions
@@ -40,15 +40,27 @@ $gLibertySystem->registerPlugin( PLUGIN_GUID_TOC, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_TOC );
 
 function data_toc_help() {
-	return 'NO HELP WRITTEN FOR {TOC}';
+	return '<table class="data help">'
+			.'<tr>'
+				.'<th>' . tra( "Key" ) . '</th>'
+				.'<th>' . tra( "Type" ) . '</th>'
+				.'<th>' . tra( "Comments" ) . '</th>'
+			.'</tr>'
+			.'<tr class="odd">'
+				.'<td>display</td>'
+				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "Will create a Tab interface on a page. The name on each tab is the name given to the imported page.The value sent with the TabX parameter is a Numeric Content Id. This allows blog posts, images, wiki pages . . . (and more) to be added.")
+			.'</tr>'
+		.'</table>'
+		. tra("Example: ") . '{toc structure_id=8 display=full_toc}';
 }
 
 function data_toc( $data, $params ) {
-	$repl = '';
 	include_once( LIBERTY_PKG_PATH.'LibertyStructure.php' );
-	global $gStructure, $gContent;
+	global $gStructure, $gContent, $gBitSmarty;
+	extract( $params );
 	$struct = NULL;
-	if( is_object( $gContent ) && (empty( $gStructure ) || !$gStructure->isValid()) ) {
+	if( is_object( $gContent ) && ( empty( $gStructure ) || !$gStructure->isValid() ) ) {
 		$structures = $gContent->getStructures();
 		// We take the first structure. not good, but works for now - spiderr
 		if( !empty( $structures[0] ) ) {
@@ -57,9 +69,18 @@ function data_toc( $data, $params ) {
 	} else {
 		$struct = &$gStructure;
 	}
+
+	$repl = '';
 	if( is_object( $struct ) && count( $struct->isValid() ) ) {
-		// maybe there is not toc to render?
-		if( !$repl = $struct->get_toc( $struct->mStructureId ) ) {
+		if( @BitBase::verifyId( $structure_id ) ) {
+			$get_structure = $structure_id;
+		} else {
+			$get_structure = $struct->mStructureId;
+		}
+		$tree = $struct->getSubTree( $get_structure, ( @$display == 'full_toc' ) ); 
+		$gBitSmarty->assign( "subtree", $tree );
+		$repl = $gBitSmarty->fetch( "bitpackage:liberty/display_toc_inc.tpl" );
+		if( empty( $repl ) ) {
 			// return blank, *not* empty, so the {toc} tag gets replaced
 			$repl = ' ';
 		}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -70,13 +70,14 @@ function markdown_parse_data( &$pData, &$pCommonObject ) {
 # <http://www.michelf.com/projects/php-markdown/>
 #
 
+
 global	$MarkdownPHPVersion, $MarkdownSyntaxVersion,
 		$md_empty_element_suffix, $md_tab_width,
 		$md_nested_brackets_depth, $md_nested_brackets, 
 		$md_escape_table, $md_backslash_escape_table, 
 		$md_list_level;
 
-$MarkdownPHPVersion    = '1.0.1b'; # Mon 6 Jun 2005
+$MarkdownPHPVersion    = '1.0.1c'; # Fri 9 Dec 2005
 $MarkdownSyntaxVersion = '1.0.1';  # Sun 12 Dec 2004
 
 
@@ -98,7 +99,7 @@ $md_wp_comments = true;  # Set to false to remove Markdown from comments.
 Plugin Name: Markdown
 Plugin URI: http://www.michelf.com/projects/php-markdown/
 Description: <a href="http://daringfireball.net/projects/markdown/syntax">Markdown syntax</a> allows you to write using an easy-to-read, easy-to-write plain text format. Based on the original Perl version by <a href="http://daringfireball.net/">John Gruber</a>. <a href="http://www.michelf.com/projects/php-markdown/">More...</a>
-Version: 1.0.1b
+Version: 1.0.1c
 Author: Michel Fortin
 Author URI: http://www.michelf.com/
 */
@@ -188,10 +189,7 @@ function smarty_modifier_markdown($text) {
 if (strcasecmp(substr(__FILE__, -16), "classTextile.php") == 0) {
 	# Try to include PHP SmartyPants. Should be in the same directory.
 	@include_once 'smartypants.php';
-	/**
-	 * @package liberty
-	 * Fake Textile class. It calls Markdown instead.
-	 */	
+	# Fake Textile class. It calls Markdown instead.
 	class Textile {
 		function TextileThis($text, $lite='', $encode='', $noimage='', $strict='') {
 			if ($lite == '' && $encode == '')   $text = Markdown($text);
@@ -957,16 +955,16 @@ function _DoCodeBlocks($text) {
 #	Process Markdown `<pre><code>` blocks.
 #
 	global $md_tab_width;
-	$text = preg_replace_callback("{
-			(?:\\n\\n|\\A)
+	$text = preg_replace_callback('{
+			(?:\n\n|\A)
 			(	            # $1 = the code block -- one or more lines, starting with a space/tab
 			  (?:
-				(?:[ ]\{$md_tab_width} | \\t)  # Lines must start with a tab or a tab-width of spaces
-				.*\\n+
+				(?:[ ]{'.$md_tab_width.'} | \t)  # Lines must start with a tab or a tab-width of spaces
+				.*\n+
 			  )+
 			)
-			((?=^[ ]{0,$md_tab_width}\\S)|\\Z)	# Lookahead for non-space at line-start, or end of doc
-		}xm",
+			((?=^[ ]{0,'.$md_tab_width.'}\S)|\Z)	# Lookahead for non-space at line-start, or end of doc
+		}xm',
 		'_DoCodeBlocks_callback', $text);
 
 	return $text;
@@ -1389,6 +1387,8 @@ Version History
 --------------- 
 
 See the readme file for detailed release notes for this version.
+
+1.0.1c - 9 Dec 2005
 
 1.0.1b - 6 Jun 2005
 

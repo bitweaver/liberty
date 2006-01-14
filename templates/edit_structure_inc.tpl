@@ -26,7 +26,11 @@
 			<li><a id="tree-moveDown"  href="javascript:void(0)">{biticon ipackage=liberty iexplain="Down"   iname=nav_down}</a></li>
 			<li><a id="tree-moveLeft"  href="javascript:void(0)">{biticon ipackage=liberty iexplain="Left"   iname=nav_prev}</a></li>
 			<li><a id="tree-moveRight" href="javascript:void(0)">{biticon ipackage=liberty iexplain="Right"  iname=nav_next}</a></li>
-			<li><a id="tree-remove"    href="javascript:void(0)">{biticon ipackage=liberty iexplain="Remove" iname=delete}</a></li>
+			{if !$no_delete}
+				<li><a id="tree-remove"    href="javascript:void(0)">{biticon ipackage=liberty iexplain="Remove" iname=delete}</a></li>
+			{else}
+				<input id="tree-remove" type="hidden" value="dummy">
+			{/if}
 			<li><a id="tree-convert"   href="javascript:void(0)">{biticon ipackage=liberty iexplain="Folder" iname=tree-folder} &larr; &rarr; {biticon ipackage=liberty iexplain="Document" iname=tree-doc}</a></li>
 			<li><div id="tree-tooltip" class="tree-tooltip"></div>
 		</ul>
@@ -43,7 +47,10 @@
 		</noscript>
 		<input type="submit" name="submit_structure" value="Save Changes" />
 	</div>
-	{formhelp note="To nest items, you first need to convert a page to a folder.<br />You can only delete a folder when it is empty"}
+	{formhelp note="To nest items, you first need to convert a page to a folder."}
+	{if !$no_delete}
+		{formhelp note="You can only delete a folder when it is empty."}
+	{/if}
 {/form}
 {/strip}
 

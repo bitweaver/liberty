@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.13 2006/01/10 21:13:43 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.14 2006/01/14 19:54:56 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -216,7 +216,7 @@ class LibertyStructure extends LibertyBase {
 		$row_max = count( $children );
 
 		// we need to insert the root structure item first
-		if( strlen( $pParentPos ) == 0 ) {
+		if( strlen( $pParentPos ) == 0 && ( $pParentId == 0 || $pStructureHash[0]['root_structure_id'] == $pParentId ) ) {
 			foreach( $pStructureHash as $node ) {
 				if( $node['structure_id'] == $node['root_structure_id'] ) {
 					$aux		  = $node;
@@ -234,6 +234,7 @@ class LibertyStructure extends LibertyBase {
 			$aux['level'] = $pLevel;
 			$aux['first'] = ( $pos == 1 );
 			$aux['last']  = FALSE;
+			$aux['has_children'] = FALSE;
 			if( strlen( $pParentPos ) == 0 ) {
 				$aux["pos"] = "$pos";
 			} else {
@@ -261,90 +262,17 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	// get sub tree of $pStructureId
-	function getSubTree( $pStructureId ) {
+	function getSubTree( $pStructureId, $pRootTree = FALSE ) {
 		global $gLibertySystem, $gBitSystem;
 		$ret = array();
 		if( @BitBase::verifyId( $pStructureId ) ) {
-			$query = "SELECT ts.root_structure_id FROM `".BIT_DB_PREFIX."tiki_structures` ts WHERE ts.`structure_id` = ?";
+			$query = "SELECT ts.`root_structure_id` FROM `".BIT_DB_PREFIX."tiki_structures` ts WHERE ts.`structure_id` = ?";
 			$root_structure_id = $this->mDb->getOne( $query, array( $pStructureId ) );
 			$pStructureHash = $this->getStructure( $root_structure_id );
-			$ret = $this->createSubTree( $pStructureHash, $pStructureId );
+			$ret = $this->createSubTree( $pStructureHash, ( ( $pRootTree ) ? $root_structure_id : $pStructureId ) );
 		}
 		return $ret;
 	}
-
-/* Original getSubTree() code
-	function getSubTree( $pStructureId, $level = 0, $parent_pos = '' ) {
-		global $gLibertySystem, $gBitSystem;
-		if( @$this->verifyId( $pStructureId ) ) {
-			$ret = array();
-			$pos = 1;
-			//The structure page is used as a title
-			if ($level == 0) {
-				$struct_info = $this->getNode( $pStructureId );
-				$aux["first"]	   = true;
-				$aux["last"]		= true;
-				$aux["level"]	   = $level;
-				$aux["pos"]		 = '';
-				$aux["structure_id"] = $struct_info["structure_id"];
-				$aux["title"]	= $struct_info["title"];
-				$aux["page_alias"]  = $struct_info["page_alias"];
-				$ret[] = $aux;
-				$level++;
-			}
-
-			//Get all child nodes for this structure_id
-			$query = "SELECT ts.`content_id`, ts.`structure_id`, ts.`page_alias`, tc.`user_id`, tc.`title`, tc.`content_type_guid`, uu.`login`, uu.`real_name`
-				FROM `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_content` tc
-				LEFT JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = tc.`user_id` )
-				WHERE tc.`content_id` = ts.`content_id` AND `parent_id`=? ORDER BY `pos` asc";
-			$result = $this->mDb->query($query,array( $pStructureId ) );
-
-			$subs = array();
-			$row_max = $result->numRows();
-			$contentTypes = $gLibertySystem->mContentTypes;
-			while ($res = $result->fetchRow()) {
-				$aux = array();
-				$aux = $res;
-				if( !empty( $contentTypes[$res['content_type_guid']] ) ) {
-					// quick alias for code readability
-					$type = &$contentTypes[$res['content_type_guid']];
-					if( empty( $type['content_object'] ) ) {
-						// create *one* object for each object *type* to  call virtual methods.
-						include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
-						$type['content_object'] = new $type['handler_class']();
-					}
-					$aux['title'] = $type['content_object']->getTitle( $aux );
-					$aux["first"] = ($pos == 1);
-					$aux["last"]  = false;
-					$aux["level"] = $level;
-					if (strlen($parent_pos) == 0) {
-						$aux["pos"] = "$pos";
-					}
-					else {
-						$aux["pos"] = $parent_pos . '.' . "$pos";
-					}
-					$ret[] = $aux;
-
-					//Recursively add any child nodes
-						$subs = $this->getSubTree($res["structure_id"], ($level + 1), $aux["pos"]);
-					if(isset($subs)) {
-						$ret = array_merge($ret, $subs);
-					}
-					// Insert a dummy entry to close table/list
-					if ($pos == $row_max) {
-						$aux["first"] = false;
-						$aux["last"]  = true;
-						$ret[] = $aux;
-					}
-
-					$pos++;
-				}
-			}
-		}
-		return $ret;
-	}
-*/
 
 	function getList( &$pListHash ) {
 		global $gBitSystem;
@@ -395,6 +323,11 @@ class LibertyStructure extends LibertyBase {
 		return $retval;
 	}
 
+	/**
+	* prepare a structure node for storage in the database
+	* @param $pParamHash contains various settings for the node to be stored
+	* @return TRUE on success, FALSE on failure where $this->mErrors will contain the reason why it failed
+	*/
 	function verifyNode( &$pParamHash ) {
 		if( !@$this->verifyId( $pParamHash['content_id'] ) ) {
 			$this->mErrors['content'] = 'Could not store structure. Invalid content id. '.$pParamHash['content_id'];
@@ -421,8 +354,11 @@ class LibertyStructure extends LibertyBase {
 		return( count( $this->mErrors ) == 0 );
 	}
 
-	// we've been given an entire structure to store in the database at once
-	// this function cleans it up and sorts out missing parameters
+	/**
+	* clean up and prepare a complete structure in the form of arrays about to be stored
+	* @param $pParamHash is a set of arrays generated by the DynamicTree javascript tree builder
+	* @return TRUE on success, FALSE on failure where $this->mErrors will contain the reason why it failed
+	*/
 	function verifyStructure( &$pParamHash ) {
 		if( !empty( $pParamHash['structure_string'] ) ) {
 			eval( $pParamHash['structure_string'] );
@@ -430,7 +366,7 @@ class LibertyStructure extends LibertyBase {
 		}
 
 		if( !empty( $pParamHash['structure'] ) && !empty( $pParamHash['root_structure_id'] ) ) {
-			$this->embelishStructureHash( $pParamHash['structure'] );
+			$this->embellishStructureHash( $pParamHash['structure'] );
 			$structureHash = $this->flattenStructureHash( $pParamHash['structure'] );
 
 			// replace the 'tree' in the data array with the root_structure_id
@@ -457,22 +393,35 @@ class LibertyStructure extends LibertyBase {
 		return( count( $this->mErrors ) == 0 );
 	}
 
+	/**
+	* store a complete structure where ever subarray contains a complete node as it should go into the database
+	* @param $pParamHash is an array with subarrays, each representing a structure node ready to associativley inserted into the database
+	* @return TRUE on success, FALSE on failure where $this->mErrors will contain the reason why it failed
+	*/
 	function storeStructure( $pParamHash ) {
 		if( $this->verifyStructure( $pParamHash ) ) {
 			// now that the structure is ready to be stored, we remove the old structure first and then insert the new one.
 			$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_structures` WHERE `root_structure_id`=? AND `structure_id`<>?";
 			$result = $this->mDb->query( $query, array( (int)$pParamHash['root_structure_id'], (int)$pParamHash['root_structure_id'] ) );
 			$query = "";
+			$this->mDb->StartTrans();
 			foreach( $pParamHash['structure_store'] as $node ) {
 				$this->mDb->associateInsert( BIT_DB_PREFIX."tiki_structures", $node );
 			}
+			$this->mDb->CompleteTrans();
 		}
+		return( count( $this->mErrors ) == 0 );
 	}
 
-	function flattenStructureHash( $pParamHash, $i = 0 ) {
+	/**
+	* make sure the array only contains one level depth
+	* @param $pParamHash contains a nested set of arrays with structure_id and pos values set
+	* @return flattened array
+	*/
+	function flattenStructureHash( $pParamHash, $i = -10000 ) {
 		$ret = array();
 		foreach( $pParamHash as $key => $node ) {
-			if( count( $node ) > 2 && !empty( $node ) ) {
+			if( !empty( $node ) && count( $node ) > 2 ) {
 				$ret = array_merge( $ret, $this->flattenStructureHash( $node, $i ) );
 				$i++;
 			} elseif( count( $node ) == 2 ) {
@@ -485,12 +434,16 @@ class LibertyStructure extends LibertyBase {
 		return $ret;
 	}
 
-	// recursively add pos values and structure id
-	function embelishStructureHash( &$pParamHash ) {
+	/**
+	* cleans up and reorganises data in nested array where keys are structure_id
+	* @param $pParamHash contains a nested set of arrays with structure_id as key
+	* @return reorganised array
+	*/
+	function embellishStructureHash( &$pParamHash ) {
 		$pos = 1;
 		foreach( $pParamHash as $structure_id => $node ) {
 			if( !empty( $node ) ) {
-				$this->embelishStructureHash( $node );
+				$this->embellishStructureHash( $node );
 			}
 			$node['pos'] = $pos++;
 			$node['structure_id'] = $structure_id;

@@ -1,4 +1,10 @@
 <?php
+// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_structure_toc.php,v 1.3 2006/01/14 19:54:56 squareing Exp $
+/**
+ * Params:
+ * @package liberty
+ * @subpackage modules
+ */
 global $gStructure, $gContent;
 $struct = NULL;
 if( is_object( $gContent ) && ( empty( $gStructure ) || !$gStructure->isValid() ) ) {
