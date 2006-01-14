@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.38 $
+ * @version  $Revision: 1.2.2.39 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -842,7 +842,7 @@ class TikiWikiParser extends BitBase {
 					$modTime = count( $exists ) == 1 ? (isset( $exists['last_modified'] ) ? (int)$exists['last_modified'] : 0 ) : 0;
 					$uri_ref = WIKI_PKG_URL."index.php?page=" . urlencode($pages[1][$i]);
 
-					$repl = '<a title="'.$desc.'" href="'.$uri_ref.'">'.( (strlen(trim($text[0])) > 0 ? $text[0] : $pages[1][$i]) ).'</a>';
+					$repl = '<a title="'.$exists["description"].'" href="'.$uri_ref.'">'.( (strlen(trim($text[0])) > 0 ? $text[0] : $pages[1][$i]) ).'</a>';
 
 					// Check is timeout expired?
 					if (isset($text[1]) && (time() - $modTime ) < intval($text[1])) {
