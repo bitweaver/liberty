@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.6 $
+ * @version  $Revision: 1.1.1.1.2.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.rss.php,v 1.1.1.1.2.6 2005/08/03 07:43:55 lsces Exp $
+// $Id: data.rss.php,v 1.1.1.1.2.7 2006/01/14 19:09:46 wjames5 Exp $
 
 /**
  * definitions
@@ -47,8 +47,8 @@ function rss_extended_help() {
 
 function rss_parse_data( $data, $params ) {
 	$repl = '';
-	if( !empty( $params['id'] ) ) {
-		global $rsslib;
+  if( @BitBase::verifyId( $params['id'] ) ) {
+ 		global $rsslib;
 		require_once( RSS_PKG_PATH.'rss_lib.php' );
 
 		$max = !empty( $params['max'] ) ? $params['max'] : 99;
@@ -67,6 +67,8 @@ function rss_parse_data( $data, $params ) {
 		}
 
 		$repl .= '</ul>';
+	}else{
+		$repl = '<b>rss can not be found, id must be a number</b>';
 	}
 	return $repl;
 }
