@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.15 2006/01/14 19:54:56 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.16 2006/01/15 07:59:18 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -350,18 +350,20 @@ class LibertyContent extends LibertyBase {
 
 
 	function verifyAccessControl() {
-		$this->invokeServices( 'content_verify_access' );
+		if( $this->isValid() ) {
+			$this->invokeServices( 'content_verify_access' );
+		}
 	}
 
 
-	function invokeServices( $pServiceFunction, $pParamHash=NULL ) {
+	function invokeServices( $pServiceFunction, $pFunctionParam=NULL ) {
 		global $gLibertySystem;
 		$errors = array();
 		// Invoke any services store functions such as categorization or access control
 		if( $serviceFunctions = $gLibertySystem->getServiceValues( $pServiceFunction ) ) {
 			foreach ( $serviceFunctions as $func ) {
 				if( function_exists( $func ) ) {
-					if( $errors = $func( $this, $pParamHash ) ) {
+					if( $errors = $func( $this, $pFunctionParam ) ) {
 						$this->mErrors = array_merge( $this->mErrors, $errors );
 					}
 				}

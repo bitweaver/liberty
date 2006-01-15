@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.15 $
+ * @version  $Revision: 1.16 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -182,6 +182,7 @@ class TikiWikiParser extends BitBase {
 		}
 	}
 
+	/* old database intensive pageExists check
 	// Use tiki_links to get all the existing links in a single query
 	function pageExists( $pTitle, $pContentId, $pCommonObject ) {
 		$pTitle = strtolower( $pTitle );
@@ -213,6 +214,48 @@ class TikiWikiParser extends BitBase {
 		}
 		return( !empty( $this->mPageLookup[$pTitle] ) ? $this->mPageLookup[$pTitle] : NULL );
 	}
+	*/
+
+	function getAllPages( $pContentId, $pCommonObject ) {
+		$ret = array();
+		if( @BitBase::verifyId( $pContentId ) ) {
+			$query = "SELECT `page_id`, tc.`content_id`, `description`, tc.`last_modified`, tc.`title`
+				FROM `".BIT_DB_PREFIX."tiki_links` tl
+				INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON( tl.`to_content_id`=tc.`content_id` )
+				INNER JOIN `".BIT_DB_PREFIX."tiki_pages` tp ON( tp.`content_id`=tc.`content_id` )
+				WHERE tl.`from_content_id`=? ORDER BY tc.`title`";
+			if( $result = $this->mDb->query( $query, array( $pContentId ) ) ) {
+				$lastTitle = '';
+				while( !$result->EOF ) {
+					if( array_key_exists( strtolower( $result->fields['title'] ), $ret ) ) {
+						$result->fields['description'] = tra( 'Multiple pages with this name' );
+					}
+					$ret[strtolower( $result->fields['title'] )] = $result->fields;
+					$result->MoveNext();
+				}
+			}
+		}
+		return $ret;
+	}
+
+	function pageExists( $pTitle, $pPageList, $pCommonObject ) {
+		$ret = FALSE;
+		if( !empty( $pTitle ) && !empty( $pPageList ) ) {
+			if( array_key_exists( strtolower( $pTitle ), $pPageList ) ) {
+				$ret = $pPageList[strtolower( $pTitle )];
+			}
+		}
+		// final attempt to get page details
+		if( empty( $ret ) && empty( $pPageList ) ) {
+			$ret = $pCommonObject->pageExists( $pTitle );
+			if( count( $ret ) > 1 ) {
+				$ret[0]['description'] = tra( 'Multiple pages with this name' );
+			}
+			$ret = $ret[0];
+		}
+		return $ret;
+	}
+
 
 	function parse_data_raw($data) {
 		$data = $this->parseData($data);
@@ -571,6 +614,9 @@ class TikiWikiParser extends BitBase {
 			require_once( WIKI_PKG_PATH.'BitPage.php' );
 		}
 
+		// get a list of pages this page links to
+		$PageList = $this->getAllPages( $pCommonObject->mContentId, $pCommonObject );
+
 		if( $gBitSystem->isFeatureActive( 'allow_html' ) ) {
 			// this is copied and pasted from format.bithtml.php - xing
 			// Strip all evil tags that remain
@@ -800,12 +846,11 @@ class TikiWikiParser extends BitBase {
 				// text[2..N] = drop
 				$text = explode("|", $pages[5][$i]);
 
-				if( $exists = $this->pageExists( $pages[1][$i], $pCommonObject->mContentId, $pCommonObject ) ) {
-					$desc = count( $exists ) == 1 ? (isset( $exists['description'] ) ? $exists['description'] : '') : tra( 'multiple pages with this name' );
+				if( $exists = $this->pageExists( $pages[1][$i], $PageList, $pCommonObject ) ) {
 					$modTime = count( $exists ) == 1 ? (isset( $exists['last_modified'] ) ? (int)$exists['last_modified'] : 0 ) : 0;
 					$uri_ref = WIKI_PKG_URL."index.php?page=" . urlencode($pages[1][$i]);
 
-					$repl = '<a title="'.$desc.'" href="'.$uri_ref.'">'.( (strlen(trim($text[0])) > 0 ? $text[0] : $pages[1][$i]) ).'</a>';
+					$repl = '<a title="'.$exists["description"].'" href="'.$uri_ref.'">'.( (strlen(trim($text[0])) > 0 ? $text[0] : $pages[1][$i]) ).'</a>';
 
 					// Check is timeout expired?
 					if (isset($text[1]) && (time() - $modTime ) < intval($text[1])) {
@@ -843,9 +888,8 @@ class TikiWikiParser extends BitBase {
 			}
 
 			if ($repl2) {
-	// This is a hack for now. page_exists_desc should not be needed here sicne blogs and articles use this function
-
-				$exists = $this->pageExists( $page_parse, $pCommonObject->mContentId, $pCommonObject );
+				// This is a hack for now. page_exists_desc should not be needed here sicne blogs and articles use this function
+				$exists = $this->pageExists( $page_parse, $PageList, $pCommonObject );
 				$repl = BitPage::getDisplayLink( $page_parse, $exists );
 				$page_parse_pq = preg_quote($page_parse, "/");
 				$data = preg_replace("/\(\($page_parse_pq\)\)/", "$repl", $data);
@@ -870,11 +914,9 @@ class TikiWikiParser extends BitBase {
 			$pages = $this->extractWikiWords( $data );
 			foreach( $pages as $page_parse) {
 				if( empty( $words ) || !array_key_exists( $page_parse, $words ) ) {
-					if( $exists = $this->pageExists( $page_parse, $pCommonObject->mContentId, $pCommonObject ) ) {
-						$desc = count( $exists ) == 1 ? (isset( $exists['description'] ) ? $exists['description'] : '') : tra( 'multiple pages with this name' );
-						// call statically since $pCommonObject might be something like BitUser
+					if( $exists = $this->pageExists( $page_parse, $PageList, $pCommonObject ) ) {
 						$repl = BitPage::getDisplayLink( $page_parse, $exists );
-					} elseif( $gBitSystem->getPreference('feature_wiki_plurals') == 'y' && $this->get_locale() == 'en_US') {
+					} elseif( $gBitSystem->getPreference( 'feature_wiki_plurals') == 'y' && $this->get_locale() == 'en_US' ) {
 						// Link plural topic names to singular topic names if the plural
 						// doesn't exist, and the language is english
 						$plural_tmp = $page_parse;
@@ -887,8 +929,8 @@ class TikiWikiParser extends BitBase {
 						// Others, excluding ending ss like address(es)
 						$plural_tmp = preg_replace("/([A-Za-rt-z])s$/", "$1", $plural_tmp);
 						// prevent redundant pageExists calls if plurals are on, and plural is same as original word
-						$exists = ( $plural_tmp != $page_parse ) ? $this->pageExists( $plural_tmp, $pCommonObject->mContentId, $pCommonObject ) : NULL;
-						$repl = BitPage::getDisplayLink( $page_parse, $exists );
+						$exists = $this->pageExists( $plural_tmp, $PageList, $pCommonObject );
+						$repl = BitPage::getDisplayLink( $plural_tmp, $exists );
 					} else {
 						$repl = BitPage::getDisplayLink( $page_parse, $exists );
 					}
