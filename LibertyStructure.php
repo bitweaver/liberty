@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.14 2006/01/14 19:54:56 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.15 2006/01/16 18:47:52 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -209,9 +209,10 @@ class LibertyStructure extends LibertyBase {
 	* @return nicely formatted and cleaned up structure array
 	*/
 	function createSubTree( $pStructureHash, $pParentId = 0, $pParentPos = '', $pLevel = 0 ) {
+		//vd($pStructureHash);
 		$ret = array();
 		// get all child menu Nodes for this structure_id
-		$children = $this->getChildNodes( $pStructureHash, $pParentId );
+		$children = LibertyStructure::getChildNodes( $pStructureHash, $pParentId );
 		$pos = 1;
 		$row_max = count( $children );
 
@@ -242,7 +243,7 @@ class LibertyStructure extends LibertyBase {
 			}
 			$ret[] = $aux;
 			//Recursively add any children
-			$subs = $this->createSubTree( $pStructureHash, $node['structure_id'], $aux['pos'], ( $pLevel + 1 ) );
+			$subs = LibertyStructure::createSubTree( $pStructureHash, $node['structure_id'], $aux['pos'], ( $pLevel + 1 ) );
 			if( !empty( $subs ) ) {
 				$r = array_pop( $ret );
 				$r['has_children'] = TRUE;
@@ -365,9 +366,9 @@ class LibertyStructure extends LibertyBase {
 			$pParamHash = array_merge( $pParamHash, $tree );
 		}
 
-		if( !empty( $pParamHash['structure'] ) && !empty( $pParamHash['root_structure_id'] ) ) {
-			$this->embellishStructureHash( $pParamHash['structure'] );
-			$structureHash = $this->flattenStructureHash( $pParamHash['structure'] );
+		if( !empty( $pParamHash['structure'] ) && @BitBase::verifyId( $pParamHash['root_structure_id'] ) ) {
+			LibertyStructure::embellishStructureHash( $pParamHash['structure'] );
+			$structureHash = LibertyStructure::flattenStructureHash( $pParamHash['structure'] );
 
 			// replace the 'tree' in the data array with the root_structure_id
 			foreach( $pParamHash['data'] as $structure_id => $node ) {
@@ -422,7 +423,7 @@ class LibertyStructure extends LibertyBase {
 		$ret = array();
 		foreach( $pParamHash as $key => $node ) {
 			if( !empty( $node ) && count( $node ) > 2 ) {
-				$ret = array_merge( $ret, $this->flattenStructureHash( $node, $i ) );
+				$ret = array_merge( $ret, LibertyStructure::flattenStructureHash( $node, $i ) );
 				$i++;
 			} elseif( count( $node ) == 2 ) {
 				$ret[] = $node;
@@ -443,7 +444,7 @@ class LibertyStructure extends LibertyBase {
 		$pos = 1;
 		foreach( $pParamHash as $structure_id => $node ) {
 			if( !empty( $node ) ) {
-				$this->embellishStructureHash( $node );
+				LibertyStructure::embellishStructureHash( $node );
 			}
 			$node['pos'] = $pos++;
 			$node['structure_id'] = $structure_id;
