@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.57 2006/01/15 01:43:02 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.58 2006/01/17 00:01:13 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -712,17 +712,19 @@ class LibertyContent extends LibertyBase {
 	* @return - none the hash is updated via the reference
 	*/
 	function postGetList( &$pListHash ) {
-		$pListHash['control']['cant_pages'] = ceil( $pListHash["cant"] / $pListHash['max_records'] );
-		$pListHash['control']['actual_page'] = 1 + ( $pListHash['offset'] / $pListHash['max_records'] );
+		global $gBitSystem;
+		$pListHash['control']['total_records'] = $pListHash["cant"];
+		$pListHash['control']['total_pages'] = ceil( $pListHash["cant"] / $pListHash['max_records'] );
+		$pListHash['control']['current_page'] = 1 + ( $pListHash['offset'] / $pListHash['max_records'] );
 
-		if ($pListHash["cant"] > ($pListHash['offset'] + $pListHash['max_records']) ) {
+		if( $pListHash["cant"] > ( $pListHash['offset'] + $pListHash['max_records'] ) ) {
 			$pListHash['control']['next_offset'] = $pListHash['offset'] + $pListHash['max_records'];
 		} else {
 			$pListHash['control']['next_offset'] = -1;
 		}
 
 		// If offset is > 0 then prev_offset
-		if ($pListHash['offset'] > 0) {
+		if( $pListHash['offset'] > 0 ) {
 			$pListHash['control']['prev_offset'] = $pListHash['offset'] - $pListHash['max_records'];
 		} else {
 			$pListHash['control']['prev_offset'] = -1;
@@ -732,6 +734,30 @@ class LibertyContent extends LibertyBase {
 		$pListHash['control']['find'] = $pListHash['find'];
 		$pListHash['control']['sort_mode'] = $pListHash['sort_mode'];
 		$pListHash['control']['max_records'] = $pListHash['max_records'];
+
+		// calculate what links to show
+		if( $gBitSystem->isFeatureActive( 'direct_pagination' ) ) {
+			$block = 6;
+			$prev  = ( $pListHash['control']['current_page'] - $block > 0 ) ? $pListHash['control']['current_page'] - $block : 1;
+			$next  = ( $pListHash['control']['current_page'] + $block < $pListHash['control']['total_pages'] ) ? $pListHash['control']['current_page'] + $block : $pListHash['control']['total_pages'];
+			for( $i = $pListHash['control']['current_page'] - 2; $i >= $prev; $i-- ) {
+				$pListHash['control']['block']['prev'][$i] = $i;
+			}
+			if( $prev != 1 ) {
+				$pListHash['control']['block']['prev'][$i + 1] = "&hellip;";
+				$pListHash['control']['block']['prev'][1] = tra( "First" );
+			}
+			if( !empty( $pListHash['control']['block'] ) ) {
+				$pListHash['control']['block']['prev'] = array_reverse( $pListHash['control']['block']['prev'], TRUE );
+			}
+			for( $i = $pListHash['control']['current_page'] + 2; $i <= $next; $i++ ) {
+				$pListHash['control']['block']['next'][$i] = $i;
+			}
+			if( $next != $pListHash['control']['total_pages'] ) {
+				$pListHash['control']['block']['next'][$i - 1] = "&hellip;";
+				$pListHash['control']['block']['next'][$pListHash['control']['total_pages']] = tra( "Last" );
+			}
+		}
 	}
 
 	/**
