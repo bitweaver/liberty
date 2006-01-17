@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.14 $
+ * @version  $Revision: 1.1.1.1.2.15 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.14 2005/12/20 21:52:43 mej Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.1.1.1.2.15 2006/01/17 18:04:13 squareing Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -78,7 +78,7 @@ if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'bit_p
 }
 
 // $post_comment_request is a flag indicating whether or not to display the comment input form
-if (empty($_REQUEST['post_comment_request'])) {
+if( empty( $_REQUEST['post_comment_request'] ) && !$gBitSystem->isFeatureActive( 'comments_auto_show_form' ) ) {
 	$post_comment_request = NULL;
 } elseif( $gBitUser->hasPermission( 'bit_p_post_comments' ) ) {
 	$post_comment_request = TRUE;
