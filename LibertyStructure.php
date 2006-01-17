@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.15 2006/01/16 18:47:52 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.16 2006/01/17 00:23:24 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -209,7 +209,6 @@ class LibertyStructure extends LibertyBase {
 	* @return nicely formatted and cleaned up structure array
 	*/
 	function createSubTree( $pStructureHash, $pParentId = 0, $pParentPos = '', $pLevel = 0 ) {
-		//vd($pStructureHash);
 		$ret = array();
 		// get all child menu Nodes for this structure_id
 		$children = LibertyStructure::getChildNodes( $pStructureHash, $pParentId );
