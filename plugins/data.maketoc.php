@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.13 $
+ * @version  $Revision: 1.1.1.1.2.14 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.1.1.1.2.13 2005/12/01 22:49:22 squareing Exp $
+// $Id: data.maketoc.php,v 1.1.1.1.2.14 2006/01/19 14:00:55 squareing Exp $
 
 /**
  * definitions
@@ -41,29 +41,34 @@ $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAMAKETOC 
 // Help Function
 function data_maketoc_help() {
 	$help =
-		'<table class="data help">'
-			.'<tr>'
-				.'<th>' . tra( "Key" ) . '</th>'
-				.'<th>' . tra( "Type" ) . '</th>'
-				.'<th>' . tra( "Comments" ) . '</th>'
-			.'</tr>'
-			.'<tr class="odd">'
-				.'<td>maxdepth</td>'
-				.'<td>' . tra( "numeric") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( 'if you specify 3 here, MakeTOC will only parse headings to the h3 level.' ) . '</td>'
-			.'</tr>'
-			.'<tr class="even">'
-				.'<td>include</td>'
-				.'<td>' . tra( "value") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( 'if you include <strong>' ).'all'.( '</strong>, it will print a list of the full list of contents, regardless of where in the page {maketoc} is.' ) . '</td>'
-			.'</tr>'
-			.'<tr class="odd">'
-				.'<td>backtotop</td>'
-				.'<td>' . tra( "boolean") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( 'if you set backtotop <strong>' ).'true'.( '</strong>, it will insert a "back to the top" link.' ) . '</td>'
-			.'</tr>'
-		.'</table>'
-		. tra("Example: ") . '{MAKETOC maxdepth=3 include=all backtotop=true}';
+		'<table class="data help">
+			<tr>
+				<th>'.tra( "Key" ).'</th>
+				<th>'.tra( "Type" ).'</th>
+				<th>'.tra( "Comments" ).'</th>
+			</tr>
+			<tr class="odd">
+				<td>maxdepth</td>
+				<td>'.tra( "numeric").'<br />('.tra("optional").')</td>
+				<td>'.tra( 'If you specify 3 here, MakeTOC will only parse headings to the h3 level.' ).'</td>
+			</tr>
+			<tr class="even">
+				<td>include</td>
+				<td>'.tra( "string").'<br />('.tra("optional").')</td>
+				<td>'.tra( 'If you include <strong>all</strong>, it will print a list of the full list of contents, regardless of where in the page {maketoc} is.' ).'</td>
+			</tr>
+			<tr class="odd">
+				<td>backtotop</td>
+				<td>'.tra( "boolean").'<br />('.tra("optional").')</td>
+				<td>'.tra( 'If you set backtotop <strong>' ).'true'.( '</strong>, it will insert a "back to the top" link.' ).'</td>
+			</tr>
+			<tr class="even">
+				<td>class</td>
+				<td>'.tra( "string").'<br />('.tra("optional").')</td>
+				<td>'.tra( 'Override the class of the maketoc div.' ).'</td>
+			</tr>
+		</table>'.
+		tra("Example: ").'{MAKETOC maxdepth=3 include=all backtotop=true}';
 	return $help;
 }
 
@@ -204,7 +209,7 @@ function maketoc_create_list( $pTocHash, $pParams ) {
 		$toplink = '';
 	}
 
-	$list = '<div class="maketoc"><h3>'.( !empty( $pParams['title'] ) ? $pParams['title'] : tra( 'Page Contents' ) ).'</h3>'.$list.$toplink.'</div>';
+	$list = '<div class="'.( !empty( $pParams['class'] ) ? $pParams['class'] : "maketoc" ).'"><h3>'.( !empty( $pParams['title'] ) ? $pParams['title'] : tra( 'Page Contents' ) ).'</h3>'.$list.$toplink.'</div>';
 
 	return $list;
 }
