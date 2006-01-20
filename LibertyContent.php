@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.59 2006/01/20 09:55:15 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.60 2006/01/20 11:13:35 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -737,25 +737,62 @@ class LibertyContent extends LibertyBase {
 
 		// calculate what links to show
 		if( $gBitSystem->isFeatureActive( 'direct_pagination' ) ) {
-			$block = 6;
-			$prev  = ( $pListHash['control']['current_page'] - $block > 0 ) ? $pListHash['control']['current_page'] - $block : 1;
-			$next  = ( $pListHash['control']['current_page'] + $block < $pListHash['control']['total_pages'] ) ? $pListHash['control']['current_page'] + $block : $pListHash['control']['total_pages'];
-			for( $i = $pListHash['control']['current_page'] - 2; $i >= $prev; $i-- ) {
+			// number of continuous links to display on either side
+			$continuous = 5;
+			// number of skipping links to display on either side
+			$skipping = 5;
+
+			// size of steps to take when skipping
+			// if you have more than 1000 pages, you should consider not using the pagination form
+			if( $pListHash['control']['total_pages'] < 50 ) {
+				$step = 5;
+			} elseif( $pListHash['control']['total_pages'] < 100 ) {
+				$step = 10;
+			} elseif( $pListHash['control']['total_pages'] < 250 ) {
+				$step = 25;
+			} elseif( $pListHash['control']['total_pages'] < 500 ) {
+				$step = 50;
+			} else {
+				$step = 100;
+			}
+
+			$prev  = ( $pListHash['control']['current_page'] - $continuous > 0 ) ? $pListHash['control']['current_page'] - $continuous : 1;
+			$next  = ( $pListHash['control']['current_page'] + $continuous < $pListHash['control']['total_pages'] ) ? $pListHash['control']['current_page'] + $continuous : $pListHash['control']['total_pages'];
+			for( $i = $pListHash['control']['current_page'] - 1; $i >= $prev; $i -= 1 ) {
 				$pListHash['control']['block']['prev'][$i] = $i;
 			}
 			if( $prev != 1 ) {
+				// replace the last of the continuous links with a ...
 				$pListHash['control']['block']['prev'][$i + 1] = "&hellip;";
-				$pListHash['control']['block']['prev'][1] = tra( "First" );
+				// add $skipping links to pages seperated by $step pages
+				if( ( $min = $pListHash['control']['current_page'] - $continuous - ( $step * $skipping ) ) < 0 ) {
+					$min = 0;
+				}
+				for( $j = ( floor( $i / $step ) * $step ); $j > $min; $j -= $step ) {
+					$pListHash['control']['block']['prev'][$j] = $j;
+				}
+				$pListHash['control']['block']['prev'][1] = 1;
 			}
+			// reverse array that links are in the correct order
 			if( !empty( $pListHash['control']['block'] ) ) {
 				$pListHash['control']['block']['prev'] = array_reverse( $pListHash['control']['block']['prev'], TRUE );
 			}
-			for( $i = $pListHash['control']['current_page'] + 2; $i <= $next; $i++ ) {
+
+			// here we start adding next links
+			for( $i = $pListHash['control']['current_page'] + 1; $i <= $next; $i += 1 ) {
 				$pListHash['control']['block']['next'][$i] = $i;
 			}
 			if( $next != $pListHash['control']['total_pages'] ) {
+				// replace the last of the continuous links with a ...
 				$pListHash['control']['block']['next'][$i - 1] = "&hellip;";
-				$pListHash['control']['block']['next'][$pListHash['control']['total_pages']] = tra( "Last" );
+				// add $skipping links to pages seperated by $step pages
+				if( ( $max = $pListHash['control']['current_page'] + $continuous + ( $step * $skipping ) ) > $pListHash['control']['total_pages'] ) {
+					$max = $pListHash['control']['total_pages'];
+				}
+				for( $j = ( ceil( $i / $step ) * $step ); $j < $max; $j += $step ) {
+					$pListHash['control']['block']['next'][$j] = $j;
+				}
+				$pListHash['control']['block']['next'][$pListHash['control']['total_pages']] = $pListHash['control']['total_pages'];
 			}
 		}
 	}

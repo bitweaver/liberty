@@ -5,6 +5,7 @@ include_once( KERNEL_PKG_PATH.'simple_form_functions_lib.php' );
 $gBitSystem->verifyPermission( 'bit_p_admin' );
 
 $commentSettings = array(
+	// when this is enabled, we need to add a spam prevention method
 	"comments_auto_show_form" => array(
 		'label' => 'Always show comment form',
 		'note' => 'Check this if you want to show the comment form automatically instead of the <em>Add Comment</em> button first.',
