@@ -5,6 +5,12 @@ include_once( KERNEL_PKG_PATH.'simple_form_functions_lib.php' );
 $gBitSystem->verifyPermission( 'bit_p_admin' );
 
 $commentSettings = array(
+	// when this is enabled, we need to add a spam prevention method
+	"comments_auto_show_form" => array(
+		'label' => 'Always show comment form',
+		'note' => 'Check this if you want to show the comment form automatically instead of the <em>Add Comment</em> button first.',
+		'page' => '',
+	),
 	"comments_reorganise_page_layout" => array(
 		'label' => 'Position Comments at top of page',
 		'note' => 'When posting a comment, comments are moved to the top of the page. This can be very disorienting and is only recommended when your site uses comments extensively.',
@@ -24,8 +30,6 @@ $commentSettings = array(
 $gBitSmarty->assign( 'commentSettings', $commentSettings );
 
 if( !empty( $_REQUEST['change_prefs'] ) ) {
-
-
 	foreach( array_keys( $commentSettings ) as $item ) {
 		simple_set_toggle( $item );
 	}
@@ -34,9 +38,7 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 	foreach( $formValues as $item ) {
 		simple_set_value( $item );
 	}
-
-
 }
 
-$gBitSystem->display( 'bitpackage:liberty/admin_comments.tpl');
+$gBitSystem->display( 'bitpackage:liberty/admin_comments.tpl', tra( 'Comment Settings' ) );
 ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -81,7 +81,7 @@ function bit_files_load( $pRow ) {
 				$ret['thumbnail_url']['medium'] = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
 				$ret['thumbnail_url']['large'] = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
 			} else {
-				$mime_thumbnail = $gLibertySystem->getMimeThumbnailURL($ret['mime_type']);
+				$mime_thumbnail = $gLibertySystem->getMimeThumbnailURL($ret['mime_type'], substr( $ret['storage_path'], strrpos( $ret['storage_path'], '.' ) + 1 ) );
 				$ret['thumbnail_url']['avatar'] = $mime_thumbnail;
 				$ret['thumbnail_url']['small'] = $mime_thumbnail;
 				$ret['thumbnail_url']['medium'] = $mime_thumbnail;

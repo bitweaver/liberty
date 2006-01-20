@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.10 2005/12/18 22:30:22 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.11 2006/01/20 11:08:50 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -215,7 +215,7 @@ class LibertySystem extends LibertyBase {
 	}
 
 	// Get the URL to the icon for the mime type passed in. This should probably check for files of multiple image types instead of just jpg
-	function getMimeThumbnailURL($pMimeType) {
+	function getMimeThumbnailURL($pMimeType, $pExt=NULL) {
 		$ret = NULL;
 		$parts = split('/',$pMimeType);
 		if (count($parts) > 1) {
@@ -231,8 +231,11 @@ class LibertySystem extends LibertyBase {
 				'url' => 'only',
 			);
 			if( !$ret = smarty_function_biticon( $biticon,$gBitSmarty ) ) {
-				$biticon['iname'] = 'generic';
-				$ret = smarty_function_biticon( $biticon,$gBitSmarty );
+				$biticon['iname'] = $pExt;
+				if( !$ret = smarty_function_biticon( $biticon,$gBitSmarty ) ) {
+					$biticon['iname'] = 'generic';
+					$ret = smarty_function_biticon( $biticon,$gBitSmarty );
+				}
 			}
 		}
 		return $ret;

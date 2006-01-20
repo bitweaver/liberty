@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.18 2006/01/17 13:11:35 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.19 2006/01/20 11:08:50 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -690,7 +690,7 @@ class LibertyContent extends LibertyBase {
 			if( empty( $title ) && !empty( $pMixed['title'] ) ) {
 				$title = $pMixed['title'];
 			}
-			$ret = '<a href="'.BIT_ROOT_URL.'index.php?content_id='.$pMixed['content_id'].'">'.$title.'</a>';
+			$ret = '<a title="'.htmlspecialchars( $title ).'" href="'.BIT_ROOT_URL.'index.php?content_id='.$pMixed['content_id'].'">'.htmlspecialchars( $title ).'</a>';
 		}
 		return $ret;
 	}
