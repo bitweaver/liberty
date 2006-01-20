@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.30 2006/01/14 21:27:34 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.31 2006/01/20 20:38:56 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -75,12 +75,8 @@ class LibertyAttachable extends LibertyContent {
 		global $gBitSystem;
 		$baseUrl = null;
 		$pathParts = array();
-		$pref = split( '/',$gBitSystem->getPreference('centralized_upload_dir') );
-		if( empty( $pref ) ) {
-			$pathParts[] = 'storage';
-		} else {
-			$pathParts = $pref;
-		}
+		$pathParts = split( '/',$gBitSystem->getPreference('centralized_upload_dir', 'storage/' ) );
+
 		if( !$pUserId ) {
 			$pathParts[] = 'common';
 		} else {
