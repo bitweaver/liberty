@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.19 2006/01/20 11:08:50 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.20 2006/01/23 20:55:33 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -193,6 +193,7 @@ class LibertyContent extends LibertyBase {
 
 		if( !empty( $pParamHash['hits'] ) ) {
 			$pParamHash['content_store']['hits'] = $pParamHash['hits'] + 1;
+			$pParamHash['content_store']['last_hit'] = $this->mDb->getUTCTime();
 		}
 
 		if( !empty( $pParamHash['edit'] ) && $func = $gLibertySystem->getPluginFunction( $pParamHash['format_guid'], 'verify_function' ) ) {
@@ -575,8 +576,8 @@ class LibertyContent extends LibertyBase {
 		global $gBitUser;
 		if( empty( $_REQUEST['post_comment_submit'] ) && empty( $_REQUEST['post_comment_request'] ) ) {
 			if( $this->mContentId && ( $gBitUser->mUserId != $this->mInfo['user_id'] ) ) {
-				$query = "UPDATE `".BIT_DB_PREFIX."tiki_content` SET `hits`=`hits`+1 WHERE `content_id` = ?";
-				$result = $this->mDb->query( $query, array( $this->mContentId ) );
+				$query = "UPDATE `".BIT_DB_PREFIX."tiki_content` SET `hits`=`hits`+1, `last_hit`= ? WHERE `content_id` = ?";
+				$result = $this->mDb->query( $query, array( $this->mDb->getUTCTime(), $this->mContentId ) );
 			}
 		}
 		return TRUE;
@@ -937,7 +938,7 @@ class LibertyContent extends LibertyBase {
 		// If sort mode is versions then offset is 0, maxRecords is -1 (again) and sort_mode is nil
 		// If sort mode is links then offset is 0, maxRecords is -1 (again) and sort_mode is nil
 		// If sort mode is backlinks then offset is 0, maxRecords is -1 (again) and sort_mode is nil
-		$query = "SELECT uue.`login` AS `modifier_user`, uue.`real_name` AS `modifier_real_name`, uue.`user_id` AS `modifier_user_id`, uuc.`login` AS`creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`, `hits`, tc.`title`, tc.`last_modified`, tc.`content_type_guid`, `ip`, tc.`created`, tc.`content_id` $gateSelect
+		$query = "SELECT uue.`login` AS `modifier_user`, uue.`real_name` AS `modifier_real_name`, uue.`user_id` AS `modifier_user_id`, uuc.`login` AS`creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`, `hits`, `last_hit`, `event_time`, tc.`title`, tc.`last_modified`, tc.`content_type_guid`, `ip`, tc.`created`, tc.`content_id` $gateSelect
 				FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom, `".BIT_DB_PREFIX."users_users` uue, `".BIT_DB_PREFIX."users_users` uuc
 				WHERE tc.`modifier_user_id`=uue.`user_id` AND tc.`user_id`=uuc.`user_id` $mid
 				ORDER BY ".$orderTable.$this->mDb->convert_sortmode($pListHash['sort_mode']);
