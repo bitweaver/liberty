@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.7 $
+ * @version  $Revision: 1.1.1.1.2.8 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -12,13 +12,11 @@ global $gLibertySystem;
 
 define( 'PLUGIN_GUID_PEARWIKI', 'pearwiki' );
 
-$auto_activate = ( @include_once( 'Text/Wiki.php' ) ? TRUE : FALSE );
-
 $pluginParams = array ( 'store_function' => 'pearwiki_save_data',
 						'load_function' => 'pearwiki_parse_data',
 						'verify_function' => 'pearwiki_verify_data',
-						'auto_activate' => $auto_activate,
-						'description' => 'Pear Wiki Syntax Format Parser. Requires Text_Wiki Pear extension. If you are running linux you can try running: su -c \'pear install Text_Wiki\'. More info <a href="http://wiki.ciaweb.net/yawiki/index.php?area=Text_Wiki&page=SamplePage">here</a>',
+						'auto_activate' =>  @include_once( 'Text/Wiki.php' ) ? TRUE : FALSE ,
+						'description' => 'Pear Wiki Syntax Format Parser. Requires Text_Wiki Pear extension. If you are running linux you can try running: su -c \'pear install Text_Wiki\'. More info <a href="http://wiki.ciaweb.net/yawiki/index.php?area=Text_Wiki&amp;page=SamplePage">here</a>',
 						'edit_label' => 'Pear Text_Wiki Syntax',
 						'edit_field' => '<input type="radio" name="format_guid" value="'.PLUGIN_GUID_PEARWIKI.'"',
 						'help_page' => 'PearWikiSyntax',
