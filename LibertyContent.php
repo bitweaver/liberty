@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.20 2006/01/23 20:55:33 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.21 2006/01/23 21:26:38 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -193,7 +193,7 @@ class LibertyContent extends LibertyBase {
 
 		if( !empty( $pParamHash['hits'] ) ) {
 			$pParamHash['content_store']['hits'] = $pParamHash['hits'] + 1;
-			$pParamHash['content_store']['last_hit'] = $this->mDb->getUTCTime();
+			$pParamHash['content_store']['last_hit'] = $gBitSystem->getUTCTime();
 		}
 
 		if( !empty( $pParamHash['edit'] ) && $func = $gLibertySystem->getPluginFunction( $pParamHash['format_guid'], 'verify_function' ) ) {
@@ -573,11 +573,11 @@ class LibertyContent extends LibertyBase {
 	* @return bool true ( will not currently report a failure )
 	*/
 	function addHit() {
-		global $gBitUser;
+		global $gBitUser,$gBitSystem;
 		if( empty( $_REQUEST['post_comment_submit'] ) && empty( $_REQUEST['post_comment_request'] ) ) {
 			if( $this->mContentId && ( $gBitUser->mUserId != $this->mInfo['user_id'] ) ) {
 				$query = "UPDATE `".BIT_DB_PREFIX."tiki_content` SET `hits`=`hits`+1, `last_hit`= ? WHERE `content_id` = ?";
-				$result = $this->mDb->query( $query, array( $this->mDb->getUTCTime(), $this->mContentId ) );
+				$result = $this->mDb->query( $query, array( $gBitSystem->getUTCTime(), $this->mContentId ) );
 			}
 		}
 		return TRUE;
