@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.31 2006/01/20 20:38:56 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.32 2006/01/23 03:48:05 jht001 Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -246,6 +246,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 						// We're gonna store to local file system & tiki_files table
 						if( empty( $storagePath ) ) {
 							$this->mErrors['file'] = 'Could not store file '.$storeRow['upload']['name'].'.';
+							$pParamHash['attachment_id'] = NULL;
 						} else {
 							$storeRow['upload']['dest_file_path'] = $storagePath;
 						}
@@ -325,6 +326,8 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 						}
 						$sql = "DELETE FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id`=?";
 						$this->mDb->query( $sql, array( $pAttachmentId ) );
+
+						unset($this->mStorage[$pAttachmentId]);
 					}
 				} else {
 					print("Expunge function not found for this content!");

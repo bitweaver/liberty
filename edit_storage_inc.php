@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1.1.1.2.8 $
+ * @version  $Revision: 1.1.1.1.2.9 $
  * @package  liberty
  * @subpackage functions
  *
@@ -31,7 +31,7 @@ $gBitSmarty->assign( 'attachmentActionBaseURL', $attachmentActionBaseURL );
 
 if( !empty( $_REQUEST['deleteAttachment'] ) ) {
 	$attachmentId = $_REQUEST['deleteAttachment'];
-	
+
 	$siblingAttachments = $gContent->getSiblingAttachments( $attachmentId );
 	$attachmentInfo = $gContent->getAttachment( $attachmentId );
 	
@@ -50,4 +50,10 @@ if( !empty( $_REQUEST['deleteAttachment'] ) ) {
 	}
 }
 $gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );	
+
+// in case we have deleted attachments
+// seems like there should be a better way to do this -- maybe original assign should have been by reference?
+$gBitSmarty->clear_assign( 'gContent' );
+$gBitSmarty->assign( 'gContent', $gContent );
+
 ?>
