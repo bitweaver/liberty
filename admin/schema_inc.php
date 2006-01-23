@@ -29,6 +29,8 @@ $tables = array(
   content_type_guid C(16) NOTNULL,
   format_guid C(16) NOTNULL,
   hits I4 NOTNULL DEFAULT 0,
+  last_hit I8 NOTNULL,
+  event_time I8 NOTNULL,
   language C(4),
   title C(160),
   ip C(39),
