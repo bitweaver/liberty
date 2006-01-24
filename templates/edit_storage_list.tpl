@@ -19,10 +19,10 @@
 						<br />
 						Actions: 
 						{if $gBitUser->isAdmin() || $bit_p_detach_attachment || $storage.user_id == $gBitUser->mUserId}
-							<a href="{$attachmentActionBaseURL}&amp;detachAttachment={$storage.attachment_id}">{biticon ipackage=liberty iname="detach" iexplain="detach"}</a>
+							<a href="{$attachmentActionBaseURL}&amp;detachAttachment={$attachmentId}">{biticon ipackage=liberty iname="detach" iexplain="detach"}</a>
 						{/if}
 						{if $gBitUser->isAdmin() ||  $storage.user_id == $gBitUser->mUserId}
-							<a href="{$attachmentActionBaseURL}&amp;deleteAttachment={$storage.attachment_id}">{biticon ipackage=liberty iname="delete" iexplain="delete"}</a>
+							<a href="{$attachmentActionBaseURL}&amp;deleteAttachment={$attachmentId}">{biticon ipackage=liberty iname="delete" iexplain="delete"}</a>
 						{/if}
 					</td>
 				</tr>

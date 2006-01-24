@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.11 2006/01/15 07:59:18 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.12 2006/01/24 21:49:32 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -75,12 +75,8 @@ class LibertyAttachable extends LibertyContent {
 		global $gBitSystem;
 		$baseUrl = null;
 		$pathParts = array();
-		$pref = split( '/',$gBitSystem->getPreference('centralized_upload_dir') );
-		if( empty( $pref ) ) {
-			$pathParts[] = 'storage';
-		} else {
-			$pathParts = $pref;
-		}
+		$pathParts = split( '/',$gBitSystem->getPreference('centralized_upload_dir', 'storage/' ) );
+
 		if( !$pUserId ) {
 			$pathParts[] = 'common';
 		} else {
@@ -250,6 +246,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 						// We're gonna store to local file system & tiki_files table
 						if( empty( $storagePath ) ) {
 							$this->mErrors['file'] = 'Could not store file '.$storeRow['upload']['name'].'.';
+							$pParamHash['attachment_id'] = NULL;
 						} else {
 							$storeRow['upload']['dest_file_path'] = $storagePath;
 						}
@@ -329,6 +326,8 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 						}
 						$sql = "DELETE FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id`=?";
 						$this->mDb->query( $sql, array( $pAttachmentId ) );
+
+						unset($this->mStorage[$pAttachmentId]);
 					}
 				} else {
 					print("Expunge function not found for this content!");

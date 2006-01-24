@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -19,7 +19,7 @@ $pluginParams = array ( 'store_function' => 'pearwiki_tiki_save_data',
 						'load_function' => 'pearwiki_tiki_parse_data',
 						'verify_function' => 'pearwiki_tiki_verify_data',
 						'auto_activate' => $auto_activate,
-						'description' => 'Pear Wiki Parser for TikiWiki Syntax. Requires Text_Wiki Pear extension. More info <a href="http://wiki.ciaweb.net/yawiki/index.php?area=Text_Wiki&page=SamplePage">here</a>',
+						'description' => 'Pear Wiki Parser for TikiWiki Syntax. Requires Text_Wiki Pear extension. More info <a href="http://wiki.ciaweb.net/yawiki/index.php?area=Text_Wiki&amp;page=SamplePage">here</a>',
 						'edit_label' => 'Tiki Wiki Syntax, parsed by Pear::Text_Wiki',
 						'edit_field' => '<input type="radio" name="format_guid" value="'.PLUGIN_GUID_PEARWIKI_TIKI.'"',
 						'help_page' => 'TikiWikiSyntax',

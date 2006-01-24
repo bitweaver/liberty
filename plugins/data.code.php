@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.9 2006/01/10 21:13:43 squareing Exp $
+// $Id: data.code.php,v 1.10 2006/01/24 21:49:32 squareing Exp $
 
 /**
  * definitions
@@ -64,7 +64,7 @@ function data_code_help() {
 				.'<td>' .tra( "Determins if Line Numbers are displayed with the code. Specifing:")
 					.'<strong>TRUE / ON / YES /</strong> or a <strong>Number</strong> '
 					.tra("will turn <strong>Line Numbering On</strong>. When a Number is specified - the Number is used for the first ")
-					.tra("line instead of <strong>1</strong>. Any ohter value will turn <strong>Line Numbering OFF</strong> ")
+					.tra("line instead of <strong>1</strong>. Any other value will turn <strong>Line Numbering OFF</strong> ")
 					.tra("and only the <strong>Code</strong> will be displayed.")
 					.'<br />' . tra("The Default =") .' <strong>FALSE</strong> ' .tra("Line Numbers are <strong>Not</strong> displayed.")
 				.'</td>'
@@ -114,7 +114,7 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 	// Trim any leading blank linkes
 	$code = preg_replace('/^[\n\r]+/', "",$code);		
 	// Trim any trailing blank linkes
-	$code = preg_replace('/[\n\r]+$/', "\n",$code);		
+	$code = preg_replace('/[\n\r]+$/', "",$code);		
 
 	if( file_exists( UTIL_PKG_PATH.'geshi/geshi.php' ) ) {
 		// Include the GeSHi library
