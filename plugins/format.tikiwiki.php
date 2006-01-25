@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.17 $
+ * @version  $Revision: 1.18 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -61,13 +61,12 @@ function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
 				INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON( tl.`from_content_id`=tc.`content_id` )
 			  WHERE `to_content_id` = ?";
 	if( $result = $pCommonObject->mDb->query($query, array( $pContentId ) ) ) {
-		while( !$result->EOF ) {
-			$data = preg_replace( '/(\W|\(\()('.$pOldName.')(\W|\)\))/', '\\1'.$pNewName.'\\3', $result->fields['data'] );
-			if( md5( $data ) != md5( $result->fields['data'] ) ) {
+		while( $row = $result->fetchRow() ) {
+			$data = preg_replace( '/(\W|\(\()('.$pOldName.')(\W|\)\))/', '\\1'.$pNewName.'\\3', $row['data'] );
+			if( md5( $data ) != md5( $row['data'] ) ) {
 				$query = "UPDATE `".BIT_DB_PREFIX."tiki_content` SET `data`=? WHERE `content_id`=?";
-				$pCommonObject->mDb->query($query, array( $data, $result->fields['from_content_id'] ) );
+				$pCommonObject->mDb->query($query, array( $data, $row['from_content_id'] ) );
 			}
-			$result->MoveNext();
 		}
 	}
 }
@@ -195,13 +194,12 @@ class TikiWikiParser extends BitBase {
 						  WHERE tl.`from_content_id`=? ORDER BY tc.`title`";
 				if( $result = $this->mDb->query( $query, array( $pContentId ) ) ) {
 					$lastTitle = '';
-					while( !$result->EOF ) {
-						if( $result->fields['title'] == $lastTitle ) {
+					while( $row = $result->fetchRow() ) {
+						if( $row['title'] == $lastTitle ) {
 // TODO - need to check ensure that tiki_links duplicate are properly inserted - spiderr
 						}
-						$this->mPageLookup[$result->fields['hash_key']][] = $result->fields;
-						$lastTitle = $result->fields['title'];
-						$result->MoveNext();
+						$this->mPageLookup[$row['hash_key']][] = $row;
+						$lastTitle = $row['title'];
 					}
 				}
 			}
@@ -217,8 +215,9 @@ class TikiWikiParser extends BitBase {
 	*/
 
 	function getAllPages( $pContentId, $pCommonObject ) {
+		global $gBitSystem;
 		$ret = array();
-		if( @BitBase::verifyId( $pContentId ) ) {
+		if( $gBitSystem->isFeatureActive( 'wiki' ) && @BitBase::verifyId( $pContentId ) ) {
 			$query = "SELECT `page_id`, tc.`content_id`, `description`, tc.`last_modified`, tc.`title`
 				FROM `".BIT_DB_PREFIX."tiki_links` tl
 				INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON( tl.`to_content_id`=tc.`content_id` )
@@ -226,12 +225,11 @@ class TikiWikiParser extends BitBase {
 				WHERE tl.`from_content_id`=? ORDER BY tc.`title`";
 			if( $result = $this->mDb->query( $query, array( $pContentId ) ) ) {
 				$lastTitle = '';
-				while( !$result->EOF ) {
-					if( array_key_exists( strtolower( $result->fields['title'] ), $ret ) ) {
-						$result->fields['description'] = tra( 'Multiple pages with this name' );
+				while( $row = $result->fetchRow() ) {
+					if( array_key_exists( strtolower( $row['title'] ), $ret ) ) {
+						$row['description'] = tra( 'Multiple pages with this name' );
 					}
-					$ret[strtolower( $result->fields['title'] )] = $result->fields;
-					$result->MoveNext();
+					$ret[strtolower( $row['title'] )] = $row;
 				}
 			}
 		}
@@ -247,11 +245,12 @@ class TikiWikiParser extends BitBase {
 		}
 		// final attempt to get page details
 		if( empty( $ret ) && empty( $pPageList ) ) {
-			$ret = $pCommonObject->pageExists( $pTitle );
-			if( count( $ret ) > 1 ) {
-				$ret[0]['description'] = tra( 'Multiple pages with this name' );
+			if( $ret = $pCommonObject->pageExists( $pTitle ) ) {
+				if( count( $ret ) > 1 ) {
+					$ret[0]['description'] = tra( 'Multiple pages with this name' );
+				}
+				$ret = $ret[0];
 			}
-			$ret = $ret[0];
 		}
 		return $ret;
 	}
@@ -1266,7 +1265,7 @@ class TikiWikiParser extends BitBase {
 			}
 
 			// Replace Hotwords before begin
-			if ($gBitSystem->getPreference('package_hotwords') == 'y') {
+			if ($gBitSystem->isPackageActive( 'hotwords' ) ) {
 				$line = $hotwordlib->replace_hotwords($line, $words);
 			}
 

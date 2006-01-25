@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.12 2006/01/24 21:49:32 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.13 2006/01/25 15:40:25 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -284,7 +284,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 		$sql = "SELECT * FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id` = ?";
 		$rs = $this->mDb->query($sql, array( $pAttachmentId ));
-		$tmpAttachment = $rs->fields;
+		$tmpAttachment = $rs->fetchRow();
 
 		if ( @$this->verifyId($tmpAttachment['attachment_id']) ) {
 			$newAttachmentId = $this->mDb->GenID( 'tiki_attachments_id_seq' );
@@ -310,9 +310,9 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 		if( @$this->verifyId( $pAttachmentId ) ) {
 			$sql = "SELECT `attachment_plugin_guid`, `user_id` FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id`=?";
-			$rs = $this->mDb->query( $sql, array( $pAttachmentId ) );
-			$guid = $rs->fields['attachment_plugin_guid'];
-			$user_id = $rs->fields['user_id'];
+			$row = $this->mDb->getRow( $sql, array( $pAttachmentId ) );
+			$guid = $row['attachment_plugin_guid'];
+			$user_id = $row['user_id'];
 
 			if( $guid && ($user_id == $gBitUser->mUserId || $gBitUser->isAdmin()) ) {
 				if ( function_exists( $gLibertySystem->mPlugins[$guid]['expunge_function'])) {
@@ -370,14 +370,12 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 					  WHERE ta.`content_id`=?";
 			if( $result = $this->mDb->query($query,array((int) $conId)) ) {
 				$this->mStorage = array();
-				while( !$result->EOF ) {
-					$row = &$result->fields;
+				while( $row = $result->fetchRow() ) {
 					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function'  ) ) {
 						$this->mStorage[$row['attachment_id']] = $func( $row );
 					} else {
 						print "NO load_function for ".$row['attachment_plugin_guid']." ".$gLibertySystem->mPlugins[$row['attachment_plugin_guid']];
 					}
-					$result->MoveNext();
 				}
 			}
 		}
@@ -395,8 +393,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 					  WHERE ta.`attachment_id`=?";
 			if( $result = $this->mDb->query($query,array((int) $pAttachmentId)) ) {
 				$ret = array();
-				if( !$result->EOF ) {
-					$row = &$result->fields;
+				if( $row = $result->fetchRow() ) {
 					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function'  ) ) {
 						$ret = $func( $row );
 					}

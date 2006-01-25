@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.16 2006/01/17 00:23:24 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.17 2006/01/25 15:40:25 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -57,7 +57,7 @@ class LibertyStructure extends LibertyBase {
 		}
 
 		if( $result = $this->mDb->query( $query, $bindVars ) ) {
-			$ret = $result->fields;
+			$ret = $result->fetchRow();
 		}
 
 		if( !empty( $contentTypes[$ret['content_type_guid']] ) ) {
@@ -700,18 +700,17 @@ class LibertyStructure extends LibertyBase {
 
 		$query = "SELECT * from `".BIT_DB_PREFIX."tiki_structures` where `parent_id`=? ORDER BY pos, page_alias, content_id";
 		$result = $this->mDb->query( $query, array( (int)$pStructureId ) );
-		while ( !$result->EOF ) {
-			array_push( $pToc, $result->fields['content_id'] );
-			$this->getContentIds( $result->fields['structure_id'], $pToc, ++$pLevel );
-			$result->MoveNext();
+		while ( $row = $result->fetchRow() ) {
+			array_push( $pToc, $row['content_id'] );
+			$this->getContentIds( $row['structure_id'], $pToc, ++$pLevel );
 		}
 	}
 
 	function getContentArray( $pStructureId, &$pToc, $pLevel=0 ) {
 		$query = "SELECT * from `".BIT_DB_PREFIX."tiki_structures` where `structure_id`=?";
 		$result = $this->mDb->query( $query, array( (int)$pStructureId ) );
-		if( !$result->EOF ) {
-			array_push( $pToc, $result->fields['content_id'] );
+		while ( $row = $result->fetchRow() ) {
+			array_push( $pToc, $row['content_id'] );
 			$this->getContentIds( $pStructureId, $pToc, $pLevel );
 		}
 	}
