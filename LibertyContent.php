@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.22 2006/01/25 15:40:25 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.23 2006/01/26 10:12:31 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -957,7 +957,6 @@ class LibertyContent extends LibertyBase {
 				$aux['editor'] = (isset( $aux['modifier_real_name'] ) ? $aux['modifier_real_name'] : $aux['modifier_user'] );
 				$aux['content_description'] = $type['content_description'];
 				$aux['user'] = $aux['creator_user'];
-				$aux['real_name'] = (isset( $aux['creator_real_name'] ) ? $aux['creator_real_name'] : $aux['creator_user'] );
 				$aux['user_id'] = $aux['creator_user_id'];
 				if( empty( $type['content_object'] ) ) {
 					// create *one* object for each object *type* to  call virtual methods.
