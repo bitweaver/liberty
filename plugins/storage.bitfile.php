@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.11 $
+ * @version  $Revision: 1.2.2.12 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -67,8 +67,7 @@ function bit_files_load( $pRow ) {
 		$query = "SELECT *
 				  FROM `".BIT_DB_PREFIX."tiki_attachments` ta INNER JOIN `".BIT_DB_PREFIX."tiki_files` tf ON (tf.`file_id` = ta.`foreign_id`)
 				  WHERE ta.`foreign_id` = ? AND ta.`content_id` = ?";
-		if( $rs = $gBitSystem->mDb->query($query, array( $pRow['foreign_id'], $pRow['content_id'] )) ) {
-			$ret = $rs->fields;
+		if( $ret = $gBitSystem->mDb->getRow($query, array( $pRow['foreign_id'], $pRow['content_id'] )) ) {
 			$canThumbFunc = liberty_get_function( 'can_thumbnail' );
 			if ( file_exists( BIT_ROOT_PATH.dirname( $ret['storage_path'] ).'/medium.jpg' ) ) {
 				$ret['thumbnail_url']['avatar'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/avatar.jpg';
@@ -104,12 +103,10 @@ function bit_files_expunge( $pStorageId ) {
 
 	if (is_numeric($pStorageId)) {
 		$sql = "SELECT * FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id` = ?";
-		$rs = $gBitSystem->mDb->query($sql, array($pStorageId));
-		$row = &$rs->fields;
+		$row = $gBitSystem->mDb->getRow($sql, array($pStorageId));
 		if ($row) {
 			$sql = "SELECT * FROM `".BIT_DB_PREFIX."tiki_files` WHERE `file_id` = ?";
-			$fileRs = $gBitSystem->mDb->query($sql, array($row['foreign_id']) );
-			$fileRow = &$fileRs->fields;
+			$fileRow = $gBitSystem->mDb->getRow($sql, array($row['foreign_id']) );
 			if ($fileRow) {
 				$absolutePath = BIT_ROOT_PATH.'/'.$fileRow['storage_path'];
 

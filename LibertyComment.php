@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.2.2.12 2006/01/12 14:04:34 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.2.2.13 2006/01/26 15:00:47 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -60,12 +60,10 @@ class LibertyComment extends LibertyContent {
 				FROM `".BIT_DB_PREFIX."tiki_comments` tc LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_content` tcn ON (tc.`content_id` = tcn.`content_id`)
 					 LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON (tcn.`user_id` = uu.`user_id`)
 				$mid";
-		$rs = $this->mDb->query($sql, $bindVars);
-
-		if ($rs && $rs->numRows()) {
-			$this->mInfo = $rs->fields;
-			$this->mContentId = $rs->fields['content_id'];
-			$this->mCommentId = $rs->fields['comment_id'];
+		if( $row = $this->mDb->getRow($sql, $bindVars) ) {
+			$this->mInfo = $row;
+			$this->mContentId = $row['content_id'];
+			$this->mCommentId = $row['comment_id'];
 		}
 		return count($this->mInfo);
 	}

@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.60 2006/01/20 11:13:35 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.61 2006/01/26 15:00:47 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -588,18 +588,20 @@ class LibertyContent extends LibertyBase {
 	* @param pCaseSensitive look for case sensitive names
 	*/
 	function pageExists( $pPageName, $pCaseSensitive=FALSE ) {
+		global $gBitSystem;
 		$ret = NULL;
-		$pageWhere = $pCaseSensitive ? 'tc.`title`' : 'LOWER( tc.`title` )';
-		$bindVars = array( ($pCaseSensitive ? $pPageName : strtolower( $pPageName ) ) );
-		$query = "SELECT `page_id`, tp.`content_id`, `description`, tc.`last_modified`, tc.`title`
-				FROM `".BIT_DB_PREFIX."tiki_pages` tp, `".BIT_DB_PREFIX."tiki_content` tc
-				WHERE tc.`content_id`=tp.`content_id` AND $pageWhere = ?";
-		$result = $this->mDb->query($query, array( $bindVars ));
+		if( $gBitSystem->isPackageActive( 'wiki' ) ) {
+			$pageWhere = $pCaseSensitive ? 'tc.`title`' : 'LOWER( tc.`title` )';
+			$bindVars = array( ($pCaseSensitive ? $pPageName : strtolower( $pPageName ) ) );
+			$query = "SELECT `page_id`, tp.`content_id`, `description`, tc.`last_modified`, tc.`title`
+					FROM `".BIT_DB_PREFIX."tiki_pages` tp, `".BIT_DB_PREFIX."tiki_content` tc
+					WHERE tc.`content_id`=tp.`content_id` AND $pageWhere = ?";
+			$result = $this->mDb->query($query, array( $bindVars ));
 
-		if( $result->numRows() ) {
-			$ret = $result->getArray();
+			if( $result->numRows() ) {
+				$ret = $result->getArray();
+			}
 		}
-
 		return $ret;
 	}
 
@@ -1034,7 +1036,6 @@ class LibertyContent extends LibertyBase {
 			if( $result = $this->mDb->query( $query,array( $this->mContentId ) ) ) {
 				while ($res = $result->fetchRow()) {
 					$ret[] = $res;
-					$result->MoveNext();
 				}
 			}
 		}

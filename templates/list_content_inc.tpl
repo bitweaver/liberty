@@ -28,7 +28,7 @@
 {/if}
 
 <table class="data">
-	<caption>{tr}Available Content{/tr} <span class="total">[ {$contentCount} ]</span></caption>
+	<caption>{tr}Available Content{/tr} <span class="total">[ {$listInfo.total_records} ]</span></caption>
 	<tr>
 		<th style="width:2%;">{smartlink ititle="ID" isort=content_id page=$page user_id=$user_id content_type_guid=$contentSelect}</th>
 		<th>{smartlink ititle="Title" isort=title page=$page user_id=$user_id idefault=1 content_type_guid=$contentSelect}</th>
@@ -48,5 +48,5 @@
 	{/foreach}
 </table>
 
-{libertypagination numPages=$numPages page=$curPage sort_mode=$sort_mode content_type_guid=$contentSelect user_id=$user_id}
+{pagination}
 {/strip}

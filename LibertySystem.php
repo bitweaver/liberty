@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.24 2006/01/19 02:12:27 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.25 2006/01/26 15:00:48 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -61,10 +61,10 @@ class LibertySystem extends LibertyBase {
 	}
 
 	function loadPlugins() {
-		$rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."tiki_plugins`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT );
-		while( $rs && !$rs->EOF ) {
-			$this->mPlugins[$rs->fields['plugin_guid']] = $rs->fields;
-			$rs->MoveNext();
+		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."tiki_plugins`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
+			while( $row = $rs->fetchRow() ) {
+				$this->mPlugins[$row['plugin_guid']] = $row;
+			}
 		}
 	}
 
@@ -102,10 +102,10 @@ class LibertySystem extends LibertyBase {
 	}
 
 	function loadContentTypes( $pCacheTime=BIT_QUERY_CACHE_TIME ) {
-		$rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."tiki_content_types`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT );
-		while( $rs && !$rs->EOF ) {
-			$this->mContentTypes[$rs->fields['content_type_guid']] = $rs->fields;
-			$rs->MoveNext();
+		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."tiki_content_types`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
+			while( $row = $rs->fetchRow() ) {
+				$this->mContentTypes[$row['content_type_guid']] = $row;
+			}
 		}
 	}
 
