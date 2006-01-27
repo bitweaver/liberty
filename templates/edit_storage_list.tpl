@@ -18,7 +18,7 @@
 						Filename: {$storage.filename}
 						<br />
 						Actions: 
-						{if $gBitUser->isAdmin() || $bit_p_detach_attachment || $storage.user_id == $gBitUser->mUserId}
+						{if $gBitUser->isAdmin() || $gBitUser->hasPermission( 'bit_p_detach_attachment' ) || $storage.user_id == $gBitUser->mUserId}
 							<a href="{$attachmentActionBaseURL}&amp;detachAttachment={$attachmentId}">{biticon ipackage=liberty iname="detach" iexplain="detach"}</a>
 						{/if}
 						{if $gBitUser->isAdmin() ||  $storage.user_id == $gBitUser->mUserId}
