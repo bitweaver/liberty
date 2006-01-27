@@ -62,7 +62,7 @@ array( 'CREATE' => array (
 		last_modified I8 NOTNULL,
 		content_type_guid C(16) NOTNULL,
 		format_guid C(16) NOTNULL,
-		hits I4,
+		hits I4 NOTNULL DEFAULT 0,
 		language C(4),
 		title C(160),
 		ip C(39),
