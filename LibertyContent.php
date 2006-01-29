@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.24 2006/01/29 13:16:31 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.25 2006/01/29 19:58:00 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -721,11 +721,12 @@ class LibertyContent extends LibertyBase {
 	*/
 	function postGetList( &$pListHash ) {
 		global $gBitSystem;
-		$pListHash['control']['total_records'] = $pListHash["cant"];
-		$pListHash['control']['total_pages'] = ceil( $pListHash["cant"] / $pListHash['max_records'] );
+		// allow the use of 'cant', 'count', 'total_records'
+		$pListHash['control']['total_records'] = ( isset( $pListHash["cant"] ) ? $pListHash['cant'] : ( isset( $pListHash['count'] ) ? $pListHash['count'] : $pListHash["total_records"] ) );
+		$pListHash['control']['total_pages'] = ceil( $pListHash['control']['total_records'] / $pListHash['max_records'] );
 		$pListHash['control']['current_page'] = 1 + ( $pListHash['offset'] / $pListHash['max_records'] );
 
-		if( $pListHash["cant"] > ( $pListHash['offset'] + $pListHash['max_records'] ) ) {
+		if( $pListHash['control']['total_records'] > ( $pListHash['offset'] + $pListHash['max_records'] ) ) {
 			$pListHash['control']['next_offset'] = $pListHash['offset'] + $pListHash['max_records'];
 		} else {
 			$pListHash['control']['next_offset'] = -1;
