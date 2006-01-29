@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.28 2006/01/29 22:41:17 bitweaver Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.29 2006/01/29 23:00:30 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -91,6 +91,7 @@ class LibertyContent extends LibertyBase {
 	function load($pContentId = NULL) {
 		if( !empty( $this->mInfo['content_type_guid'] ) ) {
 			global $gLibertySystem, $gBitSystem;
+			$this->loadPreferences();
 			$this->mInfo['content_type'] = $gLibertySystem->mContentTypes[$this->mInfo['content_type_guid']];
 			if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
 //				$this->mInfo['perm_level'] = $this->getUserPermissions();
@@ -551,6 +552,85 @@ class LibertyContent extends LibertyBase {
 		}
 		return true;
 	}
+
+
+	// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= Preferences Functions
+
+
+	/**
+	* Returns the content preferences value for the passed in key.
+	*
+	* @param string Hash key for the mPrefs value
+	* @param string Default value to return if the preference is empty
+	* @param int Optional content_id for arbitrary content preference
+	*/
+	function getPreference( $pPrefName, $pPrefDefault=NULL, $pContentId = NULL ) {
+		// drewslater - Added ability to query a preference for any content
+		$ret = NULL;
+
+		if ($pContentId && ($pContentId != $this->mContentId) && !empty($pPrefName)) {
+			// Get a user preference for an arbitrary user
+			$sql = "SELECT `value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `name` = ? and `content_id` = ?";
+
+			$rs = $this->mDb->query($sql, array($pPrefName, $pContentId));
+			$ret = (!empty($rs->fields['value'])) ? $rs->fields['value'] : $pPrefDefault;
+		} else {
+			if( isset( $this->mPrefs ) && isset( $this->mPrefs[$pPrefName] ) ) {
+				$ret = $this->mPrefs[$pPrefName];
+			} else {
+				$ret = $pPrefDefault;
+			}
+		}
+		return $ret;
+	}
+
+	function loadPreferences() {
+		if( $this->isValid() ) {
+			$this->mPrefs = $this->mDb->getAssoc( "SELECT `name`, `value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $this->mContentId ) );
+		}
+	}
+
+	/**
+	* Set a hash value in the mPrefs hash. This does *NOT* store the value in the database. It does no checking for existing or duplicate values. the main point of this function is to limit direct accessing of the mPrefs hash. I will probably make mPrefs private one day.
+	*
+	* @param string Hash key for the mPrefs value
+	* @param string Value for the mPrefs hash key
+	*/
+	function setPreference( $pPrefName, $pPrefValue ) {
+		$this->mPrefs[$pPrefName] = $pPrefValue;
+	}
+
+
+	/**
+	* Saves a preference to the liberty_content_prefs database table with the given pref name and value. If the value is NULL, the existing value will be delete and the value will not be saved. However, a zero will be stored. This will update the mPrefs hash.
+	*
+	* @param string Hash key for the mPrefs value
+	* @param string Value for the mPrefs hash key
+	*/
+	function storePreference( $pPrefName, $pPrefValue ) {
+		$ret = FALSE;
+		if( $this->isValid() ) {
+			// validate any preferences
+			if( $pPrefName == 'homePage' && !preg_match( '/^http:\/\//', $pPrefValue ) ) {
+				$pPrefValue = 'http://'.$pPrefValue;
+			}
+			$query = "delete from `".BIT_DB_PREFIX."liberty_content_prefs` where `content_id`=? and `name`=?";
+			$bindvars=array( $this->mContentId, $pPrefName );
+			$result = $this->mDb->query($query, $bindvars);
+			if( !is_null( $pPrefValue ) ) {
+				$query = "insert into `".BIT_DB_PREFIX."liberty_content_prefs` (`content_id`,`name`,`value`) values(?, ?, ?)";
+				$bindvars[]=$pPrefValue;
+				$result = $this->mDb->query($query, $bindvars);
+				$this->mPrefs[$pPrefName] = $pPrefValue;
+			}
+			$this->mPrefs[$pPrefName] = $pPrefValue;
+		}
+		return $ret;
+	}
+
+
+
+
 
 	/**
 	* Copy current permissions to another object

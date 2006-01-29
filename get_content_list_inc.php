@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage functions
  */
@@ -24,7 +24,7 @@ if( empty( $contentListHash ) ) {
 	$contentListHash = array(
 		'content_type_guid' =>   $contentSelect = empty( $_REQUEST['content_type_guid'] ) ? NULL : $_REQUEST['content_type_guid'],
 		'offset' =>              !empty( $offset_content ) ? $offset_content : 0,
-		'max_records' =>         !empty( $max_content ) ? $max_content : 500,
+		'max_records' =>         !empty( $max_content ) ? $max_content : 100,
 		'sort_mode' =>           !empty( $content_sort_mode ) ? $content_sort_mode : 'title_asc',
 		'find' =>                !empty( $_REQUEST["find_objects"] ) ? $_REQUEST["find_objects"] : NULL,
 		'user_id' =>             @BitBase::verifyId( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : NULL,

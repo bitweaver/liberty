@@ -39,6 +39,13 @@ $tables = array(
     		  , CONSTRAINT `tiki_content_guid_ref`  FOREIGN KEY (`format_guid`) REFERENCES `".BIT_DB_PREFIX."tiki_plugins`( `plugin_guid` )'
 ",
 
+'liberty_content_prefs' => "
+  content_id I4 PRIMARY,
+  name C(40) PRIMARY,
+  value C(250)
+  CONSTRAINTS ', CONSTRAINT `lib_content_prefs_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."tiki_content` (`content_id`)'
+",
+
 'tiki_comments' => "
   comment_id I4 PRIMARY,
   content_id I4 NOTNULL,
