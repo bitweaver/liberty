@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.25 2006/01/29 19:58:00 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.26 2006/01/29 22:18:34 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -686,13 +686,19 @@ class LibertyContent extends LibertyBase {
 	* @return string Formated html the link to display the page.
 	*/
 	function getDisplayLink( $pLinkText, $pMixed ) {
-		$ret = '';
-		if( $this ) {
-			$title = $this->getTitle();
-			if( empty( $title ) && !empty( $pMixed['title'] ) ) {
-				$title = $pMixed['title'];
+		if( empty( $pLinkText ) && !empty( $this ) ) {
+			$pLinkText = $this->getTitle();
+		} elseif( empty( $pLinkText ) && !empty( $pMixed['title'] ) ) {
+			$pLinkText = $pMixed['title'];
+		} else {
+			return '';
+		}
+
+		$ret = $pLinkText;
+		if( !empty( $pLinkText )  ) {
+			if( !empty( $pMixed['content_id'] ) ) {
+				$ret = '<a title="'.htmlspecialchars( $title ).'" href="'.LibertyContent::getDisplayUrl( $pMixed['content_id'], $pMixed ).'">'.htmlspecialchars( $title ).'</a>';
 			}
-			$ret = '<a title="'.htmlspecialchars( $title ).'" href="'.LibertyContent::getDisplayUrl( $pMixed['content_id'], $pMixed ).'">'.htmlspecialchars( $title ).'</a>';
 		}
 		return $ret;
 	}
@@ -721,12 +727,11 @@ class LibertyContent extends LibertyBase {
 	*/
 	function postGetList( &$pListHash ) {
 		global $gBitSystem;
-		// allow the use of 'cant', 'count', 'total_records'
-		$pListHash['control']['total_records'] = ( isset( $pListHash["cant"] ) ? $pListHash['cant'] : ( isset( $pListHash['count'] ) ? $pListHash['count'] : $pListHash["total_records"] ) );
-		$pListHash['control']['total_pages'] = ceil( $pListHash['control']['total_records'] / $pListHash['max_records'] );
+		$pListHash['control']['total_records'] = $pListHash["cant"];
+		$pListHash['control']['total_pages'] = ceil( $pListHash["cant"] / $pListHash['max_records'] );
 		$pListHash['control']['current_page'] = 1 + ( $pListHash['offset'] / $pListHash['max_records'] );
 
-		if( $pListHash['control']['total_records'] > ( $pListHash['offset'] + $pListHash['max_records'] ) ) {
+		if( $pListHash["cant"] > ( $pListHash['offset'] + $pListHash['max_records'] ) ) {
 			$pListHash['control']['next_offset'] = $pListHash['offset'] + $pListHash['max_records'];
 		} else {
 			$pListHash['control']['next_offset'] = -1;
@@ -979,28 +984,26 @@ class LibertyContent extends LibertyBase {
 		$cant = $this->mDb->getOne($query_cant,$bindVars);
 		$ret = array();
 		$contentTypes = $gLibertySystem->mContentTypes;
-		while ($aux = $result->fetchRow()) {
+		while( $aux = $result->fetchRow() ) {
 			if( !empty( $contentTypes[$aux['content_type_guid']] ) ) {
 				// quick alias for code readability
-				$type = &$contentTypes[$aux['content_type_guid']];
-				$aux['creator'] = (isset( $aux['creator_real_name'] ) ? $aux['creator_real_name'] : $aux['creator_user'] );
-				$aux['real_name'] = (isset( $aux['creator_real_name'] ) ? $aux['creator_real_name'] : $aux['creator_user'] );
-				$aux['editor'] = (isset( $aux['modifier_real_name'] ) ? $aux['modifier_real_name'] : $aux['modifier_user'] );
+				$type                       = &$contentTypes[$aux['content_type_guid']];
 				$aux['content_description'] = $type['content_description'];
-				$aux['user'] = $aux['creator_user'];
-				$aux['user_id'] = $aux['creator_user_id'];
+				$aux['creator']             = (isset( $aux['creator_real_name'] ) ? $aux['creator_real_name'] : $aux['creator_user'] );
+				$aux['real_name']           = (isset( $aux['creator_real_name'] ) ? $aux['creator_real_name'] : $aux['creator_user'] );
+				$aux['editor']              = (isset( $aux['modifier_real_name'] ) ? $aux['modifier_real_name'] : $aux['modifier_user'] );
+				$aux['user']                = $aux['creator_user'];
+				$aux['user_id']             = $aux['creator_user_id'];
+				// create *one* object for each object *type* to  call virtual methods.
 				if( empty( $type['content_object'] ) ) {
-					// create *one* object for each object *type* to  call virtual methods.
-					if( !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
-						include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
-						$type['content_object'] = new $type['handler_class']();
-						$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
-						$aux['title'] = $type['content_object']->getTitle( $aux );
-					}
+					include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
+					$type['content_object'] = new $type['handler_class']();
 				}
-				require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'bit_long_date' );
-				// getDisplayUrl is currently a pure virtual method in LibertyContent, so this cannot be called currently
-//					$aux['display_url'] = $type['content_object']->getDisplayUrl( $aux['title'], $aux );
+				if( !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
+					$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
+					$aux['title']        = $type['content_object']->getTitle( $aux );
+					$aux['display_url']  = $type['content_object']->getDisplayUrl( $aux['content_id'], $aux );
+				}
 				$ret[] = $aux;
 			}
 		}
