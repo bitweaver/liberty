@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.27 2006/01/29 22:26:45 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.28 2006/01/29 22:41:17 bitweaver Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -691,11 +691,16 @@ class LibertyContent extends LibertyBase {
 		} elseif( empty( $pLinkText ) && !empty( $pMixed['title'] ) ) {
 			$pLinkText = $pMixed['title'];
 		}
+		if( empty( $pLinkText ) && !empty( $pMixed['content_description'] ) ) {
+			$pLinkText = "[ ".$pMixed['content_description']." ]";
+		}
+		if( empty( $pLinkText ) ) {
+			$pLinkText = "[ ".tra( "No Title" )." ]";
+		}
 
-		if( !empty( $pLinkText )  ) {
-			if( !empty( $pMixed['content_id'] ) ) {
-				$ret = '<a title="'.htmlspecialchars( $pLinkText ).'" href="'.LibertyContent::getDisplayUrl( $pMixed['content_id'], $pMixed ).'">'.htmlspecialchars( $pLinkText ).'</a>';
-			}
+		// finally we are ready to create the full link
+		if( !empty( $pMixed['content_id'] ) ) {
+			$ret = '<a title="'.htmlspecialchars( $pLinkText ).'" href="'.LibertyContent::getDisplayUrl( $pMixed['content_id'], $pMixed ).'">'.htmlspecialchars( $pLinkText ).'</a>';
 		}
 		return $ret;
 	}
