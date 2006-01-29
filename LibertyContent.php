@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.23 2006/01/26 10:12:31 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.24 2006/01/29 13:16:31 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -692,7 +692,7 @@ class LibertyContent extends LibertyBase {
 			if( empty( $title ) && !empty( $pMixed['title'] ) ) {
 				$title = $pMixed['title'];
 			}
-			$ret = '<a title="'.htmlspecialchars( $title ).'" href="'.BIT_ROOT_URL.'index.php?content_id='.$pMixed['content_id'].'">'.htmlspecialchars( $title ).'</a>';
+			$ret = '<a title="'.htmlspecialchars( $title ).'" href="'.LibertyContent::getDisplayUrl( $pMixed['content_id'], $pMixed ).'">'.htmlspecialchars( $title ).'</a>';
 		}
 		return $ret;
 	}
@@ -703,8 +703,14 @@ class LibertyContent extends LibertyBase {
 	* @param array different possibilities depending on derived class
 	* @return string Formated URL address to display the page.
 	*/
-	function getDisplayUrl( $pLinkText, $pMixed ) {
-		print "UNDEFINED PURE VIRTUAL FUNCTION: LibertyContent::getDisplayUrl";
+	function getDisplayUrl( $pContentId = NULL, $pMixed = NULL ) {
+		if( @BitBase::verifyId( $pContentId ) ) {
+			return BIT_ROOT_URL.'index.php?content_id='.$pContentId;
+		} elseif( @BitBase::verifyId( $pMixed['content_id'] ) ) {
+			return BIT_ROOT_URL.'index.php?content_id='.$pMixed['content_id'];
+		} else {
+			return '#';
+		}
 	}
 
 	/**
@@ -869,6 +875,7 @@ class LibertyContent extends LibertyBase {
 
 		$bindVars = array();
 		$mid = NULL;
+		$select = '';
 		$gateSelect = '';
 		$gateFrom = '';
 
@@ -878,6 +885,11 @@ class LibertyContent extends LibertyBase {
 		} elseif( !empty($pListHash['find'] ) && is_string( $pListHash['find'] ) ) { // or a string
 			$mid = " AND UPPER(tc.`title`) like ? ";
 			$bindVars[] = ( '%' . strtoupper( $pListHash['find'] ) . '%' );
+		}
+
+		// this is necessary to display useful information in the liberty RSS feed
+		if( !empty( $pListHash['include_data'] ) ) {
+			$select = ", tc.`data`, tc.`format_guid`";
 		}
 
 		// calendar specific selection method - use timestamps to limit selection
@@ -937,10 +949,28 @@ class LibertyContent extends LibertyBase {
 		// If sort mode is versions then offset is 0, maxRecords is -1 (again) and sort_mode is nil
 		// If sort mode is links then offset is 0, maxRecords is -1 (again) and sort_mode is nil
 		// If sort mode is backlinks then offset is 0, maxRecords is -1 (again) and sort_mode is nil
-		$query = "SELECT uue.`login` AS `modifier_user`, uue.`real_name` AS `modifier_real_name`, uue.`user_id` AS `modifier_user_id`, uuc.`login` AS`creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`, `hits`, `last_hit`, `event_time`, tc.`title`, tc.`last_modified`, tc.`content_type_guid`, `ip`, tc.`created`, tc.`content_id` $gateSelect
-				FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom, `".BIT_DB_PREFIX."users_users` uue, `".BIT_DB_PREFIX."users_users` uuc
-				WHERE tc.`modifier_user_id`=uue.`user_id` AND tc.`user_id`=uuc.`user_id` $mid
-				ORDER BY ".$orderTable.$this->mDb->convert_sortmode($pListHash['sort_mode']);
+		$query = "
+			SELECT
+				uue.`login` AS `modifier_user`,
+				uue.`real_name` AS `modifier_real_name`,
+				uue.`user_id` AS `modifier_user_id`,
+				uuc.`login` AS`creator_user`,
+				uuc.`real_name` AS `creator_real_name`,
+				uuc.`user_id` AS `creator_user_id`,
+				tc.`hits`,
+				tc.`last_hit`,
+				tc.`event_time`,
+				tc.`title`,
+				tc.`last_modified`,
+				tc.`content_type_guid`,
+				tc.`ip`,
+				tc.`created`,
+				tc.`content_id`
+				$select
+				$gateSelect
+			FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom, `".BIT_DB_PREFIX."users_users` uue, `".BIT_DB_PREFIX."users_users` uuc
+			WHERE tc.`modifier_user_id`=uue.`user_id` AND tc.`user_id`=uuc.`user_id` $mid
+			ORDER BY ".$orderTable.$this->mDb->convert_sortmode($pListHash['sort_mode']);
 		$query_cant = "select count(tc.`content_id`) FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom, `".BIT_DB_PREFIX."users_users` uu WHERE uu.`user_id`=tc.`user_id` $mid";
 		// previous cant query - updated by xing
 		// $query_cant = "select count(*) from `".BIT_DB_PREFIX."tiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id` = tp.`content_id`) $mid";
