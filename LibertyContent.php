@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.30 2006/01/29 23:30:40 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.31 2006/01/29 23:49:38 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1170,7 +1170,7 @@ class LibertyContent extends LibertyBase {
 			$pFormatGuid = isset( $this->mInfo['format_guid'] ) ? $this->mInfo['format_guid'] : NULL;
 		}
 		if( empty( $pData ) && !empty( $this->mInfo['data'] ) ) {
-			$pData = NULL;
+			$pData = $this->mInfo['data'];
 		}
 		if( $pData && $pFormatGuid ) {
 			global $gLibertySystem;
