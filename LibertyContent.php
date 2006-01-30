@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.31 2006/01/29 23:49:38 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.32 2006/01/30 10:46:09 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -286,18 +286,18 @@ class LibertyContent extends LibertyBase {
 
 			$this->invokeServices( 'content_expunge_function', $this );
 
-			/* seems out of place - xing
-			if( $func = $gLibertySystem->getPluginFunction( $pParamHash['format_guid'], 'expunge_function' ) ) {
-				$ret = $func( $this->mContentId );
-			}
-			*/
-
 			// Remove individual permissions for this object if they exist
 			$query = "delete from `".BIT_DB_PREFIX."users_objectpermissions` where `object_id`=? and `object_type`=?";
 			$result = $this->mDb->query( $query, array( $this->mContentId, $this->mContentTypeGuid ) );
 
+			// Remove content preferences
+			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id` = ?";
+			$result = $this->mDb->query( $query, array( $this->mContentId ) );
+
+			// Remove content
 			$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_content` WHERE `content_id` = ?";
 			$result = $this->mDb->query( $query, array( $this->mContentId ) );
+
 			$this->mDb->CompleteTrans();
 			$ret = TRUE;
 		}
