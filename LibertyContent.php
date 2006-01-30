@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.32 2006/01/30 10:46:09 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.33 2006/01/30 11:38:06 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -607,18 +607,18 @@ class LibertyContent extends LibertyBase {
 	* @param string Hash key for the mPrefs value
 	* @param string Value for the mPrefs hash key
 	*/
-	function storePreference( $pPrefName, $pPrefValue ) {
+	function storePreference( $pPrefName, $pPrefValue = NULL ) {
 		$ret = FALSE;
 		if( $this->isValid() ) {
 			// validate any preferences
 			if( $pPrefName == 'homePage' && !preg_match( '/^http:\/\//', $pPrefValue ) ) {
 				$pPrefValue = 'http://'.$pPrefValue;
 			}
-			$query = "delete from `".BIT_DB_PREFIX."liberty_content_prefs` where `content_id`=? and `name`=?";
+			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=? AND `name`=?";
 			$bindvars=array( $this->mContentId, $pPrefName );
 			$result = $this->mDb->query($query, $bindvars);
 			if( !is_null( $pPrefValue ) ) {
-				$query = "insert into `".BIT_DB_PREFIX."liberty_content_prefs` (`content_id`,`name`,`value`) values(?, ?, ?)";
+				$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_prefs` (`content_id`,`name`,`value`) VALUES(?, ?, ?)";
 				$bindvars[]=$pPrefValue;
 				$result = $this->mDb->query($query, $bindvars);
 				$this->mPrefs[$pPrefName] = $pPrefValue;
