@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.34 2006/01/31 20:18:26 bitweaver Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.35 2006/01/31 21:53:48 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -287,7 +287,7 @@ class LibertyContent extends LibertyBase {
 			$this->invokeServices( 'content_expunge_function', $this );
 
 			// Remove individual permissions for this object if they exist
-			$query = "delete from `".BIT_DB_PREFIX."users_objectpermissions` where `object_id`=? and `object_type`=?";
+			$query = "delete from `".BIT_DB_PREFIX."users_object_permissions` where `object_id`=? and `object_type`=?";
 			$result = $this->mDb->query( $query, array( $this->mContentId, $this->mContentTypeGuid ) );
 
 			// Remove content preferences
@@ -403,7 +403,7 @@ class LibertyContent extends LibertyBase {
 		if( $this->isValid() && empty( $this->mPerms ) && $this->mContentTypeGuid ) {
 			//$object_id = md5($object_type . $object_id);
 			$query = "select uop.`perm_name`, ug.`group_id`, ug.`group_name`
-					FROM `".BIT_DB_PREFIX."users_objectpermissions` uop
+					FROM `".BIT_DB_PREFIX."users_object_permissions` uop
 						INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( uop.`group_id`=ug.`group_id` )
 					WHERE uop.`object_id` = ? AND uop.`object_type` = ?";
 			$bindVars = array( $this->mContentId, $this->mContentTypeGuid );
@@ -458,7 +458,7 @@ class LibertyContent extends LibertyBase {
 		$ret = array();
 		if( $pUserId ) {
 			$query = "SELECT uop.`perm_name`, ug.`group_id`, ug.`group_name`, ugm.`user_id`
-					FROM `".BIT_DB_PREFIX."users_objectpermissions` uop
+					FROM `".BIT_DB_PREFIX."users_object_permissions` uop
 						INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( uop.`group_id`=ug.`group_id` )
 						INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON( ugm.`group_id`=ug.`group_id` )
 					WHERE ugm.`user_id`=? AND uop.`object_id` = ? AND uop.`object_type` = ? ";
@@ -482,10 +482,10 @@ class LibertyContent extends LibertyBase {
 			$object_id = $this->mContentId;
 		}
 		//$object_id = md5($object_type . $object_id);
-		$query = "DELETE FROM `".BIT_DB_PREFIX."users_objectpermissions`
+		$query = "DELETE FROM `".BIT_DB_PREFIX."users_object_permissions`
 				WHERE `group_id` = ? AND `perm_name` = ? AND `object_id` = ?";
 		$result = $this->mDb->query($query, array($pGroupId, $perm_name, $object_id), -1, -1);
-		$query = "insert into `".BIT_DB_PREFIX."users_objectpermissions`
+		$query = "insert into `".BIT_DB_PREFIX."users_object_permissions`
 				(`group_id`,`object_id`, `object_type`, `perm_name`)
 				VALUES ( ?, ?, ?, ? )";
 		$result = $this->mDb->query($query, array($pGroupId, $object_id, $this->mContentTypeGuid, $perm_name));
@@ -506,7 +506,7 @@ class LibertyContent extends LibertyBase {
 		$groups = $this->get_user_groups( $pUserId );
 		foreach ( $groups as $group_name ) {
 			$query = "SELECT count(*)
-					FROM `".BIT_DB_PREFIX."users_objectpermissions`
+					FROM `".BIT_DB_PREFIX."users_object_permissions`
 					WHERE `group_name` = ? and `object_id` = ? and `object_type` = ? and `perm_name` = ?";
 			$bindVars = array($group_name, $object_id, $object_type, $perm_name);
 			$result = $this->mDb->getOne( $query, $bindVars );
@@ -526,7 +526,7 @@ class LibertyContent extends LibertyBase {
 	*/
 	function removePermission( $pGroupId, $perm_name ) {
 		//$object_id = md5($object_type . $object_id);
-		$query = "delete from `".BIT_DB_PREFIX."users_objectpermissions`
+		$query = "delete from `".BIT_DB_PREFIX."users_object_permissions`
 			where `group_id` = ? and `object_id` = ?
 			and `object_type` = ? and `perm_name` = ?";
 		$bindVars = array($pGroupId, $this->mContentId, $this->mContentTypeGuid, $perm_name);
@@ -543,7 +543,7 @@ class LibertyContent extends LibertyBase {
 	function copyPermissions( $destinationObjectId ) {
 		//$object_id = md5($object_type.$object_id);
 		$query = "select `perm_name`, `group_name`
-			from `".BIT_DB_PREFIX."users_objectpermissions`
+			from `".BIT_DB_PREFIX."users_object_permissions`
 			where `object_id` =? and `object_type` = ?";
 		$bindVars = array( $this->mContentId, $this->mContentTypeGuid );
 		$result = $this->mDb->query($query, $bindVars);
