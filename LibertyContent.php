@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.33 2006/01/30 11:38:06 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.34 2006/01/31 20:18:26 bitweaver Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -664,7 +664,7 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	* Determines if a wiki page (row in tiki_pages) exists, and returns a hash of important info. If N pages exists with $pPageName, returned existsHash has a row for each unique pPageName row.
+	* Determines if a wiki page (row in wiki_pages) exists, and returns a hash of important info. If N pages exists with $pPageName, returned existsHash has a row for each unique pPageName row.
 	* @param pPageName name of the wiki page
 	* @param pCaseSensitive look for case sensitive names
 	*/
@@ -675,7 +675,7 @@ class LibertyContent extends LibertyBase {
 			$pageWhere = $pCaseSensitive ? 'tc.`title`' : 'LOWER( tc.`title` )';
 			$bindVars = array( ($pCaseSensitive ? $pPageName : strtolower( $pPageName ) ) );
 			$query = "SELECT `page_id`, tp.`content_id`, `description`, tc.`last_modified`, tc.`title`
-					FROM `".BIT_DB_PREFIX."tiki_pages` tp, `".BIT_DB_PREFIX."tiki_content` tc
+					FROM `".BIT_DB_PREFIX."wiki_pages` tp, `".BIT_DB_PREFIX."tiki_content` tc
 					WHERE tc.`content_id`=tp.`content_id` AND $pageWhere = ?";
 			$ret = $this->mDb->getAll($query, $bindVars );
 			if( empty( $ret ) ) {
@@ -1002,8 +1002,8 @@ class LibertyContent extends LibertyBase {
 
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
 			$gateSelect .= ' ,ts.`security_id`, ts.`security_description`, ts.`is_private`, ts.`is_hidden`, ts.`access_question`, ts.`access_answer` ';
-			$gateFrom .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_content_security_map` tcs ON (tc.`content_id`=tcs.`content_id`) LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_security` ts ON (ts.`security_id`=tcs.`security_id` )";
-			$mid .= ' AND (tcs.`security_id` IS NULL OR tc.`user_id`=?) ';
+			$gateFrom .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."gatekeeper_security_map` cg ON (tc.`content_id`=cg.`content_id`) LEFT OUTER JOIN `".BIT_DB_PREFIX."gatekeeper_security` ts ON (ts.`security_id`=cg.`security_id` )";
+			$mid .= ' AND (cg.`security_id` IS NULL OR tc.`user_id`=?) ';
 			$bindVars[] = $gBitUser->mUserId;
 			if( $gBitSystem->isPackageActive( 'fisheye' ) ) {
 				// This is really ugly to have in here, and really would be better off somewhere else.
@@ -1011,9 +1011,9 @@ class LibertyContent extends LibertyBase {
 				// this is the only place it can go to properly enforce gatekeeper protections. Hopefully a new content generic
 				// solution will be available in ReleaseTwo - spiderr
 				if( $this->mDb->isAdvancedPostgresEnabled() ) {
-// 					$gateFrom .= " LEFT OUTER JOIN  `".BIT_DB_PREFIX."tiki_fisheye_gallery_image_map` tfgim ON (tfgim.`item_content_id`=tc.`content_id`)";
-					$mid .= " AND (SELECT ts.`security_id` FROM connectby('tiki_fisheye_gallery_image_map', 'gallery_content_id', 'item_content_id', tc.`content_id`, 0, '/')  AS t(`cb_gallery_content_id` int, `cb_item_content_id` int, level int, branch text), `".BIT_DB_PREFIX."tiki_content_security_map` tcsm,  `".BIT_DB_PREFIX."tiki_security` ts
-							WHERE ts.`security_id`=tcsm.`security_id` AND tcsm.`content_id`=`cb_gallery_content_id` LIMIT 1) IS NULL";
+// 					$gateFrom .= " LEFT OUTER JOIN  `".BIT_DB_PREFIX."fisheye_gallery_image_map` fgim ON (fgim.`item_content_id`=tc.`content_id`)";
+					$mid .= " AND (SELECT ts.`security_id` FROM connectby('fisheye_gallery_image_map', 'gallery_content_id', 'item_content_id', tc.`content_id`, 0, '/')  AS t(`cb_gallery_content_id` int, `cb_item_content_id` int, level int, branch text), `".BIT_DB_PREFIX."gatekeeper_security_map` cgm,  `".BIT_DB_PREFIX."gatekeeper_security` ts
+							WHERE ts.`security_id`=cgm.`security_id` AND cgm.`content_id`=`cb_gallery_content_id` LIMIT 1) IS NULL";
 				}
 			}
 		}
@@ -1061,7 +1061,7 @@ class LibertyContent extends LibertyBase {
 			ORDER BY ".$orderTable.$this->mDb->convert_sortmode($pListHash['sort_mode']);
 		$query_cant = "select count(tc.`content_id`) FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom, `".BIT_DB_PREFIX."users_users` uu WHERE uu.`user_id`=tc.`user_id` $mid";
 		// previous cant query - updated by xing
-		// $query_cant = "select count(*) from `".BIT_DB_PREFIX."tiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id` = tp.`content_id`) $mid";
+		// $query_cant = "select count(*) from `".BIT_DB_PREFIX."wiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id` = tp.`content_id`) $mid";
 		$result = $this->mDb->query($query,$bindVars,$pListHash['max_records'],$pListHash['offset']);
 		$cant = $this->mDb->getOne($query_cant,$bindVars);
 		$ret = array();

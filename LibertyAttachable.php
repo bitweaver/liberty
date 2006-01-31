@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.13 2006/01/25 15:40:25 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.14 2006/01/31 20:18:26 bitweaver Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -366,8 +366,8 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 		if( @$this->verifyId( $conId ) ) {
 			LibertyContent::load($pContentId);
-			$query = "SELECT * FROM `".BIT_DB_PREFIX."tiki_attachments` ta
-					  WHERE ta.`content_id`=?";
+			$query = "SELECT * FROM `".BIT_DB_PREFIX."tiki_attachments` a
+					  WHERE a.`content_id`=?";
 			if( $result = $this->mDb->query($query,array((int) $conId)) ) {
 				$this->mStorage = array();
 				while( $row = $result->fetchRow() ) {
@@ -389,8 +389,8 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		$ret = NULL;
 
 		if( @$this->verifyId( $pAttachmentId ) ) {
-			$query = "SELECT * FROM `".BIT_DB_PREFIX."tiki_attachments` ta
-					  WHERE ta.`attachment_id`=?";
+			$query = "SELECT * FROM `".BIT_DB_PREFIX."tiki_attachments` a
+					  WHERE a.`attachment_id`=?";
 			if( $result = $this->mDb->query($query,array((int) $pAttachmentId)) ) {
 				$ret = array();
 				if( $row = $result->fetchRow() ) {

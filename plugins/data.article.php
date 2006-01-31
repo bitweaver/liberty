@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_article.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.article.php,v 1.5 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.article.php,v 1.6 2006/01/31 20:18:26 bitweaver Exp $
 
 /**
  * definitions
@@ -59,7 +59,7 @@ function data_article_help() {
 			.'<tr class="even">'
 				.'<td>field</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "This can be any field found in the") . ' tiki_articles ' . tra("table.") . '<br />'
+				.'<td>' . tra( "This can be any field found in the") . ' articles ' . tra("table.") . '<br />'
 				. tra("This includes (in order of usefulnes):") . '<strong>title, heading, body, author, size, reads, votes, points, type and rating</strong>' . '</td>'
 			.'</tr>'
 		.'</table>'

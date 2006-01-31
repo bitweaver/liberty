@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.18 $
+ * @version  $Revision: 1.19 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -156,7 +156,7 @@ class TikiWikiParser extends BitBase {
 				foreach( $linkPages as $page ) {
 					if( !empty( $page ) ) {
 // SPIDERFKILL - this query is guaranteed to die - i forget where it came from and why it's here. will debug soon enough...
-						$query = "SELECT tp.`content_id` FROM `".BIT_DB_PREFIX."tiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id` = tp.`content_id`) WHERE tc.`title`=?";
+						$query = "SELECT tp.`content_id` FROM `".BIT_DB_PREFIX."wiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id` = tp.`content_id`) WHERE tc.`title`=?";
 						$result = $this->mDb->query( $query, array( $page ) );
 						if( $result->numRows() ) {
 							$res = $result->fetchRow();
@@ -190,7 +190,7 @@ class TikiWikiParser extends BitBase {
 				$query = "SELECT LOWER( tc.`title` ) AS `hash_key`, `page_id`, tc.`content_id`, `description`, tc.`last_modified`, tc.`title`
 						  FROM `".BIT_DB_PREFIX."tiki_links` tl
 						  	INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON( tl.`to_content_id`=tc.`content_id` )
-						  	INNER JOIN `".BIT_DB_PREFIX."tiki_pages` tp ON( tp.`content_id`=tc.`content_id` )
+						  	INNER JOIN `".BIT_DB_PREFIX."wiki_pages` tp ON( tp.`content_id`=tc.`content_id` )
 						  WHERE tl.`from_content_id`=? ORDER BY tc.`title`";
 				if( $result = $this->mDb->query( $query, array( $pContentId ) ) ) {
 					$lastTitle = '';
@@ -221,7 +221,7 @@ class TikiWikiParser extends BitBase {
 			$query = "SELECT `page_id`, tc.`content_id`, `description`, tc.`last_modified`, tc.`title`
 				FROM `".BIT_DB_PREFIX."tiki_links` tl
 				INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON( tl.`to_content_id`=tc.`content_id` )
-				INNER JOIN `".BIT_DB_PREFIX."tiki_pages` tp ON( tp.`content_id`=tc.`content_id` )
+				INNER JOIN `".BIT_DB_PREFIX."wiki_pages` tp ON( tp.`content_id`=tc.`content_id` )
 				WHERE tl.`from_content_id`=? ORDER BY tc.`title`";
 			if( $result = $this->mDb->query( $query, array( $pContentId ) ) ) {
 				$lastTitle = '';
@@ -827,8 +827,8 @@ class TikiWikiParser extends BitBase {
 				if (count($wexs) == 2) {
 					$wkname = $wexs[0];
 
-					if ($this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."tiki_extwiki` where `name`=?",array($wkname)) == 1) {
-						$wkurl = $this->mDb->getOne("select `extwiki`  from `".BIT_DB_PREFIX."tiki_extwiki` where `name`=?",array($wkname));
+					if ($this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."wiki_ext` where `name`=?",array($wkname)) == 1) {
+						$wkurl = $this->mDb->getOne("select `extwiki`  from `".BIT_DB_PREFIX."wiki_ext` where `name`=?",array($wkname));
 						$wkurl = '<a href="' . str_replace('$page', urlencode($wexs[1]), $wkurl). '">' . $wexs[1] . '</a>';
 						$data = preg_replace($pattern, "$wkurl", $data);
 						$repl2 = false;
@@ -876,8 +876,8 @@ class TikiWikiParser extends BitBase {
 				if (count($wexs) == 2) {
 					$wkname = $wexs[0];
 
-					if ($this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."tiki_extwiki` where `name`=?",array($wkname)) == 1) {
-						$wkurl = $this->mDb->getOne("select `extwiki`  from `".BIT_DB_PREFIX."tiki_extwiki` where `name`=?",array($wkname));
+					if ($this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."wiki_ext` where `name`=?",array($wkname)) == 1) {
+						$wkurl = $this->mDb->getOne("select `extwiki`  from `".BIT_DB_PREFIX."wiki_ext` where `name`=?",array($wkname));
 
 						$wkurl = '<a href="' . str_replace('$page', urlencode($wexs[1]), $wkurl). '">' . $wexs[1] . '</a>';
 						$data = preg_replace("/\(\($page_parse\)\)/", "$wkurl", $data);

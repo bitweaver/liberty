@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.17 2006/01/25 15:40:25 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.18 2006/01/31 20:18:26 bitweaver Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -667,7 +667,7 @@ class LibertyStructure extends LibertyBase {
 	function remove_from_structure($structure_id) {
 		// Now recursively remove
 		$query  = "select `structure_id` ";
-		$query .= "from `".BIT_DB_PREFIX."tiki_structures` as ts, `".BIT_DB_PREFIX."tiki_pages` as tp ";
+		$query .= "from `".BIT_DB_PREFIX."tiki_structures` as ts, `".BIT_DB_PREFIX."wiki_pages` as tp ";
 		$query .= "where tp.`content_id`=ts.`content_id` and `parent_id`=?";
 		$result = $this->mDb->query($query, array( $structure_id ) );
 
@@ -812,7 +812,7 @@ class LibertyStructure extends LibertyBase {
 	//Is this page the head page for a structure?
 	function get_struct_ref_if_head($title) {
 	$query =  "SELECT `structure_id`
-			   FROM `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_pages` tp,`".BIT_DB_PREFIX."tiki_content` tc
+			   FROM `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."wiki_pages` tp,`".BIT_DB_PREFIX."tiki_content` tc
 			   WHERE tp.`content_id`=ts.`content_id` AND tc.`content_id` = tp.`content_id` AND (`parent_id` is null or `parent_id`=0) and tc.`title`=?";
 		$structure_id = $this->mDb->getOne($query,array($title));
 		return $structure_id;
@@ -1016,7 +1016,7 @@ class LibertyStructure extends LibertyBase {
 	foreach($pages as $page)
 	{
 		$query = "SELECT *
-				  FROM `".BIT_DB_PREFIX."tiki_pages` tp, `".BIT_DB_PREFIX."tiki_content` tc
+				  FROM `".BIT_DB_PREFIX."wiki_pages` tp, `".BIT_DB_PREFIX."tiki_content` tc
 				  WHERE tc.`content_id` = tp.`content_id` AND tc.`title`=?";
 		$result = $this->mDb->query($query,array($page));
 		$res = $result->fetchRow();
@@ -1068,14 +1068,14 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	function structure_to_tree($structure_id) {
-		$query = "select * from `".BIT_DB_PREFIX."tiki_structures` ts,`".BIT_DB_PREFIX."tiki_pages` tp where tp.`content_id`=ts.`content_id` and `structure_id`=?";
+		$query = "select * from `".BIT_DB_PREFIX."tiki_structures` ts,`".BIT_DB_PREFIX."wiki_pages` tp where tp.`content_id`=ts.`content_id` and `structure_id`=?";
 		$result = $this->mDb->query($query,array((int)$structure_id));
 		$res = $result->fetchRow();
 		if(empty($res['description'])) $res['description']=$res['title'];
 		$name = $res['description'].'|'.$res['title'];
 		$code = '';
 		$code.= "'$name'=>";
-		$query = "select * from `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."tiki_pages` tp  where tp.`content_id`=ts.`content_id` and `parent_id`=?";
+		$query = "select * from `".BIT_DB_PREFIX."tiki_structures` ts, `".BIT_DB_PREFIX."wiki_pages` tp  where tp.`content_id`=ts.`content_id` and `parent_id`=?";
 		$result = $this->mDb->query($query,array((int)$structure_id));
 		if($result->numRows()) {
 			$code.="Array(";

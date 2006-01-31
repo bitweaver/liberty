@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -65,8 +65,8 @@ function bit_files_load( $pRow ) {
 	$ret = NULL;
 	if( !empty( $pRow['foreign_id'] ) && is_numeric( $pRow['foreign_id'] )) {
 		$query = "SELECT *
-				  FROM `".BIT_DB_PREFIX."tiki_attachments` ta INNER JOIN `".BIT_DB_PREFIX."tiki_files` tf ON (tf.`file_id` = ta.`foreign_id`)
-				  WHERE ta.`foreign_id` = ? AND ta.`content_id` = ?";
+				  FROM `".BIT_DB_PREFIX."tiki_attachments` a INNER JOIN `".BIT_DB_PREFIX."tiki_files` tf ON (tf.`file_id` = a.`foreign_id`)
+				  WHERE a.`foreign_id` = ? AND a.`content_id` = ?";
 		if( $ret = $gBitSystem->mDb->getRow($query, array( $pRow['foreign_id'], $pRow['content_id'] )) ) {
 			$canThumbFunc = liberty_get_function( 'can_thumbnail' );
 			if ( file_exists( BIT_ROOT_PATH.dirname( $ret['storage_path'] ).'/medium.jpg' ) ) {
