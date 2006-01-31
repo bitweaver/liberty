@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.19 $
+ * @version  $Revision: 1.20 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -57,7 +57,7 @@ function tikiwiki_expunge( $pContentId ) {
 
 function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
 	$query = "SELECT `from_content_id`, `data`
-			  FROM `".BIT_DB_PREFIX."tiki_links` tl
+			  FROM `".BIT_DB_PREFIX."liberty_content_links` tl
 				INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON( tl.`from_content_id`=tc.`content_id` )
 			  WHERE `to_content_id` = ?";
 	if( $result = $pCommonObject->mDb->query($query, array( $pContentId ) ) ) {
@@ -148,7 +148,7 @@ class TikiWikiParser extends BitBase {
 			return;
 		$links_already_inserted_table = array();
 		if( !empty( $pParamHash['content_id'] ) ) {
-			$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_links` WHERE `from_content_id`=?";
+			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=?";
 			$result = $this->mDb->query( $query, array( $pParamHash['content_id'] ) );
 
 			$linkPages = $this->extractWikiWords( $pParamHash['edit'] );
@@ -162,7 +162,7 @@ class TikiWikiParser extends BitBase {
 							$res = $result->fetchRow();
 							$key = $pParamHash['content_id'] . "-" . $res['content_id'];
 							if (empty($links_already_inserted_table[$key])) {
-								$query = "insert into `".BIT_DB_PREFIX."tiki_links`(`from_content_id`,`to_content_id`) values(?, ?)";
+								$query = "insert into `".BIT_DB_PREFIX."liberty_content_links`(`from_content_id`,`to_content_id`) values(?, ?)";
 								$result = $this->mDb->query($query, array( $pParamHash['content_id'], $res['content_id'] ) );
 							}
 							$links_already_inserted_table[$key] = 1;
@@ -176,19 +176,19 @@ class TikiWikiParser extends BitBase {
 	function expungeLinks( $pContentId ) {
 		if( !empty( $pContentId ) ) {
 			$this->mDb->StartTrans();
-			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."tiki_links` WHERE from_content_id=? OR to_content_id=?", array( $pContentId, $pContentId ) );
+			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE from_content_id=? OR to_content_id=?", array( $pContentId, $pContentId ) );
 			$this->mDb->CompleteTrans();
 		}
 	}
 
 	/* old database intensive pageExists check
-	// Use tiki_links to get all the existing links in a single query
+	// Use liberty_content_links to get all the existing links in a single query
 	function pageExists( $pTitle, $pContentId, $pCommonObject ) {
 		$pTitle = strtolower( $pTitle );
 		if( !empty( $pContentId ) ) {
 			if( empty( $this->mPageLookup ) ) {
 				$query = "SELECT LOWER( tc.`title` ) AS `hash_key`, `page_id`, tc.`content_id`, `description`, tc.`last_modified`, tc.`title`
-						  FROM `".BIT_DB_PREFIX."tiki_links` tl
+						  FROM `".BIT_DB_PREFIX."liberty_content_links` tl
 						  	INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON( tl.`to_content_id`=tc.`content_id` )
 						  	INNER JOIN `".BIT_DB_PREFIX."wiki_pages` tp ON( tp.`content_id`=tc.`content_id` )
 						  WHERE tl.`from_content_id`=? ORDER BY tc.`title`";
@@ -196,7 +196,7 @@ class TikiWikiParser extends BitBase {
 					$lastTitle = '';
 					while( $row = $result->fetchRow() ) {
 						if( $row['title'] == $lastTitle ) {
-// TODO - need to check ensure that tiki_links duplicate are properly inserted - spiderr
+// TODO - need to check ensure that liberty_content_links duplicate are properly inserted - spiderr
 						}
 						$this->mPageLookup[$row['hash_key']][] = $row;
 						$lastTitle = $row['title'];
@@ -207,7 +207,7 @@ class TikiWikiParser extends BitBase {
 		if( !isset( $this->mPageLookup[$pTitle] ) ) {
 			$this->mPageLookup[$pTitle] = $pCommonObject->pageExists( $pTitle );
 			if( !empty( $this->mPageLookup[$pTitle] ) && ( count( $this->mPageLookup[$pTitle] ) == 1 ) ) {
-//				$this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."tiki_links` ( `from_content_id`, `to_content_id` ) VALUES ( ?, ? )" , array( $pContentId, $this->mPageLookup[$pTitle][0]['content_id'] ) );
+//				$this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."liberty_content_links` ( `from_content_id`, `to_content_id` ) VALUES ( ?, ? )" , array( $pContentId, $this->mPageLookup[$pTitle][0]['content_id'] ) );
 			}
 		}
 		return( !empty( $this->mPageLookup[$pTitle] ) ? $this->mPageLookup[$pTitle] : NULL );
@@ -219,7 +219,7 @@ class TikiWikiParser extends BitBase {
 		$ret = array();
 		if( $gBitSystem->isFeatureActive( 'wiki' ) && @BitBase::verifyId( $pContentId ) ) {
 			$query = "SELECT `page_id`, tc.`content_id`, `description`, tc.`last_modified`, tc.`title`
-				FROM `".BIT_DB_PREFIX."tiki_links` tl
+				FROM `".BIT_DB_PREFIX."liberty_content_links` tl
 				INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON( tl.`to_content_id`=tc.`content_id` )
 				INNER JOIN `".BIT_DB_PREFIX."wiki_pages` tp ON( tp.`content_id`=tc.`content_id` )
 				WHERE tl.`from_content_id`=? ORDER BY tc.`title`";
