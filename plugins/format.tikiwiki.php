@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.22 $
+ * @version  $Revision: 1.23 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -57,8 +57,8 @@ function tikiwiki_expunge( $pContentId ) {
 
 function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
 	$query = "SELECT `from_content_id`, `data`
-			  FROM `".BIT_DB_PREFIX."liberty_content_links` tl
-				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( tl.`from_content_id`=lc.`content_id` )
+			  FROM `".BIT_DB_PREFIX."liberty_content_links` lcl
+				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcl.`from_content_id`=lc.`content_id` )
 			  WHERE `to_content_id` = ?";
 	if( $result = $pCommonObject->mDb->query($query, array( $pContentId ) ) ) {
 		while( $row = $result->fetchRow() ) {
@@ -188,10 +188,10 @@ class TikiWikiParser extends BitBase {
 		if( !empty( $pContentId ) ) {
 			if( empty( $this->mPageLookup ) ) {
 				$query = "SELECT LOWER( lc.`title` ) AS `hash_key`, `page_id`, lc.`content_id`, `description`, lc.`last_modified`, lc.`title`
-						  FROM `".BIT_DB_PREFIX."liberty_content_links` tl
-						  	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( tl.`to_content_id`=lc.`content_id` )
+						  FROM `".BIT_DB_PREFIX."liberty_content_links` lcl
+						  	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcl.`to_content_id`=lc.`content_id` )
 						  	INNER JOIN `".BIT_DB_PREFIX."wiki_pages` tp ON( tp.`content_id`=lc.`content_id` )
-						  WHERE tl.`from_content_id`=? ORDER BY lc.`title`";
+						  WHERE lcl.`from_content_id`=? ORDER BY lc.`title`";
 				if( $result = $this->mDb->query( $query, array( $pContentId ) ) ) {
 					$lastTitle = '';
 					while( $row = $result->fetchRow() ) {
@@ -219,10 +219,10 @@ class TikiWikiParser extends BitBase {
 		$ret = array();
 		if( $gBitSystem->isFeatureActive( 'wiki' ) && @BitBase::verifyId( $pContentId ) ) {
 			$query = "SELECT `page_id`, lc.`content_id`, `description`, lc.`last_modified`, lc.`title`
-				FROM `".BIT_DB_PREFIX."liberty_content_links` tl
-				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( tl.`to_content_id`=lc.`content_id` )
+				FROM `".BIT_DB_PREFIX."liberty_content_links` lcl
+				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcl.`to_content_id`=lc.`content_id` )
 				INNER JOIN `".BIT_DB_PREFIX."wiki_pages` tp ON( tp.`content_id`=lc.`content_id` )
-				WHERE tl.`from_content_id`=? ORDER BY lc.`title`";
+				WHERE lcl.`from_content_id`=? ORDER BY lc.`title`";
 			if( $result = $this->mDb->query( $query, array( $pContentId ) ) ) {
 				$lastTitle = '';
 				while( $row = $result->fetchRow() ) {
