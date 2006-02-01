@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.20 $
+ * @version  $Revision: 1.21 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -58,13 +58,13 @@ function tikiwiki_expunge( $pContentId ) {
 function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
 	$query = "SELECT `from_content_id`, `data`
 			  FROM `".BIT_DB_PREFIX."liberty_content_links` tl
-				INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON( tl.`from_content_id`=tc.`content_id` )
+				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( tl.`from_content_id`=lc.`content_id` )
 			  WHERE `to_content_id` = ?";
 	if( $result = $pCommonObject->mDb->query($query, array( $pContentId ) ) ) {
 		while( $row = $result->fetchRow() ) {
 			$data = preg_replace( '/(\W|\(\()('.$pOldName.')(\W|\)\))/', '\\1'.$pNewName.'\\3', $row['data'] );
 			if( md5( $data ) != md5( $row['data'] ) ) {
-				$query = "UPDATE `".BIT_DB_PREFIX."tiki_content` SET `data`=? WHERE `content_id`=?";
+				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content` SET `data`=? WHERE `content_id`=?";
 				$pCommonObject->mDb->query($query, array( $data, $row['from_content_id'] ) );
 			}
 		}
@@ -156,7 +156,7 @@ class TikiWikiParser extends BitBase {
 				foreach( $linkPages as $page ) {
 					if( !empty( $page ) ) {
 // SPIDERFKILL - this query is guaranteed to die - i forget where it came from and why it's here. will debug soon enough...
-						$query = "SELECT tp.`content_id` FROM `".BIT_DB_PREFIX."wiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id` = tp.`content_id`) WHERE tc.`title`=?";
+						$query = "SELECT tp.`content_id` FROM `".BIT_DB_PREFIX."wiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id` = tp.`content_id`) WHERE lc.`title`=?";
 						$result = $this->mDb->query( $query, array( $page ) );
 						if( $result->numRows() ) {
 							$res = $result->fetchRow();
@@ -187,11 +187,11 @@ class TikiWikiParser extends BitBase {
 		$pTitle = strtolower( $pTitle );
 		if( !empty( $pContentId ) ) {
 			if( empty( $this->mPageLookup ) ) {
-				$query = "SELECT LOWER( tc.`title` ) AS `hash_key`, `page_id`, tc.`content_id`, `description`, tc.`last_modified`, tc.`title`
+				$query = "SELECT LOWER( lc.`title` ) AS `hash_key`, `page_id`, lc.`content_id`, `description`, lc.`last_modified`, lc.`title`
 						  FROM `".BIT_DB_PREFIX."liberty_content_links` tl
-						  	INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON( tl.`to_content_id`=tc.`content_id` )
-						  	INNER JOIN `".BIT_DB_PREFIX."wiki_pages` tp ON( tp.`content_id`=tc.`content_id` )
-						  WHERE tl.`from_content_id`=? ORDER BY tc.`title`";
+						  	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( tl.`to_content_id`=lc.`content_id` )
+						  	INNER JOIN `".BIT_DB_PREFIX."wiki_pages` tp ON( tp.`content_id`=lc.`content_id` )
+						  WHERE tl.`from_content_id`=? ORDER BY lc.`title`";
 				if( $result = $this->mDb->query( $query, array( $pContentId ) ) ) {
 					$lastTitle = '';
 					while( $row = $result->fetchRow() ) {
@@ -218,11 +218,11 @@ class TikiWikiParser extends BitBase {
 		global $gBitSystem;
 		$ret = array();
 		if( $gBitSystem->isFeatureActive( 'wiki' ) && @BitBase::verifyId( $pContentId ) ) {
-			$query = "SELECT `page_id`, tc.`content_id`, `description`, tc.`last_modified`, tc.`title`
+			$query = "SELECT `page_id`, lc.`content_id`, `description`, lc.`last_modified`, lc.`title`
 				FROM `".BIT_DB_PREFIX."liberty_content_links` tl
-				INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON( tl.`to_content_id`=tc.`content_id` )
-				INNER JOIN `".BIT_DB_PREFIX."wiki_pages` tp ON( tp.`content_id`=tc.`content_id` )
-				WHERE tl.`from_content_id`=? ORDER BY tc.`title`";
+				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( tl.`to_content_id`=lc.`content_id` )
+				INNER JOIN `".BIT_DB_PREFIX."wiki_pages` tp ON( tp.`content_id`=lc.`content_id` )
+				WHERE tl.`from_content_id`=? ORDER BY lc.`title`";
 			if( $result = $this->mDb->query( $query, array( $pContentId ) ) ) {
 				$lastTitle = '';
 				while( $row = $result->fetchRow() ) {

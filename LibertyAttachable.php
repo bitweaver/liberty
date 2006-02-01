@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.14 2006/01/31 20:18:26 bitweaver Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.15 2006/02/01 18:42:12 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -221,12 +221,12 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 				if( function_exists( $gLibertySystem->mPlugins[$guid]['verify_function'] )
 					&& $gLibertySystem->mPlugins[$guid]['verify_function']( $storeRow ) ) {
 					if( empty( $pParamHash['attachment_id'] ) ) {
-						$sql = "SELECT `attachment_id` FROM `".BIT_DB_PREFIX."tiki_attachments`
+						$sql = "SELECT `attachment_id` FROM `".BIT_DB_PREFIX."liberty_attachments`
 								WHERE `attachment_plugin_guid` = ? AND `content_id` = ? AND `foreign_id`=?";
 						$rs = $this->mDb->query( $sql, array( $storeRow['plugin_guid'], (int)$storeRow['content_id'], (int)$storeRow['foreign_id'] ) );
 						if( empty( $rs ) || !$rs->NumRows() ) {
 							$pParamHash['attachment_id'] = $this->mDb->GenID( 'tiki_attachments_id_seq' );
-							$sql = "INSERT INTO `".BIT_DB_PREFIX."tiki_attachments` ( `attachment_id`, `attachment_plugin_guid`, `content_id`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
+							$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `attachment_id`, `attachment_plugin_guid`, `content_id`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
 							$rs = $this->mDb->query( $sql, array( $pParamHash['attachment_id'], $storeRow['plugin_guid'], $pParamHash['content_id'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
 						} else {
 							$this->mErrors['storage'] = $guid.' '.$storeRow['foreign_id'].' has already been added to this content.';
@@ -243,7 +243,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 						}
 						$storeRow['upload']['dest_path'] = $this->getStorageBranch( $storeRow['attachment_id'], $pParamHash['user_id'], 'images' );
 						$storagePath = liberty_process_upload( $storeRow );
-						// We're gonna store to local file system & tiki_files table
+						// We're gonna store to local file system & liberty_files table
 						if( empty( $storagePath ) ) {
 							$this->mErrors['file'] = 'Could not store file '.$storeRow['upload']['name'].'.';
 							$pParamHash['attachment_id'] = NULL;
@@ -282,13 +282,13 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		global $gLibertySystem;
 		global $gBitUser;
 
-		$sql = "SELECT * FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id` = ?";
+		$sql = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id` = ?";
 		$rs = $this->mDb->query($sql, array( $pAttachmentId ));
 		$tmpAttachment = $rs->fetchRow();
 
 		if ( @$this->verifyId($tmpAttachment['attachment_id']) ) {
 			$newAttachmentId = $this->mDb->GenID( 'tiki_attachments_id_seq' );
-			$sql = "INSERT INTO `".BIT_DB_PREFIX."tiki_attachments` ( `attachment_id`, `attachment_plugin_guid`, `content_id`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
+			$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `attachment_id`, `attachment_plugin_guid`, `content_id`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
 			$rs = $this->mDb->query( $sql, array( $newAttachmentId, $tmpAttachment['attachment_plugin_guid'], $pNewContentId, $tmpAttachment['foreign_id'], $gBitUser->mUserId ) );
 		}
 	}
@@ -309,7 +309,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		$ret = NULL;
 
 		if( @$this->verifyId( $pAttachmentId ) ) {
-			$sql = "SELECT `attachment_plugin_guid`, `user_id` FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id`=?";
+			$sql = "SELECT `attachment_plugin_guid`, `user_id` FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id`=?";
 			$row = $this->mDb->getRow( $sql, array( $pAttachmentId ) );
 			$guid = $row['attachment_plugin_guid'];
 			$user_id = $row['user_id'];
@@ -324,7 +324,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 						if( preg_match ( '/image\//', $this->mStorage[$pAttachmentId]['mime_type'] ) && preg_match( "/images\/$pAttachmentId/", $delDir ) ) {
 							unlink_r( BIT_ROOT_PATH.dirname( $this->mStorage[$pAttachmentId]['storage_path'] ) );
 						}
-						$sql = "DELETE FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id`=?";
+						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id`=?";
 						$this->mDb->query( $sql, array( $pAttachmentId ) );
 
 						unset($this->mStorage[$pAttachmentId]);
@@ -346,7 +346,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 				$attachmentOwner = new BitUser($attachmentInfo['user_id']);
 				$attachmentOwner->load();
 				if ($attachmentOwner->mContentId) {
-					$query = "UPDATE `".BIT_DB_PREFIX."tiki_attachments` SET `content_id` = ? WHERE `attachment_id` = ?";
+					$query = "UPDATE `".BIT_DB_PREFIX."liberty_attachments` SET `content_id` = ? WHERE `attachment_id` = ?";
 					$result = $this->mDb->query($query, array($attachmentOwner->mContentId, $pAttachmentId));
 				} else {
 					$this->mErrors[] = "Unable to detach this attachment because the owner does not have a content row";
@@ -360,13 +360,13 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 	// allow an optional content_id to be passed in to ease legacy lib style objects (like blogs, articles, etc.)
 	function load( $pContentId=NULL ) {
-		// assume a derived class has joined on the tiki_content table, and loaded it's columns already.
+		// assume a derived class has joined on the liberty_content table, and loaded it's columns already.
 		global $gLibertySystem;
 		$conId = ( @$this->verifyId( $pContentId ) ? $pContentId : $this->mContentId );
 
 		if( @$this->verifyId( $conId ) ) {
 			LibertyContent::load($pContentId);
-			$query = "SELECT * FROM `".BIT_DB_PREFIX."tiki_attachments` a
+			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` a
 					  WHERE a.`content_id`=?";
 			if( $result = $this->mDb->query($query,array((int) $conId)) ) {
 				$this->mStorage = array();
@@ -384,12 +384,12 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 	// allow an optional content_id to be passed in to ease legacy lib style objects (like blogs, articles, etc.)
 	function getAttachment( $pAttachmentId ) {
-		// assume a derived class has joined on the tiki_content table, and loaded it's columns already.
+		// assume a derived class has joined on the liberty_content table, and loaded it's columns already.
 		global $gLibertySystem;
 		$ret = NULL;
 
 		if( @$this->verifyId( $pAttachmentId ) ) {
-			$query = "SELECT * FROM `".BIT_DB_PREFIX."tiki_attachments` a
+			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` a
 					  WHERE a.`attachment_id`=?";
 			if( $result = $this->mDb->query($query,array((int) $pAttachmentId)) ) {
 				$ret = array();
@@ -410,7 +410,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		$attachmentInfo = $this->getAttachment( $pAttachmentId );
 
 		if( @$this->verifyId( $attachmentInfo['attachment_id'] ) && @$this->verifyId( $attachmentInfo['foreign_id'] ) && @$this->verifyId( $attachmentInfo['attachment_plugin_guid'] ) ) {
-			$query = "SELECT  * FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `foreign_id` = ? AND `attachment_plugin_guid` = ? AND `attachment_id` <> ?";
+			$query = "SELECT  * FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `foreign_id` = ? AND `attachment_plugin_guid` = ? AND `attachment_id` <> ?";
 			$result = $this->mDb->query( $query, array ($attachmentInfo['foreign_id'], $attachmentInfo['attachment_plugin_guid'], $attachment['attachment_id'] ) );
 			$ret = $result->getRows();
 		}

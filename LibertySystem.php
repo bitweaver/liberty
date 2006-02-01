@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.12 2006/01/25 15:40:25 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.13 2006/02/01 18:42:13 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -61,7 +61,7 @@ class LibertySystem extends LibertyBase {
 	}
 
 	function loadPlugins() {
-		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."tiki_plugins`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
+		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."liberty_plugins`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
 			while( $row = $rs->fetchRow() ) {
 				$this->mPlugins[$row['plugin_guid']] = $row;
 			}
@@ -83,18 +83,18 @@ class LibertySystem extends LibertyBase {
 			$handler = &$this->mPlugins[$guid]; //shorthand var alias
 			if( !isset( $handler['verified'] ) && $handler['is_active'] =='y' ) {
 				// We are missing a plugin!
-				$sql = "UPDATE `".BIT_DB_PREFIX."tiki_plugins` SET `is_active`='x' WHERE `plugin_guid`=?";
+				$sql = "UPDATE `".BIT_DB_PREFIX."liberty_plugins` SET `is_active`='x' WHERE `plugin_guid`=?";
 				$this->mDb->query( $sql, array( $guid ) );
 				$handler['is_active'] = 'n';
 			} elseif( !empty( $handler['verified'] ) && $handler['is_active'] =='x' ) {
 				//We found a formally missing plugin - re-enable it
-				$sql = "UPDATE `".BIT_DB_PREFIX."tiki_plugins` SET `is_active`='y' WHERE `plugin_guid`=?";
+				$sql = "UPDATE `".BIT_DB_PREFIX."liberty_plugins` SET `is_active`='y' WHERE `plugin_guid`=?";
 				$this->mDb->query( $sql, array( $guid ) );
 				$handler['is_active'] = 'y';
 			} elseif( empty( $handler['verified'] ) && !isset( $handler['is_active'] ) ) {
 				//We found a missing plugin - insert it
 				$handler['is_active'] = ( ( isset( $handler['auto_activate'] ) && $handler['auto_activate'] == FALSE ) ? 'n' : 'y' );
-				$sql = "INSERT INTO `".BIT_DB_PREFIX."tiki_plugins` ( `plugin_guid`, `plugin_type`, `plugin_description`, `is_active` ) VALUES ( ?, ?, ?, ? )";
+				$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_plugins` ( `plugin_guid`, `plugin_type`, `plugin_description`, `is_active` ) VALUES ( ?, ?, ?, ? )";
 				$this->mDb->query( $sql, array( $guid, $handler['plugin_type'], $handler['description'], $handler['is_active'] ) );
 			}
 		}
@@ -102,7 +102,7 @@ class LibertySystem extends LibertyBase {
 	}
 
 	function loadContentTypes( $pCacheTime=BIT_QUERY_CACHE_TIME ) {
-		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."tiki_content_types`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
+		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."liberty_content_types`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
 			while( $row = $rs->fetchRow() ) {
 				$this->mContentTypes[$row['content_type_guid']] = $row;
 			}
@@ -115,12 +115,12 @@ class LibertySystem extends LibertyBase {
 		}
 		$pTypeParams['content_type_guid'] = $pGuid;
 		if( empty( $this->mContentTypes[$pGuid] ) && !empty( $pTypeParams ) ) {
-			$result = $this->mDb->associateInsert( BIT_DB_PREFIX."tiki_content_types", $pTypeParams );
+			$result = $this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_types", $pTypeParams );
 			// we just ran some SQL - let's flush the loadContentTypes query cache
 			$this->loadContentTypes( 0 );
 		} else {
 			if( $pTypeParams['handler_package'] != $this->mContentTypes[$pGuid]['handler_package'] || $pTypeParams['handler_file'] != $this->mContentTypes[$pGuid]['handler_file'] || $pTypeParams['handler_class'] != $this->mContentTypes[$pGuid]['handler_class'] ) {
-				$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."tiki_content_types", $pTypeParams, array( 'name'=>'content_type_guid', 'value'=>$pGuid ) );
+				$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."liberty_content_types", $pTypeParams, array( 'name'=>'content_type_guid', 'value'=>$pGuid ) );
 			}
 		}
 	}
@@ -176,14 +176,14 @@ class LibertySystem extends LibertyBase {
 	// @parameter pPluginGuids an array of all the plugin guids that are active. Any left out are *inactive*!
 	function setActivePlugins( $pPluginGuids ) {
 		if( is_array( $pPluginGuids ) ) {
-			$sql = "UPDATE `".BIT_DB_PREFIX."tiki_plugins` SET `is_active`='n' WHERE `is_active`!='x'";
+			$sql = "UPDATE `".BIT_DB_PREFIX."liberty_plugins` SET `is_active`='n' WHERE `is_active`!='x'";
 			$this->mDb->query( $sql );
 			foreach( array_keys( $this->mPlugins ) as $guid ) {
 				$this->mPlugins[$guid]['is_active'] = 'n';
 			}
 
 			foreach( array_keys( $pPluginGuids ) as $guid ) {
-				$sql = "UPDATE `".BIT_DB_PREFIX."tiki_plugins` SET `is_active`='y' WHERE `plugin_guid`=?";
+				$sql = "UPDATE `".BIT_DB_PREFIX."liberty_plugins` SET `is_active`='y' WHERE `plugin_guid`=?";
 				$this->mDb->query( $sql, array( $guid ) );
 				$this->mPlugins[$guid]['is_active'] = 'y';
 			}

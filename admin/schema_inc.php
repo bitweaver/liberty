@@ -3,7 +3,7 @@
 // Common Content tables
 $tables = array(
 
-'tiki_plugins' => "
+'liberty_plugins' => "
   plugin_guid C(16) PRIMARY,
   plugin_type C(16) NOTNULL,
   is_active C(1) NOTNULL DEFAULT 'y',
@@ -11,7 +11,7 @@ $tables = array(
   maintainer_url C(250)
 ",
 
-'tiki_content_types' => "
+'liberty_content_types' => "
   content_type_guid C(16) PRIMARY,
   content_description C(250) NOTNULL,
   maintainer_url C(250),
@@ -20,7 +20,7 @@ $tables = array(
   handler_file C(128)
 ",
 
-'tiki_content' => "
+'liberty_content' => "
   content_id I4 PRIMARY,
   user_id I4 NOTNULL,
   modifier_user_id I4 NOTNULL,
@@ -35,33 +35,33 @@ $tables = array(
   title C(160),
   ip C(39),
   data X
-  CONSTRAINTS ', CONSTRAINT `tiki_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."tiki_content_types`( `content_type_guid` )
-    		  , CONSTRAINT `tiki_content_guid_ref`  FOREIGN KEY (`format_guid`) REFERENCES `".BIT_DB_PREFIX."tiki_plugins`( `plugin_guid` )'
+  CONSTRAINTS ', CONSTRAINT `liberty_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )
+    		  , CONSTRAINT `liberty_content_guid_ref`  FOREIGN KEY (`format_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_plugins`( `plugin_guid` )'
 ",
 
 'liberty_content_prefs' => "
   content_id I4 PRIMARY,
   name C(40) PRIMARY,
   value C(250)
-  CONSTRAINTS ', CONSTRAINT `lib_content_prefs_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."tiki_content` (`content_id`)'
+  CONSTRAINTS ', CONSTRAINT `lib_content_prefs_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
 ",
 
-'tiki_comments' => "
+'liberty_comments' => "
   comment_id I4 PRIMARY,
   content_id I4 NOTNULL,
   parent_id I4 NOTNULL
-  CONSTRAINTS ', CONSTRAINT `tiki_comments_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."tiki_content`( `content_id` )
-              , CONSTRAINT `tiki_comments_parent_ref` FOREIGN KEY (`parent_id`) REFERENCES `".BIT_DB_PREFIX."tiki_content`( `content_id` )'
+  CONSTRAINTS ', CONSTRAINT `liberty_comments_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
+              , CONSTRAINT `liberty_comments_parent_ref` FOREIGN KEY (`parent_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
 ",
 
-'tiki_link_cache' => "
+'liberty_link_cache' => "
   cache_id I4 AUTO PRIMARY,
   url C(250),
   data B,
   refresh I8
 ",
 
-'tiki_attachments' => "
+'liberty_attachments' => "
   attachment_id I4 PRIMARY,
   attachment_plugin_guid C(16) NOTNULL,
   content_id I4 NOTNULL,
@@ -71,20 +71,20 @@ $tables = array(
   hits I4,
   error_code I4,
   caption C(250)
-  CONSTRAINTS ', CONSTRAINT `tiki_attachment_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."tiki_content`( `content_id` )
-  			  , CONSTRAINT `tiki_attachment_type_ref` FOREIGN KEY (`attachment_plugin_guid`) REFERENCES `".BIT_DB_PREFIX."tiki_plugins`( `plugin_guid` )'
+  CONSTRAINTS ', CONSTRAINT `liberty_attachment_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
+  			  , CONSTRAINT `liberty_attachment_type_ref` FOREIGN KEY (`attachment_plugin_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_plugins`( `plugin_guid` )'
 ",
 
-'tiki_blobs' => '
-  blob_id I4 PRIMARY,
-  user_id I4 NOTNULL,
-  blob_size I8 NOTNULL,
-  blob_name C(250) NOTNULL,
-  blob_data_type C(100) NOTNULL,
-  blob_data B NOTNULL
-',
+//'tiki_blobs' => '
+//  blob_id I4 PRIMARY,
+//  user_id I4 NOTNULL,
+//  blob_size I8 NOTNULL,
+//  blob_name C(250) NOTNULL,
+//  blob_data_type C(100) NOTNULL,
+//  blob_data B NOTNULL
+//',
 
-'tiki_files' => "
+'liberty_files' => "
   file_id I4 PRIMARY,
   user_id I4 NOTNULL,
   storage_path C(250),
@@ -92,7 +92,7 @@ $tables = array(
   mime_type C(64)
 ",
 
-'tiki_structures' => "
+'liberty_structures' => "
   structure_id I4 AUTO PRIMARY,
   root_structure_id I4 NOTNULL,
   content_id I4 NOTNULL,
@@ -100,7 +100,7 @@ $tables = array(
   pos I4,
   page_alias C(240),
   parent_id I4
-  CONSTRAINTS ', CONSTRAINT `tiki_root_structure_id_ref` FOREIGN KEY (`root_structure_id`) REFERENCES `".BIT_DB_PREFIX."tiki_structures`( `structure_id` )'
+  CONSTRAINTS ', CONSTRAINT `liberty_root_structure_id_ref` FOREIGN KEY (`root_structure_id`) REFERENCES `".BIT_DB_PREFIX."liberty_structures`( `structure_id` )'
 "
 
 );
@@ -121,30 +121,30 @@ $gBitInstaller->registerPackageInfo( LIBERTY_PKG_NAME, array(
 
 // ### Indexes
 $indices = array (
-	'tiki_content_title_idx' => array( 'table' => 'tiki_content', 'cols' => 'title', 'opts' => NULL ),
-	'tiki_content_user_idx' => array( 'table' => 'tiki_content', 'cols' => 'user_id', 'opts' => NULL ),
-	'tiki_content_moduser_idx' => array( 'table' => 'tiki_content', 'cols' => 'modifier_user_id', 'opts' => NULL ),
-	'tiki_content_hits_idx' => array( 'table' => 'tiki_content', 'cols' => 'hits', 'opts' => NULL ),
-	'tiki_comments_object_idx' => array( 'table' => 'tiki_comments', 'cols' => 'content_id', 'opts' => NULL ),
-	'tiki_comments_parent_idx' => array( 'table' => 'tiki_comments', 'cols' => 'parent_id', 'opts' => NULL ),
-	'tiki_attachments_hits_idx' => array( 'table' => 'tiki_attachments', 'cols' => 'hits', 'opts' => NULL ),
-	'tiki_attachments_user_id_idx' => array( 'table' => 'tiki_attachments', 'cols' => 'user_id', 'opts' => NULL ),
-	'tiki_attachments_content_id_idx' => array( 'table' => 'tiki_attachments', 'cols' => 'content_id', 'opts' => NULL ),
-	'tiki_st_co_foreign_guid_idx' => array( 'table' => 'tiki_attachments', 'cols' => 'content_id, foreign_id, attachment_plugin_guid', 'opts' => array( 'UNIQUE' ) ),
-	'tiki_plugins_guid_idx' => array( 'table' => 'tiki_plugins', 'cols' => 'plugin_guid', 'opts' => array( 'UNIQUE' ) ),
-	'tiki_structures_root_idx' => array( 'table' => 'tiki_structures', 'cols' => 'root_structure_id', 'opts' => NULL),
-	'tiki_structures_parent_idx' => array( 'table' => 'tiki_structures', 'cols' => 'parent_id', 'opts' => NULL),
-	'tiki_structures_content_idx' => array( 'table' => 'tiki_structures', 'cols' => 'content_id', 'opts' => NULL )
+	'content_title_idx' => array( 'table' => 'liberty_content', 'cols' => 'title', 'opts' => NULL ),
+	'content_user_idx' => array( 'table' => 'liberty_content', 'cols' => 'user_id', 'opts' => NULL ),
+	'content_moduser_idx' => array( 'table' => 'liberty_content', 'cols' => 'modifier_user_id', 'opts' => NULL ),
+	'content_hits_idx' => array( 'table' => 'liberty_content', 'cols' => 'hits', 'opts' => NULL ),
+	'comments_object_idx' => array( 'table' => 'liberty_comments', 'cols' => 'content_id', 'opts' => NULL ),
+	'comments_parent_idx' => array( 'table' => 'liberty_comments', 'cols' => 'parent_id', 'opts' => NULL ),
+	'attachments_hits_idx' => array( 'table' => 'liberty_attachments', 'cols' => 'hits', 'opts' => NULL ),
+	'attachments_user_id_idx' => array( 'table' => 'liberty_attachments', 'cols' => 'user_id', 'opts' => NULL ),
+	'attachments_content_id_idx' => array( 'table' => 'liberty_attachments', 'cols' => 'content_id', 'opts' => NULL ),
+	'st_co_foreign_guid_idx' => array( 'table' => 'liberty_attachments', 'cols' => 'content_id, foreign_id, attachment_plugin_guid', 'opts' => array( 'UNIQUE' ) ),
+	'plugins_guid_idx' => array( 'table' => 'liberty_plugins', 'cols' => 'plugin_guid', 'opts' => array( 'UNIQUE' ) ),
+	'structures_root_idx' => array( 'table' => 'liberty_structures', 'cols' => 'root_structure_id', 'opts' => NULL),
+	'structures_parent_idx' => array( 'table' => 'liberty_structures', 'cols' => 'parent_id', 'opts' => NULL),
+	'structures_content_idx' => array( 'table' => 'liberty_structures', 'cols' => 'content_id', 'opts' => NULL )
 );
 $gBitInstaller->registerSchemaIndexes( LIBERTY_PKG_NAME, $indices );
 
 // ### Sequences
 $sequences = array (
-	'tiki_content_id_seq' => array( 'start' => 1 ),
-	'tiki_comments_comment_id_seq' => array( 'start' => 1 ),
-	'tiki_files_file_id_seq' => array( 'start' => 1 ),
-	'tiki_attachments_id_seq' => array( 'start' => 1 ),
-	'tiki_structures_id_seq' => array( 'start' => 4 )
+	'content_id_seq' => array( 'start' => 1 ),
+	'comments_comment_id_seq' => array( 'start' => 1 ),
+	'files_file_id_seq' => array( 'start' => 1 ),
+	'attachments_id_seq' => array( 'start' => 1 ),
+	'structures_id_seq' => array( 'start' => 4 )
 );
 $gBitInstaller->registerSchemaSequences( LIBERTY_PKG_NAME, $sequences );
 

@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.8 2006/01/25 15:40:25 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.9 2006/02/01 18:42:12 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -49,15 +49,15 @@ class LibertyComment extends LibertyContent {
 		}
 
 		if ($this->mCommentId) {
-			$mid = 'WHERE tc.`comment_id` = ?';
+			$mid = 'WHERE lc.`comment_id` = ?';
 			$bindVars = array($this->mCommentId);
 		} else {
 			$mid = 'WHERE tcn.`content_id` = ?';
 			$bindVars = array($this->mContentId);
 		}
 
-		$sql = "SELECT tc.*, tcn.*, uu.`email`, uu.`real_name`, uu.`login` AS `user`
-				FROM `".BIT_DB_PREFIX."tiki_comments` tc LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_content` tcn ON (tc.`content_id` = tcn.`content_id`)
+		$sql = "SELECT lc.*, tcn.*, uu.`email`, uu.`real_name`, uu.`login` AS `user`
+				FROM `".BIT_DB_PREFIX."liberty_comments` lc LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` tcn ON (lc.`content_id` = tcn.`content_id`)
 					 LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON (tcn.`user_id` = uu.`user_id`)
 				$mid";
 		if( $row = $this->mDb->getRow($sql, $bindVars) ) {
@@ -81,7 +81,7 @@ class LibertyComment extends LibertyContent {
 			if( LibertyContent::store( $pStorageHash ) ) {
 				if ($this->verifyComment($pStorageHash)) {
 					$this->mCommentId = $this->mDb->GenID( 'tiki_comments_comment_id_seq');
-					$sql = "INSERT INTO `".BIT_DB_PREFIX."tiki_comments` (`comment_id`, `content_id`, `parent_id`) VALUES (?,?,?)";
+					$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_comments` (`comment_id`, `content_id`, `parent_id`) VALUES (?,?,?)";
 					$this->mDb->query($sql, array($this->mCommentId, $pStorageHash['content_id'], $pStorageHash['parent_id']));
 					$this->mInfo['parent_id'] = $pStorageHash['parent_id'];
 					$this->mInfo['content_id'] = $pStorageHash['content_id'];
@@ -90,7 +90,7 @@ class LibertyComment extends LibertyContent {
 			}
 		} else {
 			if( $this->verifyComment($pStorageHash) && LibertyContent::store($pStorageHash) ) {
-				$sql = "UPDATE `".BIT_DB_PREFIX."tiki_comments` SET `parent_id` = ?, `content_id`= ? WHERE `comment_id` = ?";
+				$sql = "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `parent_id` = ?, `content_id`= ? WHERE `comment_id` = ?";
 				$this->mDb->query($sql, array($pStorageHash['parent_id'], $pStorageHash['content_id'], $this->mCommentId));
 				$this->mInfo['parent_id'] = $pStorageHash['parent_id'];
 				$this->mInfo['content_id'] = $pStorageHash['content_id'];
@@ -101,7 +101,7 @@ class LibertyComment extends LibertyContent {
 	}
 
 	function deleteComment() {
-		$sql = "SELECT `comment_id` FROM `".BIT_DB_PREFIX."tiki_comments` WHERE `parent_id` = ?";
+		$sql = "SELECT `comment_id` FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `parent_id` = ?";
 		$rs = $this->mDb->query($sql, array($this->mContentId));
 
 		$rows = $rs->getRows();
@@ -110,10 +110,10 @@ class LibertyComment extends LibertyContent {
 			$comment->deleteComment();
 		}
 
-		$sql = "DELETE FROM `".BIT_DB_PREFIX."tiki_comments` WHERE `comment_id` = ?";
+		$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `comment_id` = ?";
 		$rs = $this->mDb->query($sql, array($this->mCommentId));
 
-		$sql = "DELETE FROM `".BIT_DB_PREFIX."tiki_content` WHERE `content_id` = ?";
+		$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id` = ?";
 		$rs = $this->mDb->query($sql, array($this->mContentId));
 	}
 
@@ -166,17 +166,17 @@ class LibertyComment extends LibertyContent {
 		$mid = '';
 		$bindVars = array();
 		if ( !empty( $pParamHash['content_type_guid'] ) ) {
-			$mid .= " AND tc.`content_type_guid`=? ";
+			$mid .= " AND lc.`content_type_guid`=? ";
 			$bindVars[] = $pParamHash['content_type_guid'];
 		}
 		if ( @$this->verifyId( $pParamHash['user_id'] ) ) {
-			$mid .= " AND tc.`user_id`=? ";
+			$mid .= " AND lc.`user_id`=? ";
 			$bindVars[] = $pParamHash['user_id'];
 		}
 
-		$query = "SELECT DISTINCT( tc.`content_id` ), tc.`title` AS `content_title`, tc.`created`, tcmc.`last_modified`, tcmc.`title`, uu.`login` AS `user`, uu.`real_name`
-				  FROM `".BIT_DB_PREFIX."tiki_comments` tcm INNER JOIN `".BIT_DB_PREFIX."tiki_content` tcmc ON (tcm.`content_id`=tcmc.`content_id` ), `".BIT_DB_PREFIX."tiki_content` tc, `".BIT_DB_PREFIX."users_users` uu
-				  WHERE tcm.`parent_id`=tc.`content_id` AND uu.`user_id`=tcmc.`user_id` $mid  ORDER BY $sort_mode";
+		$query = "SELECT DISTINCT( lc.`content_id` ), lc.`title` AS `content_title`, lc.`created`, tcmc.`last_modified`, tcmc.`title`, uu.`login` AS `user`, uu.`real_name`
+				  FROM `".BIT_DB_PREFIX."liberty_comments` lcom INNER JOIN `".BIT_DB_PREFIX."liberty_content` tcmc ON (lcom.`content_id`=tcmc.`content_id` ), `".BIT_DB_PREFIX."liberty_content` lc, `".BIT_DB_PREFIX."users_users` uu
+				  WHERE lcom.`parent_id`=lc.`content_id` AND uu.`user_id`=tcmc.`user_id` $mid  ORDER BY $sort_mode";
 		if( $result = $this->mDb->query($query, $bindVars, $pParamHash['max_records'], $pParamHash['offset']) ) {
 			$ret = $result->GetRows();
 		}
@@ -194,9 +194,9 @@ class LibertyComment extends LibertyContent {
 		}
 		$commentCount = 0;
 		if ($contentId) {
-			$sql = "SELECT tcm.*, tcmc.`parent_id` AS `child_content_id`
-					FROM `".BIT_DB_PREFIX."tiki_comments` tcm LEFT OUTER JOIN `".BIT_DB_PREFIX."tiki_comments` tcmc ON (tcm.`content_id`=tcmc.`parent_id`)
-					WHERE tcm.`parent_id` = ?";
+			$sql = "SELECT lcom.*, tcmc.`parent_id` AS `child_content_id`
+					FROM `".BIT_DB_PREFIX."liberty_comments` lcom LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_comments` tcmc ON (lcom.`content_id`=tcmc.`parent_id`)
+					WHERE lcom.`parent_id` = ?";
 			$rows = $this->mDb->getAssoc($sql, array($contentId));
 			$commentCount += count($rows);
 			foreach ($rows as $row) {
@@ -264,8 +264,8 @@ class LibertyComment extends LibertyContent {
 		}
 
 		if ($contentId) {
-			$sql = "SELECT tcm.`comment_id` FROM `".BIT_DB_PREFIX."tiki_comments` tcm, `".BIT_DB_PREFIX."tiki_content` tc
-					WHERE tcm.`parent_id` = ? AND tcm.`content_id` = tc.`content_id` ORDER BY tc.`created` $sort_order";
+			$sql = "SELECT lcom.`comment_id` FROM `".BIT_DB_PREFIX."liberty_comments` lcom, `".BIT_DB_PREFIX."liberty_content` lc
+					WHERE lcom.`parent_id` = ? AND lcom.`content_id` = lc.`content_id` ORDER BY lc.`created` $sort_order";
 			if( $rows = $this->mDb->getAll( $sql, array($contentId), $pMaxComments, $pOffset ) ) {
 				foreach ($rows as $row) {
 					$comment = new LibertyComment( $row['comment_id'] );

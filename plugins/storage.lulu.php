@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -44,7 +44,7 @@ $gLibertySystem->registerPlugin( PLUGIN_GUID_LULU, $pluginParams );
 	function lulu_expunge($pAttachmentId) {
 		global $gBitSystem;
 		
-		$sql = "DELETE FROM `".BIT_DB_PREFIX."tiki_attachments` WHERE `attachment_id` = ?";
+		$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id` = ?";
 		$gBitSystem->mDb->query($sql, array($pAttachmentId));
 		
 		return TRUE;

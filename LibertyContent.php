@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.35 2006/01/31 21:53:48 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.36 2006/02/01 18:42:12 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -86,7 +86,7 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	* Assume a derived class has joined on the tiki_content table, and loaded it's columns already.
+	* Assume a derived class has joined on the liberty_content table, and loaded it's columns already.
 	*/
 	function load($pContentId = NULL) {
 		if( !empty( $this->mInfo['content_type_guid'] ) ) {
@@ -101,10 +101,10 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	* Verify the core class data required to update the tiki_content table entries
+	* Verify the core class data required to update the liberty_content table entries
 	*
 	* Verify will build an array [content_store] with all of the required values
-	* and populate it with the relevent data to create/update the tiki_content
+	* and populate it with the relevent data to create/update the liberty_content
 	* table record
 	*
 	* @param array Array of content data to be stored <br>
@@ -224,7 +224,7 @@ class LibertyContent extends LibertyBase {
 		global $gLibertySystem;
 		if( LibertyContent::verify( $pParamHash ) ) {
 			$this->mDb->StartTrans();
-			$table = BIT_DB_PREFIX."tiki_content";
+			$table = BIT_DB_PREFIX."liberty_content";
 			if( !@$this->verifyId( $pParamHash['content_id'] ) ) {
 				$pParamHash['content_store']['content_id'] = $this->mDb->GenID( 'tiki_content_id_seq' );
 				$pParamHash['content_id'] = $pParamHash['content_store']['content_id'];
@@ -264,7 +264,7 @@ class LibertyContent extends LibertyBase {
 	function expungeComments() {
 		require_once( LIBERTY_PKG_PATH.'LibertyComment.php' );
 		// Delete all comments associated with this piece of content
-		$query = "SELECT `comment_id` FROM `".BIT_DB_PREFIX."tiki_comments` WHERE `parent_id` = ?";
+		$query = "SELECT `comment_id` FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `parent_id` = ?";
 		$result = $this->mDb->query($query, array( $this->mContentId ) );
 		$commentIds = $result->getRows();
 		foreach ($commentIds as $commentId) {
@@ -295,7 +295,7 @@ class LibertyContent extends LibertyBase {
 			$result = $this->mDb->query( $query, array( $this->mContentId ) );
 
 			// Remove content
-			$query = "DELETE FROM `".BIT_DB_PREFIX."tiki_content` WHERE `content_id` = ?";
+			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id` = ?";
 			$result = $this->mDb->query( $query, array( $this->mContentId ) );
 
 			$this->mDb->CompleteTrans();
@@ -656,7 +656,7 @@ class LibertyContent extends LibertyBase {
 		global $gBitUser,$gBitSystem;
 		if( empty( $_REQUEST['post_comment_submit'] ) && empty( $_REQUEST['post_comment_request'] ) ) {
 			if( $this->mContentId && ( $gBitUser->mUserId != $this->mInfo['user_id'] ) ) {
-				$query = "UPDATE `".BIT_DB_PREFIX."tiki_content` SET `hits`=`hits`+1, `last_hit`= ? WHERE `content_id` = ?";
+				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content` SET `hits`=`hits`+1, `last_hit`= ? WHERE `content_id` = ?";
 				$result = $this->mDb->query( $query, array( $gBitSystem->getUTCTime(), $this->mContentId ) );
 			}
 		}
@@ -672,11 +672,11 @@ class LibertyContent extends LibertyBase {
 		global $gBitSystem;
 		$ret = NULL;
 		if( $gBitSystem->isPackageActive( 'wiki' ) ) {
-			$pageWhere = $pCaseSensitive ? 'tc.`title`' : 'LOWER( tc.`title` )';
+			$pageWhere = $pCaseSensitive ? 'lc.`title`' : 'LOWER( lc.`title` )';
 			$bindVars = array( ($pCaseSensitive ? $pPageName : strtolower( $pPageName ) ) );
-			$query = "SELECT `page_id`, tp.`content_id`, `description`, tc.`last_modified`, tc.`title`
-					FROM `".BIT_DB_PREFIX."wiki_pages` tp, `".BIT_DB_PREFIX."tiki_content` tc
-					WHERE tc.`content_id`=tp.`content_id` AND $pageWhere = ?";
+			$query = "SELECT `page_id`, tp.`content_id`, `description`, lc.`last_modified`, lc.`title`
+					FROM `".BIT_DB_PREFIX."wiki_pages` tp, `".BIT_DB_PREFIX."liberty_content` lc
+					WHERE lc.`content_id`=tp.`content_id` AND $pageWhere = ?";
 			$ret = $this->mDb->getAll($query, $bindVars );
 			if( empty( $ret ) ) {
 				$ret = NULL; // we don't want an empty array
@@ -905,14 +905,14 @@ class LibertyContent extends LibertyBase {
 
 		$bindVars = array();
 		if( !empty( $pListHash['content_type_guid'] ) ) {
-			$mid .= ' AND tc.`content_type_guid`=? ';
+			$mid .= ' AND lc.`content_type_guid`=? ';
 			$bindVars[] = $pListHash['content_type_guid'];
 		}
 
 		$this->prepGetList( $pListHash );
-		$query = "SELECT DISTINCT(uu.`user_id`) AS hash_key, uu.`user_id`, SUM( tc.`hits` ) AS `ag_hits`, uu.`login` AS `user`, uu.`real_name`
-				FROM `".BIT_DB_PREFIX."tiki_content` tc INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id`=tc.`user_id` )
-				WHERE uu.`user_id` != ".ANONYMOUS_USER_ID." AND tc.`hits` > 0 $mid
+		$query = "SELECT DISTINCT(uu.`user_id`) AS hash_key, uu.`user_id`, SUM( lc.`hits` ) AS `ag_hits`, uu.`login` AS `user`, uu.`real_name`
+				FROM `".BIT_DB_PREFIX."liberty_content` lc INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id`=lc.`user_id` )
+				WHERE uu.`user_id` != ".ANONYMOUS_USER_ID." AND lc.`hits` > 0 $mid
 				GROUP BY uu.`user_id`, uu.`login`, uu.`real_name`
 				ORDER BY `ag_hits` DESC";
 		$ret = $this->mDb->getRow( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
@@ -968,27 +968,27 @@ class LibertyContent extends LibertyBase {
 		$gateFrom = '';
 
 		if( is_array( $pListHash['find'] ) ) { // you can use an array of titles
-			$mid = " AND tc.`title` IN ( ".implode( ',',array_fill( 0,count( $pListHash['find'] ),'?' ) ).")";
+			$mid = " AND lc.`title` IN ( ".implode( ',',array_fill( 0,count( $pListHash['find'] ),'?' ) ).")";
 			$bindVars[] = $pListHash['find'];
 		} elseif( !empty($pListHash['find'] ) && is_string( $pListHash['find'] ) ) { // or a string
-			$mid = " AND UPPER(tc.`title`) like ? ";
+			$mid = " AND UPPER(lc.`title`) like ? ";
 			$bindVars[] = ( '%' . strtoupper( $pListHash['find'] ) . '%' );
 		}
 
 		// this is necessary to display useful information in the liberty RSS feed
 		if( !empty( $pListHash['include_data'] ) ) {
-			$select = ", tc.`data`, tc.`format_guid`";
+			$select = ", lc.`data`, lc.`format_guid`";
 		}
 
 		// calendar specific selection method - use timestamps to limit selection
 		if( !empty( $pListHash['start'] ) && !empty( $pListHash['stop'] ) ) {
-			$mid .= " AND ( tc.`".$pListHash['calendar_sort_mode']."` > ? AND tc.`".$pListHash['calendar_sort_mode']."` < ? ) ";
+			$mid .= " AND ( lc.`".$pListHash['calendar_sort_mode']."` > ? AND lc.`".$pListHash['calendar_sort_mode']."` < ? ) ";
 			$bindVars[] = $pListHash['start'];
 			$bindVars[] = $pListHash['stop'];
 		}
 
 		if( @$this->verifyId( $pListHash['user_id'] ) ) {
-			$mid .= " AND tc.`user_id` = ? ";
+			$mid .= " AND lc.`user_id` = ? ";
 			$bindVars[] = $pListHash['user_id'];
 		}
 
@@ -996,14 +996,14 @@ class LibertyContent extends LibertyBase {
 			$mid .= ' AND `content_type_guid`=? ';
 			$bindVars[] = $pListHash['content_type_guid'];
 		} elseif( !empty( $pListHash['content_type_guid'] ) && is_array( $pListHash['content_type_guid'] ) ) {
-			$mid .= " AND tc.`content_type_guid` IN ( ".implode( ',',array_fill ( 0, count( $pListHash['content_type_guid'] ),'?' ) )." )";
+			$mid .= " AND lc.`content_type_guid` IN ( ".implode( ',',array_fill ( 0, count( $pListHash['content_type_guid'] ),'?' ) )." )";
 			$bindVars = array_merge( $bindVars, $pListHash['content_type_guid'] );
 		}
 
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
-			$gateSelect .= ' ,ts.`security_id`, ts.`security_description`, ts.`is_private`, ts.`is_hidden`, ts.`access_question`, ts.`access_answer` ';
-			$gateFrom .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."gatekeeper_security_map` cg ON (tc.`content_id`=cg.`content_id`) LEFT OUTER JOIN `".BIT_DB_PREFIX."gatekeeper_security` ts ON (ts.`security_id`=cg.`security_id` )";
-			$mid .= ' AND (cg.`security_id` IS NULL OR tc.`user_id`=?) ';
+			$gateSelect .= ' ,ls.`security_id`, ls.`security_description`, ls.`is_private`, ls.`is_hidden`, ls.`access_question`, ls.`access_answer` ';
+			$gateFrom .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."gatekeeper_security_map` cg ON (lc.`content_id`=cg.`content_id`) LEFT OUTER JOIN `".BIT_DB_PREFIX."gatekeeper_security` ls ON (ls.`security_id`=cg.`security_id` )";
+			$mid .= ' AND (cg.`security_id` IS NULL OR lc.`user_id`=?) ';
 			$bindVars[] = $gBitUser->mUserId;
 			if( $gBitSystem->isPackageActive( 'fisheye' ) ) {
 				// This is really ugly to have in here, and really would be better off somewhere else.
@@ -1011,9 +1011,9 @@ class LibertyContent extends LibertyBase {
 				// this is the only place it can go to properly enforce gatekeeper protections. Hopefully a new content generic
 				// solution will be available in ReleaseTwo - spiderr
 				if( $this->mDb->isAdvancedPostgresEnabled() ) {
-// 					$gateFrom .= " LEFT OUTER JOIN  `".BIT_DB_PREFIX."fisheye_gallery_image_map` fgim ON (fgim.`item_content_id`=tc.`content_id`)";
-					$mid .= " AND (SELECT ts.`security_id` FROM connectby('fisheye_gallery_image_map', 'gallery_content_id', 'item_content_id', tc.`content_id`, 0, '/')  AS t(`cb_gallery_content_id` int, `cb_item_content_id` int, level int, branch text), `".BIT_DB_PREFIX."gatekeeper_security_map` cgm,  `".BIT_DB_PREFIX."gatekeeper_security` ts
-							WHERE ts.`security_id`=cgm.`security_id` AND cgm.`content_id`=`cb_gallery_content_id` LIMIT 1) IS NULL";
+// 					$gateFrom .= " LEFT OUTER JOIN  `".BIT_DB_PREFIX."fisheye_gallery_image_map` fgim ON (fgim.`item_content_id`=lc.`content_id`)";
+					$mid .= " AND (SELECT ls.`security_id` FROM connectby('fisheye_gallery_image_map', 'gallery_content_id', 'item_content_id', lc.`content_id`, 0, '/')  AS t(`cb_gallery_content_id` int, `cb_item_content_id` int, level int, branch text), `".BIT_DB_PREFIX."gatekeeper_security_map` cgm,  `".BIT_DB_PREFIX."gatekeeper_security` ls
+							WHERE ls.`security_id`=cgm.`security_id` AND cgm.`content_id`=`cb_gallery_content_id` LIMIT 1) IS NULL";
 				}
 			}
 		}
@@ -1030,7 +1030,7 @@ class LibertyContent extends LibertyBase {
 		))) {
 			$orderTable = '';
 		} else {
-			$orderTable = 'tc.';
+			$orderTable = 'lc.';
 		}
 
 
@@ -1045,23 +1045,23 @@ class LibertyContent extends LibertyBase {
 				uuc.`login` AS`creator_user`,
 				uuc.`real_name` AS `creator_real_name`,
 				uuc.`user_id` AS `creator_user_id`,
-				tc.`hits`,
-				tc.`last_hit`,
-				tc.`event_time`,
-				tc.`title`,
-				tc.`last_modified`,
-				tc.`content_type_guid`,
-				tc.`ip`,
-				tc.`created`,
-				tc.`content_id`
+				lc.`hits`,
+				lc.`last_hit`,
+				lc.`event_time`,
+				lc.`title`,
+				lc.`last_modified`,
+				lc.`content_type_guid`,
+				lc.`ip`,
+				lc.`created`,
+				lc.`content_id`
 				$select
 				$gateSelect
-			FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom, `".BIT_DB_PREFIX."users_users` uue, `".BIT_DB_PREFIX."users_users` uuc
-			WHERE tc.`modifier_user_id`=uue.`user_id` AND tc.`user_id`=uuc.`user_id` $mid
+			FROM `".BIT_DB_PREFIX."liberty_content` lc $gateFrom, `".BIT_DB_PREFIX."users_users` uue, `".BIT_DB_PREFIX."users_users` uuc
+			WHERE lc.`modifier_user_id`=uue.`user_id` AND lc.`user_id`=uuc.`user_id` $mid
 			ORDER BY ".$orderTable.$this->mDb->convert_sortmode($pListHash['sort_mode']);
-		$query_cant = "select count(tc.`content_id`) FROM `".BIT_DB_PREFIX."tiki_content` tc $gateFrom, `".BIT_DB_PREFIX."users_users` uu WHERE uu.`user_id`=tc.`user_id` $mid";
+		$query_cant = "select count(lc.`content_id`) FROM `".BIT_DB_PREFIX."liberty_content` lc $gateFrom, `".BIT_DB_PREFIX."users_users` uu WHERE uu.`user_id`=lc.`user_id` $mid";
 		// previous cant query - updated by xing
-		// $query_cant = "select count(*) from `".BIT_DB_PREFIX."wiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON (tc.`content_id` = tp.`content_id`) $mid";
+		// $query_cant = "select count(*) from `".BIT_DB_PREFIX."wiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id` = tp.`content_id`) $mid";
 		$result = $this->mDb->query($query,$bindVars,$pListHash['max_records'],$pListHash['offset']);
 		$cant = $this->mDb->getOne($query_cant,$bindVars);
 		$ret = array();
@@ -1141,11 +1141,11 @@ class LibertyContent extends LibertyBase {
 		if( $this->isValid() ) {
 			$ret = array();
 			$structures_added = array();
-			$query = 'SELECT ts.*, tc.`title`, tcr.`title` AS `root_title`
-				FROM `'.BIT_DB_PREFIX.'tiki_content` tc, `'.BIT_DB_PREFIX.'tiki_structures` ts
-				INNER JOIN  `'.BIT_DB_PREFIX.'tiki_structures` tsr ON( tsr.`structure_id`=ts.`root_structure_id` )
-				INNER JOIN `'.BIT_DB_PREFIX.'tiki_content` tcr ON( tsr.`content_id`=tcr.`content_id` )
-				WHERE tc.`content_id`=ts.`content_id` AND ts.`content_id`=?';
+			$query = 'SELECT ls.*, lc.`title`, tcr.`title` AS `root_title`
+				FROM `'.BIT_DB_PREFIX.'liberty_content` lc, `'.BIT_DB_PREFIX.'liberty_structures` ls
+				INNER JOIN  `'.BIT_DB_PREFIX.'liberty_structures` tsr ON( tsr.`structure_id`=ls.`root_structure_id` )
+				INNER JOIN `'.BIT_DB_PREFIX.'liberty_content` tcr ON( tsr.`content_id`=tcr.`content_id` )
+				WHERE lc.`content_id`=ls.`content_id` AND ls.`content_id`=?';
 			if( $result = $this->mDb->query( $query,array( $this->mContentId ) ) ) {
 				while ($res = $result->fetchRow()) {
 					$ret[] = $res;
@@ -1263,7 +1263,7 @@ class LibertyContent extends LibertyBase {
 	* @todo LEGACY FUNCTIONS that need to be cleaned / moved / or deprecated & deleted
 	*/
 	function isCached($url) {
-		$query = "select `cache_id`  from `".BIT_DB_PREFIX."tiki_link_cache` where `url`=?";
+		$query = "select `cache_id`  from `".BIT_DB_PREFIX."liberty_link_cache` where `url`=?";
 		// sometimes we can have a cache_id of 0(?!) - seen it with my own eyes, spiderr
 		$ret = $this->mDb->getOne($query, array( $url ) );
 		return $ret;
@@ -1301,7 +1301,7 @@ class LibertyContent extends LibertyBase {
 		if (!$this->isCached( $url ) && $data)
 		{	global $gBitSystem;
 			$refresh = $gBitSystem->getUTCTime();
-			$query = "insert into `".BIT_DB_PREFIX."tiki_link_cache`(`url`,`data`,`refresh`) values(?,?,?)";
+			$query = "insert into `".BIT_DB_PREFIX."liberty_link_cache`(`url`,`data`,`refresh`) values(?,?,?)";
 			$result = $this->mDb->query($query, array($url,BitDb::db_byte_encode($data),$refresh) );
 			return !isset($error);
 		}
@@ -1331,10 +1331,10 @@ class LibertyContent extends LibertyBase {
 			$bindVars = array( $this->mContentId );
 			if( $pStructureId ) {
 				array_push( $bindVars, $pStructureId );
-				$whereSql = ' AND ts.`root_structure_id`=? ';
+				$whereSql = ' AND ls.`root_structure_id`=? ';
 			}
-			$query  = "SELECT `structure_id` FROM `".BIT_DB_PREFIX."tiki_structures` ts
-					WHERE ts.`content_id`=? $whereSql";
+			$query  = "SELECT `structure_id` FROM `".BIT_DB_PREFIX."liberty_structures` ls
+					WHERE ls.`content_id`=? $whereSql";
 			$cant = $this->mDb->getOne( $query, $bindVars );
 			return $cant;
 		}
