@@ -5,10 +5,38 @@ $tables = array(
 
 'liberty_plugins' => "
   plugin_guid C(16) PRIMARY,
-  plugin_type C(16) NOTNULL,
-  is_active C(1) NOTNULL DEFAULT 'y',
-  plugin_description C(250),
-  maintainer_url C(250)
+	plugin_type C(16) NOTNULL,
+	is_active C(1) NOTNULL DEFAULT 'y',
+	plugin_description C(250),
+	maintainer_url C(250)
+",
+
+'liberty_copyrights' => "
+	copyright_id I4 AUTO PRIMARY,
+	page_id I4 NOTNULL,
+	title C(200),
+	year I8,
+	authors C(200),
+	copyright_order I8,
+	user_id I4
+",
+
+'liberty_content_history' => "
+	page_id I4 PRIMARY,
+	version I4 PRIMARY,
+	last_modified I8 NOTNULL,
+	format_guid C(16) NOTNULL,
+	description C(200),
+	user_id C(40),
+	ip C(15),
+	comment C(200),
+	data X
+	CONSTRAINTS ', CONSTRAINT `tiki_history_page_ref` FOREIGN KEY (`page_id`) REFERENCES `".BIT_DB_PREFIX."wiki_pages`( `page_id` )'
+",
+
+'liberty_content_links' => "
+	from_content_id I4 PRIMARY,
+	to_content_id I4 PRIMARY
 ",
 
 'liberty_content_types' => "
