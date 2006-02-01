@@ -145,7 +145,7 @@ $gBitInstaller->registerSchemaIndexes( LIBERTY_PKG_NAME, $indices );
 
 // ### Sequences
 $sequences = array (
-	'content_id_seq' => array( 'start' => 1 ),
+	'liberty_content_id_seq' => array( 'start' => 1 ),
 	'comments_comment_id_seq' => array( 'start' => 1 ),
 	'files_file_id_seq' => array( 'start' => 1 ),
 	'attachments_id_seq' => array( 'start' => 1 ),
