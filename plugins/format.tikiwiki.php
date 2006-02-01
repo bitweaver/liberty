@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.21 $
+ * @version  $Revision: 1.22 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -745,7 +745,7 @@ class TikiWikiParser extends BitBase {
 			// Now replace each dynamic variable by a pair composed of the
 			// variable value and a text field to edit the variable. Each
 			foreach($dvars as $dvar) {
-				$query = "select `data` from `".BIT_DB_PREFIX."tiki_dynamic_variables` where `name`=?";
+				$query = "select `data` from `".BIT_DB_PREFIX."liberty_dynamic_variables` where `name`=?";
 				$result = $this->mDb->query($query,Array($dvar));
 				if($result->numRows()) {
 				$value = $result->fetchRow();
