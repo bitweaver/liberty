@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.36 2006/02/01 18:42:12 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.37 2006/02/01 20:15:53 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -226,7 +226,7 @@ class LibertyContent extends LibertyBase {
 			$this->mDb->StartTrans();
 			$table = BIT_DB_PREFIX."liberty_content";
 			if( !@$this->verifyId( $pParamHash['content_id'] ) ) {
-				$pParamHash['content_store']['content_id'] = $this->mDb->GenID( 'tiki_content_id_seq' );
+				$pParamHash['content_store']['content_id'] = $this->mDb->GenID( 'liberty_content_id_seq' );
 				$pParamHash['content_id'] = $pParamHash['content_store']['content_id'];
 				// make sure some variables are stuff in case services need getObjectType, mContentId, etc...
 				$this->mInfo['content_type_guid'] = $pParamHash['content_type_guid'];
