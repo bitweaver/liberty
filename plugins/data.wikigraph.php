@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wolff_borg <wolff_borg@yahoo.com.au>
 // | Reworked from: wikiplugin_wikigraph.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikigraph.php,v 1.6 2006/01/30 13:38:56 squareing Exp $
+// $Id: data.wikigraph.php,v 1.7 2006/02/01 17:02:16 bitweaver Exp $
 /**
  * definitions
  */
@@ -152,10 +152,14 @@ function data_wikigraph($data, $params) {
 		)
 	);
 	$ret .= "<div align='center'><img border='0' src=\"".WIKI_PKG_URL."wiki_graph.php?page=".urlencode($data)."&amp;level=$level$add\" alt='graph' usemap='#$mapname' />";
+	if( !empty( $page ) && !empty( $level ) && !empty( $garg ) ) {
 		$mapdata = $wikilib->get_graph_map($page, $level, $garg);
 		$mapdata = preg_replace("/\n|\r/", '', $mapdata);
 		$ret .= "<map name='$mapname'>$mapdata</map></div>";
-	return $ret;
+		return $ret;
+	} else {
+		return ' ';
 	}
+}
 }
 ?>
