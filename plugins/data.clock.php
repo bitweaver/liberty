@@ -4,7 +4,7 @@
  * assigned_modules
  *
  * @author     xing
- * @version    $Revision: 1.3 $
+ * @version    $Revision: 1.4 $
  * @package    liberty
  * @subpackage plugins_data
  * @copyright  Copyright (c) 2004, bitweaver.org
@@ -70,14 +70,14 @@ function data_clock( $data, $params ) {
 	if ($params['timestamp']) {
 		$ls = strtotime($params['timestamp']);
 	} else {
-		$ls = time();
+		$ts = time();
 	}
 	if ($params['timezone']) {
 		$_ENV['TZ'] = $params['timezone'];
 		putenv("TZ=$_ENV[TZ]");
     }
 
-	$result = strftime($format, $ls);
+	$result = strftime($format, $ts);
 	$_ENV['TZ'] = $save_tz;
 	putenv("TZ=$save_tz");
 
