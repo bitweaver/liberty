@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.37 2006/02/01 20:15:53 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.38 2006/02/02 14:47:25 hash9 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -160,6 +160,7 @@ class LibertyContent extends LibertyBase {
 		}
 
 		$pParamHash['content_store']['last_modified'] = !empty( $pParamHash['last_modified'] ) ? $pParamHash['last_modified'] : $gBitSystem->getUTCTime();
+		$pParamHash['content_store']['event_time'] = !empty( $pParamHash['event_time'] ) ? $pParamHash['event_time'] : $pParamHash['content_store']['last_modified'];
 
 		// WARNING: Assume WIKI if t
 		if( isset( $pParamHash['content_id'] ) ) {
