@@ -4,7 +4,7 @@
  * assigned_modules
  *
  * @author     xing
- * @version    $Revision: 1.4 $
+ * @version    $Revision: 1.5 $
  * @package    liberty
  * @subpackage plugins_data
  * @copyright  Copyright (c) 2004, bitweaver.org
@@ -68,7 +68,7 @@ function data_clock( $data, $params ) {
 		$format = '%c';
 	}
 	if ($params['timestamp']) {
-		$ls = strtotime($params['timestamp']);
+		$ts = strtotime($params['timestamp']);
 	} else {
 		$ts = time();
 	}
