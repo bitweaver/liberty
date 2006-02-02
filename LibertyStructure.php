@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.19 2006/02/01 18:42:13 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.20 2006/02/02 07:55:24 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -469,7 +469,7 @@ class LibertyStructure extends LibertyBase {
 			$this->mDb->StartTrans();
 
 			//Create a new structure entry
-			$pParamHash['structure_id'] = $this->mDb->GenID( 'tiki_structures_id_seq' );
+			$pParamHash['structure_id'] = $this->mDb->GenID( 'liberty_structures_id_seq' );
 			if( !@$this->verifyId( $pParamHash['root_structure_id'] ) ) {
 				$pParamHash['root_structure_id'] = $pParamHash['structure_id'];
 			}

@@ -174,10 +174,10 @@ $gBitInstaller->registerSchemaIndexes( LIBERTY_PKG_NAME, $indices );
 // ### Sequences
 $sequences = array (
 	'liberty_content_id_seq' => array( 'start' => 1 ),
-	'comments_comment_id_seq' => array( 'start' => 1 ),
-	'files_file_id_seq' => array( 'start' => 1 ),
-	'attachments_id_seq' => array( 'start' => 1 ),
-	'structures_id_seq' => array( 'start' => 4 )
+	'liberty_comments_id_seq' => array( 'start' => 1 ),
+	'liberty_files_id_seq' => array( 'start' => 1 ),
+	'liberty_attachments_id_seq' => array( 'start' => 1 ),
+	'liberty_structures_id_seq' => array( 'start' => 4 )
 );
 $gBitInstaller->registerSchemaSequences( LIBERTY_PKG_NAME, $sequences );
 

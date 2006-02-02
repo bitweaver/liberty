@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.15 2006/02/01 18:42:12 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.16 2006/02/02 07:55:24 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -225,7 +225,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 								WHERE `attachment_plugin_guid` = ? AND `content_id` = ? AND `foreign_id`=?";
 						$rs = $this->mDb->query( $sql, array( $storeRow['plugin_guid'], (int)$storeRow['content_id'], (int)$storeRow['foreign_id'] ) );
 						if( empty( $rs ) || !$rs->NumRows() ) {
-							$pParamHash['attachment_id'] = $this->mDb->GenID( 'tiki_attachments_id_seq' );
+							$pParamHash['attachment_id'] = $this->mDb->GenID( 'liberty_attachments_id_seq' );
 							$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `attachment_id`, `attachment_plugin_guid`, `content_id`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
 							$rs = $this->mDb->query( $sql, array( $pParamHash['attachment_id'], $storeRow['plugin_guid'], $pParamHash['content_id'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
 						} else {
@@ -287,7 +287,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		$tmpAttachment = $rs->fetchRow();
 
 		if ( @$this->verifyId($tmpAttachment['attachment_id']) ) {
-			$newAttachmentId = $this->mDb->GenID( 'tiki_attachments_id_seq' );
+			$newAttachmentId = $this->mDb->GenID( 'liberty_attachments_id_seq' );
 			$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `attachment_id`, `attachment_plugin_guid`, `content_id`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
 			$rs = $this->mDb->query( $sql, array( $newAttachmentId, $tmpAttachment['attachment_plugin_guid'], $pNewContentId, $tmpAttachment['foreign_id'], $gBitUser->mUserId ) );
 		}

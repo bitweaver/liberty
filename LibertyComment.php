@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.9 2006/02/01 18:42:12 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.10 2006/02/02 07:55:24 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -80,7 +80,7 @@ class LibertyComment extends LibertyContent {
 		if (!$this->mCommentId) {
 			if( LibertyContent::store( $pStorageHash ) ) {
 				if ($this->verifyComment($pStorageHash)) {
-					$this->mCommentId = $this->mDb->GenID( 'tiki_comments_comment_id_seq');
+					$this->mCommentId = $this->mDb->GenID( 'liberty_comment_id_seq');
 					$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_comments` (`comment_id`, `content_id`, `parent_id`) VALUES (?,?,?)";
 					$this->mDb->query($sql, array($this->mCommentId, $pStorageHash['content_id'], $pStorageHash['parent_id']));
 					$this->mInfo['parent_id'] = $pStorageHash['parent_id'];
