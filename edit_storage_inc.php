@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage functions
  *
@@ -36,7 +36,7 @@ if( !empty( $_REQUEST['deleteAttachment'] ) ) {
 	$attachmentInfo = $gContent->getAttachment( $attachmentId );
 	
 	if( count( $siblingAttachments ) > 0 || ( !$gBitUser->isAdmin() && $gBitUser->mUserId != $attachmentInfo['user_id'] && $gBitUser->mPerms['bit_p_detach_attachment'] == 'y' ) ) {
-		// Other tiki_attachment rows reference the same foreign_id so we should just detach
+		// Other liberty_attachment rows reference the same foreign_id so we should just detach
 		$gContent->detachAttachment( $attachmentId );	
 	} else {
 		$gContent->expungeAttachment( $attachmentId );

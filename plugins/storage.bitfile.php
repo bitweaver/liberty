@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -43,7 +43,6 @@ function bit_files_store( &$pStoreRow ) {
 	$pref = $gBitSystem->getPreference('centralized_upload_dir');
 	if( isset( $pref ) ) {
 		if( !empty( $pStoreRow['foreign_id'] ) ) {
-			//$sql = "UPDATE tiki_attachment SET `binary_id`=NULL, `storage_path`=? WHERE `user_id`=? AND storage_id=?";
 			$sql = "UPDATE `".BIT_DB_PREFIX."liberty_files SET `storage_path`=?, `mime_type`=?, `size`=? WHERE `file_id` = ?";
 			$gBitSystem->mDb->query( $sql, array( $pStoreRow['dest_file_path'], $pStoreRow['type'], $pStoreRow['size'], $pStoreRow['foreign_id'] ) );
 		} else {

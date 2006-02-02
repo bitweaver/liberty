@@ -31,7 +31,7 @@ $tables = array(
 	ip C(15),
 	comment C(200),
 	data X
-	CONSTRAINTS ', CONSTRAINT `tiki_history_page_ref` FOREIGN KEY (`page_id`) REFERENCES `".BIT_DB_PREFIX."wiki_pages`( `page_id` )'
+	CONSTRAINTS ', CONSTRAINT `liberty_history_page_ref` FOREIGN KEY (`page_id`) REFERENCES `".BIT_DB_PREFIX."wiki_pages`( `page_id` )'
 ",
 
 'liberty_content_links' => "
@@ -102,15 +102,6 @@ $tables = array(
   CONSTRAINTS ', CONSTRAINT `liberty_attachment_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
   			  , CONSTRAINT `liberty_attachment_type_ref` FOREIGN KEY (`attachment_plugin_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_plugins`( `plugin_guid` )'
 ",
-
-//'tiki_blobs' => '
-//  blob_id I4 PRIMARY,
-//  user_id I4 NOTNULL,
-//  blob_size I8 NOTNULL,
-//  blob_name C(250) NOTNULL,
-//  blob_data_type C(100) NOTNULL,
-//  blob_data B NOTNULL
-//',
 
 'liberty_files' => "
   file_id I4 PRIMARY,
