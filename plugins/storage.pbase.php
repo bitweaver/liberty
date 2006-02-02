@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -29,7 +29,7 @@ $gLibertySystem->registerPlugin( PLUGIN_GUID_PBASE, $pluginParams );
 
 /*
 	the pbase plugin doesn't need to do anything extra besides store the pbase image_id
-	in tiki_attachment.foreign_id - which has already happened in LibertyAttachable::store().
+	in liberty_attachment.foreign_id - which has already happened in LibertyAttachable::store().
 	So, we don't need to even define this function
 	function pbase_store() {
 	}
