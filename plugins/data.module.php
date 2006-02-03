@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -16,7 +16,7 @@
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
 // | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.module.php,v 1.7 2005/12/26 12:25:03 squareing Exp $
+// $Id: data.module.php,v 1.8 2006/02/03 17:23:54 squareing Exp $
 
 /**
  * definitions
@@ -70,8 +70,8 @@ function datamodule_help() {
 }
 
 function data_datamodule( $data, $params ) {
-	global $modlib, $gBitSmarty;
-	require_once( KERNEL_PKG_PATH.'mod_lib.php' );
+	global $gBitThemes, $gBitSmarty, $gBitThemes;
+
 	$out = '';
 	$ret = ' ';
 
@@ -93,8 +93,8 @@ function data_datamodule( $data, $params ) {
 	}
 
 	if( !$out = $gBitSmarty->fetch( $tpl ) ) {
-		if( $modlib->is_user_module( $module ) ) {
-			$info = $modlib->get_user_module( $module );
+		if( $gBitThemes->isCustomModule( $module ) ) {
+			$info = $gBitThemes->getCustomModule( $module );
 			$gBitSmarty->assign_by_ref( 'user_title', $info["title"] );
 			$gBitSmarty->assign_by_ref( 'user_data', $info["data"] );
 			$out = $gBitSmarty->fetch( 'modules/user_module.tpl' );
@@ -139,7 +139,7 @@ function datamodule_help() {
 }
 
 function data_datamodule($data, $params) {
-	global $modlib, $cache_time, $gBitSmarty, $feature_directory, $ranklib, $feature_trackers, $bitdomain, $user,
+	global $gBitThemes, $cache_time, $gBitSmarty, $feature_directory, $ranklib, $feature_trackers, $bitdomain, $user,
 		$feature_tasks, $feature_user_bookmarks, $bit_p_tasks, $bit_p_create_bookmarks, $imagegallib;
 	require_once( KERNEL_PKG_PATH.'mod_lib.php' );
 	$out = '';
@@ -175,8 +175,8 @@ function data_datamodule($data, $params) {
             $gBitSmarty->assign('no_module_controls', 'y');
 			if( $out = $gBitSmarty->fetch( $module ) ) {
 			} else {
-				if ($modlib->is_user_module($module)) {
-					$info = $modlib->get_user_module($module);
+				if ($gBitThemes->isCustomModule($module)) {
+					$info = $gBitThemes->getCustomModule($module);
 					$gBitSmarty->assign_by_ref('user_title', $info["title"]);
 					$gBitSmarty->assign_by_ref('user_data', $info["data"]);
 					$out = $gBitSmarty->fetch('modules/user_module.tpl');
