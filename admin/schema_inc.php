@@ -37,6 +37,8 @@ $tables = array(
 'liberty_content_links' => "
 	from_content_id I4 PRIMARY,
 	to_content_id I4 PRIMARY
+    CONSTRAINTS ', CONSTRAINT `lib_content_links_from_ref` FOREIGN KEY (`from_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
+				 , CONSTRAINT `lib_content_link_to_ref` FOREIGN KEY (`to_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
 ",
 
 'liberty_content_types' => "
