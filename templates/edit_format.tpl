@@ -10,7 +10,7 @@
 					{$plugin.edit_field}
 					{if $pageInfo.format_guid eq $plugin.plugin_guid}
 						checked="checked"
-					{elseif !$pageInfo.format_guid and $plugin.plugin_guid eq $default_format}
+					{elseif !$pageInfo.format_guid and $plugin.plugin_guid eq $gBitSystemPrefs.default_format}
 						checked="checked"
 					{/if}
 					 onclick="
