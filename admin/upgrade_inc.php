@@ -8,12 +8,24 @@ $upgrades = array(
 		'BWR2' => array(
 			// STEP 1
 array( 'QUERY' =>
-array( 'PGSQL' => array(
-	"ALTER TABLE `".BIT_DB_PREFIX."tiki_content` ADD `last_hit` INT8 NOT NULL DEFAULT 0,",
-	"ALTER TABLE `".BIT_DB_PREFIX."tiki_content` ADD `event_time` INT8 NOT NULL DEFAULT 0,",
-	"UPDATE `tiki_content` SET `last_hit` = `last_modified` ,`event_time` = 0;"
-)),
+	array( 'PGSQL' => array(
+		"ALTER TABLE `".BIT_DB_PREFIX."tiki_content` ADD `last_hit` INT8 NOT NULL DEFAULT 0,",
+		"ALTER TABLE `".BIT_DB_PREFIX."tiki_content` ADD `event_time` INT8 NOT NULL DEFAULT 0,",
+		"UPDATE `tiki_content` SET `last_hit` = `last_modified` ,`event_time` = 0;"
+	)),
 ),
+array( 'DATADICT' => array(
+	array( 'RENAMETABLE' => array(
+		'tiki_content' => 'liberty_content',
+		// TODO: add more tables here
+	)),
+	array( 'RENAMECOLUMN' => array(
+		'liberty_content' => array(
+			'`language`' => '`lang_code` C(32)',
+		),
+	)),
+)),
+
 		)
 	),
 
