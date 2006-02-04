@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.21 2006/02/04 12:18:28 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.22 2006/02/04 17:45:33 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -99,7 +99,7 @@ class LibertyStructure extends LibertyBase {
 		} elseif( @BitBase::verifyId( $this->mInfo['root_structure_id'] ) ) {
 			$pParamHash['root_structure_id'] = $this->mInfo['root_structure_id'];
 		} elseif( @BitBase::verifyId( $pParamHash['structure_id'] ) ) {
-			$pParamHash['root_structure_id'] = $this->mDb->getOne( "SELECT root_structure_id FROM liberty_structures WHERE `structure_id` = ?", array( $pParamHash['structure_id'] ) );
+			$pParamHash['root_structure_id'] = $this->mDb->getOne( "SELECT `root_structure_id` FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `structure_id` = ?", array( $pParamHash['structure_id'] ) );
 		} else {
 			$pParamHash['root_structure_id'] = NULL;
 		}
