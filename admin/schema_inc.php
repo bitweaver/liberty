@@ -21,26 +21,6 @@ $tables = array(
 	user_id I4
 ",
 
-'liberty_content_history' => "
-	page_id I4 PRIMARY,
-	version I4 PRIMARY,
-	last_modified I8 NOTNULL,
-	format_guid C(16) NOTNULL,
-	description C(200),
-	user_id C(40),
-	ip C(15),
-	comment C(200),
-	data X
-	CONSTRAINTS ', CONSTRAINT `liberty_history_page_ref` FOREIGN KEY (`page_id`) REFERENCES `".BIT_DB_PREFIX."wiki_pages`( `page_id` )'
-",
-
-'liberty_content_links' => "
-	from_content_id I4 PRIMARY,
-	to_content_id I4 PRIMARY
-	CONSTRAINTS ', CONSTRAINT `lib_content_links_from_ref` FOREIGN KEY (`from_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
-				 , CONSTRAINT `lib_content_link_to_ref` FOREIGN KEY (`to_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
-",
-
 'liberty_content_types' => "
 	content_type_guid C(16) PRIMARY,
 	content_description C(250) NOTNULL,
@@ -65,23 +45,43 @@ $tables = array(
 	title C(160),
 	ip C(39),
 	data X
-	CONSTRAINTS '
+	CONSTRAINT '
 		, CONSTRAINT `liberty_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )
 		, CONSTRAINT `liberty_content_guid_ref`  FOREIGN KEY (`format_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_plugins`( `plugin_guid` )'
+",
+
+'liberty_content_history' => "
+	content_id I4 PRIMARY,
+	version I4 PRIMARY,
+	last_modified I8 NOTNULL,
+	format_guid C(16) NOTNULL,
+	description C(200),
+	user_id C(40),
+	ip C(15),
+	comment C(200),
+	data X
+	CONSTRAINT ', CONSTRAINT `liberty_history_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
+",
+
+'liberty_content_links' => "
+	from_content_id I4 PRIMARY,
+	to_content_id I4 PRIMARY
+	CONSTRAINT ', CONSTRAINT `lib_content_links_from_ref` FOREIGN KEY (`from_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
+				 , CONSTRAINT `lib_content_link_to_ref` FOREIGN KEY (`to_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
 ",
 
 'liberty_content_prefs' => "
 	content_id I4 PRIMARY,
 	name C(40) PRIMARY,
 	value C(250)
-	CONSTRAINTS ', CONSTRAINT `lib_content_prefs_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
+	CONSTRAINT ', CONSTRAINT `lib_content_prefs_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
 ",
 
 'liberty_comments' => "
 	comment_id I4 PRIMARY,
 	content_id I4 NOTNULL,
 	parent_id I4 NOTNULL
-	CONSTRAINTS '
+	CONSTRAINT '
 		, CONSTRAINT `liberty_comments_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
 		, CONSTRAINT `liberty_comments_parent_ref` FOREIGN KEY (`parent_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
 ",
@@ -103,7 +103,7 @@ $tables = array(
 	hits I4,
 	error_code I4,
 	caption C(250)
-	CONSTRAINTS '
+	CONSTRAINT '
 		, CONSTRAINT `liberty_attachment_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
 		, CONSTRAINT `liberty_attachment_type_ref` FOREIGN KEY (`attachment_plugin_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_plugins`( `plugin_guid` )'
 ",
@@ -124,7 +124,7 @@ $tables = array(
 	pos I4,
 	page_alias C(240),
 	parent_id I4
-	CONSTRAINTS ', CONSTRAINT `liberty_root_structure_id_ref` FOREIGN KEY (`root_structure_id`) REFERENCES `".BIT_DB_PREFIX."liberty_structures`( `structure_id` )'
+	CONSTRAINT ', CONSTRAINT `liberty_root_structure_id_ref` FOREIGN KEY (`root_structure_id`) REFERENCES `".BIT_DB_PREFIX."liberty_structures`( `structure_id` )'
 ",
 
 'liberty_dynamic_variables' => "
