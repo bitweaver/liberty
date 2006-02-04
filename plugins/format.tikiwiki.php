@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.44 $
+ * @version  $Revision: 1.2.2.45 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -956,7 +956,7 @@ class TikiWikiParser extends BitBase {
 
 		foreach( array_unique( $pages[1] ) as $page_parse ) {
 			// collect all parameters into $parts ( after we've removed whitespaces around '=' )
-			preg_match_all( "/(\w*)=([^=]*)(?=\s.*?|\s*\})/", preg_replace( "/\s+=\s+/", "=", $page_parse ), $parts );
+			preg_match_all( "/(\w*)=([^\}\s]*)(?=\s.*?|\s*\})/", preg_replace( "/\s+=\s+/", "=", $page_parse ), $parts );
 
 			$imgdata = array();
 			$imgdata['img_style'] = '';
