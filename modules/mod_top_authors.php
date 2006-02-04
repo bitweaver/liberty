@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_top_authors.php,v 1.4 2005/08/07 17:40:30 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_top_authors.php,v 1.5 2006/02/04 10:10:51 squareing Exp $
 /**
  * Params:
  * - content_type_guid : if set, show only those content_type_guid's
@@ -24,7 +24,7 @@ if( empty( $module_title ) ) {
 
 $listHash = $_REQUEST;
 if( !empty( $module_params['content_type_guid'] ) ) {
-	 $listHash['content_type_guid'] = $module_params['content_type_guid'];
+	$listHash['content_type_guid'] = $module_params['content_type_guid'];
 }
 $listHash['max_request'] = $module_rows;
 

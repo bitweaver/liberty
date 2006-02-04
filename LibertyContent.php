@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.38 2006/02/02 14:47:25 hash9 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.39 2006/02/04 10:10:51 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -916,7 +916,34 @@ class LibertyContent extends LibertyBase {
 				WHERE uu.`user_id` != ".ANONYMOUS_USER_ID." AND lc.`hits` > 0 $mid
 				GROUP BY uu.`user_id`, uu.`login`, uu.`real_name`
 				ORDER BY `ag_hits` DESC";
-		$ret = $this->mDb->getRow( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
+		$result = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
+		while( $aux = $result->fetchRow() ) {
+			$ret[] = $aux;
+		}
+		return $ret;
+	}
+
+	/**
+	* Get a list of content ranked by certain criteria set in $pListHash['sort_mode']
+	*
+	* @param array hash of parameters ( content_type_guid will limit list to a single content type
+	* @return - data
+	**/
+	function getContentRanking( $pListHash ) {
+		$pListHash['sort_mode'] = !empty( $pListHash['sort_mode'] ) ? $pListHash['sort_mode'] : 'hits_desc';
+
+		if( $pListHash['sort_mode'] == 'top_authors' ) {
+			global $gBitUser;
+			$ret['data'] = $gBitUser->getAuthorList( $pListHash );
+		} else {
+			include_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
+			$libertyContent = new LibertyContent();
+			$ret = $libertyContent->getContentList( $pListHash );
+		}
+
+		$ret['title']     = !empty( $pListHash['title'] ) ? $pListHash['title'] : tra( "Content Ranking" );
+		$ret['attribute'] = !empty( $pListHash['attribute'] ) ? $pListHash['attribute'] : tra( "Hits" );
+
 		return $ret;
 	}
 
