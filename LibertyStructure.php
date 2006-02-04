@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.20 2006/02/02 07:55:24 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.21 2006/02/04 12:18:28 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -90,6 +90,21 @@ class LibertyStructure extends LibertyBase {
 		return $ret;
 	}
 
+	// if you only have a structure id and you want to figure out the root structure id, use this
+	// @param $pParamHash['structure_id'] is the structure id from which you want to figure out the root structure id
+	// @return none. updates $pParamHash['root_structure_id'] by reference
+	function getRootStructureId( &$pParamHash ) {
+		if( @BitBase::verifyId( $pParamHash['root_structure_id'] ) ) {
+			$pParamHash['root_structure_id'] = $pParamHash['root_structure_id'];
+		} elseif( @BitBase::verifyId( $this->mInfo['root_structure_id'] ) ) {
+			$pParamHash['root_structure_id'] = $this->mInfo['root_structure_id'];
+		} elseif( @BitBase::verifyId( $pParamHash['structure_id'] ) ) {
+			$pParamHash['root_structure_id'] = $this->mDb->getOne( "SELECT root_structure_id FROM liberty_structures WHERE `structure_id` = ?", array( $pParamHash['structure_id'] ) );
+		} else {
+			$pParamHash['root_structure_id'] = NULL;
+		}
+	}
+
 	// This is a utility function mainly used for upgrading sites.
 	function setTreeRoot( $pRootId, $pTree ) {
 		foreach( $pTree as $structRow ) {
@@ -150,21 +165,21 @@ class LibertyStructure extends LibertyBase {
 	* @param $pStructureId structure for which we want structure
 	* @return full structure
 	*/
-	function getStructure( $pRootStructureId = NULL ) {
+	function getStructure( &$pParamHash ) {
 		global $gBitSystem, $gLibertySystem;
-		$ret = FALSE;
-		if( !@BitBase::verifyId( $pRootStructureId ) && @BitBase::verifyId( $this->mInfo['root_structure_id'] ) ) {
-			$pRootStructureId = $this->mInfo['root_structure_id'];
-		}
+		// make sure we have the correct id to get the entire structure
+		LibertyStructure::getRootStructureId( $pParamHash );
 
-		if( @BitBase::verifyId( $pRootStructureId ) ) {
+		$ret = FALSE;
+
+		if( @BitBase::verifyId( $pParamHash['root_structure_id'] ) ) {
 			// Get all nodes for this structure
 			$query = "SELECT ls.*, lc.`user_id`, lc.`title`, lc.`content_type_guid`, uu.`login`, uu.`real_name`
 				FROM `".BIT_DB_PREFIX."liberty_structures` ls
 				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( ls.`content_id` = lc.`content_id` )
 				INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = lc.`user_id` )
 				WHERE ls.`root_structure_id` = ? ORDER BY `pos` ASC";
-			$result = $this->mDb->query( $query, array( $pRootStructureId ) );
+			$result = $this->mDb->query( $query, array( $pParamHash['root_structure_id'] ) );
 
 			$subs = array();
 			$row_max = $result->numRows();
@@ -195,9 +210,11 @@ class LibertyStructure extends LibertyBase {
 	*/
 	function getChildNodes( $pStructureHash, $pParentId = 0 ) {
 		$ret = array();
-		foreach( $pStructureHash as $node ) {
-			if( $node['parent_id'] == $pParentId ) {
-				$ret[] = $node;
+		if( !empty( $pStructureHash ) ) {
+			foreach( $pStructureHash as $node ) {
+				if( $node['parent_id'] == $pParentId ) {
+					$ret[] = $node;
+				}
 			}
 		}
 		return $ret;
@@ -266,10 +283,9 @@ class LibertyStructure extends LibertyBase {
 		global $gLibertySystem, $gBitSystem;
 		$ret = array();
 		if( @BitBase::verifyId( $pStructureId ) ) {
-			$query = "SELECT ls.`root_structure_id` FROM `".BIT_DB_PREFIX."liberty_structures` ls WHERE ls.`structure_id` = ?";
-			$root_structure_id = $this->mDb->getOne( $query, array( $pStructureId ) );
-			$pStructureHash = $this->getStructure( $root_structure_id );
-			$ret = $this->createSubTree( $pStructureHash, ( ( $pRootTree ) ? $root_structure_id : $pStructureId ) );
+			$listHash['structure_id'] = $pStructureId;
+			$structureHash = $this->getStructure( $listHash );
+			$ret = $this->createSubTree( $structureHash, ( ( $pRootTree ) ? $listHash['root_structure_id'] : $pStructureId ) );
 		}
 		return $ret;
 	}
