@@ -4,7 +4,7 @@
  * assigned_modules
  *
  * @author   StarRider <starrrider@sourceforge.net>
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  * 
@@ -60,32 +60,18 @@ function data_dropdown_help() {
 }
 
 /**
- * Load Function
- */
+* Load Function
+*/
 function data_dropdown($data, $params) {
 	extract ($params, EXTR_SKIP);
-    $title = (isset($title)) ? $title : 'For More Information';
-    $width = (isset($width)) ? $width : '20';
-	$width = ((100 - $width) / 2) . '%';
+	$title = (isset($title)) ? $title : tra( 'For More Information, click me.' );
 	$dd = (microtime() * 1000000);
 
-	$ret = 
-		'<div>'
-			.'<table width="100%" border="0" cellspacing="0" cellpadding="0">'
-				.'<tr>'
-					.'<td width=' . $width . '><hr></td>'
-					.'<td>' 
-						.'<div style="text-align:center">'
-							.'<a title="Click to Expand or Contract" href="javascript:flip(' . $dd . ')"><Strong>' . $title . '</strong></a>'
-						.'</div>'				
-					.'</td>'
-					.'<td width=' . $width . '><hr></td>'
-				.'</tr>'
-			.'</table>'
-		.'</div>'
-		.'<div class="help box" style="display:none" id="' . $dd . '">'
-			.$data
-		.'</div>';
-	return $ret;
+	return	'<div style="text-align:center;font-weight:bold;">
+				<a title="Click to Expand or Contract" href="javascript:flip(\'flip'.$dd.'\')">'.$title.'</a>
+			</div>
+			<div class="help box" style="display:none" id="flip'.$dd.'">'
+				.$data.
+			'</div>';
 }
 ?>
