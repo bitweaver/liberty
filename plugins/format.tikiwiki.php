@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.45 $
+ * @version  $Revision: 1.2.2.46 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -609,6 +609,7 @@ class TikiWikiParser extends BitBase {
 		global $gBitSystem;
 		global $gBitUser;
 		global $page;
+		$section_count = 0;
 		if( $gBitSystem->isPackageActive( 'wiki' ) ) {
 			require_once( WIKI_PKG_PATH.'BitPage.php' );
 		}
@@ -1197,7 +1198,11 @@ class TikiWikiParser extends BitBase {
 		foreach ($lines as $line) {
 
 			// bitweaver now ignores leading space because it is *VERY* disturbing to unaware users - spiderr
-			$line = trim( $line );
+			// unless 'feature_wiki_preserve_leading_blanks is set'.  This is used for sites that have
+			// migrated from TikiWiki and have lots of pages whose formatting depends on the presevation of leading spaces
+			if ($gBitSystem->getPreference('feature_wiki_preserve_leading_blanks') != 'y') {
+				$line = trim( $line );
+			}
 			// Check for titlebars...
 			// NOTE: that title bar should be start from begining of line and
 			//	   be alone on that line to be autoaligned... else it is old styled
@@ -1410,8 +1415,25 @@ class TikiWikiParser extends BitBase {
 						array_unshift($divdepth, $hdrlevel);
 						$addremove = 1;
 						}
+						$edit_link = '';
+						if ($gBitSystem->getPreference('feature_wiki_section_edit') == 'y') {
+							if ($gBitUser->hasPermission( 'bit_p_edit' )) {
+								if ($hdrlevel == 2) {
+									$section_count++;
+									$content_id = $pCommonObject->mContentId;
+									$edit_url = WIKI_PKG_URL."edit.php?content_id=" . $content_id . "&action=edit_sectin&section=$section_count";
 
-						$line = $anchor . "<h$hdrlevel>" . substr($line, $hdrlevel + $addremove). "</h$hdrlevel>" . $aclose;
+									$edit_link = "<div class=\"editsection\" style=\"float:right;margin-left:5px;\">[<a href=\"$edit_url\">Edit</a>]</div>";
+								}
+							}
+						}
+						$line = $edit_link 
+						. $anchor 
+						. "<h$hdrlevel>" 
+						. substr($line, $hdrlevel + $addremove) 
+						. "</h$hdrlevel>" 
+						. $aclose
+						;
 					} elseif (!strcmp($line, "...page...")) {
 						// Close lists and divs currently opened
 						while (count($listbeg))
