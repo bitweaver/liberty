@@ -9,10 +9,10 @@
 			{if $gBitUser->hasPermission( 'bit_p_post_comments' )}
 				<a href="{$comments_return_url}&amp;post_comment_reply_id={$comment.content_id}&amp;post_comment_request=1#editcomments" rel="nofollow">{biticon ipackage="liberty" iname="reply" iexplain="Reply to this comment"}</a>
 			{/if}
-			{if $gBitUser->isAdmin() || ($gBitUser && $comment.user_id == $gBitUser->mInfo.user_id)}
+			{if $gBitUser->isAdmin() || ( $gBitUser && $gBitUser->hasPermission( 'bit_p_edit_own_comments' ) && $comment.user_id == $gBitUser->mInfo.user_id)}
 				<a href="{$comments_return_url}&amp;post_comment_id={$comment.comment_id}&amp;post_comment_request=1#editcomments" rel="nofollow">{biticon ipackage="liberty" iname="edit" iexplain="Edit"}</a>
 			{/if}
-			{if $gBitUser->isAdmin() || ($gBitUser && $comment.user_id == $gBitUser->mInfo.user_id)}
+			{if $gBitUser->isAdmin() || ( $gBitUser && $gBitUser->hasPermission( 'bit_p_remove_own_comments' ) && $comment.user_id == $gBitUser->mInfo.user_id)}
 				<a href="{$comments_return_url}&amp;delete_comment_id={$comment.comment_id}" rel="nofollow">{biticon ipackage="liberty" iname="delete" iexplain="Remove"}</a>
 			{/if}
 		</div>
