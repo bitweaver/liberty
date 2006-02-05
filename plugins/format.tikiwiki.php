@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.23 $
+ * @version  $Revision: 1.24 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -423,7 +423,7 @@ class TikiWikiParser extends BitBase {
 	function get_locale($user = false) {
 	# TODO move to admin preferences screen
 		static $locales = array(
-		  'cs' => 'cs_CZ',
+			'cs' => 'cs_CZ',
 			'de' => 'de_DE',
 			'dk' => 'da_DK',
 			'en' => 'en_US',
