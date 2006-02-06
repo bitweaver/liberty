@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_category.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.category.php,v 1.6 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.category.php,v 1.7 2006/02/06 00:09:01 squareing Exp $
 
 /**
  * definitions
@@ -172,10 +172,10 @@ function wikiplugin_category($data, $params) {
 	$listcat = array();
 	// title of categories
 	$title = '';
-	// TODO: allow 'find' and 'maxRecords'
+	// TODO: allow 'find' and 'max_records'
 	$find = "";
 	$offset = 0;
-	$maxRecords = 500;
+	$max_records = 500;
 	$count = 0;
 	$sort = (isset($sort)) ? $sort : "name_asc";
 	$types = (isset($types)) ? "+" . strtolower($types) : "*";
@@ -207,10 +207,10 @@ function wikiplugin_category($data, $params) {
 		$objectcat = array();
 		if ($sub) {
 			// get all items for category and sub category
-			$objectcat = $categlib->list_category_objects_deep($id, $offset, $maxRecords, $sort, $find);
+			$objectcat = $categlib->list_category_objects_deep($id, $offset, $max_records, $sort, $find);
 		} else {
 			// get all items for category
-			$objectcat = $categlib->list_category_objects($id, $offset, $maxRecords, $sort, $find);
+			$objectcat = $categlib->list_category_objects($id, $offset, $max_records, $sort, $find);
 		}
 		foreach ($objectcat["data"] as $obj) {
 			$type = $obj["type"];

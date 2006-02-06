@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.39 2006/02/04 10:10:51 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.40 2006/02/06 00:09:01 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -982,7 +982,7 @@ class LibertyContent extends LibertyBase {
 				'backlinks_desc'
 				))) {
 			$old_offset = $pListHash['offset'];
-			$old_maxRecords = $pListHash['max_records'];
+			$old_max_records = $pListHash['max_records'];
 			$old_sort_mode = $pListHash['sort_mode'];
 			$pListHash['sort_mode'] = 'modifier_user_desc';
 			$pListHash['offset'] = 0;
@@ -1062,9 +1062,9 @@ class LibertyContent extends LibertyBase {
 		}
 
 
-		// If sort mode is versions then offset is 0, maxRecords is -1 (again) and sort_mode is nil
-		// If sort mode is links then offset is 0, maxRecords is -1 (again) and sort_mode is nil
-		// If sort mode is backlinks then offset is 0, maxRecords is -1 (again) and sort_mode is nil
+		// If sort mode is versions then offset is 0, max_records is -1 (again) and sort_mode is nil
+		// If sort mode is links then offset is 0, max_records is -1 (again) and sort_mode is nil
+		// If sort mode is backlinks then offset is 0, max_records is -1 (again) and sort_mode is nil
 		$query = "
 			SELECT
 				uue.`login` AS `modifier_user`,
@@ -1118,7 +1118,7 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 
-		// If sortmode is versions, links or backlinks sort using the ad-hoc function and reduce using old_offse and old_maxRecords
+		// If sortmode is versions, links or backlinks sort using the ad-hoc function and reduce using old_offse and old_max_records
 		if ($old_sort_mode == 'versions_asc' && !empty( $ret['versions'] ) ) {
 			usort($ret, 'compare_versions');
 		}
@@ -1151,7 +1151,7 @@ class LibertyContent extends LibertyBase {
 				'backlinks_asc',
 				'backlinks_desc'
 				))) {
-			$ret = array_slice($ret, $old_offset, $old_maxRecords);
+			$ret = array_slice($ret, $old_offset, $old_max_records);
 		}
 
 		$pListHash["data"] = $ret;

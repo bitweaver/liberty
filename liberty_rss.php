@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_rss.php,v 1.1 2006/01/29 13:16:31 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_rss.php,v 1.2 2006/02/06 00:09:01 squareing Exp $
  * @package wiki
  * @subpackage functions
  */
@@ -14,8 +14,8 @@ require_once( LIBERTY_PKG_PATH."LibertyContent.php" );
 
 $gBitSystem->verifyPackage( 'rss' );
 
-$rss->title = $gBitSystem->getPreference( 'title_rss_liberty', $gBitSystem->mPrefs['siteTitle'].' - '.tra( 'Liberty' ) );
-$rss->description = $gBitSystem->getPreference( 'desc_rss_liberty', $gBitSystem->mPrefs['siteTitle'].' - '.tra( 'RSS Feed' ) );
+$rss->title = $gBitSystem->getPreference( 'title_rss_liberty', $gBitSystem->mPrefs['site_title'].' - '.tra( 'Liberty' ) );
+$rss->description = $gBitSystem->getPreference( 'desc_rss_liberty', $gBitSystem->mPrefs['site_title'].' - '.tra( 'RSS Feed' ) );
 
 // check permission to view liberty pages
 if( !$gBitUser->hasPermission( 'bit_p_view' ) ) {

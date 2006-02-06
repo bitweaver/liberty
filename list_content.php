@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage functions
  */
@@ -19,17 +19,17 @@ if( !empty( $_REQUEST['sort_mode'] ) ) {
 	$gBitSmarty->assign( 'sort_mode', $content_sort_mode );
 }
 
-$max_content = $gBitSystem->mPrefs['maxRecords'];
+$max_content = $gBitSystem->mPrefs['max_records'];
 $offset_content = @BitBase::verifyId( $_REQUEST['offset'] ) ? $_REQUEST['offset'] : 0;
 $gBitSmarty->assign( 'user_id', @BitBase::verifyId( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : NULL );
 $gBitSmarty->assign( 'curPage', $page = @BitBase::verifyId( $_REQUEST['page'] ) ? $_REQUEST['page'] : 1 );
-$offset_content = ( $page - 1 ) * $gBitSystem->mPrefs['maxRecords'];
+$offset_content = ( $page - 1 ) * $gBitSystem->mPrefs['max_records'];
 
 // now that we have all the offsets, we can get the content list
 include_once( LIBERTY_PKG_PATH.'get_content_list_inc.php' );
  
 // calculate page number
-$numPages = ceil( $contentList['cant'] / $gBitSystem->mPrefs['maxRecords'] );
+$numPages = ceil( $contentList['cant'] / $gBitSystem->mPrefs['max_records'] );
 $gBitSmarty->assign( 'numPages', $numPages );
 
 //$gBitSmarty->assign_by_ref('offset', $offset);
