@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.10 2006/01/24 21:49:32 squareing Exp $
+// $Id: data.code.php,v 1.11 2006/02/06 10:55:59 bitweaver Exp $
 
 /**
  * definitions
@@ -111,10 +111,14 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 
 	$code = unhtmlentities( $code );
 
-	// Trim any leading blank linkes
-	$code = preg_replace('/^[\n\r]+/', "",$code);		
-	// Trim any trailing blank linkes
-	$code = preg_replace('/[\n\r]+$/', "",$code);		
+	// Trim any leading blank lines
+	$code = preg_replace('/^[\n\r]+/', "",$code);
+	// Trim any trailing blank lines
+	if( file_exists( UTIL_PKG_PATH.'geshi/geshi.php' ) ) {
+		$code = preg_replace('/[\n\r]+$/', "",$code);
+	} else {
+		$code = preg_replace('/[\n\r]+$/', "\n",$code);
+	}
 
 	if( file_exists( UTIL_PKG_PATH.'geshi/geshi.php' ) ) {
 		// Include the GeSHi library
