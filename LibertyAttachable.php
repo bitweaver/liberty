@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.16 2006/02/02 07:55:24 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.17 2006/02/06 09:58:33 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -518,7 +518,7 @@ function liberty_process_image( &$pFileHash ) {
 	$resizeFunc = liberty_get_function( 'resize' );
 
 	list($type, $ext) = split( '/', strtolower( $pFileHash['type'] ) );
-	mkdir_p( BIT_PKG_PATH.$pFileHash['dest_path'] );
+	mkdir_p( BIT_ROOT_PATH.$pFileHash['dest_path'] );
 	if( $resizePath = liberty_process_generic( $pFileHash, $ext ) ) {
 		$pFileHash['source_file'] = BIT_ROOT_PATH.$resizePath;
 		$nameHold = $pFileHash['name'];
@@ -538,7 +538,7 @@ function liberty_process_image( &$pFileHash ) {
 function liberty_clear_thumbnails( &$pFileHash ) {
 	$thumbsizes = array( 'avatar', 'small', 'medium', 'large' );
 	foreach( $thumbsizes as $size ) {
-		$fullPath =  BIT_PKG_PATH.$pFileHash['dest_path']."$size.jpg";
+		$fullPath =  BIT_ROOT_PATH.$pFileHash['dest_path']."$size.jpg";
 		if( file_exists( $fullPath ) ) {
 			unlink( $fullPath );
 		}
@@ -665,20 +665,20 @@ function liberty_gd_resize_image( &$pFileHash, $pFormat = NULL ) {
 		switch( $pFormat ) {
 			case 'png':
 				$ext = '.png';
-				$destFile = BIT_PKG_PATH.'/'.$destUrl.$ext;
+				$destFile = BIT_ROOT_PATH.'/'.$destUrl.$ext;
 				imagepng( $t, $destFile );
 				break;
 			case 'gif':
 				// This must go immediately before default so default will be hit for PHP's without gif support
 				if( function_exists( 'imagegif' ) ) {
 					$ext = '.gif';
-					$destFile = BIT_PKG_PATH.'/'.$destUrl.$ext;
+					$destFile = BIT_ROOT_PATH.'/'.$destUrl.$ext;
 					imagegif( $t, $destFile );
 					break;
 				}
 			default:
 				$ext = '.jpg';
-				$destFile = BIT_PKG_PATH.'/'.$destUrl.$ext;
+				$destFile = BIT_ROOT_PATH.'/'.$destUrl.$ext;
 				imagejpeg( $t, $destFile );
 				break;
 		}
@@ -762,7 +762,7 @@ function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL ) {
 				// We have to resize. *ALL* resizes are converted to jpeg
 				$destExt = '.jpg';
 				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
-				$destFile = BIT_PKG_PATH.'/'.$destUrl;
+				$destFile = BIT_ROOT_PATH.'/'.$destUrl;
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 //	print "			if ( !imagick_resize( $iImg, $pFileHash[max_width], $pFileHash[max_height], IMAGICK_FILTER_LANCZOS, 0.5, $pFileHash[max_width] x $pFileHash[max_height] > ) ) {";
 
@@ -880,7 +880,7 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 				// We have to resize. *ALL* resizes are converted to jpeg
 				$destExt = '.jpg';
 				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
-				$destFile = BIT_PKG_PATH.'/'.$destUrl;
+				$destFile = BIT_ROOT_PATH.'/'.$destUrl;
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 				// Alternate Filter settings can seen here http://www.dylanbeattie.net/magick/filters/result.html
 				if ( $error = liberty_magickwand_check_error( MagickResizeImage( $magickWand, $pFileHash['max_width'], $pFileHash['max_height'], MW_CatromFilter, 1.00 ), $magickWand ) ) {

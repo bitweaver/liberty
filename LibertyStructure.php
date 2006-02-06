@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.22 2006/02/04 17:45:33 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.23 2006/02/06 09:58:33 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -594,7 +594,7 @@ class LibertyStructure extends LibertyBase {
 		global $exportlib, $bitdomain, $gBitSystem;
 
 		include_once( WIKI_PKG_PATH.'export_lib.php' );
-		include_once (BIT_PKG_PATH."util/tar.class.php");
+		include_once (BIT_ROOT_PATH."util/tar.class.php");
 
 		$page_info = $this->s_get_structure_info($structure_id);
 		$title = $page_info["title"];
