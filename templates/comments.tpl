@@ -75,6 +75,7 @@
 						<td>
 							<label for="comments-maxcomm">{tr}Messages{/tr} </label>
 							<select name="comments_maxComments" id="comments-maxcomm">
+								<option value="5" {if $maxComments eq 5}selected="selected"{/if}>5</option>
 								<option value="10" {if $maxComments eq 10}selected="selected"{/if}>10</option>
 								<option value="20" {if $maxComments eq 20}selected="selected"{/if}>20</option>
 								<option value="50" {if $maxComments eq 50}selected="selected"{/if}>50</option>
