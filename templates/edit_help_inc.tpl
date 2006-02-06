@@ -1,7 +1,7 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.6 2005/10/12 15:13:53 spiderr Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.7 2006/02/06 22:56:47 squareing Exp $ *}
 
 {strip}
-{if $gBitSystem->isFeatureActive( 'feature_wikihelp' )}
+{if $gBitSystem->isFeatureActive( 'wiki_help' )}
 	{jstabs}
 		{jstab title="Help"}
 			{foreach from=$formatplugins item=p}

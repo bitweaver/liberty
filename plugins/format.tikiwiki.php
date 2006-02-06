@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.24 $
+ * @version  $Revision: 1.25 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -95,7 +95,7 @@ class TikiWikiParser extends BitBase {
 		BitBase::BitBase();
 
 		global $gBitSystem;
-		$this->mUseWikiWords = $gBitSystem->getPreference( 'feature_wikiwords' ) == 'y';
+		$this->mUseWikiWords = $gBitSystem->isFeatureActive( 'wiki_words' );
 
 		// Setup the WikiWord regex
 	    $wiki_page_regex = $gBitSystem->getPreference( 'wiki_page_regex', 'strict' );
@@ -907,7 +907,7 @@ class TikiWikiParser extends BitBase {
 		// If they are parenthesized then don't treat as links
 		// Prevent ))PageName(( from being expanded	\"\'
 		//[A-Z][a-z0-9_\-]+[A-Z][a-z0-9_\-]+[A-Za-z0-9\-_]*
-		if( $gBitSystem->isPackageActive( 'wiki' ) && $gBitSystem->isFeatureActive( 'feature_wikiwords' ) ) {
+		if( $gBitSystem->isPackageActive( 'wiki' ) && $gBitSystem->isFeatureActive( 'wiki_words' ) ) {
 			// The first part is now mandatory to prevent [Foo|MyPage] from being converted!
 			// the {2} is curious but seems to prevent things like "__Administration / Modules__" getting linked - spiderr
 			$pages = $this->extractWikiWords( $data );
@@ -915,7 +915,7 @@ class TikiWikiParser extends BitBase {
 				if( empty( $words ) || !array_key_exists( $page_parse, $words ) ) {
 					if( $exists = $this->pageExists( $page_parse, $PageList, $pCommonObject ) ) {
 						$repl = BitPage::getDisplayLink( $page_parse, $exists );
-					} elseif( $gBitSystem->getPreference( 'feature_wiki_plurals') == 'y' && $this->get_locale() == 'en_US' ) {
+					} elseif( $gBitSystem->isFeatureActive( 'wiki_plurals') && $this->get_locale() == 'en_US' ) {
 						// Link plural topic names to singular topic names if the plural
 						// doesn't exist, and the language is english
 						$plural_tmp = $page_parse;
@@ -1076,7 +1076,7 @@ class TikiWikiParser extends BitBase {
 		// Handle double square brackets.  -rlpowell
 		$data = str_replace( "[[", "[", $data );
 
-		if ($gBitSystem->getPreference('feature_wiki_tables') != 'new') {
+		if ($gBitSystem->getPreference('wiki_tables') != 'new') {
 			// New syntax for tables
 			if (preg_match_all("/\|\|(.*)\|\|/", $data, $tables)) {
 				$maxcols = 1;
@@ -1254,7 +1254,7 @@ class TikiWikiParser extends BitBase {
 
 			// If the first character is ' ' and we are not in pre then we are in pre
 			// bitweaver now ignores leading space because it is *VERY* disturbing to unaware users - spiderr
-			if (substr($line, 0, 1) == ' ' && $gBitSystem->getPreference('feature_wiki_monosp') == 'y' && $inTable == 0) {
+			if (substr($line, 0, 1) == ' ' && $gBitSystem->isFeatureActive('wiki_monosp') && $inTable == 0) {
 				// This is not list item -- must close lists currently opened
 				while (count($listbeg))
 				$data .= array_shift($listbeg);

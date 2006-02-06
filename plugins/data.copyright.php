@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,13 +17,13 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.copyright.php,v 1.4 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.copyright.php,v 1.5 2006/02/06 22:56:47 squareing Exp $
 
 /**
  * definitions
  */
 global $gBitSystem;
-if( ( $gBitSystem->isPackageActive( 'wiki' ) ) && ( $gBitSystem->isFeatureActive( 'wiki_feature_copyrights' ) ) ) { // Do not include this Plugin if this Package and Feature are not active
+if( ( $gBitSystem->isPackageActive( 'wiki' ) ) && ( $gBitSystem->isFeatureActive( 'wiki_copyrights' ) ) ) { // Do not include this Plugin if this Package and Feature are not active
 
 define( 'PLUGIN_GUID_DATACOPYRIGHT', 'datacopyright' );
 global $gLibertySystem;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_wikilist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikilist.php,v 1.5 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.wikilist.php,v 1.6 2006/02/06 22:56:47 squareing Exp $
 
 /**
  * definitions
@@ -81,9 +81,9 @@ function wikiplugin_compare_wikipages($a, $b) {
 
 function wikiplugin_wikilist($data, $params) {
 	global $gBitSystem;
-	global $feature_hotwords;
-	// turn off $feature_hotwords to avoid conflicts
-	$feature_hotwords = 'n';
+	global $hotwords;
+	// turn off $hotwords to avoid conflicts
+	$hotwords = 'n';
 
 	extract ($params, EXTR_SKIP);
 	if(!isset($alpha))		{ $alpha = 1; }

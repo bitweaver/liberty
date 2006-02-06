@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -16,7 +16,7 @@
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
 // | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.module.php,v 1.8 2006/02/03 17:23:54 squareing Exp $
+// $Id: data.module.php,v 1.9 2006/02/06 22:56:47 squareing Exp $
 
 /**
  * definitions
@@ -140,7 +140,7 @@ function datamodule_help() {
 
 function data_datamodule($data, $params) {
 	global $gBitThemes, $cache_time, $gBitSmarty, $feature_directory, $ranklib, $feature_trackers, $bitdomain, $user,
-		$feature_tasks, $feature_user_bookmarks, $bit_p_tasks, $bit_p_create_bookmarks, $imagegallib;
+		$feature_tasks, $user_bookmarks, $bit_p_tasks, $bit_p_create_bookmarks, $imagegallib;
 	require_once( KERNEL_PKG_PATH.'mod_lib.php' );
 	$out = '';
 	extract ($params, EXTR_SKIP);
