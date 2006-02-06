@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.40 2006/02/06 00:09:01 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.41 2006/02/06 18:43:06 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -810,27 +810,27 @@ class LibertyContent extends LibertyBase {
 	*/
 	function postGetList( &$pListHash ) {
 		global $gBitSystem;
-		$pListHash['control']['total_records'] = $pListHash["cant"];
-		$pListHash['control']['total_pages'] = ceil( $pListHash["cant"] / $pListHash['max_records'] );
-		$pListHash['control']['current_page'] = 1 + ( $pListHash['offset'] / $pListHash['max_records'] );
+		$pListHash['listInfo']['total_records'] = $pListHash["cant"];
+		$pListHash['listInfo']['total_pages'] = ceil( $pListHash["cant"] / $pListHash['max_records'] );
+		$pListHash['listInfo']['current_page'] = 1 + ( $pListHash['offset'] / $pListHash['max_records'] );
 
 		if( $pListHash["cant"] > ( $pListHash['offset'] + $pListHash['max_records'] ) ) {
-			$pListHash['control']['next_offset'] = $pListHash['offset'] + $pListHash['max_records'];
+			$pListHash['listInfo']['next_offset'] = $pListHash['offset'] + $pListHash['max_records'];
 		} else {
-			$pListHash['control']['next_offset'] = -1;
+			$pListHash['listInfo']['next_offset'] = -1;
 		}
 
 		// If offset is > 0 then prev_offset
 		if( $pListHash['offset'] > 0 ) {
-			$pListHash['control']['prev_offset'] = $pListHash['offset'] - $pListHash['max_records'];
+			$pListHash['listInfo']['prev_offset'] = $pListHash['offset'] - $pListHash['max_records'];
 		} else {
-			$pListHash['control']['prev_offset'] = -1;
+			$pListHash['listInfo']['prev_offset'] = -1;
 		}
 
-		$pListHash['control']['offset'] = $pListHash['offset'];
-		$pListHash['control']['find'] = $pListHash['find'];
-		$pListHash['control']['sort_mode'] = $pListHash['sort_mode'];
-		$pListHash['control']['max_records'] = $pListHash['max_records'];
+		$pListHash['listInfo']['offset'] = $pListHash['offset'];
+		$pListHash['listInfo']['find'] = $pListHash['find'];
+		$pListHash['listInfo']['sort_mode'] = $pListHash['sort_mode'];
+		$pListHash['listInfo']['max_records'] = $pListHash['max_records'];
 
 		// calculate what links to show
 		if( $gBitSystem->isFeatureActive( 'direct_pagination' ) ) {
@@ -841,55 +841,55 @@ class LibertyContent extends LibertyBase {
 
 			// size of steps to take when skipping
 			// if you have more than 1000 pages, you should consider not using the pagination form
-			if( $pListHash['control']['total_pages'] < 50 ) {
+			if( $pListHash['listInfo']['total_pages'] < 50 ) {
 				$step = 5;
-			} elseif( $pListHash['control']['total_pages'] < 100 ) {
+			} elseif( $pListHash['listInfo']['total_pages'] < 100 ) {
 				$step = 10;
-			} elseif( $pListHash['control']['total_pages'] < 250 ) {
+			} elseif( $pListHash['listInfo']['total_pages'] < 250 ) {
 				$step = 25;
-			} elseif( $pListHash['control']['total_pages'] < 500 ) {
+			} elseif( $pListHash['listInfo']['total_pages'] < 500 ) {
 				$step = 50;
 			} else {
 				$step = 100;
 			}
 
-			$prev  = ( $pListHash['control']['current_page'] - $continuous > 0 ) ? $pListHash['control']['current_page'] - $continuous : 1;
-			$next  = ( $pListHash['control']['current_page'] + $continuous < $pListHash['control']['total_pages'] ) ? $pListHash['control']['current_page'] + $continuous : $pListHash['control']['total_pages'];
-			for( $i = $pListHash['control']['current_page'] - 1; $i >= $prev; $i -= 1 ) {
-				$pListHash['control']['block']['prev'][$i] = $i;
+			$prev  = ( $pListHash['listInfo']['current_page'] - $continuous > 0 ) ? $pListHash['listInfo']['current_page'] - $continuous : 1;
+			$next  = ( $pListHash['listInfo']['current_page'] + $continuous < $pListHash['listInfo']['total_pages'] ) ? $pListHash['listInfo']['current_page'] + $continuous : $pListHash['listInfo']['total_pages'];
+			for( $i = $pListHash['listInfo']['current_page'] - 1; $i >= $prev; $i -= 1 ) {
+				$pListHash['listInfo']['block']['prev'][$i] = $i;
 			}
 			if( $prev != 1 ) {
 				// replace the last of the continuous links with a ...
-				$pListHash['control']['block']['prev'][$i + 1] = "&hellip;";
+				$pListHash['listInfo']['block']['prev'][$i + 1] = "&hellip;";
 				// add $skipping links to pages seperated by $step pages
-				if( ( $min = $pListHash['control']['current_page'] - $continuous - ( $step * $skipping ) ) < 0 ) {
+				if( ( $min = $pListHash['listInfo']['current_page'] - $continuous - ( $step * $skipping ) ) < 0 ) {
 					$min = 0;
 				}
 				for( $j = ( floor( $i / $step ) * $step ); $j > $min; $j -= $step ) {
-					$pListHash['control']['block']['prev'][$j] = $j;
+					$pListHash['listInfo']['block']['prev'][$j] = $j;
 				}
-				$pListHash['control']['block']['prev'][1] = 1;
+				$pListHash['listInfo']['block']['prev'][1] = 1;
 			}
 			// reverse array that links are in the correct order
-			if( !empty( $pListHash['control']['block'] ) ) {
-				$pListHash['control']['block']['prev'] = array_reverse( $pListHash['control']['block']['prev'], TRUE );
+			if( !empty( $pListHash['listInfo']['block'] ) ) {
+				$pListHash['listInfo']['block']['prev'] = array_reverse( $pListHash['listInfo']['block']['prev'], TRUE );
 			}
 
 			// here we start adding next links
-			for( $i = $pListHash['control']['current_page'] + 1; $i <= $next; $i += 1 ) {
-				$pListHash['control']['block']['next'][$i] = $i;
+			for( $i = $pListHash['listInfo']['current_page'] + 1; $i <= $next; $i += 1 ) {
+				$pListHash['listInfo']['block']['next'][$i] = $i;
 			}
-			if( $next != $pListHash['control']['total_pages'] ) {
+			if( $next != $pListHash['listInfo']['total_pages'] ) {
 				// replace the last of the continuous links with a ...
-				$pListHash['control']['block']['next'][$i - 1] = "&hellip;";
+				$pListHash['listInfo']['block']['next'][$i - 1] = "&hellip;";
 				// add $skipping links to pages seperated by $step pages
-				if( ( $max = $pListHash['control']['current_page'] + $continuous + ( $step * $skipping ) ) > $pListHash['control']['total_pages'] ) {
-					$max = $pListHash['control']['total_pages'];
+				if( ( $max = $pListHash['listInfo']['current_page'] + $continuous + ( $step * $skipping ) ) > $pListHash['listInfo']['total_pages'] ) {
+					$max = $pListHash['listInfo']['total_pages'];
 				}
 				for( $j = ( ceil( $i / $step ) * $step ); $j < $max; $j += $step ) {
-					$pListHash['control']['block']['next'][$j] = $j;
+					$pListHash['listInfo']['block']['next'][$j] = $j;
 				}
-				$pListHash['control']['block']['next'][$pListHash['control']['total_pages']] = $pListHash['control']['total_pages'];
+				$pListHash['listInfo']['block']['next'][$pListHash['listInfo']['total_pages']] = $pListHash['listInfo']['total_pages'];
 			}
 		}
 	}
