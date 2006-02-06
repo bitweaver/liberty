@@ -22,6 +22,7 @@
 				{formlabel label="Comments per Page" for="comments_per_page"}
 				{forminput}
 					<select name="comments_per_page" id="comments_per_page">
+						<option value="5" {if $gBitSystemPrefs.comments_per_page eq 5}selected="selected"{/if}>5</option>
 						<option value="10" {if $gBitSystemPrefs.comments_per_page eq 10}selected="selected"{/if}>10</option>
 						<option value="20" {if $gBitSystemPrefs.comments_per_page eq 20}selected="selected"{/if}>20</option>
 						<option value="50" {if $gBitSystemPrefs.comments_per_page eq 50}selected="selected"{/if}>50</option>
