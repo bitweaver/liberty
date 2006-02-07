@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.43 2006/02/07 10:18:26 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.44 2006/02/07 10:19:54 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -211,7 +211,7 @@ class LibertyContent extends LibertyBase {
 		}
 		$pParamHash['content_store']['format_guid'] = $pParamHash['format_guid'];
 
-		if( !$this->verifyId( $this->mInfo['version'] ) ) {
+		if( !@BitBase::verifyId( $this->mInfo['version'] ) ) {
 			$pParamHash['content_store']['version'] = 1;
 		} else {
 			$pParamHash['content_store']['version'] = $this->mInfo['version'] + 1;
