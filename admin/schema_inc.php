@@ -41,6 +41,7 @@ $tables = array(
 	hits I4 NOTNULL DEFAULT 0,
 	last_hit I8 NOTNULL DEFAULT 0,
 	event_time I8 NOTNULL DEFAULT 0,
+	version I4,
 	lang_code C(32),
 	title C(160),
 	ip C(39),

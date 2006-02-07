@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.41 2006/02/06 18:43:06 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.42 2006/02/07 01:19:19 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -211,6 +211,12 @@ class LibertyContent extends LibertyBase {
 		}
 		$pParamHash['content_store']['format_guid'] = $pParamHash['format_guid'];
 
+		if( !$this->verifyId( $this->mPageId ) ) {
+			$pParamHash['content_store']['version'] = 1;
+		} else {
+			$pParamHash['content_store']['version'] = $this->mInfo['version'] + 1;
+		}
+
 		return( count( $this->mErrors ) == 0 );
 
 	}
@@ -239,6 +245,15 @@ class LibertyContent extends LibertyBase {
 				}
 				$locId = array ( "name" => "content_id", "value" => $pParamHash['content_id'] );
 				$result = $this->mDb->associateUpdate( $table, $pParamHash['content_store'], $locId );
+			}
+
+			if( !empty( $pParamHash['force_history'] ) || ( empty( $pParamHash['minor'] ) && !empty( $this->mInfo['version'] ) && $pParamHash['field_changed'] )) {
+				if( empty( $pParamHash['has_no_history'] ) ) {
+					$query = "insert into `".BIT_DB_PREFIX."liberty_content_history`( `content_id`, `version`, `last_modified`, `user_id`, `ip`, `comment`, `data`, `description`, `format_guid`) values(?,?,?,?,?,?,?,?,?)";
+					$result = $this->mDb->query( $query, array( $this->mContentId, (int)$this->mInfo['version'], (int)$this->mInfo['last_modified'] , $this->mInfo['modifier_user_id'], $this->mInfo['ip'], $this->mInfo['comment'], $this->mInfo['data'], $this->mInfo['description'], $this->mInfo['format_guid'] ) );
+				}
+				$action = "Created";
+				$mailEvents = 'wiki_page_changes';
 			}
 
 			$this->invokeServices( 'content_store_function', $pParamHash );
@@ -301,6 +316,160 @@ class LibertyContent extends LibertyBase {
 
 			$this->mDb->CompleteTrans();
 			$ret = TRUE;
+		}
+		return $ret;
+	}
+
+	// *********  History functions for the wiki ********** //
+	/**
+	* Get count of the number of historic records for the page
+	* @return count
+	*/
+	function getHistoryCount() {
+		$ret = NULL;
+		if( $this->isValid() ) {
+			$query = "SELECT COUNT(*) AS `count`
+					FROM `".BIT_DB_PREFIX."liberty_content_history`
+					WHERE `content_id` = ?";
+			$rs = $this->mDb->query($query, array($this->mContentId));
+			$ret = $rs->fields['count'];
+		}
+		return $ret;
+	}
+
+	/**
+	* Get complete set of historical data in order to display a given wiki page version
+	* @param pExistsHash the hash that was returned by LibertyContent::pageExists
+	* @return array of mInfo data
+	*/
+	function getHistory( $pVersion=NULL, $pUserId=NULL, $pOffset = 0, $max_records = -1 ) {
+		$ret = NULL;
+		if( $this->isValid() ) {
+			global $gBitSystem;
+			$versionSql = '';
+			if( @BitBase::verifyId( $pUserId ) ) {
+				$bindVars = array( $pUserId );
+				$whereSql = ' th.`user_id`=? ';
+			} else {
+				$bindVars = array( $this->mContentId );
+				$whereSql = ' th.`content_id`=? ';
+			}
+			if( !empty( $pVersion ) ) {
+				array_push( $bindVars, $pVersion );
+				$versionSql = ' AND th.`version`=? ';
+			}
+			$query = "SELECT lc.`title`, th.*,
+				uue.`login` AS modifier_user, uue.`real_name` AS modifier_real_name,
+				uuc.`login` AS creator_user, uuc.`real_name` AS creator_real_name
+				FROM `".BIT_DB_PREFIX."liberty_content_history` th INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id` = th.`content_id`)
+				LEFT JOIN `".BIT_DB_PREFIX."users_users` uue ON (uue.`user_id` = th.`user_id`)
+				LEFT JOIN `".BIT_DB_PREFIX."users_users` uuc ON (uuc.`user_id` = lc.`user_id`)
+				WHERE $whereSql $versionSql order by th.`version` desc";
+
+			$result = $this->mDb->query( $query, $bindVars, $max_records, $pOffset );
+			$ret = array();
+			while( !$result->EOF ) {
+				$aux = $result->fields;
+				$aux['creator'] = (isset( $aux['creator_real_name'] ) ? $aux['creator_real_name'] : $aux['creator_user'] );
+				$aux['editor'] = (isset( $aux['modifier_real_name'] ) ? $aux['modifier_real_name'] : $aux['modifier_user'] );
+				array_push( $ret, $aux );
+				$result->MoveNext();
+			}
+		}
+		return $ret;
+	}
+
+	/**
+	 * Removes last version of the page (from pages) if theres some
+	 * version in the liberty_content_history then the last version becomes the actual version
+	 */
+	function removeLastVersion( $comment = '' ) {
+		if( $this->isValid() ) {
+			global $gBitSystem;
+			$this->invalidateCache();
+			$query = "select * from `".BIT_DB_PREFIX."liberty_content_history` where `content_id`=? order by ".$this->mDb->convert_sortmode("last_modified_desc");
+			$result = $this->mDb->query($query, array( $this->mContentId ) );
+			if ($result->numRows()) {
+				// We have a version
+				$res = $result->fetchRow();
+				$this->rollbackVersion( $res["version"] );
+				$this->expungeVersion( $res["version"] );
+			} else {
+				$this->remove_all_versions($page);
+			}
+			$action = "Removed last version";
+			$t = $gBitSystem->getUTCTime();
+			$query = "insert into `".BIT_DB_PREFIX."wiki_action_log`( `action`, `content_id`, `last_modified`, `user_id`, `ip`, `comment`) values( ?, ?, ?, ?, ?, ?)";
+			$result = $this->mDb->query($query, array( $action, $this->mContentId, $t, ROOT_USER_ID, $_SERVER["REMOTE_ADDR"], $comment ) );
+		}
+	}
+
+	/**
+	 * Roll back to a specific version of a page
+	 * @param pVersion Version number to roll back to
+	 * @param comment Comment text to be added to the action log
+	 * @return TRUE if completed successfully
+	 */
+	function rollbackVersion( $pVersion, $comment = '' ) {
+		$ret = FALSE;
+		if( $this->isValid() ) {
+			global $gBitUser,$gBitSystem;
+			$this->mDb->StartTrans();
+			// JHT - cache invalidation appears to be handled by store function - so don't need to do it here
+			$query = "select *, `user_id` AS modifier_user_id, `data` AS `edit` from `".BIT_DB_PREFIX."liberty_content_history` where `content_id`=? and `version`=?";
+			$result = $this->mDb->query($query,array( $this->mContentId, $pVersion ) );
+			if( $result->numRows() ) {
+				$res = $result->fetchRow();
+				$res['comment'] = 'Rollback to version '.$pVersion.' by '.$gBitUser->getDisplayName();
+				// JHT 2005-06-19_15:22:18
+				// set ['force_history'] to
+				// make sure we don't destory current content without leaving a copy in history
+				// if rollback can destroy the current page version, it can be used
+				// maliciously
+				$res['force_history'] = 1;
+				// JHT 2005-10-16_22:21:10
+				// title must be set or store fails
+				// we use current page name
+				$res['title'] = $this->getTitle();
+				if( $this->store( $res ) ) {
+					$ret = TRUE;
+				}
+				$this->mDb->CompleteTrans();
+			} else {
+				$this->mDb->RollbackTrans();
+			}
+		}
+		return $ret;
+	}
+
+	/**
+	 * Removes a specific version of a page
+	 * @param pVersion Version number to roll back to
+	 * @param comment Comment text to be added to the action log
+	 * @return TRUE if completed successfully
+	 */
+	function expungeVersion( $pVersion=NULL, $comment = '' ) {
+		$ret = FALSE;
+		if( $this->isValid() ) {
+			$this->mDb->StartTrans();
+			$bindVars = array( $this->mContentId );
+			$versionSql = '';
+			if( $pVersion ) {
+				$versionSql = " and `version`=? ";
+				array_push( $bindVars, $pVersion );
+			}
+			$hasRows = $this->mDb->getOne( "SELECT COUNT(`version`) FROM `".BIT_DB_PREFIX."liberty_content_history` WHERE `content_id`=? $versionSql ", $bindVars );
+			$query = "delete from `".BIT_DB_PREFIX."liberty_content_history` where `content_id`=? $versionSql ";
+			$result = $this->mDb->query( $query, $bindVars );
+			if( $hasRows ) {
+				global $gBitSystem;
+				$action = "Removed version $pVersion";
+				$t = $gBitSystem->getUTCTime();
+				$query = "insert into `".BIT_DB_PREFIX."wiki_action_log`(`action`,`content_id`,`last_modified`,`user_id`,`ip`,`comment`) values(?,?,?,?,?,?)";
+				$result = $this->mDb->query($query,array($action,$this->mContentId,$t,ROOT_USER_ID,$_SERVER["REMOTE_ADDR"],$comment));
+				$ret = TRUE;
+			}
+			$this->mDb->CompleteTrans();
 		}
 		return $ret;
 	}
@@ -446,6 +615,17 @@ class LibertyContent extends LibertyBase {
 	function hasAdminPermission() {
 		global $gBitUser;
 		return( $gBitUser->isAdmin() || $gBitUser->hasPermission( $this->mAdminContentPerm ) );
+	}
+
+
+	/**
+	* Determine if current user has the ability to edit this type of content
+	*
+	* @return bool True if user has this type of content administration permission
+	*/
+	function hasEditPermission() {
+		global $gBitUser;
+		return( $gBitUser->isAdmin() || $gBitUser->hasPermission( $this->mAdminContentPerm ) || $this->isOwner() );
 	}
 
 
@@ -1067,12 +1247,8 @@ class LibertyContent extends LibertyBase {
 		// If sort mode is backlinks then offset is 0, max_records is -1 (again) and sort_mode is nil
 		$query = "
 			SELECT
-				uue.`login` AS `modifier_user`,
-				uue.`real_name` AS `modifier_real_name`,
-				uue.`user_id` AS `modifier_user_id`,
-				uuc.`login` AS`creator_user`,
-				uuc.`real_name` AS `creator_real_name`,
-				uuc.`user_id` AS `creator_user_id`,
+				uue.`login` AS `modifier_user`, uue.`real_name` AS `modifier_real_name`, uue.`user_id` AS `modifier_user_id`,
+				uuc.`login` AS`creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`,
 				lc.`hits`,
 				lc.`last_hit`,
 				lc.`event_time`,
