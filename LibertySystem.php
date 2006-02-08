@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.14 2006/02/08 08:12:00 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.15 2006/02/08 23:24:27 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -121,7 +121,7 @@ class LibertySystem extends LibertyBase {
 			$this->loadContentTypes( 0 );
 		} else {
 			if( $pTypeParams['handler_package'] != $this->mContentTypes[$pGuid]['handler_package'] || $pTypeParams['handler_file'] != $this->mContentTypes[$pGuid]['handler_file'] || $pTypeParams['handler_class'] != $this->mContentTypes[$pGuid]['handler_class'] ) {
-				$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."liberty_content_types", $pTypeParams, array( 'name'=>'content_type_guid', 'value'=>$pGuid ) );
+				$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."liberty_content_types", $pTypeParams, array( 'content_type_guid'=>$pGuid ) );
 			}
 		}
 	}

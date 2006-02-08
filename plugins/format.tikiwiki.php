@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.25 $
+ * @version  $Revision: 1.26 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -157,13 +157,11 @@ class TikiWikiParser extends BitBase {
 					if( !empty( $page ) ) {
 // SPIDERFKILL - this query is guaranteed to die - i forget where it came from and why it's here. will debug soon enough...
 						$query = "SELECT tp.`content_id` FROM `".BIT_DB_PREFIX."wiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id` = tp.`content_id`) WHERE lc.`title`=?";
-						$result = $this->mDb->query( $query, array( $page ) );
-						if( $result->numRows() ) {
-							$res = $result->fetchRow();
-							$key = $pParamHash['content_id'] . "-" . $res['content_id'];
+						if( $contentId = $this->mDb->getOne( $query, array( $page ) ) ) {
+							$key = $pParamHash['content_id'] . "-" . $contentId;
 							if (empty($links_already_inserted_table[$key])) {
 								$query = "insert into `".BIT_DB_PREFIX."liberty_content_links`(`from_content_id`,`to_content_id`) values(?, ?)";
-								$result = $this->mDb->query($query, array( $pParamHash['content_id'], $res['content_id'] ) );
+								$result = $this->mDb->query($query, array( $pParamHash['content_id'], $contentId ) );
 							}
 							$links_already_inserted_table[$key] = 1;
 						}
