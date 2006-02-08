@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.46 2006/02/08 18:32:10 mej Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.47 2006/02/08 20:18:31 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -116,8 +116,12 @@ class LibertyContent extends LibertyBase {
 	* last_modified <br>
 	* content_type_guid <br>
 	* format_guid <br>
+	* last_hit <br>
+	* event_time <br>
 	* hits <br>
-	* language <br>
+	* lang_code <br>
+	* source_id <br>
+	* group_id <br>
 	* title <br>
 	* ip <br>
 	* data <br>
@@ -144,6 +148,7 @@ class LibertyContent extends LibertyBase {
 				// These should never be updated, only inserted
 				$pParamHash['content_store']['created'] = !empty( $pParamHash['created'] ) ? $pParamHash['created'] : $gBitSystem->getUTCTime();
 				$pParamHash['content_store']['user_id'] = $pParamHash['user_id'];
+				$pParamHash['content_store']['source_id'] = !empty( $pParamHash['source_id'] ) ? $pParamHash['source_id'] : 0;
 			} else {
 				$pParamHash['content_id'] = $this->mContentId;
 			}
@@ -235,6 +240,10 @@ class LibertyContent extends LibertyBase {
 			if( !@$this->verifyId( $pParamHash['content_id'] ) ) {
 				$pParamHash['content_store']['content_id'] = $this->mDb->GenID( 'liberty_content_id_seq' );
 				$pParamHash['content_id'] = $pParamHash['content_store']['content_id'];
+				if ( $pParamHash['content_store']['source_id'] == 0 ) {
+					$pParamHash['content_store']['source_id'] = $pParamHash['content_id'];
+					$pParamHash['source_id'] = $pParamHash['content_id'];
+				}
 				// make sure some variables are stuff in case services need getObjectType, mContentId, etc...
 				$this->mInfo['content_type_guid'] = $pParamHash['content_type_guid'];
 				$this->mContentId = $pParamHash['content_store']['content_id'];

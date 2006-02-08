@@ -43,12 +43,15 @@ $tables = array(
 	event_time I8 NOTNULL DEFAULT 0,
 	version I4,
 	lang_code C(32),
+	source_id I4 NOTNULL,
+	group_id I4 NOTNULL DEFAULT -1,
 	title C(160),
 	ip C(39),
 	data X
 	CONSTRAINT '
 		, CONSTRAINT `liberty_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )
 		, CONSTRAINT `liberty_content_guid_ref`  FOREIGN KEY (`format_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_plugins`( `plugin_guid` )'
+		, CONSTRAINT `liberty_content_group_id`  FOREIGN KEY (`group_id`) REFERENCES `".BIT_DB_PREFIX."users_groups`( `group_id` )'
 ",
 
 'liberty_content_history' => "
