@@ -31,12 +31,12 @@ $gBitSmarty->assign( 'commentSettings', $commentSettings );
 
 if( !empty( $_REQUEST['change_prefs'] ) ) {
 	foreach( array_keys( $commentSettings ) as $item ) {
-		simple_set_toggle( $item );
+		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
 
 	$formValues = array('comments_per_page', 'comments_default_ordering', 'comments_default_display_mode' );
 	foreach( $formValues as $item ) {
-		simple_set_value( $item );
+		simple_set_value( $item, LIBERTY_PKG_NAME );
 	}
 }
 

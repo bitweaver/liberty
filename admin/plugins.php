@@ -7,7 +7,7 @@ $gBitSystem->verifyPermission( 'bit_p_admin' );
 if( isset( $_REQUEST['pluginsave'] ) && !empty( $_REQUEST['pluginsave'] ) ) {
 	if( !empty( $_REQUEST['default_format'] ) && !empty( $_REQUEST['PLUGINS'][$_REQUEST['default_format']][0] ) ) {
 		$gLibertySystem->setActivePlugins( $_REQUEST['PLUGINS'] );
-		$gBitSystem->storePreference( 'default_format',$_REQUEST['default_format'] );
+		$gBitSystem->storePreference( 'default_format', $_REQUEST['default_format'], LIBERTY_PKG_NAME );
 		$gBitSmarty->assign( 'default_format',$_REQUEST['default_format'] );
 	} else {
 		$gBitSmarty->assign( 'errorMsg', 'You cannot disable the default format');
@@ -21,9 +21,9 @@ if( isset( $_REQUEST['pluginsave'] ) && !empty( $_REQUEST['pluginsave'] ) ) {
 
 // Sort the plugins to avoild splitting tables
 foreach( $gLibertySystem->mPlugins as $key => $row ) {
-   $types[ucfirst( $row['plugin_type'] )]  = $row['plugin_type'];
-   $type[$key]  = $row['plugin_type'];
-   $guid[$key] = $row['plugin_guid'];
+	$types[ucfirst( $row['plugin_type'] )]  = $row['plugin_type'];
+	$type[$key]  = $row['plugin_type'];
+	$guid[$key] = $row['plugin_guid'];
 }
 array_multisort( $type, SORT_ASC, $guid, SORT_ASC, $gLibertySystem->mPlugins );
 $gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );

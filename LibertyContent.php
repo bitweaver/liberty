@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.47 2006/02/08 20:18:31 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.48 2006/02/08 21:51:14 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -819,10 +819,6 @@ class LibertyContent extends LibertyBase {
 		}
 		return $ret;
 	}
-
-
-
-
 
 	/**
 	* Copy current permissions to another object

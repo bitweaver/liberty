@@ -30,7 +30,7 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 	$errors = array();
 	$formFeatures = array_merge( $formLibertyFeatures, $formImageFeatures );
 	foreach( $formFeatures as $item => $data ) {
-		simple_set_toggle( $item );
+		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
 
 	if( $_REQUEST['approved_html_tags'] != DEFAULT_ACCEPTABLE_TAGS ) {
@@ -46,7 +46,7 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 	$gBitSmarty->assign_by_ref( 'errors', $errors );
 
 	foreach( $formValues as $item ) {
-		simple_set_value( $item );
+		simple_set_value( $item, LIBERTY_PKG_NAME );
 	}
 }
 
