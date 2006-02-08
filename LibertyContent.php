@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.44 2006/02/07 10:19:54 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.45 2006/02/08 11:33:22 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -765,8 +765,10 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
-	function loadPreferences() {
-		if( $this->isValid() ) {
+	function loadPreferences( $pContentId = NULL ) {
+		if( @BitBase::verifyId( $pContentId ) ) {
+			return $this->mDb->getAssoc( "SELECT `name`, `value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $pContentId ) );
+		} elseif( $this->isValid() ) {
 			$this->mPrefs = $this->mDb->getAssoc( "SELECT `name`, `value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $this->mContentId ) );
 		}
 	}
