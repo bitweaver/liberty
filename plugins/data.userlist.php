@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_userlist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.userlist.php,v 1.5 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.userlist.php,v 1.6 2006/02/08 18:32:10 mej Exp $
 
 /**
  * definitions
@@ -83,12 +83,12 @@ function wikiplugin_userprint($num,$user,$userspage,$email,$wp_user_count) {
 		$ret .= ('<td>__'.$wp_user_count.'__</td>');
 	}
 
-	if( $gBitSystem->isPackageActive( 'messu' ) ) {
-		$messu_img = ('<a class="wiki" href="'.MESSU_PKG_URL.'compose.php?to='.$user.'" title="'.tra('Send a message to').' '.$user.'"><img src="'.IMG_PKG_URL.'icons/icon_ultima.gif" width="20" height="10" border="0" alt="'.tra('Send message').'" /></a> ');
+	if( $gBitSystem->isPackageActive( 'messages' ) ) {
+		$messages_img = ('<a class="wiki" href="'.MESSAGES_PKG_URL.'compose.php?to='.$user.'" title="'.tra('Send a message to').' '.$user.'"><img src="'.IMG_PKG_URL.'icons/icon_ultima.gif" width="20" height="10" border="0" alt="'.tra('Send message').'" /></a> ');
 	} else {
-		$messu_img = ('');
+		$messages_img = ('');
 	}
-	$ret .= ('<td>'.$messu_img.$user.'</td>');
+	$ret .= ('<td>'.$messages_img.$user.'</td>');
 
 	// if you want to show all email addresses indstead of only public ones, uncomment following line
 		$public = 'y';

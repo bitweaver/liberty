@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.45 2006/02/08 11:33:22 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.46 2006/02/08 18:32:10 mej Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1495,7 +1495,7 @@ class LibertyContent extends LibertyBase {
 		// available in my konqueror... (like ldap://, ldaps://, nfs://, fish://...)
 		// ... seems like it is better to enum that allowed explicitly than all
 		// noncacheable protocols.
-		if (((strstr($url, 'tiki-') || strstr($url, 'messu-')) && $data == '')
+		if (((strstr($url, 'tiki-') || strstr($url, 'messages-')) && $data == '')
 		|| (substr($url, 0, 7) != 'http://' && substr($url, 0, 8) != 'https://'))
 			return false;
 		// Request data for URL if nothing given in parameters
