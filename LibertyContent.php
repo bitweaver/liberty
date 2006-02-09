@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.50 2006/02/08 23:24:27 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.51 2006/02/09 10:39:23 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -505,6 +505,31 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
+	* Check permissions to establish if user has permission to view the object
+	* Should be provided by the decendent package
+	*/
+	function isViewable($pContentId = NULL) {
+		return( true );
+	}
+
+	/**
+	* Check permissions to establish if user has permission to edit the object
+	* Should be provided by the decendent package
+	*/
+	function isEditable($pContentId = NULL) {
+		return( false );
+	}
+
+	/**
+	* Check permissions to establish if user has permission to admin the object
+	* That would include permission to delete an object or change it's permissions
+	* Should be provided by the decendent package
+	*/
+	function isAdminable($pContentId = NULL) {
+		return( false );
+	}
+
+	/**
 	* Check user_id to establish if the object that has been loaded was created by the current user
 	* @param $pParamHash optionally pass in the hash to check against
 	* @return TRUE if user owns the content
@@ -528,14 +553,18 @@ class LibertyContent extends LibertyBase {
 		return( $this->isValid() && !empty( $this->mInfo['content_type_guid'] ) && $this->mInfo['content_type_guid'] == $pContentGuid );
 	}
 
-
+	/**
+	* Check permissions to establish if user has permission to access the object
+	*/
 	function verifyAccessControl() {
 		if( $this->isValid() ) {
 			$this->invokeServices( 'content_verify_access' );
 		}
 	}
 
-
+	/**
+	* Set up access to services used by the object
+	*/
 	function invokeServices( $pServiceFunction, $pFunctionParam=NULL ) {
 		global $gLibertySystem;
 		$errors = array();
@@ -552,7 +581,9 @@ class LibertyContent extends LibertyBase {
 		return $errors;
 	}
 
-
+	/**
+	* Set up SQL strings for services used by the object
+	*/
 	function getServicesSql( $pServiceFunction, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
 		global $gLibertySystem;
 		if( $loadFuncs = $gLibertySystem->getServiceValues( $pServiceFunction ) ) {
