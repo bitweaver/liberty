@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -16,7 +16,7 @@
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
 // | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.module.php,v 1.9 2006/02/06 22:56:47 squareing Exp $
+// $Id: data.module.php,v 1.10 2006/02/09 14:52:47 squareing Exp $
 
 /**
  * definitions
@@ -120,86 +120,4 @@ function data_datamodule( $data, $params ) {
 	}
 	return $ret;
 }
-
-
-
-/*
-// original code
-function datamodule_help() {
-	$back = tra("^__Parameter Syntax:__ ") . "~np~{MODULE" . tra("(key=>value)}~/np~\n");
-	$back.= tra("||__::key::__ | __::value::__ | __::Comments::__\n");
-	$back.= "::module::" . tra(" | ::name:: | the name of the module to be displayed. __Required__\n");
-	$back.= "::align::" . tra(" | ::alignment:: | orientation of the module to the page. Can be  ") . "left / center / right" . tra(". There default is ") . "__left__.\n";
-	$back.= "::max::" . tra(" | ::number:: | number of rows the module will be display in. There default is __10__.\n");
-	$back.= "::np::" . tra(" | ::boolean:: |  if True (any value = True) the content will not be parsed. There default is __No__.\n");
-	$back.= "::args::" . tra(" | ::value:: | this depends on module - some modules require additional arguments passed to them.||^");
-	$back.= tra("^__Example:__ ") . "~np~{MODULE(module=>last_modified_pages,align=>left,max=>3,maxlen=>22)}{/MODULE}~/np~^";
-	$back.= tra("^__Note:__ Plugin's are __case sensitive__. The Name of the plugin __MUST__ be UPPERCASE. The Key(s) are __always__ lowercase. Some Values are mixed-case but most require lowercase. When in doubt - look at the Example.^");
-	return $back;
-}
-
-function data_datamodule($data, $params) {
-	global $gBitThemes, $cache_time, $gBitSmarty, $feature_directory, $ranklib, $feature_trackers, $bitdomain, $user,
-		$feature_tasks, $user_bookmarks, $bit_p_tasks, $bit_p_create_bookmarks, $imagegallib;
-	require_once( KERNEL_PKG_PATH.'mod_lib.php' );
-	$out = '';
-	extract ($params, EXTR_SKIP);
-	if (!isset($align)) {
-		$align = 'left';
-	}
-	if (!isset($max)) {
-		$max = '10';
-	}
-	if (!isset($np)) {
-		$np = '0';
-	}
-	if (!isset($module)) {
-		$out = '<form class="box" id="modulebox">';
-		$out .= '<br /><select name="choose">';
-		$out .= '<option value="">' . tra('Please choose a module'). '</option>';
-		$out .= '<option value="" style="background-color:#bebebe;">' . tra('to be used as argument'). '</option>';
-		$out .= '<option value="" style="background-color:#bebebe;">{MODULE(module=>name_of_module)}</option>';
-		$handle = opendir('modules');
-		while ($file = readdir($handle)) {
-			if ((substr($file, 0, 4) == "mod-") and (substr($file, -4, 4) == ".php")) {
-				$mod = substr(substr(basename($file), 4), 0, -4);
-				$out .= "<option value=\"$mod\">$mod</option>";
-			}
-		}
-		$out .= '</select></form>';
-	} else {
-		if (!isset($args)) {
-			$args = '';
-		}
-//		if ((!file_exists($cachefile)) || (file_exists($nocache)) || ((time() - filemtime($cachefile)) > $cache_time)) {
-            $gBitSmarty->assign('no_module_controls', 'y');
-			if( $out = $gBitSmarty->fetch( $module ) ) {
-			} else {
-				if ($gBitThemes->isCustomModule($module)) {
-					$info = $gBitThemes->getCustomModule($module);
-					$gBitSmarty->assign_by_ref('user_title', $info["title"]);
-					$gBitSmarty->assign_by_ref('user_data', $info["data"]);
-					$out = $gBitSmarty->fetch('modules/user_module.tpl');
-				}
-			}
-           	$gBitSmarty->clear_assign('no_module_controls');
-//		} else {
-//			$fp = fopen($cachefile, "r");
-//			$out = fread($fp, filesize($cachefile));
-//			fclose ($fp);
-//		}
-		$out = eregi_replace("\n", "", $out);
-	}
-	if ($out) {
-		if ($np) {
-  		    $data = "<div style='float:$align;'>~np~$out~/np~</div>".$data;
-		} else {
-			$data = "<div style='float:$align;'>$out</div>" . $data;
-		}
-	} else {
-		$data = "<div style='error'>" . tra("Sorry no such module"). "<br/><b>$module</b></div>" . $data;
-	}
-	return $data;
-}
-*/
 ?>
