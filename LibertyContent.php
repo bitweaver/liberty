@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.51 2006/02/09 10:39:23 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.52 2006/02/09 12:14:35 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -808,7 +808,7 @@ class LibertyContent extends LibertyBase {
 		if( @BitBase::verifyId( $pContentId ) ) {
 			return $this->mDb->getAssoc( "SELECT `name`, `value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $pContentId ) );
 		} elseif( $this->isValid() ) {
-			$this->mPrefs = $this->mDb->getAssoc( "SELECT `name`, `value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $this->mContentId ) );
+			$this->mPrefs = @$this->mDb->getAssoc( "SELECT `name`, `value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $this->mContentId ) );
 		}
 	}
 
@@ -1261,7 +1261,11 @@ class LibertyContent extends LibertyBase {
 							WHERE ls.`security_id`=cgm.`security_id` AND cgm.`content_id`=`cb_gallery_content_id` LIMIT 1) IS NULL";
 				}
 			}
-		}
+		} else { 
+			$groups = array_keys($gBitUser->mGroups);
+			$mid .= " AND lc.`group_id` IN ( ".implode( ',',array_fill ( 0, count( $groups ),'?' ) )." )";
+			$bindVars = array_merge( $bindVars, $groups );
+		}		
 
 		if( in_array( $pListHash['sort_mode'], array(
 				'modifier_user_desc',
