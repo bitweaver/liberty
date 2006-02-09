@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.52 2006/02/09 12:14:35 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.53 2006/02/09 14:45:28 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -90,11 +90,17 @@ class LibertyContent extends LibertyBase {
 	*/
 	function load($pContentId = NULL) {
 		if( !empty( $this->mInfo['content_type_guid'] ) ) {
-			global $gLibertySystem, $gBitSystem;
+			global $gLibertySystem, $gBitSystem, $gBitUser;
 			$this->loadPreferences();
 			$this->mInfo['content_type'] = $gLibertySystem->mContentTypes[$this->mInfo['content_type_guid']];
 			if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
 //				$this->mInfo['perm_level'] = $this->getUserPermissions();
+			} else {
+				if ( empty($gBitUser->mGroups[$this->mInfo['group_id']] ) ) {
+					$this->mInfo = NULL;
+//					$this->mContentId = 0;
+					$pContentId = 0;
+				}				
 			}
 		}
 

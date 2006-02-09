@@ -3,7 +3,7 @@
  * Base class for Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.7 2006/02/01 18:42:12 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.8 2006/02/09 14:45:28 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -51,18 +51,25 @@ class LibertyBase extends BitBase {
 	 */
 	function getLibertyObject( $pContentId, $pContentGuid=NULL ) {
 		$ret = NULL;
-		global $gLibertySystem;
+		global $gLibertySystem, $gBitUser, $gBitSystem;
 
 		if( BitBase::verifyId( $pContentId ) ) {
 			if( empty( $pContentGuid ) ) {
-				$pContentGuid = $gLibertySystem->mDb->getOne( "SELECT `content_type_guid` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=?", array( $pContentId ) );
+				$ret = $gLibertySystem->mDb->getRow( "SELECT `content_type_guid`, `group_id`  FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=?", array( $pContentId ) );
+				if ( !empty($gBitUser->mGroups[$ret['group_id']] ) ) {
+					$pContentGuid = $ret[content_type_guid];
+				} else {
+					$gBitSystem->fatalError( 'You do not have permission to access this item' );
+					$ret = NULL;
+				}	 
 			}
-			if( !empty( $pContentGuid) && isset( $gLibertySystem->mContentTypes[$pContentGuid] ) ) {
+			if( !empty( $pContentGuid ) && isset( $gLibertySystem->mContentTypes[$pContentGuid] ) ) {
 				$type = $gLibertySystem->mContentTypes[$pContentGuid];
 				require_once( constant( strtoupper( $type['handler_package'] ).'_PKG_PATH' ).$type['handler_file'] );
 				$ret = new $type['handler_class']( NULL, $pContentId );
 				$ret->load();
 			}
+
 		}
 		return $ret;
 	}
