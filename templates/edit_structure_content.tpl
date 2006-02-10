@@ -21,7 +21,7 @@
 		<div class="row">
 			{formlabel label="Content" for="content"}
 			{forminput}
-				{html_options onchange="submit();" values=$contentTypes options=$contentTypes name=content_type_guid selected=$contentSelect}
+				{html_options onchange="submit();" options=$contentTypes name=content_type_guid selected=$contentSelect}
 			{/forminput}
 
 			{forminput}

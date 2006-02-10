@@ -4,7 +4,7 @@
 	<div class="row">
 		{formlabel label="Restrict listing" for="content_type_guid"}
 		{forminput}
-			{html_options onchange="submit();" values=$contentTypes options=$contentTypes name=content_type_guid id=content_type selected=$contentSelect}
+			{html_options onchange="submit();" options=$contentTypes name=content_type_guid id=content_type selected=$contentSelect}
 			<noscript>
 				<div><input type="submit" name="content_switch" value="{tr}change content type{/tr}" /></div>
 			</noscript>
