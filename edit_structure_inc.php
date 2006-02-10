@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage functions
  */
@@ -57,7 +57,6 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 		}
 		$gBitSmarty->assign( 'contentList', $cList );
 		$gBitSmarty->assign( 'contentSelect', $contentSelect );
-		$gBitSmarty->assign( 'contentTypes', $contentTypes );
 		$gBitSmarty->assign( 'contentTypes', $contentTypes );
 
 		$subpages = $gStructure->s_get_pages($_REQUEST["structure_id"]);
