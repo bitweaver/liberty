@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.53 2006/02/09 14:45:28 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.54 2006/02/10 04:56:54 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -93,15 +93,6 @@ class LibertyContent extends LibertyBase {
 			global $gLibertySystem, $gBitSystem, $gBitUser;
 			$this->loadPreferences();
 			$this->mInfo['content_type'] = $gLibertySystem->mContentTypes[$this->mInfo['content_type_guid']];
-			if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
-//				$this->mInfo['perm_level'] = $this->getUserPermissions();
-			} else {
-				if ( empty($gBitUser->mGroups[$this->mInfo['group_id']] ) ) {
-					$this->mInfo = NULL;
-//					$this->mContentId = 0;
-					$pContentId = 0;
-				}				
-			}
 		}
 
 	}
@@ -604,6 +595,9 @@ class LibertyContent extends LibertyBase {
 					}
 					if( !empty( $loadHash['where_sql'] ) ) {
 						$pWhereSql .= $loadHash['where_sql'];
+					}
+					if( !empty( $loadHash['bind_vars'] ) ) {
+						$pBindVars = array_merge( $pBindVars, $loadHash['bind_vars'] );
 					}
 				}
 			}
@@ -1267,11 +1261,11 @@ class LibertyContent extends LibertyBase {
 							WHERE ls.`security_id`=cgm.`security_id` AND cgm.`content_id`=`cb_gallery_content_id` LIMIT 1) IS NULL";
 				}
 			}
-		} else { 
+		} else {
 			$groups = array_keys($gBitUser->mGroups);
 			$mid .= " AND lc.`group_id` IN ( ".implode( ',',array_fill ( 0, count( $groups ),'?' ) )." )";
 			$bindVars = array_merge( $bindVars, $groups );
-		}		
+		}
 
 		if( in_array( $pListHash['sort_mode'], array(
 				'modifier_user_desc',
