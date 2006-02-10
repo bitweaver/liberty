@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage functions
  */
@@ -32,10 +32,8 @@ if( empty( $contentListHash ) ) {
 }
 $contentList = $gContent->getContentList( $contentListHash );
 
-$contentTypes = array( '' => tra( 'All Content' ) );
-$contentDescs = array( '' => tra( 'All Content' ) );
+$contentTypes = array( '' => 'All Content' );
 foreach( $gLibertySystem->mContentTypes as $cType ) {
-	$contentTypes[] = $cType['content_type_guid'];
-	$contentDescs[] = $cType['content_description'];
+	$contentTypes[$cType['content_type_guid']] = $cType['content_description'];
 }
 ?>

@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.55 2006/02/10 21:15:29 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.56 2006/02/10 21:39:36 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1262,8 +1262,8 @@ class LibertyContent extends LibertyBase {
 							WHERE ls.`security_id`=cgm.`security_id` AND cgm.`content_id`=`cb_gallery_content_id` LIMIT 1) IS NULL";
 				}
 			}
-		} 
-		
+		}
+
 		if( in_array( $pListHash['sort_mode'], array(
 				'content_id_desc',
 				'content_id_asc',
@@ -1297,13 +1297,13 @@ class LibertyContent extends LibertyBase {
 				lc.`created`,
 				lc.`content_id`
 				$selectSql
-			FROM `".BIT_DB_PREFIX."liberty_content` lc 
+			FROM `".BIT_DB_PREFIX."liberty_content` lc
 			INNER JOIN `".BIT_DB_PREFIX."users_users` uue ON lc.`modifier_user_id`=uue.`user_id`
 			$joinSql
 			,`".BIT_DB_PREFIX."users_users` uuc
 			WHERE lc.`user_id`=uuc.`user_id` $whereSql
 			ORDER BY ".$orderTable.$this->mDb->convert_sortmode($pListHash['sort_mode']);
-		$query_cant = "select count(lc.`content_id`) FROM `".BIT_DB_PREFIX."liberty_content` lc 
+		$query_cant = "select count(lc.`content_id`) FROM `".BIT_DB_PREFIX."liberty_content` lc
 			$joinSql, `".BIT_DB_PREFIX."users_users` uu
 			WHERE uu.`user_id`=lc.`user_id` $whereSql";
 		// previous cant query - updated by xing

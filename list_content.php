@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage functions
  */
@@ -27,7 +27,7 @@ $offset_content = ( $page - 1 ) * $gBitSystem->getPreference( 'max_records' );
 
 // now that we have all the offsets, we can get the content list
 include_once( LIBERTY_PKG_PATH.'get_content_list_inc.php' );
- 
+
 // calculate page number
 $numPages = ceil( $contentList['cant'] / $gBitSystem->getPreference( 'max_records' ) );
 $gBitSmarty->assign( 'numPages', $numPages );
@@ -35,7 +35,6 @@ $gBitSmarty->assign( 'numPages', $numPages );
 //$gBitSmarty->assign_by_ref('offset', $offset);
 $gBitSmarty->assign( 'contentSelect', $contentSelect );
 $gBitSmarty->assign( 'contentTypes', $contentTypes );
-$gBitSmarty->assign( 'contentDescs', $contentDescs );
 $gBitSmarty->assign( 'contentList', $contentList['data'] );
 $gBitSmarty->assign( 'listInfo', $contentList['listInfo'] );
 
