@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage functions
  */
@@ -35,6 +35,7 @@ $gBitSmarty->assign( 'numPages', $numPages );
 //$gBitSmarty->assign_by_ref('offset', $offset);
 $gBitSmarty->assign( 'contentSelect', $contentSelect );
 $gBitSmarty->assign( 'contentTypes', $contentTypes );
+$gBitSmarty->assign( 'contentDescs', $contentDescs );
 $gBitSmarty->assign( 'contentList', $contentList['data'] );
 $gBitSmarty->assign( 'listInfo', $contentList['listInfo'] );
 
