@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.54 2006/02/10 04:56:54 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.55 2006/02/10 21:15:29 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1180,6 +1180,12 @@ class LibertyContent extends LibertyBase {
 
 		$this->prepGetList( $pListHash );
 
+		$selectSql = '';
+		$joinSql = '';
+		$whereSql = '';
+		$bindVars = array();
+		$this->getServicesSql( 'content_list_function', $selectSql, $joinSql, $whereSql, $bindVars );
+
 		if( $pListHash['sort_mode'] == 'size_desc' ) {
 			$pListHash['sort_mode'] = 'page_size_desc';
 		}
@@ -1206,49 +1212,44 @@ class LibertyContent extends LibertyBase {
 			$pListHash['max_records'] = -1;
 		}
 
-		$bindVars = array();
-		$mid = NULL;
-		$select = '';
-		$gateSelect = '';
-		$gateFrom = '';
-
+//vd($pListHash);
 		if( is_array( $pListHash['find'] ) ) { // you can use an array of titles
-			$mid = " AND lc.`title` IN ( ".implode( ',',array_fill( 0,count( $pListHash['find'] ),'?' ) ).")";
+			$whereSql = " AND lc.`title` IN ( ".implode( ',',array_fill( 0,count( $pListHash['find'] ),'?' ) ).") ";
 			$bindVars[] = $pListHash['find'];
 		} elseif( !empty($pListHash['find'] ) && is_string( $pListHash['find'] ) ) { // or a string
-			$mid = " AND UPPER(lc.`title`) like ? ";
+			$whereSql = " AND UPPER(lc.`title`) like ? ";
 			$bindVars[] = ( '%' . strtoupper( $pListHash['find'] ) . '%' );
 		}
 
 		// this is necessary to display useful information in the liberty RSS feed
 		if( !empty( $pListHash['include_data'] ) ) {
-			$select = ", lc.`data`, lc.`format_guid`";
+			$selectSql .= ", lc.`data`, lc.`format_guid`";
 		}
 
 		// calendar specific selection method - use timestamps to limit selection
 		if( !empty( $pListHash['start'] ) && !empty( $pListHash['stop'] ) ) {
-			$mid .= " AND ( lc.`".$pListHash['calendar_sort_mode']."` > ? AND lc.`".$pListHash['calendar_sort_mode']."` < ? ) ";
+			$whereSql .= " AND ( lc.`".$pListHash['calendar_sort_mode']."` > ? AND lc.`".$pListHash['calendar_sort_mode']."` < ? ) ";
 			$bindVars[] = $pListHash['start'];
 			$bindVars[] = $pListHash['stop'];
 		}
 
 		if( @$this->verifyId( $pListHash['user_id'] ) ) {
-			$mid .= " AND lc.`user_id` = ? ";
+			$whereSql .= " AND lc.`user_id` = ? ";
 			$bindVars[] = $pListHash['user_id'];
 		}
 
 		if( !empty( $pListHash['content_type_guid'] ) && is_string( $pListHash['content_type_guid'] ) ) {
-			$mid .= ' AND `content_type_guid`=? ';
+			$whereSql .= ' AND `content_type_guid`=? ';
 			$bindVars[] = $pListHash['content_type_guid'];
 		} elseif( !empty( $pListHash['content_type_guid'] ) && is_array( $pListHash['content_type_guid'] ) ) {
-			$mid .= " AND lc.`content_type_guid` IN ( ".implode( ',',array_fill ( 0, count( $pListHash['content_type_guid'] ),'?' ) )." )";
+			$whereSql .= " AND lc.`content_type_guid` IN ( ".implode( ',',array_fill ( 0, count( $pListHash['content_type_guid'] ),'?' ) )." )";
 			$bindVars = array_merge( $bindVars, $pListHash['content_type_guid'] );
 		}
 
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
-			$gateSelect .= ' ,ls.`security_id`, ls.`security_description`, ls.`is_private`, ls.`is_hidden`, ls.`access_question`, ls.`access_answer` ';
-			$gateFrom .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."gatekeeper_security_map` cg ON (lc.`content_id`=cg.`content_id`) LEFT OUTER JOIN `".BIT_DB_PREFIX."gatekeeper_security` ls ON (ls.`security_id`=cg.`security_id` )";
-			$mid .= ' AND (cg.`security_id` IS NULL OR lc.`user_id`=?) ';
+			$selectSql .= ' ,ls.`security_id`, ls.`security_description`, ls.`is_private`, ls.`is_hidden`, ls.`access_question`, ls.`access_answer` ';
+			$joinSql .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."gatekeeper_security_map` cg ON (lc.`content_id`=cg.`content_id`) LEFT OUTER JOIN `".BIT_DB_PREFIX."gatekeeper_security` ls ON (ls.`security_id`=cg.`security_id` ) ";
+			$whereSql .= ' AND (cg.`security_id` IS NULL OR lc.`user_id`=?) ';
 			$bindVars[] = $gBitUser->mUserId;
 			if( $gBitSystem->isPackageActive( 'fisheye' ) ) {
 				// This is really ugly to have in here, and really would be better off somewhere else.
@@ -1256,18 +1257,16 @@ class LibertyContent extends LibertyBase {
 				// this is the only place it can go to properly enforce gatekeeper protections. Hopefully a new content generic
 				// solution will be available in ReleaseTwo - spiderr
 				if( $this->mDb->isAdvancedPostgresEnabled() ) {
-// 					$gateFrom .= " LEFT OUTER JOIN  `".BIT_DB_PREFIX."fisheye_gallery_image_map` fgim ON (fgim.`item_content_id`=lc.`content_id`)";
-					$mid .= " AND (SELECT ls.`security_id` FROM connectby('fisheye_gallery_image_map', 'gallery_content_id', 'item_content_id', lc.`content_id`, 0, '/')  AS t(`cb_gallery_content_id` int, `cb_item_content_id` int, level int, branch text), `".BIT_DB_PREFIX."gatekeeper_security_map` cgm,  `".BIT_DB_PREFIX."gatekeeper_security` ls
+// 					$joinSql .= " LEFT OUTER JOIN  `".BIT_DB_PREFIX."fisheye_gallery_image_map` fgim ON (fgim.`item_content_id`=lc.`content_id`)";
+					$whereSql .= " AND (SELECT ls.`security_id` FROM connectby('fisheye_gallery_image_map', 'gallery_content_id', 'item_content_id', lc.`content_id`, 0, '/')  AS t(`cb_gallery_content_id` int, `cb_item_content_id` int, level int, branch text), `".BIT_DB_PREFIX."gatekeeper_security_map` cgm,  `".BIT_DB_PREFIX."gatekeeper_security` ls
 							WHERE ls.`security_id`=cgm.`security_id` AND cgm.`content_id`=`cb_gallery_content_id` LIMIT 1) IS NULL";
 				}
 			}
-		} else {
-			$groups = array_keys($gBitUser->mGroups);
-			$mid .= " AND lc.`group_id` IN ( ".implode( ',',array_fill ( 0, count( $groups ),'?' ) )." )";
-			$bindVars = array_merge( $bindVars, $groups );
-		}
-
+		} 
+		
 		if( in_array( $pListHash['sort_mode'], array(
+				'content_id_desc',
+				'content_id_asc',
 				'modifier_user_desc',
 				'modifier_user_asc',
 				'modifier_real_name_desc',
@@ -1297,16 +1296,20 @@ class LibertyContent extends LibertyBase {
 				lc.`ip`,
 				lc.`created`,
 				lc.`content_id`
-				$select
-				$gateSelect
-			FROM `".BIT_DB_PREFIX."liberty_content` lc $gateFrom, `".BIT_DB_PREFIX."users_users` uue, `".BIT_DB_PREFIX."users_users` uuc
-			WHERE lc.`modifier_user_id`=uue.`user_id` AND lc.`user_id`=uuc.`user_id` $mid
+				$selectSql
+			FROM `".BIT_DB_PREFIX."liberty_content` lc 
+			INNER JOIN `".BIT_DB_PREFIX."users_users` uue ON lc.`modifier_user_id`=uue.`user_id`
+			$joinSql
+			,`".BIT_DB_PREFIX."users_users` uuc
+			WHERE lc.`user_id`=uuc.`user_id` $whereSql
 			ORDER BY ".$orderTable.$this->mDb->convert_sortmode($pListHash['sort_mode']);
-		$query_cant = "select count(lc.`content_id`) FROM `".BIT_DB_PREFIX."liberty_content` lc $gateFrom, `".BIT_DB_PREFIX."users_users` uu WHERE uu.`user_id`=lc.`user_id` $mid";
+		$query_cant = "select count(lc.`content_id`) FROM `".BIT_DB_PREFIX."liberty_content` lc 
+			$joinSql, `".BIT_DB_PREFIX."users_users` uu
+			WHERE uu.`user_id`=lc.`user_id` $whereSql";
 		// previous cant query - updated by xing
 		// $query_cant = "select count(*) from `".BIT_DB_PREFIX."wiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id` = tp.`content_id`) $mid";
-		$result = $this->mDb->query($query,$bindVars,$pListHash['max_records'],$pListHash['offset']);
-		$cant = $this->mDb->getOne($query_cant,$bindVars);
+		$result = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
+		$cant = $this->mDb->getOne( $query_cant, $bindVars );
 		$ret = array();
 		$contentTypes = $gLibertySystem->mContentTypes;
 		while( $aux = $result->fetchRow() ) {
