@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/header_inc.tpl,v 1.4 2006/01/14 19:54:56 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/header_inc.tpl,v 1.5 2006/02/10 10:35:55 squareing Exp $ *}
 {strip}
 {if $structureInfo}
 	<link rel="index" title="{tr}Contents{/tr}" href="index.php?structure_id={$structureInfo.root_structure_id}" />
@@ -17,7 +17,6 @@
 		<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/libs/mygosu/ie5.js"></script>
 	<![endif]-->
 	<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/libs/mygosu/DynamicTreeBuilder.js"></script>
-	<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/libs/mygosu/plugins.js"></script>
 	<link rel="stylesheet" type="text/css" href="{$smarty.const.UTIL_PKG_URL}javascript/libs/mygosu/DynamicTree.css" />
 {/if}
 {/strip}
