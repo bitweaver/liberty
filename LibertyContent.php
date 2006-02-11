@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.58 2006/02/11 00:51:45 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.59 2006/02/11 12:25:11 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -117,7 +117,6 @@ class LibertyContent extends LibertyBase {
 	* event_time <br>
 	* hits <br>
 	* lang_code <br>
-	* group_id <br>
 	* title <br>
 	* ip <br>
 	* data <br>
