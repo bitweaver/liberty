@@ -2,6 +2,19 @@
 
 <div class="row">
 	{formfeedback error=$errors.format}
+	{formlabel label="Language"}
+	{forminput}
+		<select>
+		{foreach from=$translationsList key=langCode item=lang}
+			<option value="{$langCode}" {if $smarty.request.lang_code==$langCode || $pageInfo.lang_code==$langCode || ($langCode==$gBitSystem->getPreference('bitlanguage') && !$smarty.request.lang_code && !$gContent->getField('lang_code'))}selected="selected"{/if}>{$lang.native_name}</option>
+		{/foreach}
+		</select>
+		{formhelp note="The language of this page"}
+	{/forminput}
+</div>
+
+<div class="row">
+	{formfeedback error=$errors.format}
 	{formlabel label="Content Format"}
 	{foreach name=formatPlugins from=$gLibertySystem->mPlugins item=plugin key=guid}
 		{if $plugin.is_active eq 'y' and $plugin.edit_field and $plugin.plugin_type eq 'format'}
