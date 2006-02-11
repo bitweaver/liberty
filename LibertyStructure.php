@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.24 2006/02/09 13:08:40 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.25 2006/02/11 12:24:45 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -308,12 +308,6 @@ class LibertyStructure extends LibertyBase {
 			$mid .= " AND lc.`user_id` = ? ";
 			array_push( $bindVars, $pListHash['user_id'] );
 		}
-
-		if( !$gBitSystem->isPackageActive( 'gatekeeper' ) ) { 
-			$groups = array_keys($gBitUser->mGroups);
-			$mid .= " AND lc.`group_id` IN ( ".implode( ',',array_fill ( 0, count( $groups ),'?' ) )." )";
-			$bindVars = array_merge( $bindVars, $groups );
-		}		
 
 		if( !empty( $pListHash['content_type_guid'] ) ) {
 			$mid .= " AND lc.`content_type_guid`=? ";
