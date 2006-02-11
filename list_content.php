@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.13 $
+ * @version  $Revision: 1.14 $
  * @package  liberty
  * @subpackage functions
  */
@@ -36,6 +36,7 @@ $gBitSmarty->assign( 'numPages', $numPages );
 $gBitSmarty->assign( 'contentSelect', $contentSelect );
 $gBitSmarty->assign( 'contentTypes', $contentTypes );
 $gBitSmarty->assign( 'contentList', $contentList['data'] );
+$contentList['listInfo']['parameters']['content_type_guid'] = $contentSelect;
 $gBitSmarty->assign( 'listInfo', $contentList['listInfo'] );
 
 $gBitSystem->setBrowserTitle( 'List Content' );

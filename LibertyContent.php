@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.57 2006/02/10 23:21:10 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.58 2006/02/11 00:51:45 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1206,12 +1206,11 @@ class LibertyContent extends LibertyBase {
 			$pListHash['max_records'] = -1;
 		}
 
-//vd($pListHash);
 		if( is_array( $pListHash['find'] ) ) { // you can use an array of titles
-			$whereSql = " AND lc.`title` IN ( ".implode( ',',array_fill( 0,count( $pListHash['find'] ),'?' ) ).") ";
-			$bindVars[] = $pListHash['find'];
+			$whereSql .= " AND lc.`title` IN ( ".implode( ',',array_fill( 0,count( $pListHash['find'] ),'?' ) ).") ";
+			$bindVars = array_merge( $pListHash['find'], $pListHash['find']);
 		} elseif( !empty($pListHash['find'] ) && is_string( $pListHash['find'] ) ) { // or a string
-			$whereSql = " AND UPPER(lc.`title`) like ? ";
+			$whereSql .= " AND UPPER(lc.`title`) like ? ";
 			$bindVars[] = ( '%' . strtoupper( $pListHash['find'] ) . '%' );
 		}
 
