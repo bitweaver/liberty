@@ -43,8 +43,6 @@ $tables = array(
 	event_time I8 NOTNULL DEFAULT 0,
 	version I4,
 	lang_code C(32),
-	source_id I4 NOTNULL,
-	group_id I4 NOTNULL DEFAULT -1,
 	title C(160),
 	ip C(39),
 	data X
