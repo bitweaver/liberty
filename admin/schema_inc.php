@@ -50,7 +50,6 @@ $tables = array(
 		, CONSTRAINT `liberty_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )
 		, CONSTRAINT `liberty_content_guid_ref`  FOREIGN KEY (`format_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_plugins`( `plugin_guid` )'
 ",
-		// , CONSTRAINT `liberty_content_group_ref`  FOREIGN KEY (`group_id`) REFERENCES `".BIT_DB_PREFIX."users_groups`( `group_id` )'
 
 'liberty_content_history' => "
 	content_id I4 PRIMARY,
