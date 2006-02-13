@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.47 $
+ * @version  $Revision: 1.2.2.48 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -1275,7 +1275,7 @@ class TikiWikiParser extends BitBase {
 			}
 
 			// Replace monospaced text
-			$line = preg_replace("/-\+(.*?)\+-/", "<code>$1</code>", $line);
+			$line = preg_replace("/-\+(.*?)\+-/", "<tt>$1</tt>", $line);
 			// Replace bold text
 			$line = preg_replace("/__(.*?)__/", "<b>$1</b>", $line);
 			$line = preg_replace("/\'\'(.*?)\'\'/", "<i>$1</i>", $line);
