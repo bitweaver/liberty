@@ -15,5 +15,8 @@
 	{if $gBitSystem->isPackageActive( 'hotwords' ) }
 		<li><a class="item" href="{$smarty.const.HOTWORDS_PKG_URL}admin/index.php">{tr}Hotwords{/tr}</a></li>
 	{/if}
+	{if $gBitSystem->isPackageActive( 'stars' ) }
+		<li><a class="item" href="{$smarty.const.KERNEL_PKG_URL}admin/index.php?page=stars">{tr}Stars{/tr}</a></li>
+	{/if}
 </ul>
 {/strip}
