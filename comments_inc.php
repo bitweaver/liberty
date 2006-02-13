@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.8 2006/01/20 11:08:50 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.9 2006/02/13 01:31:46 jht001 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -72,6 +72,7 @@ if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'bit_p
 	$storeRow = array();
 	$storeRow['title'] = $_REQUEST['comment_title'];
 	$storeRow['edit'] = $_REQUEST['comment_data'];
+	$storeRow['root_id'] = $commentsParentId;
 	$storeRow['parent_id'] = (@BitBase::verifyId($storeComment->mInfo['parent_id']) ? $storeComment->mInfo['parent_id'] : (!@BitBase::verifyId($_REQUEST['post_comment_reply_id']) ? $commentsParentId : $_REQUEST['post_comment_reply_id']));
 	$storeRow['content_id'] = (@BitBase::verifyId($storeComment->mContentId) ? $storeComment->mContentId : NULL);
 	$storeComment->storeComment($storeRow);
@@ -134,6 +135,24 @@ if( !empty( $_REQUEST['comment_page'] ) || !empty( $_REQUEST['post_comment_reque
 $commentOffset = !empty( $_REQUEST['comment_page'] ) ? ($_REQUEST['comment_page'] - 1) * $maxComments : 0;
 
 $gComment = new LibertyComment( NULL, $gContent->mContentId );
+
+$currentPage = !empty( $_REQUEST['comment_page'] ) ? $_REQUEST['comment_page'] : 1;
+
+#logic to support displaying a single comment -- used when we need a URL pointing to a comment
+if (!empty($_REQUEST['view_comment_id'])) {
+        $commentOffset = $gComment->getNumComments_upto($_REQUEST['view_comment_id']);
+#       echo "commentOffset =$commentOffset= maxComments=$maxComments=\n";
+        $comments_sort_mode = 'commentDate_asc';
+        $comments_display_style = 'flat';
+        $comments_at_top_of_page = 'y';
+        $maxComments = 1;
+        $currentPage = ceil( $commentOffset+1 / $maxComments );
+        }
+else {
+        $commentOffset = ($currentPage - 1) * $maxComments;
+        }
+
+
 // $commentsParentId is the content_id which the comment tree is attached to
 if( !@BitBase::verifyId( $commentsParentId ) ) {
 	$comments = NULL;
@@ -146,7 +165,6 @@ $gBitSmarty->assign('comments', $comments);
 $gBitSmarty->assign('maxComments', $maxComments);
 
 $numCommentPages = ceil( $numComments / $maxComments );
-$currentPage = !empty( $_REQUEST['comment_page'] ) ? $_REQUEST['comment_page'] : 1;
 
 $commentsPgnHash = array(
 	'numPages' => $numCommentPages,

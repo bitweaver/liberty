@@ -26,6 +26,24 @@ array( 'DATADICT' => array(
 	)),
 )),
 
+// changes for materialized path support for comments
+array( 'DATADICT' => array(
+array( 'CREATEINDEX' => array(
+	'thread_forward_idx' => array( 'liberty_comments', '`root_id`,`thread_forward_sequence`', array( 'UNIQUE' ) ),
+	'thread_reverse_idx' => array( 'liberty_comments', '`root_id`,`thread_reverse_sequence`', array( 'UNIQUE' ) ),
+    )),
+
+array( 'ALTER' => array (
+	'liberty_comments' => array(
+		'root_id' => array( 'root_id', 'I4' ),
+		'thread_forward_sequence' => array( 'thread_forward_sequence', 'C(250)' ),
+		'thread_reverse_sequence' => array( 'thread_reverse_sequence', 'C(250)' )
+	)),
+
+)),
+
+),
+
 		)
 	),
 
