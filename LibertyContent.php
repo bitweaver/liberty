@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.59 2006/02/11 12:25:11 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.60 2006/02/13 20:12:35 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1269,6 +1269,8 @@ class LibertyContent extends LibertyBase {
 				'creator_real_name_asc',
 		))) {
 			$orderTable = '';
+		} elseif( !empty( $pListHash['order_table'] ) ) {
+			$orderTable = $pListHash['order_table'];
 		} else {
 			$orderTable = 'lc.';
 		}
