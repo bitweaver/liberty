@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.15 $
+ * @version  $Revision: 1.16 $
  * @package  liberty
  * @subpackage functions
  */
@@ -20,13 +20,11 @@ if( !empty( $_REQUEST['sort_mode'] ) ) {
 }
 
 $max_content = $gBitSystem->getPreference( 'max_records' );
-$offset_content = @BitBase::verifyId( $_REQUEST['offset'] ) ? $_REQUEST['offset'] : 0;
 $gBitSmarty->assign( 'user_id', @BitBase::verifyId( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : NULL );
 
 // now that we have all the offsets, we can get the content list
 include_once( LIBERTY_PKG_PATH.'get_content_list_inc.php' );
 
-//$gBitSmarty->assign_by_ref('offset', $offset);
 $gBitSmarty->assign( 'contentSelect', $contentSelect );
 $gBitSmarty->assign( 'contentTypes', $contentTypes );
 $gBitSmarty->assign( 'contentList', $contentList['data'] );
