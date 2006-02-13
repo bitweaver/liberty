@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.26 $
+ * @version  $Revision: 1.27 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -549,7 +549,7 @@ class TikiWikiParser extends BitBase {
 			$table_data = str_replace('||', "\n|", $table_data);
 			while (preg_match('/^![^!]+!!/m', $table_data)) {
 				/* Replace !! with \n! but ONLY in !-defined header rows. */
-				$table_data = preg_replace('/^!(^!]+)!!/m', "!$1\n!", $table_data);
+				$table_data = preg_replace('/^!([^!]+)!!/m', "!$1\n!", $table_data);
 			}
 			if (substr($table_data, 0, 1) != "\n") {
 				/* We have table parameters. */
