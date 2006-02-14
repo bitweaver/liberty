@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.48 $
+ * @version  $Revision: 1.2.2.49 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -217,7 +217,7 @@ class TikiWikiParser extends BitBase {
 	function getAllPages( $pContentId, $pCommonObject ) {
 		global $gBitSystem;
 		$ret = array();
-		if( $gBitSystem->isFeatureActive( 'wiki' ) && @BitBase::verifyId( $pContentId ) ) {
+		if( $gBitSystem->isPackageActive( 'wiki' ) && @BitBase::verifyId( $pContentId ) ) {
 			$query = "SELECT `page_id`, tc.`content_id`, `description`, tc.`last_modified`, tc.`title`
 				FROM `".BIT_DB_PREFIX."tiki_links` tl
 				INNER JOIN `".BIT_DB_PREFIX."tiki_content` tc ON( tl.`to_content_id`=tc.`content_id` )
