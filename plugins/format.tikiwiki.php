@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2.2.49 $
+ * @version  $Revision: 1.2.2.50 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -801,7 +801,7 @@ class TikiWikiParser extends BitBase {
 		// Replace colors ~~color:text~~
 		$data = preg_replace("/\~\~([^\:]+):([^\~]+)\~\~/", "<span style=\"color:$1;\">$2</span>", $data);
 		// Replace background colors ++color:text++
-		$data = preg_replace("/\+\+([^\:]+):([^\+]+)\+\+/", "<span style=\"background:$1;\">$2</span>", $data);
+		$data = preg_replace("/\+\+([^\s][^\: ]+):([^\+]+)\+\+/", "<span style=\"background:$1;\">$2</span>", $data);
 		// Underlined text
 		$data = preg_replace("/===([^\=]+)===/", "<span style=\"text-decoration:underline;\">$1</span>", $data);
 		// Center text
