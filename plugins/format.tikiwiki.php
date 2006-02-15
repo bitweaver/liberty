@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.30 $
+ * @version  $Revision: 1.31 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -607,7 +607,7 @@ class TikiWikiParser extends BitBase {
 		global $gBitSystem;
 		global $gBitUser;
 		global $page;
-		$section_count = 0;
+		$section_count = 1;
 		if( $gBitSystem->isPackageActive( 'wiki' ) ) {
 			require_once( WIKI_PKG_PATH.'BitPage.php' );
 		}
@@ -1414,15 +1414,11 @@ class TikiWikiParser extends BitBase {
 						$addremove = 1;
 						}
 						$edit_link = '';
-						if ($gBitSystem->isFeatureActive('wiki_section_edit')) {
-							if ($gBitUser->hasPermission( 'bit_p_edit' )) {
-								if ($hdrlevel == 2) {
-									$section_count++;
-									$content_id = $pCommonObject->mContentId;
-									$edit_url = WIKI_PKG_URL."edit.php?content_id=" . $content_id . "&action=edit_sectin&section=$section_count";
-
-									$edit_link = "<div class=\"editsection\" style=\"float:right;margin-left:5px;\">[<a href=\"$edit_url\">Edit</a>]</div>";
-								}
+						if( $gBitSystem->isFeatureActive( 'wiki_section_edit' ) && $gBitUser->hasPermission( 'bit_p_edit' ) ) {
+							if( $hdrlevel == $gBitSystem->getPreference( 'wiki_section_edit' ) ) {
+								$content_id = $pCommonObject->mContentId;
+								$edit_url = WIKI_PKG_URL."edit.php?content_id=".$content_id."&amp;action=edit_sectin&amp;section=".$section_count++;
+								$edit_link = '<div class="editsection" style="float:right;margin-left:5px;">[<a href="'.$edit_url.'">'.tra( "edit" ).'</a>]</div>';
 							}
 						}
 						$line = $edit_link 
