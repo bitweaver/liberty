@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.12 2006/02/13 01:31:46 jht001 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.13 2006/02/16 13:48:11 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -377,7 +377,7 @@ class LibertyComment extends LibertyContent {
 					$comment->mInfo['level'] = $curLevel;
 					$curLevel++;
 					$comment->mInfo['children'] = $this->getComments_threaded($comment->mInfo['content_id']);
-					$comment->mInfo['parsed_data'] = $this->parseData($comment->mInfo['data'], $comment->mInfo['format_guid']);
+					$comment->mInfo['parsed_data'] = $this->parseData($comment->mInfo);
 					$curLevel--;
 					$ret[] = $comment->mInfo;
 				}
@@ -436,7 +436,7 @@ class LibertyComment extends LibertyContent {
 			if ($rs && $rs->numRows()) {
 				$rows = $rs->getRows();
 				foreach ($rows as $row) {
-					$row['parsed_data'] = $this->parseData($row['data'], $row['format_guid']);
+					$row['parsed_data'] = $this->parseData($row);
 					$flat_comments[] = $row; 
 				}
 				}

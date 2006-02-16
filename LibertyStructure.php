@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.26 2006/02/16 11:10:25 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.27 2006/02/16 13:48:11 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -1039,7 +1039,7 @@ class LibertyStructure extends LibertyBase {
 		$docs[] = $res["title"];
 		if(empty($res["description"])) $res["description"]=$res["title"];
 		$title=$res["title"].'|'.$res["description"];
-		$dat = $this->parseData($res['data']);
+		$dat = $this->parseData($res);
 
 		//Now dump the page
 		$dat = preg_replace("/index.php\?page=([^\'\" ]+)/","$1.html",$dat);

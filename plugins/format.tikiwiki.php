@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.32 $
+ * @version  $Revision: 1.33 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -71,12 +71,12 @@ function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
 	}
 }
 
-function tikiwiki_parse_data( &$pData, &$pCommonObject ) {
+function tikiwiki_parse_data( &$pData, &$pCommonObject, $pContentId ) {
 	static $parser;
 	if( empty( $parser ) ) {
 		$parser = new TikiWikiParser();
 	}
-	return $parser->parse_data( $pData, $pCommonObject );
+	return $parser->parse_data( $pData, $pCommonObject, $pContentId );
 }
 
 /**
@@ -98,7 +98,7 @@ class TikiWikiParser extends BitBase {
 		$this->mUseWikiWords = $gBitSystem->isFeatureActive( 'wiki_words' );
 
 		// Setup the WikiWord regex
-	    $wiki_page_regex = $gBitSystem->getPreference( 'wiki_page_regex', 'strict' );
+		$wiki_page_regex = $gBitSystem->getPreference( 'wiki_page_regex', 'strict' );
 		// Please DO NOT modify any of the brackets in the regex(s).
 		// It may seem redundent but, really, they are ALL REQUIRED.
 		if ($wiki_page_regex == 'strict') {
@@ -212,7 +212,7 @@ class TikiWikiParser extends BitBase {
 	}
 	*/
 
-	function getAllPages( $pContentId, $pCommonObject ) {
+	function getAllPages( $pContentId ) {
 		global $gBitSystem;
 		$ret = array();
 		if( $gBitSystem->isPackageActive( 'wiki' ) && @BitBase::verifyId( $pContentId ) ) {
@@ -234,7 +234,7 @@ class TikiWikiParser extends BitBase {
 		return $ret;
 	}
 
-	function pageExists( $pTitle, $pPageList, $pCommonObject ) {
+	function pageExists( $pTitle, $pPageList, $pCommonObject, $pContentId ) {
 		$ret = FALSE;
 		if( !empty( $pTitle ) && !empty( $pPageList ) ) {
 			if( array_key_exists( strtolower( $pTitle ), $pPageList ) ) {
@@ -242,8 +242,8 @@ class TikiWikiParser extends BitBase {
 			}
 		}
 		// final attempt to get page details
-		if( empty( $ret ) && empty( $pPageList ) ) {
-			if( $ret = $pCommonObject->pageExists( $pTitle ) ) {
+		if( empty( $ret ) ) {
+			if( $ret = $pCommonObject->pageExists( $pTitle, FALSE, $pContentId ) ) {
 				if( count( $ret ) > 1 ) {
 					$ret[0]['description'] = tra( 'Multiple pages with this name' );
 				}
@@ -252,7 +252,6 @@ class TikiWikiParser extends BitBase {
 		}
 		return $ret;
 	}
-
 
 	function parse_data_raw($data) {
 		$data = $this->parseData($data);
@@ -603,17 +602,18 @@ class TikiWikiParser extends BitBase {
 		return $data;
 	}
 
-	function parse_data( $data, &$pCommonObject ) {
-		global $gBitSystem;
-		global $gBitUser;
-		global $page;
+	function parse_data( $data, &$pCommonObject, $pContentId ) {
+		global $gBitSystem, $gBitUser, $page;
+
+		// this is used for setting the links when section editing is enabled
 		$section_count = 1;
+
 		if( $gBitSystem->isPackageActive( 'wiki' ) ) {
 			require_once( WIKI_PKG_PATH.'BitPage.php' );
 		}
 
 		// get a list of pages this page links to
-		$PageList = $this->getAllPages( $pCommonObject->mContentId, $pCommonObject );
+		$pageList = $this->getAllPages( $pContentId );
 
 		if( $gBitSystem->isFeatureActive( 'allow_html' ) ) {
 			// this is copied and pasted from format.bithtml.php - xing
@@ -844,7 +844,7 @@ class TikiWikiParser extends BitBase {
 				// text[2..N] = drop
 				$text = explode("|", $pages[5][$i]);
 
-				if( $exists = $this->pageExists( $pages[1][$i], $PageList, $pCommonObject ) ) {
+				if( $exists = $this->pageExists( $pages[1][$i], $pageList, $pCommonObject, $pContentId ) ) {
 					$modTime = count( $exists ) == 1 ? (isset( $exists['last_modified'] ) ? (int)$exists['last_modified'] : 0 ) : 0;
 					$uri_ref = WIKI_PKG_URL."index.php?page=" . urlencode($pages[1][$i]);
 
@@ -887,7 +887,7 @@ class TikiWikiParser extends BitBase {
 
 			if ($repl2) {
 				// This is a hack for now. page_exists_desc should not be needed here sicne blogs and articles use this function
-				$exists = $this->pageExists( $page_parse, $PageList, $pCommonObject );
+				$exists = $this->pageExists( $page_parse, $pageList, $pCommonObject, $pContentId );
 				$repl = BitPage::getDisplayLink( $page_parse, $exists );
 				$page_parse_pq = preg_quote($page_parse, "/");
 				$data = preg_replace("/\(\($page_parse_pq\)\)/", "$repl", $data);
@@ -912,7 +912,7 @@ class TikiWikiParser extends BitBase {
 			$pages = $this->extractWikiWords( $data );
 			foreach( $pages as $page_parse) {
 				if( empty( $words ) || !array_key_exists( $page_parse, $words ) ) {
-					if( $exists = $this->pageExists( $page_parse, $PageList, $pCommonObject ) ) {
+					if( $exists = $this->pageExists( $page_parse, $pageList, $pCommonObject, $pContentId ) ) {
 						$repl = BitPage::getDisplayLink( $page_parse, $exists );
 					} elseif( $gBitSystem->isFeatureActive( 'wiki_plurals') && $this->get_locale() == 'en_US' ) {
 						// Link plural topic names to singular topic names if the plural
@@ -927,7 +927,9 @@ class TikiWikiParser extends BitBase {
 						// Others, excluding ending ss like address(es)
 						$plural_tmp = preg_replace("/([A-Za-rt-z])s$/", "$1", $plural_tmp);
 						// prevent redundant pageExists calls if plurals are on, and plural is same as original word
-						$exists = $this->pageExists( $plural_tmp, $PageList, $pCommonObject );
+						if( $page_parse != $plural_tmp ) {
+							$exists = $this->pageExists( $plural_tmp, $pageList, $pCommonObject, $pContentId );
+						}
 						$repl = BitPage::getDisplayLink( $plural_tmp, $exists );
 					} else {
 						$repl = BitPage::getDisplayLink( $page_parse, $exists );
@@ -1416,8 +1418,7 @@ class TikiWikiParser extends BitBase {
 						$edit_link = '';
 						if( $gBitSystem->isFeatureActive( 'wiki_section_edit' ) && $gBitUser->hasPermission( 'bit_p_edit' ) ) {
 							if( $hdrlevel == $gBitSystem->getPreference( 'wiki_section_edit' ) ) {
-								$content_id = $pCommonObject->mContentId;
-								$edit_url = WIKI_PKG_URL."edit.php?content_id=".$content_id."&amp;action=edit_sectin&amp;section=".$section_count++;
+								$edit_url = WIKI_PKG_URL."edit.php?content_id=".$pContentId."&amp;action=edit_sectin&amp;section=".$section_count++;
 								$edit_link = '<div class="editsection" style="float:right;margin-left:5px;">[<a href="'.$edit_url.'">'.tra( "edit" ).'</a>]</div>';
 							}
 						}

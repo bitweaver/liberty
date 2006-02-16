@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.62 2006/02/16 11:10:25 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.63 2006/02/16 13:48:11 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -878,19 +878,27 @@ class LibertyContent extends LibertyBase {
 	* Determines if a wiki page (row in wiki_pages) exists, and returns a hash of important info. If N pages exists with $pPageName, returned existsHash has a row for each unique pPageName row.
 	* @param pPageName name of the wiki page
 	* @param pCaseSensitive look for case sensitive names
+	* @param pContentId if you insert the content id of the currently viewed object, non-existing links can be created immediately
 	*/
-	function pageExists( $pPageName, $pCaseSensitive=FALSE ) {
+	function pageExists( $pPageName, $pCaseSensitive=FALSE, $pContentId=NULL ) {
 		global $gBitSystem;
 		$ret = NULL;
 		if( $gBitSystem->isPackageActive( 'wiki' ) ) {
 			$pageWhere = $pCaseSensitive ? 'lc.`title`' : 'LOWER( lc.`title` )';
 			$bindVars = array( ($pCaseSensitive ? $pPageName : strtolower( $pPageName ) ) );
 			$query = "SELECT `page_id`, wp.`content_id`, `description`, lc.`last_modified`, lc.`title`
-					FROM `".BIT_DB_PREFIX."wiki_pages` wp, `".BIT_DB_PREFIX."liberty_content` lc
-					WHERE lc.`content_id`=wp.`content_id` AND $pageWhere = ?";
+				FROM `".BIT_DB_PREFIX."wiki_pages` wp, `".BIT_DB_PREFIX."liberty_content` lc
+				WHERE lc.`content_id`=wp.`content_id` AND $pageWhere = ?";
 			$ret = $this->mDb->getAll( $query, $bindVars );
 			if( empty( $ret ) ) {
 				$ret = NULL; // we don't want an empty array
+			} elseif( @BitBase::verifyId( $pContentId ) ) {
+				// when page has been found, we insert the links into liberty_content_links
+				foreach( $ret as $link ) {
+					$storeHash['from_content_id'] = $pContentId;
+					$storeHash['to_content_id'] = $link['content_id'];
+					$this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_links", $storeHash );
+				}
 			}
 		}
 		return $ret;
@@ -1404,18 +1412,38 @@ class LibertyContent extends LibertyBase {
 	* @param string Format GUID processor to use
 	* @return string Formated data string
 	*/
-	function parseData( $pData=NULL, $pFormatGuid=NULL ) {
-		$ret = &$pData;
-		if( empty( $pFormatGuid ) ) {
+	function parseData( $pMixed=NULL, $pFormatGuid=NULL ) {
+		$ret = &$pMixed;
+
+		// get the data into place
+		if( empty( $pMixed ) && !empty( $this->mInfo['data'] ) ) {
+			$data = $this->mInfo['data'];
+		} elseif( is_array( $pMixed ) && !empty( $pMixed['data'] ) ) {
+			$data = $pMixed['data'];
+		} elseif( !empty( $pMixed ) ) {
+			$data = $pMixed;
+		}
+
+		// get the format guid into place
+		if( is_array( $pMixed ) && !empty( $pMixed['format_guid'] ) ) {
+			$data = $pMixed['format_guid'];
+		} elseif( empty( $pFormatGuid ) ) {
 			$pFormatGuid = isset( $this->mInfo['format_guid'] ) ? $this->mInfo['format_guid'] : NULL;
 		}
-		if( empty( $pData ) && !empty( $this->mInfo['data'] ) ) {
-			$pData = $this->mInfo['data'];
+
+		// get the content id if we have one to get
+		if( is_array( $pMixed ) && !empty( $pMixed['content_id'] ) ) {
+			$contentId = $pMixed['content_id'];
+		} elseif( !empty( $this->mContentId ) ) {
+			$contentId = $this->mContentId;
+		} else {
+			$contentId = NULL;
 		}
-		if( $pData && $pFormatGuid ) {
+
+		if( $data && $pFormatGuid ) {
 			global $gLibertySystem;
 			if( $func = $gLibertySystem->getPluginFunction( $pFormatGuid, 'load_function' ) ) {
-				$ret = $func( $pData, $this );
+				$ret = $func( $data, $this, $contentId );
 			}
 		}
 		return $ret;
@@ -1425,8 +1453,8 @@ class LibertyContent extends LibertyBase {
 	/**
 	* Special parsing for multipage articles
 	*
-	* Temporary remove &lt;PRE&gt;&lt;/PRE&gt; secions to protect
-	* from broke &lt;PRE&gt; tags and leave well known &lt;PRE&gt;
+	* Temporarily remove <pre>...</pre> sections to protect
+	* from broke <pre> tags and leave well known <pre>
 	* behaviour (i.e. type all text inside AS IS w/o
 	* any interpretation)
 	* @param string Data to process

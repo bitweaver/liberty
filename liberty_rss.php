@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_rss.php,v 1.3 2006/02/09 10:30:37 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_rss.php,v 1.4 2006/02/16 13:48:11 squareing Exp $
  * @package wiki
  * @subpackage functions
  */
@@ -50,7 +50,7 @@ if( !$gBitUser->hasPermission( 'bit_p_view' ) ) {
 
 		// add the parsed data, if there is any
 		if( !empty( $feed['data'] ) ) {
-			$description .= '<br /><hr /><br />'.tra( 'Content' ).':<br />'.$liberty->parseData( $feed['data'], $feed['format_guid'] ).'<br /><hr />';
+			$description .= '<br /><hr /><br />'.tra( 'Content' ).':<br />'.$liberty->parseData( $feed ).'<br /><hr />';
 		}
 
 		$item->description = $description;

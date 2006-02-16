@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.9 2006/02/13 01:31:46 jht001 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.10 2006/02/16 13:48:11 squareing Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -90,7 +90,8 @@ $gBitSmarty->assign_by_ref('post_comment_request', $post_comment_request);
 if( !empty( $_REQUEST['post_comment_preview'] ) ) {
 	$postComment['title'] = $_REQUEST['comment_title'];
 	$postComment['data'] = $_REQUEST['comment_data'];
-	$postComment['parsed_data'] = LibertyComment::parseData( $_REQUEST['comment_data'], 'bitwiki' );
+	$postComment['format_guid'] = PLUGIN_GUID_TIKIWIKI;
+	$postComment['parsed_data'] = LibertyComment::parseData( $postComment );
 	$gBitSmarty->assign('post_comment_preview', TRUE);
 }
 
@@ -105,7 +106,7 @@ if (@BitBase::verifyId($_REQUEST['post_comment_reply_id'])) {
 		}
 	else {
 		$comment_prefix = tra('Re:') . " ";
-		}		
+		}
 	$postComment['title'] = $comment_prefix . $tmpComment->mInfo['title'];
 
 	$gBitSmarty->assign('post_comment_reply_id', $post_comment_reply_id);

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.include.php,v 1.7 2005/12/26 12:25:03 squareing Exp $
+// $Id: data.include.php,v 1.8 2006/02/16 13:48:11 squareing Exp $
 
 /**
  * definitions
@@ -77,7 +77,7 @@ function data_include($data, $params) {
 		require_once( WIKI_PKG_PATH.'BitPage.php');
 		$wp = new BitPage( $params['page_id'] );
 		if( $wp->load() ) {
-			$ret = $wp->parseData( $wp->mInfo['data'], $wp->mInfo['format_guid'] );
+			$ret = $wp->parseData( $wp->mInfo );
 		}
 	// load page by content_id
 	} elseif( isset( $params['content_id'] ) && is_numeric( $params['content_id'] ) ) {
