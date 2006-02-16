@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.25 2006/02/11 12:24:45 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.26 2006/02/16 11:10:25 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -683,8 +683,8 @@ class LibertyStructure extends LibertyBase {
 	function remove_from_structure($structure_id) {
 		// Now recursively remove
 		$query  = "select `structure_id` ";
-		$query .= "from `".BIT_DB_PREFIX."liberty_structures` as ls, `".BIT_DB_PREFIX."wiki_pages` as tp ";
-		$query .= "where tp.`content_id`=ls.`content_id` and `parent_id`=?";
+		$query .= "from `".BIT_DB_PREFIX."liberty_structures` as ls, `".BIT_DB_PREFIX."wiki_pages` as wp ";
+		$query .= "where wp.`content_id`=ls.`content_id` and `parent_id`=?";
 		$result = $this->mDb->query($query, array( $structure_id ) );
 
 		while ($res = $result->fetchRow()) {
@@ -828,8 +828,8 @@ class LibertyStructure extends LibertyBase {
 	//Is this page the head page for a structure?
 	function get_struct_ref_if_head($title) {
 	$query =  "SELECT `structure_id`
-			   FROM `".BIT_DB_PREFIX."liberty_structures` ls, `".BIT_DB_PREFIX."wiki_pages` tp,`".BIT_DB_PREFIX."liberty_content` lc
-			   WHERE tp.`content_id`=ls.`content_id` AND lc.`content_id` = tp.`content_id` AND (`parent_id` is null or `parent_id`=0) and lc.`title`=?";
+			   FROM `".BIT_DB_PREFIX."liberty_structures` ls, `".BIT_DB_PREFIX."wiki_pages` wp,`".BIT_DB_PREFIX."liberty_content` lc
+			   WHERE wp.`content_id`=ls.`content_id` AND lc.`content_id` = wp.`content_id` AND (`parent_id` is null or `parent_id`=0) and lc.`title`=?";
 		$structure_id = $this->mDb->getOne($query,array($title));
 		return $structure_id;
 	}
@@ -967,15 +967,15 @@ class LibertyStructure extends LibertyBase {
   }
 
 	/** Return all the pages belonging to a structure
-  \scope private
-  \return An array of page_info arrays
-  */
+	\scope private
+	\return An array of page_info arrays
+	*/
 	function _s_get_structure_pages($structure_id) {
 		$ret = array();
-		$query =  "select `pos`, `structure_id`, `parent_id`, ls.`content_id`, lc.`title`, `page_alias`
+		$query =  "SELECT `pos`, `structure_id`, `parent_id`, ls.`content_id`, lc.`title`, `page_alias`
 				   FROM `".BIT_DB_PREFIX."liberty_structures` ls, `".BIT_DB_PREFIX."liberty_content` lc
-				   WHERE lc.`content_id` = tp.`content_id` AND tp.`content_id`=ls.`content_id` AND `parent_id`=?
-				   ORDER by ".$this->mDb->convert_sortmode("pos_asc");
+				   WHERE lc.`content_id` = wp.`content_id` AND wp.`content_id`=ls.`content_id` AND `parent_id`=?
+				   ORDER BY ".$this->mDb->convert_sortmode("pos_asc");
 
 		$result = $this->mDb->query($query,array((int)$structure_id));
 		while ($res = $result->fetchRow()) {
@@ -1032,8 +1032,8 @@ class LibertyStructure extends LibertyBase {
 	foreach($pages as $page)
 	{
 		$query = "SELECT *
-				  FROM `".BIT_DB_PREFIX."wiki_pages` tp, `".BIT_DB_PREFIX."liberty_content` lc
-				  WHERE lc.`content_id` = tp.`content_id` AND lc.`title`=?";
+				  FROM `".BIT_DB_PREFIX."wiki_pages` wp, `".BIT_DB_PREFIX."liberty_content` lc
+				  WHERE lc.`content_id` = wp.`content_id` AND lc.`title`=?";
 		$result = $this->mDb->query($query,array($page));
 		$res = $result->fetchRow();
 		$docs[] = $res["title"];
@@ -1084,14 +1084,14 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	function structure_to_tree($structure_id) {
-		$query = "select * from `".BIT_DB_PREFIX."liberty_structures` ls,`".BIT_DB_PREFIX."wiki_pages` tp where tp.`content_id`=ls.`content_id` and `structure_id`=?";
+		$query = "select * from `".BIT_DB_PREFIX."liberty_structures` ls,`".BIT_DB_PREFIX."wiki_pages` wp where wp.`content_id`=ls.`content_id` and `structure_id`=?";
 		$result = $this->mDb->query($query,array((int)$structure_id));
 		$res = $result->fetchRow();
 		if(empty($res['description'])) $res['description']=$res['title'];
 		$name = $res['description'].'|'.$res['title'];
 		$code = '';
 		$code.= "'$name'=>";
-		$query = "select * from `".BIT_DB_PREFIX."liberty_structures` ls, `".BIT_DB_PREFIX."wiki_pages` tp  where tp.`content_id`=ls.`content_id` and `parent_id`=?";
+		$query = "select * from `".BIT_DB_PREFIX."liberty_structures` ls, `".BIT_DB_PREFIX."wiki_pages` wp  where wp.`content_id`=ls.`content_id` and `parent_id`=?";
 		$result = $this->mDb->query($query,array((int)$structure_id));
 		if($result->numRows()) {
 			$code.="Array(";

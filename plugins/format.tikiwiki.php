@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.31 $
+ * @version  $Revision: 1.32 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -156,7 +156,7 @@ class TikiWikiParser extends BitBase {
 				foreach( $linkPages as $page ) {
 					if( !empty( $page ) ) {
 // SPIDERFKILL - this query is guaranteed to die - i forget where it came from and why it's here. will debug soon enough...
-						$query = "SELECT tp.`content_id` FROM `".BIT_DB_PREFIX."wiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id` = tp.`content_id`) WHERE lc.`title`=?";
+						$query = "SELECT wp.`content_id` FROM `".BIT_DB_PREFIX."wiki_pages` wp INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id` = wp.`content_id`) WHERE lc.`title`=?";
 						if( $contentId = $this->mDb->getOne( $query, array( $page ) ) ) {
 							$key = $pParamHash['content_id'] . "-" . $contentId;
 							if (empty($links_already_inserted_table[$key])) {
@@ -188,7 +188,7 @@ class TikiWikiParser extends BitBase {
 				$query = "SELECT LOWER( lc.`title` ) AS `hash_key`, `page_id`, lc.`content_id`, `description`, lc.`last_modified`, lc.`title`
 						  FROM `".BIT_DB_PREFIX."liberty_content_links` lcl
 						  	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcl.`to_content_id`=lc.`content_id` )
-						  	INNER JOIN `".BIT_DB_PREFIX."wiki_pages` tp ON( tp.`content_id`=lc.`content_id` )
+						  	INNER JOIN `".BIT_DB_PREFIX."wiki_pages` wp ON( wp.`content_id`=lc.`content_id` )
 						  WHERE lcl.`from_content_id`=? ORDER BY lc.`title`";
 				if( $result = $this->mDb->query( $query, array( $pContentId ) ) ) {
 					$lastTitle = '';
@@ -219,7 +219,7 @@ class TikiWikiParser extends BitBase {
 			$query = "SELECT `page_id`, lc.`content_id`, `description`, lc.`last_modified`, lc.`title`
 				FROM `".BIT_DB_PREFIX."liberty_content_links` lcl
 				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcl.`to_content_id`=lc.`content_id` )
-				INNER JOIN `".BIT_DB_PREFIX."wiki_pages` tp ON( tp.`content_id`=lc.`content_id` )
+				INNER JOIN `".BIT_DB_PREFIX."wiki_pages` wp ON( wp.`content_id`=lc.`content_id` )
 				WHERE lcl.`from_content_id`=? ORDER BY lc.`title`";
 			if( $result = $this->mDb->query( $query, array( $pContentId ) ) ) {
 				$lastTitle = '';

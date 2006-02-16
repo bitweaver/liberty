@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.61 2006/02/14 21:53:25 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.62 2006/02/16 11:10:25 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -885,10 +885,10 @@ class LibertyContent extends LibertyBase {
 		if( $gBitSystem->isPackageActive( 'wiki' ) ) {
 			$pageWhere = $pCaseSensitive ? 'lc.`title`' : 'LOWER( lc.`title` )';
 			$bindVars = array( ($pCaseSensitive ? $pPageName : strtolower( $pPageName ) ) );
-			$query = "SELECT `page_id`, tp.`content_id`, `description`, lc.`last_modified`, lc.`title`
-					FROM `".BIT_DB_PREFIX."wiki_pages` tp, `".BIT_DB_PREFIX."liberty_content` lc
-					WHERE lc.`content_id`=tp.`content_id` AND $pageWhere = ?";
-			$ret = $this->mDb->getAll($query, $bindVars );
+			$query = "SELECT `page_id`, wp.`content_id`, `description`, lc.`last_modified`, lc.`title`
+					FROM `".BIT_DB_PREFIX."wiki_pages` wp, `".BIT_DB_PREFIX."liberty_content` lc
+					WHERE lc.`content_id`=wp.`content_id` AND $pageWhere = ?";
+			$ret = $this->mDb->getAll( $query, $bindVars );
 			if( empty( $ret ) ) {
 				$ret = NULL; // we don't want an empty array
 			}
@@ -1301,7 +1301,7 @@ class LibertyContent extends LibertyBase {
 			$joinSql, `".BIT_DB_PREFIX."users_users` uu
 			WHERE uu.`user_id`=lc.`user_id` $whereSql";
 		// previous cant query - updated by xing
-		// $query_cant = "select count(*) from `".BIT_DB_PREFIX."wiki_pages` tp INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id` = tp.`content_id`) $mid";
+		// $query_cant = "select count(*) from `".BIT_DB_PREFIX."wiki_pages` wp INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id` = wp.`content_id`) $mid";
 		$result = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
 		$cant = $this->mDb->getOne( $query_cant, $bindVars );
 		$ret = array();
