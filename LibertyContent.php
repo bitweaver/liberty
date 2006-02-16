@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.64 2006/02/16 18:15:58 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.65 2006/02/16 18:46:10 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1413,8 +1413,6 @@ class LibertyContent extends LibertyBase {
 	* @return string Formated data string
 	*/
 	function parseData( $pMixed=NULL, $pFormatGuid=NULL ) {
-		$ret = &$pMixed;
-
 		// get the data into place
 		if( empty( $pMixed ) && !empty( $this->mInfo['data'] ) ) {
 			$data = $this->mInfo['data'];
@@ -1439,6 +1437,8 @@ class LibertyContent extends LibertyBase {
 		} else {
 			$contentId = NULL;
 		}
+
+		$ret = $data;
 
 		if( $data && $format_guid ) {
 			global $gLibertySystem;
