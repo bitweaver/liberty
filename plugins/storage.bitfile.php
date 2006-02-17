@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.13 $
+ * @version  $Revision: 1.14 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -43,11 +43,11 @@ function bit_files_store( &$pStoreRow ) {
 	$pref = $gBitSystem->getPreference('centralized_upload_dir');
 	if( isset( $pref ) ) {
 		if( !empty( $pStoreRow['foreign_id'] ) ) {
-			$sql = "UPDATE `".BIT_DB_PREFIX."liberty_files SET `storage_path`=?, `mime_type`=?, `size`=? WHERE `file_id` = ?";
+			$sql = "UPDATE `".BIT_DB_PREFIX."liberty_files SET `storage_path`=?, `mime_type`=?, `file_size`=? WHERE `file_id` = ?";
 			$gBitSystem->mDb->query( $sql, array( $pStoreRow['dest_file_path'], $pStoreRow['type'], $pStoreRow['size'], $pStoreRow['foreign_id'] ) );
 		} else {
 			$pStoreRow['file_id'] = $gBitSystem->mDb->GenID( 'liberty_files_id_seq' );
-			$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_files` ( `storage_path`, `file_id`, `mime_type`, `size`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
+			$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_files` ( `storage_path`, `file_id`, `mime_type`, `file_size`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
 			$userId = !empty( $pStoreRow['upload']['user_id'] ) ? $pStoreRow['upload']['user_id'] : $gBitUser->mUserId;
 			$gBitSystem->mDb->query($sql, array( $pStoreRow['upload']['dest_path'].$pStoreRow['upload']['name'], $pStoreRow['file_id'],  $pStoreRow['upload']['type'],  $pStoreRow['upload']['size'], $userId ) );
 		}

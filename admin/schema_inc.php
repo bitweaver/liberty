@@ -176,7 +176,6 @@ $indices = array (
 	'attachments_user_id_idx' => array( 'table' => 'liberty_attachments', 'cols' => 'user_id', 'opts' => NULL ),
 	'attachments_content_id_idx' => array( 'table' => 'liberty_attachments', 'cols' => 'content_id', 'opts' => NULL ),
 	'st_co_foreign_guid_idx' => array( 'table' => 'liberty_attachments', 'cols' => 'content_id, foreign_id, attachment_plugin_guid', 'opts' => array( 'UNIQUE' ) ),
-	'plugins_guid_idx' => array( 'table' => 'liberty_plugins', 'cols' => 'plugin_guid', 'opts' => array( 'UNIQUE' ) ),
 	'structures_root_idx' => array( 'table' => 'liberty_structures', 'cols' => 'root_structure_id', 'opts' => NULL),
 	'structures_parent_idx' => array( 'table' => 'liberty_structures', 'cols' => 'parent_id', 'opts' => NULL),
 	'structures_content_idx' => array( 'table' => 'liberty_structures', 'cols' => 'content_id', 'opts' => NULL )
