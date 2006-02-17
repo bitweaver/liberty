@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.65 2006/02/16 18:46:10 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.66 2006/02/17 21:20:14 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -247,7 +247,7 @@ class LibertyContent extends LibertyBase {
 
 			if( !empty( $pParamHash['force_history'] ) || ( empty( $pParamHash['minor'] ) && !empty( $this->mInfo['version'] ) && $pParamHash['field_changed'] )) {
 				if( empty( $pParamHash['has_no_history'] ) ) {
-					$query = "insert into `".BIT_DB_PREFIX."liberty_content_history`( `content_id`, `version`, `last_modified`, `user_id`, `ip`, `comment`, `data`, `description`, `format_guid`) values(?,?,?,?,?,?,?,?,?)";
+					$query = "insert into `".BIT_DB_PREFIX."liberty_content_history`( `content_id`, `version`, `last_modified`, `user_id`, `ip`, `action_comment`, `data`, `description`, `format_guid`) values(?,?,?,?,?,?,?,?,?)";
 					$result = $this->mDb->query( $query, array( $this->mContentId, (int)$this->mInfo['version'], (int)$this->mInfo['last_modified'] , $this->mInfo['modifier_user_id'], $this->mInfo['ip'], $this->mInfo['comment'], $this->mInfo['data'], $this->mInfo['description'], $this->mInfo['format_guid'] ) );
 				}
 				$action = "Created";
@@ -397,7 +397,7 @@ class LibertyContent extends LibertyBase {
 			}
 			$action = "Removed last version";
 			$t = $gBitSystem->getUTCTime();
-			$query = "insert into `".BIT_DB_PREFIX."wiki_action_log`( `action`, `content_id`, `last_modified`, `user_id`, `ip`, `comment`) values( ?, ?, ?, ?, ?, ?)";
+			$query = "insert into `".BIT_DB_PREFIX."content_action_log`( `action`, `content_id`, `last_modified`, `user_id`, `ip`, `action_comment`) values( ?, ?, ?, ?, ?, ?)";
 			$result = $this->mDb->query($query, array( $action, $this->mContentId, $t, ROOT_USER_ID, $_SERVER["REMOTE_ADDR"], $comment ) );
 		}
 	}
@@ -463,7 +463,7 @@ class LibertyContent extends LibertyBase {
 				global $gBitSystem;
 				$action = "Removed version $pVersion";
 				$t = $gBitSystem->getUTCTime();
-				$query = "insert into `".BIT_DB_PREFIX."wiki_action_log`(`action`,`content_id`,`last_modified`,`user_id`,`ip`,`comment`) values(?,?,?,?,?,?)";
+				$query = "insert into `".BIT_DB_PREFIX."content_action_log`(`action`,`content_id`,`last_modified`,`user_id`,`ip`,`action_comment`) values(?,?,?,?,?,?)";
 				$result = $this->mDb->query($query,array($action,$this->mContentId,$t,ROOT_USER_ID,$_SERVER["REMOTE_ADDR"],$comment));
 				$ret = TRUE;
 			}
