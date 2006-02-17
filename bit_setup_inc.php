@@ -3,14 +3,18 @@
  * base package include
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage functions
  */
 
 global $gBitSystem, $gBitUser, $gBitSmarty;
 
-$gBitSystem->registerPackage( 'liberty', dirname( __FILE__).'/' );
+$registerHash = array(
+	'package_name' => 'liberty',
+	'package_path' => dirname( __FILE__ ).'/',
+);
+$gBitSystem->registerPackage( $registerHash );
 
 require_once( LIBERTY_PKG_PATH.'LibertySystem.php' );
 ?>
