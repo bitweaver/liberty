@@ -49,7 +49,7 @@ $tables = array(
 	description C(200),
 	user_id C(40),
 	ip C(15),
-	`comment` C(200),
+	history_comment C(200),
 	data X
 	CONSTRAINT ', CONSTRAINT `liberty_history_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
 ",
@@ -128,7 +128,7 @@ $tables = array(
 	file_id I4 PRIMARY,
 	user_id I4 NOTNULL,
 	storage_path C(250),
-	`size` I4,
+	file_size I4,
 	mime_type C(64)
 ",
 
@@ -136,7 +136,7 @@ $tables = array(
 	structure_id I4 AUTO PRIMARY,
 	root_structure_id I4 NOTNULL,
 	content_id I4 NOTNULL,
-	`level` I1 NOTNULL DEFAULT 1,
+	structure_level I1 NOTNULL DEFAULT 1,
 	pos I4,
 	page_alias C(240),
 	parent_id I4
