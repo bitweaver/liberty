@@ -95,7 +95,6 @@ $tables = array(
 	root_id I4 NOTNULL,
 	thread_forward_sequence C(250),
 	thread_reverse_sequence C(250)
-	 
 	CONSTRAINT '
 		, CONSTRAINT `liberty_comments_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
 		, CONSTRAINT `liberty_comments_parent_ref` FOREIGN KEY (`parent_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
