@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.33 $
+ * @version  $Revision: 1.34 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -951,76 +951,6 @@ class TikiWikiParser extends BitBase {
 		// TODO: I think this is 1. just wrong and 2. not needed here? remove it?
 		// Replace ))Words((
 		$data = preg_replace("/\(\(([^\)]+)\)\)/", "$1", $data);
-
-		// Images
-		preg_match_all("/(\{img [^\}]+})/i", $data, $pages);
-
-		foreach( array_unique( $pages[1] ) as $page_parse ) {
-			// collect all parameters into $parts ( after we've removed whitespaces around '=' )
-			preg_match_all( "/(\w*)=([^=]*)(?=\s.*?|\s*\})/", preg_replace( "/\s+=\s+/", "=", $page_parse ), $parts );
-
-			$imgdata = array();
-			$imgdata['img_style'] = '';
-			$imgdata['div_style'] = '';
-
-			foreach( $parts[1] as $i => $key ) {
-				$value = preg_replace( '/"/', "", $parts[2][$i] );
-				switch( $key ) {
-					case 'width':
-					case 'height':
-						$imgdata['img_style'] .= $key.':'.$value.';';
-						break;
-					case 'float':
-					case 'padding':
-					case 'margin':
-					case 'background':
-					case 'border':
-					case 'text-align':
-					case 'color':
-					case 'font':
-					case 'font-size':
-					case 'font-weight':
-					case 'font-family':
-						$imgdata['div_style'] .= $key.':'.$value.';';
-						break;
-					case 'align':
-						if( $value == 'center' ) {
-							$imgdata['div_style'] .= 'text-align:'.$value.';';
-						} else {
-							$imgdata['div_style'] .= 'float:'.$value.';';
-						}
-						break;
-					default:
-						$imgdata[$key] = $value;
-						break;
-				}
-			}
-
-			// check if we have a source to load an image from
-			if( !empty( $imgdata['src'] ) ) {
-				// set up image first
-				$repl = '<img'.
-						' alt="'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : tra( 'Image' ) ).'"'.
-						' title="'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : tra( 'Image' ) ).'"'.
-						' src="'.$imgdata['src'].'"'.
-						' style="'.$imgdata['img_style'].'"'.
-					' />';
-
-				// if this image is linking to something, wrap the image with the <a>
-				if( !empty( $imgdata['link'] ) ) {
-					$repl = '<a href="'.trim( $imgdata['link'] ).'">'.$repl.'</a>';
-				}
-
-				// finally, wrap the image with a div
-				if( !empty( $imgdata['div_style'] ) || !empty( $imgdata['desc'] ) ) {
-					$repl = '<div class="img-plugin" style="'.$imgdata['div_style'].'">'.$repl.'<br />'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : '' ).'</div>';
-				}
-			} else {
-				$repl = '<span class="warning">'.tra( 'When using <strong>{img}</strong> the <strong>src</strong> parameter is required.' ).'</span>';
-			}
-
-			$data = str_replace( $page_parse, $repl, $data );
-		}
 
 		$links = $this->get_links($data);
 
