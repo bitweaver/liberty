@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.67 2006/02/17 22:06:22 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.68 2006/02/18 09:09:51 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -397,7 +397,7 @@ class LibertyContent extends LibertyBase {
 			}
 			$action = "Removed last version";
 			$t = $gBitSystem->getUTCTime();
-			$query = "insert into `".BIT_DB_PREFIX."content_action_log`( `action`, `content_id`, `last_modified`, `user_id`, `ip`, `action_comment`) values( ?, ?, ?, ?, ?, ?)";
+			$query = "insert into `".BIT_DB_PREFIX."content_action_log`( `log_action`, `content_id`, `last_modified`, `user_id`, `ip`, `action_comment`) values( ?, ?, ?, ?, ?, ?)";
 			$result = $this->mDb->query($query, array( $action, $this->mContentId, $t, ROOT_USER_ID, $_SERVER["REMOTE_ADDR"], $comment ) );
 		}
 	}
@@ -463,7 +463,7 @@ class LibertyContent extends LibertyBase {
 				global $gBitSystem;
 				$action = "Removed version $pVersion";
 				$t = $gBitSystem->getUTCTime();
-				$query = "insert into `".BIT_DB_PREFIX."content_action_log`(`action`,`content_id`,`last_modified`,`user_id`,`ip`,`action_comment`) values(?,?,?,?,?,?)";
+				$query = "insert into `".BIT_DB_PREFIX."content_action_log`(`log_action`,`content_id`,`last_modified`,`user_id`,`ip`,`action_comment`) values(?,?,?,?,?,?)";
 				$result = $this->mDb->query($query,array($action,$this->mContentId,$t,ROOT_USER_ID,$_SERVER["REMOTE_ADDR"],$comment));
 				$ret = TRUE;
 			}
@@ -783,10 +783,10 @@ class LibertyContent extends LibertyBase {
 
 		if ($pContentId && ($pContentId != $this->mContentId) && !empty($pPrefName)) {
 			// Get a user preference for an arbitrary user
-			$sql = "SELECT `value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `name` = ? and `content_id` = ?";
+			$sql = "SELECT `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `name` = ? and `content_id` = ?";
 
 			$rs = $this->mDb->query($sql, array($pPrefName, $pContentId));
-			$ret = (!empty($rs->fields['value'])) ? $rs->fields['value'] : $pPrefDefault;
+			$ret = (!empty($rs->fields['pref_value'])) ? $rs->fields['pref_value'] : $pPrefDefault;
 		} else {
 			if( isset( $this->mPrefs ) && isset( $this->mPrefs[$pPrefName] ) ) {
 				$ret = $this->mPrefs[$pPrefName];
@@ -799,9 +799,9 @@ class LibertyContent extends LibertyBase {
 
 	function loadPreferences( $pContentId = NULL ) {
 		if( @BitBase::verifyId( $pContentId ) ) {
-			return $this->mDb->getAssoc( "SELECT `name`, `value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $pContentId ) );
+			return $this->mDb->getAssoc( "SELECT `name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $pContentId ) );
 		} elseif( $this->isValid() ) {
-			$this->mPrefs = @$this->mDb->getAssoc( "SELECT `name`, `value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $this->mContentId ) );
+			$this->mPrefs = @$this->mDb->getAssoc( "SELECT `name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $this->mContentId ) );
 		}
 	}
 
@@ -833,7 +833,7 @@ class LibertyContent extends LibertyBase {
 			$bindvars=array( $this->mContentId, $pPrefName );
 			$result = $this->mDb->query($query, $bindvars);
 			if( !is_null( $pPrefValue ) ) {
-				$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_prefs` (`content_id`,`name`,`value`) VALUES(?, ?, ?)";
+				$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_prefs` (`content_id`,`name`,`pref_value`) VALUES(?, ?, ?)";
 				$bindvars[]=$pPrefValue;
 				$result = $this->mDb->query($query, $bindvars);
 				$this->mPrefs[$pPrefName] = $pPrefValue;
