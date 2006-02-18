@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.70 2006/02/18 18:37:18 bitweaver Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.71 2006/02/18 18:53:27 bitweaver Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1424,9 +1424,11 @@ class LibertyContent extends LibertyBase {
 
 		// get the format guid into place
 		if( is_array( $pMixed ) && !empty( $pMixed['format_guid'] ) ) {
-			$format_guid = $pMixed['format_guid'];
+			$formatGuid = $pMixed['format_guid'];
 		} elseif( empty( $pFormatGuid ) ) {
-			$format_guid = isset( $this->mInfo['format_guid'] ) ? $this->mInfo['format_guid'] : NULL;
+			$formatGuid = isset( $this->mInfo['format_guid'] ) ? $this->mInfo['format_guid'] : NULL;
+		} else {
+			$formatGuid = $pFormatGuid;
 		}
 
 		// get the content id if we have one to get
@@ -1440,9 +1442,9 @@ class LibertyContent extends LibertyBase {
 
 		$ret = $data;
 
-		if( $data && $format_guid ) {
+		if( $data && $formatGuid ) {
 			global $gLibertySystem;
-			if( $func = $gLibertySystem->getPluginFunction( $format_guid, 'load_function' ) ) {
+			if( $func = $gLibertySystem->getPluginFunction( $formatGuid, 'load_function' ) ) {
 				$ret = $func( $data, $this, $contentId );
 			}
 		}
