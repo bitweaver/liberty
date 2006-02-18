@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.15 2006/02/18 18:36:42 bitweaver Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.16 2006/02/18 20:14:37 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -441,7 +441,8 @@ class LibertyComment extends LibertyContent {
 				$rows = $rs->getRows();
 				foreach ($rows as $row) {
 					$row['parsed_data'] = $this->parseData($row);
-					$flat_comments[] = $row; 
+					$row['level'] = substr_count ( $row['thread_forward_sequence'], '.' ) - 1;
+					$flat_comments[] = $row;
 				}
 			}
 
