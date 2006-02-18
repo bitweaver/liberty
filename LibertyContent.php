@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.69 2006/02/18 17:37:19 bitweaver Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.70 2006/02/18 18:37:18 bitweaver Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -248,7 +248,7 @@ class LibertyContent extends LibertyBase {
 			if( !empty( $pParamHash['force_history'] ) || ( empty( $pParamHash['minor'] ) && !empty( $this->mInfo['version'] ) && $pParamHash['field_changed'] )) {
 				if( empty( $pParamHash['has_no_history'] ) ) {
 					$query = "insert into `".BIT_DB_PREFIX."liberty_content_history`( `content_id`, `version`, `last_modified`, `user_id`, `ip`, `history_comment`, `data`, `description`, `format_guid`) values(?,?,?,?,?,?,?,?,?)";
-					$result = $this->mDb->query( $query, array( $this->mContentId, (int)$this->mInfo['version'], (int)$this->mInfo['last_modified'] , $this->mInfo['modifier_user_id'], $this->mInfo['ip'], $this->mInfo['history_comment'], $this->mInfo['data'], $this->mInfo['description'], $this->mInfo['format_guid'] ) );
+					$result = $this->mDb->query( $query, array( $this->mContentId, (int)$this->mInfo['version'], (int)$this->mInfo['last_modified'] , $this->mInfo['modifier_user_id'], $this->mInfo['ip'], !empty( $this->mInfo['history_comment'] ) ? $this->mInfo['history_comment'] : '', $this->mInfo['data'], $this->mInfo['description'], $this->mInfo['format_guid'] ) );
 				}
 				$action = "Created";
 				$mailEvents = 'wiki_page_changes';
@@ -897,7 +897,7 @@ class LibertyContent extends LibertyBase {
 				foreach( $ret as $link ) {
 					$storeHash['from_content_id'] = $pContentId;
 					$storeHash['to_content_id'] = $link['content_id'];
-					$this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_links", $storeHash );
+					//$this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_links", $storeHash );
 				}
 			}
 		}
