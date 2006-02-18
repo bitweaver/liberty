@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.68 2006/02/18 09:09:51 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.69 2006/02/18 17:37:19 bitweaver Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1288,7 +1288,7 @@ class LibertyContent extends LibertyBase {
 		// If sort mode is backlinks then offset is 0, max_records is -1 (again) and sort_mode is nil
 		$query = "SELECT
 				uue.`login` AS `modifier_user`, uue.`real_name` AS `modifier_real_name`, uue.`user_id` AS `modifier_user_id`,
-				uuc.`login` AS`creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`,
+				uuc.`login` AS `creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`,
 				lc.`hits`,
 				lc.`last_hit`,
 				lc.`event_time`,
