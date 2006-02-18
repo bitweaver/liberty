@@ -57,7 +57,7 @@ $tables = array(
 'liberty_action_log' => "
 	content_id I4 NOTNULL,
 	user_id I4 NOTNULL,
-	action C(255) NOTNULL,
+	log_action C(255) NOTNULL,
 	last_modified I8,
 	title C(160),
 	ip C(15),
@@ -68,7 +68,7 @@ $tables = array(
 	copyright_id I4 AUTO PRIMARY,
 	page_id I4 NOTNULL,
 	title C(200),
-	year I8,
+	copyright_year I8,
 	authors C(200),
 	copyright_order I8,
 	user_id I4
@@ -84,7 +84,7 @@ $tables = array(
 'liberty_content_prefs' => "
 	content_id I4 PRIMARY,
 	name C(40) PRIMARY,
-	value C(250)
+	pref_value C(250)
 	CONSTRAINT ', CONSTRAINT `lib_content_prefs_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
 ",
 
