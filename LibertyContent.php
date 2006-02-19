@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.72 2006/02/19 00:18:11 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.73 2006/02/19 12:07:46 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -897,7 +897,9 @@ class LibertyContent extends LibertyBase {
 				foreach( $ret as $link ) {
 					$storeHash['from_content_id'] = $pContentId;
 					$storeHash['to_content_id'] = $link['content_id'];
-					//$this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_links", $storeHash );
+					if( !$this->mDb->getOne( "SELECT `from_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=? AND `to_content_id`=?", array( $storeHash['from_content_id'], $storeHash['to_content_id'] ) ) ) {
+						$this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_links", $storeHash );
+					}
 				}
 			}
 		}
