@@ -3,11 +3,11 @@
 {if $translationsList}
 	<div class="row">
 		{formfeedback error=$errors.format}
-		{formlabel label="Language"}
+		{formlabel label="Language" for="lang_code"}
 		{forminput}
-			<select>
+			<select name="i18n[lang_code]" id="lang_code">
 				{foreach from=$translationsList key=langCode item=lang}
-					<option value="{$langCode}" {if $smarty.request.lang_code==$langCode || $pageInfo.lang_code==$langCode || ($langCode==$gBitSystem->getPreference('bitlanguage') && !$smarty.request.lang_code && !$gContent->getField('lang_code'))}selected="selected"{/if}>{$lang.native_name}</option>
+					<option value="{$langCode}" {if $smarty.request.i18n.lang_code==$langCode || $pageInfo.lang_code==$langCode || ( $langCode==$gBitSystem->getPreference('bitlanguage') && !$smarty.request.i18n.lang_code && !$gContent->getField('lang_code') )}selected="selected" {/if}>{$lang.native_name}</option>
 				{/foreach}
 			</select>
 			{formhelp note="The language of this page"}
