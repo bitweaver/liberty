@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.71 2006/02/18 18:53:27 bitweaver Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.72 2006/02/19 00:18:11 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1188,11 +1188,11 @@ class LibertyContent extends LibertyBase {
 		$this->getServicesSql( 'content_list_sql_function', $selectSql, $joinSql, $whereSql, $bindVars );
 
 		if( $pListHash['sort_mode'] == 'size_desc' ) {
-			$pListHash['sort_mode'] = 'page_size_desc';
+			$pListHash['sort_mode'] = 'wiki_page_size_desc';
 		}
 
 		if( $pListHash['sort_mode'] == 'size_asc' ) {
-			$pListHash['sort_mode'] = 'page_size_asc';
+			$pListHash['sort_mode'] = 'wiki_page_size_asc';
 		}
 
 		$old_sort_mode = '';
