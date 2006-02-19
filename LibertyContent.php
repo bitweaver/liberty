@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.61 2006/01/26 15:00:47 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.62 2006/02/19 03:49:23 seannerd Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -220,6 +220,12 @@ class LibertyContent extends LibertyBase {
 	*/
 	function store( &$pParamHash ) {
 		global $gLibertySystem;
+		if ( ( !(isset($this->mInfo['no_index']) and $this->mInfo['no_index'] == true ) ) and !isset($this->mInfo['index_data']) ) {
+			$this->mInfo['index_data'] = "";
+			if ( isset($pParamHash["title"]) )       $this->mInfo['index_data'] .= $pParamHash["title"] . ' ';
+			if ( isset($pParamHash["author_name"]) ) $this->mInfo['index_data'] .= $pParamHash["author_name"] . ' ';
+			if ( isset($pParamHash["edit"]) )        $this->mInfo['index_data'] .= $pParamHash["edit"];
+		}
 		if( LibertyContent::verify( $pParamHash ) ) {
 			$this->mDb->StartTrans();
 			$table = BIT_DB_PREFIX."tiki_content";
@@ -1224,6 +1230,25 @@ class LibertyContent extends LibertyBase {
 					WHERE ts.`content_id`=? $whereSql";
 			$cant = $this->mDb->getOne( $query, $bindVars );
 			return $cant;
+		}
+	}
+
+	/**
+	 * This is a generic liberty content function to gather indexable words. Override this function
+	 * in your BitPackage.php file if you need to add more indexable words from files other than
+	 * tiki_content and users_users. 
+	 */
+
+	function setIndexData( $pContentId = 0 ) {
+		global $gBitSystem ;
+		if ( $pContentId == 0 ) $pContentId = $this->mContentId;
+		$sql = "SELECT tc.`title`, tc.`data`, uu.`login`, uu.`real_name` " .
+				"FROM `" . BIT_DB_PREFIX . "tiki_content` tc " .  
+				"INNER JOIN `" . BIT_DB_PREFIX . "users_users` uu ON uu.`user_id` = tc.`user_id` " . 
+				"WHERE tc.`content_id` = ?" ;
+		$res = $gBitSystem->mDb->getRow($sql, array($pContentId));
+		if (!(isset($this->mInfo['no_index']) and $this->mInfo['no_index'] == true)) {
+			$this->mInfo['index_data'] = $res["title"] . " " . $res["data"] . " " . $res["login"] . " " . $res["real_name"] ;
 		}
 	}
 
