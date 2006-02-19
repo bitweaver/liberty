@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.73 2006/02/19 12:07:46 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.74 2006/02/19 20:09:04 bitweaver Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1420,7 +1420,7 @@ class LibertyContent extends LibertyBase {
 			$data = $this->mInfo['data'];
 		} elseif( is_array( $pMixed ) && !empty( $pMixed['data'] ) ) {
 			$data = $pMixed['data'];
-		} elseif( !empty( $pMixed ) ) {
+		} else {
 			$data = $pMixed;
 		}
 
