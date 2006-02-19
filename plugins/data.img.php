@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.1 2006/02/18 16:32:10 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.2 2006/02/19 21:01:38 bitweaver Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAIMG', 'dataimg' );
 global $gLibertySystem;
@@ -52,39 +52,41 @@ function data_img($data, $params) {
 	$imgdata['div_style'] = '';
 
 	foreach( $params as $key => $value ) {
-		switch( $key ) {
-			// rename a couple of parameters
-			case 'background-color':
-				$key = 'background';
-			case 'description':
-				$key = 'desc';
-			case 'width':
-			case 'height':
-				$imgdata['img_style'] .= $key.':'.$value.';';
-				break;
-			case 'float':
-			case 'padding':
-			case 'margin':
-			case 'background':
-			case 'border':
-			case 'text-align':
-			case 'color':
-			case 'font':
-			case 'font-size':
-			case 'font-weight':
-			case 'font-family':
-				$imgdata['div_style'] .= $key.':'.$value.';';
-				break;
-			case 'align':
-				if( $value == 'center' ) {
-					$imgdata['div_style'] .= 'text-align:'.$value.';';
-				} else {
-					$imgdata['div_style'] .= 'float:'.$value.';';
-				}
-				break;
-			default:
-				$imgdata[$key] = $value;
-				break;
+		if( !empty( $value ) ) {
+			switch( $key ) {
+				// rename a couple of parameters
+				case 'background-color':
+					$key = 'background';
+				case 'description':
+					$key = 'desc';
+				case 'width':
+				case 'height':
+					$imgdata['img_style'] .= $key.':'.$value.';';
+					break;
+				case 'float':
+				case 'padding':
+				case 'margin':
+				case 'background':
+				case 'border':
+				case 'text-align':
+				case 'color':
+				case 'font':
+				case 'font-size':
+				case 'font-weight':
+				case 'font-family':
+					$imgdata['div_style'] .= $key.':'.$value.';';
+					break;
+				case 'align':
+					if( $value == 'center' ) {
+						$imgdata['div_style'] .= 'text-align:'.$value.';';
+					} else {
+						$imgdata['div_style'] .= 'float:'.$value.';';
+					}
+					break;
+				default:
+					$imgdata[$key] = $value;
+					break;
+			}
 		}
 	}
 
