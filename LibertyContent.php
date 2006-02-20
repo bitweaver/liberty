@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.74 2006/02/19 20:09:04 bitweaver Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.75 2006/02/20 04:54:33 seannerd Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -214,6 +214,11 @@ class LibertyContent extends LibertyBase {
 			$pParamHash['content_store']['version'] = 1;
 		} else {
 			$pParamHash['content_store']['version'] = $this->mInfo['version'] + 1;
+		if ( ( !(isset($this->mInfo['no_index']) and $this->mInfo['no_index'] == true ) ) and !isset($this->mInfo['index_data']) ) {
+			$this->mInfo['index_data'] = "";
+		if ( isset($pParamHash["title"]) )       $this->mInfo['index_data'] .= $pParamHash["title"] . ' ';
+		if ( isset($pParamHash["author_name"]) ) $this->mInfo['index_data'] .= $pParamHash["author_name"] . ' ';
+		if ( isset($pParamHash["edit"]) )        $this->mInfo['index_data'] .= $pParamHash["edit"];
 		}
 
 		return( count( $this->mErrors ) == 0 );
@@ -1609,6 +1614,25 @@ class LibertyContent extends LibertyBase {
 					WHERE ls.`content_id`=? $whereSql";
 			$cant = $this->mDb->getOne( $query, $bindVars );
 			return $cant;
+		}
+	}
+
+	/**
+	 * This is a generic liberty content function to gather indexable words. Override this function
+	 * in your BitPackage.php file if you need to add more indexable words from files other than
+	 * tiki_content and users_users. 
+	 */
+
+	function setIndexData( $pContentId = 0 ) {
+		global $gBitSystem ;
+		if ( $pContentId == 0 ) $pContentId = $this->mContentId;
+		$sql = "SELECT lc.`title`, lc.`data`, uu.`login`, uu.`real_name` " .
+				"FROM `" . BIT_DB_PREFIX . "liberty_content` lc " . 
+				"INNER JOIN `" . BIT_DB_PREFIX . "users_users` uu ON uu.`user_id` = lc.`user_id` " . 
+				"WHERE lc.`content_id` = ?" ;
+		$res = $gBitSystem->mDb->getRow($sql, array($pContentId));
+		if (!(isset($this->mInfo['no_index']) and $this->mInfo['no_index'] == true)) {
+			$this->mInfo['index_data'] = $res["title"] . " " . $res["data"] . " " . $res["login"] . " " . $res["real_name"] ;
 		}
 	}
 
