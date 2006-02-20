@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.77 2006/02/20 17:51:34 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.78 2006/02/20 22:08:41 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -949,6 +949,9 @@ class LibertyContent extends LibertyBase {
 		$ret = NULL;
 		if( isset( $this->mInfo['content_type_guid'] ) ) {
 			$ret = $this->mInfo['content_type_guid'];
+		} elseif( $this->mContentTypeGuid ) {
+			// for unloaded classes
+			$ret = $this->mContentTypeGuid;
 		}
 		return $ret;
 	}
