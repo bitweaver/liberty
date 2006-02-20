@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.76 2006/02/20 09:52:52 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.77 2006/02/20 17:51:34 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -126,7 +126,7 @@ class LibertyContent extends LibertyBase {
 	* with the require values for LibertyContent::store()
 	*/
 	function verify( &$pParamHash ) {
-		global $gLibertySystem, $gBitSystem;
+		global $gLibertySystem, $gBitSystem, $gBitLanguage;
 
 		// It is possible a derived class set this to something different
 		if( empty( $pParamHash['content_type_guid'] ) ) {
@@ -156,6 +156,13 @@ class LibertyContent extends LibertyBase {
 			$pParamHash['content_store']['title'] = substr( $pParamHash['title'], 0, 160 );
 		} elseif( isset( $pParamHash['title'] ) ) {
 			$pParamHash['content_store']['title'] = NULL;
+		}
+
+		// get the lang code from $_REQUEST if it's not set
+		if( !empty( $pParamHash['lang_code'] ) && in_array( $pParamHash['lang_code'], array_keys( $gBitLanguage->mLanguageList ) ) ) {
+			$pParamHash['content_store']['lang_code'] = $pParamHash['lang_code'];
+		} elseif( !empty( $_REQUEST['i18n']['lang_code'] ) && in_array( $_REQUEST['i18n']['lang_code'], array_keys( $gBitLanguage->mLanguageList ) ) ) {
+			$pParamHash['content_store']['lang_code'] = $_REQUEST['i18n']['lang_code'];
 		}
 
 		$pParamHash['content_store']['last_modified'] = !empty( $pParamHash['last_modified'] ) ? $pParamHash['last_modified'] : $gBitSystem->getUTCTime();
