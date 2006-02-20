@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.75 2006/02/20 04:54:33 seannerd Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.76 2006/02/20 09:52:52 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -214,11 +214,12 @@ class LibertyContent extends LibertyBase {
 			$pParamHash['content_store']['version'] = 1;
 		} else {
 			$pParamHash['content_store']['version'] = $this->mInfo['version'] + 1;
+		}
 		if ( ( !(isset($this->mInfo['no_index']) and $this->mInfo['no_index'] == true ) ) and !isset($this->mInfo['index_data']) ) {
 			$this->mInfo['index_data'] = "";
-		if ( isset($pParamHash["title"]) )       $this->mInfo['index_data'] .= $pParamHash["title"] . ' ';
-		if ( isset($pParamHash["author_name"]) ) $this->mInfo['index_data'] .= $pParamHash["author_name"] . ' ';
-		if ( isset($pParamHash["edit"]) )        $this->mInfo['index_data'] .= $pParamHash["edit"];
+			if ( isset($pParamHash["title"]) )       $this->mInfo['index_data'] .= $pParamHash["title"] . ' ';
+			if ( isset($pParamHash["author_name"]) ) $this->mInfo['index_data'] .= $pParamHash["author_name"] . ' ';
+			if ( isset($pParamHash["edit"]) )        $this->mInfo['index_data'] .= $pParamHash["edit"];
 		}
 
 		return( count( $this->mErrors ) == 0 );
