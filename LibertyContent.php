@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.62 2006/02/19 03:49:23 seannerd Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.2.2.63 2006/02/20 02:13:51 seannerd Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -208,6 +208,14 @@ class LibertyContent extends LibertyBase {
 		}
 		$pParamHash['content_store']['format_guid'] = $pParamHash['format_guid'];
 
+		if ( ( !(isset($this->mInfo['no_index']) and $this->mInfo['no_index'] == true ) ) and !isset($this->mInfo['index_data']) ) {
+			$this->mInfo['index_data'] = "";
+		if ( isset($pParamHash["title"]) )       $this->mInfo['index_data'] .= $pParamHash["title"] . ' ';
+		if ( isset($pParamHash["author_name"]) ) $this->mInfo['index_data'] .= $pParamHash["author_name"] . ' ';
+		if ( isset($pParamHash["edit"]) )        $this->mInfo['index_data'] .= $pParamHash["edit"];
+		}
+	
+	
 		return( count( $this->mErrors ) == 0 );
 
 	}
@@ -220,12 +228,6 @@ class LibertyContent extends LibertyBase {
 	*/
 	function store( &$pParamHash ) {
 		global $gLibertySystem;
-		if ( ( !(isset($this->mInfo['no_index']) and $this->mInfo['no_index'] == true ) ) and !isset($this->mInfo['index_data']) ) {
-			$this->mInfo['index_data'] = "";
-			if ( isset($pParamHash["title"]) )       $this->mInfo['index_data'] .= $pParamHash["title"] . ' ';
-			if ( isset($pParamHash["author_name"]) ) $this->mInfo['index_data'] .= $pParamHash["author_name"] . ' ';
-			if ( isset($pParamHash["edit"]) )        $this->mInfo['index_data'] .= $pParamHash["edit"];
-		}
 		if( LibertyContent::verify( $pParamHash ) ) {
 			$this->mDb->StartTrans();
 			$table = BIT_DB_PREFIX."tiki_content";
