@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.78 2006/02/20 22:08:41 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.79 2006/02/21 10:38:15 jht001 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -905,15 +905,16 @@ class LibertyContent extends LibertyBase {
 			$ret = $this->mDb->getAll( $query, $bindVars );
 			if( empty( $ret ) ) {
 				$ret = NULL; // we don't want an empty array
-			} elseif( @BitBase::verifyId( $pContentId ) ) {
-				// when page has been found, we insert the links into liberty_content_links
-				foreach( $ret as $link ) {
-					$storeHash['from_content_id'] = $pContentId;
-					$storeHash['to_content_id'] = $link['content_id'];
-					if( !$this->mDb->getOne( "SELECT `from_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=? AND `to_content_id`=?", array( $storeHash['from_content_id'], $storeHash['to_content_id'] ) ) ) {
-						$this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_links", $storeHash );
-					}
-				}
+// no longer need this with new liberty_content_link structure
+//			} elseif( @BitBase::verifyId( $pContentId ) ) {
+//				// when page has been found, we insert the links into liberty_content_links
+//				foreach( $ret as $link ) {
+//					$storeHash['from_content_id'] = $pContentId;
+//					$storeHash['to_content_id'] = $link['content_id'];
+//					if( !$this->mDb->getOne( "SELECT `from_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=? AND `to_content_id`=?", array( $storeHash['from_content_id'], $storeHash['to_content_id'] ) ) ) {
+//						$this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_links", $storeHash );
+//					}
+//				}
 			}
 		}
 		return $ret;

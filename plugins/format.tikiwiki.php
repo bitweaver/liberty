@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.34 $
+ * @version  $Revision: 1.35 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -69,6 +69,12 @@ function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
 			}
 		}
 	}
+
+	#Fix up titles in the link table
+	$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET `to_title`=? WHERE `to_content_id`=?";
+	$pCommonObject->mDb->query($query, array( $pNewName, $pContentId ) );
+
+
 }
 
 function tikiwiki_parse_data( &$pData, &$pCommonObject, $pContentId ) {
@@ -146,29 +152,93 @@ class TikiWikiParser extends BitBase {
 		global $gBitSystem;
 		if (!$gBitSystem->isPackageActive( 'wiki') )
 			return;
-		$links_already_inserted_table = array();
-		if( !empty( $pParamHash['content_id'] ) ) {
-			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=?";
-			$result = $this->mDb->query( $query, array( $pParamHash['content_id'] ) );
+		if( empty( $pParamHash['content_id'] ) ) {
+			return;
+			}
 
-			$linkPages = $this->extractWikiWords( $pParamHash['edit'] );
-			if( is_array( $linkPages ) && count( $linkPages ) ) {
-				foreach( $linkPages as $page ) {
-					if( !empty( $page ) ) {
-// SPIDERFKILL - this query is guaranteed to die - i forget where it came from and why it's here. will debug soon enough...
-						$query = "SELECT wp.`content_id` FROM `".BIT_DB_PREFIX."wiki_pages` wp INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id` = wp.`content_id`) WHERE lc.`title`=?";
-						if( $contentId = $this->mDb->getOne( $query, array( $page ) ) ) {
-							$key = $pParamHash['content_id'] . "-" . $contentId;
-							if (empty($links_already_inserted_table[$key])) {
-								$query = "insert into `".BIT_DB_PREFIX."liberty_content_links`(`from_content_id`,`to_content_id`) values(?, ?)";
-								$result = $this->mDb->query($query, array( $pParamHash['content_id'], $contentId ) );
-							}
-							$links_already_inserted_table[$key] = 1;
-						}
-					}
-				}
+		$from_content_id = $pParamHash['content_id'];
+		$from_title = $pParamHash['title'];
+
+		#if this is a new page, fix up any links that may already point to it
+		$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET `to_content_id`=? WHERE `to_content_id`=? and `to_title` = ?";
+		$this->mDb->query($query, array( $from_content_id, 0, $from_title ) );
+		
+		#get all the current links from this page
+		$old_links_in_db = array();
+		$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=?";
+		if( $result = $this->mDb->query($query, array( $from_content_id ) ) ) {
+			while( $row = $result->fetchRow() ) {
+				$old_links_in_db[$row['to_title']] = $row['to_content_id'];	
 			}
 		}
+
+		#get list of all wiki links on this page
+		$wiki_links_in_content = $this->extractWikiWords( $pParamHash['edit'] );
+		if( !is_array( $wiki_links_in_content )) {
+			$wiki_links_in_content = array();
+			}
+
+		#create list of unique new wiki links on this page
+		$unique_new_wiki_links = array();
+		foreach( $wiki_links_in_content as $to_title ) {
+			if( empty( $to_title ) ) {
+				continue;
+			}
+			if( isset( $old_links_in_db[$to_title] )) {
+				# link already in DB - skip rest of processing
+				continue;
+			}
+			$unique_new_wiki_links[$to_title] = $to_title;
+		}
+
+
+		#get list of all new links that point to existing content
+		$new_link_pointing_to_existing_content = array();		
+		$title_list_count = count($unique_new_wiki_links);
+		if( $title_list_count > 0 ) {
+			$title_list = '?' . str_repeat(',?',$title_list_count - 1);
+			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_content` WHERE `title` IN($title_list)";
+			if( $result = $this->mDb->query($query, array_keys($unique_new_wiki_links) ) ) {
+				while( $row = $result->fetchRow() ) {
+					$new_link_pointing_to_existing_content[$row['title']] = $row['content_id'];	
+				}
+			}
+
+			if( count($new_link_pointing_to_existing_content) > 0 ) {
+				#insert all new links pointing to existing content
+				$query_var = array_keys($new_link_pointing_to_existing_content);
+				$query_var_list = '?' . str_repeat(',?', count($new_link_pointing_to_existing_content) - 1);
+				$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_links`"
+					. " (`from_content_id`,`to_content_id`,`to_title`)"
+					. " SELECT ?,`content_id`,`title` FROM `".BIT_DB_PREFIX."liberty_content`"
+					. " WHERE `title` IN ( $query_var_list )"
+					;
+				array_unshift($query_var,$from_content_id);
+				$result = $this->mDb->query($query, $query_var);
+			}
+		}
+
+		#insert all new links pointing to non-existing content
+		foreach ($unique_new_wiki_links as $to_title) {
+				if( isset($new_link_pointing_to_existing_content[$to_title]) ) {
+					continue;
+					}
+				$query = "insert into `".BIT_DB_PREFIX."liberty_content_links` (`from_content_id`,`to_title`) values(?, ?)";
+				$result = $this->mDb->query($query, array( $from_content_id, $to_title ) );
+			}
+
+
+		# now delete any links no longer on page
+		foreach( $wiki_links_in_content as $to_title) {
+			$wiki_links_in_content_table[$to_title] = 1;
+			}
+		foreach( array_keys($old_links_in_db) as $to_title ) {
+			if( !isset($wiki_links_in_content_table[$to_title]) ) {
+				$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=? and `to_title` = ?";
+				$result = $this->mDb->query( $query, array( $from_content_id, $to_title ) );
+			}
+		}
+
 	}
 
 	function expungeLinks( $pContentId ) {
