@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.36 $
+ * @version  $Revision: 1.37 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -447,11 +447,13 @@ class TikiWikiParser extends BitBase {
 		$data = preg_replace("/~([0-9]+)~/", "&#$1;", $data);
 	}
 
-	function parse_smileys($data) {
+	function parse_smileys( $pData ) {
 		global $gBitSystem, $gBitSmarty;
 		if( defined( "SMILEYS_PKG_URL" ) && $gBitSystem->isPackageActive( 'smileys' ) ) {
-			preg_match_all( "/\(:([^:]+):\)/", $data, $smileys );
+			preg_match_all( "/\(:([^:]+):\)/", $pData, $smileys );
 			require_once $gBitSmarty->_get_plugin_filepath( 'function', 'biticon' );
+			$smileys[0] = array_unique( $smileys[0] );
+			$smileys[1] = array_unique( $smileys[1] );
 			if( !empty( $smileys[1] ) ) {
 				foreach( $smileys[1] as $key => $smiley ) {
 					$biticon = array(
@@ -460,26 +462,28 @@ class TikiWikiParser extends BitBase {
 						'iexplain' => $smiley,
 						'iforce' => 'icon',
 					);
-					$data = preg_replace( "/".preg_quote( $smileys[0][$key] )."/", smarty_function_biticon( $biticon, $gBitSmarty ), $data );
+					$pData = preg_replace( "/".preg_quote( $smileys[0][$key] )."/", smarty_function_biticon( $biticon, $gBitSmarty ), $pData );
 				}
 			}
 		}
 
-		return $data;
+		return $pData;
 	}
 
-	function parse_comment_data($data) {
-		// rel=\"nofollow\" is support fo Google's Preventing comment spam
+	function parse_comment_data( $pData ) {
+		// rel=\"nofollow\" is support for Google's Preventing comment spam
 		// http://www.google.com/googleblog/2005/01/preventing-comment-spam.html
-		$data = preg_replace("/\[([^\|\]]+)\|([^\]]+)\]/", "<a rel=\"nofollow\" href=\"$1\">$2</a>", $data);
+		$pData = preg_replace("/\[([^\|\]]+)\|([^\]]+)\]/", "<a rel=\"nofollow\" href=\"$1\">$2</a>", $pData);
 
 		// Segundo intento reemplazar los [link] comunes
-		$data = preg_replace("/\[([^\]\|]+)\]/", "<a rel=\"nofollow\" href=\"$1\">$1</a>", $data);
+		$pData = preg_replace("/\[([^\]\|]+)\]/", "<a rel=\"nofollow\" href=\"$1\">$1</a>", $pData);
+
 		// Llamar aqui a parse smileys
-		$data = $this->parse_smileys($data);
-		$data = preg_replace("/---/", "<hr/>", $data);
+		$pData = $this->parse_smileys($pData);
+		$pData = preg_replace("/---/", "<hr/>", $pData);
+
 		// Reemplazar --- por <hr/>
-		return $data;
+		return $pData;
 	}
 
 	function get_language($user = false) {
