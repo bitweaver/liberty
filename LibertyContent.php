@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.79 2006/02/21 10:38:15 jht001 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.80 2006/02/22 16:38:03 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -955,6 +955,14 @@ class LibertyContent extends LibertyBase {
 			$ret = $this->mContentTypeGuid;
 		}
 		return $ret;
+	}
+
+	function getContentTypeDescription( $pContentType=NULL ) {
+		global $gLibertySystem;
+		if( is_null( $pContentType ) ) {
+			$pContentType = $this->getContentType();
+		}
+		return $gLibertySystem->getContentTypeDescription( $pContentType );
 	}
 
 	/**
