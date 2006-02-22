@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.35 $
+ * @version  $Revision: 1.36 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -447,12 +447,22 @@ class TikiWikiParser extends BitBase {
 		$data = preg_replace("/~([0-9]+)~/", "&#$1;", $data);
 	}
 
-
 	function parse_smileys($data) {
-		global $gBitSystem;
-		if( defined("SMILEYS_PKG_URL") && $gBitSystem->getPreference('package_smileys') == 'y' ) {
-			$data = preg_replace("/\(:([^:]+):\)/", "<img alt=\"$1\" class=\"icon\" src=\"".SMILEYS_PKG_URL."icons/$1.gif\" />", $data);
-// TODO - biticon can't work cause this is post smarty parse			$data = preg_replace("/\(:([^:]+):\)/", "{biticon ipackage=\"smileys\" iname=\"$1\" iexplain=\"{tr}$1{/tr}", $data);
+		global $gBitSystem, $gBitSmarty;
+		if( defined( "SMILEYS_PKG_URL" ) && $gBitSystem->isPackageActive( 'smileys' ) ) {
+			preg_match_all( "/\(:([^:]+):\)/", $data, $smileys );
+			require_once $gBitSmarty->_get_plugin_filepath( 'function', 'biticon' );
+			if( !empty( $smileys[1] ) ) {
+				foreach( $smileys[1] as $key => $smiley ) {
+					$biticon = array(
+						'ipackage' => 'smileys',
+						'iname' => $smiley,
+						'iexplain' => $smiley,
+						'iforce' => 'icon',
+					);
+					$data = preg_replace( "/".preg_quote( $smileys[0][$key] )."/", smarty_function_biticon( $biticon, $gBitSmarty ), $data );
+				}
+			}
 		}
 
 		return $data;
