@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.80 2006/02/22 16:38:03 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.81 2006/02/22 23:54:14 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -292,11 +292,11 @@ class LibertyContent extends LibertyBase {
 		require_once( LIBERTY_PKG_PATH.'LibertyComment.php' );
 		// Delete all comments associated with this piece of content
 		$query = "SELECT `comment_id` FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `parent_id` = ?";
-		$result = $this->mDb->query($query, array( $this->mContentId ) );
-		$commentIds = $result->getRows();
-		foreach ($commentIds as $commentId) {
-			$tmpComment = new LibertyComment($commentId);
-			$tmpComment->deleteComment();
+		if( $commentIds = $this->mDb->getCol($query, array( $this->mContentId ) ) ) {
+			foreach ($commentIds as $commentId) {
+				$tmpComment = new LibertyComment($commentId);
+				$tmpComment->deleteComment();
+			}
 		}
 		return TRUE;
 	}
@@ -1032,19 +1032,20 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	* Pure virtual function that returns Request_URI to a piece of content
+	* Not-so-pure virtual function that returns Request_URI to a piece of content
 	* @param string Text for DisplayLink function
 	* @param array different possibilities depending on derived class
 	* @return string Formated URL address to display the page.
 	*/
 	function getDisplayUrl( $pContentId = NULL, $pMixed = NULL ) {
 		if( @BitBase::verifyId( $pContentId ) ) {
-			return BIT_ROOT_URL.'index.php?content_id='.$pContentId;
+			$ret = BIT_ROOT_URL.'index.php?content_id='.$pContentId;
 		} elseif( @BitBase::verifyId( $pMixed['content_id'] ) ) {
-			return BIT_ROOT_URL.'index.php?content_id='.$pMixed['content_id'];
+			$ret = BIT_ROOT_URL.'index.php?content_id='.$pMixed['content_id'];
 		} else {
-			return '#';
+			$ret = '#';
 		}
+		return $ret;
 	}
 
 	/**
