@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.83 2006/02/24 19:05:40 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.84 2006/02/24 22:13:20 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1157,7 +1157,7 @@ class LibertyContent extends LibertyBase {
 		}
 
 		$this->prepGetList( $pListHash );
-		$query = "SELECT DISTINCT(uu.`user_id`) AS hash_key, uu.`user_id`, SUM( lc.`hits` ) AS `ag_hits`, uu.`login` AS `user`, uu.`real_name`
+		$query = "SELECT DISTINCT(uu.`user_id`) AS hash_key, uu.`user_id`, SUM( lc.`hits` ) AS `ag_hits`, uu.`login``, uu.`real_name`
 				FROM `".BIT_DB_PREFIX."liberty_content` lc INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id`=lc.`user_id` )
 				WHERE uu.`user_id` != ".ANONYMOUS_USER_ID." AND lc.`hits` > 0 $mid
 				GROUP BY uu.`user_id`, uu.`login`, uu.`real_name`

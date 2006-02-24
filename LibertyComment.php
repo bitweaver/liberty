@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.16 2006/02/18 20:14:37 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.17 2006/02/24 22:13:20 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -57,7 +57,7 @@ class LibertyComment extends LibertyContent {
 			$bindVars = array($this->mContentId);
 		}
 
-		$sql = "SELECT lc.*, tcn.*, uu.`email`, uu.`real_name`, uu.`login` AS `user`
+		$sql = "SELECT lc.*, tcn.*, uu.`email`, uu.`real_name`, uu.`login`
 				FROM `".BIT_DB_PREFIX."liberty_comments` lc LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` tcn ON (lc.`content_id` = tcn.`content_id`)
 					 LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON (tcn.`user_id` = uu.`user_id`)
 				$mid";
@@ -129,9 +129,8 @@ class LibertyComment extends LibertyContent {
 
 	function deleteComment() {
 		$sql = "SELECT `comment_id` FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `parent_id` = ?";
-		$rs = $this->mDb->query($sql, array($this->mContentId));
+		$rows = $this->mDb->getAll($sql, array($this->mContentId));
 
-		$rows = $rs->getRows();
 		foreach ($rows as $row) {
 			$comment = new LibertyComment($row['comment_id']);
 			$comment->deleteComment();
@@ -426,7 +425,7 @@ class LibertyComment extends LibertyContent {
 
 		if ($contentId) {
 
-			$sql = "SELECT tc.*, tcn.*, uu.`email`, uu.`real_name`, uu.`login` AS `user`
+			$sql = "SELECT tc.comment_id, tc.parent_id, tc.root_id, tc.thread_forward_sequence, tc.thread_reverse_sequence, tcn.*, uu.`email`, uu.`real_name`, uu.`login`
 					FROM `".BIT_DB_PREFIX."liberty_comments` tc LEFT OUTER JOIN
 					 `".BIT_DB_PREFIX."liberty_content` tcn
 					 ON (tc.`content_id` = tcn.`content_id`)
@@ -435,10 +434,8 @@ class LibertyComment extends LibertyContent {
 				    where tc.root_id =?
 					$mid";
 
-			$rs = $this->mDb->query($sql,array($pContentId),$pMaxComments,$pOffset);
 			$flat_comments = array();
-			if ($rs && $rs->numRows()) {
-				$rows = $rs->getRows();
+			if( $rows = $this->mDb->getAll($sql,array($pContentId),$pMaxComments,$pOffset) ) {
 				foreach ($rows as $row) {
 					$row['parsed_data'] = $this->parseData($row);
 					$row['level'] = substr_count ( $row['thread_forward_sequence'], '.' ) - 1;

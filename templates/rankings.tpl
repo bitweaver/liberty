@@ -41,7 +41,7 @@
 					{if $smarty.request.sort_mode == "last_modified_desc"}
 						{$item.display_link}&nbsp;&nbsp;&nbsp;<small>{$item.$attribute|bit_short_datetime}</small>
 					{elseif $smarty.request.sort_mode == "top_authors"}
-						{displayname hash=$item.user}&nbsp;&nbsp;&nbsp;<small>[ {$item.$attribute|default:"0"} ]</small>
+						{displayname hash=$item.login}&nbsp;&nbsp;&nbsp;<small>[ {$item.$attribute|default:"0"} ]</small>
 					{else}
 						{$item.display_link}&nbsp;&nbsp;&nbsp;<small>[ {$item.$attribute|default:"0"} ]</small>
 					{/if}
