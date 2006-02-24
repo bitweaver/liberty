@@ -76,9 +76,10 @@ $tables = array(
 
 'liberty_content_links' => "
 	from_content_id I4 PRIMARY,
-	to_content_id I4 PRIMARY,
+	to_content_id I4 ,
     to_title C(160) PRIMARY
-	CONSTRAINT ', CONSTRAINT `lib_content_links_from_ref` FOREIGN KEY (`from_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
+	CONSTRAINT ', CONSTRAINT `lib_content_links_from_ref` FOREIGN KEY (`from_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`),
+				  CONSTRAINT `lib_content_links_to_ref` FOREIGN KEY (`to_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
 				'
 ",
 
@@ -178,7 +179,8 @@ $indices = array (
 	'st_co_foreign_guid_idx' => array( 'table' => 'liberty_attachments', 'cols' => 'content_id, foreign_id, attachment_plugin_guid', 'opts' => array( 'UNIQUE' ) ),
 	'structures_root_idx' => array( 'table' => 'liberty_structures', 'cols' => 'root_structure_id', 'opts' => NULL),
 	'structures_parent_idx' => array( 'table' => 'liberty_structures', 'cols' => 'parent_id', 'opts' => NULL),
-	'structures_content_idx' => array( 'table' => 'liberty_structures', 'cols' => 'content_id', 'opts' => NULL )
+	'structures_content_idx' => array( 'table' => 'liberty_structures', 'cols' => 'content_id', 'opts' => NULL),
+	'to_content_id_idx' => array( 'table' => 'liberty_content_links', 'cols' => 'to_content_id', 'opts' => NULL)
 );
 $gBitInstaller->registerSchemaIndexes( LIBERTY_PKG_NAME, $indices );
 
