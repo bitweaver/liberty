@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.82 2006/02/23 17:05:43 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.83 2006/02/24 19:05:40 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -169,7 +169,7 @@ class LibertyContent extends LibertyBase {
 		$pParamHash['content_store']['event_time'] = !empty( $pParamHash['event_time'] ) ? $pParamHash['event_time'] : $pParamHash['content_store']['last_modified'];
 
 		// WARNING: Assume WIKI if t
-		if( isset( $pParamHash['content_id'] ) ) {
+		if( !empty( $pParamHash['content_id'] ) ) {
 			// do NOT allow changing of content_type_guid in update for safety of overridden secondary classes (like BitBook )
 			unset( $pParamHash['content_store']['content_type_guid'] );
 		} elseif( empty( $pParamHash['content_type_guid'] ) ) {

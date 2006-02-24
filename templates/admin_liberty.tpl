@@ -13,6 +13,13 @@
 							{/forminput}
 						</div>
 					{/foreach}
+						<div class="row">
+							{formlabel label="Auto-Display Attachment Thumbnails" for="liberty_auto_display_attachment_thumbs"}
+							{forminput}
+								{html_options options=$thumbSizes name="liberty_auto_display_attachment_thumbs" selected=$gBitSystem->getPreference('liberty_auto_display_attachment_thumbs')}
+								{formhelp note='This will automatically display thumbnails of all attachments of a given page (usually in the top right corner of the page). You can still display the items inline as well.' page=''}
+							{/forminput}
+						</div>
 				</div>
 
 				<div class="row">
@@ -41,7 +48,7 @@
 					"}
 					{forminput}
 						<label>
-							<input type="radio" name="image_processor" value="gd" {if !$gdInstalled}disabled="disabled"{/if} {if !$gBitSystemPrefs.image_processor || $gBitSystemPrefs.image_processor=='gd'}checked="checked"{/if} /> gdLibrary
+							<input type="radio" name="image_processor" value="gd" {if !$gdInstalled}disabled="disabled"{/if} {if !$gBitSystem->getPreference('image_processor') || $gBitSystem->getPreference('image_processor')=='gd'}checked="checked"{/if} /> gdLibrary
 						</label>
 					{/forminput}
 				</div>
@@ -58,7 +65,7 @@
 					"}
 					{forminput}
 						<label>
-							<input type="radio" name="image_processor" value="magickwand" {if !$magickwandInstalled}disabled="disabled"{/if} {if $gBitSystemPrefs.image_processor=='magickwand'}checked="checked"{/if}/> ImageMagick's MagickWand
+							<input type="radio" name="image_processor" value="magickwand" {if !$magickwandInstalled}disabled="disabled"{/if} {if $gBitSystem->getPreference('image_processor')=='magickwand'}checked="checked"{/if}/> ImageMagick's MagickWand
 						</label>
 					{/forminput}
 				</div>
@@ -75,7 +82,7 @@
 					"}
 					{forminput}
 						<label>
-							<input type="radio" name="image_processor" value="imagick" {if !$imagickInstalled}disabled="disabled"{/if} {if $gBitSystemPrefs.image_processor=='imagick'}checked="checked"{/if}/> php-imagick
+							<input type="radio" name="image_processor" value="imagick" {if !$imagickInstalled}disabled="disabled"{/if} {if $gBitSystem->getPreference('image_processor')=='imagick'}checked="checked"{/if}/> php-imagick
 						</label>
 					{/forminput}
 				</div>

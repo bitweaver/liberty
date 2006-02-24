@@ -5,11 +5,6 @@ $formLibertyFeatures = array(
 		'note' => 'Limit users\' disk usage.',
 		'page' => '',
 	),
-	"liberty_auto_display_attachment_thumbs" => array(
-		'label' => 'Auto-Display Attachment Thumbnails',
-		'note' => 'This will automatically display thumbnails of all attachments of a given page (usually in the top right corner of the page). You can still display the items inline as well.',
-		'page' => '',
-	),
 );
 
 $gBitSmarty->assign( 'formLibertyFeatures', $formLibertyFeatures );
@@ -33,6 +28,8 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
 
+	$gBitSystem->storePreference('liberty_auto_display_attachment_thumbs', $_REQUEST['liberty_auto_display_attachment_thumbs'] );
+
 	if( $_REQUEST['approved_html_tags'] != DEFAULT_ACCEPTABLE_TAGS ) {
 		$tags = preg_replace( '/\s/', '', $_REQUEST['approved_html_tags'] );
 		$lastAngle = strrpos( $tags, '>' ) + 1;
@@ -49,6 +46,8 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 		simple_set_value( $item, LIBERTY_PKG_NAME );
 	}
 }
+
+$gBitSmarty->assign( 'thumbSizes', array( '' => 'Off', 'icon'=>tra('Icon'), 'avatar'=>tra('Avatar'), 'small'=>tra('Small'), 'medium'=>tra('Medium'), 'large'=>tra('Large') ) );
 
 $tags = $gBitSystem->getPreference( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
 
