@@ -18,6 +18,9 @@
 		{/if}
 	{/foreach}
 
+{include file="bitpackage:liberty/edit_storage_list.tpl"}
+
+
 	<h2 class="clear"><a href="javascript:ajax_updater( 'attbrowser', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', 'ajax=true' );" onclick="javascript:document.getElementById( 'attbrowser' ).innerHTML = '{tr}Loading Attachment Browser...{/tr}'">{tr}Attachment Browser{/tr}</a></h2>
 	<noscript><div class="warning">{tr}The attachment browser only works with javascript enabled.{/tr}</div></noscript>
 	<div id="attbrowser" class="attbrowser"></div>

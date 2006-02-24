@@ -3,7 +3,7 @@
 {if $gContent->mStorage}
 	<div class="row">
 		<table class="data" summary="List of attached files">
-			<caption>{tr}Attached Items{/tr}</caption>
+			<caption>{tr}Items Attached Directly to this Content{/tr}</caption>
 			<tr>
 				<th scope="col" title="{tr}Thumbnail{/tr}">{tr}Thumbnail{/tr}</th>
 				<th scope="col" title="{tr}File Properties{/tr}">{tr}File Properties{/tr}</th>
