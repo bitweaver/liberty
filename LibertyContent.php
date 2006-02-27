@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.84 2006/02/24 22:13:20 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.85 2006/02/27 03:55:20 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -410,7 +410,7 @@ class LibertyContent extends LibertyBase {
 			}
 			$action = "Removed last version";
 			$t = $gBitSystem->getUTCTime();
-			$query = "insert into `".BIT_DB_PREFIX."content_action_log`( `log_action`, `content_id`, `last_modified`, `user_id`, `ip`, `action_comment`) values( ?, ?, ?, ?, ?, ?)";
+			$query = "insert into `".BIT_DB_PREFIX."liberty_action_log`( `log_action`, `content_id`, `last_modified`, `user_id`, `ip`, `action_comment`) values( ?, ?, ?, ?, ?, ?)";
 			$result = $this->mDb->query($query, array( $action, $this->mContentId, $t, ROOT_USER_ID, $_SERVER["REMOTE_ADDR"], $comment ) );
 		}
 	}
@@ -476,7 +476,7 @@ class LibertyContent extends LibertyBase {
 				global $gBitSystem;
 				$action = "Removed version $pVersion";
 				$t = $gBitSystem->getUTCTime();
-				$query = "insert into `".BIT_DB_PREFIX."content_action_log`(`log_action`,`content_id`,`last_modified`,`user_id`,`ip`,`action_comment`) values(?,?,?,?,?,?)";
+				$query = "insert into `".BIT_DB_PREFIX."liberty_action_log`(`log_action`,`content_id`,`last_modified`,`user_id`,`ip`,`action_comment`) values(?,?,?,?,?,?)";
 				$result = $this->mDb->query($query,array($action,$this->mContentId,$t,ROOT_USER_ID,$_SERVER["REMOTE_ADDR"],$comment));
 				$ret = TRUE;
 			}
