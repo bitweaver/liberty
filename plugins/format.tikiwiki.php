@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.38 $
+ * @version  $Revision: 1.39 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -160,7 +160,7 @@ class TikiWikiParser extends BitBase {
 		$from_title = $pParamHash['title'];
 
 		#if this is a new page, fix up any links that may already point to it
-		$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET `to_content_id`=? WHERE `to_content_id`=? and `to_title` = ?";
+		$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET `to_content_id`=? WHERE (`to_content_id`=? or `to_content_id` is NULL ) and `to_title` = ?";
 		$this->mDb->query($query, array( $from_content_id, 0, $from_title ) );
 		
 		#get all the current links from this page
