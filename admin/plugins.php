@@ -7,7 +7,7 @@ $gBitSystem->verifyPermission( 'bit_p_admin' );
 if( isset( $_REQUEST['pluginsave'] ) && !empty( $_REQUEST['pluginsave'] ) ) {
 	if( !empty( $_REQUEST['default_format'] ) && !empty( $_REQUEST['PLUGINS'][$_REQUEST['default_format']][0] ) ) {
 		$gLibertySystem->setActivePlugins( $_REQUEST['PLUGINS'] );
-		$gBitSystem->storePreference( 'default_format', $_REQUEST['default_format'], LIBERTY_PKG_NAME );
+		$gBitSystem->storeConfig( 'default_format', $_REQUEST['default_format'], LIBERTY_PKG_NAME );
 		$gBitSmarty->assign( 'default_format',$_REQUEST['default_format'] );
 	} else {
 		$gBitSmarty->assign( 'errorMsg', 'You cannot disable the default format');

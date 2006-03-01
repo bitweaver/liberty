@@ -28,7 +28,7 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
 
-	$gBitSystem->storePreference('liberty_auto_display_attachment_thumbs', $_REQUEST['liberty_auto_display_attachment_thumbs'] );
+	$gBitSystem->storeConfig('liberty_auto_display_attachment_thumbs', $_REQUEST['liberty_auto_display_attachment_thumbs'] );
 
 	if( $_REQUEST['approved_html_tags'] != DEFAULT_ACCEPTABLE_TAGS ) {
 		$tags = preg_replace( '/\s/', '', $_REQUEST['approved_html_tags'] );
@@ -38,7 +38,7 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 			$tags = substr( $tags, 0, $lastAngle );
 			$errors['warning'] = 'The approved tags list has been shortened. You can only have 250 characters for approved tags.';
 		}
-		$gBitSystem->storePreference('approved_html_tags', $tags , LIBERTY_PKG_NAME );
+		$gBitSystem->storeConfig('approved_html_tags', $tags , LIBERTY_PKG_NAME );
 	}
 	$gBitSmarty->assign_by_ref( 'errors', $errors );
 
