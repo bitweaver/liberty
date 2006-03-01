@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.26 2006/02/08 02:58:14 seannerd Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.1.1.1.2.27 2006/03/01 17:24:13 starrrider Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -32,6 +32,7 @@ define( 'LIBERTY_SERVICE_COMMERCE', 'commerce' );
 define( 'LIBERTY_SERVICE_MENU', 'menu' );
 define( 'LIBERTY_SERVICE_DOCUMENT_GENERATION', 'document_generation' );
 define( 'LIBERTY_SERVICE_SEARCH', 'search');
+define( 'LIBERTY_TEXT_AREA', 'editliberty');
 
 define( 'DEFAULT_ACCEPTABLE_TAGS', '<a><br><b><blockquote><cite><code><div><dd><dl><dt><em><h1><h2><h3><h4><hr>'
 		.' <i><it><img><li><ol><p><pre><span><strong><table><tbody><div><tr><td><th><u><ul>'
@@ -52,12 +53,14 @@ class LibertySystem extends LibertyBase {
 	var $mPlugins;
 	var $mDataTags;
 	var $mContentTypes;
+	var $mLibrary;
 
 	function LibertySystem() {
 		LibertyBase::LibertyBase();
 		$this->mDataTags = array();
 		$this->loadPlugins();
 		$this->loadContentTypes();
+		$this->mLibrary = array();
 	}
 
 	function loadPlugins() {
@@ -240,6 +243,24 @@ class LibertySystem extends LibertyBase {
 		}
 		return $ret;
 
+	}
+	function registerLibFunction( $pLibData ) {
+		if ( !empty( $pLibData ) ) {
+			$pTag = strtolower($pLibData['FuncName']);
+			$this->mLibrary[$pTag] = $pLibData;
+	}	}
+
+	function getLibFunctions() {
+		$ret = $this->mLibrary;
+		return $ret;
+	}
+
+	function isLibFunction( $pLibTag ) {
+		if ( !empty( $pLibTag ) ) {
+			$pLibTag = strtolower($pLibTag);
+			if ( array_key_exists( $pLibTag, $this->mLibrary ) ) return ( $this->mLibrary[$pLibTag] );
+		}
+		return False;
 	}
 }
 
