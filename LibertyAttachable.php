@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.17 2006/02/06 09:58:33 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.18 2006/03/01 18:35:16 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -75,7 +75,7 @@ class LibertyAttachable extends LibertyContent {
 		global $gBitSystem;
 		$baseUrl = null;
 		$pathParts = array();
-		$pathParts = split( '/',$gBitSystem->getPreference('centralized_upload_dir', 'storage/' ) );
+		$pathParts = split( '/',$gBitSystem->getConfig('centralized_upload_dir', 'storage/' ) );
 
 		if( !$pUserId ) {
 			$pathParts[] = 'common';
@@ -181,7 +181,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 */
 			if( $save ) {
 				// - TODO: get common preferences page with this as an option, but right now files are only option cuz no blobs - SPIDERR
-				$storageGuid = $gBitSystem->getPreference( 'common_storage_plugin', PLUGIN_GUID_BIT_FILES );
+				$storageGuid = $gBitSystem->getConfig( 'common_storage_plugin', PLUGIN_GUID_BIT_FILES );
 				if( !empty( $pParamHash['upload']['size'] ) ) {
 					$pParamHash['upload']['dest_base_name'] = substr( $pParamHash['upload']['name'], 0, strrpos( $pParamHash['upload']['name'], '.' )  );
 					$pParamHash['upload']['source_file'] = $pParamHash['upload']['tmp_name'];
@@ -548,7 +548,7 @@ function liberty_clear_thumbnails( &$pFileHash ) {
 function liberty_get_function( $pType ) {
 	global $gBitSystem;
 	$ret = NULL;
-	switch( $gBitSystem->getPreference( 'image_processor' ) ) {
+	switch( $gBitSystem->getConfig( 'image_processor' ) ) {
 		case 'imagick':
 			$ret = 'liberty_imagick_'.$pType.'_image';
 			break;

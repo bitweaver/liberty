@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -58,8 +58,8 @@ function purge_html( $pText ) {
 	}
 
 	// Strip all evil tags that remain
-	// this comes out of gBitSystem->getPreference() set in Liberty Admin
-	$acceptableTags = $gBitSystem->getPreference( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
+	// this comes out of gBitSystem->getConfig() set in Liberty Admin
+	$acceptableTags = $gBitSystem->getConfig( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
 
 	// Destroy all script code "manually" - strip_tags will leave code inline as plain text
 	if( !preg_match( '/\<script\>/', $acceptableTags ) ) {

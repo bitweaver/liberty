@@ -8,7 +8,7 @@
 						<div class="row">
 							{formlabel label=`$output.label` for=$item}
 							{forminput}
-								{html_checkboxes name="$item" values="y" checked=`$gBitSystemPrefs.$item` labels=false id=$item}
+								{html_checkboxes name="$item" values="y" checked=`$gBitSystem->getConfig('')$item` labels=false id=$item}
 								{formhelp note=`$output.note` page=`$output.page`}
 							{/forminput}
 						</div>
@@ -16,7 +16,7 @@
 						<div class="row">
 							{formlabel label="Auto-Display Attachment Thumbnails" for="liberty_auto_display_attachment_thumbs"}
 							{forminput}
-								{html_options options=$thumbSizes name="liberty_auto_display_attachment_thumbs" selected=$gBitSystem->getPreference('liberty_auto_display_attachment_thumbs')}
+								{html_options options=$thumbSizes name="liberty_auto_display_attachment_thumbs" selected=$gBitSystem->getConfig('liberty_auto_display_attachment_thumbs')}
 								{formhelp note='This will automatically display thumbnails of all attachments of a given page (usually in the top right corner of the page). You can still display the items inline as well.' page=''}
 							{/forminput}
 						</div>
@@ -48,7 +48,7 @@
 					"}
 					{forminput}
 						<label>
-							<input type="radio" name="image_processor" value="gd" {if !$gdInstalled}disabled="disabled"{/if} {if !$gBitSystem->getPreference('image_processor') || $gBitSystem->getPreference('image_processor')=='gd'}checked="checked"{/if} /> gdLibrary
+							<input type="radio" name="image_processor" value="gd" {if !$gdInstalled}disabled="disabled"{/if} {if !$gBitSystem->getConfig('image_processor') || $gBitSystem->getConfig('image_processor')=='gd'}checked="checked"{/if} /> gdLibrary
 						</label>
 					{/forminput}
 				</div>
@@ -65,7 +65,7 @@
 					"}
 					{forminput}
 						<label>
-							<input type="radio" name="image_processor" value="magickwand" {if !$magickwandInstalled}disabled="disabled"{/if} {if $gBitSystem->getPreference('image_processor')=='magickwand'}checked="checked"{/if}/> ImageMagick's MagickWand
+							<input type="radio" name="image_processor" value="magickwand" {if !$magickwandInstalled}disabled="disabled"{/if} {if $gBitSystem->getConfig('image_processor')=='magickwand'}checked="checked"{/if}/> ImageMagick's MagickWand
 						</label>
 					{/forminput}
 				</div>
@@ -82,7 +82,7 @@
 					"}
 					{forminput}
 						<label>
-							<input type="radio" name="image_processor" value="imagick" {if !$imagickInstalled}disabled="disabled"{/if} {if $gBitSystem->getPreference('image_processor')=='imagick'}checked="checked"{/if}/> php-imagick
+							<input type="radio" name="image_processor" value="imagick" {if !$imagickInstalled}disabled="disabled"{/if} {if $gBitSystem->getConfig('image_processor')=='imagick'}checked="checked"{/if}/> php-imagick
 						</label>
 					{/forminput}
 				</div>
@@ -91,7 +91,7 @@
 					<div class="row">
 						{formlabel label=`$output.label` for=$item}
 						{forminput}
-							{html_checkboxes name="$item" values="y" checked=`$gBitSystemPrefs.$item` labels=false id=$item}
+							{html_checkboxes name="$item" values="y" checked=`$gBitSystem->getConfig('')$item` labels=false id=$item}
 							{formhelp note=`$output.note` page=`$output.page`}
 						{/forminput}
 					</div>

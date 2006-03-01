@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.39 $
+ * @version  $Revision: 1.40 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -104,7 +104,7 @@ class TikiWikiParser extends BitBase {
 		$this->mUseWikiWords = $gBitSystem->isFeatureActive( 'wiki_words' );
 
 		// Setup the WikiWord regex
-		$wiki_page_regex = $gBitSystem->getPreference( 'wiki_page_regex', 'strict' );
+		$wiki_page_regex = $gBitSystem->getConfig( 'wiki_page_regex', 'strict' );
 		// Please DO NOT modify any of the brackets in the regex(s).
 		// It may seem redundent but, really, they are ALL REQUIRED.
 		if ($wiki_page_regex == 'strict') {
@@ -702,8 +702,8 @@ class TikiWikiParser extends BitBase {
 		if( $gBitSystem->isFeatureActive( 'allow_html' ) ) {
 			// this is copied and pasted from format.bithtml.php - xing
 			// Strip all evil tags that remain
-			// this comes out of gBitSystem->getPreference() set in Liberty Admin
-			$acceptableTags = $gBitSystem->getPreference( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
+			// this comes out of gBitSystem->getConfig() set in Liberty Admin
+			$acceptableTags = $gBitSystem->getConfig( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
 
 			// Destroy all script code "manually" - strip_tags will leave code inline as plain text
 			if( !preg_match( '/\<script\>/', $acceptableTags ) ) {
@@ -767,7 +767,7 @@ class TikiWikiParser extends BitBase {
 		}
 
 		// Replace links to slideshows
-		if ($gBitSystem->getPreference('feature_drawings') == 'y') {
+		if ($gBitSystem->getConfig('feature_drawings') == 'y') {
 			// Replace drawings
 			// Replace rss modules
 			$pars = parse_url($_SERVER["REQUEST_URI"]);
@@ -1091,7 +1091,7 @@ class TikiWikiParser extends BitBase {
 		// Handle double square brackets.  -rlpowell
 		$data = str_replace( "[[", "[", $data );
 
-		if ($gBitSystem->getPreference('wiki_tables') != 'new') {
+		if ($gBitSystem->getConfig('wiki_tables') != 'new') {
 			// New syntax for tables
 			if (preg_match_all("/\|\|(.*)\|\|/", $data, $tables)) {
 				$maxcols = 1;
@@ -1431,7 +1431,7 @@ class TikiWikiParser extends BitBase {
 						}
 						$edit_link = '';
 						if( $gBitSystem->isFeatureActive( 'wiki_section_edit' ) && $gBitUser->hasPermission( 'bit_p_edit' ) ) {
-							if( $hdrlevel == $gBitSystem->getPreference( 'wiki_section_edit' ) ) {
+							if( $hdrlevel == $gBitSystem->getConfig( 'wiki_section_edit' ) ) {
 								$edit_url = WIKI_PKG_URL."edit.php?content_id=".$pContentId."&amp;action=edit_sectin&amp;section=".$section_count++;
 								$edit_link = '<span class="editsection" style="float:right;margin-left:5px;">[<a href="'.$edit_url.'">'.tra( "edit" ).'</a>]</span>';
 							}

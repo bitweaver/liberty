@@ -43,7 +43,7 @@
 										</td>
 										<td>{$guid}</td>
 										{if $plugin_type eq 'format'}
-											<td align="center">{if $plugin.is_active == 'y'}{html_radios values=$guid name="default_format" checked=$gBitSystemPrefs.default_format}{/if}</td>
+											<td align="center">{if $plugin.is_active == 'y'}{html_radios values=$guid name="default_format" checked=$gBitSystem->getConfig('default_format')}{/if}</td>
 										{/if}
 										<td align="center">
 											{if $plugin.is_active=='x'}

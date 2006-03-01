@@ -49,7 +49,7 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 
 $gBitSmarty->assign( 'thumbSizes', array( '' => 'Off', 'icon'=>tra('Icon'), 'avatar'=>tra('Avatar'), 'small'=>tra('Small'), 'medium'=>tra('Medium'), 'large'=>tra('Large') ) );
 
-$tags = $gBitSystem->getPreference( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
+$tags = $gBitSystem->getConfig( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
 
 $gBitSmarty->assign( 'approved_html_tags', $tags );
 ?>

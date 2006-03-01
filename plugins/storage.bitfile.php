@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -40,7 +40,7 @@ function bit_files_verify( &$pStoreRow ) {
 function bit_files_store( &$pStoreRow ) {
 	global $gBitSystem, $gBitUser;
 	$ret = NULL;
-	$pref = $gBitSystem->getPreference('centralized_upload_dir');
+	$pref = $gBitSystem->getConfig('centralized_upload_dir');
 	if( isset( $pref ) ) {
 		if( !empty( $pStoreRow['foreign_id'] ) ) {
 			$sql = "UPDATE `".BIT_DB_PREFIX."liberty_files SET `storage_path`=?, `mime_type`=?, `file_size`=? WHERE `file_id` = ?";

@@ -5,7 +5,7 @@
 	{/if}
 
 	<div class="storage">
-		{assign var=thumbsize value=$gBitSystem->getPreference('liberty_auto_display_attachment_thumbs')}
+		{assign var=thumbsize value=$gBitSystem->getConfig('liberty_auto_display_attachment_thumbs')}
 		{foreach from=$gContent->mStorage item=attachment }
 			{capture name="size"}{$attachment.size|kbsize}{/capture}
 			{capture name="popup"}{include file="bitpackage:kernel/popup_box.tpl" content="`$attachment.filename`<br />{tr}Size{/tr}: `$smarty.capture.size`" noclose=true}{/capture}

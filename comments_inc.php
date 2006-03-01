@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.10 2006/02/16 13:48:11 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.11 2006/03/01 18:35:16 spiderr Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -112,19 +112,19 @@ if (@BitBase::verifyId($_REQUEST['post_comment_reply_id'])) {
 	$gBitSmarty->assign('post_comment_reply_id', $post_comment_reply_id);
 }
 
-$maxComments = $gBitSystem->getPreference( 'comments_per_page', 10 );
+$maxComments = $gBitSystem->getConfig( 'comments_per_page', 10 );
 if (!empty($_REQUEST["comments_maxComments"])) {
 	$maxComments = $_REQUEST["comments_maxComments"];
 	$comments_at_top_of_page = 'y';
 }
 
-$comments_sort_mode = $gBitSystem->getPreference( 'comments_default_ordering', 'commentDate_desc' );
+$comments_sort_mode = $gBitSystem->getConfig( 'comments_default_ordering', 'commentDate_desc' );
 if (!empty($_REQUEST["comments_sort_mode"])) {
 	$comments_sort_mode = $_REQUEST["comments_sort_mode"];
 	$comments_at_top_of_page = 'y';
 }
 
-$comments_display_style = $gBitSystem->getPreference( 'comments_default_display_mode', 'threaded' );
+$comments_display_style = $gBitSystem->getConfig( 'comments_default_display_mode', 'threaded' );
 if( !empty( $_REQUEST["comments_style"] ) ) {
 	$comments_display_style = $_REQUEST["comments_style"];
 	$comments_at_top_of_page = 'y';
@@ -182,7 +182,7 @@ $gBitSmarty->assign('postComment', $postComment);
 
 $gBitSmarty->assign('currentTimestamp', time());
 $gBitSmarty->assign('comments_return_url', $comments_return_url);
-$gBitSmarty->assign('comments_at_top_of_page', ( isset( $comments_at_top_of_page ) && $gBitSystem->getPreference( 'comments_reorganise_page_layout', 'n' ) == 'y' ) ? $comments_at_top_of_page : NULL );
+$gBitSmarty->assign('comments_at_top_of_page', ( isset( $comments_at_top_of_page ) && $gBitSystem->getConfig( 'comments_reorganise_page_layout', 'n' ) == 'y' ) ? $comments_at_top_of_page : NULL );
 $gBitSmarty->assign('comments_style', $comments_display_style);
 $gBitSmarty->assign('comments_sort_mode', $comments_sort_mode);
 ?>

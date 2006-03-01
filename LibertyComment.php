@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.17 2006/02/24 22:13:20 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.18 2006/03/01 18:35:16 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -196,7 +196,7 @@ class LibertyComment extends LibertyContent {
 			$pParamHash['sort_mode'] = 'last_modified_desc';
 		}
 		if( empty( $pParamHash['max_records'] ) ) {
-			$pParamHash['max_records'] = $gBitSystem->getPreference( 'max_records' );
+			$pParamHash['max_records'] = $gBitSystem->getConfig( 'max_records' );
 		}
 		LibertyContent::prepGetList( $pParamHash );
 		$sort_mode = $this->mDb->convert_sortmode($pParamHash['sort_mode']);

@@ -3,7 +3,7 @@
  * attachment_browser
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage functions
  */
@@ -24,9 +24,9 @@ $gBitSmarty->assign( 'userAttachments', $userAttachments );
 // pagination
 $offset = @BitBase::verifyId( $_REQUEST['offset'] ) ? $_REQUEST['offset'] : 0;
 $gBitSmarty->assign( 'curPage', $pgnPage = @BitBase::verifyId( $_REQUEST['pgnPage'] ) ? $_REQUEST['pgnPage'] : 1 );
-$offset = ( $pgnPage - 1 ) * $gBitSystem->getPreference( 'max_records' );
+$offset = ( $pgnPage - 1 ) * $gBitSystem->getConfig( 'max_records' );
 
 // calculate page number
-$numPages = ceil( $userAttachments['cant'] / $gBitSystem->getPreference( 'max_records' ) );
+$numPages = ceil( $userAttachments['cant'] / $gBitSystem->getConfig( 'max_records' ) );
 $gBitSmarty->assign( 'numPages', $numPages );
 ?>

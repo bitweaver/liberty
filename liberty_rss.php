@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_rss.php,v 1.4 2006/02/16 13:48:11 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_rss.php,v 1.5 2006/03/01 18:35:16 spiderr Exp $
  * @package wiki
  * @subpackage functions
  */
@@ -14,8 +14,8 @@ require_once( LIBERTY_PKG_PATH."LibertyContent.php" );
 
 $gBitSystem->verifyPackage( 'rss' );
 
-$rss->title = $gBitSystem->getPreference( 'title_rss_liberty', $gBitSystem->getPreference( 'site_title' ).' - '.tra( 'Liberty' ) );
-$rss->description = $gBitSystem->getPreference( 'desc_rss_liberty', $gBitSystem->getPreference( 'site_title' ).' - '.tra( 'RSS Feed' ) );
+$rss->title = $gBitSystem->getConfig( 'title_rss_liberty', $gBitSystem->getConfig( 'site_title' ).' - '.tra( 'Liberty' ) );
+$rss->description = $gBitSystem->getConfig( 'desc_rss_liberty', $gBitSystem->getConfig( 'site_title' ).' - '.tra( 'RSS Feed' ) );
 
 // check permission to view liberty pages
 if( !$gBitUser->hasPermission( 'bit_p_view' ) ) {
@@ -27,7 +27,7 @@ if( !$gBitUser->hasPermission( 'bit_p_view' ) ) {
 
 	$liberty = new LibertyContent();
 	$listHash = array(
-		'max_records' => $gBitSystem->getPreference( 'max_rss_liberty', 10 ),
+		'max_records' => $gBitSystem->getConfig( 'max_rss_liberty', 10 ),
 		'sort_mode' => 'last_modified_desc',
 		'include_data' => TRUE,
 	);
@@ -59,7 +59,7 @@ if( !$gBitUser->hasPermission( 'bit_p_view' ) ) {
 		$item->source = 'http://'.$_SERVER['HTTP_HOST'].LIBERTY_PKG_URL.'/list_content.php';
 		$item->author = $gBitUser->getDisplayName( FALSE, array( 'real_name' => $feed['modifier_real_name'], 'login' => $feed['modifier_user'] ) );
 
-		$item->descriptionTruncSize = $gBitSystem->getPreference( 'rssfeed_truncate', 5000 );
+		$item->descriptionTruncSize = $gBitSystem->getConfig( 'rssfeed_truncate', 5000 );
 		$item->descriptionHtmlSyndicated = FALSE;
 
 		// pass the item on to the rss feed creator

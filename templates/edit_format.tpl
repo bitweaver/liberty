@@ -7,7 +7,7 @@
 		{forminput}
 			<select name="i18n[lang_code]" id="lang_code">
 				{foreach from=$translationsList key=langCode item=lang}
-					<option value="{$langCode}" {if $smarty.request.i18n.lang_code==$langCode || $pageInfo.lang_code==$langCode || ( $langCode==$gBitSystem->getPreference('bitlanguage') && !$smarty.request.i18n.lang_code && !$gContent->getField('lang_code') )}selected="selected" {/if}>{$lang.native_name}</option>
+					<option value="{$langCode}" {if $smarty.request.i18n.lang_code==$langCode || $pageInfo.lang_code==$langCode || ( $langCode==$gBitSystem->getConfig('bitlanguage') && !$smarty.request.i18n.lang_code && !$gContent->getField('lang_code') )}selected="selected" {/if}>{$lang.native_name}</option>
 				{/foreach}
 			</select>
 			{formhelp note="The language of this page"}
@@ -25,7 +25,7 @@
 					{$plugin.edit_field}
 					{if $pageInfo.format_guid eq $plugin.plugin_guid}
 						checked="checked"
-					{elseif !$pageInfo.format_guid and $plugin.plugin_guid eq $gBitSystemPrefs.default_format}
+					{elseif !$pageInfo.format_guid and $plugin.plugin_guid eq $gBitSystem->getConfig('default_format')}
 						checked="checked"
 					{/if}
 					onclick="
