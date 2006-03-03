@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.11 2006/02/06 10:55:59 bitweaver Exp $
+// $Id: data.code.php,v 1.12 2006/03/03 15:53:31 spiderr Exp $
 
 /**
  * definitions
@@ -72,12 +72,6 @@ function data_code_help() {
 		.'</table>'
 		. tra("Example: ") . "{CODE source='php' num='on' }" . tra("Sorce Code Snippet") . "{/code}";
 	return $help;
-}
-
-function decodeHTML($string) {
-    $string = strtr($string, array_flip(get_html_translation_table(HTML_ENTITIES)));
-    $string = preg_replace("/&#([0-9]+);/me", "chr('\\1')", $string);
-    return $string;
 }
 
 // Load Function
@@ -174,13 +168,5 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 
 	$work = "~np~<div class='codelisting'>". $code ."</div>~/np~";
     return $work;
-}
-
-function unhtmlentities($string) {
-	$trans_tbl = get_html_translation_table(HTML_ENTITIES);
-	$trans_tbl = array_flip($trans_tbl);
-	$trans_tbl['&nbsp;'] = ' ';
-	$ret = strtr($string, $trans_tbl);
-	return preg_replace('/&#(\d+);/me', "chr('\\1')",$ret);
 }
 ?>
