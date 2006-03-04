@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.8 2006/03/04 10:23:45 starrrider Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.9 2006/03/04 10:52:36 squareing Exp $ *}
 
 {strip}
 {if $gBitSystem->isFeatureActive( 'wiki_help' )}
@@ -25,7 +25,7 @@
 
 		{if count($dataplugins) ne 0}
 			{jstab title="Plugin Help"}
-				<div id="{$jsWindow}" style="display:none;">
+				<div id="{$jsWindow}">
 					<table class="data help">
 						<tr>
 							<td style="width: 35%; text-align: center;"><strong><big><big>Plugin Selector</big></big></strong></td>
@@ -37,11 +37,7 @@
 									<select size="15" onchange="javascript:flipMulti(this.options[this.selectedIndex].value,'2')">
 										{foreach from=$dataplugins item=p}
 											{if $p.is_active eq 'y'}
-												{if $p.windowId eq $firstPlugin}
-													<option value="{$p.windowId}" selected="selected">{$p.title}</option>
-												{else}
-													<option value="{$p.windowId}">{$p.title}</option>
-												{/if}
+												<option value="{$p.windowId}" {if $p.windowId eq $firstPlugin}selected="selected"{/if}>{$p.title}</option>
 											{/if}
 										{/foreach}
 									</select>
@@ -50,7 +46,7 @@
 							<td style="vertical-align: top;">
 								{foreach from=$dataplugins item=p}
 									{if $p.is_active eq 'y'}
-										<div id="{$p.windowId}" class="box" style="display:none;">
+										<div id="{$p.windowId}" class="box" style="display:{if $p.windowId ne $firstPlugin}none{else}block{/if};">
 											<table class="data help">
 												<tr>
 													<th colspan="4" style="text-align: center;"><strong><big><big>{$p.title}</big></big></strong></th>
