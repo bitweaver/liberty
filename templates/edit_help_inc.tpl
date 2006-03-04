@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.9 2006/03/04 10:52:36 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.10 2006/03/04 11:13:55 squareing Exp $ *}
 
 {strip}
 {if $gBitSystem->isFeatureActive( 'wiki_help' )}
@@ -25,85 +25,75 @@
 
 		{if count($dataplugins) ne 0}
 			{jstab title="Plugin Help"}
-				<div id="{$jsWindow}">
-					<table class="data help">
-						<tr>
-							<td style="width: 35%; text-align: center;"><strong><big><big>Plugin Selector</big></big></strong></td>
-							<td style="text-align: center;"><strong><big><big>Plugin Data</big></big></strong></td>
-						</tr>
-						<tr>
-							<td style="vertical-align: top;">
-								<div class="box">
-									<select size="15" onchange="javascript:flipMulti(this.options[this.selectedIndex].value,'2')">
-										{foreach from=$dataplugins item=p}
-											{if $p.is_active eq 'y'}
-												<option value="{$p.windowId}" {if $p.windowId eq $firstPlugin}selected="selected"{/if}>{$p.title}</option>
+				<table class="data help">
+					<tr>
+						<td style="vertical-align: top; width:1px;">
+							{tr}Select the plugin{/tr}:<br />
+							<select size="15" onchange="javascript:flipMulti(this.options[this.selectedIndex].value,'2')">
+								{foreach from=$dataplugins item=p}
+									{if $p.is_active eq 'y'}
+										<option value="{$p.windowId}">{$p.title}</option>
+									{/if}
+								{/foreach}
+							</select>
+						</td>
+						<td style="vertical-align: top;">
+							{foreach from=$dataplugins item=p}
+								{if $p.is_active eq 'y'}
+									<div id="{$p.windowId}" style="display:none;">
+										<table class="data help">
+											<tr>
+												<th colspan="4" style="text-align: center;">{$p.title}</th>
+											</tr>
+											<tr class="odd">
+												<td title="{tr}The GUID is a string used to locate the Plugins Data.{/tr}">GUID => {$p.guid}</td>
+												<td title="{tr}The Tag is the string added to the text that calls the Plugin.{/tr}">tag => {$p.tag}</td>
+												<td title="{tr}Provides a Default Activation Value for the Administrator.{/tr}">auto_activate => {$p.auto_activate}</td>
+												<td title="{tr}The Number of Code Blocks required by the Plugin. Will be 1 or 2.{/tr}">requires_pair => {$p.requires_pair}</td>
+											</tr>
+											<tr class="even">
+												<td colspan="4" title="{tr}States what the Plugin does.{/tr}">description => {$p.description}</td>
+											</tr>
+											<tr class="odd">
+												<td colspan="2" title="{tr}This function is called when the Tag is found and does the actual work.{/tr}">load_function => {$p.load_function}</td>
+												<td colspan="2" title="{tr}This function provides the Help Information displayed below.{/tr}">help_function => {$p.help_function}</td>
+											</tr>
+											<tr class="even">
+												<td colspan="4" title="{tr}The Syntax needed to make the Plugin function (can be inserted into the editor).{/tr}">syntax => {$p.syntax}</td>
+											</tr>
+											<tr class="odd">
+												<td colspan="4" title="{tr}A link to a Help Page on bitweaver.org.{/tr}">help_page => {$p.help_page}</td>
+											</tr>
+											{if !$p.variable_syntax}
+												<tr class="even">
+													<td colspan="2" style="text-align: center;" title="{tr}Click to Visit the Help Page on bitweaver.org in a new window{/tr}">
+														<input type="button" value="Visit the Help Page" onclick="javascript:popUpWin('http://bitweaver/wiki/index.php?page={$p.help_page}','standard',800,800)"></input>
+													</td>
+													<td colspan="2" style="text-align: center;" title="{tr}Click to Insert the Syntax into the page{/tr}">
+														<input type="button" value="Insert the Syntax" onclick="javascript:insertAt('{$textarea_id}','{$p.syntax}')"></input>
+													</td>
+												</tr>
 											{/if}
-										{/foreach}
-									</select>
-								</div>
-							</td>
-							<td style="vertical-align: top;">
-								{foreach from=$dataplugins item=p}
-									{if $p.is_active eq 'y'}
-										<div id="{$p.windowId}" class="box" style="display:{if $p.windowId ne $firstPlugin}none{else}block{/if};">
-											<table class="data help">
-												<tr>
-													<th colspan="4" style="text-align: center;"><strong><big><big>{$p.title}</big></big></strong></th>
-												</tr>
-												<tr class="odd">
-													<td title="{tr}The GUID is a string used to locate the Plugins Data.{/tr}">GUID => {$p.guid}</td>
-													<td title="{tr}The Tag is the string added to the text that calls the Plugin.{/tr}">tag => {$p.tag}</td>
-													<td title="{tr}Provides a Default Activation Value for the Administrator.{/tr}">auto_activate => {$p.auto_activate}</td>
-													<td title="{tr}The Number of Code Blocks required by the Plugin. Will be 1 or 2.{/tr}">requires_pair => {$p.requires_pair}</td>
-												</tr>
-												<tr class="even">
-													<td colspan="4" title="{tr}States what the Plugin does.{/tr}">description => {$p.description}</td>
-												</tr>
-												<tr class="odd">
-													<td colspan="2" title="{tr}This function is called when the Tag is found and does the actual work.{/tr}">load_function => {$p.load_function}</td>
-													<td colspan="2" title="{tr}This function provides the Help Information displayed below.{/tr}">help_function => {$p.help_function}</td>
-												</tr>
-												<tr class="even">
-													<td colspan="4" title="{tr}The Syntax needed to make the Plugin function (can be inserted into the editor).{/tr}">syntax => {$p.syntax}</td>
-												</tr>
-												<tr class="odd">
-													<td colspan="4" title="{tr}A link to a Help Page on bitweaver.org.{/tr}">help_page => {$p.help_page}</td>
-												</tr>
-												{if !$p.variable_syntax}
-													<tr class="even">
-														<td colspan="2" style="text-align: center;" title="{tr}Click to Visit the Help Page on bitweaver.org in a new window{/tr}">
-															<input type="button" value="Visit the Help Page" onClick="javascript:popUpWin('http://bitweaver/wiki/index.php?page={$p.help_page}','standard',800,800)"></input>
-														</td>
-														<td colspan="2" style="text-align: center;" title="{tr}Click to Insert the Syntax into the page{/tr}">
-															<input type="button" value="Insert the Syntax" onClick="javascript:insertAt('{$textarea_id}','{$p.syntax}')"></input>
-														</td>
-													</tr>
-												{/if}
-											</table>
-										</div>
-									{/if}
-								{/foreach}
-							</td>
-						</tr>
-						<tr>
-       	            	    <td colspan="2" title="{tr}Parameter Data sent to the Plugin{/tr}">
-								{foreach from=$dataplugins item=p}
-									{if $p.is_active eq 'y'}
-										<div class="box" id="{$p.extWinId}" style="display:none;">
-			           	            	    <div style="text-align: center;"><strong><big><big>{tr}Parameter Data{/tr}</big></big></strong></div>
-											<br />{$p.exthelp}
-										</div>
-									{/if}
-								{/foreach}
-							</td>
-						</tr>
-					</table>
-				</div>
-				<script type="text/javascript">/* <![CDATA[ */
-						show('{$jsWindow}');
-						flipMulti('{$firstPlugin}','2');
-				/* ]]> */</script>
+										</table>
+									</div>
+								{/if}
+							{/foreach}
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td title="{tr}Parameter Data sent to the Plugin{/tr}">
+							{foreach from=$dataplugins item=p}
+								{if $p.is_active eq 'y'}
+									<div id="{$p.extWinId}" style="display:none;">
+										{$p.exthelp}
+									</div>
+								{/if}
+							{/foreach}
+						</td>
+					</tr>
+				</table>
+				<script type="text/javascript"> flipMulti('{$firstPlugin}','2'); </script>
 {*				<noscript>
 					{foreach from=$dataplugins item=p}
 						{if $p.is_active eq 'y'}

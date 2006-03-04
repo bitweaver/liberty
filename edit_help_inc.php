@@ -3,7 +3,7 @@
  * edit_help_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage functions
  */
@@ -41,7 +41,7 @@ foreach( array_keys( $gLibertySystem->mPlugins ) as $pluginGuid ) {
 			// NOTE: $gLibertySystem->mPlugins['variable_syntax'] is only used by the Plugin Library {LIB}
 			$pinfo['help_function'] =	!empty( $gLibertySystem->mPlugins[$pluginGuid]['help_function'] )		? $gLibertySystem->mPlugins[$pluginGuid]['help_function'] : tra('Not Defined');
 			$pinfo["exthelp"] = 		!empty( $gLibertySystem->mPlugins[$pluginGuid]['help_function'] ) &&
-										function_exists($gLibertySystem->mPlugins[$pluginGuid]['help_function'] ) ? $gLibertySystem->mPlugins[$pluginGuid]['help_function']() : tra('None Defined');
+										function_exists($gLibertySystem->mPlugins[$pluginGuid]['help_function'] ) ? $gLibertySystem->mPlugins[$pluginGuid]['help_function']() : '';
 			$mt = microtime()*1000000;
 			$pinfo["windowId"] = $mt;
 			$pinfo["extWinId"] = $mt+1;
