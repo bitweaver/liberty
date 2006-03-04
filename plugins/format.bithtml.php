@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.2.2 $
+ * @version  $Revision: 1.1.2.3 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -93,12 +93,20 @@ function bithtml_parse_data( &$pData, &$pCommonObject ) {
 	}
 	if( preg_match("/\(\(([^\)][^\)]+)\)\)/", $pData ) ) {
 		preg_match_all("/\(\(([^\)][^\)]+)\)\)/", $pData, $pages);
-		foreach (array_unique($pages[1])as $page_parse) {
-	// This is a hack for now. page_exists_desc should not be needed here sicne blogs and articles use this function
+		for ($i = 0; $i < count($pages[1]); $i++) {
+				// 24-Jun-2003, by zaufi
+				// TODO: future optimize: get page description and modification time at once.
 
-				$exists = $pCommonObject->pageExists( $page_parse, $pCommonObject->mContentId, $pCommonObject );
-				$repl = BitPage::getDisplayLink( $page_parse, $exists );
-				$page_parse_pq = preg_quote($page_parse, "/");
+				// text[0] = link description (previous format)
+				// text[1] = timeout in seconds (new field)
+				// text[2..N] = drop
+				$text = explode("|", $pages[1][$i]);
+
+				// This is a hack for now. page_exists_desc should not be needed here sicne blogs and articles use this function
+				$exists = $pCommonObject->pageExists( $text[0], $pCommonObject->mContentId, $pCommonObject );
+				$desc = isset($text[1]) ? $text[1] : $text[0];
+				$repl = BitPage::getDisplayLink( $desc, $exists );
+				$page_parse_pq = preg_quote($pages[1][$i], "/");
 				$pData = preg_replace("/\(\($page_parse_pq\)\)/", "$repl", $pData);
 		}
 	}
