@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.85 2006/02/27 03:55:20 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.86 2006/03/06 14:06:31 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -153,7 +153,7 @@ class LibertyContent extends LibertyBase {
 					|| (!empty($_REQUEST["title"]) && !empty($this->mInfo["title"]) && (md5($this->mInfo["title"]) != md5($_REQUEST["title"])));
 		// check some lengths, if too long, then truncate
 		if( !empty( $pParamHash['title'] ) ) {
-			$pParamHash['content_store']['title'] = substr( $pParamHash['title'], 0, 160 );
+			$pParamHash['content_store']['title'] = htmlentities( substr( $pParamHash['title'], 0, 160 ) );
 		} elseif( isset( $pParamHash['title'] ) ) {
 			$pParamHash['content_store']['title'] = NULL;
 		}
@@ -1645,15 +1645,15 @@ class LibertyContent extends LibertyBase {
 	/**
 	 * This is a generic liberty content function to gather indexable words. Override this function
 	 * in your BitPackage.php file if you need to add more indexable words from files other than
-	 * tiki_content and users_users. 
+	 * tiki_content and users_users.
 	 */
 
 	function setIndexData( $pContentId = 0 ) {
 		global $gBitSystem ;
 		if ( $pContentId == 0 ) $pContentId = $this->mContentId;
 		$sql = "SELECT lc.`title`, lc.`data`, uu.`login`, uu.`real_name` " .
-				"FROM `" . BIT_DB_PREFIX . "liberty_content` lc " . 
-				"INNER JOIN `" . BIT_DB_PREFIX . "users_users` uu ON uu.`user_id` = lc.`user_id` " . 
+				"FROM `" . BIT_DB_PREFIX . "liberty_content` lc " .
+				"INNER JOIN `" . BIT_DB_PREFIX . "users_users` uu ON uu.`user_id` = lc.`user_id` " .
 				"WHERE lc.`content_id` = ?" ;
 		$res = $gBitSystem->mDb->getRow($sql, array($pContentId));
 		if (!(isset($this->mInfo['no_index']) and $this->mInfo['no_index'] == true)) {
