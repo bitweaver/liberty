@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.2.8 $
+ * @version  $Revision: 1.1.2.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wolff_borg <wolff_borg@yahoo.com.au>
 // | Reworked from: wikiplugin_wikigraph.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikigraph.php,v 1.1.2.8 2006/02/03 12:36:51 squareing Exp $
+// $Id: data.wikigraph.php,v 1.1.2.9 2006/03/08 11:53:07 wolff_borg Exp $
 /**
  * definitions
  */
@@ -125,13 +125,13 @@ function data_wikigraph($data, $params) {
 	if(isset($nodeheight)) $add.="&amp;nodeheight=$nodeheight";
 	if(isset($edgecolor)) $add.="&amp;edgecolor=$edgecolor";
 	if(isset($edgestyle)) $add.="&amp;edgestyle=$edgestyle";
-	if(empty($data)) $data=$gContent->mInfo['title'];
+	if(empty($data) && empty($page)) $page=$gContent->mInfo['title'];
 	$mapname=md5(uniqid("."));
 	$ret='';
 	$garg = array(
 		'att' => array(
 			'level'     => $level,
-			'nodesep'   => isset($nodesep) ? $nodesep : ".1",
+			'nodesep'   => isset($nodesep) ? $nodesep : "0.1",
 			'rankdir'   => isset($rankdir) ? $rankdir : "LR",
 			'bgcolor'   => isset($bgcolor) ? $bgcolor : "transparent",
 			'size'      => isset($size) ? $size : ""
@@ -151,8 +151,8 @@ function data_wikigraph($data, $params) {
 			'style'     => isset($edgestyle) ? $edgestyle : "solid"
 		)
 	);
-	$ret .= "<div align='center'><img border='0' src=\"".WIKI_PKG_URL."wiki_graph.php?page=".urlencode($data)."&amp;level=$level$add\" alt='graph' usemap='#$mapname' />";
-	if( !empty( $page ) && !empty( $level ) && !empty( $garg ) ) {
+	$ret .= "<div align='center'><img border='0' src=\"".WIKI_PKG_URL."wiki_graph.php?page=".urlencode($page)."&amp;level=$level$add\" alt='graph' usemap='#$mapname' />";
+	if( !empty( $page ) && !empty( $garg ) ) {
 		$mapdata = $wikilib->get_graph_map($page, $level, $garg);
 		$mapdata = preg_replace("/\n|\r/", '', $mapdata);
 		$ret .= "<map name='$mapname'>$mapdata</map></div>";
