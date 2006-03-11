@@ -1,10 +1,10 @@
 <?php
-// $Id: data.library.php,v 1.1 2006/03/03 07:07:15 starrrider Exp $
+// $Id: data.library.php,v 1.2 2006/03/11 20:36:01 starrrider Exp $
 /**
  * assigned_modules
  *
  * @author   StarRider <starrrider@sourceforge.net>
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -25,7 +25,7 @@ $pluginParams = array ( 'tag' => 'LIB',
 						'help_page' => 'DataPluginLibrary',
 						'description' => tra("This plugin uses Key-words to execute the Plugin Library Functions."),
 						'help_function' => 'data_help_library',
-						'syntax' => "{LIB func= <strong>Plus</strong> the Parameters defined by each Function}",
+						'syntax' => "{LIB func= and the Parameters defined by each Function}",
 						'variable_syntax' => TRUE,
 						'plugin_type' => DATA_PLUGIN
 					  );
@@ -40,41 +40,39 @@ global $gLibertySystem;
 
 // Functions inside Functions don't normally make sense - But they do in this case!
 	function addSelector ($LibFunctionArray) {
-		$cnt = 0;
+		$cnt = 1;
 		$ret =		'<div class="box">'
-						.'<select size="10" style="width: 100%;" onchange="javascript:flipMulti(this.options[this.selectedIndex].value,'."'2','2'".')"';
+						.'<select size="10" style="width: 100%;" onchange="javascript:flipMulti('."'lib',this.options[this.selectedIndex].value,'2','2')".'">';
 		foreach($LibFunctionArray as $v) {
+			$ret .=			'<option value="'.$v['funcWindow'].'"'.(($cnt==1) ? ' selected="selected">' : '>').$v['FuncName'].'</option>';
 			$cnt++;
-			$ret .=			'<option value="'.$v['funcWindow'].'" ';
-			$ret .= ($cnt==1) ? 'selected="selected">' : '>';
-			$ret .=				$v['FuncName']
-							.'</option>';
 		}
-		$ret .=	'		</select>'
+		$ret .=			'</select>'
 					.'</div>';
 		return $ret;
 	}
 
 	function addFuncData ($LibFunctionArray) {
+print_r($LibFunctionArray);
 	global $inEditor;
 		$ret = '';
 		foreach($LibFunctionArray as $v) {
 			$tbl = 	'<table class="data help">'
 						.'<tr><th colspan="2" style="text-align: center;"><strong><big>'.tra("Function").' '.$v['FuncName'].'</big></strong></th></tr>'
 						.'<tr class="odd"><td colspan="2">description => '.$v['FuncDesc'].'</td></tr>'
-						.'<tr class="even"><td colspan="2">syntax => '.$v['syntax'].'</td></tr>'
+						.'<tr class="even"><td colspan="2">syntax => ~np~'.$v['syntax'].'~/np~</td></tr>'
 						.'<tr class="odd"><td colspan="2">help_page => '.$v['helppage'].'</td></tr>';
-			if (isset($inEditor)) $tbl .=
-						'<tr class="even">'
+			if (isset($inEditor))
+				$tbl .=	'<tr class="even">'
 							.'<td style="text-align: center;" title="'.tra("Click to Visit the Help Page on bitweaver.org in a new window").'">'
-								.'<input type="button" value="Visit the Help Page" onClick="javascript:popUpWin'."('http://bitweaver/wiki/index.php?page=".$v['helppage']."','standard',800,".'800)"></input>'
+								.'<input type="button" value="Visit the Help Page" onclick="javascript:popUpWin'."('http://bitweaver/wiki/index.php?page=".$v['helppage']."','standard',800,".'800)"></input>'
 							.'</td>'
 							.'<td style="text-align: center;" title="'.tra("Click to Insert the Syntax into the page").'">'
-								.'<input type="button" value="Insert the Syntax" onClick="javascript:insertAt(\'editwiki\',\''.$v['syntax'].'\')"></input>'
+								.'<input type="button" value="Insert the Syntax" onclick="javascript:insertAt('.LIBERTY_TEXT_AREA."','".$v['syntax']."')".'"></input>'
 							.'</td>'
 						.'</tr>';
 			$tbl .= '</table>';
-			$ret .= libToggleBox($v['funcWindow'],$tbl,TRUE,'box');
+			$ret .= libToggleBox('lib'.$v['funcWindow'],$tbl,TRUE,'box');
 		}
 		return $ret;
 	}
@@ -83,9 +81,9 @@ global $gLibertySystem;
 		$ret = '';
 		foreach($LibFunctionArray as $v) {
 			$parms = '';
-			$cnt = 0;
+			$codeBlocks = 0;
 			foreach($v['Params'] as $p) {
-				if ($p['Name']!='data') $cnt++;
+				if ($p['Name']!='data') $codeBlocks++;
 				$parms .= libHelpParam( // $name,$type,$descr,$req,$default,$notes,$keywords )
 							$p['Name'], // Name
 							$p['Type'], // Type
@@ -96,11 +94,12 @@ global $gLibertySystem;
 							$p['KeyWords'] // KeyWords
 			  	);
 			}
-			if ($cnt) {
-				$tbl = '<div style="text-align: center;"><strong><big>'.tra("Function Specific Parameters").'</big></strong></div>';
-				$tbl .=	libHelpTable($parms); // Creates the Table
-			} else $tbl =	'<div style="text-align: center;"><strong><big>'.tra("No Function Specific Parameters").'</big></strong></div>';
-			$ret .= libToggleBox($v['paramWindow'],$tbl,TRUE,'box');
+			if ($codeBlocks)
+				$tbl = '<div style="text-align: center;"><strong><big>'.tra("Function Specific Parameters").'</big></strong></div>'
+						.libBox(tra('The data for this Function is placed between the Code Blocks of the Plugin.'))
+						.libHelpTable($parms); // Creates the Table
+			else $tbl =	'<div style="text-align: center;"><strong><big>'.tra("No Function Specific Parameters").'</big></strong></div>';
+			$ret .= libToggleBox('lib'.$v['paramWindow'],$tbl,TRUE,'box');
 		}
 		return $ret;
 	}
@@ -113,7 +112,7 @@ global $gLibertySystem;
 					.'<noscript>';
 		foreach($LibFunctionArray as $v) {
 			$fData =	'<div class="box">'
-							.'<div style="text-align: center;"><strong><big>'.tra('Function').' '.$v['FuncName'].'<hr />'
+							.'<div style="text-align: center;"><strong><big>'.tra('Function').' '.$v['FuncName'].'</big></strong><br />'
 								.'<table class="data help">'
 									.'<tr class="odd"><td>'.tra('description').' => '.$v['FuncDesc'].'</td></tr>'
 									.'<tr class="even"><td>'.tra('syntax').' => '.$v['syntax'].'</td></tr>'
@@ -121,16 +120,15 @@ global $gLibertySystem;
 			if (isset($inEditor)) $fData .=
 									'<tr class="even">'
 										.'<td style="text-align: center;" title="'.tra("Click to Visit the Help Page on bitweaver.org in a new window").'">'
-											.'<input type="button" value="Visit the Help Page" onClick="javascript:popUpWin'."('http://bitweaver/wiki/index.php?page=".$v['helppage']."','standard',800,".'800)"></input>'
+											.'<input type="button" value="Visit the Help Page" onclick="javascript:popUpWin'."('http://bitweaver/wiki/index.php?page=".$v['helppage']."','standard',800,".'800)"></input>'
 										.'</td>'
 										.'<td style="text-align: center;" title="'.tra("Click to Insert the Syntax into the page").'">'
-											.'<input type="button" value="Insert the Syntax" onClick="javascript:insertAt(\'editwiki\',\''.$v['syntax'].'\')"></input>'
+											.'<input type="button" value="Insert the Syntax" onclick="javascript:insertAt('."'editwiki','".$v['syntax'].'\')"></input>'
 										.'</td>'
 									.'</tr>';
 			$fData .= 			'</table>'
 							.'</div>';
 			$fData .= 		'<div style="text-align: center;"><strong><big>'.tra("Function Specific Parameters").'</big></strong></div>';
-// Need to update this
 			$parms = '';
 			foreach($v['Params'] as $p)
 				$parms .= libHelpParam( // $name,$type,$descr,$req,$default,$notes,$keywords )
@@ -153,8 +151,8 @@ global $gLibertySystem;
 	function addData($LibFunctionArray) {
 		$ret =	'<table class="data help">'
 					.'<tr>'
-						.'<td style="width: 35%; text-align: center;"><strong><big>'.tra("Function Selector").'</big></strong></tb>'
-						.'<td style="text-align: center;"><strong><big>'.tra("Function Data").'</big></strong></tb>'
+						.'<td style="width: 35%; text-align: center;"><strong><big>'.tra("Function Selector").'</big></strong></td>'
+						.'<td style="text-align: center;"><strong><big>'.tra("Function Data").'</big></strong></td>'
 					.'</tr>'
 					.'<tr>'
 						.'<td style="vertical-align: top;">'.addSelector($LibFunctionArray).'</td>'
@@ -167,23 +165,24 @@ global $gLibertySystem;
 		return $ret;
 	}
 
+// Beginning of load function
+	$helpId = microtime()*10000000;
 	$LibFunctionArray = $gLibertySystem->getLibFunctions();
 	if (!empty($LibFunctionArray)) {
 		libNatSort2D($LibFunctionArray,'FuncName'); // Sort the array
 		foreach($LibFunctionArray as $k => $v) {
 			$tmp = '';
-			$mt = (microtime() * 1000000);
-			if (!isset($firstFunction)) $firstFunction = $mt;
-			$LibFunctionArray[$k]['funcWindow'] = $mt;
-			$LibFunctionArray[$k]['paramWindow'] = $mt+1;
+			if (!isset($firstFunction)) {
+				$firstFunction = $helpId++;
+				$LibFunctionArray[$k]['funcWindow'] = $firstFunction;
+			} else $LibFunctionArray[$k]['funcWindow'] = $helpId++;
+			$LibFunctionArray[$k]['paramWindow'] = $helpId++;
+			$LibFunctionArray[$k]['noJsWindow'] = $helpId++;
 			foreach($v['Params'] as $p)
 				if ($p['Name'] != 'data') $tmp .= $p['Name'].'= ';
 			$LibFunctionArray[$k]['syntax'] = '{LIB func='."'".$v['FuncName']."' ".$tmp.'}';
 			$LibFunctionArray[$k]['helppage'] = 'DataPluginLibrary#'.$v['FuncName'];
 	}	}
-
-// print_r($LibFunctionArray);
-	$jsWindow = (microtime() * 1000000);
 
 // Create the Help Data
 	$help = libHelpParam( // $name,$type,$descr,$req,$default,$notes,$keywords )
@@ -198,7 +197,7 @@ global $gLibertySystem;
 		tra("Each Function defines the Parameters it uses. This includes the Parameter's Name, the data Type expected, if the data is required or not, and what the Parameter does. Some Functions use data placed between the Code Blocks. All of this is explained below."),
 		"{LIBEXAMPLE x1='Parameter 1' x2='Parameter 2' x3='Parameter 3' x4='Parameter 4' x5='Parameter 5' }" // An Example
 	);
-	$help .= libToggleBox($jsWindow,addData($LibFunctionArray),FALSE,'box');
+	$help .= libToggleBox('lib'.$helpId,addData($LibFunctionArray),FALSE,'box');
 	$help .= addNoScript($LibFunctionArray,$firstFunction);
 	return $help;
 }
