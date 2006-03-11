@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.12 2006/03/03 15:53:31 spiderr Exp $
+// $Id: data.code.php,v 1.13 2006/03/11 16:42:38 starrrider Exp $
 
 /**
  * definitions
@@ -97,7 +97,7 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 	$num = (isset($num)) ? $num : FALSE;
 
 	// trim any trailing spaces
-	$code = ''; 
+	$code = '';
 	$lines = explode("\n", $data);
 	foreach ($lines as $line) {
 		$code .=  rtrim($line) . "\n";

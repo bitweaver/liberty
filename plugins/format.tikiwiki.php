@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.40 $
+ * @version  $Revision: 1.41 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -162,13 +162,13 @@ class TikiWikiParser extends BitBase {
 		#if this is a new page, fix up any links that may already point to it
 		$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET `to_content_id`=? WHERE (`to_content_id`=? or `to_content_id` is NULL ) and `to_title` = ?";
 		$this->mDb->query($query, array( $from_content_id, 0, $from_title ) );
-		
+
 		#get all the current links from this page
 		$old_links_in_db = array();
 		$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=?";
 		if( $result = $this->mDb->query($query, array( $from_content_id ) ) ) {
 			while( $row = $result->fetchRow() ) {
-				$old_links_in_db[$row['to_title']] = $row['to_content_id'];	
+				$old_links_in_db[$row['to_title']] = $row['to_content_id'];
 			}
 		}
 
@@ -193,14 +193,14 @@ class TikiWikiParser extends BitBase {
 
 
 		#get list of all new links that point to existing content
-		$new_link_pointing_to_existing_content = array();		
+		$new_link_pointing_to_existing_content = array();
 		$title_list_count = count($unique_new_wiki_links);
 		if( $title_list_count > 0 ) {
 			$title_list = '?' . str_repeat(',?',$title_list_count - 1);
 			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_content` WHERE `title` IN($title_list)";
 			if( $result = $this->mDb->query($query, array_keys($unique_new_wiki_links) ) ) {
 				while( $row = $result->fetchRow() ) {
-					$new_link_pointing_to_existing_content[$row['title']] = $row['content_id'];	
+					$new_link_pointing_to_existing_content[$row['title']] = $row['content_id'];
 				}
 			}
 
@@ -791,7 +791,7 @@ class TikiWikiParser extends BitBase {
 
 					if (file_exists("img/wiki/$bitdomain$name")) {
 						if ($gBitUser->hasPermission( 'bit_p_edit_drawings' ) || $gBitUser->hasPermission( 'bit_p_admin_drawings' )) {
-						$repl = "<a href='#' onClick=\"javascript:window.open('".DRAWINGS_PKG_URL."edit.php?page=" . urlencode($page). "&amp;path=$pars&amp;drawing={$id}','','menubar=no,width=252,height=25');\"><img border='0' src='img/wiki/$bitdomain$name' alt='click to edit' /></a>";
+						$repl = "<a href='#' onclick=\"javascript:window.open('".DRAWINGS_PKG_URL."edit.php?page=" . urlencode($page). "&amp;path=$pars&amp;drawing={$id}','','menubar=no,width=252,height=25');\"><img border='0' src='img/wiki/$bitdomain$name' alt='click to edit' /></a>";
 						} else {
 						$repl = "<img border='0' src='img/wiki/$bitdomain$name' alt='a drawing' />";
 						}
@@ -841,7 +841,7 @@ class TikiWikiParser extends BitBase {
 				$id = 'dyn_'.$dvar;
 
 				if( $gBitUser->hasPermission( 'bit_p_edit_dynvar' ) ) {
-					$span1 = "<span  style='display:inline;' id='dyn_".$dvar."_display'><a class='dynavar' onClick='javascript:toggle_dynamic_var(\"$dvar\");' title='".tra('Click to edit dynamic variable').": $dvar'>$value</a></span>";
+					$span1 = "<span  style='display:inline;' id='dyn_".$dvar."_display'><a class='dynavar' onclick='javascript:toggle_dynamic_var(\"$dvar\");' title='".tra('Click to edit dynamic variable').": $dvar'>$value</a></span>";
 					$span2 = "<span style='display:none;' id='dyn_".$dvar."_edit'><input type='text' name='dyn_".$dvar."' value='".$value."' /></span>";
 				} else {
 					$span1 = "<span class='dynavar' style='display:inline;' id='dyn_".$dvar."_display'>$value</span>";
@@ -1436,11 +1436,11 @@ class TikiWikiParser extends BitBase {
 								$edit_link = '<span class="editsection" style="float:right;margin-left:5px;">[<a href="'.$edit_url.'">'.tra( "edit" ).'</a>]</span>';
 							}
 						}
-						$line = $edit_link 
-						. $anchor 
-						. "<h$hdrlevel>" 
-						. substr($line, $hdrlevel + $addremove) 
-						. "</h$hdrlevel>" 
+						$line = $edit_link
+						. $anchor
+						. "<h$hdrlevel>"
+						. substr($line, $hdrlevel + $addremove)
+						. "</h$hdrlevel>"
 						. $aclose
 						;
 					} elseif (!strcmp($line, "...page...")) {

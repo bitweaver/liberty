@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Rewritten for bitweaver by Author
 // | wikiplugin_pluginhelp.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.pluginhelp.php,v 1.6 2006/03/03 07:07:15 starrrider Exp $
+// $Id: data.pluginhelp.php,v 1.7 2006/03/11 16:42:38 starrrider Exp $
 
 /**
  * definitions
@@ -105,7 +105,7 @@ function data_pluginhelp($data, $params) {
 	if ($thisGuid != 'datalibrary') $ret .= // This button is not needed by the Plugin Library {LIB}
 			'<tr class="even">'
 				.'<td colspan="4" style="text-align: center;" title="'.tra('Click to Visit the Help Page on bitweaver.org in a new window.').'">'
-					.'<input type="button" value="Visit the Help Page" onClick="javascript:popUpWin(\'http://bitweaver.org/wiki/index.php?page='.$pluginParams['help_page'].'\',\'standard\',800,800)"></input>'
+					.'<input type="button" value="Visit the Help Page" onclick="javascript:popUpWin(\'http://bitweaver.org/wiki/index.php?page='.$pluginParams['help_page'].'\',\'standard\',800,800)"></input>'
 				.'</td>'
 			.'</tr>';
 	$ret .= '</table>'

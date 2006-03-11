@@ -1,11 +1,11 @@
 <?php
-// $Id: a.library.php,v 1.1 2006/03/03 07:07:15 starrrider Exp $
+// $Id: a.library.php,v 1.2 2006/03/11 16:42:38 starrrider Exp $
 /**
  * assigned_modules
  *
  * @author   StarRider starrrider@sourceforge.net
  *
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -84,8 +84,8 @@ function libBox($msg='',$border=TRUE,$odd=FALSE) {
 //				$clas a valid CSS Class - default = none
 // Note: JavaScript is used to Contract the box so it will be displayed if JavaScript is not active
 function libToggleBox($id,$msg,$hidden=TRUE,$clas='') {
-	if (isset($id) && isset($msg)) {
-		$ret = '<div id='.$id.' style="display:block;"'.((empty($clas)) ? '>' : ' class="'.$clas.'">');
+	if (isset($id) && !empty($id) && isset($msg)) {
+		$ret =	'<div id="'.$id.'" style="display:block;"'.((empty($clas)) ? '>' : ' class="'.$clas.'">');
 		$ret .=		$msg;
 		$ret .=	'</div>';
 		if ($hidden) $ret .= '<script type="text/javascript">'."hide('$id')</script>";
@@ -114,7 +114,7 @@ function libHeaderBox($header='',$msg='') {
 	return $ret;
 } $gLibertySystem->registerLibFunction( array(
 	'FuncName'	=> 'libHeaderBox',
-	'FuncDesc'	=> tra('Returns a Formatted Box with Header & Message Sections.'),
+	'FuncDesc'	=> tra('Returns a Formatted Box with Header and Message Sections.'),
 	'Params'	=> array(
 		'0' => array(
 			'Name' => 'header', 'Type' => 'string', 'Required' => TRUE, 'Default' => '',
@@ -136,7 +136,7 @@ function libHeaderBox($header='',$msg='') {
 //				$msg is the text string to be displayed
 //				$hidden is the default state of that window
 function libContractedHeaderBox($header='',$msg='',$hidden=TRUE) {
-	$winId = microtime() * 1000000;
+	$winId = 'lib'.(microtime() * 1000000);
 	if (!empty($header) && !empty($msg)) {
 		$tbl =	'<table><tr>'
 					.'<td style="width: 5%; text-align: center;">'.libAddPlusMinusIcon($winId,$hidden).'</td>'
@@ -148,7 +148,7 @@ function libContractedHeaderBox($header='',$msg='',$hidden=TRUE) {
 	return $ret;
 } $gLibertySystem->registerLibFunction( array(
 	'FuncName'	=> 'libContractedHeaderBox',
-	'FuncDesc'	=> tra('Returns a Formatted Box with a Header & Message Sections. The Message Section can be Expanded or Contracted'),
+	'FuncDesc'	=> tra('Returns a Formatted Box with a Header and Message Sections. The Message Section can be Expanded or Contracted'),
 	'Params'	=> array(
 		'0' => array(
 			'Name' => 'header', 'Type' => 'string', 'Required' => TRUE, 'Default' => '',
@@ -254,7 +254,7 @@ function libTabBox($title='',$body='') {
 // arguments:	$title is the string to be placed in the Tab
 //				$body will be added between the divs without any formatting
 function libContractedTabBox($title='',$body='',$hidden=TRUE) {
-	$winId = microtime() * 1000000;
+	$winId = 'lib'.(microtime() * 1000000);
 	if (!empty($title) && !empty($body)) {
 		$header =	'<div style="text-align: center;">'.$title.'<br />'.libAddPlusMinusIcon($winId,$hidden).'</div>';
 		$ret = libTabBox($header,libToggleBox($winId,$body));
@@ -361,7 +361,7 @@ function libAddAnchorLink($name='',$txt='') {
 // arguments:	$idWin is Window that the Icon will control
 //				$hidden is the default state of that window
 function libAddPlusMinusIcon($idWin,$hidden=FALSE) {
-	$idIcon = (microtime() * 1000000);
+	$idIcon = 'lib'.(microtime() * 1000000);
 	if (isset($idWin)) {
 		$ret =	'<a onclick="flipIcon('."'".$idWin."','".$idIcon."')".'">';
 		$ret .=		'<img id="'.$idIcon.'" src="'.LIBERTY_PKG_URL.'icons/';
@@ -405,7 +405,6 @@ global $gLibertySystem;
 	if (!empty($tbl)) {
 		$ret = $tbl;
 		if (!empty($example)) {
-			$mt = (microtime() * 1000000);
 			$ret .= 	'<div class="box"><strong>'.tra('Example:').' </strong>'.$example.'</div>';
 		}
 		if (is_array($notes) && !is_null($notes)) {
@@ -428,8 +427,8 @@ global $gLibertySystem;
 // arguments:	$parms contains everything to be placed in the table
 function libHelpTable($parms='') {
 global $pluginRowCnt;
-	$pluginRowCnt = 0;
 	if (!empty($parms)) {
+		$pluginRowCnt = 0; // Reset
 		$ret = '<table class="data help">'
 					.'<tr>'
 						.'<th>'.tra( "Key" ).'</th>'

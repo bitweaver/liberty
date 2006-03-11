@@ -4,10 +4,10 @@
  * assigned_modules
  *
  * @author   StarRider <starrrider@sourceforge.net>
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
- * 
+ *
  * @copyright Copyright (c) 2004, bitweaver.org
  * All Rights Reserved. See copyright.txt for details and a complete list of authors.
  * @license Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
@@ -65,13 +65,11 @@ function data_dropdown_help() {
 function data_dropdown($data, $params) {
 	extract ($params, EXTR_SKIP);
 	$title = (isset($title)) ? $title : tra( 'For More Information, click me.' );
-	$dd = (microtime() * 1000000);
-
-	return	'<div style="text-align:center;font-weight:bold;">
-				<a title="Click to Expand or Contract" href="javascript:flip(\'flip'.$dd.'\')">'.$title.'</a>
-			</div>
-			<div class="help box" style="display:none" id="flip'.$dd.'">'
-				.$data.
-			'</div>';
+	$id = 'dropdown'.(microtime() * 1000000);
+	$ret = 	'<div style="text-align:center;font-weight:bold;">'
+				.'<a title="Click to Expand or Contract" href="javascript:flip(\''.$id.'\')">'.$title.'</a>'
+			.'</div>'
+			.'<div class="help box" style="display:none" id="'.$dd.'">'.$data.'</div>';
+	return $ret;
 }
 ?>
