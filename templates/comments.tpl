@@ -31,7 +31,7 @@
 					<div class="row">
 						{formlabel label="Title" for="comments-title"}
 						{forminput}
-							<input type="text" size="50" name="comment_title" id="comments-title" value="{$postComment.title}" />
+							<input type="text" size="50" name="comment_title" id="comments-title" value="{$postComment.title|escape:html}" />
 							{formhelp note=""}
 						{/forminput}
 					</div>
@@ -97,7 +97,7 @@
 							<select name="comments_sort_mode" id="comments-sort">
 								<option value="commentDate_desc" {if $comments_sort_mode eq "commentDate_desc"}selected="selected"{/if}>Newest first</option>
 								<option value="commentDate_asc" {if $comments_sort_mode eq "commentDate_asc"}selected="selected"{/if}>Oldest first</option>
-							</select> 
+							</select>
 						</td>
 						<td style="text-align:right"><input type="submit" name="comments_setOptions" value="set" /></td>
 					</tr>
