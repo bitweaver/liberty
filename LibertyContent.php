@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.86 2006/03/06 14:06:31 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.87 2006/03/12 09:08:43 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -153,7 +153,7 @@ class LibertyContent extends LibertyBase {
 					|| (!empty($_REQUEST["title"]) && !empty($this->mInfo["title"]) && (md5($this->mInfo["title"]) != md5($_REQUEST["title"])));
 		// check some lengths, if too long, then truncate
 		if( !empty( $pParamHash['title'] ) ) {
-			$pParamHash['content_store']['title'] = htmlentities( substr( $pParamHash['title'], 0, 160 ) );
+			$pParamHash['content_store']['title'] = htmlspecialchars( substr( $pParamHash['title'], 0, 160 ), ENT_NOQUOTES, "UTF-8" );
 		} elseif( isset( $pParamHash['title'] ) ) {
 			$pParamHash['content_store']['title'] = NULL;
 		}
@@ -255,6 +255,7 @@ class LibertyContent extends LibertyBase {
 				if( !empty( $pParamHash['content_store']['title'] ) && !empty( $this->mInfo['title'] ) ) {
 					$renamed = $pParamHash['content_store']['title'] != $this->mInfo['title'];
 				}
+				vd($pParamHash);
 				$result = $this->mDb->associateUpdate( $table, $pParamHash['content_store'], array("content_id" => $pParamHash['content_id'] ) );
 			}
 
