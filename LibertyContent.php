@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.87 2006/03/12 09:08:43 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.88 2006/03/12 09:09:32 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -255,7 +255,6 @@ class LibertyContent extends LibertyBase {
 				if( !empty( $pParamHash['content_store']['title'] ) && !empty( $this->mInfo['title'] ) ) {
 					$renamed = $pParamHash['content_store']['title'] != $this->mInfo['title'];
 				}
-				vd($pParamHash);
 				$result = $this->mDb->associateUpdate( $table, $pParamHash['content_store'], array("content_id" => $pParamHash['content_id'] ) );
 			}
 
