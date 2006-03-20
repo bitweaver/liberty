@@ -14,36 +14,78 @@ array( 'QUERY' =>
 		"UPDATE `".BIT_DB_PREFIX."tiki_content` SET `last_hit` = `last_modified` ,`event_time` = 0;"
 	)),
 ),
+
 array( 'DATADICT' => array(
 	array( 'RENAMETABLE' => array(
-		'tiki_content' => 'liberty_content',
-		// TODO: add more tables here
+		'tiki_content'       => 'liberty_content',
+		'tiki_attachments'   => 'liberty_attachments',
+		'tiki_files'         => 'liberty_files',
+		'tiki_structures'    => 'liberty_structures',
+		'tiki_comments'      => 'liberty_comments',
+		'tiki_plugins'       => 'liberty_plugins',
+		'tiki_content_types' => 'liberty_content_types',
+		'tiki_link_cache'    => 'liberty_link_cache',
 	)),
-	array( 'RENAMECOLUMN' => array(
+	array( 'ALTER' => array(
 		'liberty_content' => array(
-			'`language`' => '`lang_code` C(32)',
+			'lang_code' => array( 'lang_code', 'C(32)' ),
 		),
+	)),
+)),
+
+array( 'QUERY' =>
+	array( 'PGSQL' => array(
+		"UPDATE `".BIT_DB_PREFIX."liberty_content` SET `lang_code` = `language`"
+	)),
+),
+
+array( 'DATADICT' => array(
+	array( 'DROPCOLUMN' => array(
+		'liberty_content' => array( '`language`' ),
+	)),
+)),
+
+// generic history for all content
+array( 'DATADICT' => array(
+	array( 'ALTER' => array (
+		'liberty_content_history' => array(
+			'content_id' => array( 'content_id', 'I4' ),
+		),
+		'liberty_content' => array(
+			'version' => array( 'version', 'I4' ),
+		),
+	)),
+)),
+
+array( 'QUERY' =>
+	array( 'PGSQL' => array(
+		"UPDATE `".BIT_DB_PREFIX."liberty_content_history` lch SET `content_id`=(SELECT `content_id` FROM `".BIT_DB_PREFIX."wiki_pages` wp WHERE wp.`page_id`=lch.`page_id`)"
+		"UPDATE `".BIT_DB_PREFIX."liberty_content` lc SET version=(SELECT `version` from `".BIT_DB_PREFIX."wiki_pages` wp WHERE wp.`content_id`=lc.`content_id`)"
+	)),
+),
+
+array( 'DATADICT' => array(
+	array( 'DROPCOLUMN' => array(
+		'liberty_content_history' => array( '`page_id`' ),
+		'wiki_pages'              => array( '`version`' ),
 	)),
 )),
 
 // changes for materialized path support for comments
 array( 'DATADICT' => array(
-array( 'CREATEINDEX' => array(
-	'thread_forward_idx' => array( 'liberty_comments', '`root_id`,`thread_forward_sequence`', array( 'UNIQUE' ) ),
-	'thread_reverse_idx' => array( 'liberty_comments', '`root_id`,`thread_reverse_sequence`', array( 'UNIQUE' ) ),
-    )),
-
-array( 'ALTER' => array (
-	'liberty_comments' => array(
-		'root_id' => array( 'root_id', 'I4' ),
-		'thread_forward_sequence' => array( 'thread_forward_sequence', 'C(250)' ),
-		'thread_reverse_sequence' => array( 'thread_reverse_sequence', 'C(250)' )
+	array( 'CREATEINDEX' => array(
+		'thread_forward_idx' => array( 'liberty_comments', '`root_id`,`thread_forward_sequence`', array( 'UNIQUE' ) ),
+		'thread_reverse_idx' => array( 'liberty_comments', '`root_id`,`thread_reverse_sequence`', array( 'UNIQUE' ) ),
 	)),
 
+	array( 'ALTER' => array (
+		'liberty_comments' => array(
+			'root_id' => array( 'root_id', 'I4' ),
+			'thread_forward_sequence' => array( 'thread_forward_sequence', 'C(250)' ),
+			'thread_reverse_sequence' => array( 'thread_reverse_sequence', 'C(250)' ),
+		),
+	)),
 )),
-
-),
-
 		)
 	),
 

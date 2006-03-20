@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.41 $
+ * @version  $Revision: 1.42 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -817,6 +817,7 @@ class TikiWikiParser extends BitBase {
 			}
 		}
 
+		// ============================================= this should go - xing
 		// Replace dynamic variables
 		// Dynamic variables are similar to dynamic content but they are editable
 		// from the page directly, intended for short data, not long text but text
@@ -860,6 +861,7 @@ class TikiWikiParser extends BitBase {
 			$data='<form method="post" name="dyn_vars">'.$data.'<div style="display:none;"><input type="submit" name="_dyn_update" value="'.tra('Update variables').'"/></div></form>';
 		}
 
+		/* ============================================= obsolete - this looks as though it should be a liberty plugin - xing
 		// Replace dynamic content occurrences
 		if (preg_match_all("/\{content +id=([0-9]+)\}/", $data, $dcs)) {
 			for ($i = 0; $i < count($dcs[0]); $i++) {
@@ -877,6 +879,7 @@ class TikiWikiParser extends BitBase {
 				$data = str_replace($dcs[0][$i], $repl, $data);
 			}
 		}
+		*/
 
 		// Replace boxes
 		$data = preg_replace("/\^([^\^]+)\^/", "<div class=\"bitbox\">$1</div>", $data);
