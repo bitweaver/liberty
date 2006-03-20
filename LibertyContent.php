@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.88 2006/03/12 09:09:32 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.89 2006/03/20 16:18:46 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -592,7 +592,7 @@ class LibertyContent extends LibertyBase {
 		if( $loadFuncs = $gLibertySystem->getServiceValues( $pServiceFunction ) ) {
 			foreach( $loadFuncs as $func ) {
 				if( function_exists( $func ) ) {
-					$loadHash = $func();
+					$loadHash = $func( $this );
 					if( !empty( $loadHash['select_sql'] ) ) {
 						$pSelectSql .= $loadHash['select_sql'];
 					}
@@ -609,7 +609,6 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 	}
-
 
 	/**
 	* Check permissions for the object that has been loaded against the permission database
