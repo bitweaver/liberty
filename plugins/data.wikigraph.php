@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wolff_borg <wolff_borg@yahoo.com.au>
 // | Reworked from: wikiplugin_wikigraph.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikigraph.php,v 1.8 2006/03/20 09:19:56 bitweaver Exp $
+// $Id: data.wikigraph.php,v 1.9 2006/03/20 09:30:59 bitweaver Exp $
 /**
  * definitions
  */
@@ -125,7 +125,7 @@ function data_wikigraph($data, $params) {
 	if(isset($nodeheight)) $add.="&amp;nodeheight=$nodeheight";
 	if(isset($edgecolor)) $add.="&amp;edgecolor=$edgecolor";
 	if(isset($edgestyle)) $add.="&amp;edgestyle=$edgestyle";
-	if(empty($data)) $data=( empty( $gContent->mInfo['title'] ) ? NULL : $gContent->mInfo['title'] );
+	if(empty($data)) $data=( ( !is_object( $gContent ) || empty( $gContent->mInfo['title'] ) ) ? NULL : $gContent->mInfo['title'] );
 	if( !empty( $data ) ) {
 		$mapname=md5(uniqid("."));
 		$ret='';
