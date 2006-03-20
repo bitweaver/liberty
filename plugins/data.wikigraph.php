@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wolff_borg <wolff_borg@yahoo.com.au>
 // | Reworked from: wikiplugin_wikigraph.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikigraph.php,v 1.9 2006/03/20 09:30:59 bitweaver Exp $
+// $Id: data.wikigraph.php,v 1.10 2006/03/20 15:58:35 squareing Exp $
 /**
  * definitions
  */
@@ -27,7 +27,7 @@ if ($gBitSystem->isPackageActive( 'wiki' ) ) { // Do not include this Plugin if 
 define( 'PLUGIN_GUID_DATAWIKIGRAPH', 'datawikigraph' );
 $pluginParams = array ( 'tag' => 'WIKIGRAPH',
 						'auto_activate' => FALSE,
-						'requires_pair' => FALSE,
+						'requires_pair' => TRUE,
 						'load_function' => 'data_wikigraph',
 						'title' => 'WikiGraph',
 						'help_page' => 'DataPluginWikiGraph',
@@ -75,6 +75,8 @@ function data_wikigraph_help() {
  		.'</table>'
 		.tra( "Example: " )."{div preset=centered border='3px solid blue'}";
 	return $help;
+
+	// old help - needs to be fulle converted into new format
 	$back = tra("^__Parameter Syntax:__ ") . "~np~{WIKIGRAPH" . tra("(key=>value)}~/np~\n");
 	$back.= tra("Inserts a graph for visual navigation. The graph shows the page and every page that can be reached from that page. Each node in the graph can be clicked to navigate to the selected page. Unless a PageName is included between the  ") . "__~np~{WIKIGRAPH}~/np~__" . tra(" blocks, the graph will be created for the Current Page. __Note:__ This plugin requires the installation of ))GraphViz(( on the server.");
 	$back.= tra("||__::key::__ | __::value::__ | __::Comments::__\n");
@@ -106,62 +108,66 @@ include_once( UTIL_PKG_PATH.'GraphViz.php' );
 
 function data_wikigraph($data, $params) {
 	global $gContent, $wikilib;
+
 	$add = "";
-	extract ($params, EXTR_SKIP);
-	if(!isset($level)) $level = 0;
-	if(!isset($title)) $title = "Wiki-Graph";
-	if(isset($page)) $add = "&amp;page=$page";
-	if(isset($nodesep)) $add.="&amp;nodesep=$nodesep";
-	if(isset($rankdir)) $add.="&amp;rankdir=$rankdir";
-	if(isset($size)) $add.="&amp;size=$size";
-	if(isset($bgcolor)) $add.="&amp;bgcolor=$bgcolor";
-	if(isset($fontsize)) $add.="&amp;fontsize=$fontsize";
-	if(isset($fontname)) $add.="&amp;fontname=$fontname";
-	if(isset($shape)) $add.="&amp;shape=$shape";
-	if(isset($nodestyle)) $add.="&amp;nodestyle=$nodestyle";
-	if(isset($nodecolor)) $add.="&amp;nodecolor=$nodecolor";
-	if(isset($nodefillcolor)) $add.="&amp;nodefillcolor=$nodefillcolor";
-	if(isset($nodewidth)) $add.="&amp;nodewidth=$nodewidth";
-	if(isset($nodeheight)) $add.="&amp;nodeheight=$nodeheight";
-	if(isset($edgecolor)) $add.="&amp;edgecolor=$edgecolor";
-	if(isset($edgestyle)) $add.="&amp;edgestyle=$edgestyle";
-	if(empty($data)) $data=( ( !is_object( $gContent ) || empty( $gContent->mInfo['title'] ) ) ? NULL : $gContent->mInfo['title'] );
+	$ret = " ";
+
+	if( empty( $params['level'] ) ) {
+		$level = 0;
+	}
+
+	$ommit = array( 'title', 'data' );
+	foreach( $params as $param => $value ) {
+		if( !in_array( $param, $ommit ) && !is_numeric( $param ) ) {
+			$add .= "&amp;{$param}={$value}";
+		}
+	}
+
+	//extract ($params, EXTR_SKIP);
+	if( empty( $title ) ) {
+		$title = "Wiki-Graph";
+	}
+
+	if( empty( $data ) ) {
+		$data = ( ( !is_object( $gContent ) || empty( $gContent->mInfo['title'] ) ) ? NULL : $gContent->mInfo['title'] );
+	}
+
 	if( !empty( $data ) ) {
-		$mapname=md5(uniqid("."));
-		$ret='';
 		$garg = array(
 			'att' => array(
-				'level'     => $level,
+				'level'     => $params['level'],
 				'nodesep'   => isset($nodesep) ? $nodesep : ".1",
 				'rankdir'   => isset($rankdir) ? $rankdir : "LR",
 				'bgcolor'   => isset($bgcolor) ? $bgcolor : "transparent",
-				'size'      => isset($size) ? $size : ""
+				'size'      => isset($size)    ? $size    : ""
 			),
 			'node' => array(
-				'fontsize'  => isset($fontsize) ? $fontsize : "9",
-				'fontname'  => isset($fontname) ? $fontname : "Helvetica",
-				'shape'     => isset($shape) ? $shape : "box",
-				'style'     => isset($nodestyle) ? $nodestyle : "filled",
-				'color'     => isset($nodecolor) ? $nodecolor : "#aeaeae",
-				'fillcolor' => isset($nodefillcolor) ? $nodefillcolor : "#FFFFFF",
-				'width'     => isset($nodewidth) ? $nodewidth : ".1",
-				'height'    => isset($nodeheight) ? $nodeheight : ".1"
+				'fontsize'  => isset($fontsize)      ? $fontsize      : "10",
+				'fontname'  => isset($fontname)      ? $fontname      : "sans",
+				'shape'     => isset($shape)         ? $shape         : "box",
+				'style'     => isset($nodestyle)     ? $nodestyle     : "filled",
+				'color'     => isset($nodecolor)     ? $nodecolor     : "#aaaaaa",
+				'fillcolor' => isset($nodefillcolor) ? $nodefillcolor : "#f5f5f5",
+				'width'     => isset($nodewidth)     ? $nodewidth     : ".1",
+				'height'    => isset($nodeheight)    ? $nodeheight    : ".1"
 			),
 			'edge' => array(
-				'color'     => isset($edgecolor) ? $edgecolor : "#999999",
+				'color'     => isset($edgecolor) ? $edgecolor : "#aa8866",
 				'style'     => isset($edgestyle) ? $edgestyle : "solid"
 			)
 		);
-		$ret .= "<div align='center'><img border='0' src=\"".WIKI_PKG_URL."wiki_graph.php?page=".urlencode($data)."&amp;level=$level$add\" alt='graph' usemap='#$mapname' />";
-		if( !empty( $page ) && !empty( $level ) && !empty( $garg ) ) {
-			$mapdata = $wikilib->get_graph_map($page, $level, $garg);
+
+		$mapname=md5(uniqid("."));
+		$ret = "<div align='center'><img border='0' src=\"".WIKI_PKG_URL."wiki_graph.php?page=".urlencode($data)."{$add}\" alt='{$title}' usemap='#$mapname' />";
+
+		if( !empty( $data ) && !empty( $params['level'] ) && !empty( $garg ) ) {
+			$mapdata = $wikilib->get_graph_map($data, $params['level'], $garg);
 			$mapdata = preg_replace("/\n|\r/", '', $mapdata);
-			$ret .= "<map name='$mapname'>$mapdata</map></div>";
-			return $ret;
-		} else {
-			return ' ';
+			$ret .= "<map name='$mapname'>$mapdata</map>";
+			$ret .= "</div>";
 		}
 	}
+	return $ret;
 }
 }
 ?>
