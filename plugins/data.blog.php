@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.blog.php,v 1.2 2006/01/30 09:10:47 squareing Exp $
+// $Id: data.blog.php,v 1.3 2006/03/22 10:24:20 squareing Exp $
 
 /**
  * definitions
