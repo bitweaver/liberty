@@ -211,8 +211,6 @@ $gBitInstaller->registerUserPermissions( LIBERTY_PKG_NAME, array(
 	array('bit_p_remove_comments', 'Can delete comments', 'editors', LIBERTY_PKG_NAME),
 	array('bit_p_vote_comments', 'Can vote comments', 'registered', LIBERTY_PKG_NAME),
 	array('bit_p_edit_comments', 'Can edit all comments', 'editors', LIBERTY_PKG_NAME),
-	array('bit_p_use_content_templates', 'Can use content templates', 'registered', LIBERTY_PKG_NAME),
-	array('bit_p_edit_content_templates', 'Can edit content templates', 'editors', LIBERTY_PKG_NAME),
 	array('bit_p_content_attachments', 'Can create content attachments', 'registered', LIBERTY_PKG_NAME),
 	array('bit_p_detach_attachment', 'Can detach content attachments', 'registered', LIBERTY_PKG_NAME),
 	array('bit_p_print', 'Can print content', 'basic', LIBERTY_PKG_NAME),
