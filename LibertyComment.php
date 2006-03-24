@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.18 2006/03/01 18:35:16 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.19 2006/03/24 18:16:35 sylvieg Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -409,18 +409,17 @@ class LibertyComment extends LibertyContent {
 		if (!empty($pSortOrder)) {
 			if ($pSortOrder == 'commentDate_desc') {
 				$mid = 'last_modified DESC';
-				}
-			if ($pSortOrder == 'commentDate_asc') {
+			} else if ($pSortOrder == 'commentDate_asc') {
 				$mid = 'last_modified ASC';
-				}
-			if ($pSortOrder == 'thread_asc') {
+			} elseif ($pSortOrder == 'thread_asc') {
 				$mid = 'thread_forward_sequence  ASC';
-				}
 			// thread newest first is harder...
-			if ($pSortOrder == 'thread_desc') {
+			} elseif ($pSortOrder == 'thread_desc') {
 				$mid = 'thread_reverse_sequence  ASC';
-				}
+			} else {
+				$mid = $this->mDb->convert_sortmode( $pSortOrder );
 			}
+		}
 		$mid = 'order by ' . $mid;
 
 		if ($contentId) {
@@ -435,7 +434,7 @@ class LibertyComment extends LibertyContent {
 					$mid";
 
 			$flat_comments = array();
-			if( $rows = $this->mDb->getAll($sql,array($pContentId),$pMaxComments,$pOffset) ) {
+			if( $rows = $this->mDb->query($sql,array($pContentId),$pMaxComments,$pOffset) ) {
 				foreach ($rows as $row) {
 					$row['parsed_data'] = $this->parseData($row);
 					$row['level'] = substr_count ( $row['thread_forward_sequence'], '.' ) - 1;
@@ -447,7 +446,6 @@ class LibertyComment extends LibertyContent {
 			$ret = $flat_comments;
 
 			}
-
 		return $ret;
 	}
 
