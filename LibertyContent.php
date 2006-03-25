@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.91 2006/03/25 16:32:44 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.92 2006/03/25 16:36:20 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -259,8 +259,6 @@ class LibertyContent extends LibertyBase {
 			}
 
 			if( !empty( $pParamHash['force_history'] ) || ( empty( $pParamHash['minor'] ) && $this->getField( 'version' ) && $pParamHash['field_changed'] )) {
-vd( $this->getField( 'version' ) );
-die;
 				if( empty( $pParamHash['has_no_history'] ) ) {
 					$query = "insert into `".BIT_DB_PREFIX."liberty_content_history`( `content_id`, `version`, `last_modified`, `user_id`, `ip`, `history_comment`, `data`, `description`, `format_guid`) values(?,?,?,?,?,?,?,?,?)";
 					$result = $this->mDb->query( $query, array( $this->mContentId, (int)$this->getField( 'version' ), (int)$this->getField( 'last_modified' ) , $this->getField( 'modifier_user_id' ), $this->getField( 'ip' ), $this->getField( 'history_comment' ), $this->getField( 'data' ), $this->getField( 'description' ), $this->getField( 'format_guid' ) ) );
