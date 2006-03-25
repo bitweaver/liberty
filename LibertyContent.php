@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.90 2006/03/23 20:26:33 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.91 2006/03/25 16:32:44 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -149,11 +149,11 @@ class LibertyContent extends LibertyBase {
 		}
 
 		$pParamHash['field_changed'] = empty( $pParamHash['content_id'] )
-					|| (!empty($this->mInfo["data"]) && !empty($_REQUEST["edit"]) && (md5($this->mInfo["data"]) != md5($_REQUEST["edit"])))
-					|| (!empty($_REQUEST["title"]) && !empty($this->mInfo["title"]) && (md5($this->mInfo["title"]) != md5($_REQUEST["title"])));
+					|| (!empty($this->mInfo["data"]) && !empty($pParamHash["edit"]) && (md5($this->mInfo["data"]) != md5($pParamHash["edit"])))
+					|| (!empty($pParamHash["title"]) && !empty($this->mInfo["title"]) && (md5($this->mInfo["title"]) != md5($pParamHash["title"])));
 		// check some lengths, if too long, then truncate
 		if( !empty( $pParamHash['title'] ) ) {
-			$pParamHash['content_store']['title'] = htmlspecialchars( substr( $pParamHash['title'], 0, 160 ), ENT_NOQUOTES, "UTF-8" );
+			$pParamHash['content_store']['title'] = substr( $pParamHash['title'], 0, 160 );
 		} elseif( isset( $pParamHash['title'] ) ) {
 			$pParamHash['content_store']['title'] = NULL;
 		}
@@ -259,6 +259,8 @@ class LibertyContent extends LibertyBase {
 			}
 
 			if( !empty( $pParamHash['force_history'] ) || ( empty( $pParamHash['minor'] ) && $this->getField( 'version' ) && $pParamHash['field_changed'] )) {
+vd( $this->getField( 'version' ) );
+die;
 				if( empty( $pParamHash['has_no_history'] ) ) {
 					$query = "insert into `".BIT_DB_PREFIX."liberty_content_history`( `content_id`, `version`, `last_modified`, `user_id`, `ip`, `history_comment`, `data`, `description`, `format_guid`) values(?,?,?,?,?,?,?,?,?)";
 					$result = $this->mDb->query( $query, array( $this->mContentId, (int)$this->getField( 'version' ), (int)$this->getField( 'last_modified' ) , $this->getField( 'modifier_user_id' ), $this->getField( 'ip' ), $this->getField( 'history_comment' ), $this->getField( 'data' ), $this->getField( 'description' ), $this->getField( 'format_guid' ) ) );
@@ -312,6 +314,8 @@ class LibertyContent extends LibertyBase {
 			$this->expungeComments();
 
 			$this->invokeServices( 'content_expunge_function', $this );
+
+			$this->expungeVersion();
 
 			// Remove individual permissions for this object if they exist
 			$query = "delete from `".BIT_DB_PREFIX."users_object_permissions` where `object_id`=? and `object_type`=?";
