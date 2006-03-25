@@ -34,7 +34,7 @@
 			</div>
 		{/form}
 
-		<h2>{$rankList.title} &nbsp;&nbsp; <small>[ {$rankList.attribute} ]</small></h2>
+		<h2>{$rankList.title|escape} &nbsp;&nbsp; <small>[ {$rankList.attribute} ]</small></h2>
 		<ol>
 			{foreach from=$rankList.data item=item}
 				<li class="{cycle values="even,odd"}">

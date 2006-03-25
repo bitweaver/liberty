@@ -6,7 +6,7 @@
 				{section loop=$structureInfo.structure_path name=ix}
 					{if $structureInfo.structure_path[ix].parent_id} &raquo; {/if}
 					<a href="index.php?structure_id={$structureInfo.structure_path[ix].structure_id}">
-						{$structureInfo.structure_path[ix].title}
+						{$structureInfo.structure_path[ix].title|escape}
 					</a>
 				{/section}
 			</span>
@@ -20,7 +20,7 @@
 							{if $wikibook_use_icons eq 'y'}
 								{biticon ipackage=liberty iname=nav_prev iexplain=Previous}
 							{else}
-								&laquo;&nbsp;{$structureInfo.prev.title}
+								&laquo;&nbsp;{$structureInfo.prev.title|escape}
 							{/if}
 						</a>
 					{else}&nbsp;{/if}
@@ -32,7 +32,7 @@
 							{if $wikibook_use_icons eq 'y'}
 								{biticon ipackage=liberty iname=nav_next iexplain=Next}
 							{else}
-								{$structureInfo.next.title}&nbsp;&raquo;
+								{$structureInfo.next.title|escape}&nbsp;&raquo;
 							{/if}
 						</a>
 					{else}&nbsp;{/if}

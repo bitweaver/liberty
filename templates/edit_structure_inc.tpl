@@ -3,7 +3,7 @@
 	<div class="tree-wrapper1">
 		{section name=ix loop=$subtree}
 			{if $subtree[ix].pos eq ''}
-				<h2>{$subtree[ix].title} {if $subtree[ix].page_alias}({/if}{$subtree[ix].page_alias}{if $subtree[ix].page_alias}){/if}</h2>
+				<h2>{$subtree[ix].title|escape} {if $subtree[ix].page_alias}({/if}{$subtree[ix].page_alias}{if $subtree[ix].page_alias}){/if}</h2>
 			{/if}
 		{/section}
 
@@ -13,7 +13,7 @@
 					{if $subtree[ix].first}{else}</div>{/if}
 					{if $subtree[ix].last}{else}
 						<div class="{if $subtree[ix].has_children}folder{else}doc{/if}">
-							<a href="{$smarty.const.WIKI_PKG_URL}index.php?structure_id={$subtree[ix].structure_id}" target="{$subtree[ix].content_id}" title="{$subtree[ix].structure_id}">{$subtree[ix].title}{if $subtree[ix].page_alias} ({$subtree[ix].page_alias}){/if}</a>
+							<a href="{$smarty.const.WIKI_PKG_URL}index.php?structure_id={$subtree[ix].structure_id}" target="{$subtree[ix].content_id}" title="{$subtree[ix].structure_id}">{$subtree[ix].title|escape}{if $subtree[ix].page_alias} ({$subtree[ix].page_alias}){/if}</a>
 					{/if}
 				{/if}
 			{/section}

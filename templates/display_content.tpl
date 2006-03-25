@@ -1,3 +1,3 @@
 Generic Content display template.
 <br />
-Title: {$pageInfo.title}
+Title: {$pageInfo.title|escape}

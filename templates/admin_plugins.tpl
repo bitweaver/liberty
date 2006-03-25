@@ -35,7 +35,7 @@
 									<tr class="{cycle values="odd,even"}">
 										<td>
 											{if $plugin_type eq 'data'}
-												<h3>{$plugin.title}</h3>
+												<h3>{$plugin.title|escape}</h3>
 											{/if}
 											<label for="{$guid}">
 												{$plugin.plugin_description}

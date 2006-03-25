@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.10 2006/03/04 11:13:55 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.11 2006/03/25 20:50:16 squareing Exp $ *}
 
 {strip}
 {if $gBitSystem->isFeatureActive( 'wiki_help' )}
@@ -32,7 +32,7 @@
 							<select size="15" onchange="javascript:flipMulti(this.options[this.selectedIndex].value,'2')">
 								{foreach from=$dataplugins item=p}
 									{if $p.is_active eq 'y'}
-										<option value="{$p.windowId}">{$p.title}</option>
+										<option value="{$p.windowId}">{$p.title|escape}</option>
 									{/if}
 								{/foreach}
 							</select>
@@ -43,7 +43,7 @@
 									<div id="{$p.windowId}" style="display:none;">
 										<table class="data help">
 											<tr>
-												<th colspan="4" style="text-align: center;">{$p.title}</th>
+												<th colspan="4" style="text-align: center;">{$p.title|escape}</th>
 											</tr>
 											<tr class="odd">
 												<td title="{tr}The GUID is a string used to locate the Plugins Data.{/tr}">GUID => {$p.guid}</td>
