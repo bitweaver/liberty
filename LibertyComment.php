@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.21 2006/03/28 17:42:52 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.22 2006/03/28 18:20:41 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -444,8 +444,8 @@ class LibertyComment extends LibertyContent {
 				    where tc.root_id $mid2
 					$mid";
 			$flat_comments = array();
-			if( $rows = $this->mDb->getAll($sql,$bindVars,$pMaxComments,$pOffset) ) {
-				foreach ($rows as $row) {
+			if( $result = $this->mDb->query($sql,$bindVars,$pMaxComments,$pOffset) ) {
+				while( $row = $result->FetchRow() ) {
 					$row['parsed_data'] = $this->parseData($row);
 					$row['level'] = substr_count ( $row['thread_forward_sequence'], '.' ) - 1;
 					$flat_comments[] = $row;
