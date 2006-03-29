@@ -86,6 +86,258 @@ array( 'DATADICT' => array(
 		),
 	)),
 )),
+
+// straight from http://www.bitweaver.org/storage/comments_updater.txt -- not tested yet
+array( 'PHP' => '
+	#require_once( "../bit_setup_inc.php" );
+	#require_once( WIKI_PKG_PATH."BitPage.php" );
+	require_once( LIBERTY_PKG_PATH."LibertyBase.php");
+
+
+	global $gQueryUserId;
+	require_once( LIBERTY_PKG_PATH."LibertyComment.php" );
+	$cmt = new LibertyComment();
+	$max_records = 100000;
+	$allComments = $cmt->getList(
+		array(
+			"max_records" => $max_records,
+			"created_ge" => 0,
+		)
+	);
+
+
+	#bitweaver/jht/make_comments_rss.php on line 43
+	#comment=a:7:{s:10:"content_id";s:4:"5339";
+	#s:13:"content_title";
+	#s:19:"Hong Kong Broadband";
+	#s:7:"created";s:10:"1128187879";
+	#s:13:"last_modified";s:10:"1131332821";
+	#s:5:"title";N;
+	#s:4:"user";s:5:"kcyyk";
+	#s:9:"real_name";s:7:"Kenneth";}
+
+
+	foreach ($allComments as $comment) {
+		# echo "x=" . serialize($comment) . "\n";
+		# exit;
+		$comment_id = $comment["comment_id"];
+		$parent_content_type = $comment["content_type_guid"];
+		$content_title = $comment["content_title"];
+		$content_id = $comment["content_id"];
+		$parent_id = $comment["parent_id"];
+		$created = $comment["created"];
+		$last_modified = $comment["last_modified"];
+		$title = $comment["title"];
+		$user = $comment["user"];
+		$user_name = $comment["real_name"];
+		$data = $comment["data"];
+		$content_type_guid = $comment["content_type_guid"];
+
+		// assume not usable as not converted yet
+		$root_id = $comment["root_id"];
+
+		//make guess of parent_id -- refine later
+		$root_content_id_of_comment[$content_id] = $parent_id;
+
+		$parent_content_id_of_comment[$content_id] = $parent_id;
+		$content_type_guid_of_comment[$content_id] = $content_type_guid;
+		$depth_of_comment[$content_id] =  1;
+		$comment_id_of_comment[$content_id] = $comment_id;
+
+		#  echo "A comment: $comment_id content: $content_id parent: $parent_id root: $root_id title: $title\n";
+
+	}
+
+	#echo serialize($content_type_guid_of_comment),"\n";
+
+	//calc comment root and depth
+
+	$loop_done = 0;
+	while (!$loop_done) {
+		$c = 0;
+		foreach ($allComments as $comment) {
+			$content_id = $comment["content_id"];
+			$comment_id = $comment["comment_id"];
+			$parent_id = $comment["parent_id"];
+			$title = $comment["title"];
+
+			$root_id = $root_content_id_of_comment[$content_id];
+			$root_content_type = empty($content_type_guid_of_comment[$root_id]) ? "notcomment" : $content_type_guid_of_comment[$root_id];
+
+			if ($root_content_type == "bitcomment") {
+				# its a comment on a comment
+				# need to go back one more level
+				$root_content_id_of_comment[$content_id] = $parent_content_id_of_comment[$root_id];
+				$depth_of_comment[$content_id]++;
+				$c++;
+			}
+		}
+		if ($c <= 0) {
+			$loop_done = 1;
+		}
+	}
+
+
+	usort($allComments, "jc");
+
+	function jc ($a, $b) {
+		global $root_table;
+		global $depth_of_comment;
+		global $comment_id_of_comment;
+		global $root_content_id_of_comment;
+
+		$content_id_a = $a["content_id"];
+		$content_id_b = $b["content_id"];
+
+		$parent_id_a = $a["parent_id"];
+		$parent_id_b = $b["parent_id"];
+
+		$root_a = $root_content_id_of_comment[$content_id_a];
+		$root_b = $root_content_id_of_comment[$content_id_b];
+
+
+		$depth_a = $depth_of_comment[$content_id_a];
+		$depth_b = $depth_of_comment[$content_id_b];
+
+		$id_a = $comment_id_of_comment[$content_id_a];
+		$id_b = $comment_id_of_comment[$content_id_b];
+
+		$key_a = sprintf("%08d %08d %08d",$root_a,$depth_a,$parent_id_a);
+		$key_b = sprintf("%08d %08d %08d",$root_b,$depth_b,$parent_id_b);;
+
+		if ($key_a == $key_b) {
+			return 0;
+		}
+
+		return ($key_a < $key_b) ? -1: +1;
+	}
+
+	foreach ($allComments as $comment) {
+		$content_id = $comment["content_id"];
+		$comment_id = $comment["comment_id"];
+		$parent_content_type = $comment["content_type_guid"];
+		$content_title = $comment["content_title"];
+		$parent_id = $comment["parent_id"];
+		$created = $comment["created"];
+		$last_modified = $comment["last_modified"];
+		$title = $comment["title"];
+		$user = $comment["user"];
+		$user_name = $comment["real_name"];
+		$data = $comment["data"];
+
+		$root_id = $root_content_id_of_comment[$content_id];
+		$depth = $depth_of_comment[$content_id];
+
+		// we used to number sequentially, easier to just use comemnt ID
+		#  $root_table_seq[$parent_id . "-" . $depth] =  empty($root_table_seq[$parent_id . "-" . $depth]) ? 1: $root_table_seq[$parent_id . "-" . $depth] + 1; 
+		$root_table_seq[$parent_id . "-" . $depth] = $comment_id;
+
+		$root_table_seq3[$content_id] = $root_table_seq[$parent_id . "-" . $depth];  
+
+		#  echo "C comment $comment_id content: $content_id parent: $parent_id root: $root_id depth: $depth title: $title\n";
+		#  echo "update bit_liberty_comments set root_id=$root_id where comment_id=$comment_id;\n";
+		$sql = "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `root_id` = ? where `comment_id` = ?";
+		echo $sql . "  ($root_id, $comment_id)\n";
+		$result = $gBitSystem->mDb->query($sql, array($root_id, $comment_id));
+		#echo "result=" . serialize($result) . "\n";
+
+	}
+
+
+	foreach ($allComments as $comment) {
+		$content_id = $comment["content_id"];
+		$comment_id = $comment["comment_id"];
+		$parent_content_type = $comment["content_type_guid"];
+		$content_title = $comment["content_title"];
+		$parent_id = $comment["parent_id"];
+		$created = $comment["created"];
+		$last_modified = $comment["last_modified"];
+		$title = $comment["title"];
+		$user = $comment["user"];
+		$user_name = $comment["real_name"];
+		$data = $comment["data"];
+
+		$root_id = $root_content_id_of_comment[$content_id];
+		$depth = $depth_of_comment[$content_id];
+
+		$seq = sprintf("%09d",$root_table_seq3[$content_id]);
+
+		$x = $parent_id;
+		while (!empty($root_table_seq3[$x])) {
+			$seq = sprintf("%09d",$root_table_seq3[$x]) . "." . $seq;
+			$x = $parent_content_id_of_comment[$x];
+		}
+
+
+		$seq .= ".";
+		if (strlen($seq) > 25*10) {
+			echo "restricting depth: comment: $comment_id, content_id=$content_id\n";
+			$seq = substr($seq,0,24*10) . sprintf("%09d",$comment_id) . ".";
+		}
+
+
+		#  $seq_r .= ".";
+
+		$seq_r = strtr($seq, "0123456789", "9876543210");
+
+		#  echo "D comment $comment_id content: $content_id parent: $parent_id root: $root_id depth: $depth title: $title\n";
+		#  echo "  seq=$seq=\n";
+		#  echo " rseq=$seq_r=\n";
+
+		#  echo "update bit_liberty_comments set thread_forward_sequence="$seq" where comment_id=$comment_id;\n";
+		#  echo "update bit_liberty_comments set thread_reverse_sequence="$seq_r" where comment_id=$comment_id;\n";
+		$sql = "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `thread_forward_sequence` = ? where `comment_id` = ?";
+		echo $sql . "   ($seq, $comment_id)\n";
+		$result = $gBitSystem->mDb->query($sql, array($seq, $comment_id));
+
+		$sql = "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `thread_reverse_sequence` = ? where `comment_id` = ?";
+		echo $sql . "   ($seq_r, $comment_id)\n";
+		$result = $gBitSystem->mDb->query($sql, array($seq_r, $comment_id));
+	}
+'),
+array( 'DATADICT' => array(
+	array( 'RENAMECOLUMN' => array(
+		'liberty_files' => array(
+			'`size`' => 'file_size'
+		),
+		'liberty_structures' => array(
+			'`level`' => 'structure_level'
+		),
+		'liberty_content_history' => array(
+			'`comment`' => 'history_comment'
+		),
+		'liberty_action_log' => array(
+			'`comment`' => 'action_comment'
+		),
+	)),
+	array( 'DROPCOLUMN' => array(
+		'liberty_action_log' => array( '`page_id`' ),
+	)),
+	array( 'ALTER' => array(
+		'liberty_action_log' => array(
+			'content_id' => array( 'content_id', 'I4' ),
+		),
+	)),
+)),
+// keep an eye on this. i think wiki_pages is still called tiki_pages at this point - xing
+array( 'QUERY' =>
+	array( 'SQL92' => array(
+		"UPDATE `".BIT_DB_PREFIX."liberty_action_log` lal SET `content_id`=( SELECT `content_id` FROM `".BIT_DB_PREFIX."tiki_pages` tp WHERE tp.`page_id`=lal.`page_id` )"
+	)),
+),
+array( 'DATADICT' => array(
+	array( 'RENAMECOLUMN' => array(
+		'liberty_action_log' => array(
+			'`action`' => 'log_action'
+		),
+		'liberty_copyrights' => array(
+			'`year`' => 'copyright_year'
+		),
+		'liberty_content_prefs' => array(
+			'`value`' => 'pref_value'
+		),
+	)),
+)),
 		)
 	),
 
@@ -94,108 +346,107 @@ array( 'DATADICT' => array(
 
 // Step 0
 array( 'QUERY' =>
-array( 'PGSQL' => array(
-	"ALTER TABLE `".BIT_DB_PREFIX."tiki_files_pkey` RENAME TO `".BIT_DB_PREFIX."tiki_old_files_pkey`",
-)),
+	array( 'PGSQL' => array(
+		"ALTER TABLE `".BIT_DB_PREFIX."tiki_files_pkey` RENAME TO `".BIT_DB_PREFIX."tiki_old_files_pkey`",
+	)),
 ),
 
 // Step 1
 array( 'DATADICT' => array(
-array( 'DROPTABLE' => array(
-	'tiki_content'
-)),
-array( 'RENAMETABLE' => array(
-		'tiki_files' => 'tiki_old_files',
-)),
+	array( 'DROPTABLE' => array(
+		'tiki_content'
+	)),
+	array( 'RENAMETABLE' => array(
+			'tiki_files' => 'tiki_old_files',
+	)),
+	array( 'CREATE' => array (
+		'tiki_plugins' => "
+			plugin_guid C(16) PRIMARY,
+			plugin_type C(16) NOTNULL,
+			is_active C(1) NOTNULL DEFAULT 'y',
+			plugin_description C(250),
+			maintainer_url C(250)
+		",
 
-array( 'CREATE' => array (
-	'tiki_plugins' => "
-		plugin_guid C(16) PRIMARY,
-		plugin_type C(16) NOTNULL,
-		is_active C(1) NOTNULL DEFAULT 'y',
-		plugin_description C(250),
-		maintainer_url C(250)
-	",
+		'tiki_content_types' => "
+			content_type_guid C(16) PRIMARY,
+			content_description C(250) NOTNULL,
+			maintainer_url C(250),
+			handler_class C(128),
+			handler_package C(128),
+			handler_file C(128)
+		",
 
-	'tiki_content_types' => "
-		content_type_guid C(16) PRIMARY,
-		content_description C(250) NOTNULL,
-		maintainer_url C(250),
-		handler_class C(128),
-		handler_package C(128),
-		handler_file C(128)
-	",
+		'tiki_content' => "
+			content_id I4 PRIMARY,
+			user_id I4 NOTNULL,
+			modifier_user_id I4 NOTNULL,
+			created I8 NOTNULL,
+			last_modified I8 NOTNULL,
+			content_type_guid C(16) NOTNULL,
+			format_guid C(16) NOTNULL,
+			hits I4 NOTNULL DEFAULT 0,
+			language C(4),
+			title C(160),
+			ip C(39),
+			data X
+		",
 
-	'tiki_content' => "
-		content_id I4 PRIMARY,
-		user_id I4 NOTNULL,
-		modifier_user_id I4 NOTNULL,
-		created I8 NOTNULL,
-		last_modified I8 NOTNULL,
-		content_type_guid C(16) NOTNULL,
-		format_guid C(16) NOTNULL,
-		hits I4 NOTNULL DEFAULT 0,
-		language C(4),
-		title C(160),
-		ip C(39),
-		data X
-	",
+		'tiki_attachments' => "
+			attachment_id I4 PRIMARY,
+			attachment_plugin_guid C(16) NOTNULL,
+			content_id I4 NOTNULL,
+			foreign_id I4 NOTNULL,
+			user_id I4 NOTNULL,
+			pos I4,
+			hits I4,
+			error_code I4,
+			caption C(250)
+			CONSTRAINTS ', CONSTRAINT `tiki_attachment_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."tiki_content`( `content_id` )
+						  , CONSTRAINT `tiki_attachment_type_ref` FOREIGN KEY (`attachment_plugin_guid`) REFERENCES `".BIT_DB_PREFIX."tiki_plugins`( `plugin_guid` )'
+		",
 
-	'tiki_attachments' => "
-		attachment_id I4 PRIMARY,
-		attachment_plugin_guid C(16) NOTNULL,
-		content_id I4 NOTNULL,
-		foreign_id I4 NOTNULL,
-		user_id I4 NOTNULL,
-		pos I4,
-		hits I4,
-		error_code I4,
-		caption C(250)
-		CONSTRAINTS ', CONSTRAINT `tiki_attachment_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."tiki_content`( `content_id` )
-					  , CONSTRAINT `tiki_attachment_type_ref` FOREIGN KEY (`attachment_plugin_guid`) REFERENCES `".BIT_DB_PREFIX."tiki_plugins`( `plugin_guid` )'
-	",
+		'tiki_blobs' => "
+			blob_id I4 PRIMARY,
+			user_id I4 NOTNULL,
+			blob_size I8 NOTNULL,
+			blob_name C(250) NOTNULL,
+			blob_data_type C(100) NOTNULL,
+			blob_data B NOTNULL
+		",
 
-	'tiki_blobs' => "
-		blob_id I4 PRIMARY,
-		user_id I4 NOTNULL,
-		blob_size I8 NOTNULL,
-		blob_name C(250) NOTNULL,
-		blob_data_type C(100) NOTNULL,
-		blob_data B NOTNULL
-	",
+		'tiki_files' => "
+			file_id I4 PRIMARY,
+			user_id I4 NOTNULL,
+			storage_path C(250),
+			size I4,
+			mime_type C(64)
+		",
+	)),
+	array( 'RENAMECOLUMN' => array(
+		'tiki_structures' => array(
+			'`page_ref_id`' => 'structure_id I4 AUTO'
+		),
+		'tiki_link_cache' => array(
+			'`cacheId`' => 'cache_id I4 AUTO'
+		),
+		'tiki_comments' => array(
+			'`threadId`' => 'comment_id I4 AUTO',
+			'`parentId`' => 'parent_id I4',
+		)
+	)),
 
-	'tiki_files' => "
-		file_id I4 PRIMARY,
-		user_id I4 NOTNULL,
-		storage_path C(250),
-		size I4,
-		mime_type C(64)
-	",
-)),
-array( 'RENAMECOLUMN' => array(
-	'tiki_structures' => array(
-		'`page_ref_id`' => 'structure_id I4 AUTO'
-	),
-	'tiki_link_cache' => array(
-		'`cacheId`' => 'cache_id I4 AUTO'
-	),
-	'tiki_comments' => array(
-		'`threadId`' => 'comment_id I4 AUTO',
-		'`parentId`' => 'parent_id I4',
-	)
-)),
+	array( 'ALTER' => array(
+		'tiki_structures' => array(
+			'user_id' => array( 'user_id', 'I4' ),
+			'content_id' => array( 'content_id', 'I4' ),
+			'root_structure_id' => array( 'root_structure_id', 'I4' ),
+		),
+		'tiki_comments' => array(
+			'content_id' => array( 'content_id', 'I4' ), // , 'NOTNULL' ),
+		),
 
-array( 'ALTER' => array(
-	'tiki_structures' => array(
-		'user_id' => array( 'user_id', 'I4' ),
-		'content_id' => array( 'content_id', 'I4' ),
-		'root_structure_id' => array( 'root_structure_id', 'I4' ),
-	),
-	'tiki_comments' => array(
-		'content_id' => array( 'content_id', 'I4' ), // , 'NOTNULL' ),
-	),
-
-)),
+	)),
 )),
 
 // Step 2
