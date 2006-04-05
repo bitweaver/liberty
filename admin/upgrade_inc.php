@@ -59,7 +59,7 @@ array( 'DATADICT' => array(
 
 array( 'QUERY' =>
 	array( 'PGSQL' => array(
-		"UPDATE `".BIT_DB_PREFIX."liberty_content_history` lch SET `content_id`=(SELECT `content_id` FROM `".BIT_DB_PREFIX."wiki_pages` wp WHERE wp.`page_id`=lch.`page_id`)"
+		"UPDATE `".BIT_DB_PREFIX."liberty_content_history` lch SET `content_id`=(SELECT `content_id` FROM `".BIT_DB_PREFIX."wiki_pages` wp WHERE wp.`page_id`=lch.`page_id`)",
 		"UPDATE `".BIT_DB_PREFIX."liberty_content` lc SET version=(SELECT `version` from `".BIT_DB_PREFIX."wiki_pages` wp WHERE wp.`content_id`=lc.`content_id`)"
 	)),
 ),
