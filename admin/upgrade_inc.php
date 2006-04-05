@@ -9,29 +9,60 @@ $upgrades = array(
 			// STEP 1
 array( 'QUERY' =>
 	array( 'PGSQL' => array(
-		"ALTER TABLE `".BIT_DB_PREFIX."tiki_content` ADD `last_hit` INT8 NOT NULL DEFAULT 0,",
-		"ALTER TABLE `".BIT_DB_PREFIX."tiki_content` ADD `event_time` INT8 NOT NULL DEFAULT 0,",
-		"UPDATE `".BIT_DB_PREFIX."tiki_content` SET `last_hit` = `last_modified` ,`event_time` = 0;"
+		"ALTER TABLE `".BIT_DB_PREFIX."tiki_content` ADD `last_hit` INT8 NOT NULL DEFAULT 0",
+		"ALTER TABLE `".BIT_DB_PREFIX."tiki_content` ADD `event_time` INT8 NOT NULL DEFAULT 0",
+		"UPDATE `".BIT_DB_PREFIX."tiki_content` SET `last_hit` = `last_modified` ,`event_time` = 0",
 	)),
 ),
 
 array( 'DATADICT' => array(
 	array( 'RENAMETABLE' => array(
-		'tiki_content'       => 'liberty_content',
-		'tiki_attachments'   => 'liberty_attachments',
-		'tiki_files'         => 'liberty_files',
-		'tiki_structures'    => 'liberty_structures',
-		'tiki_comments'      => 'liberty_comments',
-		'tiki_plugins'       => 'liberty_plugins',
-		'tiki_content_types' => 'liberty_content_types',
-		'tiki_link_cache'    => 'liberty_link_cache',
+		'tiki_content'          => 'liberty_content',
+		'tiki_attachments'      => 'liberty_attachments',
+		'tiki_files'            => 'liberty_files',
+		'tiki_structures'       => 'liberty_structures',
+		'tiki_comments'         => 'liberty_comments',
+		'tiki_plugins'          => 'liberty_plugins',
+		'tiki_content_types'    => 'liberty_content_types',
+		'tiki_link_cache'       => 'liberty_link_cache',
+		'tiki_history'          => 'liberty_content_history',
+		'tiki_actionlog'        => 'liberty_action_log',
+		'tiki_copyrights'       => 'liberty_copyrights',
+		'tiki_links'            => 'liberty_content_links',
+		'tiki_user_preferences' => 'liberty_content_prefs',
 	)),
 	array( 'ALTER' => array(
 		'liberty_content' => array(
-			'lang_code' => array( 'lang_code', 'C(32)' ),
+			'lang_code' => array( '`lang_code`', 'VARCHAR(32)' ),
 		),
 	)),
 )),
+
+// content links
+array( 'QUERY' =>
+	array( 'MYSQL' => array(
+		"ALTER TABLE `".BIT_DB_PREFIX."liberty_content_links` DROP PRIMARY KEY",
+	)),
+),
+
+array( 'DATADICT' => array(
+	array( 'ALTER' => array(
+		'liberty_content_links' => array(
+			'to_title' => array( '`to_title`', 'VARCHAR(160)' ),
+		),
+	)),
+)),
+
+array( 'QUERY' =>
+	array( 'MYSQL' => array(
+		"UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET to_title = (SELECT title FROM `".BIT_DB_PREFIX."liberty_content` lc WHERE `".BIT_DB_PREFIX."liberty_content_links`.`to_content_id`=lc.`content_id`)",
+		"DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE to_title IS NULL",
+		"ALTER TABLE liberty_content_links ALTER to_content_id DROP NOT NULL",
+	)),
+	array( 'CREATEINDEX' => array(
+		'liberty_content_links_title_idx' => array( 'liberty_content_links', '`to_title`' ),
+	)),
+),
 
 array( 'QUERY' =>
 	array( 'PGSQL' => array(
@@ -49,41 +80,41 @@ array( 'DATADICT' => array(
 array( 'DATADICT' => array(
 	array( 'ALTER' => array (
 		'liberty_content_history' => array(
-			'content_id' => array( 'content_id', 'I4' ),
+			'content_id' => array( '`content_id`', 'I4' ),
 		),
 		'liberty_content' => array(
-			'version' => array( 'version', 'I4' ),
+			'version' => array( '`version`', 'I4' ),
 		),
 	)),
 )),
 
 array( 'QUERY' =>
 	array( 'PGSQL' => array(
-		"UPDATE `".BIT_DB_PREFIX."liberty_content_history` lch SET `content_id`=(SELECT `content_id` FROM `".BIT_DB_PREFIX."wiki_pages` wp WHERE wp.`page_id`=lch.`page_id`)",
-		"UPDATE `".BIT_DB_PREFIX."liberty_content` lc SET version=(SELECT `version` from `".BIT_DB_PREFIX."wiki_pages` wp WHERE wp.`content_id`=lc.`content_id`)"
+		"UPDATE `".BIT_DB_PREFIX."liberty_content_history` SET `content_id`=(SELECT `content_id` FROM `".BIT_DB_PREFIX."tiki_pages` wp WHERE wp.`page_id`=`".BIT_DB_PREFIX."liberty_content_history`.`page_id`)",
+		"UPDATE `".BIT_DB_PREFIX."liberty_content` SET version=(SELECT `version` from `".BIT_DB_PREFIX."tiki_pages` wp WHERE wp.`content_id`=`".BIT_DB_PREFIX."liberty_content`.`content_id`)"
 	)),
 ),
 
 array( 'DATADICT' => array(
 	array( 'DROPCOLUMN' => array(
 		'liberty_content_history' => array( '`page_id`' ),
-		'wiki_pages'              => array( '`version`' ),
+		'tiki_pages'              => array( '`version`' ),
 	)),
 )),
 
 // changes for materialized path support for comments
 array( 'DATADICT' => array(
-	array( 'CREATEINDEX' => array(
-		'thread_forward_idx' => array( 'liberty_comments', '`root_id`,`thread_forward_sequence`', array( 'UNIQUE' ) ),
-		'thread_reverse_idx' => array( 'liberty_comments', '`root_id`,`thread_reverse_sequence`', array( 'UNIQUE' ) ),
-	)),
-
 	array( 'ALTER' => array (
 		'liberty_comments' => array(
 			'root_id' => array( 'root_id', 'I4' ),
-			'thread_forward_sequence' => array( 'thread_forward_sequence', 'C(250)' ),
-			'thread_reverse_sequence' => array( 'thread_reverse_sequence', 'C(250)' ),
+			'thread_forward_sequence' => array( '`thread_forward_sequence`', 'VARCHAR(250)' ),
+			'thread_reverse_sequence' => array( '`thread_reverse_sequence`', 'VARCHAR(250)' ),
 		),
+	)),
+
+	array( 'CREATEINDEX' => array(
+		'thread_forward_idx' => array( 'liberty_comments', '`root_id`,`thread_forward_sequence`', array( 'UNIQUE' ) ),
+		'thread_reverse_idx' => array( 'liberty_comments', '`root_id`,`thread_reverse_sequence`', array( 'UNIQUE' ) ),
 	)),
 )),
 
@@ -92,7 +123,6 @@ array( 'PHP' => '
 	#require_once( "../bit_setup_inc.php" );
 	#require_once( WIKI_PKG_PATH."BitPage.php" );
 	require_once( LIBERTY_PKG_PATH."LibertyBase.php");
-
 
 	global $gQueryUserId;
 	require_once( LIBERTY_PKG_PATH."LibertyComment.php" );
@@ -298,20 +328,17 @@ array( 'PHP' => '
 array( 'DATADICT' => array(
 	array( 'RENAMECOLUMN' => array(
 		'liberty_files' => array(
-			'`size`' => 'file_size'
+			'`size`' => '`file_size` I4'
 		),
 		'liberty_structures' => array(
-			'`level`' => 'structure_level'
+			'`level`' => '`structure_level` I1 NOTNULL DEFAULT 1'
 		),
 		'liberty_content_history' => array(
-			'`comment`' => 'history_comment'
+			'`comment`' => '`history_comment` C(200)'
 		),
 		'liberty_action_log' => array(
-			'`comment`' => 'action_comment'
+			'`comment`' => '`action_comment` C(200)'
 		),
-	)),
-	array( 'DROPCOLUMN' => array(
-		'liberty_action_log' => array( '`page_id`' ),
 	)),
 	array( 'ALTER' => array(
 		'liberty_action_log' => array(
@@ -319,22 +346,24 @@ array( 'DATADICT' => array(
 		),
 	)),
 )),
-// keep an eye on this. i think wiki_pages is still called tiki_pages at this point - xing
 array( 'QUERY' =>
 	array( 'SQL92' => array(
-		"UPDATE `".BIT_DB_PREFIX."liberty_action_log` lal SET `content_id`=( SELECT `content_id` FROM `".BIT_DB_PREFIX."tiki_pages` tp WHERE tp.`page_id`=lal.`page_id` )"
+		"UPDATE `".BIT_DB_PREFIX."liberty_action_log` SET `content_id`=( SELECT `content_id` FROM `".BIT_DB_PREFIX."tiki_pages` tp WHERE tp.`page_id`=`".BIT_DB_PREFIX."liberty_action_log`.`page_id` )"
 	)),
 ),
 array( 'DATADICT' => array(
+	array( 'DROPCOLUMN' => array(
+		'liberty_action_log' => array( '`page_id`' ),
+	)),
 	array( 'RENAMECOLUMN' => array(
 		'liberty_action_log' => array(
-			'`action`' => 'log_action'
+			'`action`' => '`log_action` C(255) NOTNULL'
 		),
 		'liberty_copyrights' => array(
-			'`year`' => 'copyright_year'
+			'`year`' => '`copyright_year` I8'
 		),
 		'liberty_content_prefs' => array(
-			'`value`' => 'pref_value'
+			'`value`' => '`pref_value` C(250)'
 		),
 	)),
 )),
@@ -425,14 +454,14 @@ array( 'DATADICT' => array(
 	)),
 	array( 'RENAMECOLUMN' => array(
 		'tiki_structures' => array(
-			'`page_ref_id`' => 'structure_id I4 AUTO'
+			'`page_ref_id`' => '`structure_id` I4 AUTO'
 		),
 		'tiki_link_cache' => array(
-			'`cacheId`' => 'cache_id I4 AUTO'
+			'`cacheId`' => '`cache_id` I4 AUTO'
 		),
 		'tiki_comments' => array(
-			'`threadId`' => 'comment_id I4 AUTO',
-			'`parentId`' => 'parent_id I4',
+			'`threadId`' => '`comment_id` I4 AUTO',
+			'`parentId`' => '`parent_id` I4',
 		)
 	)),
 
@@ -463,29 +492,6 @@ array( 'PGSQL' => array(
 	"ALTER TABLE `".BIT_DB_PREFIX."tiki_content` ADD CONSTRAINT `tiki_content_guid_ref`  FOREIGN KEY (`format_guid`) REFERENCES ".BIT_DB_PREFIX."tiki_plugins( `plugin_guid` )"
 	"ALTER TABLE `".BIT_DB_PREFIX."tiki_content` ADD CONSTRAINT `tiki_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."tiki_content_types`( `content_type_guid` )" ),
 )),
-
-threadId
-object
-objectType
-parentId
-userName
-type
-points
-votes
-average
-hash
-summary
-smiley
-message_id
-in_reply_to
-comment_rating
-
-commentDate
-hits
-data
-title
-user_ip
-
 */
 ),
 
