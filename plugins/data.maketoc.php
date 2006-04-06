@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.7 2006/01/20 11:08:50 squareing Exp $
+// $Id: data.maketoc.php,v 1.8 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
@@ -23,18 +23,20 @@
 define( 'PLUGIN_GUID_DATAMAKETOC', 'datamaketoc' );
 global $gLibertySystem;
 global $gContent;
-$pluginParams = array ( 'tag' => 'MAKETOC',
-						'auto_activate' => TRUE,
-						'requires_pair' => FALSE,
-						'load_function' => '',
-						'title' => 'MakeTOC',
-						'help_page' => 'DataPluginMakeTOC',
-						'description' => tra("Will create a table of contents of the WikiPage based on the headings below."),
-						'help_function' => 'data_maketoc_help',
-
-						'syntax' => "{MAKETOC}",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'MAKETOC',
+	'auto_activate' => TRUE,
+	'requires_pair' => FALSE,
+	'load_function' => '',
+	'title' => 'MakeTOC',
+	'help_page' => 'DataPluginMakeTOC',
+	'description' => tra("Will create a table of contents of the WikiPage based on the headings below."),
+	'help_function' => 'data_maketoc_help',
+	'syntax' => "{MAKETOC}",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.maketoc.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAMAKETOC, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAMAKETOC );
 

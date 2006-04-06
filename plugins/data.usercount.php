@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,29 +14,32 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Damian Parker <damosoft@users.sourceforge.net>
-// | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
+// | Reworked & Undoubtedly Screwed-Up for (Bitweaver)
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_usercount.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.usercount.php,v 1.5 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.usercount.php,v 1.6 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
  */
 define( 'PLUGIN_GUID_DATAUSERCOUNT', 'datausercount' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'USERCOUNT',
-						'auto_activate' => FALSE,
-						'requires_pair' => TRUE,
-						'load_function' => 'data_usercount',
-						'title' => 'UserCount<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
-//						'title' => 'UserCount',                                                                                       // and Remove the comment from the start of this line
-						'help_page' => 'DataPluginUserCount',
-						'description' => tra("Will show the number of users. If a Group Name can be included to filter the Groups."),
-						'help_function' => 'data_usercount_help',
-						'syntax' => "{USERCOUNT}Group Name{USERCOUNT}",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'USERCOUNT',
+	'auto_activate' => FALSE,
+	'requires_pair' => TRUE,
+	'load_function' => 'data_usercount',
+	'title' => 'UserCount<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
+//	'title' => 'UserCount',                                                                                       // and Remove the comment from the start of this line
+	'help_page' => 'DataPluginUserCount',
+	'description' => tra("Will show the number of users. If a Group Name can be included to filter the Groups."),
+	'help_function' => 'data_usercount_help',
+	'syntax' => "{USERCOUNT}Group Name{USERCOUNT}",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.usercount.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAUSERCOUNT, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAUSERCOUNT );
 

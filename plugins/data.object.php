@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.3 $
+ * @package  liberty
+ * @subpackage plugins_data
+ */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2004, bitweaver.org
 // +----------------------------------------------------------------------+
@@ -9,11 +14,12 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Damian Parker <damosoft@users.sourceforge.net>
-// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Rewrote data function so plugin can cover more types of objects than just Flash
 // | by: Jasp (Jared Woodbridge) <jaspp@users.sourceforge.net>
 // +----------------------------------------------------------------------+
+// $Id: data.object.php,v 1.3 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
@@ -23,17 +29,20 @@ if( $gBitSystem->isPackageActive( 'wiki' ) ) { // Do not include this Plugin if 
 
 define( 'PLUGIN_GUID_DATAOBJECT', 'dataobject' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'OBJECT',
-						'auto_activate' => TRUE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_object',
-						'title' => 'Object',
-						'help_page' => 'DataPluginObject',
-						'description' => tra("This plugin displays a Flash, Tcl or Java applet/object."),
-						'help_function' => 'data_object_help',
-						'syntax' => "{OBJECT type= src= width= height=}",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'OBJECT',
+	'auto_activate' => TRUE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_object',
+	'title' => 'Object',
+	'help_page' => 'DataPluginObject',
+	'description' => tra("This plugin displays a Flash, Tcl or Java applet/object."),
+	'help_function' => 'data_object_help',
+	'syntax' => "{OBJECT type= src= width= height=}",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.object.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAOBJECT, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAOBJECT );
 
@@ -84,7 +93,7 @@ function data_object_help() {
 				. tra("(Default = ") . '<strong>' . tra( 'none - content is allowed to flow around object' ) . '</strong>)</td>'
 			.'</tr>'
 		.'</table>'
-		
+
 		.'<table class="data help">'
 			.'<caption>' . tra( "Flash specific parameters" ) . '</caption>'
 			.'<tr>'
@@ -98,7 +107,7 @@ function data_object_help() {
 				.'<td>' . tra( "The quality at which to display a Flash applet. Possible values are unknown - except:") . ' <strong>high</strong> ' . tra("and probably") . ' <strong>low</strong>.</td>'
 			.'</tr>'
 		.'</table>'
-		
+
 		.'<table class="data help">'
 			.'<caption>' . tra( "Java specific parameters" ) . '</caption>'
 			.'<tr>'
@@ -132,10 +141,10 @@ function data_object_help() {
 				.'<td>' . tra( "Specifies the name of the Java archive." ) . '</td>'
 			.'</tr>'
 		.'</table>'
-		
+
 		. tra("Example: ") . "{OBJECT type=flash src=../liberty/icons/Mind-Reader.swf}<br />"
 		. tra("Example: ") . "{OBJECT type=flash src=http://www.bitweaver.org/liberty/icons/Mind-Reader.swf width='100%' height='600' quality='high'}<br />"
-		. tra('Both of these examples display "The Flash Mind Reader" by Andy Naughton. The first example is on your site and is not very large. The second example is located on the bitweaver.org site and takes the width of the center column with an appropriate height.'); 
+		. tra('Both of these examples display "The Flash Mind Reader" by Andy Naughton. The first example is on your site and is not very large. The second example is located on the bitweaver.org site and takes the width of the center column with an appropriate height.');
 	return $help;
 }
 
@@ -146,9 +155,9 @@ function data_object ($data, $params) {
 		if (!array_key_exists($parameter, $params))
 			return '<span class="warning">'.tra('When using <strong>{object}</strong>, a <strong>type</strong> and <strong>src</strong> parameter is required.').'</span>';
 	}
-	
+
 	$objectParams = array();
-	
+
 	switch ($params["type"]) {
 		case "tcl":
 			// This loop scans for and sets param_ custom object parmeters. Note that in the future, it may be used for object types other than Tcl, so don't go making this part of the tcl clause below.
@@ -164,7 +173,7 @@ function data_object ($data, $params) {
 			$objectParams["pluginspage"] = "http://www.tcl.tk/software/plugin/";
 			$objectParams["src"] = $params["src"];
 			break;
-			
+
 		case "flash":
 			// Macromedia Flash movie
 			$classid = "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000";
@@ -172,7 +181,7 @@ function data_object ($data, $params) {
 			if (array_key_exists("quality", $params))
 				$objectParams["quality"] = $params["quality"];
 			break;
-			
+
 		case "java":
 			// Java applet
 			$classid = "clsid:8AD9C840-044E-11D1-B3E9-00805F499D93";
@@ -189,12 +198,12 @@ function data_object ($data, $params) {
 			if (array_key_exists("archive", $params))
 				$objectParams["archive"] = $params["archive"];
 			break;
-			
+
 		default:
 			// Unrecognized object type
 			return '<span class="warning">'.tra('The <strong>type</strong> parameter of <strong>{object}</strong> must either be <strong>tcl</strong>, <strong>flash</strong> or <strong>java</strong>.').'</span>';
 	}
-	
+
 	// Build the <object> HTML code
 	$result  = '<object classid="'.$classid.'" style="';
 	$result .= (array_key_exists("float",  $params)) ? ' float: ' .$params["float"]. ';' : '';
@@ -206,7 +215,7 @@ function data_object ($data, $params) {
 	foreach (array_keys($objectParams) as $parameter)
 		$result .= '<param name="'.$parameter.'" value="'.$objectParams[$parameter].'"/>';
 	$result .= '</object>';
-	
+
 	// ...and we're done
 	return $result;
 }

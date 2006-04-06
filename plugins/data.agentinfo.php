@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,27 +14,30 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Damian Parker <damosoft@users.sourceforge.net>
-// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.agentinfo.php,v 1.6 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.agentinfo.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
  */
 define( 'PLUGIN_GUID_DATAAGENTINFO', 'dataagentinfo' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'AGENTINFO',
-						'auto_activate' => TRUE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_agentinfo',
-						'title' => 'AgentInfo',
-						'help_page' => 'DataPluginAgentInfo',
-						'description' => tra("This plugin will display the viewer's IP address, the Browser they are using, or the info about the site's Server software."),
-						'help_function' => 'data_agentinfo_help',
-						'syntax' => "{AGENTINFO info= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'AGENTINFO',
+	'auto_activate' => TRUE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_agentinfo',
+	'title' => 'AgentInfo',
+	'help_page' => 'DataPluginAgentInfo',
+	'description' => tra("This plugin will display the viewer's IP address, the Browser they are using, or the info about the site's Server software."),
+	'help_function' => 'data_agentinfo_help',
+	'syntax' => "{AGENTINFO info= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.agentinfo.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAAGENTINFO, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAAGENTINFO );
 

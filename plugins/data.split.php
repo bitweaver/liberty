@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,29 +14,32 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Luis Argerich <lrargerich@users.sourceforge.net>
-// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_split.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.split.php,v 1.5 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.split.php,v 1.6 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
  */
 define( 'PLUGIN_GUID_DATASPLIT', 'datasplit' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'SPLIT',
-						'auto_activate' => FALSE,
-						'requires_pair' => TRUE,
-						'load_function' => 'data_split',
-						'title' => 'Split<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
-//						'title' => 'Split',                                                                             // and Remove the comment from the start of this line
-						'help_page' => 'DataPluginSplit',
-						'description' => tra("This plugin is used to split a page in two or more columns using __-~045~-__ as a seperator."),
-						'help_function' => 'data_split_help',
-						'syntax' => "{SPLIT joincols= fixedsize= }{SPLIT}",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'SPLIT',
+	'auto_activate' => FALSE,
+	'requires_pair' => TRUE,
+	'load_function' => 'data_split',
+	'title' => 'Split - This plugin is not yet functional.', // Remove this line when the plugin becomes operational
+//	'title' => 'Split',	// and Remove the comment from the start of this line
+	'help_page' => 'DataPluginSplit',
+	'description' => tra("This plugin is used to split a page in two or more columns using __-~045~-__ as a seperator."),
+	'help_function' => 'data_split_help',
+	'syntax' => "{SPLIT joincols= fixedsize= }{SPLIT}",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.split.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATASPLIT, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATASPLIT );
 

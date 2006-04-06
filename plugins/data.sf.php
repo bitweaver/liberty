@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,10 +14,10 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Mose <mose@sourceforge.net>
-// | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
+// | Reworked & Undoubtedly Screwed-Up for (Bitweaver)
 // | by: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.sf.php,v 1.7 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.sf.php,v 1.8 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
@@ -26,17 +26,20 @@ define( 'PLUGIN_GUID_DATASF', 'datasf' );
 define('SF_CACHE',48); # in hours
 define('DEF_TAG','bugs');
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'SF',
-						'auto_activate' => TRUE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_sf',
-						'title' => 'SourceForge (SF)',
-						'help_page' => 'DataPluginSourceForge',
-						'description' => tra("Creates a link to SourceForge. Can link to the Bugs / RFEs / Patches / Support Index pages or individual items on those pages."),
-						'help_function' => 'data_sf_help',
-						'syntax' => "{SF tag= aid= groupid= atid= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'SF',
+	'auto_activate' => TRUE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_sf',
+	'title' => 'SourceForge (SF)',
+	'help_page' => 'DataPluginSourceForge',
+	'description' => tra("Creates a link to SourceForge. Can link to the Bugs / RFEs / Patches / Support Index pages or individual items on those pages."),
+	'help_function' => 'data_sf_help',
+	'syntax' => "{SF tag= aid= groupid= atid= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.sf.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATASF, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATASF );
 
@@ -52,8 +55,8 @@ function data_sf_help() {
 			.'<tr class="odd">'
 				.'<td>tag</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "The") . ' <strong>tag</strong> ' . tra("is a short-cut that allows you to use this plugin without having to look up the SourceForge") 
-				.' <strong>groupid or adit</strong> ' . tra("numbers for specific projects.") 
+				.'<td>' . tra( "The") . ' <strong>tag</strong> ' . tra("is a short-cut that allows you to use this plugin without having to look up the SourceForge")
+				.' <strong>groupid or adit</strong> ' . tra("numbers for specific projects.")
 				.'<br/>' . tra("Possible values for BitWeaver are:") . '<strong>bugs / rfe / patches / support</strong>'
 				.'<br/>' . tra("Possible values for TikiWiki are:") . '<strong>twbugs / twrfe / twpatches / twsupport</strong>'
 				.'<br/>' . tra("Possible values for JGraph are:") . '<strong>jgbugs / jgrfe / jgsupport</strong>'
@@ -73,7 +76,7 @@ function data_sf_help() {
 			.'<tr class="even">'
 				.'<td>atid</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Only") . ' <strong>Tracker</strong> ' . tra("pages on SourceForge used a") . ' <strong>adit</strong> ' 
+				.'<td>' . tra( "Only") . ' <strong>Tracker</strong> ' . tra("pages on SourceForge used a") . ' <strong>adit</strong> '
 				.tra("number. These pages are: Bugs / RFE / Patches / and ") . '<strong>3</strong></td>'
 			.'</tr>'
 		.'</table>'
@@ -86,7 +89,7 @@ function data_sf_help() {
 // Load Function
 function data_sf($data, $params) {
 	# customize that (or extract it in a db)
-	// [tag]     = array(  groupid , atid , ProjectName , TrackerName , IndexName ) 
+	// [tag]     = array(  groupid , atid , ProjectName , TrackerName , IndexName )
 // BitWeaver ******************************************************
 	$sftags['bugs'] = array('141358','749176','BitWeaver',' Bug #',' Bug Index');
 	$sftags['rfe'] = array('141358','749179','BitWeaver',' RFE #',' RFE Index');
@@ -103,10 +106,10 @@ function data_sf($data, $params) {
 	$sftags['jgsupport'] = array('43118','435211','JGraph',' Support #',' Support Index');
 // JGraph ******************************************************
 	$sftags['pbbrfe'] = array('7885','58021','PhpBB',' Bug #',' Bug Index');
-	
+
 	extract ($params, EXTR_SKIP);
 	$tag = (isset($tag)) ? strtolower($tag) : ' '; // Just to be sure no caps
-	if (isset($sftags["$tag"]) and (is_array($sftags["$tag"])) ) { // is $tag in the array 
+	if (isset($sftags["$tag"]) and (is_array($sftags["$tag"])) ) { // is $tag in the array
 		list($groupid,$atid,$proj,$tag1,$tag2) = $sftags["$tag"];
 		$tag = (isset($aid)) ? $proj . $tag1 . $aid : $proj . $tag2;
 	} else { // So their must be doing it the hard way
@@ -116,7 +119,7 @@ function data_sf($data, $params) {
 		} else { // Both groupid & atid are present / but project is unknown - so
 			$tag = (isset($aid)) ? 'Unknown Project / ID #' . $aid : 'Unknown Project Index Page';
 	}	}
-	$url = (isset($aid)) ? 'http://sourceforge.net/tracker/index.php?func=detail&aid=' . $aid . '&' : 'http://sourceforge.net/tracker/?'; 
+	$url = (isset($aid)) ? 'http://sourceforge.net/tracker/index.php?func=detail&aid=' . $aid . '&' : 'http://sourceforge.net/tracker/?';
 	$url = $url . 'group_id=' . $groupid . '&atid=' . $atid;
 
 	$ret = '<a href="' . $url . '" title="Launch Source Forge.net in a New Window" onkeypress="popUpWin(this.href,\'full\',800,800);" onclick="popUpWin(this.href,\'full\',800,800);return false;">' . $tag . '</a>';

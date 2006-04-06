@@ -1,16 +1,22 @@
 <?php
-// $id: data.example.php,v 1.4.2.9 2005/07/14 09:03:36 starrider Exp $
 /**
- * assigned_modules
- *
- * @author   StarRider starrrider@sourceforge.net
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
- * @copyright Copyright (c) 2004, bitweaver.org
- * All Rights Reserved. See copyright.txt for details and a complete list of authors.
- * @license Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
  */
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2004, bitweaver.org
+// +----------------------------------------------------------------------+
+// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
+// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
+// |
+// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
+// | -> see http://phpdocu.sourceforge.net/
+// +----------------------------------------------------------------------+
+// | Author: StarRider starrrider@sourceforge.net
+// +----------------------------------------------------------------------+
+// $id: data.example.php,v 1.4.2.9 2005/07/14 09:03:36 starrider Exp $
+
 /******************
  * Initialization *
  ******************/
@@ -25,6 +31,8 @@ $pluginParams = array ( 'tag' => 'EXAM',
 	'description' => tra("This Plugin is an Example that does nothing. It functions as a template for the creation of new plugins."),
 	'help_function' => 'data_example_help',
 	'syntax' => "{EXAM x1= x2= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.example.php',
+	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAEXAMPLE, $pluginParams );

@@ -1,10 +1,10 @@
 <?php
-// $Id: data.geshidata.php,v 1.1 2006/03/11 20:35:17 starrrider Exp $
+// $Id: data.geshidata.php,v 1.2 2006/04/06 05:06:11 starrrider Exp $
 /**
  * assigned_modules
  *
  * @author   StarRider <starrrider@sourceforge.net>
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -17,17 +17,20 @@
 global $gLibertySystem;
 define( 'PLUGIN_GUID_DATAGESHIDATA','datageshidata' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'GESHIDATA',
-						'auto_activate' => TRUE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_GeshiData',
-						'title' => 'GeshiData',
-						'help_page' => 'DataPluginGeshiData',
-						'description' => tra("This plugin is a documentation tool for the bitweaver site. It will display some of information defined in the GeSHi (Generic Syntax Highlighter) package."),
-						'help_function' => 'data_help_GeshiData',
-						'syntax' => "{GESHIDATA doall= lang= info= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'GESHIDATA',
+	'auto_activate' => TRUE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_GeshiData',
+	'title' => 'GeshiData',
+	'help_page' => 'DataPluginGeshiData',
+	'description' => tra("This plugin is a documentation tool for the bitweaver site. It will display some of information defined in the GeSHi (Generic Syntax Highlighter) package."),
+	'help_function' => 'data_help_GeshiData',
+	'syntax' => "{GESHIDATA doall= lang= info= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.geshidata.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAGESHIDATA, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAGESHIDATA );
 /*****************

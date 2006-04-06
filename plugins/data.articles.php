@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,11 +14,11 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Gustavo Muslera <gmuslera@users.sourceforge.net>
-// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_articles.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.articles.php,v 1.8 2006/01/14 19:54:56 squareing Exp $
+// $Id: data.articles.php,v 1.9 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
@@ -27,17 +27,20 @@ global $gBitSystem, $gBitSmarty;
 if( $gBitSystem->isPackageActive( 'articles' ) ) { // Do not include this Plugin if the Package is not active
 define( 'PLUGIN_GUID_DATAARTICLES', 'dataarticles' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'ARTICLES',
-						'auto_activate' => TRUE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_articles',
-						'help_function' => 'data_articles_help',
-						'title' => 'Articles',
-						'help_page' => 'DataPluginArticles',
-						'description' => tra( "This plugin will display several Articles." ),
-						'syntax' => "{ARTICLES max= topic= type= }",
-						'plugin_type' => DATA_PLUGIN
-					);
+$pluginParams = array (
+	'tag' => 'ARTICLES',
+	'auto_activate' => TRUE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_articles',
+	'help_function' => 'data_articles_help',
+	'title' => 'Articles',
+	'help_page' => 'DataPluginArticles',
+	'description' => tra( "This plugin will display several Articles." ),
+	'syntax' => "{ARTICLES max= topic= type= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.articles.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAARTICLES, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAARTICLES );
 

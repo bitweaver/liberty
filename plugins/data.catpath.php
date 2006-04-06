@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,11 +14,11 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): TeeDog <teedog@users.sourceforge.net>
-// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_catpath.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.catpath.php,v 1.6 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.catpath.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
@@ -27,18 +27,21 @@ global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'categories' ) ) { // Do not include this Plugin if the Package is not active
 define( 'PLUGIN_GUID_DATACATPATH', 'datacatpath' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'CATPATH',
-						'auto_activate' => FALSE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_catpath',
-						'title' => 'CatPath<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
-//						'title' => 'CatPath',																						  // and Remove the comment from the start of this line
-						'help_page' => 'DataPluginCatPath',
-						'description' => tra("This plugin insert the full category path for each category that the page belongs to."),
-						'help_function' => 'data_catpath_help',
-						'syntax' => "{CATPATH divider= top= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'CATPATH',
+	'auto_activate' => FALSE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_catpath',
+	'title' => 'CatPath - This plugin is not yet functional.', // Remove this line when the plugin becomes operational
+//	'title' => 'CatPath',	// and Remove the comment from the start of this line
+	'help_page' => 'DataPluginCatPath',
+	'description' => tra("This plugin insert the full category path for each category that the page belongs to."),
+	'help_function' => 'data_catpath_help',
+	'syntax' => "{CATPATH divider= top= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.catpath.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACATPATH, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATACATPATH );
 
@@ -70,7 +73,7 @@ function data_catpath_help() {
 function data_catpath($data, $params) { // Pre-Clyde Changes
 // requires_pair was TRUE / No other changes were made to the Help
 // The next 2 lines allow access to the $pluginParams given above and may be removed when no longer needed
-	global $gLibertySystem; 
+	global $gLibertySystem;
 	$pluginParams = $gLibertySystem->mPlugins[PLUGIN_GUID_DATACATPATH];
 	$ret = 'The plugin <strong>"' . $pluginParams['tag'] . '"</strong> has not been completed as yet. ';
 	return $ret;

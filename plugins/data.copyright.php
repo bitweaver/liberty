@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,10 +14,10 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Ricardo Gladwell <axonrg@users.sourceforge.net>
-// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.copyright.php,v 1.5 2006/02/06 22:56:47 squareing Exp $
+// $Id: data.copyright.php,v 1.6 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
@@ -27,17 +27,20 @@ if( ( $gBitSystem->isPackageActive( 'wiki' ) ) && ( $gBitSystem->isFeatureActive
 
 define( 'PLUGIN_GUID_DATACOPYRIGHT', 'datacopyright' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'COPYRIGHT',
-						'auto_activate' => TRUE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_copyright',
-						'title' => 'CopyRight',
-						'help_page' => 'DataPluginCopyRight',
-						'description' => tra("This plugin is used to insert CopyRight notices."),
-						'help_function' => 'data_copyright_help',
-						'syntax' => "{COPYRIGHT title= year= authors= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'COPYRIGHT',
+	'auto_activate' => TRUE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_copyright',
+	'title' => 'CopyRight',
+	'help_page' => 'DataPluginCopyRight',
+	'description' => tra("This plugin is used to insert CopyRight notices."),
+	'help_function' => 'data_copyright_help',
+	'syntax' => "{COPYRIGHT title= year= authors= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.copyright.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACOPYRIGHT, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATACOPYRIGHT );
 
@@ -77,7 +80,7 @@ function data_copyright($data, $params) { // Pre-Clyde Changes
 // Changed this to use Parameters instead
 // Added testing to maintain Pre-Clyde compatability
 // The next 2 lines allow access to the $pluginParams given above and may be removed when no longer needed
-	global $gLibertySystem; 
+	global $gLibertySystem;
 	$pluginParams = $gLibertySystem->mPlugins[PLUGIN_GUID_DATACOPYRIGHT];
 	extract ($params, EXTR_SKIP);
 	// This maintains Pre-Clyde Parameters

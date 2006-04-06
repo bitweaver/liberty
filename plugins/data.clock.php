@@ -1,21 +1,28 @@
 <?php
-// $id: data.example.php,v 1.4.2.9 2005/07/14 09:03:36 starrider Exp $
 /**
- * assigned_modules
- *
- * @author     xing
- * @version    $Revision: 1.5 $
- * @package    liberty
+ * @version  $Revision: 1.6 $
+ * @package  liberty
  * @subpackage plugins_data
- * @copyright  Copyright (c) 2004, bitweaver.org
  */
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2004, bitweaver.org
+// +----------------------------------------------------------------------+
+// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
+// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
+// |
+// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
+// | -> see http://phpdocu.sourceforge.net/
+// +----------------------------------------------------------------------+
+// | Author: xing
+// +----------------------------------------------------------------------+
+// $Id: data.clock.php,v 1.6 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * Setup Code
  */
 define( 'PLUGIN_GUID_DATACLOCK', 'dataclock' );
 global $gLibertySystem;
-$pluginParams = array ( 
+$pluginParams = array (
 	'tag' => 'CLOCK',
 	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
@@ -25,6 +32,8 @@ $pluginParams = array (
 	'description' => "This plugin allows you to insert flexible date/time strings into your pages.",
 	'help_function' => 'data_clock_help',
 	'syntax' => "{clock format='%c'}",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.example.php',
+	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACLOCK, $pluginParams );

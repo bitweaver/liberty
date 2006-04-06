@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,24 +15,27 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mapquest.php,v 1.6 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.mapquest.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
  */
 define( 'PLUGIN_GUID_DATAMAPQUEST', 'datamapquest' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'MAPQUEST',
-						'auto_activate' => TRUE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_mapquest',
-						'title' => 'MapQuest',
-						'help_page' => 'DataPluginMapQuest',
-						'description' => tra("Creates an Icon link to MapQuest and/or a link to a Specific Map based on an Address."),
-						'help_function' => 'data_mapquest_help',
-						'syntax' => "{MAPQUEST icon= myicon= text= address= city= state= zip= country= title= style= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'MAPQUEST',
+	'auto_activate' => TRUE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_mapquest',
+	'title' => 'MapQuest',
+	'help_page' => 'DataPluginMapQuest',
+	'description' => tra("Creates an Icon link to MapQuest and/or a link to a Specific Map based on an Address."),
+	'help_function' => 'data_mapquest_help',
+	'syntax' => "{MAPQUEST icon= myicon= text= address= city= state= zip= country= title= style= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.mapquest.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAMAPQUEST, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAMAPQUEST );
 
@@ -48,9 +51,9 @@ function data_mapquest_help() {
 			.'<tr class="odd">'
 				.'<td>icon</td>'
 				.'<td>' . tra( "key-word") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Creates an Icon Link to MapQuests primary URL. The size of the Icon can be:") 
+				.'<td>' . tra( "Creates an Icon Link to MapQuests primary URL. The size of the Icon can be:")
 					.' <strong>sm</strong> ' . tra("= Small,")
-					.' <strong>med</strong> ' . tra("= Medium,") 
+					.' <strong>med</strong> ' . tra("= Medium,")
 					.' <strong>lg</strong> ' . tra("= Large or")
 					.' <strong>none</strong> ' . tra("= The primary URL to MapQuest is <strong>NOT</strong> Displayed)")
 					. tra("<br />The Default = ") . ' <strong>sm</strong> ' . tra("The Small MapQuest Icon is displayed.")
@@ -125,7 +128,7 @@ function data_mapquest_help() {
 }
 
 // Load Function
-function data_mapquest( $data, $params ) { 
+function data_mapquest( $data, $params ) {
 	extract ($params, EXTR_SKIP);
 
 	$ret = '<a href="http://www.mapquest.com" title="Launch Map Quest in a New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">';
@@ -155,9 +158,9 @@ function data_mapquest( $data, $params ) {
 	$map = isset($style) ? $map . '&style=' . $style : $map;
 	$map = isset($title) ? $map . '&title=' . implode('+', explode(' ',$title)) : $map;
 	$map = '"' . $map . '&cid=lfmaplink"';
-	
+
 	$map = '<a href="' . $map . '" title="Launch Map Quest in a New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">';
-	
+
     if (isset($myicon)) { // Test for the existance of MyIcon
 		$ret = $map . '<img border="0" src="' . $myicon . '"></a>';
 	} else {

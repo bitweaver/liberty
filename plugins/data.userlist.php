@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,29 +14,32 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): sQuare
-// | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
+// | Reworked & Undoubtedly Screwed-Up for (Bitweaver)
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_userlist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.userlist.php,v 1.6 2006/02/08 18:32:10 mej Exp $
+// $Id: data.userlist.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
  */
 define( 'PLUGIN_GUID_DATAUSERLIST', 'datauserlist' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'USERLIST',
-						'auto_activate' => FALSE,
-						'requires_pair' => TRUE,
-						'load_function' => 'data_userlist',
-						'title' => 'UserList<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
-//						'title' => 'UserList',,                                                                                       // and Remove the comment from the start of this line
-						'help_page' => 'DataPluginUserList',
-						'description' => tra("This plugin will displays an alphabetically sorted list of registered users. A Group Name can be included to filter Groups to be listed."),
-						'help_function' => 'data_userlist_help',
-						'syntax' => "{USERLIST num= userspage= alpha= total= email= }GroupName{USERLIST}",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'USERLIST',
+	'auto_activate' => FALSE,
+	'requires_pair' => TRUE,
+	'load_function' => 'data_userlist',
+	'title' => 'UserList<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
+//	'title' => 'UserList',,                                                                                       // and Remove the comment from the start of this line
+	'help_page' => 'DataPluginUserList',
+	'description' => tra("This plugin will displays an alphabetically sorted list of registered users. A Group Name can be included to filter Groups to be listed."),
+	'help_function' => 'data_userlist_help',
+	'syntax' => "{USERLIST num= userspage= alpha= total= email= }GroupName{USERLIST}",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.userlist.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAUSERLIST, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAUSERLIST );
 
@@ -125,12 +128,12 @@ function wikiplugin_userlist($data, $params) {
 	global $gBitUser, $gBitSystem;
 
 	extract ($params, EXTR_SKIP);
-	$num = (isset($num)) ? True : False;				     // Default = False 
-	$userspage = (!isset($userspage)) ? True : False;   // Default = True 
-	$alpha = (!isset($alpha)) ? True : False; 				  // Default = True 
-	$total = (!isset($total)) ? True : False; 				   // Default = True 
-	$email = (isset($email)) ? True : False; 				 // Default = False 
-	
+	$num = (isset($num)) ? True : False;				     // Default = False
+	$userspage = (!isset($userspage)) ? True : False;   // Default = True
+	$alpha = (!isset($alpha)) ? True : False; 				  // Default = True
+	$total = (!isset($total)) ? True : False; 				   // Default = True
+	$email = (isset($email)) ? True : False; 				 // Default = False
+
 	$colcount = 1;
 
 	$ret = '<table class="normal">';

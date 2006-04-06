@@ -1,34 +1,41 @@
 <?php
-// $id:
 /**
- * assigned_modules
- *
- * @author   StarRider <starrrider@sourceforge.net>
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
- *
- * @copyright Copyright (c) 2004, bitweaver.org
- * All Rights Reserved. See copyright.txt for details and a complete list of authors.
- * @license Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
  */
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2004, bitweaver.org
+// +----------------------------------------------------------------------+
+// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
+// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
+// |
+// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
+// | -> see http://phpdocu.sourceforge.net/
+// +----------------------------------------------------------------------+
+// | Author: StarRider starrrider@sourceforge.net
+// +----------------------------------------------------------------------+
+// $id: data.dropdown.php,v 1.8 2005/07/14 09:03:36 starrider Exp $
 
 /**
  * Initialization
  */
 global $gLibertySystem;
 define( 'PLUGIN_GUID_DROPDOWN', 'dropdown' );
-$pluginParams = array ( 'tag' => 'DD',
-						'auto_activate' => TRUE,
-						'requires_pair' => TRUE,
-						'load_function' => 'data_dropdown',
-						'title' => 'DropDown (DD)',
-						'help_page' => 'DataPluginDropDown',
-						'description' => tra("This plugin creates a expandable box of text.. All text should be entered between the ") . "{DD} " . tra("blocks."),
-						'help_function' => 'data_dropdown_help',
-						'syntax' => "{DD title= width= }" . tra("Text in the Drop-Down box.") . "{DD}",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'DD',
+	'auto_activate' => TRUE,
+	'requires_pair' => TRUE,
+	'load_function' => 'data_dropdown',
+	'title' => 'DropDown (DD)',
+	'help_page' => 'DataPluginDropDown',
+	'description' => tra("This plugin creates a expandable box of text.. All text should be entered between the ") . "{DD} " . tra("blocks."),
+	'help_function' => 'data_dropdown_help',
+	'syntax' => "{DD title= width= }" . tra("Text in the Drop-Down box.") . "{DD}",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.dropdown.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DROPDOWN, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DROPDOWN );
 

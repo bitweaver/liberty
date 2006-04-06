@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,28 +14,31 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Unknown
-// | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
+// | Reworked & Undoubtedly Screwed-Up for (Bitweaver)
 // | by: wolff_borg <wolff_borg@yahoo.com.au>
 // | Reworked from: wikiplugin_wikigraph.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikigraph.php,v 1.10 2006/03/20 15:58:35 squareing Exp $
+// $Id: data.wikigraph.php,v 1.11 2006/04/06 05:06:11 starrrider Exp $
 /**
  * definitions
  */
 global $gBitSystem, $gLibertySystem;
 if ($gBitSystem->isPackageActive( 'wiki' ) ) { // Do not include this Plugin if the Package is not active
 define( 'PLUGIN_GUID_DATAWIKIGRAPH', 'datawikigraph' );
-$pluginParams = array ( 'tag' => 'WIKIGRAPH',
-						'auto_activate' => FALSE,
-						'requires_pair' => TRUE,
-						'load_function' => 'data_wikigraph',
-						'title' => 'WikiGraph',
-						'help_page' => 'DataPluginWikiGraph',
-						'description' => tra("Inserts a graph for visual navigation. The graph shows the page and every page that can be reached from that page."),
-						'help_function' => 'data_wikigraph_help',
-						'syntax' => "{WIKIGRAPH level= ,title= ,nodesep= ,rankdir= ,bgcolor= ,size= ,fontsize= ,fontname= ,shap= ,nodestyle= ,nodecolor= ,nodefillcolor= ,nodewidth= ,nodeheight= ,edgecolor= ,edgestyle= }".tra("Wiki page name")."{WIKIGRAPH}",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'WIKIGRAPH',
+	'auto_activate' => FALSE,
+	'requires_pair' => TRUE,
+	'load_function' => 'data_wikigraph',
+	'title' => 'WikiGraph',
+	'help_page' => 'DataPluginWikiGraph',
+	'description' => tra("Inserts a graph for visual navigation. The graph shows the page and every page that can be reached from that page."),
+	'help_function' => 'data_wikigraph_help',
+	'syntax' => "{WIKIGRAPH level= ,title= ,nodesep= ,rankdir= ,bgcolor= ,size= ,fontsize= ,fontname= ,shap= ,nodestyle= ,nodecolor= ,nodefillcolor= ,nodewidth= ,nodeheight= ,edgecolor= ,edgestyle= }".tra("Wiki page name")."{WIKIGRAPH}",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.wikigraph.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAWIKIGRAPH, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAWIKIGRAPH );
 

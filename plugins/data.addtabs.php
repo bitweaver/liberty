@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.addtabs.php,v 1.6 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.addtabs.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
@@ -23,17 +23,20 @@
 define( 'PLUGIN_GUID_DATAADDTABS', 'dataaddtabs' );
 global $gLibertySystem;
 global $gContent;
-$pluginParams = array ( 'tag' => 'ADDTABS',
-						'auto_activate' => TRUE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_addtabs',
-						'title' => 'AddTabs',
-						'help_page' => 'DataPluginAddTabs',
-						'description' => tra("Will join the contents from several sources in a Tabbed Interface."),
-						'help_function' => 'data_addtabs_help',
-						'syntax' => "{ADDTABS tab1= tab2= tab3= . . . tab99= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'ADDTABS',
+	'auto_activate' => TRUE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_addtabs',
+	'title' => 'AddTabs',
+	'help_page' => 'DataPluginAddTabs',
+	'description' => tra("Will join the contents from several sources in a Tabbed Interface."),
+	'help_function' => 'data_addtabs_help',
+	'syntax' => "{ADDTABS tab1= tab2= tab3= . . . tab99= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.addtabs.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAADDTABS, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAADDTABS );
 
@@ -52,7 +55,7 @@ function data_addtabs_help() {
 				.'<td>tab1 - tab99</td>'
 				.'<td>' . tra( "numeric") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "Will create a Tab interface on a page. The name on each tab is the name given to the imported page.The value sent with the TabX parameter is a Numeric Content Id. This allows blog posts, images, wiki pages . . . (and more) to be added.")
-				. tra("<br /><strong>Note 1:</strong> A listing of Content Id's can be found ") 
+				. tra("<br /><strong>Note 1:</strong> A listing of Content Id's can be found ")
 				. '<a href="'.LIBERTY_PKG_URL.'list_content.php" title="Launch BitWeaver Content Browser in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "Here" ) . '</a>'
 				. tra("<br /><strong>Note 2:</strong> The order used when the tabs are specified does not matter. The Tabname does - Tab1 is always first and Tab99 will always be last.</td>")
 			.'</tr>'

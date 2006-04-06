@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.2 2006/02/19 21:01:38 bitweaver Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.3 2006/04/06 05:06:11 starrrider Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAIMG', 'dataimg' );
 global $gLibertySystem;
@@ -13,6 +13,8 @@ $pluginParams = array (
 	'description' => tra( "Allows you to insert an image into your page with little effort and a multitude of styling options." ),
 	'help_function' => 'data_img_help',
 	'syntax' => "{img src=http://www.google.at/logos/olympics06_ski_jump.gif}",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.img.php',
+	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAIMG, $pluginParams );

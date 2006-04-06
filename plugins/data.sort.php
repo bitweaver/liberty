@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,27 +14,30 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Oliver Hertel <ohertel@users.sourceforge.net>
-// | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
+// | Reworked & Undoubtedly Screwed-Up for (Bitweaver)
 // | by: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.sort.php,v 1.5 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.sort.php,v 1.6 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
  */
 define( 'PLUGIN_GUID_DATASORT', 'datasort' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'SORT',
-						'auto_activate' => FALSE,
-						'requires_pair' => TRUE,
-						'load_function' => 'data_sort',
-						'title' => 'Sort',
-						'help_page' => 'DataPluginSort',
-						'description' => tra("This plugin sorts operates on lines of text - not the text in the lines. Every line between the ") . "~np~{SORT}~/np~" . tra(" blocks -  including the lines the blocks are on - is sorted."),
-						'help_function' => 'data_sort_help',
-						'syntax' => "{SORT sort= }" . tra("Lines to be sorted") . "{SORT}",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'SORT',
+	'auto_activate' => FALSE,
+	'requires_pair' => TRUE,
+	'load_function' => 'data_sort',
+	'title' => 'Sort',
+	'help_page' => 'DataPluginSort',
+	'description' => tra("This plugin sorts operates on lines of text - not the text in the lines. Every line between the ") . "~np~{SORT}~/np~" . tra(" blocks -  including the lines the blocks are on - is sorted."),
+	'help_function' => 'data_sort_help',
+	'syntax' => "{SORT sort= }" . tra("Lines to be sorted") . "{SORT}",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.sort.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATASORT, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATASORT );
 

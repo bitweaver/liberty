@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -16,7 +16,7 @@
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
 // | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.module.php,v 1.10 2006/02/09 14:52:47 squareing Exp $
+// $Id: data.module.php,v 1.11 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
@@ -24,17 +24,20 @@
 define( 'PLUGIN_GUID_DATAMODULE', 'datamodule' );
 
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'MODULE',
-						'auto_activate' => FALSE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_datamodule',
-						'title' => 'Module',
-						'help_page' => 'DataPluginModule',
-						'description' => tra("Display a module block in content"),
-						'help_function' => 'datamodule_help',
-						'syntax' => '{MODULE module= align="right"}',
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'MODULE',
+	'auto_activate' => FALSE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_datamodule',
+	'title' => 'Module',
+	'help_page' => 'DataPluginModule',
+	'description' => tra("Display a module block in content"),
+	'help_function' => 'datamodule_help',
+	'syntax' => '{MODULE module= align="right"}',
+	'path' => LIBERTY_PKG_PATH.'plugins/data.module.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAMODULE, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAMODULE );
 

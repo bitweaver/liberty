@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  * @author bigwasp bigwasp@sourceforge.net
@@ -15,28 +15,31 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Damian Parker <damosoft@users.sourceforge.net>
-// | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
+// | Reworked & Undoubtedly Screwed-Up for (Bitweaver)
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_usercount.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.userlink.php,v 1.4 2006/01/10 21:13:43 squareing Exp $
+// $Id: data.userlink.php,v 1.5 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
  */
 define( 'PLUGIN_GUID_DATAUSERLINK', 'datauserlink' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'USERLINK',
-						'auto_activate' => FALSE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_userlink',
-						'title' => 'UserLink shows a link to the UserPage for a given login or email',
-						'help_page' => 'DataPluginUserLink',
-						'description' => tra("Will show a link to the userpage"),
-						'help_function' => 'data_userlink_help',
-						'syntax' => "{USERLINK login='bigwasp'}",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'USERLINK',
+	'auto_activate' => FALSE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_userlink',
+	'title' => 'UserLink shows a link to the UserPage for a given login or email',
+	'help_page' => 'DataPluginUserLink',
+	'description' => tra("Will show a link to the userpage"),
+	'help_function' => 'data_userlink_help',
+	'syntax' => "{USERLINK login='bigwasp'}",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.userlink.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAUSERLINK, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAUSERLINK );
 
@@ -50,23 +53,23 @@ function data_userlink_help() {
 				.'<th>' . tra( "Comments") . '</th>'
 			.'</tr>'
 			.'<tr class="odd">'
-			        .'<td>login</td>' 
+			        .'<td>login</td>'
 			        .'<td>' . tra( "string" ) . '<br />' . tra( "(optional)") . '</td>'
 				.'<td>' . tra( "The login name to generate the link" ) . '</td>'
 			.'</tr>'
 			.'<tr class="even">'
 			        .'<td>email</td>'
 				.'<td>' . tra( "string" ) . '<br />' . tra( "(optional)") . '</td>'
-				.'<td>' . tra( "The e-mail address to generate the link" ) . '</td>'	
+				.'<td>' . tra( "The e-mail address to generate the link" ) . '</td>'
 			.'</tr>'
 			.'<tr class="odd">'
 			        .'<td>label</td>'
 				.'<td>' . tra( "string" ) . '<br />' . tra( "(optional)") . '</td>'
-				.'<td>' . tra( "The label to show; default is user's name" ) . '</td>'	
+				.'<td>' . tra( "The label to show; default is user's name" ) . '</td>'
 			.'</tr>'
 		.'</table>'
 		.tra("Example: ") . "{USERLINK login='admin' label='Site Administrator'}";
-	return $help;			
+	return $help;
 }
 
 // Load Function
@@ -83,7 +86,7 @@ function data_userlink($data, $params) {
 		$myHash['email'] = $email;
 	} else if ( isset( $user_id ) ) {
 		$myHash['user_id'] = $user_id;
-	}	
+	}
 
 	$user = $gBitUser->userExists($myHash);
 

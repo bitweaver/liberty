@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -13,28 +13,30 @@
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sbcglobal.net>
+// | Author: StarRider <starrrider@users.sourceforge.net>
 // | Rewritten for bitweaver by Author
-// | wikiplugin_pluginhelp.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.pluginhelp.php,v 1.7 2006/03/11 16:42:38 starrrider Exp $
+// $Id: data.pluginhelp.php,v 1.8 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
  */
 define( 'PLUGIN_GUID_DATAPLUGINHELP', 'datapluginhelp' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'PLUGINHELP',
-						'auto_activate' => FALSE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_pluginhelp',
-						'title' => 'PluginHelp',                                                                             // and Remove the comment from the start of this line
-						'help_page' => 'DataPluginPluginHelp',
-						'description' => tra("This plugin will display the plugin's Help."),
-						'help_function' => 'data_pluginhelp_help',
-						'syntax' => "{PLUGINHELP plugin= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'PLUGINHELP',
+	'auto_activate' => FALSE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_pluginhelp',
+	'title' => 'PluginHelp',                                                                             // and Remove the comment from the start of this line
+	'help_page' => 'DataPluginPluginHelp',
+	'description' => tra("This plugin will display the plugin's Help."),
+	'help_function' => 'data_pluginhelp_help',
+	'syntax' => "{PLUGINHELP plugin= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.pluginhelp.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAPLUGINHELP, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAPLUGINHELP );
 

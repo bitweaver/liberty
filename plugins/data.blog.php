@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,11 +14,11 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Gustavo Muslera <gmuslera@users.sourceforge.net>
-// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.blog.php,v 1.3 2006/03/22 10:24:20 squareing Exp $
+// $Id: data.blog.php,v 1.4 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
@@ -27,17 +27,20 @@ global $gBitSystem, $gBitSmarty;
 if( $gBitSystem->isPackageActive( 'blogs' ) ) { // Do not include this Plugin if the Package is not active
 define( 'PLUGIN_GUID_DATABLOG', 'datablog' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'BLOG',
-						'auto_activate' => TRUE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_blog',
-						'help_function' => 'data_blog_help',
-						'title' => 'Blog',
-						'help_page' => 'DataPluginBlog',
-						'description' => tra( "This plugin will display several posts from a blog." ),
-						'syntax' => "{BLOG id= max= format= }",
-						'plugin_type' => DATA_PLUGIN
-					);
+$pluginParams = array (
+	'tag' => 'BLOG',
+	'auto_activate' => TRUE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_blog',
+	'help_function' => 'data_blog_help',
+	'title' => 'Blog',
+	'help_page' => 'DataPluginBlog',
+	'description' => tra( "This plugin will display several posts from a blog." ),
+	'syntax' => "{BLOG id= max= format= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.blog.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATABLOG, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATABLOG );
 
@@ -81,13 +84,13 @@ function data_blog($data, $params) { // No change in the parameters with Clyde
 	require_once( LIBERTY_PKG_PATH.'lookup_content_inc.php' );
 
 	$module_params = $params;
-	
+
 /*	$gBitSystem->verifyPermission( 'bit_p_read_blog' ); */
 
 	$gBitSmarty->assign('blog_id', $module_params['id']);
 
   $blogPost = new BitBlogPost();
-	
+
 	$sortOptions = array(
 		"last_modified_asc",
 		"last_modified_desc",
@@ -98,8 +101,8 @@ function data_blog($data, $params) { // No change in the parameters with Clyde
 		$sort_mode = $module_params['sort_mode'];
 	} else {
 		$sort_mode = 'last_modified_desc';
-	}	
-		
+	}
+
 	$getHash = Array();
 
   $getHash['blog_id'] = empty($module_params['id']) ? 1 : $module_params['id'];
@@ -110,10 +113,10 @@ function data_blog($data, $params) { // No change in the parameters with Clyde
   $getHash['page'] = (!empty($module_params['page']) ? $module_params['page'] : 1);
   $getHash['offset'] = (!empty($module_params['offset']) ? $module_params['offset'] : 0);
   $blogPosts = $blogPost->getList( $getHash );
-		
+
 	$display_format = empty($module_params['format']) ? 'simple_title_list' : $module_params['format'];
 
-	$display_result = "";	
+	$display_result = "";
 	switch( $display_format ) {
 		case 'full':
 			$display_result = '<div class="blogs">';
@@ -127,7 +130,7 @@ function data_blog($data, $params) { // No change in the parameters with Clyde
 				$display_result .= $gBitSmarty->fetch( 'bitpackage:articles/article_display.tpl' );
 */
 			}
-			
+
 
 			$display_result .= '</div>';
 			$display_result = eregi_replace( "\n", "", $display_result );

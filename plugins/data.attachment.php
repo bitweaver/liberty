@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.4 2005/08/07 17:40:31 squareing Exp $
+// $Id: data.attachment.php,v 1.5 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
@@ -24,17 +24,20 @@ global $gBitSystem;
 
 define( 'PLUGIN_GUID_DATAATTACHMENT', 'dataattachment' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'ATTACHMENT',
-						'auto_activate' => TRUE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_attachment',
-						'title' => 'Attachment',
-						'help_page' => 'DataPluginAttachment',
-						'description' => tra("Display attachment in content"),
-						'help_function' => 'data_attachment_help',
-						'syntax' => '{ATTACHMENT id= size= align= }',
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'ATTACHMENT',
+	'auto_activate' => TRUE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_attachment',
+	'title' => 'Attachment',
+	'help_page' => 'DataPluginAttachment',
+	'description' => tra("Display attachment in content"),
+	'help_function' => 'data_attachment_help',
+	'syntax' => '{ATTACHMENT id= size= align= }',
+	'path' => LIBERTY_PKG_PATH.'plugins/data.attachment.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAATTACHMENT, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAATTACHMENT );
 
@@ -55,13 +58,13 @@ function data_attachment_help() {
 			.'<tr class="even">'
 				.'<td>size</td>'
 				.'<td>' . tra( "key-words") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "If the Attachment is an image, you can specify the size of the thumbnail displayed. Possible values are:") . ' <strong>avatar, small, medium, large, original</strong> ' 
+				.'<td>' . tra( "If the Attachment is an image, you can specify the size of the thumbnail displayed. Possible values are:") . ' <strong>avatar, small, medium, large, original</strong> '
 				. tra("(Default = ") . '<strong>medium</strong>)</td>'
 			.'</tr>'
 			.'<tr class="odd">'
 				.'<td>link</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Allows you to specify a relative or absolute URL the image will link to if clicked. If set to false, no link is inserted.") 
+				.'<td>' . tra( "Allows you to specify a relative or absolute URL the image will link to if clicked. If set to false, no link is inserted.")
 				. tra("(Default = ") . '<strong>'.tra( 'link to source image' ).'</strong>)</td>'
 			.'</tr>'
 			.'<tr class="even">'
@@ -84,7 +87,7 @@ function data_attachment_help() {
 function data_attachment($data, $params) { // NOTE: The original plugin had several parameters that have been dropped
 	// at a minimum, return blank string (not empty) so we still replace the tag
 	$ret = ' ';
-	if( empty( $params['id'] ) ) { 
+	if( empty( $params['id'] ) ) {
 		// The Manditory Parameter is missing. we are not gonna trow an error, and just return empty since
 		// many sites use the old style required second "closing" empty tag
 		return $ret;

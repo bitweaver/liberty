@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,27 +14,30 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Marc Laporte <marclaporte@users.sourceforge.net>
-// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.include.php,v 1.8 2006/02/16 13:48:11 squareing Exp $
+// $Id: data.include.php,v 1.9 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
  */
 define( 'PLUGIN_GUID_DATAINCLUDE', 'datainclude' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'INCLUDE',
-						'auto_activate' => TRUE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_include',
-						'title' => 'Include',
-						'help_page' => 'DataPluginInclude',
-						'description' => tra("This plugin is used to include the contents of one Wiki page in another Wiki page."),
-						'help_function' => 'data_include_help',
-						'syntax' => "{INCLUDE content_id= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'INCLUDE',
+	'auto_activate' => TRUE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_include',
+	'title' => 'Include',
+	'help_page' => 'DataPluginInclude',
+	'description' => tra("This plugin is used to include the contents of one Wiki page in another Wiki page."),
+	'help_function' => 'data_include_help',
+	'syntax' => "{INCLUDE content_id= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.include.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAINCLUDE, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAINCLUDE );
 

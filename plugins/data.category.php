@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,11 +14,11 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Oliver Hertel <ohertel@users.sourceforge.net>
-// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_category.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.category.php,v 1.7 2006/02/06 00:09:01 squareing Exp $
+// $Id: data.category.php,v 1.8 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
@@ -27,18 +27,21 @@ global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'categories' ) ) { // Do not include this Plugin if the Package is not active
 define( 'PLUGIN_GUID_DATACATEGORY', 'datacategory' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'CATEGORY',
-						'auto_activate' => FALSE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_category',
-						'title' => 'Category<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
-//						'title' => 'Category',                                                                             // and Remove the comment from the start of this line
-						'help_page' => 'DataPluginCategory',
-						'description' => tra("This plugin insert a list of items for the current category or a given category."),
-						'help_function' => 'data_category_help',
-						'syntax' => "{CATEGORY id= types= sort= sub= split= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'CATEGORY',
+	'auto_activate' => FALSE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_category',
+	'title' => 'Category<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
+//	'title' => 'Category',	// and Remove the comment from the start of this line
+	'help_page' => 'DataPluginCategory',
+	'description' => tra("This plugin insert a list of items for the current category or a given category."),
+	'help_function' => 'data_category_help',
+	'syntax' => "{CATEGORY id= types= sort= sub= split= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.category.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACATEGORY, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATACATEGORY );
 
@@ -52,7 +55,7 @@ function data_category_help() {
 				.'<th>' . tra( "Comments" ) . '</th>'
 			.'</tr>'
 			.'<tr class="odd">'
-				.'<td>id</td>' 
+				.'<td>id</td>'
 				.'<td>' . tra( "number(s)") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "A Category Id number or list of Id numbers. The easiest way to see a Category Id number is to open 'View Categories' and placing the mouse over the Category in question. The URL will be displayed by most browsers. The end of the URL contains an Id number like this: <strong>parent_id=9</strong>. Multiple Id numbers can be entered by joining them with the + character like this: <strong>1+2+3</strong>. Default = <strong>the Current Category Id Number </strong> if not defined.") . '</td>'
 			.'</tr>'
@@ -86,7 +89,7 @@ function data_category_help() {
 function data_category($data, $params) {  // Pre-Clyde Changes
 // requires_pair was TRUE / No other changes were made to the Help
 // The next 2 lines allow access to the $pluginParams given above and may be removed when no longer needed
-	global $gLibertySystem; 
+	global $gLibertySystem;
 	$pluginParams = $gLibertySystem->mPlugins[PLUGIN_GUID_DATACATEGORY];
 	$ret = 'The plugin <strong>"' . $pluginParams['tag'] . '"</strong> has not been completed as yet. ';
 	return $ret;

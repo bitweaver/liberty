@@ -1,34 +1,41 @@
 <?php
-// $id:
 /**
- * assigned_modules
- *
- * @author   StarRider starrrider@sourceforge.net
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
- * @copyright Copyright (c) 2004, bitweaver.org
- * All Rights Reserved. See copyright.txt for details and a complete list of authors.
- * @license Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
  */
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2004, bitweaver.org
+// +----------------------------------------------------------------------+
+// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
+// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
+// |
+// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
+// | -> see http://phpdocu.sourceforge.net/
+// +----------------------------------------------------------------------+
+// | Author: StarRider starrrider@sourceforge.net
+// +----------------------------------------------------------------------+
+// $Id: data.spytext.php,v 1.8 2006/04/06 05:06:11 starrrider Exp $
 
 /******************
  * Initialization *
  ******************/
-
 global $gLibertySystem;
 define( 'PLUGIN_GUID_SPYTEXT', 'spytext' );
-$pluginParams = array ( 'tag' => 'SPYTEXT',
-						'auto_activate' => TRUE,
-						'requires_pair' => TRUE,
-						'load_function' => 'data_spytext',
-						'title' => 'Spy Text (SPYTEXT)',
-						'help_page' => 'DataPluginSpyText',
-						'description' => tra("Allows text to be stored that is only visible to a List of Spys or to a Spy Agency (Group). To anyone else (except an Admin) the text is not be visible."),
-						'help_function' => 'data_spytext_help',
-						'syntax' => "{SPYTEXT spy= agency= sender= to= hidden= title= width= icon= alert= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'SPYTEXT',
+	'auto_activate' => TRUE,
+	'requires_pair' => TRUE,
+	'load_function' => 'data_spytext',
+	'title' => 'Spy Text (SPYTEXT)',
+	'help_page' => 'DataPluginSpyText',
+	'description' => tra("Allows text to be stored that is only visible to a List of Spys or to a Spy Agency (Group). To anyone else (except an Admin) the text is not be visible."),
+	'help_function' => 'data_spytext_help',
+	'syntax' => "{SPYTEXT spy= agency= sender= to= hidden= title= width= icon= alert= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.spytext.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_SPYTEXT, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_SPYTEXT );
 

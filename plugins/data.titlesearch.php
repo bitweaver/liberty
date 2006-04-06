@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,29 +14,32 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Claudio Bustos <cdx@users.sourceforge.net>
-// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_titlesearch.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.titlesearch.php,v 1.5 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.titlesearch.php,v 1.6 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
  */
 define( 'PLUGIN_GUID_DATATITLESEARCH', 'datatitlesearch' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'TITLESEARCH',
-						'auto_activate' => FALSE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_titlesearch',
-						'title' => 'TitleSearch<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
-//						'title' => 'TitleSearch',                                                                                         // and Remove the comment from the start of this line
-						'help_page' => 'DataPluginTitleSearch',
-						'description' => tra("This plugin search the titles of all pages in this wiki."),
-						'help_function' => 'data_titlesearch_help',
-						'syntax' => "{TITLESEARCH search= info= exclude= noheader= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'TITLESEARCH',
+	'auto_activate' => FALSE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_titlesearch',
+	'title' => 'TitleSearch<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
+//	'title' => 'TitleSearch',                                                                                         // and Remove the comment from the start of this line
+	'help_page' => 'DataPluginTitleSearch',
+	'description' => tra("This plugin search the titles of all pages in this wiki."),
+	'help_function' => 'data_titlesearch_help',
+	'syntax' => "{TITLESEARCH search= info= exclude= noheader= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.titlesearch.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATATITLESEARCH, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATATITLESEARCH );
 

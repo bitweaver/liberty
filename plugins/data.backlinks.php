@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,11 +14,11 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Claudio Bustos <cdx@users.sourceforge.net>
-// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_backlinks.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.backlinks.php,v 1.6 2006/02/06 22:56:47 squareing Exp $
+// $Id: data.backlinks.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
@@ -27,18 +27,21 @@ global $gBitSystem;
 if( ( $gBitSystem->isPackageActive( 'wiki' ) ) && ( $gBitSystem->isFeatureActive('backlinks') ) ) { // Do not include this Plugin if the Package or the Feature is not active
 define( 'PLUGIN_GUID_DATABACKLINKS', 'databacklinks' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'BACKLINKS',
-						'auto_activate' => FALSE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_backlinks',
-						'title' => 'BackLinks<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
-//						'title' => 'BackLinks',                                                                             // and Remove the comment from the start of this line
-						'help_page' => 'DataPluginBackLinks',
-						'description' => tra("This plugin will list all Wiki pages which contains a link to the specified page."),
-						'help_function' => 'data_backlinks_help',
-						'syntax' => "{BACKLINKS page= info= exclude= self= header= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'BACKLINKS',
+	'auto_activate' => FALSE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_backlinks',
+	'title' => 'BackLinks<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
+//	'title' => 'BackLinks',                                                                             // and Remove the comment from the start of this line
+	'help_page' => 'DataPluginBackLinks',
+	'description' => tra("This plugin will list all Wiki pages which contains a link to the specified page."),
+	'help_function' => 'data_backlinks_help',
+	'syntax' => "{BACKLINKS page= info= exclude= self= header= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.backlinks.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATABACKLINKS, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATABACKLINKS );
 
@@ -59,13 +62,13 @@ function data_backlinks_help() {
 			.'<tr class="even">'
 				.'<td>info</td>'
 				.'<td>' . tra( "key-words") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Defines what is to be displayed. Multiple columns can be displayed if joined with the character |. Available choices are:") 
+				.'<td>' . tra( "Defines what is to be displayed. Multiple columns can be displayed if joined with the character |. Available choices are:")
 				.' <strong>hits, lastmodif, user, ip, len, comment, creator, version, flag, versions, links, backlinks</strong>. ' . tra("(Default = EVERYTHING)") . '</td>'
 			.'</tr>'
 			.'<tr class="odd">'
 				.'<td>exclude</td>'
 				.'<td>' . tra( "page-name(s)") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Can be any wiki page. Multiple pagenames will be excluded if joined with the character |. Like this:") 
+				.'<td>' . tra( "Can be any wiki page. Multiple pagenames will be excluded if joined with the character |. Like this:")
 				.' <strong>HomePage|SandBox</strong> ' . tra("(Default = EVERYTHING is displayed)") . '</td>'
 			.'</tr>'
 			.'<tr class="even">'
@@ -98,7 +101,7 @@ function data_backlinks($data, $params) { // Pre-Clyde Changes
     $header = isset($header) ? TRUE : FALSE; // Any value passed in this parameter makes it True
 
 // The next 2 lines allow access to the $pluginParams given above and may be removed when no longer needed
-	global $gLibertySystem; 
+	global $gLibertySystem;
 	$pluginParams = $gLibertySystem->mPlugins[PLUGIN_GUID_DATABACKLINKS];
 	$ret = 'The plugin <strong>"' . $pluginParams['tag'] . '"</strong> has not been completed as yet. ';
 	return $ret;

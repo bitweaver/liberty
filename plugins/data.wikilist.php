@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,29 +14,32 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Unknown
-// | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
+// | Reworked & Undoubtedly Screwed-Up for (Bitweaver)
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_wikilist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikilist.php,v 1.6 2006/02/06 22:56:47 squareing Exp $
+// $Id: data.wikilist.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
  */
 define( 'PLUGIN_GUID_DATAWIKILIST', 'datawikilist' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'WIKILIST',
-						'auto_activate' => FALSE,
-						'requires_pair' => TRUE,
-						'load_function' => 'data_wikilist',
-						'title' => 'WikiList<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
-//						'title' => 'WikiList',                                                                             // and Remove the comment from the start of this line
-						'help_page' => 'DataPluginWikiList',
-						'description' => tra("Displays an alphabetically sorted list of WikiPages"),
-						'help_function' => 'data_wikilist_help',
-						'syntax' => "{WIKILIST num= alpha= total= list= }Group Name{WIKILIST} ",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'WIKILIST',
+	'auto_activate' => FALSE,
+	'requires_pair' => TRUE,
+	'load_function' => 'data_wikilist',
+	'title' => 'WikiList<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
+//	'title' => 'WikiList',                                                                             // and Remove the comment from the start of this line
+	'help_page' => 'DataPluginWikiList',
+	'description' => tra("Displays an alphabetically sorted list of WikiPages"),
+	'help_function' => 'data_wikilist_help',
+	'syntax' => "{WIKILIST num= alpha= total= list= }Group Name{WIKILIST} ",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.wikilist.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAWIKILIST, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAWIKILIST );
 

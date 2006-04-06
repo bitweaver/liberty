@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,24 +15,27 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mqdirections.php,v 1.6 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.mqdirections.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
  */
 define( 'PLUGIN_GUID_DATAMQDIR', 'datamqdir' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'MQDIR',
-						'auto_activate' => TRUE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_mqdir',
-						'title' => 'MapQuest Directions',
-						'help_page' => 'DataPluginMapQuestDirections',
-						'description' => tra("Creates an Icon link to MapQuest with a form to get Directions from MapQuest based on a Destination Address."),
-						'help_function' => 'data_mqdir_help',
-						'syntax' => "{MQDIR icon= myicon= text= address= city= state= zip= country= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'MQDIR',
+	'auto_activate' => TRUE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_mqdir',
+	'title' => 'MapQuest Directions',
+	'help_page' => 'DataPluginMapQuestDirections',
+	'description' => tra("Creates an Icon link to MapQuest with a form to get Directions from MapQuest based on a Destination Address."),
+	'help_function' => 'data_mqdir_help',
+	'syntax' => "{MQDIR icon= myicon= text= address= city= state= zip= country= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.mqdirections.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAMQDIR , $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAMQDIR );
 
@@ -48,9 +51,9 @@ function data_mqdir_help() {
 			.'<tr class="odd">'
 				.'<td>icon</td>'
 				.'<td>' . tra( "key-word") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Creates an Icon Link to MapQuests primary URL. The size of the Icon can be:") 
+				.'<td>' . tra( "Creates an Icon Link to MapQuests primary URL. The size of the Icon can be:")
 					.' <strong>sm</strong> ' . tra("= Small,")
-					.' <strong>med</strong> ' . tra("= Medium,") 
+					.' <strong>med</strong> ' . tra("= Medium,")
 					.' <strong>lg</strong> ' . tra("= Large or")
 					. tra("<br />The Default = ") . ' <strong>sm</strong> ' . tra("The Small MapQuest Icon is displayed.")
 				.'</td>'
@@ -93,7 +96,7 @@ function data_mqdir_help() {
 }
 
 // Load Function
-function data_mqdir( $data, $params ) { 
+function data_mqdir( $data, $params ) {
 	extract ($params, EXTR_SKIP);
 
 	$a2a = isset($address) ? $address : ' ';
@@ -118,7 +121,7 @@ function data_mqdir( $data, $params ) {
 			break;
 	}
 
-	$ret = 
+	$ret =
 		'<form action="http://www.mapquest.com/directions/main.adp" method="get">'
 			.'<div align="center">'
 				.'<input type="hidden" name="go" value="1+">'

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.5 2006/01/14 19:54:56 squareing Exp $
+// $Id: data.toc.php,v 1.6 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
@@ -25,17 +25,20 @@ global $gLibertySystem;
 define( 'PLUGIN_GUID_TOC', 'datatoc' );
 
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'toc',
-						'auto_activate' => TRUE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_toc',
-						'title' => 'Table Of Contents (TOC)',
-						'help_page' => 'DataPluginTOC',
-						'description' => tra("Display a Table Of Contents for Structures"),
-						'help_function' => 'data_toc_help',
-						'syntax' => '{TOC sturcture_id= }',
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'toc',
+	'auto_activate' => TRUE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_toc',
+	'title' => 'Table Of Contents (TOC)',
+	'help_page' => 'DataPluginTOC',
+	'description' => tra("Display a Table Of Contents for Structures"),
+	'help_function' => 'data_toc_help',
+	'syntax' => '{TOC sturcture_id= }',
+	'path' => LIBERTY_PKG_PATH.'plugins/data.toc.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_TOC, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_TOC );
 
@@ -77,7 +80,7 @@ function data_toc( $data, $params ) {
 		} else {
 			$get_structure = $struct->mStructureId;
 		}
-		$tree = $struct->getSubTree( $get_structure, ( @$display == 'full_toc' ) ); 
+		$tree = $struct->getSubTree( $get_structure, ( @$display == 'full_toc' ) );
 		$gBitSmarty->assign( "subtree", $tree );
 		$repl = $gBitSmarty->fetch( "bitpackage:liberty/display_toc_inc.tpl" );
 		if( empty( $repl ) ) {

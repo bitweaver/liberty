@@ -1,21 +1,28 @@
 <?php
-// $id: data.example.php,v 1.4.2.9 2005/07/14 09:03:36 starrider Exp $
 /**
- * assigned_modules
- *
- * @author     xing
- * @version    $Revision: 1.4 $
- * @package    liberty
+ * @version  $Revision: 1.5 $
+ * @package  liberty
  * @subpackage plugins_data
- * @copyright  Copyright (c) 2004, bitweaver.org
  */
+// +----------------------------------------------------------------------+
+// | Copyright (c) 2004, bitweaver.org
+// +----------------------------------------------------------------------+
+// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
+// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
+// |
+// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
+// | -> see http://phpdocu.sourceforge.net/
+// +----------------------------------------------------------------------+
+// | Author: xing
+// +----------------------------------------------------------------------+
+// $Id: data.div.php,v 1.5 2006/04/06 05:06:11 starrrider Exp $
 
 /**
- * Setup Code
+ * definitions
  */
 define( 'PLUGIN_GUID_DATADIV', 'datadiv' );
 global $gLibertySystem;
-$pluginParams = array ( 
+$pluginParams = array (
 	'tag' => 'DIV',
 	'auto_activate' => TRUE,
 	'requires_pair' => TRUE,
@@ -25,6 +32,8 @@ $pluginParams = array (
 	'description' => tra( "This plugin allows you to easily create a div with a number of optional CSS parameters." ),
 	'help_function' => 'data_div_help',
 	'syntax' => "{div border='3px solid blue'}",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.div.php',
+	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATADIV, $pluginParams );

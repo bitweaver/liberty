@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,29 +14,32 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
-// | Reworked & Undoubtedly Screwed-Up for (Bitweaver) 
+// | Reworked & Undoubtedly Screwed-Up for (Bitweaver)
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_translated.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.translated.php,v 1.5 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.translated.php,v 1.6 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
  */
 define( 'PLUGIN_GUID_DATATRANSLATED', 'datatranslated' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'TRANSLATED',
-						'auto_activate' => FALSE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_translated',
-						'title' => 'Translated<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
-//						'title' => 'Translated',                                                                                       // and Remove the comment from the start of this line
-						'help_page' => 'DataPluginTranslated',
-						'description' => tra("This plugin is used to create a link to a page that contains a translation. The link can be shown as an Icon for the country or as an abreviation for the language."),
-						'help_function' => 'data_translated_help',
-						'syntax' => "{TRANSLATED page= lang= flag= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'TRANSLATED',
+	'auto_activate' => FALSE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_translated',
+	'title' => 'Translated<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
+//	'title' => 'Translated',                                                                                       // and Remove the comment from the start of this line
+	'help_page' => 'DataPluginTranslated',
+	'description' => tra("This plugin is used to create a link to a page that contains a translation. The link can be shown as an Icon for the country or as an abreviation for the language."),
+	'help_function' => 'data_translated_help',
+	'syntax' => "{TRANSLATED page= lang= flag= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.translated.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATATRANSLATED, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATATRANSLATED );
 

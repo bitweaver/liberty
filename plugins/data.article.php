@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,11 +14,11 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): dheltzel
-// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_article.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.article.php,v 1.6 2006/01/31 20:18:26 bitweaver Exp $
+// $Id: data.article.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
@@ -27,18 +27,21 @@ global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'articles' ) ) { // Do not include this Plugin if the Package is not active
 define( 'PLUGIN_GUID_DATAARTICLE', 'dataarticle' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'ARTICLE',
-						'auto_activate' => FALSE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_article',
-						'title' => 'Article<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin
-//						'title' => 'Article',                                                                             // and Remove the comment from the start of this line
-						'help_page' => 'DataPluginArticle',
-						'description' => tra("This plugin will display the data from a single field in the specified Article."),
-						'help_function' => 'data_article_help',
-						'syntax' => "{ARTICLE id= field=}",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'ARTICLE',
+	'auto_activate' => FALSE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_article',
+	'title' => 'Article<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin
+//	'title' => 'Article',	// and Remove the comment from the start of this line
+	'help_page' => 'DataPluginArticle',
+	'description' => tra("This plugin will display the data from a single field in the specified Article."),
+	'help_function' => 'data_article_help',
+	'syntax' => "{ARTICLE id= field=}",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.article.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAARTICLE, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAARTICLE );
 
@@ -70,7 +73,7 @@ function data_article_help() {
 // Executable Routine
 function data_article($data, $params) { // No change in the parameters with Clyde
 // The next 2 lines allow access to the $pluginParams given above and may be removed when no longer needed
-	global $gLibertySystem; 
+	global $gLibertySystem;
 	$pluginParams = $gLibertySystem->mPlugins[PLUGIN_GUID_DATAARTICLE];
 	$ret = 'The plugin <strong>"' . $pluginParams['tag'] . '"</strong> has not been completed as yet. ';
 	return $ret;

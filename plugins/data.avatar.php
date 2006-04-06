@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,11 +14,11 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Luis Argerich <lrargerich@users.sourceforge.net>
-// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_avatar.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.avatar.php,v 1.6 2006/03/01 18:35:17 spiderr Exp $
+// $Id: data.avatar.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
@@ -27,18 +27,21 @@ global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'wiki' ) ) { // Do not include this Plugin if the Package is not active
 define( 'PLUGIN_GUID_DATAAVATAR', 'dataavatar' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'AVATAR',
-						'auto_activate' => FALSE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_avatar',
-						'title' => 'Avatar<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
-//						'title' => 'Avatar',                                                                             // and Remove the comment from the start of this line
-						'help_page' => 'DataPluginAvatar',
-						'description' => tra("This plugin will display a User's Avatar as a Link to a page."),
-						'help_function' => 'data_avatar_help',
-						'syntax' => "{AVATAR user= page= float= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'AVATAR',
+	'auto_activate' => FALSE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_avatar',
+	'title' => 'Avatar<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
+//	'title' => 'Avatar',	// and Remove the comment from the start of this line
+	'help_page' => 'DataPluginAvatar',
+	'description' => tra("This plugin will display a User's Avatar as a Link to a page."),
+	'help_function' => 'data_avatar_help',
+	'syntax' => "{AVATAR user= page= float= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.avatar.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAAVATAR, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAAVATAR );
 
@@ -65,7 +68,7 @@ function data_avatar_help() {
 			.'<tr class="odd">'
 				.'<td>float</td>'
 				.'<td>' . tra( "key-words") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Specifies how the Avatar is to be alligned on the page. If NOT defined - the text will not wrap around the Avatar. Possible values are:") 
+				.'<td>' . tra( "Specifies how the Avatar is to be alligned on the page. If NOT defined - the text will not wrap around the Avatar. Possible values are:")
 				. ' <strong>left or right</strong> ' . tra("(Default = ") . '<strong>NOT SET</strong>)</td>'
 			.'</tr>'
 		.'</table>'
@@ -77,7 +80,7 @@ function data_avatar_help() {
 function data_avatar($data, $params) { // Pre-Clyde Changes
 // The Parameter user is new - the info was extracted from $data
 // The next 2 lines allow access to the $pluginParams given above and may be removed when no longer needed
-	global $gLibertySystem; 
+	global $gLibertySystem;
 	$pluginParams = $gLibertySystem->mPlugins[PLUGIN_GUID_DATAAVATAR];
 	$ret = 'The plugin <strong>"' . $pluginParams['tag'] . '"</strong> has not been completed as yet. ';
 	return $ret;

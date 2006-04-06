@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,6 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Southpaw <southpawz@users.sourceforge.net>
 // +----------------------------------------------------------------------+
+// $Id: data.freemind.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
@@ -23,17 +24,20 @@ global $gLibertySystem;
 
 define( 'PLUGIN_GUID_FREEMIND', 'datafreemind' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'MM',
-						'auto_activate' => TRUE,
-						'requires_pair' => FALSE,
-						'load_function' => 'data_freemind',
-						'title' => 'FreeMind (Mind Map)',
-						'help_page' => 'DataPluginFreeMind',
-						'description' => tra("Displays a Freemind mindmap"),
-						'help_function' => 'data_freemind_help',
-						'syntax' => "{MM src= height= width= }",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'MM',
+	'auto_activate' => TRUE,
+	'requires_pair' => FALSE,
+	'load_function' => 'data_freemind',
+	'title' => 'FreeMind (Mind Map)',
+	'help_page' => 'DataPluginFreeMind',
+	'description' => tra("Displays a Freemind mindmap"),
+	'help_function' => 'data_freemind_help',
+	'syntax' => "{MM src= height= width= }",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.freemind.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FREEMIND, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_FREEMIND );
 
@@ -67,14 +71,14 @@ function data_freemind_help() {
 }
 
 // Load Function
-function data_freemind( $data, $params ) { 
+function data_freemind( $data, $params ) {
 	$repl = '';
 	if( !empty( $params['src'] ) ) {
 		$height = !empty( $params['height'] ) ? $params['height'] : '600';
 		$width = !empty( $params['width'] ) ? $params['width'] : '100%';
 		$drvr = '../drivers/freemind.jar';
 		if (!file_exists($drvr)) {
-			$repl = tra("Error - the file") . '<strong> freemind.jar </strong>' . tra("does not exist in the site's <strong>drivers</strong> directory."); 
+			$repl = tra("Error - the file") . '<strong> freemind.jar </strong>' . tra("does not exist in the site's <strong>drivers</strong> directory.");
 		} else {
 			$repl =
 				 '<script language="JavaScript">'.
@@ -92,7 +96,7 @@ function data_freemind( $data, $params ) {
 				 '</applet>'.
 				 '<br />'.
 				 '<span class="">Download <a href="' . $params["src"] . '">this mind map</a> and use this application to edit it: <a href="http://freemind.sourceforge.net/">Freemind </a> </span>';
-		}		
+		}
 	}
 	return $repl;
 }

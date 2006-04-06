@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -14,27 +14,30 @@
 // | -> see http://phpdocu.sourceforge.net/
 // +----------------------------------------------------------------------+
 // | Author (TikiWiki): Stephan Borg <wolff_borg@users.sourceforge.net>
-// | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
+// | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.countdown.php,v 1.5 2005/11/22 07:27:18 squareing Exp $
+// $Id: data.countdown.php,v 1.6 2006/04/06 05:06:11 starrrider Exp $
 
 /**
  * definitions
  */
 define( 'PLUGIN_GUID_DATACOUNTDOWN', 'datacountdown' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'COUNTDOWN',
-						'auto_activate' => TRUE,
-						'requires_pair' => TRUE,
-						'load_function' => 'data_countdown',
-						'title' => 'CountDown',
-						'help_page' => 'DataPluginCountDown',
-						'description' => tra("Displays a Count-Down until a date:time is reached - then - negative numbers indicate how long it has been since that date. The Count-Down is displayed in the format of (X days, X hours, X minutes and X seconds)."),
-						'help_function' => 'data_countdown_help',
-						'syntax' => "{COUNTDOWN enddate= localtime= }" . tra("Text") . "{countdown}",
-						'plugin_type' => DATA_PLUGIN
-					  );
+$pluginParams = array (
+	'tag' => 'COUNTDOWN',
+	'auto_activate' => TRUE,
+	'requires_pair' => TRUE,
+	'load_function' => 'data_countdown',
+	'title' => 'CountDown',
+	'help_page' => 'DataPluginCountDown',
+	'description' => tra("Displays a Count-Down until a date:time is reached - then - negative numbers indicate how long it has been since that date. The Count-Down is displayed in the format of (X days, X hours, X minutes and X seconds)."),
+	'help_function' => 'data_countdown_help',
+	'syntax' => "{COUNTDOWN enddate= localtime= }" . tra("Text") . "{countdown}",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.countdown.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
+);
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACOUNTDOWN, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATACOUNTDOWN );
 
@@ -66,7 +69,7 @@ function data_countdown_help() {
 // Load Function
 function data_countdown($data, $params) {
 // The next 2 lines allow access to the $pluginParams given above
-	global $gLibertySystem; 
+	global $gLibertySystem;
 	$pluginParams = $gLibertySystem->mPlugins[PLUGIN_GUID_DATACOUNTDOWN];
 	extract ($params, EXTR_SKIP);
     if (!isset($enddate) ) {  // The Manditory Parameter is missing
