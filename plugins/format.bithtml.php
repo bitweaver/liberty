@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -17,6 +17,7 @@ $pluginParams = array ( 'store_function' => 'bithtml_save_data',
 						'description' => 'HTML Syntax Format Parser',
 						'edit_label' => 'HTML',
 						'edit_field' => '<input type="radio" name="format_guid" value="'.PLUGIN_GUID_BITHTML.'"',
+						'help_page' => 'HTMLSyntax',
 						'plugin_type' => FORMAT_PLUGIN
 					  );
 
