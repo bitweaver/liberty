@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.14 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.code.php,v 1.15 2006/04/09 16:04:38 squareing Exp $
 
 /**
  * definitions
@@ -169,7 +169,7 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 	}
 
 
-	$work = "~np~<div class='codelisting'>". $code ."</div>~/np~";
+	$work = "<!--~np~--><div class='codelisting'>". $code ."</div><!--~/np~-->";
     return $work;
 }
 ?>
