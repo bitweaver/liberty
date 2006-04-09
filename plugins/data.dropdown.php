@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -76,7 +76,7 @@ function data_dropdown($data, $params) {
 	$ret = 	'<div style="text-align:center;font-weight:bold;">'
 				.'<a title="Click to Expand or Contract" href="javascript:flip(\''.$id.'\')">'.$title.'</a>'
 			.'</div>'
-			.'<div class="help box" style="display:none" id="'.$dd.'">'.$data.'</div>';
+			.'<div class="help box" style="display:none" id="'.( !empty( $dd ) ? $dd : 'id' ).'">'.$data.'</div>';
 	return $ret;
 }
 ?>
