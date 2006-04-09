@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.42 $
+ * @version  $Revision: 1.43 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -374,7 +374,7 @@ class TikiWikiParser extends BitBase {
 			}
 		}
 
-		if( preg_match("/\~np\~((.|\n)*?)\~\/np\~/", $data, $preparse) ) {
+		if( preg_match("!\~np\~(.*?)\~/np\~!s", $data, $preparse) ) {
 			// Find all sections delimited by ~np~ ... ~/np~
 			$new_data = '';
 			$nopa = '';
