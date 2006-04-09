@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.3 2006/04/06 05:06:11 starrrider Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.4 2006/04/09 19:17:50 bitweaver Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAIMG', 'dataimg' );
 global $gLibertySystem;
@@ -63,7 +63,9 @@ function data_img($data, $params) {
 					$key = 'desc';
 				case 'width':
 				case 'height':
-					$imgdata['img_style'] .= $key.':'.$value.';';
+					if( preg_match( "/^\d/", $value ) ) {
+						$imgdata['img_style'] .= $key.':'.$value.';';
+					}
 					break;
 				case 'float':
 				case 'padding':
