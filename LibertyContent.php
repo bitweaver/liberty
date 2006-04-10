@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.93 2006/04/10 13:58:10 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.94 2006/04/10 17:38:44 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1479,11 +1479,11 @@ class LibertyContent extends LibertyBase {
 			global $gLibertySystem;
 			if( $func = $gLibertySystem->getPluginFunction( $formatGuid, 'load_function' ) ) {
 				$ret = $func( $data, $this, $contentId );
-				post_parse_data( $ret );
 			}
 		}
 		return $ret;
 	}
+
 
 	/**
 	* Special parsing for multipage articles

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing
 // +----------------------------------------------------------------------+
-// $Id: data.div.php,v 1.6 2006/04/10 17:18:17 squareing Exp $
+// $Id: data.div.php,v 1.7 2006/04/10 17:38:44 squareing Exp $
 
 /**
  * definitions
@@ -63,7 +63,6 @@ function data_div_help() {
 }
 
 function data_div( $data, $params ) {
-	global $gContent;
 	$style = '';
 	foreach( $params as $key => $value ) {
 		if( !empty( $value ) ) {
@@ -90,12 +89,6 @@ function data_div( $data, $params ) {
 			}
 		}
 	}
-
-	$parse['data']        = &$data;
-	$parse['format_guid'] = ( !empty( $gContent->mInfo['format_guid'] ) ? $gContent->mInfo['format_guid'] : NULL );
-	$parse['content_id']  = ( !empty( $gContent->mInfo['content_id'] ) ? $gContent->mInfo['content_id'] : NULL );
-	$data                 = $gContent->parseData( $parse );
-
 	return( '<div style="'.$style.'">'.$data.'</div>' );
 }
 ?>
