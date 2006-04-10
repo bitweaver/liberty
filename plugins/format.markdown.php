@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -19,7 +19,7 @@ define( 'PLUGIN_GUID_MARKDOWN', 'markdown' );
 $pluginParams = array (
 	'store_function' => 'markdown_save_data',
 	'load_function' => 'markdown_parse_data',
-	'verify_function' => 'markdown_verify_data',
+	//'verify_function' => 'markdown_verify_data',
 	'auto_activate' => FALSE,
 	'description' => 'This parser allows you to use plain text, which is then converted to HTML. For the full syntax, please view <a href="http://daringfireball.net/projects/markdown/syntax">Markdown Syntax</a>',
 	'edit_label' => 'Markdown',
@@ -28,12 +28,6 @@ $pluginParams = array (
 );
 
 $gLibertySystem->registerPlugin( PLUGIN_GUID_MARKDOWN, $pluginParams );
-
-function markdown_verify_data( &$pParamHash ) {
-	$errorMsg = NULL;
-	$pParamHash['content_store']['data'] = Markdown( $pParamHash['edit'] );
-	return $errorMsg;
-}
 
 function markdown_save_data( &$pParamHash ) {
 	static $parser;
@@ -47,6 +41,7 @@ function markdown_save_data( &$pParamHash ) {
 
 function markdown_parse_data( &$pData, &$pCommonObject ) {
 	global $gLibertySystem;
+	$pData = Markdown( $pData );
 	// eventually we should strip tags, maybe tikilink, or other things.
 	parse_data_plugins( $pData, $foo, $bar, $empty );
 	// this function is called manually, since it processes the HTML code
