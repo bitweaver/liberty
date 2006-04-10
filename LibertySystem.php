@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.22 2006/03/25 20:50:16 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.23 2006/04/10 13:58:10 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -278,7 +278,7 @@ class LibertySystem extends LibertyBase {
 }
 
 function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser ) {
-	global $gLibertySystem;
+	global $gLibertySystem, $gParsedDataPlugins;
 	// Find the plugins
 	// note: $curlyTags[0] is the complete match, $curlyTags[1] is plugin name, $curlyTags[2] is plugin arguments
 	preg_match_all("/\{\/?([A-Za-z]+)([^\}]*)\}/", $data, $curlyTags);
@@ -387,8 +387,10 @@ function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser ) {
 						$ret = preg_replace( "/\~(\/?)[np]p\~/", '', $ret );
 
 					}
-					// Replace plugin section with its output in data
-					$data = substr_replace($data, $ret, $pos, $pos_end - $pos + strlen($plugin_end));
+					// pass plugin output to hash and place a unique key in the text for later replacement
+					$key = md5( microtime( rand() ) );
+					$gParsedDataPlugins[$key] = $ret;
+					$data = substr_replace( $data, $key, $pos, $pos_end - $pos + strlen( $plugin_end ) );
 				}
 			}
 			$i--;
@@ -398,6 +400,17 @@ function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser ) {
 				$code_first = false;
 			}
 		} // while
+	}
+}
+
+// parse_data_plugins places all plugin data in $gParsedDataPlugins. The plugin
+// data is passed back into $data once all the parsing has finished
+function post_parse_data( &$pData ) {
+	global $gParsedDataPlugins;
+	if( !empty( $gParsedDataPlugins ) && is_array( $gParsedDataPlugins ) ) {
+		foreach( $gParsedDataPlugins as $key => $data ) {
+			$pData = str_replace( $key, $data, $pData );
+		}
 	}
 }
 
