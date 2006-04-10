@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.17 $
+ * @version  $Revision: 1.18 $
  * @package  liberty
  * @subpackage functions
  */
@@ -31,6 +31,16 @@ $gBitSmarty->assign( 'contentList', $contentList['data'] );
 $contentList['listInfo']['parameters']['content_type_guid'] = $contentSelect;
 $gBitSmarty->assign( 'listInfo', $contentList['listInfo'] );
 
-$gBitSystem->setBrowserTitle( 'List Content' );
-$gBitSystem->display( 'bitpackage:liberty/list_content.tpl' );
+if( !empty( $_REQUEST['ajax_xml'] ) ) {
+	require_once( UTIL_PKG_PATH.'javascript/libs/suggest/suggest_lib.php' );
+	foreach( array_keys( $contentList['data'] ) as $row ) {
+		$xmlList[$contentList['data'][$row]['content_id']] = $contentList['data'][$row]['title'];
+	}
+	$xml = SuggestLib::exportXml( $xmlList, $_REQUEST['id'] );
+	header( "Content-Type: text/xml\n\n" );
+	print $xml;
+} else {
+	$gBitSystem->setBrowserTitle( 'List Content' );
+	$gBitSystem->display( 'bitpackage:liberty/list_content.tpl' );
+}
 ?>
