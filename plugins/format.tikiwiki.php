@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.43 $
+ * @version  $Revision: 1.44 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -804,16 +804,6 @@ class TikiWikiParser extends BitBase {
 					}
 					$data = str_replace($draws[0][$i], $repl, $data);
 				}
-			}
-		}
-
-		// Replace cookies
-		if (preg_match_all("/\{cookie\}/", $data, $rsss)) {
-			require_once( KERNEL_PKG_PATH.'tagline_lib.php' );
-			global $taglinelib;
-			for ($i = 0; $i < count($rsss[0]); $i++) {
-				$cookie = $taglinelib->pick_cookie();
-				$data = str_replace($rsss[0][$i], $cookie, $data);
 			}
 		}
 
