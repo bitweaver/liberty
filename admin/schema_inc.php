@@ -206,15 +206,15 @@ $gBitInstaller->registerPreferences( LIBERTY_PKG_NAME, array(
 
 // ### Default UserPermissions
 $gBitInstaller->registerUserPermissions( LIBERTY_PKG_NAME, array(
-	array('bit_p_edit_html_style', 'Can include style information in HTML', 'editors', LIBERTY_PKG_NAME),
-	array('bit_p_post_comments', 'Can post new comments', 'registered', LIBERTY_PKG_NAME),
-	array('bit_p_read_comments', 'Can read comments', 'basic', LIBERTY_PKG_NAME),
-	array('bit_p_remove_comments', 'Can delete comments', 'editors', LIBERTY_PKG_NAME),
-	array('bit_p_vote_comments', 'Can vote comments', 'registered', LIBERTY_PKG_NAME),
-	array('bit_p_edit_comments', 'Can edit all comments', 'editors', LIBERTY_PKG_NAME),
-	array('bit_p_content_attachments', 'Can create content attachments', 'registered', LIBERTY_PKG_NAME),
-	array('bit_p_detach_attachment', 'Can detach content attachments', 'registered', LIBERTY_PKG_NAME),
-	array('bit_p_print', 'Can print content', 'basic', LIBERTY_PKG_NAME),
+	array('p_liberty_edit_html_style', 'Can include style information in HTML', 'editors', LIBERTY_PKG_NAME),
+	array('p_liberty_post_comments', 'Can post new comments', 'registered', LIBERTY_PKG_NAME),
+	array('p_liberty_read_comments', 'Can read comments', 'basic', LIBERTY_PKG_NAME),
+	array('p_liberty_remove_comments', 'Can delete comments', 'editors', LIBERTY_PKG_NAME),
+	array('p_liberty_vote_comments', 'Can vote comments', 'registered', LIBERTY_PKG_NAME),
+	array('p_liberty_edit_comments', 'Can edit all comments', 'editors', LIBERTY_PKG_NAME),
+	array('p_liberty_attach_attachments', 'Can create content attachments', 'registered', LIBERTY_PKG_NAME),
+	array('p_liberty_detach_attachment', 'Can detach content attachments', 'registered', LIBERTY_PKG_NAME),
+	array('p_liberty_print', 'Can print content', 'basic', LIBERTY_PKG_NAME),
 ) );
 
 ?>

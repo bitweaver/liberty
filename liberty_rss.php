@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_rss.php,v 1.6 2006/04/05 06:31:57 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_rss.php,v 1.7 2006/04/11 13:05:42 squareing Exp $
  * @package wiki
  * @subpackage functions
  */
@@ -18,7 +18,7 @@ $rss->title = $gBitSystem->getConfig( 'title_rss_liberty', $gBitSystem->getConfi
 $rss->description = $gBitSystem->getConfig( 'desc_rss_liberty', $gBitSystem->getConfig( 'site_title' ).' - '.tra( 'RSS Feed' ) );
 
 // check permission to view liberty pages
-if( !$gBitUser->hasPermission( 'bit_p_view' ) ) {
+if( !$gBitUser->hasPermission( 'p_wiki_view_page' ) ) {
 	require_once( RSS_PKG_PATH."rss_error.php" );
 } else {
 	// check if we want to use the cache file

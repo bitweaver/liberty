@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage functions
  *
@@ -35,7 +35,7 @@ if( !empty( $_REQUEST['deleteAttachment'] ) ) {
 	$siblingAttachments = $gContent->getSiblingAttachments( $attachmentId );
 	$attachmentInfo = $gContent->getAttachment( $attachmentId );
 	
-	if( count( $siblingAttachments ) > 0 || ( !$gBitUser->isAdmin() && $gBitUser->mUserId != $attachmentInfo['user_id'] && $gBitUser->mPerms['bit_p_detach_attachment'] == 'y' ) ) {
+	if( count( $siblingAttachments ) > 0 || ( !$gBitUser->isAdmin() && $gBitUser->mUserId != $attachmentInfo['user_id'] && $gBitUser->mPerms['p_liberty_detach_attachment'] == 'y' ) ) {
 		// Other liberty_attachment rows reference the same foreign_id so we should just detach
 		$gContent->detachAttachment( $attachmentId );	
 	} else {
@@ -45,7 +45,7 @@ if( !empty( $_REQUEST['deleteAttachment'] ) ) {
 	$attachmentId = $_REQUEST['detachAttachment'];
 	$attachmentInfo = $gContent->getAttachment( $attachmentId );
 	
-	if( $gBitUser->isAdmin() || $gBitUser->mPerms['bit_p_detach_attachment'] == 'y' || $attachmentInfo['user_id'] == $gBitUser->mUserId ) {
+	if( $gBitUser->isAdmin() || $gBitUser->mPerms['p_liberty_detach_attachment'] == 'y' || $attachmentInfo['user_id'] == $gBitUser->mUserId ) {
 		$gContent->detachAttachment( $attachmentId );
 	}
 }

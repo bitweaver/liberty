@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -50,11 +50,11 @@ function purge_html( $pText ) {
 
 	// Yank style - both tag and inline attributes
 	// strip_tags has doesn't recognize that css within the style tags are not document text. To fix this do something similar to the following:
-	if( !$gBitUser->hasPermission( 'bit_p_edit_html_style' ) ) {
+	if( !$gBitUser->hasPermission( 'p_liberty_edit_html_style' ) ) {
 		$text = preg_replace( "/<style[^>]*>.*<\/style>/siU", '', $text );
 	}
 	$text = stripslashes($text);
-	if( !$gBitUser->hasPermission( 'bit_p_edit_html_style' ) ) {
+	if( !$gBitUser->hasPermission( 'p_liberty_edit_html_style' ) ) {
 		$text = preg_replace( "/ (style|class)=[\"]?([^\"]*)[\"]?/i", '', $text);
 	}
 

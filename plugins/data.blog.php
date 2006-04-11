@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.blog.php,v 1.4 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.blog.php,v 1.5 2006/04/11 13:05:42 squareing Exp $
 
 /**
  * definitions
@@ -85,7 +85,7 @@ function data_blog($data, $params) { // No change in the parameters with Clyde
 
 	$module_params = $params;
 
-/*	$gBitSystem->verifyPermission( 'bit_p_read_blog' ); */
+/*	$gBitSystem->verifyPermission( 'p_blogs_view' ); */
 
 	$gBitSmarty->assign('blog_id', $module_params['id']);
 

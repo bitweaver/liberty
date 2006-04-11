@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.44 $
+ * @version  $Revision: 1.45 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -831,7 +831,7 @@ class TikiWikiParser extends BitBase {
 				// Now build 2 divs
 				$id = 'dyn_'.$dvar;
 
-				if( $gBitUser->hasPermission( 'bit_p_edit_dynvar' ) ) {
+				if( $gBitUser->hasPermission( 'p_wiki_edit_dynvar' ) ) {
 					$span1 = "<span  style='display:inline;' id='dyn_".$dvar."_display'><a class='dynavar' onclick='javascript:toggle_dynamic_var(\"$dvar\");' title='".tra('Click to edit dynamic variable').": $dvar'>$value</a></span>";
 					$span2 = "<span style='display:none;' id='dyn_".$dvar."_edit'><input type='text' name='dyn_".$dvar."' value='".$value."' /></span>";
 				} else {
@@ -1423,7 +1423,7 @@ class TikiWikiParser extends BitBase {
 						$addremove = 1;
 						}
 						$edit_link = '';
-						if( $gBitSystem->isFeatureActive( 'wiki_section_edit' ) && $gBitUser->hasPermission( 'bit_p_edit' ) ) {
+						if( $gBitSystem->isFeatureActive( 'wiki_section_edit' ) && $gBitUser->hasPermission( 'p_wiki_edit_page' ) ) {
 							if( $hdrlevel == $gBitSystem->getConfig( 'wiki_section_edit' ) ) {
 								$edit_url = WIKI_PKG_URL."edit.php?content_id=".$pContentId."&amp;action=edit_sectin&amp;section=".$section_count++;
 								$edit_link = '<span class="editsection" style="float:right;margin-left:5px;">[<a href="'.$edit_url.'">'.tra( "edit" ).'</a>]</span>';
