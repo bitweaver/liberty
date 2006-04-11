@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.45 $
+ * @version  $Revision: 1.46 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -781,6 +781,7 @@ class TikiWikiParser extends BitBase {
 
 			$pars = join('/', $pars);
 
+			/* i don't think we need this - move this to a plugin if someone needs it - xing
 			if (preg_match_all("/\{draw +name=([A-Za-z_\-0-9]+) *\}/", $data, $draws)) {
 				//$this->invalidate_cache($page);
 				for ($i = 0; $i < count($draws[0]); $i++) {
@@ -805,6 +806,7 @@ class TikiWikiParser extends BitBase {
 					$data = str_replace($draws[0][$i], $repl, $data);
 				}
 			}
+			*/
 		}
 
 		// ============================================= this should go - xing

@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.94 2006/04/10 17:38:44 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.95 2006/04/11 17:52:09 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -81,7 +81,7 @@ class LibertyContent extends LibertyBase {
 		LibertyBase::LibertyBase();
 		$this->mPerms = array();
 		if( empty( $this->mAdminContentPerm ) ) {
-			$this->mAdminContentPerm = 'bit_p_admin_content';
+			$this->mAdminContentPerm = 'p_admin_content';
 		}
 	}
 
