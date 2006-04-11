@@ -1,10 +1,10 @@
 <?php
 /**
- * $Id: edit_help_inc.php,v 1.7 2006/04/06 05:08:58 starrrider Exp $
+ * $Id: edit_help_inc.php,v 1.8 2006/04/11 19:20:17 starrrider Exp $
  * edit_help_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage functions
  */
@@ -42,8 +42,7 @@ foreach( array_keys( $gLibertySystem->mPlugins ) as $pluginGuid ) {
 				function_exists($gLibertySystem->mPlugins[$pluginGuid]['help_function'] ) 						? $gLibertySystem->mPlugins[$pluginGuid]['help_function']() : '';
 			$dataplugins[] = $pinfo;
 }	}	}
-libNatSort2D( $dataplugins,'title' ); // Sort the array - StarRider
-$FirstPluginWinId = $dataplugins[1]["guid"];
+$FirstPluginWinId = $dataplugins[0]["guid"];
 $helpWinId  = 'HelpWindow';
 
 $gBitSmarty->assign_by_ref( 'formatplugins', $formatplugins );
