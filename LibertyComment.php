@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.22 2006/03/28 18:20:41 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.23 2006/04/12 08:41:45 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -434,15 +434,13 @@ class LibertyComment extends LibertyContent {
 			$mid2 = '=?';
 			$bindVars = array( $pContentId );
 		}
+
 		if ($pContentId) {
 			$sql = "SELECT tc.comment_id, tc.parent_id, tc.root_id, tc.thread_forward_sequence, tc.thread_reverse_sequence, tcn.*, uu.`email`, uu.`real_name`, uu.`login`
-					FROM `".BIT_DB_PREFIX."liberty_comments` tc LEFT OUTER JOIN
-					 `".BIT_DB_PREFIX."liberty_content` tcn
-					 ON (tc.`content_id` = tcn.`content_id`)
-						 LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu
-						 ON (tcn.`user_id` = uu.`user_id`)
-				    where tc.root_id $mid2
-					$mid";
+					FROM `".BIT_DB_PREFIX."liberty_comments` tc
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` tcn ON (tc.`content_id` = tcn.`content_id`)
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON (tcn.`user_id` = uu.`user_id`)
+				    where tc.root_id $mid2 $mid";
 			$flat_comments = array();
 			if( $result = $this->mDb->query($sql,$bindVars,$pMaxComments,$pOffset) ) {
 				while( $row = $result->FetchRow() ) {
