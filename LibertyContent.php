@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.96 2006/04/12 12:46:44 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.97 2006/04/12 18:39:15 sylvieg Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -589,7 +589,7 @@ class LibertyContent extends LibertyBase {
 	/**
 	* Set up SQL strings for services used by the object
 	*/
-	function getServicesSql( $pServiceFunction, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars, &$pObject = NULL ) {
+	function getServicesSql( $pServiceFunction, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars, &$pObject ) {
 		global $gLibertySystem;
 		if( $loadFuncs = $gLibertySystem->getServiceValues( $pServiceFunction ) ) {
 			foreach( $loadFuncs as $func ) {
