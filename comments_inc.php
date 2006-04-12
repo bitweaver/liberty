@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.12 2006/04/11 13:05:42 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.13 2006/04/12 15:39:19 sylvieg Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -24,6 +24,12 @@
 // Traverse each _REQUEST data adn put them in an array
 
 // this script may only be included - so its better to die if called directly.
+
+/**
+* @param $commentsParentId = the content id of the object where a new comment will be attached - mandatory
+* @param $commentsParentIds = the list of content id of object the comments will be displayed - if not defined $commentsParentId
+* @param $comments_return_url
+**/
 
 /**
  * required setup
@@ -159,7 +165,12 @@ if( !@BitBase::verifyId( $commentsParentId ) ) {
 	$comments = NULL;
 	$numComments = 0;
 } else {
-	$comments = $gComment->getComments( $commentsParentId, $maxComments, $commentOffset, $comments_sort_mode, $comments_display_style );
+	if( @BitBase::verifyId( $commentsParentIds ) ) {
+		$parents = $commentsParentIds;
+	} else {
+		$parents = $commentsParentId;
+	}
+	$comments = $gComment->getComments( $parents, $maxComments, $commentOffset, $comments_sort_mode, $comments_display_style );
 	$numComments = $gComment->getNumComments( $commentsParentId );
 }
 $gBitSmarty->assign('comments', $comments);
