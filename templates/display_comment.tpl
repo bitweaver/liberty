@@ -20,7 +20,8 @@
 		<h3>{$comment.title|escape}</h3>
 		<div class="date">{tr}by{/tr} {displayname hash=$comment}, {$comment.last_modified|bit_long_datetime}</div>
 		<div class="content">
-			{include file="bitpackage:liberty/services_inc.tpl" serviceLocation='body' serviceHash=$gContent->mInfo}
+			{* doesn't work yet, because comments don't have service sql yet *}
+			{*include file="bitpackage:liberty/services_inc.tpl" serviceLocation='body' serviceHash=$comments*}
 			{$comment.parsed_data}
 		</div>
 	</div><!-- end .post -->
