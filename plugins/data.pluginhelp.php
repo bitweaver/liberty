@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -16,7 +16,7 @@
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // | Rewritten for bitweaver by Author
 // +----------------------------------------------------------------------+
-// $Id: data.pluginhelp.php,v 1.8 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.pluginhelp.php,v 1.9 2006/04/12 12:50:05 starrrider Exp $
 
 /**
  * definitions
@@ -42,18 +42,24 @@ $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAPLUGINHE
 
 // Help Function
 function data_pluginhelp_help() {
-	$help = libHelpParam( // $name,$type,$descr,$req,$default,$notes,$keywords )
-				'plugin', // Name
-				'string', // Type
-				tra('The Name of the Plugin to be displayed.'), // Description
-				TRUE, // Required
-				tra( "There is").' <strong>No</strong> '.tra( "Default.") // Default
-			);
-	return libPluginHelp( //$tbl,$notes,$example)
-				libHelpTable($help), // Creates the Table
-				NULL, // Notes
-				"{PLUGINHELP plugin='pluginhelp' }" // Example
-			);
+	$help =
+		'<table class="data help">'
+			.'<tr>'
+				.'<th>'.tra( "Key" ).'</th>'
+				.'<th>'.tra( "Type" ).'</th>'
+				.'<th>'.tra( "Comments" ).'</th>'
+			.'</tr>'
+			.'<tr class="odd">'
+				.'<td>plugin</td>'
+				.'<td>'.tra( "string").'<br />'.tra("(manditory)").'</td>'
+				.'<td>'.tra( "The Name of the Plugin to be displayed.")
+					.'<br />'.tra( "There is").' <strong>No</strong> '.tra( "Default.")
+				.'</td>'
+			.'</tr>'
+		.'</table>'
+		. tra("Example: ") ."{PLUGINHELP plugin='pluginhelp' } - Will display the Plugin\'s Help<br />"
+		. tra("Example: ") ."{PLUGINHELP plugin='pluginhelp' showdata=TRUE } - Will display the Plugin\'s PluginParams";
+	return $help;
 }
 
 // Load Function
@@ -70,7 +76,16 @@ function data_pluginhelp($data, $params) {
 			$thisGuid = $pluginGuid;
 	}
 	if (!isset($thisGuid)) { // The Plugin was not found
-		return libPluginError('PluginHelp', tra('The Plugin Name Specified').' <strong>plugin='.$plugin.'</strong> '.tra('does not exist.'));
+		$ret  =
+			'<div class="box">'
+				.'<div class="error" style="text-align:center;">'
+					.'<h2>'.tra('Error in the Plugin "').'PluginHelp</h2>'
+				.'</div><hr />'
+				.'<div class="boxcontent">'
+					.tra('The Plugin Name Specified').' <strong>plugin='.$plugin.'</strong> '.tra('does not exist.')
+				.'</div>';
+			'</div>';
+		return $ret;
 	}
 
 	$pluginParams = $gLibertySystem->mPlugins[$thisGuid];
