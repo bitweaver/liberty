@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.24 2006/04/12 12:46:44 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.25 2006/04/12 15:38:06 sylvieg Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -435,19 +435,23 @@ class LibertyComment extends LibertyContent {
 		if (is_array( $pContentId ) ) {
 			$mid2 = 'in ('.implode(',', array_fill(0, count( $pContentId ), '?')).')';
 			$bindVars = $pContentId;
+			$select1 = ', lcp.content_type_guid as parent_content_type_guid, lcp.title as parent_title ';
+			$join1 = " LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` lcp ON (lcp.content_id = lcom.parent_id) ";
 		} elseif ($pContentId) {
 			$mid2 = '=?';
 			$bindVars = array( $pContentId );
+			$select1 = '';
+			$join1 = '';
 		}
 
 		$joinSql = $selectSql = $whereSql = '';
 		$this->getServicesSql( 'content_list_sql_function', $selectSql, $joinSql, $whereSql, $bindVars, $this );
 
 		if ($pContentId) {
-			$sql = "SELECT lcom.comment_id, lcom.parent_id, lcom.root_id, lcom.thread_forward_sequence, lcom.thread_reverse_sequence, lc.*, uu.`email`, uu.`real_name`, uu.`login` $selectSql
+			$sql = "SELECT lcom.comment_id, lcom.parent_id, lcom.root_id, lcom.thread_forward_sequence, lcom.thread_reverse_sequence, lc.*, uu.`email`, uu.`real_name`, uu.`login` $selectSql $select1
 					FROM `".BIT_DB_PREFIX."liberty_comments` lcom
 						LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lcom.`content_id` = lc.`content_id`)
-						LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON (lc.`user_id` = uu.`user_id`) $joinSql
+						LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON (lc.`user_id` = uu.`user_id`) $joinSql $join1
 				    WHERE lcom.root_id $mid2 $whereSql $mid";
 			$flat_comments = array();
 			if( $result = $this->mDb->query( $sql, $bindVars, $pMaxComments, $pOffset ) ) {
