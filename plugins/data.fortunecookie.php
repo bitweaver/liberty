@@ -1,4 +1,5 @@
 <?php
+global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'tidbits' ) ) {
 	define( 'PLUGIN_GUID_DATACOOKIE', 'datacookie' );
 	global $gLibertySystem;
