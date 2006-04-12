@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.95 2006/04/11 17:52:09 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.96 2006/04/12 12:46:44 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -589,12 +589,16 @@ class LibertyContent extends LibertyBase {
 	/**
 	* Set up SQL strings for services used by the object
 	*/
-	function getServicesSql( $pServiceFunction, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
+	function getServicesSql( $pServiceFunction, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars, &$pObject = NULL ) {
 		global $gLibertySystem;
 		if( $loadFuncs = $gLibertySystem->getServiceValues( $pServiceFunction ) ) {
 			foreach( $loadFuncs as $func ) {
 				if( function_exists( $func ) ) {
-					$loadHash = $func( $this );
+					if( !empty( $pObject ) && is_object( $pObject ) ) {
+						$loadHash = $func( $pObject );
+					} else {
+						$loadHash = $func( $this );
+					}
 					if( !empty( $loadHash['select_sql'] ) ) {
 						$pSelectSql .= $loadHash['select_sql'];
 					}
@@ -954,6 +958,9 @@ class LibertyContent extends LibertyBase {
 		} elseif( $this->mContentTypeGuid ) {
 			// for unloaded classes
 			$ret = $this->mContentTypeGuid;
+		} elseif( $this->mType['content_type_guid'] ) {
+			// unloaded content might have this
+			$ret = $this->mType['content_type_guid'];
 		}
 		return $ret;
 	}

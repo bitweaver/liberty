@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.23 2006/04/12 08:41:45 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.24 2006/04/12 12:46:44 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -50,18 +50,22 @@ class LibertyComment extends LibertyContent {
 		}
 
 		if ($this->mCommentId) {
-			$mid = 'WHERE lc.`comment_id` = ?';
+			$mid = 'WHERE lcom.`comment_id` = ?';
 			$bindVars = array($this->mCommentId);
 		} else {
-			$mid = 'WHERE tcn.`content_id` = ?';
+			$mid = 'WHERE lc.`content_id` = ?';
 			$bindVars = array($this->mContentId);
 		}
 
-		$sql = "SELECT lc.*, tcn.*, uu.`email`, uu.`real_name`, uu.`login`
-				FROM `".BIT_DB_PREFIX."liberty_comments` lc LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` tcn ON (lc.`content_id` = tcn.`content_id`)
-					 LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON (tcn.`user_id` = uu.`user_id`)
-				$mid";
-		if( $row = $this->mDb->getRow($sql, $bindVars) ) {
+		$joinSql = $selectSql = $whereSql = '';
+		$this->getServicesSql( 'content_list_sql_function', $selectSql, $joinSql, $whereSql, $bindVars, $this );
+
+		$sql = "SELECT lcom.*, lc.*, uu.`email`, uu.`real_name`, uu.`login` $selectSql
+				FROM `".BIT_DB_PREFIX."liberty_comments` lcom
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lcom.`content_id` = lc.`content_id`)
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON (lc.`user_id` = uu.`user_id`) $joinSql
+				$mid $whereSql";
+		if( $row = $this->mDb->getRow( $sql, $bindVars ) ) {
 			$this->mInfo = $row;
 			$this->mContentId = $row['content_id'];
 			$this->mCommentId = $row['comment_id'];
@@ -427,6 +431,7 @@ class LibertyComment extends LibertyContent {
 		}
 		$mid = 'order by ' . $mid;
 
+		$bindVars = array();
 		if (is_array( $pContentId ) ) {
 			$mid2 = 'in ('.implode(',', array_fill(0, count( $pContentId ), '?')).')';
 			$bindVars = $pContentId;
@@ -435,16 +440,19 @@ class LibertyComment extends LibertyContent {
 			$bindVars = array( $pContentId );
 		}
 
+		$joinSql = $selectSql = $whereSql = '';
+		$this->getServicesSql( 'content_list_sql_function', $selectSql, $joinSql, $whereSql, $bindVars, $this );
+
 		if ($pContentId) {
-			$sql = "SELECT tc.comment_id, tc.parent_id, tc.root_id, tc.thread_forward_sequence, tc.thread_reverse_sequence, tcn.*, uu.`email`, uu.`real_name`, uu.`login`
-					FROM `".BIT_DB_PREFIX."liberty_comments` tc
-					LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` tcn ON (tc.`content_id` = tcn.`content_id`)
-					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON (tcn.`user_id` = uu.`user_id`)
-				    where tc.root_id $mid2 $mid";
+			$sql = "SELECT lcom.comment_id, lcom.parent_id, lcom.root_id, lcom.thread_forward_sequence, lcom.thread_reverse_sequence, lc.*, uu.`email`, uu.`real_name`, uu.`login` $selectSql
+					FROM `".BIT_DB_PREFIX."liberty_comments` lcom
+						LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lcom.`content_id` = lc.`content_id`)
+						LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON (lc.`user_id` = uu.`user_id`) $joinSql
+				    WHERE lcom.root_id $mid2 $whereSql $mid";
 			$flat_comments = array();
-			if( $result = $this->mDb->query($sql,$bindVars,$pMaxComments,$pOffset) ) {
+			if( $result = $this->mDb->query( $sql, $bindVars, $pMaxComments, $pOffset ) ) {
 				while( $row = $result->FetchRow() ) {
-					$row['parsed_data'] = $this->parseData($row);
+					$row['parsed_data'] = $this->parseData( $row );
 					$row['level'] = substr_count ( $row['thread_forward_sequence'], '.' ) - 1;
 					$flat_comments[] = $row;
 				}
