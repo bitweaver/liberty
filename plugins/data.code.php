@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.15 $
+ * @version  $Revision: 1.16 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.15 2006/04/09 16:04:38 squareing Exp $
+// $Id: data.code.php,v 1.16 2006/04/12 00:20:11 starrrider Exp $
 
 /**
  * definitions
@@ -77,6 +77,22 @@ function data_code_help() {
 	return $help;
 }
 
+if( !function_exists( 'unHtmlEntities' )) { // avoid name collisions
+	function unHtmlEntities($str) {
+		$tTbl = get_html_translation_table(HTML_ENTITIES);
+		$tTbl = array_flip($tTbl);
+		return strtr($str, $tTbl);
+	}
+}
+if( !function_exists( 'deCodeHTML' )) { // avoid name collisions
+	function deCodeHTML($str) {
+	    $str = strtr($str, array_flip(get_html_translation_table(HTML_ENTITIES)));
+    	$str = preg_replace("/&#([0-9]+);/me", "chr('\\1')", $str);
+    	return $str;
+	}
+}
+
+
 // Load Function
 function data_code( $data, $params ) { // Pre-Clyde Changes
 // Parameters were $In & $Colors
@@ -106,7 +122,7 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 		$code .=  rtrim($line) . "\n";
 	}
 
-	$code = unhtmlentities( $code );
+	$code = unHtmlEntities( $code );
 
 	// Trim any leading blank lines
 	$code = preg_replace('/^[\n\r]+/', "",$code);
@@ -125,7 +141,7 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 			$geshi->enable_line_numbers(GESHI_FANCY_LINE_NUMBERS);
 			if (is_numeric($num)) $geshi->start_line_numbers_at($num);
 		}
-		$code = decodeHTML(htmlentities($geshi->parse_code()));
+		$code = deCodeHTML(htmlentities($geshi->parse_code()));
 	} else {
 		if ($num) { // Line Numbering has been requested
 			$lines = explode("\n", $code);
@@ -140,7 +156,7 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 		}
 		switch (strtoupper($source)) { 	// I used a switch here to make it easy to expand this plugin for other kinds of source code
 			case 'HTML':
-				$code = highlight_string(decodeHTML($code),true);
+				$code = highlight_string(deCodeHTML($code),true);
 				if (substr($code, 0, 6) == '<code>') { // Remove the first <code>" tags
 					$code = substr($code, 6, (strlen($code) - 13));
 				}
