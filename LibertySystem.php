@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.24 2006/04/10 17:38:44 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.25 2006/04/13 08:45:11 starrrider Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -57,14 +57,12 @@ class LibertySystem extends LibertyBase {
 	var $mPlugins;
 	var $mDataTags;
 	var $mContentTypes;
-	var $mLibrary;
 
 	function LibertySystem() {
 		LibertyBase::LibertyBase();
 		$this->mDataTags = array();
 		$this->loadPlugins();
 		$this->loadContentTypes();
-		$this->mLibrary = array();
 	}
 
 	function loadPlugins() {
@@ -254,26 +252,6 @@ class LibertySystem extends LibertyBase {
 			}
 		}
 		return $ret;
-
-	}
-
-	function registerLibFunction( $pLibData ) {
-		if ( !empty( $pLibData ) ) {
-			$pTag = strtolower($pLibData['FuncName']);
-			$this->mLibrary[$pTag] = $pLibData;
-	}	}
-
-	function getLibFunctions() {
-		$ret = $this->mLibrary;
-		return $ret;
-	}
-
-	function isLibFunction( $pLibTag ) {
-		if ( !empty( $pLibTag ) ) {
-			$pLibTag = strtolower($pLibTag);
-			if ( array_key_exists( $pLibTag, $this->mLibrary ) ) return ( $this->mLibrary[$pLibTag] );
-		}
-		return False;
 	}
 }
 
