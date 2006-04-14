@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.46 $
+ * @version  $Revision: 1.47 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -603,7 +603,7 @@ class TikiWikiParser extends BitBase {
 
 	function cache_links($links, &$pCommonObject ) {
 		global $gBitSystem;
-		if( $gBitSystem->isFeatureActive( 'cachepages' ) ) {
+		if( $gBitSystem->isFeatureActive( 'liberty_cache_pages' ) ) {
 			foreach ($links as $link) {
 				if( !$pCommonObject->isCached( $link ) ) {
 					$pCommonObject->cacheUrl($link);
@@ -1056,7 +1056,7 @@ class TikiWikiParser extends BitBase {
 			// enter square brackets in their output; things like [[foo]
 			// get rendered as [foo]. -rlpowell
 
-			if( $gBitSystem->isFeatureActive( 'cachepages') && $pCommonObject->isCached( $link ) ) {
+			if( $gBitSystem->isFeatureActive( 'liberty_cache_pages') && $pCommonObject->isCached( $link ) ) {
 				//use of urlencode for using cached versions of dynamic sites
 				$cosa = "<a class=\"bitcache\" href=\"".KERNEL_PKG_URL."view_cache.php?url=".urlencode($link)."\">(cache)</a>";
 

@@ -197,8 +197,8 @@ $gBitInstaller->registerSchemaSequences( LIBERTY_PKG_NAME, $sequences );
 
 // ### Default Preferences
 $gBitInstaller->registerPreferences( LIBERTY_PKG_NAME, array(
-	array(LIBERTY_PKG_NAME, 'cacheimages','n'),
-	array(LIBERTY_PKG_NAME, 'cachepages','n'),
+	array(LIBERTY_PKG_NAME, 'liberty_cache_images','n'),
+	array(LIBERTY_PKG_NAME, 'liberty_cache_pages','n'),
 	array(LIBERTY_PKG_NAME, 'default_format','tikiwiki'),
 	array(LIBERTY_PKG_NAME, 'liberty_auto_display_attachment_thumbs', 'y'),
 //	array(LIBERTY_PKG_NAME, 'liberty_attachment_link_format', 'wiki') not needed anymore since we use js in the edit page now (depends on format of content)
