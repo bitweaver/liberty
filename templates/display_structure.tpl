@@ -1,7 +1,7 @@
 {strip}
 {if $structureInfo.structure_path}
 	<div class="structurebar">
-		{if $gBitSystem->isFeatureActive( 'wikibook_show_path' )}
+		{if $gBitSystem->isFeatureActive( 'wiki_book_show_path' )}
 			<span class="path">
 				{section loop=$structureInfo.structure_path name=ix}
 					{if $structureInfo.structure_path[ix].parent_id} &raquo; {/if}
@@ -12,7 +12,7 @@
 			</span>
 		{/if}
 
-		{if $gBitSystem->isFeatureActive( 'wikibook_show_navigation' )}
+		{if $gBitSystem->isFeatureActive( 'wiki_book_show_navigation' )}
 			<span class="navigation">
 				<span class="left">
 					{if $structureInfo.prev and $structureInfo.prev.structure_id}

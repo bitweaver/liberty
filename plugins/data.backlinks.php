@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,13 +18,13 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_backlinks.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.backlinks.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.backlinks.php,v 1.8 2006/04/14 19:36:18 squareing Exp $
 
 /**
  * definitions
  */
 global $gBitSystem;
-if( ( $gBitSystem->isPackageActive( 'wiki' ) ) && ( $gBitSystem->isFeatureActive('backlinks') ) ) { // Do not include this Plugin if the Package or the Feature is not active
+if( ( $gBitSystem->isPackageActive( 'wiki' ) ) && ( $gBitSystem->isFeatureActive('wiki_backlinks') ) ) { // Do not include this Plugin if the Package or the Feature is not active
 define( 'PLUGIN_GUID_DATABACKLINKS', 'databacklinks' );
 global $gLibertySystem;
 $pluginParams = array (
