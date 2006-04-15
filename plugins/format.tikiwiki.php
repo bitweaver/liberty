@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.47 $
+ * @version  $Revision: 1.48 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -699,7 +699,7 @@ class TikiWikiParser extends BitBase {
 		// get a list of pages this page links to
 		$pageList = $this->getAllPages( $pContentId );
 
-		if( $gBitSystem->isFeatureActive( 'allow_html' ) ) {
+		if( $gBitUser->hasPermission( 'p_liberty_enter_html' ) ) {
 			// this is copied and pasted from format.bithtml.php - xing
 			// Strip all evil tags that remain
 			// this comes out of gBitSystem->getConfig() set in Liberty Admin
