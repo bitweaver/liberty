@@ -1,6 +1,6 @@
 {strip}
 {if $gContent->mStorage}
-	{if !$gBitSystem->isFeatureActive( 'help_popup' )}
+	{if !$gBitSystem->isFeatureActive( 'site_help_popup' )}
 		{popup_init src="`$smarty.const.UTIL_PKG_URL`javascript/libs/overlib.js"}
 	{/if}
 

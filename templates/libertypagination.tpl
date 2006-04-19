@@ -25,7 +25,7 @@
 	<br />
 
 	{* MSIE dies when we use a form in the pagination when doing ajax stuff *}
-	{if $gBitSystem->isFeatureActive( 'direct_pagination' ) or $ajaxId}
+	{if $gBitSystem->isFeatureActive( 'site_direct_pagination' ) or $ajaxId}
 		{foreach from=$pgnPages item=link}
 			{$link}&nbsp;
 		{/foreach}

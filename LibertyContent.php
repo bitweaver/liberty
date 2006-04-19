@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.98 2006/04/13 10:31:09 sylvieg Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.99 2006/04/19 13:48:38 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1087,7 +1087,7 @@ class LibertyContent extends LibertyBase {
 		$pListHash['listInfo']['max_records'] = $pListHash['max_records'];
 
 		// calculate what links to show
-		if( $gBitSystem->isFeatureActive( 'direct_pagination' ) ) {
+		if( $gBitSystem->isFeatureActive( 'site_direct_pagination' ) ) {
 			// number of continuous links to display on either side
 			$continuous = 5;
 			// number of skipping links to display on either side

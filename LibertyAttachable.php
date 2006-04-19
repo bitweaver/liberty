@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.18 2006/03/01 18:35:16 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.19 2006/04/19 13:48:38 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -38,7 +38,7 @@ class LibertyAttachable extends LibertyContent {
 	}
 
 	/**
-	* getStoragePath - get path to store files for the feature centralized_upload_dir. It creates a calculable hierarchy of directories
+	* getStoragePath - get path to store files for the feature site_upload_dir. It creates a calculable hierarchy of directories
 	*
 	* @access public
 	* @author Christian Fowler<spider@steelsun.com>
@@ -62,7 +62,7 @@ class LibertyAttachable extends LibertyContent {
 
 
 	/**
-	* getStorageBranch - get url to store files for the feature centralized_upload_dir. It creates a calculable hierarchy of directories
+	* getStorageBranch - get url to store files for the feature site_upload_dir. It creates a calculable hierarchy of directories
 	*
 	* @access public
 	* @author Christian Fowler<spider@steelsun.com>
@@ -75,7 +75,7 @@ class LibertyAttachable extends LibertyContent {
 		global $gBitSystem;
 		$baseUrl = null;
 		$pathParts = array();
-		$pathParts = split( '/',$gBitSystem->getConfig('centralized_upload_dir', 'storage/' ) );
+		$pathParts = split( '/',$gBitSystem->getConfig('site_upload_dir', 'storage/' ) );
 
 		if( !$pUserId ) {
 			$pathParts[] = 'common';
@@ -120,7 +120,7 @@ class LibertyAttachable extends LibertyContent {
 	*/
 	function verifyStorageFile( $pFileName, $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE ) {
 		// don't worry about double slashes '//' for now. we'll remove them later
-		$path = $this->getPreference('centralized_upload_dir').'/';
+		$path = $this->getPreference('site_upload_dir').'/';
 		if( empty( $path ) ) {
 			$path = 'storage/';
 		}
