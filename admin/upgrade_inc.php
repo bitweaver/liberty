@@ -53,6 +53,7 @@ array( 'DATADICT' => array(
 	)),
 )),
 
+// liberty_content_links php stuff comes in large PHP block below
 array( 'QUERY' =>
 	array( 'MYSQL' => array(
 		"UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET to_title = (SELECT title FROM `".BIT_DB_PREFIX."liberty_content` lc WHERE `".BIT_DB_PREFIX."liberty_content_links`.`to_content_id`=lc.`content_id`)",
@@ -323,6 +324,28 @@ array( 'PHP' => '
 		$sql = "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `thread_reverse_sequence` = ? where `comment_id` = ?";
 		echo $sql . "   ($seq_r, $comment_id)\n";
 		$result = $gBitSystem->mDb->query($sql, array($seq_r, $comment_id));
+	}
+
+	// get content links up to speed
+	require_once( LIBERTY_PKG_PATH."plugins/format.tikiwiki.php");
+
+	$bb = new BitBase;
+	// remove all existing links
+	$query = "DELETE  FROM `".BIT_DB_PREFIX."liberty_content_links` ";
+	$result = $bb->mDb->query($query, array());
+
+
+	// get list of all wiki pages in tikiwiki format
+	$ci = 0;
+	$query = "SELECT content_id, data AS edit, title  FROM `".BIT_DB_PREFIX."liberty_content` WHERE `format_guid` = `tikiwiki` ";
+	if( $result = $bb->mDb->query($query, array() ) ) {
+		// generate links for each content item
+		while( $row = $result->fetchRow() ) {
+			$content_id = $row["content_id"];
+			$tp = new TikiWikiParser();
+			$tp->storeLinks($row);
+			$ci++;
+		}
 	}
 '),
 array( 'DATADICT' => array(
