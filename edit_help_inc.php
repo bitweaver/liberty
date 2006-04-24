@@ -1,10 +1,10 @@
 <?php
 /**
- * $Id: edit_help_inc.php,v 1.8 2006/04/11 19:20:17 starrrider Exp $
+ * $Id: edit_help_inc.php,v 1.9 2006/04/24 21:38:21 squareing Exp $
  * edit_help_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage functions
  */
@@ -28,7 +28,7 @@ foreach( array_keys( $gLibertySystem->mPlugins ) as $pluginGuid ) {
 	if( ($gLibertySystem->mPlugins[$pluginGuid]['plugin_type'] == DATA_PLUGIN) && ($gLibertySystem->mPlugins[$pluginGuid]['is_active'] == 'y') ) {
 		if( isset( $gLibertySystem->mPlugins[$pluginGuid]['description'] )) {
 			$pinfo["guid"] =			preg_replace( "/^data/", "", $pluginGuid );
-			$pinfo['title'] =			!empty( $gLibertySystem->mPlugins[$pluginGuid]['title'] )				? tra('Data Plugin').' "'.$gLibertySystem->mPlugins[$pluginGuid]['title'].'"' : tra('Undefined Plugin Name');
+			$pinfo['title'] =			!empty( $gLibertySystem->mPlugins[$pluginGuid]['title'] )				? $gLibertySystem->mPlugins[$pluginGuid]['title'] : tra('Undefined Plugin Name');
 			$pinfo['description'] =		!empty( $gLibertySystem->mPlugins[$pluginGuid]['description'] )			? $gLibertySystem->mPlugins[$pluginGuid]['description'] : tra('Not Defined');
 			$pinfo["is_active"] =		$gLibertySystem->mPlugins[$pluginGuid]['is_active'];
 			$pinfo['auto_activate'] =	!empty( $gLibertySystem->mPlugins[$pluginGuid]['auto_activate'] )		? "TRUE" : "FALSE";
