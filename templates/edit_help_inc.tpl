@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.15 2006/04/25 07:04:54 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.16 2006/04/25 08:42:00 squareing Exp $ *}
 
 {strip}
 	{if $gBitSystem->isFeatureActive( 'site_edit_help' )}
@@ -33,7 +33,7 @@
 									<ul>
 										<li class="{cycle values="odd,even"}"><strong>{tr}Syntax{/tr}:</strong> <a href="#" title="{tr}Click to insert syntax into editor{/tr}" onclick="javascript:insertAt('{$textarea_id}','{$p.syntax}')">{$p.syntax}</a></li>
 										<li class="{cycle}"><strong>{tr}Description{/tr}:</strong> {$p.description}</li>
-										<li class="{cycle}"><strong>{tr}Online Help{/tr}:</strong> {jspopup href="http://www.bitweaver.org/wiki/`$p.help_page`" title=`$p.help_page`}</a></li>
+										<li class="{cycle}"><strong>{tr}Online Help{/tr}:</strong> {jspopup href="http://www.bitweaver.org/wiki/`$p.help_page`" title=`$p.help_page`}</li>
 									</ul>
 									<br /><br />
 									{$p.exthelp}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.6 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.toc.php,v 1.7 2006/04/25 08:42:00 squareing Exp $
 
 /**
  * definitions
@@ -52,7 +52,7 @@ function data_toc_help() {
 			.'<tr class="odd">'
 				.'<td>display</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Will create a Tab interface on a page. The name on each tab is the name given to the imported page.The value sent with the TabX parameter is a Numeric Content Id. This allows blog posts, images, wiki pages . . . (and more) to be added.")
+				.'<td>' . tra( "Will create a Tab interface on a page. The name on each tab is the name given to the imported page.The value sent with the TabX parameter is a Numeric Content Id. This allows blog posts, images, wiki pages . . . (and more) to be added.") . '</td>'
 			.'</tr>'
 		.'</table>'
 		. tra("Example: ") . '{toc structure_id=8 display=full_toc}';
