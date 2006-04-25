@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.48 $
+ * @version  $Revision: 1.49 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -699,22 +699,24 @@ class TikiWikiParser extends BitBase {
 		// get a list of pages this page links to
 		$pageList = $this->getAllPages( $pContentId );
 
-		if( $gBitUser->hasPermission( 'p_liberty_enter_html' ) ) {
-			// this is copied and pasted from format.bithtml.php - xing
-			// Strip all evil tags that remain
-			// this comes out of gBitSystem->getConfig() set in Liberty Admin
-			$acceptableTags = $gBitSystem->getConfig( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
-
-			// Destroy all script code "manually" - strip_tags will leave code inline as plain text
-			if( !preg_match( '/\<script\>/', $acceptableTags ) ) {
-				$data = preg_replace( "/(\<script)(.*?)(script\>)/si", '', $data );
-			}
-
-			$data = strip_tags( $data, $acceptableTags );
-		} else {
-			// convert HTML to chars
-			$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
-		}
+		// disable HTML in wiki page for now - very disruptive. should be changed into a per page setting - xing
+//		if( $gBitUser->hasPermission( 'p_liberty_enter_html' ) ) {
+//			// this is copied and pasted from format.bithtml.php - xing
+//			// Strip all evil tags that remain
+//			// this comes out of gBitSystem->getConfig() set in Liberty Admin
+//			$acceptableTags = $gBitSystem->getConfig( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
+//
+//			// Destroy all script code "manually" - strip_tags will leave code inline as plain text
+//			if( !preg_match( '/\<script\>/', $acceptableTags ) ) {
+//				$data = preg_replace( "/(\<script)(.*?)(script\>)/si", '', $data );
+//			}
+//
+//			$data = strip_tags( $data, $acceptableTags );
+//		} else {
+//			// convert HTML to chars
+//			$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
+//		}
+		$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
 
 		// Process pre_handlers here
 		foreach ($this->pre_handlers as $handler) {
