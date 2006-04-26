@@ -34,7 +34,6 @@ $tables = array(
 	version I4,
 	lang_code C(32),
 	title C(160),
-	url_title C(160),
 	ip C(39),
 	data X
 	CONSTRAINT '
