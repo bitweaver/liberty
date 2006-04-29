@@ -7,7 +7,7 @@
 		{forminput}
 			<select name="i18n[lang_code]" id="lang_code">
 				{foreach from=$translationsList key=langCode item=lang}
-					<option value="{$langCode}" {if $smarty.request.i18n.lang_code==$langCode || $pageInfo.lang_code==$langCode || ( $langCode==$gBitSystem->getConfig('bitlanguage') && !$smarty.request.i18n.lang_code && !$gContent->getField('lang_code') )}selected="selected" {/if}>{$lang.native_name}</option>
+					<option value="{$langCode}" {if $smarty.request.i18n.lang_code==$langCode || $gContent->mInfo.lang_code==$langCode || ( $langCode==$gBitSystem->getConfig('bitlanguage') && !$smarty.request.i18n.lang_code && !$gContent->getField('lang_code') )}selected="selected" {/if}>{$lang.native_name}</option>
 				{/foreach}
 			</select>
 			{formhelp note="The language of this page"}
@@ -26,9 +26,9 @@
 					{counter name=nb print=false assign=nb}
 					<label>
 						{$plugin.edit_field}
-						{if $pageInfo.format_guid eq $plugin.plugin_guid}
+						{if $gContent->mInfo.format_guid eq $plugin.plugin_guid}
 							checked="checked"
-						{elseif !$pageInfo.format_guid and $plugin.plugin_guid eq $gBitSystem->getConfig('default_format')}
+						{elseif !$gContent->mInfo.format_guid and $plugin.plugin_guid eq $gBitSystem->getConfig('default_format')}
 							checked="checked"
 						{/if}
 						onclick="
@@ -46,6 +46,16 @@
 							{/if}
 						"
 					/> {$plugin.edit_label}</label>
+					{if $plugin.plugin_guid == "tikiwiki"}
+						&nbsp;&nbsp;
+						{if $gBitUser->hasPermission( 'p_liberty_enter_html' )}
+							<label><input type="checkbox" name="preferences[content_enter_html]" value="y" id="html" {if $gContent->mPrefs.content_enter_html}checked="checked" {/if}/> {tr}Allow HTML{/tr}</label>
+						{elseif $gContent->getPreference( 'content_enter_html' )}
+							[ {tr}HTML will remain as HTML{/tr} ]
+						{else}
+							[ {tr}HTML will be escaped{/tr} ]
+						{/if}
+					{/if}
 					{formhelp note=`$plugin.edit_help`}
 				{/forminput}
 			{/if}

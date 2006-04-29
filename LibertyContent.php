@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.99 2006/04/19 13:48:38 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.100 2006/04/29 16:02:18 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -94,7 +94,6 @@ class LibertyContent extends LibertyBase {
 			$this->loadPreferences();
 			$this->mInfo['content_type'] = $gLibertySystem->mContentTypes[$this->mInfo['content_type_guid']];
 		}
-
 	}
 
 	/**
@@ -279,6 +278,13 @@ class LibertyContent extends LibertyBase {
 			// If we renamed the page, we need to update the backlinks
 			if( !empty( $renamed ) && $func = $gLibertySystem->getPluginFunction( $pParamHash['format_guid'], 'rename_function' ) ) {
 				$ret = $func( $this->mContentId, $this->mInfo['title'], $pParamHash['content_store']['title'], $this );
+			}
+
+			// store content preferences
+			if( @is_array( $pParamHash['preferences_store'] ) ) {
+				foreach( $pParamHash['preferences_store'] as $pref => $value ) {
+					$this->storePreference( $pref, $value );
+				}
 			}
 			$this->mDb->CompleteTrans();
 		}
