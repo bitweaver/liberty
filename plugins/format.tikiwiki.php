@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.50 $
+ * @version  $Revision: 1.51 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -699,8 +699,15 @@ class TikiWikiParser extends BitBase {
 		// get a list of pages this page links to
 		$pageList = $this->getAllPages( $pContentId );
 
+		// if the object isn't loaded, we'll try and get the content prefs manually
+		if( !empty( $pCommonObject->mPrefs ) ) {
+			$contentPrefs = $pCommonObject->mPrefs;
+		} elseif( empty( $pCommonObject->mContentId ) && !empty( $pContentId ) ) {
+			$contentPrefs = LibertyContent::loadPreferences( $pContentId );
+		}
+
 		// disable HTML in wiki page for now - very disruptive. should be changed into a per page setting - xing
-		if( $pCommonObject->getPreference( 'content_enter_html' ) ) {
+		if( !empty( $contentPrefs['content_enter_html'] ) ) {
 			// this is copied and pasted from format.bithtml.php - xing
 			// Strip all evil tags that remain
 			// this comes out of gBitSystem->getConfig() set in Liberty Admin
