@@ -399,6 +399,7 @@ array( 'QUERY' =>
 		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='users_double_click' WHERE `pref_name`='user_dbl'",
 		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='users_bread_crumb' WHERE `pref_name`='userbreadCrumb'",
 		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='users_information' WHERE `pref_name`='user_information'",
+		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='users_email_display' WHERE `pref_name`='email is public'",
 		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='messages_max_records' WHERE `pref_name`='mess_max_records'",
 		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='messages_min_priority' WHERE `pref_name`='minPrio'",
 		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='messages_alert' WHERE `pref_name`='message_alert'",

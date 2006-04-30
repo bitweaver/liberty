@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_userlist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.userlist.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.userlist.php,v 1.8 2006/04/30 18:07:05 squareing Exp $
 
 /**
  * definitions
@@ -80,7 +80,7 @@ function wikiplugin_userprint($num,$user,$userspage,$email,$wp_user_count) {
 	// get email address and check if it's public
 	$user_info = $gBitUser->getUserInfo( array( 'login' => $user ) );
 	$eml = scrambleEmail($user_info['email']);
-	$public = FALSE; // cheap hack from spiderr to get things working. $wikilib->get_user_preference($user,'email is public');
+	$public = FALSE; // cheap hack from spiderr to get things working. $wikilib->get_user_preference($user,'users_is_email_public');
 
 	if ($num) {
 		$ret .= ('<td>__'.$wp_user_count.'__</td>');
