@@ -390,6 +390,21 @@ array( 'DATADICT' => array(
 		),
 	)),
 )),
+
+// rename some liberty_content_prefs
+array( 'QUERY' =>
+	array( 'PGSQL' => array(
+		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='users_country' WHERE `pref_name`='country'",
+		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='users_homepage' WHERE `pref_name`='homePage'",
+		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='users_double_click' WHERE `pref_name`='user_dbl'",
+		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='users_bread_crumb' WHERE `pref_name`='userbreadCrumb'",
+		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='users_information' WHERE `pref_name`='user_information'",
+		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='messages_max_records' WHERE `pref_name`='mess_max_records'",
+		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='messages_min_priority' WHERE `pref_name`='minPrio'",
+		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='messages_alert' WHERE `pref_name`='message_alert'",
+	)),
+),
+
 		)
 	),
 

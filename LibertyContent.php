@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.100 2006/04/29 16:02:18 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.101 2006/04/30 17:43:36 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -850,7 +850,7 @@ class LibertyContent extends LibertyBase {
 		$ret = FALSE;
 		if( $this->isValid() ) {
 			// validate any preferences
-			if( $pPrefName == 'homePage' && !preg_match( '/^http:\/\//', $pPrefValue ) ) {
+			if( $pPrefName == 'users_homepage' && !preg_match( '/^http:\/\//', $pPrefValue ) ) {
 				$pPrefValue = 'http://'.$pPrefValue;
 			}
 			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=? AND `name`=?";
