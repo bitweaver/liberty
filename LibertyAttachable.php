@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.19 2006/04/19 13:48:38 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.20 2006/05/02 11:24:52 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -435,23 +435,24 @@ function liberty_process_upload( &$pFileHash ) {
 }
 
 function liberty_process_archive( &$pFileHash ) {
+	global $gBitSystem;
 	$cwd = getcwd();
 	$dir = dirname( $pFileHash['tmp_name'] );
 	$upExt = strtolower( substr( $pFileHash['name'], (strrpos( $pFileHash['name'], '.' ) + 1) ) );
 	$baseDir = $dir.'/';
-	if( is_uploaded_file( $pFileHash['tmp_name'] ) ) {
+	if( $gBitSystem->isPackageActive( 'xupload' ) || is_uploaded_file( $pFileHash['tmp_name'] ) ) {
 		global $gBitUser;
 		$baseDir .= $gBitUser->mUserId;
 	}
 	$destDir = $baseDir.'/'.basename( $pFileHash['tmp_name'] );
-	if( (is_dir( $baseDir ) || mkdir( $baseDir )) && @mkdir( $destDir ) ) {
+	if( ( is_dir( $baseDir ) || mkdir( $baseDir ) ) && @mkdir( $destDir ) ) {
 		// Some commands don't nicely support extracting to other directories
 		chdir( $destDir );
 		list( $mimeType, $mimeExt ) = split( '/', $pFileHash['type'] );
 		switch( $mimeExt ) {
 			case 'x-rar-compressed':
 			case 'x-rar':
-				$shellResult = shell_exec( "unrar x \"$pFileHash[tmp_name]\" \"$destDir\"" );
+				$shellResult = shell_exec( "unrar x \"{$pFileHash['tmp_name']}\" \"$destDir\"" );
 				break;
 			case 'x-bzip2':
 			case 'bzip2':
@@ -466,31 +467,32 @@ function liberty_process_archive( &$pFileHash ) {
 					case 'bz2': $compressFlag = '-j'; break;
 					default: $compressFlag = ''; break;
 				}
-				$shellResult = shell_exec( "tar -x $compressFlag -f \"$pFileHash[tmp_name]\"  -C \"$destDir\"" );
+				$shellResult = shell_exec( "tar -x $compressFlag -f \"{$pFileHash['tmp_name']}\"  -C \"$destDir\"" );
 				break;
 			case 'x-zip-compressed':
 			case 'x-zip':
 			case 'zip':
-				$shellResult = shell_exec( "unzip \"$pFileHash[tmp_name]\" -d \"$destDir\"" );
+				$shellResult = shell_exec( "unzip \"{$pFileHash['tmp_name']}\" -d \"$destDir\"" );
 				break;
 			case 'x-stuffit':
 			case 'stuffit':
-				$shellResult = shell_exec( "unstuff -d=\"$destDir\" \"$pFileHash[tmp_name]\" " );
+				$shellResult = shell_exec( "unstuff -d=\"$destDir\" \"{$pFileHash['tmp_name']}\" " );
 				break;
 			default:
 				if( $upExt == 'zip' ) {
-					$shellResult = shell_exec( "unzip \"$pFileHash[tmp_name]\" -d \"$destDir\"" );
+					$shellResult = shell_exec( "unzip \"{$pFileHash['tmp_name']}\" -d \"$destDir\"" );
 				} elseif( $upExt == 'rar' ) {
-					$shellResult = shell_exec( "unrar x \"$pFileHash[tmp_name]\" \"$destDir\"" );
+					$shellResult = shell_exec( "unrar x \"{$pFileHash['tmp_name']}\" \"$destDir\"" );
 				} elseif( $upExt == 'sit' || $upExt == 'sitx' ) {
-					print( "unstuff -d=\"$destDir\" \"$pFileHash[tmp_name]\" " );
-					$shellResult = shell_exec( "unstuff -d=\"$destDir\" \"$pFileHash[tmp_name]\" " );
+					print( "unstuff -d=\"$destDir\" \"{$pFileHash['tmp_name']}\" " );
+					$shellResult = shell_exec( "unstuff -d=\"$destDir\" \"{$pFileHash['tmp_name']}\" " );
 				} else {
 					$destDir = NULL;
 				}
 				break;
 		}
 	}
+	//vd($shellResult);
 	chdir( $cwd );
 	return $destDir;
 }
