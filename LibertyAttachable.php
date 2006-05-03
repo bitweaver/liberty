@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.20 2006/05/02 11:24:52 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.21 2006/05/03 19:55:52 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -46,9 +46,9 @@ class LibertyAttachable extends LibertyContent {
 	* @param $pCommon indicates not to use the 'common' branch, and not the 'users/.../<user_id>' branch
 	* @return string full path on local filsystem to store files.
 	*/
-	function getStoragePath( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE ) {
+	function getStoragePath( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755 ) {
 		$ret = null;
-		if( $storageUrl = $this->getStorageBranch( $pSubDir, $pUserId, $pPackage ) ) {
+		if( $storageUrl = LibertyAttachable::getStorageBranch( $pSubDir, $pUserId, $pPackage, $pPermissions ) ) {
 			$ret = BIT_ROOT_PATH.$storageUrl;
 			//$ret = $storageUrl;
 		}
@@ -56,8 +56,8 @@ class LibertyAttachable extends LibertyContent {
 	}
 
 
-	function getStorageUrl( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE ) {
-		return BIT_ROOT_URL.$this->getStorageBranch( $pSubDir, $pUserId, $pPackage );
+	function getStorageUrl( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755 ) {
+		return BIT_ROOT_URL.LibertyAttachable::getStorageBranch( $pSubDir, $pUserId, $pPackage, $pPermissions );
 	}
 
 
@@ -70,7 +70,7 @@ class LibertyAttachable extends LibertyContent {
 	* @param $pUserId indicates the 'users/.../<user_id>' branch or use the 'common' branch if null
 	* @return string full path on local filsystem to store files.
 	*/
-	function getStorageBranch( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE ) {
+	function getStorageBranch( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755 ) {
 		// *PRIVATE FUNCTION. GO AWAY! DO NOT CALL DIRECTLY!!!
 		global $gBitSystem;
 		$baseUrl = null;
@@ -84,7 +84,8 @@ class LibertyAttachable extends LibertyContent {
 			$pathParts[] = (int)($pUserId % 1000);
 			$pathParts[] = $pUserId;
 		}
-		if ($pPackage) {
+
+		if( $pPackage ) {
 			$pathParts[] = $pPackage;
 		}
 		// In case $pSubDir is multiple levels deep we'll need to mkdir each directory if they don't exist
@@ -92,11 +93,15 @@ class LibertyAttachable extends LibertyContent {
 		foreach ($pSubDirParts as $subDir) {
 			$pathParts[] = $subDir;
 		}
+
 		foreach( $pathParts as $p ) {
 			if( !empty( $p ) ) {
 				$baseUrl .= $p.'/';
 				if( !file_exists( BIT_ROOT_PATH.$baseUrl ) ) {
-					if( !mkdir( BIT_ROOT_PATH.$baseUrl ) ) {
+					$oldu = umask( 0 );
+					if( mkdir( BIT_ROOT_PATH.$baseUrl, $pPermissions ) ) {
+						umask( $oldu );
+					} else {
 						// ACK, something went very wrong.
 						$baseUrl = FALSE;
 						break;
