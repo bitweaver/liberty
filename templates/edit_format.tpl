@@ -69,7 +69,7 @@
 {if $nb > 2}
 	{$capture_format}
 {else}
-	<input type="hidden" name="format_guid" value="$formatplugins[0].guid" />
+	<input type="hidden" name="format_guid" value="{$formatplugins[0].guid}" />
 {/if}
 	
 {/strip}
