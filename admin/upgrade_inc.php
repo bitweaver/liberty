@@ -387,13 +387,14 @@ array( 'DATADICT' => array(
 		),
 		'liberty_content_prefs' => array(
 			'`value`' => '`pref_value` C(250)'
+			'`name`' => '`pref_name` C(40)'
 		),
 	)),
 )),
 
 // rename some liberty_content_prefs
 array( 'QUERY' =>
-	array( 'PGSQL' => array(
+	array( 'SQL92' => array(
 		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='users_country' WHERE `pref_name`='country'",
 		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='users_homepage' WHERE `pref_name`='homePage'",
 		"UPDATE `".BIT_DB_PREFIX."liberty_content_prefs` SET `pref_name`='users_double_click' WHERE `pref_name`='user_dbl'",

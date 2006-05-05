@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -42,13 +42,14 @@ function pearwiki_tiki_parse_data( &$pData, &$pCommonObject ) {
 	if( empty( $parser ) ) {
 		define('PAGE_SEP', 'PAGE MARKER HERE*&^%$#^$%*PAGEMARKERHERE');
 
-		require_once(dirname(__FILE__).'/../../util/pear/Text/Wiki/Tiki.php');
-		$parser =& new Text_Wiki_Tiki();
-		$parser->setRenderConf('xhtml', 'wikilink', 'exists_callback', array(&$pCommonObject, 'pageExists'));
-		$parser->setRenderConf('xhtml', 'wikilink', 'view_url', 'index.php?page=');
-		$parser->setRenderConf('xhtml', 'wikilink', 'new_url', 'edit.php?page=');
+		require_once 'Text/Wiki.php';
+		$parser =& new Text_Wiki();
+		vd(pearwiki_get_all_pages( $pCommonObject->mContentId ) );
+		$parser->setRenderConf('xhtml', 'wikilink', 'exists_callback', array( &$pCommonObject, 'pageExists' ) );
+		$parser->setRenderConf('xhtml', 'wikilink', 'view_url', BIT_ROOT_URL.'index.php?page=');
+		$parser->setRenderConf('xhtml', 'wikilink', 'new_url', BIT_ROOT_URL.'edit.php?page=');
 		$parser->setRenderConf('xhtml', 'table', 'css_table', 'wikitable');
-		$parser->setRenderConf('xhtml', 'table', 'css_td', 'wikicell');
+		//$parser->setRenderConf('xhtml', 'table', 'css_td', 'wikicell');
 		//$parser->setFormatConf('Xhtml', 'translate', false);
 		/*$extwiki = array();
 		$extwikiSth = $this->mDb->query('SELECT `extwiki`, `name` FROM `wiki_ext`');
@@ -66,5 +67,27 @@ function pearwiki_tiki_parse_data( &$pData, &$pCommonObject ) {
 		$xhtml= data_maketoc($xhtml);
 	}*/
 	return $xhtml;
+}
+
+function pearwiki_get_all_pages( $pContentId ) {
+	global $gBitSystem;
+	$ret = array();
+	if( $gBitSystem->isPackageActive( 'wiki' ) && @BitBase::verifyId( $pContentId ) ) {
+		$query = "SELECT `page_id`, lc.`content_id`, `description`, lc.`last_modified`, lc.`title`
+			FROM `".BIT_DB_PREFIX."liberty_content_links` lcl
+			INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcl.`to_content_id`=lc.`content_id` )
+			INNER JOIN `".BIT_DB_PREFIX."wiki_pages` wp ON( wp.`content_id`=lc.`content_id` )
+			WHERE lcl.`from_content_id`=? ORDER BY lc.`title`";
+		if( $result = $gBitSystem->mDb->query( $query, array( $pContentId ) ) ) {
+			$lastTitle = '';
+			while( $row = $result->fetchRow() ) {
+				if( array_key_exists( strtolower( $row['title'] ), $ret ) ) {
+					$row['description'] = tra( 'Multiple pages with this name' );
+				}
+				$ret[strtolower( $row['title'] )] = $row;
+			}
+		}
+	}
+	return $ret;
 }
 ?>

@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.101 2006/04/30 17:43:36 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.102 2006/05/05 16:51:45 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -807,7 +807,7 @@ class LibertyContent extends LibertyBase {
 
 		if ($pContentId && ($pContentId != $this->mContentId) && !empty($pPrefName)) {
 			// Get a user preference for an arbitrary user
-			$sql = "SELECT `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `name` = ? and `content_id` = ?";
+			$sql = "SELECT `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `pref_name` = ? and `content_id` = ?";
 
 			$rs = $this->mDb->query($sql, array($pPrefName, $pContentId));
 			$ret = (!empty($rs->fields['pref_value'])) ? $rs->fields['pref_value'] : $pPrefDefault;
@@ -823,9 +823,9 @@ class LibertyContent extends LibertyBase {
 
 	function loadPreferences( $pContentId = NULL ) {
 		if( @BitBase::verifyId( $pContentId ) ) {
-			return $this->mDb->getAssoc( "SELECT `name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $pContentId ) );
+			return $this->mDb->getAssoc( "SELECT `pref_name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $pContentId ) );
 		} elseif( $this->isValid() ) {
-			$this->mPrefs = @$this->mDb->getAssoc( "SELECT `name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $this->mContentId ) );
+			$this->mPrefs = @$this->mDb->getAssoc( "SELECT `pref_name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $this->mContentId ) );
 		}
 	}
 
@@ -853,11 +853,11 @@ class LibertyContent extends LibertyBase {
 			if( $pPrefName == 'users_homepage' && !preg_match( '/^http:\/\//', $pPrefValue ) ) {
 				$pPrefValue = 'http://'.$pPrefValue;
 			}
-			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=? AND `name`=?";
+			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=? AND `pref_name`=?";
 			$bindvars=array( $this->mContentId, $pPrefName );
 			$result = $this->mDb->query($query, $bindvars);
 			if( !is_null( $pPrefValue ) ) {
-				$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_prefs` (`content_id`,`name`,`pref_value`) VALUES(?, ?, ?)";
+				$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_prefs` (`content_id`,`pref_name`,`pref_value`) VALUES(?, ?, ?)";
 				$bindvars[]=$pPrefValue;
 				$result = $this->mDb->query($query, $bindvars);
 				$this->mPrefs[$pPrefName] = $pPrefValue;

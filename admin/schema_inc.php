@@ -84,7 +84,7 @@ $tables = array(
 
 'liberty_content_prefs' => "
 	content_id I4 PRIMARY,
-	name C(40) PRIMARY,
+	pref_name C(40) PRIMARY,
 	pref_value C(250)
 	CONSTRAINT ', CONSTRAINT `lib_content_prefs_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
 ",
