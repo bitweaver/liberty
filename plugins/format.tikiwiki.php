@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.52 $
+ * @version  $Revision: 1.53 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -832,11 +832,11 @@ class TikiWikiParser extends BitBase {
 				$query = "select `data` from `".BIT_DB_PREFIX."liberty_dynamic_variables` where `name`=?";
 				$result = $this->mDb->query($query,Array($dvar));
 				if($result->numRows()) {
-				$value = $result->fetchRow();
-				$value = $value["data"];
+					$value = $result->fetchRow();
+					$value = $value["data"];
 				} else {
-				//Default value is NULL
-				$value = "NaV";
+					//Default value is NULL
+					$value = "NaV";
 				}
 				// Now build 2 divs
 				$id = 'dyn_'.$dvar;
