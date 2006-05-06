@@ -55,7 +55,7 @@ array( 'DATADICT' => array(
 
 // liberty_content_links php stuff comes in large PHP block below
 array( 'QUERY' =>
-	array( 'MYSQL' => array(
+	array( 'SQL92' => array(
 		"UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET to_title = (SELECT title FROM `".BIT_DB_PREFIX."liberty_content` lc WHERE `".BIT_DB_PREFIX."liberty_content_links`.`to_content_id`=lc.`content_id`)",
 		"DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE to_title IS NULL",
 		"ALTER TABLE liberty_content_links ALTER to_content_id DROP NOT NULL",
@@ -66,8 +66,8 @@ array( 'QUERY' =>
 ),
 
 array( 'QUERY' =>
-	array( 'PGSQL' => array(
-		"UPDATE `".BIT_DB_PREFIX."liberty_content` SET `lang_code` = `language`"
+	array( 'SQL92' => array(
+		"UPDATE `".BIT_DB_PREFIX."liberty_content` SET lang_code=language"
 	)),
 ),
 
@@ -337,8 +337,8 @@ array( 'PHP' => '
 
 	// get list of all wiki pages in tikiwiki format
 	$ci = 0;
-	$query = "SELECT content_id, data AS edit, title  FROM `".BIT_DB_PREFIX."liberty_content` WHERE `format_guid` = `tikiwiki` ";
-	if( $result = $bb->mDb->query($query, array() ) ) {
+	$query = "SELECT `content_id`, `data` AS `edit`, `title` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `format_guid`=?";
+	if( $result = $bb->mDb->query($query, array( "tikiwiki" ) ) ) {
 		// generate links for each content item
 		while( $row = $result->fetchRow() ) {
 			$content_id = $row["content_id"];
@@ -368,7 +368,7 @@ array( 'DATADICT' => array(
 			'content_id' => array( 'content_id', 'I4' ),
 		),
 		'liberty_plugins' => array(
-			'plugin_path' => array( 'plugin_path', 'C(250)' ),
+			'plugin_path' => array( 'plugin_path', 'VARCHAR(250)' ),
 		),
 	)),
 )),
@@ -383,14 +383,13 @@ array( 'DATADICT' => array(
 	)),
 	array( 'RENAMECOLUMN' => array(
 		'liberty_action_log' => array(
-			'`action`' => '`log_action` C(255) NOTNULL'
+			'`action`' => '`log_action` C(255) NOTNULL',
 		),
 		'liberty_copyrights' => array(
-			'`year`' => '`copyright_year` I8'
+			'`year`' => '`copyright_year` I8',
 		),
 		'liberty_content_prefs' => array(
-			'`value`' => '`pref_value` C(250)'
-			'`name`' => '`pref_name` C(40)'
+			'`value`' => '`pref_value` C(250)',
 		),
 	)),
 )),
