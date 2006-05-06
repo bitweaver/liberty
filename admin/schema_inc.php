@@ -6,6 +6,7 @@ $tables = array(
 'liberty_plugins' => "
 	plugin_guid C(16) PRIMARY,
 	plugin_type C(16) NOTNULL,
+	plugin_path C(250) NOTNULL,
 	is_active C(1) NOTNULL DEFAULT 'y',
 	plugin_description C(250),
 	maintainer_url C(250)
@@ -77,7 +78,7 @@ $tables = array(
 'liberty_content_links' => "
 	from_content_id I4,
 	to_content_id I4,
-    to_title C(160)
+	to_title C(160)
 	CONSTRAINT ', CONSTRAINT `lib_content_links_from_ref` FOREIGN KEY (`from_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
 				, CONSTRAINT `lib_content_links_to_ref` FOREIGN KEY (`to_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
 ",

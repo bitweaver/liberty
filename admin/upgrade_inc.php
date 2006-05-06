@@ -367,6 +367,9 @@ array( 'DATADICT' => array(
 		'liberty_action_log' => array(
 			'content_id' => array( 'content_id', 'I4' ),
 		),
+		'liberty_plugins' => array(
+			'plugin_path' => array( 'plugin_path', 'C(250)' ),
+		),
 	)),
 )),
 array( 'QUERY' =>
