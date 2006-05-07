@@ -64,7 +64,7 @@
 							<div class="row">
 								{formlabel label="Allow HTML" for="allow_html"}
 								{forminput}
-									To allow use of HTML in any format, assign the <a href="{$smarty.const.USERS_PKG_PATH}admin/edit_group.php">p_liberty_enter_html permission</a>.
+									To allow use of HTML in any format, assign the <a href="{$smarty.const.USERS_PKG_URL}admin/edit_group.php">p_liberty_enter_html permission</a>.
 									{formhelp note="Allow the use of HTML in tikiwiki format content."}
 								{/forminput}
 							</div>
