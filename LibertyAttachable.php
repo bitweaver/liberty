@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.21 2006/05/03 19:55:52 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.22 2006/05/08 09:22:47 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -430,8 +430,7 @@ function liberty_process_upload( &$pFileHash ) {
 		$pFileHash['upload']['name'] = $pFileHash['upload']['name'].'.txt';
 	}
 	// Thumbs.db is a windows My Photos/ folder file, and seems to really piss off imagick
-	if( (preg_match( '/^image\/*/', $pFileHash['upload']['type'] ) || preg_match( '/pdf/i', $pFileHash['upload']['type'] ) )
-		 && $pFileHash['upload']['name'] != 'Thumbs.db' ) {
+	if( (preg_match( '/^image\/*/', $pFileHash['upload']['type'] ) || preg_match( '/pdf/i', $pFileHash['upload']['type'] ) ) && $pFileHash['upload']['name'] != 'Thumbs.db' ) {
 		$ret = liberty_process_image( $pFileHash['upload'] );
 	} else {
 		$ret = liberty_process_generic( $pFileHash['upload'] );
@@ -443,14 +442,14 @@ function liberty_process_archive( &$pFileHash ) {
 	global $gBitSystem;
 	$cwd = getcwd();
 	$dir = dirname( $pFileHash['tmp_name'] );
-	$upExt = strtolower( substr( $pFileHash['name'], (strrpos( $pFileHash['name'], '.' ) + 1) ) );
+	$upExt = strtolower( substr( $pFileHash['name'], ( strrpos( $pFileHash['name'], '.' ) + 1 ) ) );
 	$baseDir = $dir.'/';
-	if( $gBitSystem->isPackageActive( 'xupload' ) || is_uploaded_file( $pFileHash['tmp_name'] ) ) {
+	if( is_file( $pFileHash['tmp_name'] ) ) {
 		global $gBitUser;
 		$baseDir .= $gBitUser->mUserId;
 	}
 	$destDir = $baseDir.'/'.basename( $pFileHash['tmp_name'] );
-	if( ( is_dir( $baseDir ) || mkdir( $baseDir ) ) && @mkdir( $destDir ) ) {
+	if( is_dir( $destDir ) || @mkdir_p( $destDir ) ) {
 		// Some commands don't nicely support extracting to other directories
 		chdir( $destDir );
 		list( $mimeType, $mimeExt ) = split( '/', $pFileHash['type'] );
@@ -506,8 +505,8 @@ function liberty_process_generic( &$pFileHash ) {
 	$ret = NULL;
 	$destBase = $pFileHash['dest_path'].$pFileHash['name'];
 	$actualPath = BIT_ROOT_PATH.$destBase;
-	if( is_uploaded_file( $pFileHash['source_file']) ) {
-		if( move_uploaded_file( $pFileHash['source_file'], $actualPath ) ) {
+	if( is_file( $pFileHash['source_file']) ) {
+		if( @rename( $pFileHash['source_file'], $actualPath ) || @copy( $pFileHash['source_file'], $actualPath ) ) {
 			$ret = $destBase;
 		}
 	} elseif( copy( $pFileHash['source_file'], $actualPath ) ) {
