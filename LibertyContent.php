@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.102 2006/05/05 16:51:45 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.103 2006/05/15 13:27:24 sylvieg Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -595,15 +595,15 @@ class LibertyContent extends LibertyBase {
 	/**
 	* Set up SQL strings for services used by the object
 	*/
-	function getServicesSql( $pServiceFunction, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars, $pObject = NULL) {
+	function getServicesSql( $pServiceFunction, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars, $pObject = NULL, $pParamHash = NULL) {
 		global $gLibertySystem;
 		if( $loadFuncs = $gLibertySystem->getServiceValues( $pServiceFunction ) ) {
 			foreach( $loadFuncs as $func ) {
 				if( function_exists( $func ) ) {
 					if( !empty( $pObject ) && is_object( $pObject ) ) {
-						$loadHash = $func( $pObject );
+						$loadHash = $func( $pObject, $pParamHash );
 					} else {
-						$loadHash = $func( $this );
+						$loadHash = $func( $this, $pParamHash );
 					}
 					if( !empty( $loadHash['select_sql'] ) ) {
 						$pSelectSql .= $loadHash['select_sql'];
