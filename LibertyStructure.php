@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.27 2006/02/16 13:48:11 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.28 2006/05/17 17:00:30 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -313,7 +313,7 @@ class LibertyStructure extends LibertyBase {
 			$mid .= " AND lc.`content_type_guid`=? ";
 			array_push( $bindVars, $pListHash['content_type_guid'] );
 		}
-		$query = "SELECT ls.`structure_id`, ls.`parent_id`, ls.`content_id`, `page_alias`, `pos`, lc.`title`, `hits`, `data`, `last_modified`, lc.`modifier_user_id`, `ip`, lc.`user_id` AS `creator_user_id`, uu.`login` AS `user`, uu.`real_name` , uu.`email`
+		$query = "SELECT ls.`structure_id`, ls.`parent_id`, ls.`content_id`, `page_alias`, `pos`, lc.`title`, `hits`, `data`, `last_modified`, lc.`modifier_user_id`, `ip`, lc.`user_id` AS `creator_user_id`, uu.`login` AS `creator_user`, uu.`real_name` , uu.`email`
 				  FROM `".BIT_DB_PREFIX."liberty_structures` ls INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( ls.`content_id` = lc.`content_id` ) INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON ( lc.`user_id` = uu.`user_id` )
 				  WHERE $mid
 				  ORDER BY ".$this->mDb->convert_sortmode($pListHash['sort_mode']);

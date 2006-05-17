@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.25 2006/04/12 15:38:06 sylvieg Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.26 2006/05/17 17:00:30 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -238,7 +238,7 @@ class LibertyComment extends LibertyContent {
 			. " lc.`title` as title,  "
 			. " ptc.content_type_guid as parent_content_type_guid, "
 			. " lc.content_type_guid as content_type_guid, "
-			. " uu.`login` AS `user`, "
+			. " uu.`login` AS `creator_user`, "
 			. " uu.`real_name`"
 				  . " FROM `".BIT_DB_PREFIX."liberty_comments` lcm
 				  		INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lcm.`content_id`=lc.`content_id` )
