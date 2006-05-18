@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.22 2006/05/08 09:22:47 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.23 2006/05/18 05:12:57 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -447,6 +447,10 @@ function liberty_process_archive( &$pFileHash ) {
 	if( is_file( $pFileHash['tmp_name'] ) ) {
 		global $gBitUser;
 		$baseDir .= $gBitUser->mUserId;
+	}
+	if( is_dir( $pFileHash['tmp_name'] ) ) {
+		// we were passed in a directory
+		return( $pFileHash['tmp_name'] );
 	}
 	$destDir = $baseDir.'/'.basename( $pFileHash['tmp_name'] );
 	if( is_dir( $destDir ) || @mkdir_p( $destDir ) ) {
