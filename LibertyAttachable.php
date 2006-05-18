@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.24 2006/05/18 06:08:51 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.25 2006/05/18 18:54:00 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -439,8 +439,18 @@ function liberty_process_upload( &$pFileHash ) {
 }
 
 function liberty_process_archive( &$pFileHash ) {
-	global $gBitSystem;
 	$cwd = getcwd();
+	// if the file has been uploaded using a form, we'll process the uploaded
+	// file directly. if it's been ftp uploaded or some other method used,
+	// we'll copy the file. in the case of xuploaded files, the files have been
+	// processed but don't have to be copied
+	if( empty( $pFileHash['preprocessed'] ) && !is_uploaded_file( $pFileHash['tmp_name'] ) && is_file( $pFileHash['tmp_name'] ) ) {
+		$tmpDir = ini_get('upload_tmp_dir');
+		$copyFile = tempnam( !empty( $tmpDir ) ? $tmpDir : '/tmp', $pFileHash['name'] );
+		copy( $pFileHash['tmp_name'], $copyFile );
+		$pFileHash['tmp_name'] = $copyFile;
+	}
+
 	$dir = dirname( $pFileHash['tmp_name'] );
 	$upExt = strtolower( substr( $pFileHash['name'], ( strrpos( $pFileHash['name'], '.' ) + 1 ) ) );
 	$baseDir = $dir.'/';
@@ -450,7 +460,7 @@ function liberty_process_archive( &$pFileHash ) {
 	}
 	$destDir = $baseDir.'/'.basename( $pFileHash['tmp_name'] );
 	// this if is very important logic back so subdirs get processed properly
-	if( (is_dir( $baseDir ) || @mkdir_p( $baseDir )) && @mkdir( $destDir ) ) {
+	if( ( is_dir( $baseDir ) || mkdir( $baseDir ) ) && @mkdir( $destDir ) ) {
 		// Some commands don't nicely support extracting to other directories
 		chdir( $destDir );
 		list( $mimeType, $mimeExt ) = split( '/', $pFileHash['type'] );
@@ -499,6 +509,12 @@ function liberty_process_archive( &$pFileHash ) {
 	}
 	//vd($shellResult);
 	chdir( $cwd );
+
+	// if we created a copy of the original, we remove it
+	if( !empty( $copyFile ) ) {
+		@unlink( $copyFile );
+	}
+
 	return $destDir;
 }
 
