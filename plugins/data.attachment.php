@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.5 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.attachment.php,v 1.6 2006/05/18 18:26:37 squareing Exp $
 
 /**
  * definitions
@@ -118,7 +118,7 @@ function data_attachment($data, $params) { // NOTE: The original plugin had seve
 
 	$aloat = ( !empty( $params['align'] ) ? '<div style="text-align:'.$params['align'].';">' : NULL );
 	$aloat = ( ( !empty( $params['float'] ) && empty( $aloat ) ) ? '<div style="float:'.$params['float'].';">' : NULL );
-	$ret =  $aloat.'<a'.$href.'"><img src="'.$thumburl.'"/></a>'.(!empty($aloat)?'</div>':'');
+	$ret =  $aloat.'<a'.$href.'><img src="'.$thumburl.'"/></a>'.(!empty($aloat)?'</div>':'');
 	return $ret;
 }
 ?>
