@@ -1,24 +1,16 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
- * @package  liberty
+ * assigned_modules
+ *
+ * @author     xing
+ * @version    $Revision: 1.9 $
+ * @package    liberty
  * @subpackage plugins_data
+ * @copyright  Copyright (c) 2004, bitweaver.org
  */
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2004, bitweaver.org
-// +----------------------------------------------------------------------+
-// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
-// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
-// |
-// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
-// | -> see http://phpdocu.sourceforge.net/
-// +----------------------------------------------------------------------+
-// | Author: xing
-// +----------------------------------------------------------------------+
-// $Id: data.div.php,v 1.8 2006/05/24 07:27:08 squareing Exp $
 
 /**
- * definitions
+ * Setup Code
  */
 define( 'PLUGIN_GUID_DATADIV', 'datadiv' );
 global $gLibertySystem;
