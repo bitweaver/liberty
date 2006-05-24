@@ -4,7 +4,7 @@
  * assigned_modules
  *
  * @author     xing
- * @version    $Revision: 1.1.2.2 $
+ * @version    $Revision: 1.1.2.3 $
  * @package    liberty
  * @subpackage plugins_data
  * @copyright  Copyright (c) 2004, bitweaver.org
@@ -15,7 +15,7 @@
  */
 define( 'PLUGIN_GUID_DATADIV', 'datadiv' );
 global $gLibertySystem;
-$pluginParams = array ( 
+$pluginParams = array (
 	'tag' => 'DIV',
 	'auto_activate' => TRUE,
 	'requires_pair' => TRUE,
@@ -48,7 +48,7 @@ function data_div_help() {
 				.'<td>' . tra( "string") . '<br />' . tra( "(optional)" ) . '</td>'
 				.'<td>' . tra( "There are a few presets, which you can use to style with. Presets include: dark, orange, red, blue, centered.") .'</td>'
 			.'</tr>'
- 		.'</table>'
+		.'</table>'
 		. tra( "Example: " ) . "{div preset=centered border='3px solid blue'}";
 	return $help;
 }
@@ -56,25 +56,33 @@ function data_div_help() {
 function data_div( $data, $params ) {
 	$style = '';
 	foreach( $params as $key => $value ) {
-		switch( $key ) {
-			case 'preset':
-				if( $value == 'dark' ) {
-					$style .= 'background:#333;color:#ccc;border:2px solid #000;padding:0.5em 1em;margin:0.5em;';
-				} elseif( $value == "orange" ) {
-					$style .= 'background:#f60;color:#fff;border:2px solid #900;padding:0.5em 1em;margin:0.5em;';
-				} elseif( $value == "red" ) {
-					$style .= 'background:#eee;color:#900;border:2px solid #900;padding:0.5em 1em;margin:0.5em;';
-				} elseif( $value == "blue" ) {
-					$style .= 'background:#def;color:#009;border:2px solid #acf;padding:0.5em 1em;margin:0.5em;';
-				} elseif( $value == "centered" ) {
-					$style .= 'background:#eee;color:#333;border:2px solid #ddd;padding:0.5em 1em;margin:0.5em auto;width:50%;text-align:center;';
-				}
+		if( !empty( $value ) ) {
+			switch( $key ) {
+				case 'preset':
+					if( $value == 'dark' ) {
+						$style .= 'background:#333;color:#ccc;border:2px solid #000;padding:0.5em 1em;margin:0.5em;';
+					} elseif( $value == "orange" ) {
+						$style .= 'background:#f60;color:#fff;border:2px solid #900;padding:0.5em 1em;margin:0.5em;';
+					} elseif( $value == "red" ) {
+						$style .= 'background:#eee;color:#900;border:2px solid #900;padding:0.5em 1em;margin:0.5em;';
+					} elseif( $value == "blue" ) {
+						$style .= 'background:#def;color:#009;border:2px solid #acf;padding:0.5em 1em;margin:0.5em;';
+					} elseif( $value == "centered" ) {
+						$style .= 'background:#eee;color:#333;border:2px solid #ddd;padding:0.5em 1em;margin:0.5em auto;width:50%;text-align:center;';
+					}
+					break;
+				case 'style':
+					$style .= $value;
+					break;
+				case 'class':
+					$class = $value;
+					break;
+				default:
+					$style .= $key.':'.$value.';';
 				break;
-			default:
-				$style .= $key.':'.$value.';';
-				break;
+			}
 		}
 	}
-	return( '<div style="'.$style.'">'.$data.'</div>' );
+	return( '<div '.( !empty( $class ) ? 'class="'.$class.'" ' : '' ).'style="'.$style.'">'.$data.'</div>' );
 }
 ?>
