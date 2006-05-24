@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing
 // +----------------------------------------------------------------------+
-// $Id: data.div.php,v 1.7 2006/04/10 17:38:44 squareing Exp $
+// $Id: data.div.php,v 1.8 2006/05/24 07:27:08 squareing Exp $
 
 /**
  * definitions
@@ -57,7 +57,7 @@ function data_div_help() {
 				.'<td>' . tra( "string") . '<br />' . tra( "(optional)" ) . '</td>'
 				.'<td>' . tra( "There are a few presets, which you can use to style with. Presets include: dark, orange, red, blue, centered.") .'</td>'
 			.'</tr>'
- 		.'</table>'
+		.'</table>'
 		. tra( "Example: " ) . "{div preset=centered border='3px solid blue'}";
 	return $help;
 }
@@ -83,12 +83,15 @@ function data_div( $data, $params ) {
 				case 'style':
 					$style .= $value;
 					break;
+				case 'class':
+					$class = $value;
+					break;
 				default:
 					$style .= $key.':'.$value.';';
 				break;
 			}
 		}
 	}
-	return( '<div style="'.$style.'">'.$data.'</div>' );
+	return( '<div '.( !empty( $class ) ? 'class="'.$class.'" ' : '' ).'style="'.$style.'">'.$data.'</div>' );
 }
 ?>
