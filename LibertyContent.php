@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.103 2006/05/15 13:27:24 sylvieg Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.104 2006/05/25 16:52:21 sylvieg Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -118,7 +118,7 @@ class LibertyContent extends LibertyBase {
 	* lang_code <br>
 	* title <br>
 	* ip <br>
-	* data <br>
+	* edit <br>
 	* <br>
 	* @return integer Count of the number of errors ( 0 for success ) <br>
 	* [pParamHash] will be extended to include array [content_store] populated
@@ -210,7 +210,7 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 
-		if( empty( $pParamHash['edit'] ) && !empty( $this->mInfo['data'] ) ) {
+		if( empty( $pParamHash['edit'] ) ) {
 			// someone has deleted the data entirely - common for fisheye
 			$pParamHash['content_store']['data'] = NULL;
 		}
