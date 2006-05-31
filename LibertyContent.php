@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.104 2006/05/25 16:52:21 sylvieg Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.105 2006/05/31 14:21:40 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -347,11 +347,11 @@ class LibertyContent extends LibertyBase {
 	function getHistoryCount() {
 		$ret = NULL;
 		if( $this->isValid() ) {
-			$query = "SELECT COUNT(*) AS `count`
+			$query = "SELECT COUNT(*) AS `hcount`
 					FROM `".BIT_DB_PREFIX."liberty_content_history`
 					WHERE `content_id` = ?";
 			$rs = $this->mDb->query($query, array($this->mContentId));
-			$ret = $rs->fields['count'];
+			$ret = $rs->fields['hcount'];
 		}
 		return $ret;
 	}
