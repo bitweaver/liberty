@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.25 2006/05/18 18:54:00 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.26 2006/06/04 10:54:43 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -439,6 +439,11 @@ function liberty_process_upload( &$pFileHash ) {
 }
 
 function liberty_process_archive( &$pFileHash ) {
+	// sanity check: make sure tmp_name isn't empty. will scan / if it is
+	if( empty( $pFileHash['tmp_name'] ) || empty( $pFileHash['name'] ) ) {
+		return FALSE;
+	}
+
 	$cwd = getcwd();
 	// if the file has been uploaded using a form, we'll process the uploaded
 	// file directly. if it's been ftp uploaded or some other method used,
@@ -458,6 +463,7 @@ function liberty_process_archive( &$pFileHash ) {
 		global $gBitUser;
 		$baseDir .= $gBitUser->mUserId;
 	}
+
 	$destDir = $baseDir.'/'.basename( $pFileHash['tmp_name'] );
 	// this if is very important logic back so subdirs get processed properly
 	if( ( is_dir( $baseDir ) || mkdir( $baseDir ) ) && @mkdir( $destDir ) ) {
