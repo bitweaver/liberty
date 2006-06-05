@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.27 2006/06/05 06:19:37 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.28 2006/06/05 14:25:53 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -44,20 +44,22 @@ class LibertyAttachable extends LibertyContent {
 	* @author Christian Fowler<spider@steelsun.com>
 	* @param $pSubDir any desired directory below the StoragePath. this will be created if it doesn't exist
 	* @param $pCommon indicates not to use the 'common' branch, and not the 'users/.../<user_id>' branch
+	* @param $pRootDir override BIT_ROOT_DIR with a custom absolute path - useful for areas where no we access should be allowed
 	* @return string full path on local filsystem to store files.
 	*/
-	function getStoragePath( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755 ) {
+	function getStoragePath( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pRootDir = NULL ) {
 		$ret = null;
-		if( $storageUrl = LibertyAttachable::getStorageBranch( $pSubDir, $pUserId, $pPackage, $pPermissions ) ) {
-			$ret = BIT_ROOT_PATH.$storageUrl;
+		if( $storageUrl = LibertyAttachable::getStorageBranch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pRootDir ) ) {
+			//$ret = BIT_ROOT_PATH.$storageUrl;
+			$ret = ( !empty( $pRootDir ) ? $pRootDir : BIT_ROOT_PATH ).$storageUrl;
 			//$ret = $storageUrl;
 		}
 		return $ret;
 	}
 
 
-	function getStorageUrl( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755 ) {
-		return BIT_ROOT_URL.LibertyAttachable::getStorageBranch( $pSubDir, $pUserId, $pPackage, $pPermissions );
+	function getStorageUrl( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pRootDir = NULL ) {
+		return BIT_ROOT_URL.LibertyAttachable::getStorageBranch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pRootDir );
 	}
 
 
@@ -68,14 +70,15 @@ class LibertyAttachable extends LibertyContent {
 	* @author Christian Fowler<spider@steelsun.com>
 	* @param $pSubDir any desired directory below the StoragePath. this will be created if it doesn't exist
 	* @param $pUserId indicates the 'users/.../<user_id>' branch or use the 'common' branch if null
+	* @param $pRootDir override BIT_ROOT_DIR with a custom absolute path - useful for areas where no we access should be allowed
 	* @return string full path on local filsystem to store files.
 	*/
-	function getStorageBranch( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755 ) {
+	function getStorageBranch( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pRootDir = NULL ) {
 		// *PRIVATE FUNCTION. GO AWAY! DO NOT CALL DIRECTLY!!!
 		global $gBitSystem;
 		$baseUrl = null;
 		$pathParts = array();
-		$pathParts = split( '/',$gBitSystem->getConfig('site_upload_dir', 'storage/' ) );
+		$pathParts = split( '/',$gBitSystem->getConfig( 'site_upload_dir', 'storage/' ) );
 
 		if( !$pUserId ) {
 			$pathParts[] = 'common';
@@ -94,12 +97,14 @@ class LibertyAttachable extends LibertyContent {
 			$pathParts[] = $subDir;
 		}
 
+		$pRootDir = !empty( $pRootDir ) ? $pRootDir : BIT_ROOT_PATH;
+
 		foreach( $pathParts as $p ) {
 			if( !empty( $p ) ) {
 				$baseUrl .= $p.'/';
-				if( !file_exists( BIT_ROOT_PATH.$baseUrl ) ) {
+				if( !file_exists( $pRootDir.$baseUrl ) ) {
 					$oldu = umask( 0 );
-					if( mkdir( BIT_ROOT_PATH.$baseUrl, $pPermissions ) ) {
+					if( mkdir( $pRootDir.$baseUrl, $pPermissions ) ) {
 						umask( $oldu );
 					} else {
 						// ACK, something went very wrong.
