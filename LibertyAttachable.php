@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.26 2006/06/04 10:54:43 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.27 2006/06/05 06:19:37 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -524,12 +524,12 @@ function liberty_process_archive( &$pFileHash ) {
 	return $destDir;
 }
 
-function liberty_process_generic( &$pFileHash ) {
+function liberty_process_generic( &$pFileHash, $pMoveFile=TRUE ) {
 	$ret = NULL;
 	$destBase = $pFileHash['dest_path'].$pFileHash['name'];
 	$actualPath = BIT_ROOT_PATH.$destBase;
 	if( is_file( $pFileHash['source_file']) ) {
-		if( @rename( $pFileHash['source_file'], $actualPath ) || @copy( $pFileHash['source_file'], $actualPath ) ) {
+		if( ($pMoveFile && @rename( $pFileHash['source_file'], $actualPath )) || @copy( $pFileHash['source_file'], $actualPath ) ) {
 			$ret = $destBase;
 		}
 	} elseif( copy( $pFileHash['source_file'], $actualPath ) ) {
@@ -548,7 +548,7 @@ function liberty_process_image( &$pFileHash ) {
 
 	list($type, $ext) = split( '/', strtolower( $pFileHash['type'] ) );
 	mkdir_p( BIT_ROOT_PATH.$pFileHash['dest_path'] );
-	if( $resizePath = liberty_process_generic( $pFileHash, $ext ) ) {
+	if( $resizePath = liberty_process_generic( $pFileHash ) ) {
 		$pFileHash['source_file'] = BIT_ROOT_PATH.$resizePath;
 		$nameHold = $pFileHash['name'];
 		$sizeHold = $pFileHash['size'];
@@ -715,7 +715,7 @@ function liberty_gd_resize_image( &$pFileHash, $pFormat = NULL ) {
 		$pFileHash['size'] = filesize( $destFile );
 		$ret = $destUrl.$ext;
 	} elseif( $iwidth && $iheight ) {
-		$ret = liberty_process_generic( $pFileHash );
+		$ret = liberty_process_generic( $pFileHash, FALSE );
 	}
 
 	return $ret;
@@ -771,10 +771,10 @@ function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL ) {
 		$iImg = imagick_readimage( $pFileHash['source_file'] );
 		if( !$iImg ) {
 //			$pFileHash['error'] = $pFileHash['name'].' '.tra ( "is not a known image file" );
-			$destUrl = liberty_process_generic( $pFileHash );
+			$destUrl = liberty_process_generic( $pFileHash, FALSE );
 		} elseif( imagick_iserror( $iImg ) ) {
 //			$pFileHash['error'] = imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
-			$destUrl = liberty_process_generic( $pFileHash );
+			$destUrl = liberty_process_generic( $pFileHash, FALSE );
 		} else {
 			imagick_set_image_quality( $iImg, 85 );
 			$iwidth = imagick_getwidth( $iImg );
@@ -813,7 +813,7 @@ function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL ) {
 				$pFileHash['size'] = filesize( $destFile );
 			} else {
 	//print "GENERIC";
-				$destUrl = liberty_process_generic( $pFileHash );
+				$destUrl = liberty_process_generic( $pFileHash, FALSE );
 			}
 		}
 		$ret = $destUrl;
@@ -877,7 +877,7 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 		}
 		if( $error = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand ) ) {
 //			$pFileHash['error'] = $error;
-			$destUrl = liberty_process_generic( $pFileHash );
+			$destUrl = liberty_process_generic( $pFileHash, FALSE );
 		} else {
 
 			if( $isPdf ) {
@@ -920,7 +920,7 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 				}
 				$pFileHash['size'] = filesize( $destFile );
 			} else {
-				$destUrl = liberty_process_generic( $pFileHash );
+				$destUrl = liberty_process_generic( $pFileHash, FALSE );
 			}
 		}
 		$ret = $destUrl;
