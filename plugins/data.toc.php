@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.7 2006/04/25 08:42:00 squareing Exp $
+// $Id: data.toc.php,v 1.8 2006/06/08 10:24:26 dspt Exp $
 
 /**
  * definitions
@@ -34,7 +34,7 @@ $pluginParams = array (
 	'help_page' => 'DataPluginTOC',
 	'description' => tra("Display a Table Of Contents for Structures"),
 	'help_function' => 'data_toc_help',
-	'syntax' => '{TOC sturcture_id= }',
+	'syntax' => '{TOC structure_id= }',
 	'path' => LIBERTY_PKG_PATH.'plugins/data.toc.php',
 	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
@@ -52,7 +52,7 @@ function data_toc_help() {
 			.'<tr class="odd">'
 				.'<td>display</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Will create a Tab interface on a page. The name on each tab is the name given to the imported page.The value sent with the TabX parameter is a Numeric Content Id. This allows blog posts, images, wiki pages . . . (and more) to be added.") . '</td>'
+				.'<td>' . tra( "Will display a Table Of Contents for Structures, such as Wiki-books. Works only if the page where the tag is used is a part of some structure. If the page belongs to several wiki-books, use structure_id attribute.") . '</td>'
 			.'</tr>'
 		.'</table>'
 		. tra("Example: ") . '{toc structure_id=8 display=full_toc}';
