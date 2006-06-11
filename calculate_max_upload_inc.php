@@ -14,4 +14,3 @@ if( $gBitSystem->isPackageActive( 'quota' ) ) {
 
 $gBitSmarty->assign( 'uploadMax', $uploadMax );
 ?>
-
