@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.28 2006/06/05 14:25:53 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.29 2006/06/11 19:32:42 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -534,10 +534,11 @@ function liberty_process_generic( &$pFileHash, $pMoveFile=TRUE ) {
 	$destBase = $pFileHash['dest_path'].$pFileHash['name'];
 	$actualPath = BIT_ROOT_PATH.$destBase;
 	if( is_file( $pFileHash['source_file']) ) {
-		if( ($pMoveFile && @rename( $pFileHash['source_file'], $actualPath )) || @copy( $pFileHash['source_file'], $actualPath ) ) {
+		if( $pMoveFile && rename( $pFileHash['source_file'], $actualPath ) ) {
 			$ret = $destBase;
+		} else {
+			copy( $pFileHash['source_file'], $actualPath );
 		}
-	} elseif( copy( $pFileHash['source_file'], $actualPath ) ) {
 		$ret = $destBase;
 	}
 	$pFileHash['size'] = filesize( $actualPath );
