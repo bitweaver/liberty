@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.12 $
+ * @version  $Revision: 1.1.1.1.2.13 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_articles.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.articles.php,v 1.1.1.1.2.12 2006/01/11 14:38:14 squareing Exp $
+// $Id: data.articles.php,v 1.1.1.1.2.13 2006/06/11 02:09:20 wolff_borg Exp $
 
 /**
  * definitions
@@ -114,7 +114,7 @@ function data_articles($data, $params) { // No change in the parameters with Cly
 	$getHash['topic']         = !empty( $module_params['topic'] ) ? $module_params['topic'] : NULL;
 	$articles_results = $articlesObject->getList( $getHash );
 
-	$display_format = empty($module_params['format']) ? 'simple_title_list' : $module_params['format'];
+	$display_format = empty($module_params['format']) ? 'list' : $module_params['format'];
 	$display_result = "";
 
 	switch( $display_format ) {
