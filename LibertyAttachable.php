@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.33 2006/01/26 15:00:47 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.1.1.1.2.34 2006/06/13 20:33:22 windblown Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -521,6 +521,10 @@ function liberty_process_image( &$pFileHash ) {
 	mkdir_p( BIT_PKG_PATH.$pFileHash['dest_path'] );
 	if( $resizePath = liberty_process_generic( $pFileHash, $ext ) ) {
 		$pFileHash['source_file'] = BIT_ROOT_PATH.$resizePath;
+		//set permissions if possible - necessary for some wonky shared hosting environments
+		if(chmod($pFileHash['source_file'], 0644)){
+			//does nothing, but fails elegantly
+		}
 		$nameHold = $pFileHash['name'];
 		$sizeHold = $pFileHash['size'];
 		$ret = $pFileHash['source_file'];
@@ -667,6 +671,10 @@ function liberty_gd_resize_image( &$pFileHash, $pFormat = NULL ) {
 				$ext = '.png';
 				$destFile = BIT_PKG_PATH.'/'.$destUrl.$ext;
 				imagepng( $t, $destFile );
+				//set permissions if possible - necessary for some wonky shared hosting environments
+				if(chmod($pFileHash['source_file'], 0644)){
+					//does nothing, but fails elegantly
+				}
 				break;
 			case 'gif':
 				// This must go immediately before default so default will be hit for PHP's without gif support
@@ -674,12 +682,20 @@ function liberty_gd_resize_image( &$pFileHash, $pFormat = NULL ) {
 					$ext = '.gif';
 					$destFile = BIT_PKG_PATH.'/'.$destUrl.$ext;
 					imagegif( $t, $destFile );
+					//set permissions if possible - necessary for some wonky shared hosting environments
+					if(chmod($pFileHash['source_file'], 0644)){
+						//does nothing, but fails elegantly
+					}
 					break;
 				}
 			default:
 				$ext = '.jpg';
 				$destFile = BIT_PKG_PATH.'/'.$destUrl.$ext;
 				imagejpeg( $t, $destFile );
+				//set permissions if possible - necessary for some wonky shared hosting environments
+				if(chmod($pFileHash['source_file'], 0644)){
+					//does nothing, but fails elegantly
+				}
 				break;
 		}
 		$pFileHash['name'] = $pFileHash['dest_base_name'].$ext;
