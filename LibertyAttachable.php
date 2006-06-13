@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.30 2006/06/13 16:57:31 windblown Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.31 2006/06/13 20:32:23 windblown Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -706,6 +706,10 @@ function liberty_gd_resize_image( &$pFileHash, $pFormat = NULL ) {
 				$ext = '.png';
 				$destFile = BIT_ROOT_PATH.'/'.$destUrl.$ext;
 				imagepng( $t, $destFile );
+				//set permissions if possible - necessary for some wonky shared hosting environments
+				if(chmod($pFileHash['source_file'], 0644)){
+					//does nothing, but fails elegantly
+				}
 				break;
 			case 'gif':
 				// This must go immediately before default so default will be hit for PHP's without gif support
@@ -713,6 +717,10 @@ function liberty_gd_resize_image( &$pFileHash, $pFormat = NULL ) {
 					$ext = '.gif';
 					$destFile = BIT_ROOT_PATH.'/'.$destUrl.$ext;
 					imagegif( $t, $destFile );
+					//set permissions if possible - necessary for some wonky shared hosting environments
+					if(chmod($pFileHash['source_file'], 0644)){
+						//does nothing, but fails elegantly
+					}
 					break;
 				}
 			default:
