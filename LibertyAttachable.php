@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.29 2006/06/11 19:32:42 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.30 2006/06/13 16:57:31 windblown Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -556,6 +556,10 @@ function liberty_process_image( &$pFileHash ) {
 	mkdir_p( BIT_ROOT_PATH.$pFileHash['dest_path'] );
 	if( $resizePath = liberty_process_generic( $pFileHash ) ) {
 		$pFileHash['source_file'] = BIT_ROOT_PATH.$resizePath;
+		//set permissions if possible - necessary for some wonky shared hosting environments
+		if(chmod($pFileHash['source_file'], 0644)){
+			//does nothing, but fails elegantly
+		}
 		$nameHold = $pFileHash['name'];
 		$sizeHold = $pFileHash['size'];
 		$ret = $pFileHash['source_file'];
@@ -715,6 +719,9 @@ function liberty_gd_resize_image( &$pFileHash, $pFormat = NULL ) {
 				$ext = '.jpg';
 				$destFile = BIT_ROOT_PATH.'/'.$destUrl.$ext;
 				imagejpeg( $t, $destFile );
+				if(chmod($destFile, 0644)){
+					//does nothing, but fails elegantly
+				}
 				break;
 		}
 		$pFileHash['name'] = $pFileHash['dest_base_name'].$ext;
