@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.105 2006/05/31 14:21:40 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.106 2006/06/15 18:14:09 wakeworks Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -26,7 +26,9 @@
 /**
  * Maximum lengths for database fields
  */
-define( 'BIT_CONTENT_MAX_TITLE_LEN', 160);
+if( !defined( 'BIT_CONTENT_MAX_TITLE_LEN' ) ) {
+	define( 'BIT_CONTENT_MAX_TITLE_LEN', 160);
+}
 define( 'BIT_CONTENT_MAX_LANGUAGE_LEN', 4);
 define( 'BIT_CONTENT_MAX_IP_LEN', 39);
 define( 'BIT_CONTENT_MAX_FORMAT_GUID_LEN', 16);
@@ -152,7 +154,7 @@ class LibertyContent extends LibertyBase {
 					|| (!empty($pParamHash["title"]) && !empty($this->mInfo["title"]) && (md5($this->mInfo["title"]) != md5($pParamHash["title"])));
 		// check some lengths, if too long, then truncate
 		if( !empty( $pParamHash['title'] ) ) {
-			$pParamHash['content_store']['title'] = substr( $pParamHash['title'], 0, 160 );
+			$pParamHash['content_store']['title'] = substr( $pParamHash['title'], 0, BIT_CONTENT_MAX_TITLE_LEN );
 		} elseif( isset( $pParamHash['title'] ) ) {
 			$pParamHash['content_store']['title'] = NULL;
 		}
