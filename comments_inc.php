@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.13 $
+ * @version  $Revision: 1.14 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.13 2006/04/12 15:39:19 sylvieg Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.14 2006/06/16 22:25:40 spiderr Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -173,7 +173,8 @@ if( !@BitBase::verifyId( $commentsParentId ) ) {
 	$comments = $gComment->getComments( $parents, $maxComments, $commentOffset, $comments_sort_mode, $comments_display_style );
 	$numComments = $gComment->getNumComments( $commentsParentId );
 }
-$gBitSmarty->assign('comments', $comments);
+
+$gBitSmarty->assign_by_ref('comments', $comments);
 $gBitSmarty->assign('maxComments', $maxComments);
 
 $numCommentPages = ceil( $numComments / $maxComments );
