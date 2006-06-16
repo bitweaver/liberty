@@ -2,7 +2,7 @@
 <br />
 <div class="display comment">
 	<div class="header">
-		{if !( $post_comment_request || $post_comment_preview )}
+		{if !( $smarty.request.post_comment_request || $post_comment_preview )}
 			<a name="editcomments"></a>
 		{/if}
 		<h2>{tr}Comments{/tr}</h2>
@@ -22,7 +22,8 @@
 			<input type="hidden" name="comments_maxComments" value="{$maxComments}" />
 			<input type="hidden" name="comments_style" value="{$comments_style}" />
 			<input type="hidden" name="comments_sort_mode" value="{$comments_sort_mode}" />
-			{if $post_comment_request || $post_comment_preview}
+
+			{if $smarty.request.post_comment_request || $smarty.request.post_comment_preview}
 				<a name="editcomments"></a>
 				{legend legend="Post Comment"}
 					<input type="hidden" name="post_comment_reply_id" value="{$post_comment_reply_id}" />
