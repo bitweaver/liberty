@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.14 2006/06/16 22:25:40 spiderr Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.15 2006/06/16 22:35:14 sylvieg Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -89,6 +89,9 @@ if( empty( $_REQUEST['post_comment_request'] ) && !$gBitSystem->isFeatureActive(
 	$post_comment_request = NULL;
 } elseif( $gBitUser->hasPermission( 'p_liberty_post_comments' ) ) {
 	$post_comment_request = TRUE;
+}
+if( !empty( $_REQUEST['post_comment_request'] ) && $_REQUEST['post_comment_request'] == 'y' && !$gBitUser->hasPermission( 'p_liberty_post_comments' ) ) {
+	$gBitSystem->fatalPermission( 'p_liberty_post_comments' );
 }
 $gBitSmarty->assign_by_ref('post_comment_request', $post_comment_request);
 
