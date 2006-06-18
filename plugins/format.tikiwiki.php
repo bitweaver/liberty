@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.53 $
+ * @version  $Revision: 1.54 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -40,12 +40,11 @@ function tikiwiki_save_data( &$pParamHash ) {
 	if( $pParamHash['edit'] ) {
 		$parser->storeLinks( $pParamHash );
 	}
+	LibertyContent::expungeLibertyCacheFile( $pParamHash['content_id'] );
 }
 
 function tikiwiki_verify_data( &$pParamHash ) {
 	$errorMsg = NULL;
-
-	// Removed htmlspecialchars conversion as it permantenly modifies the orginal source. calling htmlentities on parse now.
 	$pParamHash['content_store']['data'] = $pParamHash['edit'];
 	return( $errorMsg );
 }
@@ -53,6 +52,7 @@ function tikiwiki_verify_data( &$pParamHash ) {
 function tikiwiki_expunge( $pContentId ) {
 	$parser = new TikiWikiParser();
 	$parser->expungeLinks( $pContentId );
+	LibertyContent::expungeLibertyCacheFile( $pContentId );
 }
 
 function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
@@ -66,23 +66,52 @@ function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
 			if( md5( $data ) != md5( $row['data'] ) ) {
 				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content` SET `data`=? WHERE `content_id`=?";
 				$pCommonObject->mDb->query($query, array( $data, $row['from_content_id'] ) );
+
+				// remove any chached files pointing here
+				LibertyContent::expungeLibertyCacheFile( $row['from_content_id'] );
 			}
 		}
 	}
 
 	#Fix up titles in the link table
 	$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET `to_title`=? WHERE `to_content_id`=?";
-	$pCommonObject->mDb->query($query, array( $pNewName, $pContentId ) );
-
-
+	$pCommonObject->mDb->query( $query, array( $pNewName, $pContentId ) );
 }
 
 function tikiwiki_parse_data( &$pData, &$pCommonObject, $pContentId ) {
-	static $parser;
-	if( empty( $parser ) ) {
-		$parser = new TikiWikiParser();
+	global $gBitSystem;
+
+	// cache data if we are using liberty cache
+	if( $gBitSystem->isFeatureActive( 'liberty_cache' ) ) {
+		$cacheFile = LibertyContent::getLibertyCacheFile( $pContentId );
+
+		// write / refresh cache if we are exceeding time limit of cache
+		if( !is_file( $cacheFile ) || ( $gBitSystem->getConfig( 'liberty_cache' ) < ( time() - filemtime( $cacheFile ) ) ) ) {
+			static $parser;
+			if( empty( $parser ) ) {
+				$parser = new TikiWikiParser();
+			}
+			$ret = $parser->parse_data( $pData, $pCommonObject, $pContentId );
+
+			// write contents to cache file - ignore any errors
+			$h = fopen( $cacheFile, 'w' );
+			fwrite( $h, $ret );
+			fclose( $h );
+		} else {
+			// get contents from cache file
+			$h = fopen( $cacheFile, 'r' );
+			$ret = fread( $h, filesize( $cacheFile ) );
+			fclose( $h );
+			$pCommonObject->mInfo['is_cached'] = TRUE;
+		}
+	} else {
+		static $parser;
+		if( empty( $parser ) ) {
+			$parser = new TikiWikiParser();
+		}
+		$ret = $parser->parse_data( $pData, $pCommonObject, $pContentId );
 	}
-	return $parser->parse_data( $pData, $pCommonObject, $pContentId );
+	return $ret;
 }
 
 /**
@@ -150,23 +179,31 @@ class TikiWikiParser extends BitBase {
 
 	function storeLinks( &$pParamHash ) {
 		global $gBitSystem;
-		if (!$gBitSystem->isPackageActive( 'wiki') )
+		if( !$gBitSystem->isPackageActive( 'wiki') ) {
 			return;
+		}
+
 		if( empty( $pParamHash['content_id'] ) ) {
 			return;
-			}
+		}
 
 		$from_content_id = $pParamHash['content_id'];
 		$from_title = $pParamHash['title'];
 
+		// we need to remove the cache of any pages pointing to this one
+		$clearCache = $this->mDb->getCol( "SELECT `from_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE (`to_content_id`=? or `to_content_id` is NULL ) and `to_title` = ?", array( 0, $from_title ) );
+		foreach( $clearCache as $content_id ) {
+			LibertyContent::expungeLibertyCacheFile( $content_id );
+		}
+
 		#if this is a new page, fix up any links that may already point to it
 		$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET `to_content_id`=? WHERE (`to_content_id`=? or `to_content_id` is NULL ) and `to_title` = ?";
-		$this->mDb->query($query, array( $from_content_id, 0, $from_title ) );
+		$this->mDb->query( $query, array( $from_content_id, 0, $from_title ) );
 
 		#get all the current links from this page
 		$old_links_in_db = array();
 		$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=?";
-		if( $result = $this->mDb->query($query, array( $from_content_id ) ) ) {
+		if( $result = $this->mDb->query( $query, array( $from_content_id ) ) ) {
 			while( $row = $result->fetchRow() ) {
 				$old_links_in_db[$row['to_title']] = $row['to_content_id'];
 			}
@@ -174,9 +211,9 @@ class TikiWikiParser extends BitBase {
 
 		#get list of all wiki links on this page
 		$wiki_links_in_content = $this->extractWikiWords( $pParamHash['edit'] );
-		if( !is_array( $wiki_links_in_content )) {
+		if( !is_array( $wiki_links_in_content ) ) {
 			$wiki_links_in_content = array();
-			}
+		}
 
 		#create list of unique new wiki links on this page
 		$unique_new_wiki_links = array();
@@ -184,7 +221,7 @@ class TikiWikiParser extends BitBase {
 			if( empty( $to_title ) ) {
 				continue;
 			}
-			if( isset( $old_links_in_db[$to_title] )) {
+			if( isset( $old_links_in_db[$to_title] ) ) {
 				# link already in DB - skip rest of processing
 				continue;
 			}
@@ -208,11 +245,10 @@ class TikiWikiParser extends BitBase {
 				#insert all new links pointing to existing content
 				$query_var = array_keys($new_link_pointing_to_existing_content);
 				$query_var_list = '?' . str_repeat(',?', count($new_link_pointing_to_existing_content) - 1);
-				$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_links`"
-					. " (`from_content_id`,`to_content_id`,`to_title`)"
-					. " SELECT ?,`content_id`,`title` FROM `".BIT_DB_PREFIX."liberty_content`"
-					. " WHERE `title` IN ( $query_var_list )"
-					;
+				$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_links`
+					(`from_content_id`,`to_content_id`,`to_title`)
+					SELECT ?,`content_id`,`title` FROM `".BIT_DB_PREFIX."liberty_content`
+					WHERE `title` IN ( $query_var_list )";
 				array_unshift($query_var,$from_content_id);
 				$result = $this->mDb->query($query, $query_var);
 			}
@@ -220,32 +256,34 @@ class TikiWikiParser extends BitBase {
 
 		#insert all new links pointing to non-existing content
 		foreach ($unique_new_wiki_links as $to_title) {
-				if( isset($new_link_pointing_to_existing_content[$to_title]) ) {
-					continue;
-					}
-				$query = "insert into `".BIT_DB_PREFIX."liberty_content_links` (`from_content_id`,`to_title`) values(?, ?)";
-				$result = $this->mDb->query($query, array( $from_content_id, $to_title ) );
+			if( isset($new_link_pointing_to_existing_content[$to_title]) ) {
+				continue;
 			}
-
+			$query = "insert into `".BIT_DB_PREFIX."liberty_content_links` (`from_content_id`,`to_title`) values(?, ?)";
+			$result = $this->mDb->query($query, array( $from_content_id, $to_title ) );
+		}
 
 		# now delete any links no longer on page
 		foreach( $wiki_links_in_content as $to_title) {
 			$wiki_links_in_content_table[$to_title] = 1;
-			}
+		}
+
 		foreach( array_keys($old_links_in_db) as $to_title ) {
 			if( !isset($wiki_links_in_content_table[$to_title]) ) {
 				$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=? and `to_title` = ?";
 				$result = $this->mDb->query( $query, array( $from_content_id, $to_title ) );
 			}
 		}
-
 	}
 
 	function expungeLinks( $pContentId ) {
 		if( !empty( $pContentId ) ) {
-			$this->mDb->StartTrans();
+			// remove any cached file pointing to this page
+			$links = $this->mDb->getCol( "SELECT `from_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE to_content_id=?", array( $pContentId ) );
+			foreach( $links as $content_id ) {
+				LibertyContent::expungeLibertyCacheFile( $content_id );
+			}
 			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE from_content_id=? OR to_content_id=?", array( $pContentId, $pContentId ) );
-			$this->mDb->CompleteTrans();
 		}
 	}
 

@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.106 2006/06/15 18:14:09 wakeworks Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.107 2006/06/18 21:24:42 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -313,13 +313,16 @@ class LibertyContent extends LibertyBase {
 	* Delete content object and all related records
 	*/
 	function expunge() {
-		global $gBitSystem;
+		global $gBitSystem, $gLibertySystem;
 		$ret = FALSE;
 		if( $this->isValid() ) {
 			$this->mDb->StartTrans();
 			$this->expungeComments();
 
 			$this->invokeServices( 'content_expunge_function', $this );
+			if( $func = $gLibertySystem->getPluginFunction( $this->mInfo['format_guid'], 'expunge_function' ) ) {
+				$func( $this->mContentId );
+			}
 
 			$this->expungeVersion();
 
@@ -1677,6 +1680,46 @@ class LibertyContent extends LibertyBase {
 		}
 	}
 
-}
+	// -------------------- Cache -------------------- //
+	// private function - calling this function will result in death
+	function getLibertyCachePath( $pContentId = NULL ) {
+		if( empty( $pContentId ) && @BitBase::verifyId( $this->mContentId ) ) {
+			$pContentId = $this->mContentId;
+		}
 
+		$baseUrl = NULL;
+		if( @BitBase::verifyId( $pContentId ) ) {
+			$pathParts   = split( '/', TEMP_PKG_URL );
+			$pathParts[] = LIBERTY_PKG_NAME;
+			$pathParts[] = 'cache';
+			$pathParts[] = (int)($pContentId % 1000);
+
+			foreach( $pathParts as $p ) {
+				if( !empty( $p ) ) {
+					$baseUrl .= $p.'/';
+					if( !file_exists( BIT_ROOT_PATH.$baseUrl ) ) {
+						if( !mkdir( BIT_ROOT_PATH.$baseUrl ) ) {
+							// ACK, something went very wrong.
+							$baseUrl = FALSE;
+							break;
+						}
+					}
+				}
+			}
+		}
+		return BIT_ROOT_PATH.$baseUrl;
+	}
+
+	function getLibertyCacheFile( $pContentId = NULL ) {
+		$ret = '';
+		if( @BitBase::verifyId( $pContentId ) ) {
+			$ret = LibertyContent::getLibertyCachePath( $pContentId ).$pContentId;
+		}
+		return $ret;
+	}
+
+	function expungeLibertyCacheFile( $pContentId = NULL ) {
+		return( @unlink( LibertyContent::getLibertyCacheFile( $pContentId ) ).$pContentId );
+	}
+}
 ?>

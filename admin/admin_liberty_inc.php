@@ -6,9 +6,7 @@ $formLibertyFeatures = array(
 		'page' => '',
 	),
 );
-
 $gBitSmarty->assign( 'formLibertyFeatures', $formLibertyFeatures );
-
 
 $formImageFeatures = array(
 	"liberty_jpeg_originals" => array(
@@ -28,6 +26,7 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
 
+	$gBitSystem->storeConfig('liberty_cache', $_REQUEST['liberty_cache'] );
 	$gBitSystem->storeConfig('liberty_auto_display_attachment_thumbs', $_REQUEST['liberty_auto_display_attachment_thumbs'] );
 
 	if( $_REQUEST['approved_html_tags'] != DEFAULT_ACCEPTABLE_TAGS ) {
