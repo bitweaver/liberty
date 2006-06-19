@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.107 2006/06/18 21:24:42 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.108 2006/06/19 16:00:26 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1680,8 +1680,7 @@ class LibertyContent extends LibertyBase {
 		}
 	}
 
-	// -------------------- Cache -------------------- //
-	// private function - calling this function will result in death
+	// -------------------- Cache Funtions -------------------- //
 	function getLibertyCachePath( $pContentId = NULL ) {
 		if( empty( $pContentId ) && @BitBase::verifyId( $this->mContentId ) ) {
 			$pContentId = $this->mContentId;
@@ -1695,7 +1694,7 @@ class LibertyContent extends LibertyBase {
 			$pathParts[] = (int)($pContentId % 1000);
 
 			foreach( $pathParts as $p ) {
-				if( !empty( $p ) ) {
+				if( !empty( $p ) || $p === 0 ) {
 					$baseUrl .= $p.'/';
 					if( !file_exists( BIT_ROOT_PATH.$baseUrl ) ) {
 						if( !mkdir( BIT_ROOT_PATH.$baseUrl ) ) {
