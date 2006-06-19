@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.54 $
+ * @version  $Revision: 1.55 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -40,7 +40,7 @@ function tikiwiki_save_data( &$pParamHash ) {
 	if( $pParamHash['edit'] ) {
 		$parser->storeLinks( $pParamHash );
 	}
-	LibertyContent::expungeLibertyCacheFile( $pParamHash['content_id'] );
+	LibertyContent::expungeCacheFile( $pParamHash['content_id'] );
 }
 
 function tikiwiki_verify_data( &$pParamHash ) {
@@ -52,7 +52,7 @@ function tikiwiki_verify_data( &$pParamHash ) {
 function tikiwiki_expunge( $pContentId ) {
 	$parser = new TikiWikiParser();
 	$parser->expungeLinks( $pContentId );
-	LibertyContent::expungeLibertyCacheFile( $pContentId );
+	LibertyContent::expungeCacheFile( $pContentId );
 }
 
 function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
@@ -68,7 +68,7 @@ function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
 				$pCommonObject->mDb->query($query, array( $data, $row['from_content_id'] ) );
 
 				// remove any chached files pointing here
-				LibertyContent::expungeLibertyCacheFile( $row['from_content_id'] );
+				LibertyContent::expungeCacheFile( $row['from_content_id'] );
 			}
 		}
 	}
@@ -83,7 +83,7 @@ function tikiwiki_parse_data( &$pData, &$pCommonObject, $pContentId ) {
 
 	// cache data if we are using liberty cache
 	if( $gBitSystem->isFeatureActive( 'liberty_cache' ) ) {
-		$cacheFile = LibertyContent::getLibertyCacheFile( $pContentId );
+		$cacheFile = LibertyContent::getCacheFile( $pContentId );
 
 		// write / refresh cache if we are exceeding time limit of cache
 		if( !is_file( $cacheFile ) || ( $gBitSystem->getConfig( 'liberty_cache' ) < ( time() - filemtime( $cacheFile ) ) ) ) {
@@ -193,7 +193,7 @@ class TikiWikiParser extends BitBase {
 		// we need to remove the cache of any pages pointing to this one
 		$clearCache = $this->mDb->getCol( "SELECT `from_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE (`to_content_id`=? or `to_content_id` is NULL ) and `to_title` = ?", array( 0, $from_title ) );
 		foreach( $clearCache as $content_id ) {
-			LibertyContent::expungeLibertyCacheFile( $content_id );
+			LibertyContent::expungeCacheFile( $content_id );
 		}
 
 		#if this is a new page, fix up any links that may already point to it
@@ -281,7 +281,7 @@ class TikiWikiParser extends BitBase {
 			// remove any cached file pointing to this page
 			$links = $this->mDb->getCol( "SELECT `from_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE to_content_id=?", array( $pContentId ) );
 			foreach( $links as $content_id ) {
-				LibertyContent::expungeLibertyCacheFile( $content_id );
+				LibertyContent::expungeCacheFile( $content_id );
 			}
 			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE from_content_id=? OR to_content_id=?", array( $pContentId, $pContentId ) );
 		}

@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.108 2006/06/19 16:00:26 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.109 2006/06/19 20:29:23 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1681,23 +1681,30 @@ class LibertyContent extends LibertyBase {
 	}
 
 	// -------------------- Cache Funtions -------------------- //
-	function getLibertyCachePath( $pContentId = NULL ) {
+	function getCacheBaseUrl() {
+		return TEMP_PKG_URL.LIBERTY_PKG_NAME.'/cache/';
+	}
+
+	function getCacheBasePath() {
+		return str_replace( '//', '/', BIT_ROOT_PATH.LibertyContent::getCacheBaseUrl() );
+	}
+
+	function getCachePath( $pContentId = NULL ) {
 		if( empty( $pContentId ) && @BitBase::verifyId( $this->mContentId ) ) {
 			$pContentId = $this->mContentId;
 		}
 
-		$baseUrl = NULL;
+		$ret = FALSE;
 		if( @BitBase::verifyId( $pContentId ) ) {
-			$pathParts   = split( '/', TEMP_PKG_URL );
-			$pathParts[] = LIBERTY_PKG_NAME;
-			$pathParts[] = 'cache';
+			$baseUrl = NULL;
+			$pathParts   = split( '/', LibertyContent::getCacheBaseUrl() );
 			$pathParts[] = (int)($pContentId % 1000);
 
 			foreach( $pathParts as $p ) {
 				if( !empty( $p ) || $p === 0 ) {
 					$baseUrl .= $p.'/';
 					if( !file_exists( BIT_ROOT_PATH.$baseUrl ) ) {
-						if( !mkdir( BIT_ROOT_PATH.$baseUrl ) ) {
+						if( @!mkdir( BIT_ROOT_PATH.$baseUrl ) ) {
 							// ACK, something went very wrong.
 							$baseUrl = FALSE;
 							break;
@@ -1705,20 +1712,23 @@ class LibertyContent extends LibertyBase {
 					}
 				}
 			}
-		}
-		return BIT_ROOT_PATH.$baseUrl;
-	}
-
-	function getLibertyCacheFile( $pContentId = NULL ) {
-		$ret = '';
-		if( @BitBase::verifyId( $pContentId ) ) {
-			$ret = LibertyContent::getLibertyCachePath( $pContentId ).$pContentId;
+			$ret = BIT_ROOT_PATH.$baseUrl;
 		}
 		return $ret;
 	}
 
-	function expungeLibertyCacheFile( $pContentId = NULL ) {
-		return( @unlink( LibertyContent::getLibertyCacheFile( $pContentId ) ).$pContentId );
+	function getCacheFile( $pContentId = NULL ) {
+		if( $ret = LibertyContent::getCachePath( $pContentId ).$pContentId ) {
+			return $ret;
+		} else {
+			return FALSE;
+		}
+	}
+
+	function expungeCacheFile( $pContentId = NULL ) {
+		if( @BitBase::verifyId( $pContentId ) ) {
+			return( @unlink( LibertyContent::getCacheFile( $pContentId ) ).$pContentId );
+		}
 	}
 }
 ?>
