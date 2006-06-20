@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.109 2006/06/19 20:29:23 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.110 2006/06/20 08:37:10 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1455,48 +1455,48 @@ class LibertyContent extends LibertyBase {
 	*
 	* This is the "object like" method. It should be more object like,
 	* but for now, we'll just point to the old lib style "parse_data" - XOXO spiderr
-	* @param string Data to be formated
-	* @param string Format GUID processor to use
+	* @param         pMixed can be a string or a hash - if a string is given, it will be parsed without the use of cache
+	* @param string  pMixed['data'] string to be parsed
+	* @param int     pMixed['content_id'] content_id or the item to be parsed - required for caching and optimal parser performance
+	* @param boolean pMixed['no_cache'] disable caching
+	* @param string  pMixed['cache_extension'] cache to a seperate file. useful for truncated displays of parsed content such as article front page
+	* @param string pFormatGuid processor to use
 	* @return string Formated data string
 	*/
 	function parseData( $pMixed=NULL, $pFormatGuid=NULL ) {
 		// get the data into place
 		if( empty( $pMixed ) && !empty( $this->mInfo['data'] ) ) {
-			$data = $this->mInfo['data'];
+			$parseHash = $this->mInfo;
 		} elseif( is_array( $pMixed ) ) {
-			if( !empty( $pMixed['data'] ) ) {
-				$data = $pMixed['data'];
-			} else {
-				$data = '';
+			$parseHash = $pMixed;
+			if( empty( $parseHash['data'] ) ) {
+				$parseHash['data'] = '';
 			}
 		} else {
-			$data = $pMixed;
+			$parseHash['data'] = $pMixed;
+		}
+
+		// sanitise parseHash a bit
+		if( empty( $parseHash['content_id'] ) ) {
+			$parseHash['content_id'] = NULL;
+		}
+
+		if( empty( $parseHash['cache_extension'] ) ) {
+			$parseHash['cache_extension'] = NULL;
 		}
 
 		// get the format guid into place
-		if( is_array( $pMixed ) && !empty( $pMixed['format_guid'] ) ) {
-			$formatGuid = $pMixed['format_guid'];
-		} elseif( empty( $pFormatGuid ) ) {
-			$formatGuid = isset( $this->mInfo['format_guid'] ) ? $this->mInfo['format_guid'] : NULL;
+		if( !empty( $parseHash['format_guid'] ) ) {
+			$formatGuid = $parseHash['format_guid'];
 		} else {
 			$formatGuid = $pFormatGuid;
 		}
 
-		// get the content id if we have one to get
-		if( is_array( $pMixed ) && !empty( $pMixed['content_id'] ) ) {
-			$contentId = $pMixed['content_id'];
-		} elseif( !empty( $this->mContentId ) ) {
-			$contentId = $this->mContentId;
-		} else {
-			$contentId = NULL;
-		}
-
-		$ret = $data;
-
-		if( $data && $formatGuid ) {
+		$ret = $parseHash['data'];
+		if( !empty( $parseHash['data'] ) && $formatGuid ) {
 			global $gLibertySystem;
 			if( $func = $gLibertySystem->getPluginFunction( $formatGuid, 'load_function' ) ) {
-				$ret = $func( $data, $this, $contentId );
+				$ret = $func( $parseHash, $this );
 			}
 		}
 		return $ret;
@@ -1717,9 +1717,9 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
-	function getCacheFile( $pContentId = NULL ) {
-		if( $ret = LibertyContent::getCachePath( $pContentId ).$pContentId ) {
-			return $ret;
+	function getCacheFile( $pContentId = NULL, $pCacheExtension = NULL ) {
+		if( $ret = LibertyContent::getCachePath( $pContentId ) ) {
+			return( $ret.$pContentId.( !empty( $pCacheExtension ) ? '.'.$pCacheExtension : '') );
 		} else {
 			return FALSE;
 		}
@@ -1727,8 +1727,16 @@ class LibertyContent extends LibertyBase {
 
 	function expungeCacheFile( $pContentId = NULL ) {
 		if( @BitBase::verifyId( $pContentId ) ) {
-			return( @unlink( LibertyContent::getCacheFile( $pContentId ) ).$pContentId );
+			// we need to unlink all files with the same id and any extension
+			if( $dh = opendir( $cacheDir = LibertyContent::getCachePath( $pContentId ) ) ) {
+				while( FALSE !== ( $file = readdir( $dh ) ) ) {
+					if( $file != '.' && $file != '..' && ( preg_match( "/^".$pContentId."$/", $file ) || preg_match( "/^".$pContentId."\..*/", $file ) ) ) {
+						@unlink( $cacheDir.$file );
+					}
+				}
+			}
 		}
+		return TRUE;
 	}
 }
 ?>

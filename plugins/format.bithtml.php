@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -11,15 +11,16 @@ global $gLibertySystem;
  */
 define( 'PLUGIN_GUID_BITHTML', 'bithtml' );
 
-$pluginParams = array ( 'store_function' => 'bithtml_save_data',
-						'load_function' => 'bithtml_parse_data',
-						'verify_function' => 'bithtml_verify_data',
-						'description' => 'HTML Syntax Format Parser',
-						'edit_label' => 'HTML',
-						'edit_field' => '<input type="radio" name="format_guid" value="'.PLUGIN_GUID_BITHTML.'"',
-						'help_page' => 'HTMLSyntax',
-						'plugin_type' => FORMAT_PLUGIN
-					  );
+$pluginParams = array (
+	'store_function' => 'bithtml_save_data',
+	'load_function' => 'bithtml_parse_data',
+	'verify_function' => 'bithtml_verify_data',
+	'description' => 'HTML Syntax Format Parser',
+	'edit_label' => 'HTML',
+	'edit_field' => '<input type="radio" name="format_guid" value="'.PLUGIN_GUID_BITHTML.'"',
+	'help_page' => 'HTMLSyntax',
+	'plugin_type' => FORMAT_PLUGIN
+);
 
 $gLibertySystem->registerPlugin( PLUGIN_GUID_BITHTML, $pluginParams );
 
@@ -84,26 +85,26 @@ function bithtml_save_data( &$pParamHash ) {
 	}
 }
 
-function bithtml_parse_data( &$pData, &$pCommonObject ) {
+function bithtml_parse_data( &$pParseHash, &$pCommonObject ) {
 	global $gLibertySystem;
+	$ret = $pParseHash['data'];
 	// eventually we should strip tags, maybe tikilink, or other things.
-	parse_data_plugins( $pData, $foo, $bar, $empty );
+	parse_data_plugins( $ret, $foo, $bar, $empty );
 	// this function is called manually, since it processes the HTML code
-	if( preg_match( "/\{maketoc.*?\}/i", $pData ) && @$gLibertySystem->mPlugins['datamaketoc']['is_active'] == 'y' ) {
-		$pData = data_maketoc( $pData );
+	if( preg_match( "/\{maketoc.*?\}/i", $ret ) && @$gLibertySystem->mPlugins['datamaketoc']['is_active'] == 'y' ) {
+		$ret = data_maketoc( $ret );
 	}
-	if( preg_match("/\(\(([^\)][^\)]+)\)\)/", $pData ) ) {
-		preg_match_all("/\(\(([^\)][^\)]+)\)\)/", $pData, $pages);
+	if( preg_match( "/\(\(([^\)][^\)]+)\)\)/", $ret ) ) {
+		preg_match_all( "/\(\(([^\)][^\)]+)\)\)/", $ret, $pages );
 		foreach (array_unique($pages[1])as $page_parse) {
-	// This is a hack for now. page_exists_desc should not be needed here sicne blogs and articles use this function
-
-				$exists = $pCommonObject->pageExists( $page_parse, $pCommonObject->mContentId, $pCommonObject );
-				$repl = BitPage::getDisplayLink( $page_parse, $exists );
-				$page_parse_pq = preg_quote($page_parse, "/");
-				$pData = preg_replace("/\(\($page_parse_pq\)\)/", "$repl", $pData);
+			// This is a hack for now. page_exists_desc should not be needed here since blogs and articles use this function
+			$exists = $pCommonObject->pageExists( $page_parse, $pCommonObject->mContentId, $pCommonObject );
+			$repl = BitPage::getDisplayLink( $page_parse, $exists );
+			$page_parse_pq = preg_quote($page_parse, "/");
+			$ret = preg_replace("/\(\($page_parse_pq\)\)/", "$repl", $ret);
 		}
 	}
-	return $pData;
+	return $ret;
 }
 
 ?>

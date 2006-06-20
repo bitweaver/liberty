@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.55 $
+ * @version  $Revision: 1.56 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -15,17 +15,18 @@ define( 'WIKI_WORDS_REGEX', '[A-z0-9]{2}[\w\d_\-]+[A-Z_][\w\d_\-]+[A-z0-9]+' );
  * @package  liberty
  * @subpackage plugins_format
  */
-$pluginParams = array ( 'store_function' => 'tikiwiki_save_data',
-						'load_function' => 'tikiwiki_parse_data',
-						'verify_function' => 'tikiwiki_verify_data',
-						'rename_function' => 'tikiwiki_rename',
-						'expunge_function' => 'tikiwiki_expunge',
-						'description' => 'TikiWiki Syntax Format Parser',
-						'edit_label' => 'Tiki Wiki Syntax',
-						'edit_field' => '<input type="radio" name="format_guid" value="'.PLUGIN_GUID_TIKIWIKI.'"',
-						'help_page' => 'TikiWikiSyntax',
-						'plugin_type' => FORMAT_PLUGIN
-					  );
+$pluginParams = array (
+	'store_function' => 'tikiwiki_save_data',
+	'load_function' => 'tikiwiki_parse_data',
+	'verify_function' => 'tikiwiki_verify_data',
+	'rename_function' => 'tikiwiki_rename',
+	'expunge_function' => 'tikiwiki_expunge',
+	'description' => 'TikiWiki Syntax Format Parser',
+	'edit_label' => 'Tiki Wiki Syntax',
+	'edit_field' => '<input type="radio" name="format_guid" value="'.PLUGIN_GUID_TIKIWIKI.'"',
+	'help_page' => 'TikiWikiSyntax',
+	'plugin_type' => FORMAT_PLUGIN
+);
 
 $gLibertySystem->registerPlugin( PLUGIN_GUID_TIKIWIKI, $pluginParams );
 
@@ -78,38 +79,38 @@ function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
 	$pCommonObject->mDb->query( $query, array( $pNewName, $pContentId ) );
 }
 
-function tikiwiki_parse_data( &$pData, &$pCommonObject, $pContentId ) {
+function tikiwiki_parse_data( &$pParseHash, &$pCommonObject ) {
 	global $gBitSystem;
 
 	// cache data if we are using liberty cache
-	if( $gBitSystem->isFeatureActive( 'liberty_cache' ) ) {
-		$cacheFile = LibertyContent::getCacheFile( $pContentId );
+	if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && !empty( $pParseHash['content_id'] ) && empty( $pParseHash['no_cache'] ) ) {
+		if( $cacheFile = LibertyContent::getCacheFile( $pParseHash['content_id'], $pParseHash['cache_extension'] ) ) {
+			// write / refresh cache if we are exceeding time limit of cache
+			if( !is_file( $cacheFile ) || ( $gBitSystem->getConfig( 'liberty_cache' ) < ( time() - filemtime( $cacheFile ) ) ) ) {
+				static $parser;
+				if( empty( $parser ) ) {
+					$parser = new TikiWikiParser();
+				}
+				$ret = $parser->parse_data( $pParseHash, $pCommonObject );
 
-		// write / refresh cache if we are exceeding time limit of cache
-		if( !is_file( $cacheFile ) || ( $gBitSystem->getConfig( 'liberty_cache' ) < ( time() - filemtime( $cacheFile ) ) ) ) {
-			static $parser;
-			if( empty( $parser ) ) {
-				$parser = new TikiWikiParser();
+				// write parsed contents to cache file
+				$h = fopen( $cacheFile, 'w' );
+				fwrite( $h, $ret );
+				fclose( $h );
+			} else {
+				// get contents from cache file
+				$h = fopen( $cacheFile, 'r' );
+				$ret = fread( $h, filesize( $cacheFile ) );
+				fclose( $h );
+				$pCommonObject->mInfo['is_cached'] = TRUE;
 			}
-			$ret = $parser->parse_data( $pData, $pCommonObject, $pContentId );
-
-			// write contents to cache file - ignore any errors
-			$h = fopen( $cacheFile, 'w' );
-			fwrite( $h, $ret );
-			fclose( $h );
-		} else {
-			// get contents from cache file
-			$h = fopen( $cacheFile, 'r' );
-			$ret = fread( $h, filesize( $cacheFile ) );
-			fclose( $h );
-			$pCommonObject->mInfo['is_cached'] = TRUE;
 		}
 	} else {
 		static $parser;
 		if( empty( $parser ) ) {
 			$parser = new TikiWikiParser();
 		}
-		$ret = $parser->parse_data( $pData, $pCommonObject, $pContentId );
+		$ret = $parser->parse_data( $pParseHash, $pCommonObject );
 	}
 	return $ret;
 }
@@ -148,10 +149,9 @@ class TikiWikiParser extends BitBase {
 
 	}
 
-
 	function add_pre_handler($name) {
 		if (!in_array($name, $this->pre_handlers)) {
-		$this->pre_handlers[] = $name;
+			$this->pre_handlers[] = $name;
 		}
 	}
 
@@ -160,7 +160,6 @@ class TikiWikiParser extends BitBase {
 			$this->pos_handlers[] = $name;
 		}
 	}
-
 
 	function extractWikiWords( &$data ) {
 		if( $this->mUseWikiWords ) {
@@ -175,7 +174,6 @@ class TikiWikiParser extends BitBase {
 		}
 		return $words;
 	}
-
 
 	function storeLinks( &$pParamHash ) {
 		global $gBitSystem;
@@ -724,8 +722,11 @@ class TikiWikiParser extends BitBase {
 		return $data;
 	}
 
-	function parse_data( $data, &$pCommonObject, $pContentId ) {
+	function parse_data( $pParseHash, &$pCommonObject ) {
 		global $gBitSystem, $gBitUser, $page;
+
+		$data      = $pParseHash['data'];
+		$contentId = $pParseHash['content_id'];
 
 		// this is used for setting the links when section editing is enabled
 		$section_count = 1;
@@ -735,13 +736,13 @@ class TikiWikiParser extends BitBase {
 		}
 
 		// get a list of pages this page links to
-		$pageList = $this->getAllPages( $pContentId );
+		$pageList = $this->getAllPages( $contentId );
 
 		// if the object isn't loaded, we'll try and get the content prefs manually
 		if( !empty( $pCommonObject->mPrefs ) ) {
 			$contentPrefs = $pCommonObject->mPrefs;
-		} elseif( empty( $pCommonObject->mContentId ) && !empty( $pContentId ) ) {
-			$contentPrefs = LibertyContent::loadPreferences( $pContentId );
+		} elseif( empty( $pCommonObject->mContentId ) && !empty( $contentId ) ) {
+			$contentPrefs = LibertyContent::loadPreferences( $contentId );
 		}
 
 		// disable HTML in wiki page for now - very disruptive. should be changed into a per page setting - xing
@@ -969,7 +970,7 @@ class TikiWikiParser extends BitBase {
 				// text[2..N] = drop
 				$text = explode("|", $pages[5][$i]);
 
-				if( $exists = $this->pageExists( $pages[1][$i], $pageList, $pCommonObject, $pContentId ) ) {
+				if( $exists = $this->pageExists( $pages[1][$i], $pageList, $pCommonObject, $contentId ) ) {
 					$modTime = count( $exists ) == 1 ? (isset( $exists['last_modified'] ) ? (int)$exists['last_modified'] : 0 ) : 0;
 					$uri_ref = WIKI_PKG_URL."index.php?page=" . urlencode($pages[1][$i]);
 
@@ -1012,7 +1013,7 @@ class TikiWikiParser extends BitBase {
 
 			if ($repl2) {
 				// This is a hack for now. page_exists_desc should not be needed here sicne blogs and articles use this function
-				$exists = $this->pageExists( $page_parse, $pageList, $pCommonObject, $pContentId );
+				$exists = $this->pageExists( $page_parse, $pageList, $pCommonObject, $contentId );
 				$repl = BitPage::getDisplayLink( $page_parse, $exists );
 				$page_parse_pq = preg_quote($page_parse, "/");
 				$data = preg_replace("/\(\($page_parse_pq\)\)/", "$repl", $data);
@@ -1037,7 +1038,7 @@ class TikiWikiParser extends BitBase {
 			$pages = $this->extractWikiWords( $data );
 			foreach( $pages as $page_parse) {
 				if( empty( $words ) || !array_key_exists( $page_parse, $words ) ) {
-					if( $exists = $this->pageExists( $page_parse, $pageList, $pCommonObject, $pContentId ) ) {
+					if( $exists = $this->pageExists( $page_parse, $pageList, $pCommonObject, $contentId ) ) {
 						$repl = BitPage::getDisplayLink( $page_parse, $exists );
 					} elseif( $gBitSystem->isFeatureActive( 'wiki_plurals') && $this->get_locale() == 'en_US' ) {
 						// Link plural topic names to singular topic names if the plural
@@ -1053,7 +1054,7 @@ class TikiWikiParser extends BitBase {
 						$plural_tmp = preg_replace("/([A-Za-rt-z])s$/", "$1", $plural_tmp);
 						// prevent redundant pageExists calls if plurals are on, and plural is same as original word
 						if( $page_parse != $plural_tmp ) {
-							$exists = $this->pageExists( $plural_tmp, $pageList, $pCommonObject, $pContentId );
+							$exists = $this->pageExists( $plural_tmp, $pageList, $pCommonObject, $contentId );
 						}
 						$repl = BitPage::getDisplayLink( $plural_tmp, $exists );
 					} else {
@@ -1473,7 +1474,7 @@ class TikiWikiParser extends BitBase {
 						$edit_link = '';
 						if( $gBitSystem->isFeatureActive( 'wiki_section_edit' ) && $gBitUser->hasPermission( 'p_wiki_edit_page' ) ) {
 							if( $hdrlevel == $gBitSystem->getConfig( 'wiki_section_edit' ) ) {
-								$edit_url = WIKI_PKG_URL."edit.php?content_id=".$pContentId."&amp;action=edit_sectin&amp;section=".$section_count++;
+								$edit_url = WIKI_PKG_URL."edit.php?content_id=".$contentId."&amp;action=edit_sectin&amp;section=".$section_count++;
 								$edit_link = '<span class="editsection" style="float:right;margin-left:5px;">[<a href="'.$edit_url.'">'.tra( "edit" ).'</a>]</span>';
 							}
 						}
