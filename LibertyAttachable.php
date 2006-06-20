@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.31 2006/06/13 20:32:23 windblown Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.32 2006/06/20 17:13:03 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -612,7 +612,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$pFileHash['name'] = 'original.jpg';
 		$pFileHash['max_width'] = MAX_THUMBNAIL_DIMENSION;
 		$pFileHash['max_height'] = MAX_THUMBNAIL_DIMENSION;
-		$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
+		$pFileHash['original_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
 	}
 	// Icon thumb is 48x48
 	$pFileHash['dest_base_name'] = 'icon';
