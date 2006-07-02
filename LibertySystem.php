@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.27 2006/04/26 03:53:38 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.28 2006/07/02 22:36:24 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -56,10 +56,18 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  */
 class LibertySystem extends LibertyBase {
 
+	// Hash of plugin data
 	var $mPlugins;
+
+	// Liberty data tags
 	var $mDataTags;
+
+	// Content types
 	var $mContentTypes;
 
+	/**
+	 * Initiate Class
+	 **/
 	function LibertySystem() {
 		LibertyBase::LibertyBase();
 		$this->mDataTags = array();
@@ -67,6 +75,13 @@ class LibertySystem extends LibertyBase {
 		$this->loadContentTypes();
 	}
 
+	/**
+	 * Load plugins from database
+	 *
+	 * Populates $this->mPlugins
+	 * @return none
+	 * @access public
+	 **/
 	function loadPlugins() {
 		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."liberty_plugins`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
 			while( $row = $rs->fetchRow() ) {
@@ -75,6 +90,11 @@ class LibertySystem extends LibertyBase {
 		}
 	}
 
+	/**
+	 * Scan for plugins and add them to the database if they haven't been added yet
+	 *
+	 * @return none
+	 **/
 	function scanPlugins() {
 		$pluginsPath = LIBERTY_PKG_PATH.'plugins/';
 		if( $pluginDir = opendir( $pluginsPath ) ) {
@@ -108,6 +128,11 @@ class LibertySystem extends LibertyBase {
 		asort( $this->mPlugins );
 	}
 
+	/**
+	 * Load all available content types into $this->mContentTypes
+	 *
+	 * @return none
+	 **/
 	function loadContentTypes( $pCacheTime=BIT_QUERY_CACHE_TIME ) {
 		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."liberty_content_types`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
 			while( $row = $rs->fetchRow() ) {
@@ -116,6 +141,12 @@ class LibertySystem extends LibertyBase {
 		}
 	}
 
+	/**
+	 * Register new content type
+	 *
+	 * @return none
+	 * @access public
+	 **/
 	function registerContentType( $pGuid, $pTypeParams ) {
 		if( !isset( $this->mContentTypes ) ) {
 			$this->loadContentTypes();
@@ -132,6 +163,13 @@ class LibertySystem extends LibertyBase {
 		}
 	}
 
+	/**
+	 * Get the description of a given content type
+	 *
+	 * @param $pContentType Content type GUID you want the description for
+	 * @return Content type description
+	 * @access public
+	 **/
 	function getContentTypeDescription( $pContentType ) {
 		$ret = NULL;
 		if( !empty( $this->mContentTypes[$pContentType]['content_description'] ) ) {
@@ -140,19 +178,46 @@ class LibertySystem extends LibertyBase {
 		return $ret;
 	}
 
+	/**
+	 * Get the service details of a given package
+	 *
+	 * @param $pPackageName Package name of you want the service details for
+	 * @return Service details if the package has them - FALSE if the package is not a service
+	 * @access public
+	 **/
 	function getService( $pPackageName ) {
 		global $gBitSystem;
 		return( !empty( $gBitSystem->mPackages[$pPackageName]['service'] ) ? $gBitSystem->mPackages[$pPackageName]['service'] : NULl );
 	}
 
+	/**
+	 * Register package as service - hash added to $this->mServices
+	 *
+	 * $pServiceHash Service hash details. see existing service hashes found in <package>/bit_setup_inc.php for examples and details
+	 * @return none
+	 * @access public
+	 **/
 	function registerService( $pServiceName, $pPackageName, $pServiceHash ) {
 		$this->mServices[$pServiceName][$pPackageName] = $pServiceHash;
 	}
 
+	/**
+	 * Check to see if a package has any service capabilities
+	 *
+	 * @return TRUE on success, FALSE on failure
+	 * @access public
+	 **/
 	function hasService( $pServiceName ) {
 		return( !empty( $this->mServices[$pServiceName] ) );
 	}
 
+	/**
+	 * Get contents of a given service value
+	 *
+	 * @param $pServiceValue Service value you want to work to get
+	 * @return Value of a given service value
+	 * @access private
+	 **/
 	function getServiceValues( $pServiceValue ) {
 		global $gBitSystem;
 		$ret = NULL;
@@ -171,6 +236,12 @@ class LibertySystem extends LibertyBase {
 		return $ret;
 	}
 
+	/**
+	 * Check to see if a given plugin is activ or not
+	 *
+	 * @param $pPluginGuid Plugin GUID of the plugin you want to check
+	 * @return TRUE if the plugin is active, FALSE if it's not
+	 **/
 	function isPluginActive( $pPluginGuid ) {
 		return( isset( $this->mPlugins[$pGuid] ) && ($this->mPlugins[$pGuid] == 'y') );
 	}
@@ -179,6 +250,14 @@ class LibertySystem extends LibertyBase {
 		$this->mDataTags[strtolower($pTag)] = $pPluginGuid;
 	}
 
+	/**
+	 * Allow plugins to register themselves using this function. Data is added directly to the list of existing plugins
+	 *
+	 * @param $pGuid GUID of plugin
+	 * @param $pPluginParams Set of plugin parameters (see treasury/plugins/mime.*.php for example)
+	 * @return none
+	 * @access public
+	 **/
 	function registerPlugin( $pGuid, $pPluginParams ) {
 		if( isset($this->mPlugins[$pGuid] ) ) {
 			$this->mPlugins[$pGuid]['verified'] = TRUE;
