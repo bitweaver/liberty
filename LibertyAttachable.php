@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.32 2006/06/20 17:13:03 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.33 2006/07/03 13:18:26 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -255,7 +255,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 						$storagePath = liberty_process_upload( $storeRow );
 						// We're gonna store to local file system & liberty_files table
 						if( empty( $storagePath ) ) {
-							$this->mErrors['file'] = 'Could not store file '.$storeRow['upload']['name'].'.';
+							$this->mErrors['file'] = tra( "Could not store file" ).": ".$storeRow['upload']['name'].'.';
 							$pParamHash['attachment_id'] = NULL;
 						} else {
 							$storeRow['upload']['dest_file_path'] = $storagePath;
