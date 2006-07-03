@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.34 2006/07/03 13:43:24 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.35 2006/07/03 16:27:32 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -429,6 +429,20 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 	}
 }
 
+/**
+ * Process uploaded files. Will automagically generate thumbnails for images
+ * 
+ * @param array $pFileHash Data require to process the files
+ * @param array $pFileHash['upload']['name'] (required) Name of the uploaded file
+ * @param array $pFileHash['upload']['type'] (required) Mime type of the file uploaded
+ * @param array $pFileHash['upload']['dest_path'] (required) Relative path where you want to store the file
+ * @param array $pFileHash['upload']['source_file'] (required) Absolute path to file including file name
+ * @param boolean $pFileHash['upload']['thumbnail'] (optional) Set to FALSE if you don't want to generate thumbnails
+ * @param array $pFileHash['upload']['thumbsizes'] (optional) Decide what sizes thumbnails you want to create: icon, avatar, small, medium, large
+ * @param boolean $pMoveFile (optional) specify if you want to move or copy the original file
+ * @access public
+ * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+ */
 function liberty_process_upload( &$pFileHash ) {
 	// Check for evil file extensions that could be execed on the server
 	if( preg_match( '/(.pl|.php|.php3|.php4|.phtml|.cgi|.asp|.sh|.shtml)$/', $pFileHash['upload']['name'] ) ) {
@@ -608,8 +622,8 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 	$resizeFunc = liberty_get_function( 'resize' );
 
 	// allow custom selecteion of thumbnail sizes
-	if( empty( $pFileHash['sizes'] ) ) {
-		$pFileHash['sizes'] = array( 'icon', 'avatar', 'small', 'medium', 'large' );
+	if( empty( $pFileHash['thumbsizes'] ) ) {
+		$pFileHash['thumbsizes'] = array( 'icon', 'avatar', 'small', 'medium', 'large' );
 	}
 
 	if( !preg_match( '/image\/(gif|jpg|jpeg|png)/', strtolower( $pFileHash['type'] ) ) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ) ) {
@@ -620,7 +634,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$pFileHash['max_height'] = MAX_THUMBNAIL_DIMENSION;
 		$pFileHash['original_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
 	}
-	if( in_array( 'icon', $pFileHash['sizes'] ) ) {
+	if( in_array( 'icon', $pFileHash['thumbsizes'] ) ) {
 		// Icon thumb is 48x48
 		$pFileHash['dest_base_name'] = 'icon';
 		$pFileHash['name'] = 'icon.jpg';
@@ -628,7 +642,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$pFileHash['max_height'] = 48;
 		$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
 	}
-	if( in_array( 'avatar', $pFileHash['sizes'] ) ) {
+	if( in_array( 'avatar', $pFileHash['thumbsizes'] ) ) {
 		// Avatar thumb is 100x100
 		$pFileHash['dest_base_name'] = 'avatar';
 		$pFileHash['name'] = 'avatar.jpg';
@@ -636,7 +650,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$pFileHash['max_height'] = 100;
 		$pFileHash['small_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
 	}
-	if( in_array( 'small', $pFileHash['sizes'] ) ) {
+	if( in_array( 'small', $pFileHash['thumbsizes'] ) ) {
 		// Small thumb is 160x120
 		$pFileHash['dest_base_name'] = 'small';
 		$pFileHash['name'] = 'small.jpg';
@@ -644,7 +658,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$pFileHash['max_height'] = 120;
 		$pFileHash['small_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
 	}
-	if( in_array( 'medium', $pFileHash['sizes'] ) ) {
+	if( in_array( 'medium', $pFileHash['thumbsizes'] ) ) {
 		// Medium thumb is 400x300
 		$pFileHash['dest_base_name'] = 'medium';
 		$pFileHash['name'] = 'medium.jpg';
@@ -652,7 +666,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$pFileHash['max_height'] = 300;
 		$pFileHash['medium_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
 	}
-	if( in_array( 'large', $pFileHash['sizes'] ) ) {
+	if( in_array( 'large', $pFileHash['thumbsizes'] ) ) {
 		// Large thumb is 800x600
 		$pFileHash['dest_base_name'] = 'large';
 		$pFileHash['name'] = 'large.jpg';
