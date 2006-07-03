@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.33 2006/07/03 13:18:26 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.34 2006/07/03 13:43:24 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -606,6 +606,12 @@ define( 'MAX_THUMBNAIL_DIMENSION', 99999 );
 function liberty_generate_thumbnails( &$pFileHash ) {
 	global $gBitSystem;
 	$resizeFunc = liberty_get_function( 'resize' );
+
+	// allow custom selecteion of thumbnail sizes
+	if( empty( $pFileHash['sizes'] ) ) {
+		$pFileHash['sizes'] = array( 'icon', 'avatar', 'small', 'medium', 'large' );
+	}
+
 	if( !preg_match( '/image\/(gif|jpg|jpeg|png)/', strtolower( $pFileHash['type'] ) ) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ) ) {
 		// jpeg version of original
 		$pFileHash['dest_base_name'] = 'original';
@@ -614,36 +620,46 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$pFileHash['max_height'] = MAX_THUMBNAIL_DIMENSION;
 		$pFileHash['original_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
 	}
-	// Icon thumb is 48x48
-	$pFileHash['dest_base_name'] = 'icon';
-	$pFileHash['name'] = 'icon.jpg';
-	$pFileHash['max_width'] = 48;
-	$pFileHash['max_height'] = 48;
-	$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
-	// Avatar thumb is 100x100
-	$pFileHash['dest_base_name'] = 'avatar';
-	$pFileHash['name'] = 'avatar.jpg';
-	$pFileHash['max_width'] = 100;
-	$pFileHash['max_height'] = 100;
-	$pFileHash['small_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
-	// Small thumb is 160x120
-	$pFileHash['dest_base_name'] = 'small';
-	$pFileHash['name'] = 'small.jpg';
-	$pFileHash['max_width'] = 160;
-	$pFileHash['max_height'] = 120;
-	$pFileHash['small_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
-	// Medium thumb is 400x300
-	$pFileHash['dest_base_name'] = 'medium';
-	$pFileHash['name'] = 'medium.jpg';
-	$pFileHash['max_width'] = 400;
-	$pFileHash['max_height'] = 300;
-	$pFileHash['medium_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
-	// Large thumb is 800x600
-	$pFileHash['dest_base_name'] = 'large';
-	$pFileHash['name'] = 'large.jpg';
-	$pFileHash['max_width'] = 800;
-	$pFileHash['max_height'] = 600;
-	$pFileHash['large_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
+	if( in_array( 'icon', $pFileHash['sizes'] ) ) {
+		// Icon thumb is 48x48
+		$pFileHash['dest_base_name'] = 'icon';
+		$pFileHash['name'] = 'icon.jpg';
+		$pFileHash['max_width'] = 48;
+		$pFileHash['max_height'] = 48;
+		$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
+	}
+	if( in_array( 'avatar', $pFileHash['sizes'] ) ) {
+		// Avatar thumb is 100x100
+		$pFileHash['dest_base_name'] = 'avatar';
+		$pFileHash['name'] = 'avatar.jpg';
+		$pFileHash['max_width'] = 100;
+		$pFileHash['max_height'] = 100;
+		$pFileHash['small_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
+	}
+	if( in_array( 'small', $pFileHash['sizes'] ) ) {
+		// Small thumb is 160x120
+		$pFileHash['dest_base_name'] = 'small';
+		$pFileHash['name'] = 'small.jpg';
+		$pFileHash['max_width'] = 160;
+		$pFileHash['max_height'] = 120;
+		$pFileHash['small_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
+	}
+	if( in_array( 'medium', $pFileHash['sizes'] ) ) {
+		// Medium thumb is 400x300
+		$pFileHash['dest_base_name'] = 'medium';
+		$pFileHash['name'] = 'medium.jpg';
+		$pFileHash['max_width'] = 400;
+		$pFileHash['max_height'] = 300;
+		$pFileHash['medium_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
+	}
+	if( in_array( 'large', $pFileHash['sizes'] ) ) {
+		// Large thumb is 800x600
+		$pFileHash['dest_base_name'] = 'large';
+		$pFileHash['name'] = 'large.jpg';
+		$pFileHash['max_width'] = 800;
+		$pFileHash['max_height'] = 600;
+		$pFileHash['large_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
+	}
 }
 
 
