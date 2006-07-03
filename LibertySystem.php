@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.28 2006/07/02 22:36:24 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.29 2006/07/03 19:55:09 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -59,6 +59,9 @@ class LibertySystem extends LibertyBase {
 	// Hash of plugin data
 	var $mPlugins;
 
+	// set the name of the plugins database table
+	var $mPluginsTable = 'liberty_plugins';
+
 	// Liberty data tags
 	var $mDataTags;
 
@@ -68,11 +71,13 @@ class LibertySystem extends LibertyBase {
 	/**
 	 * Initiate Class
 	 **/
-	function LibertySystem() {
+	function LibertySystem( $pExtras = TRUE ) {
 		LibertyBase::LibertyBase();
-		$this->mDataTags = array();
 		$this->loadPlugins();
-		$this->loadContentTypes();
+		if( $pExtras ) {
+			$this->mDataTags = array();
+			$this->loadContentTypes();
+		}
 	}
 
 	/**
@@ -83,7 +88,7 @@ class LibertySystem extends LibertyBase {
 	 * @access public
 	 **/
 	function loadPlugins() {
-		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."liberty_plugins`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
+		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX.$this->mPluginsTable."`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
 			while( $row = $rs->fetchRow() ) {
 				$this->mPlugins[$row['plugin_guid']] = $row;
 			}
@@ -95,13 +100,15 @@ class LibertySystem extends LibertyBase {
 	 *
 	 * @return none
 	 **/
-	function scanPlugins() {
-		$pluginsPath = LIBERTY_PKG_PATH.'plugins/';
-		if( $pluginDir = opendir( $pluginsPath ) ) {
+	function scanPlugins( $pPluginsPath = NULL ) {
+		if( empty( $pPluginsPath ) ) {
+			$pPluginsPath = LIBERTY_PKG_PATH.'plugins/';
+		}
+		if( $pluginDir = opendir( $pPluginsPath ) ) {
 			// Make two passes through the root - 1. to define the DEFINES, and 2. to include the $pScanFile's
 			while (false !== ($plugin = readdir($pluginDir))) {
 				if( preg_match( '/\.php$/', $plugin ) ) {
-					include_once( $pluginsPath.$plugin );
+					include_once( $pPluginsPath.$plugin );
 				}
 			}
 		}
@@ -110,18 +117,18 @@ class LibertySystem extends LibertyBase {
 			$handler = &$this->mPlugins[$guid]; //shorthand var alias
 			if( !isset( $handler['verified'] ) && $handler['is_active'] =='y' ) {
 				// We are missing a plugin!
-				$sql = "UPDATE `".BIT_DB_PREFIX."liberty_plugins` SET `is_active`='x' WHERE `plugin_guid`=?";
+				$sql = "UPDATE `".BIT_DB_PREFIX.$this->mPluginsTable."` SET `is_active`='x' WHERE `plugin_guid`=?";
 				$this->mDb->query( $sql, array( $guid ) );
 				$handler['is_active'] = 'n';
 			} elseif( !empty( $handler['verified'] ) && $handler['is_active'] =='x' ) {
 				//We found a formally missing plugin - re-enable it
-				$sql = "UPDATE `".BIT_DB_PREFIX."liberty_plugins` SET `is_active`='y' WHERE `plugin_guid`=?";
+				$sql = "UPDATE `".BIT_DB_PREFIX.$this->mPluginsTable."` SET `is_active`='y' WHERE `plugin_guid`=?";
 				$this->mDb->query( $sql, array( $guid ) );
 				$handler['is_active'] = 'y';
 			} elseif( empty( $handler['verified'] ) && !isset( $handler['is_active'] ) ) {
 				//We found a missing plugin - insert it
 				$handler['is_active'] = ( ( isset( $handler['auto_activate'] ) && $handler['auto_activate'] == FALSE ) ? 'n' : 'y' );
-				$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_plugins` ( `plugin_guid`, `plugin_type`, `plugin_description`, `is_active` ) VALUES ( ?, ?, ?, ? )";
+				$sql = "INSERT INTO `".BIT_DB_PREFIX.$this->mPluginsTable."` ( `plugin_guid`, `plugin_type`, `plugin_description`, `is_active` ) VALUES ( ?, ?, ?, ? )";
 				$this->mDb->query( $sql, array( $guid, $handler['plugin_type'], $handler['description'], $handler['is_active'] ) );
 			}
 		}
@@ -270,14 +277,14 @@ class LibertySystem extends LibertyBase {
 	// @parameter pPluginGuids an array of all the plugin guids that are active. Any left out are *inactive*!
 	function setActivePlugins( $pPluginGuids ) {
 		if( is_array( $pPluginGuids ) ) {
-			$sql = "UPDATE `".BIT_DB_PREFIX."liberty_plugins` SET `is_active`='n' WHERE `is_active`!='x'";
+			$sql = "UPDATE `".BIT_DB_PREFIX.$this->mPluginsTable."` SET `is_active`='n' WHERE `is_active`!='x'";
 			$this->mDb->query( $sql );
 			foreach( array_keys( $this->mPlugins ) as $guid ) {
 				$this->mPlugins[$guid]['is_active'] = 'n';
 			}
 
 			foreach( array_keys( $pPluginGuids ) as $guid ) {
-				$sql = "UPDATE `".BIT_DB_PREFIX."liberty_plugins` SET `is_active`='y' WHERE `plugin_guid`=?";
+				$sql = "UPDATE `".BIT_DB_PREFIX.$this->mPluginsTable."` SET `is_active`='y' WHERE `plugin_guid`=?";
 				$this->mDb->query( $sql, array( $guid ) );
 				$this->mPlugins[$guid]['is_active'] = 'y';
 			}
