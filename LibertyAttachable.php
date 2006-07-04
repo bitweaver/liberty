@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.35 2006/07/03 16:27:32 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.36 2006/07/04 15:43:41 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -78,7 +78,7 @@ class LibertyAttachable extends LibertyContent {
 		global $gBitSystem;
 		$baseUrl = null;
 		$pathParts = array();
-		$pathParts = split( '/',$gBitSystem->getConfig( 'site_upload_dir', 'storage/' ) );
+		$pathParts = split( '/', $gBitSystem->getConfig( 'site_upload_dir', 'storage/' ) );
 
 		if( !$pUserId ) {
 			$pathParts[] = 'common';
@@ -128,25 +128,23 @@ class LibertyAttachable extends LibertyContent {
 	* @param $pPackage indicates what package the data is from. defaults to the currently active package
 	* @return on success return full path to file, if it fails to find the file, returns false
 	*/
-	function verifyStorageFile( $pFileName, $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE ) {
-		// don't worry about double slashes '//' for now. we'll remove them later
-		$path = $this->getPreference('site_upload_dir').'/';
-		if( empty( $path ) ) {
-			$path = 'storage/';
-		}
-		if( !$pUserId ) {
-			$path .= 'common/';
-		} else {
-			$path .= 'users/'.(int)($pUserId % 1000).'/'.$pUserId.'/';
-		}
-		$path .= $pPackage.'/'.$pSubDir.'/'.$pFileName;
-		$path = BIT_ROOT_PATH.ereg_replace( '//','/',$path );
-		if( file_exists( $path ) ) {
-			return $path;
-		} else {
-			return FALSE;
-		}
-	}
+	//	------------------------- i think this function is not used - xing
+//	function verifyStorageFile( $pFileName, $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE ) {
+//		// don't worry about double slashes '//' for now. we'll remove them later
+//		$path = $this->getConfig( 'site_upload_dir', 'storage' ).'/';
+//		if( !$pUserId ) {
+//			$path .= 'common/';
+//		} else {
+//			$path .= 'users/'.(int)($pUserId % 1000).'/'.$pUserId.'/';
+//		}
+//		$path .= $pPackage.'/'.$pSubDir.'/'.$pFileName;
+//		$path = BIT_ROOT_PATH.ereg_replace( '//','/',$path );
+//		if( file_exists( $path ) ) {
+//			return $path;
+//		} else {
+//			return FALSE;
+//		}
+//	}
 
 	function verify( &$pParamHash ) {
 		global $gBitSystem, $gBitUser;
