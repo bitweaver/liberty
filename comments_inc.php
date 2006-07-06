@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.15 $
+ * @version  $Revision: 1.16 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.15 2006/06/16 22:35:14 sylvieg Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.16 2006/07/06 20:13:54 sylvieg Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -200,4 +200,5 @@ $gBitSmarty->assign('comments_return_url', $comments_return_url);
 $gBitSmarty->assign('comments_at_top_of_page', ( isset( $comments_at_top_of_page ) && $gBitSystem->getConfig( 'comments_reorganise_page_layout', 'n' ) == 'y' ) ? $comments_at_top_of_page : NULL );
 $gBitSmarty->assign('comments_style', $comments_display_style);
 $gBitSmarty->assign('comments_sort_mode', $comments_sort_mode);
+$gBitSmarty->assign('textarea_id', 'commentpost');
 ?>
