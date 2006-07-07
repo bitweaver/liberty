@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.110 2006/06/20 08:37:10 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.111 2006/07/07 20:52:14 sylvieg Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -620,7 +620,11 @@ class LibertyContent extends LibertyBase {
 						$pWhereSql .= $loadHash['where_sql'];
 					}
 					if( !empty( $loadHash['bind_vars'] ) ) {
-						$pBindVars = array_merge( $pBindVars, $loadHash['bind_vars'] );
+						if ( is_array( $pBindVars ) ) {
+							$pBindVars = array_merge( $pBindVars, $loadHash['bind_vars'] );
+						} else {
+							$pBindVars = $loadHash['bind_vars'];
+						}
 					}
 				}
 			}
