@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.36 2006/07/04 15:43:41 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.37 2006/07/08 09:04:30 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -621,10 +621,13 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 
 	// allow custom selecteion of thumbnail sizes
 	if( empty( $pFileHash['thumbsizes'] ) ) {
-		$pFileHash['thumbsizes'] = array( 'icon', 'avatar', 'small', 'medium', 'large' );
+		$pFileHash['thumbsizes'] = array( 'icon', 'avatar', 'small', 'medium', 'large', 'original' );
 	}
 
-	if( !preg_match( '/image\/(gif|jpg|jpeg|png)/', strtolower( $pFileHash['type'] ) ) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ) ) {
+	if( in_array( 'original', $pFileHash['thumbsizes'] )
+		&& !preg_match( '/image\/(gif|jpg|jpeg|png)/', strtolower( $pFileHash['type'] ) )
+		&& $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' )
+	) {
 		// jpeg version of original
 		$pFileHash['dest_base_name'] = 'original';
 		$pFileHash['name'] = 'original.jpg';
