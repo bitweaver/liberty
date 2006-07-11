@@ -12,6 +12,9 @@
 					</div>
 
 					{assign var=textarea_id value="commentpost"}
+
+					{include file="bitpackage:liberty/edit_format.tpl"}
+
 					{if $gBitSystem->isPackageActive( 'smileys' )}
 						{include file="bitpackage:smileys/smileys_full.tpl"}
 					{/if}
