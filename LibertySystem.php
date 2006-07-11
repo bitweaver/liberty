@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.29 2006/07/03 19:55:09 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.30 2006/07/11 15:09:20 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -22,10 +22,12 @@
 /**
  * Local base defines
  */
+// Plugin Definitions
 define( 'STORAGE_PLUGIN', 'storage' );
 define( 'FORMAT_PLUGIN', 'format' );
 define( 'DATA_PLUGIN', 'data' );
 
+// Service Definitions
 define( 'LIBERTY_SERVICE_ACCESS_CONTROL', 'access_control' );
 define( 'LIBERTY_SERVICE_CATEGORIZATION', 'categorization' );
 define( 'LIBERTY_SERVICE_COMMERCE', 'commerce' );
@@ -40,9 +42,10 @@ define( 'LIBERTY_SERVICE_CONTENT_TEMPLATES', 'content_templates');
 define( 'LIBERTY_TEXT_AREA', 'editliberty');
 define( 'LIBERTY_UPLOAD', 'upload');
 
+// Set of default acceptable HTML tags
 define( 'DEFAULT_ACCEPTABLE_TAGS', '<a><br><b><blockquote><cite><code><div><dd><dl><dt><em><h1><h2><h3><h4><hr>'
-		.' <i><it><img><li><ol><p><pre><span><strong><table><tbody><div><tr><td><th><u><ul>'
-		.' <button><fieldset><form><label><input><option><select><textarea>' );
+		.'<i><it><img><li><ol><p><pre><span><strong><table><tbody><div><tr><td><th><u><ul>'
+		.'<button><fieldset><form><label><input><option><select><textarea>' );
 
 /**
  * Link to base class
@@ -80,6 +83,7 @@ class LibertySystem extends LibertyBase {
 		}
 	}
 
+	// ****************************** Plugin Functions
 	/**
 	 * Load plugins from database
 	 *
@@ -136,114 +140,6 @@ class LibertySystem extends LibertyBase {
 	}
 
 	/**
-	 * Load all available content types into $this->mContentTypes
-	 *
-	 * @return none
-	 **/
-	function loadContentTypes( $pCacheTime=BIT_QUERY_CACHE_TIME ) {
-		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."liberty_content_types`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
-			while( $row = $rs->fetchRow() ) {
-				$this->mContentTypes[$row['content_type_guid']] = $row;
-			}
-		}
-	}
-
-	/**
-	 * Register new content type
-	 *
-	 * @return none
-	 * @access public
-	 **/
-	function registerContentType( $pGuid, $pTypeParams ) {
-		if( !isset( $this->mContentTypes ) ) {
-			$this->loadContentTypes();
-		}
-		$pTypeParams['content_type_guid'] = $pGuid;
-		if( empty( $this->mContentTypes[$pGuid] ) && !empty( $pTypeParams ) ) {
-			$result = $this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_types", $pTypeParams );
-			// we just ran some SQL - let's flush the loadContentTypes query cache
-			$this->loadContentTypes( 0 );
-		} else {
-			if( $pTypeParams['handler_package'] != $this->mContentTypes[$pGuid]['handler_package'] || $pTypeParams['handler_file'] != $this->mContentTypes[$pGuid]['handler_file'] || $pTypeParams['handler_class'] != $this->mContentTypes[$pGuid]['handler_class'] ) {
-				$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."liberty_content_types", $pTypeParams, array( 'content_type_guid'=>$pGuid ) );
-			}
-		}
-	}
-
-	/**
-	 * Get the description of a given content type
-	 *
-	 * @param $pContentType Content type GUID you want the description for
-	 * @return Content type description
-	 * @access public
-	 **/
-	function getContentTypeDescription( $pContentType ) {
-		$ret = NULL;
-		if( !empty( $this->mContentTypes[$pContentType]['content_description'] ) ) {
-			$ret = $this->mContentTypes[$pContentType]['content_description'];
-		}
-		return $ret;
-	}
-
-	/**
-	 * Get the service details of a given package
-	 *
-	 * @param $pPackageName Package name of you want the service details for
-	 * @return Service details if the package has them - FALSE if the package is not a service
-	 * @access public
-	 **/
-	function getService( $pPackageName ) {
-		global $gBitSystem;
-		return( !empty( $gBitSystem->mPackages[$pPackageName]['service'] ) ? $gBitSystem->mPackages[$pPackageName]['service'] : NULl );
-	}
-
-	/**
-	 * Register package as service - hash added to $this->mServices
-	 *
-	 * $pServiceHash Service hash details. see existing service hashes found in <package>/bit_setup_inc.php for examples and details
-	 * @return none
-	 * @access public
-	 **/
-	function registerService( $pServiceName, $pPackageName, $pServiceHash ) {
-		$this->mServices[$pServiceName][$pPackageName] = $pServiceHash;
-	}
-
-	/**
-	 * Check to see if a package has any service capabilities
-	 *
-	 * @return TRUE on success, FALSE on failure
-	 * @access public
-	 **/
-	function hasService( $pServiceName ) {
-		return( !empty( $this->mServices[$pServiceName] ) );
-	}
-
-	/**
-	 * Get contents of a given service value
-	 *
-	 * @param $pServiceValue Service value you want to work to get
-	 * @return Value of a given service value
-	 * @access private
-	 **/
-	function getServiceValues( $pServiceValue ) {
-		global $gBitSystem;
-		$ret = NULL;
-		if( !empty( $this->mServices ) ) {
-			foreach( array_keys( $this->mServices ) as $service ) {
-				if( $this->hasService( $service ) ) {
-					if( !($package = $gBitSystem->getConfig( 'liberty_service_'.$service )) ) {
-						$package = key( $this->mServices[$service] );
-					}
-					if( !empty( $this->mServices[$service][$package][$pServiceValue] ) ) {
-						$ret[$service] = $this->mServices[$service][$package][$pServiceValue];
-					}
-				}
-			}
-		}
-		return $ret;
-	}
-
-	/**
 	 * Check to see if a given plugin is activ or not
 	 *
 	 * @param $pPluginGuid Plugin GUID of the plugin you want to check
@@ -253,6 +149,14 @@ class LibertySystem extends LibertyBase {
 		return( isset( $this->mPlugins[$pGuid] ) && ($this->mPlugins[$pGuid] == 'y') );
 	}
 
+	/**
+	 * Allow data plugins to register their tag
+	 * 
+	 * @param string $pTag Tag of plugin, e.g.: TOC
+	 * @param string $pPluginGuid GUID of plugin, e.g.: PLUGIN_GUID_TOC
+	 * @access public
+	 * @return void
+	 */
 	function registerDataTag( $pTag, $pPluginGuid ) {
 		$this->mDataTags[strtolower($pTag)] = $pPluginGuid;
 	}
@@ -315,7 +219,125 @@ class LibertySystem extends LibertyBase {
 		return $ret;
 	}
 
-	// Get the URL to the icon for the mime type passed in. This should probably check for files of multiple image types instead of just jpg
+	// ****************************** Content Type Functions
+	/**
+	 * Load all available content types into $this->mContentTypes
+	 *
+	 * @return none
+	 **/
+	function loadContentTypes( $pCacheTime=BIT_QUERY_CACHE_TIME ) {
+		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."liberty_content_types`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
+			while( $row = $rs->fetchRow() ) {
+				$this->mContentTypes[$row['content_type_guid']] = $row;
+			}
+		}
+	}
+
+	/**
+	 * Register new content type
+	 *
+	 * @return none
+	 * @access public
+	 **/
+	function registerContentType( $pGuid, $pTypeParams ) {
+		if( !isset( $this->mContentTypes ) ) {
+			$this->loadContentTypes();
+		}
+		$pTypeParams['content_type_guid'] = $pGuid;
+		if( empty( $this->mContentTypes[$pGuid] ) && !empty( $pTypeParams ) ) {
+			$result = $this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_types", $pTypeParams );
+			// we just ran some SQL - let's flush the loadContentTypes query cache
+			$this->loadContentTypes( 0 );
+		} else {
+			if( $pTypeParams['handler_package'] != $this->mContentTypes[$pGuid]['handler_package'] || $pTypeParams['handler_file'] != $this->mContentTypes[$pGuid]['handler_file'] || $pTypeParams['handler_class'] != $this->mContentTypes[$pGuid]['handler_class'] ) {
+				$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."liberty_content_types", $pTypeParams, array( 'content_type_guid'=>$pGuid ) );
+			}
+		}
+	}
+
+	/**
+	 * Get the description of a given content type
+	 *
+	 * @param $pContentType Content type GUID you want the description for
+	 * @return Content type description
+	 * @access public
+	 **/
+	function getContentTypeDescription( $pContentType ) {
+		$ret = NULL;
+		if( !empty( $this->mContentTypes[$pContentType]['content_description'] ) ) {
+			$ret = $this->mContentTypes[$pContentType]['content_description'];
+		}
+		return $ret;
+	}
+
+	// ****************************** Service Functions
+	/**
+	 * Get the service details of a given package
+	 *
+	 * @param $pPackageName Package name of you want the service details for
+	 * @return Service details if the package has them - FALSE if the package is not a service
+	 * @access public
+	 **/
+	function getService( $pPackageName ) {
+		global $gBitSystem;
+		return( !empty( $gBitSystem->mPackages[$pPackageName]['service'] ) ? $gBitSystem->mPackages[$pPackageName]['service'] : NULl );
+	}
+
+	/**
+	 * Register package as service - hash added to $this->mServices
+	 *
+	 * $pServiceHash Service hash details. see existing service hashes found in <package>/bit_setup_inc.php for examples and details
+	 * @return none
+	 * @access public
+	 **/
+	function registerService( $pServiceName, $pPackageName, $pServiceHash ) {
+		$this->mServices[$pServiceName][$pPackageName] = $pServiceHash;
+	}
+
+	/**
+	 * Check to see if a package has any service capabilities
+	 *
+	 * @return TRUE on success, FALSE on failure
+	 * @access public
+	 **/
+	function hasService( $pServiceName ) {
+		return( !empty( $this->mServices[$pServiceName] ) );
+	}
+
+	/**
+	 * Get contents of a given service value
+	 *
+	 * @param $pServiceValue Service value you want to work to get
+	 * @return Value of a given service value
+	 * @access private
+	 **/
+	function getServiceValues( $pServiceValue ) {
+		global $gBitSystem;
+		$ret = NULL;
+		if( !empty( $this->mServices ) ) {
+			foreach( array_keys( $this->mServices ) as $service ) {
+				if( $this->hasService( $service ) ) {
+					if( !($package = $gBitSystem->getConfig( 'liberty_service_'.$service )) ) {
+						$package = key( $this->mServices[$service] );
+					}
+					if( !empty( $this->mServices[$service][$package][$pServiceValue] ) ) {
+						$ret[$service] = $this->mServices[$service][$package][$pServiceValue];
+					}
+				}
+			}
+		}
+		return $ret;
+	}
+
+	// ****************************** Miscellaneous Functions
+	/**
+	 * Get the URL to the icon for the mime type passed in. This should probably check for files of multiple image types instead of just jpg 
+	 * 
+	 * @param string $pMimeType Mime type of the file
+	 * @param string $pExt Extension of the file - used to get backup mime icon
+	 * @access public
+	 * @return Full image HTML tag to mime icon
+	 */
 	function getMimeThumbnailURL($pMimeType, $pExt=NULL) {
 		$ret = NULL;
 		$parts = split('/',$pMimeType);
@@ -343,6 +365,17 @@ class LibertySystem extends LibertyBase {
 	}
 }
 
+/**
+ * This crazy function will parse all the data plugin stuff found within any 
+ * parsed text section
+ * 
+ * @param array $data Data to be parsed
+ * @param array $preparsed 
+ * @param array $noparsed 
+ * @param array $pParser 
+ * @access public
+ * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+ */
 function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser ) {
 	global $gLibertySystem;
 	// Find the plugins
