@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.38 2006/07/08 10:31:22 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.39 2006/07/11 06:41:41 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -562,7 +562,6 @@ function liberty_process_generic( &$pFileHash, $pMoveFile=TRUE ) {
 function liberty_process_image( &$pFileHash ) {
 	global $gBitSystem;
 	$ret = NULL;
-	$resizeFunc = liberty_get_function( 'resize' );
 
 	list($type, $ext) = split( '/', strtolower( $pFileHash['type'] ) );
 	mkdir_p( BIT_ROOT_PATH.$pFileHash['dest_path'] );
