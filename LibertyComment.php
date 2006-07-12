@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.26 2006/05/17 17:00:30 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.27 2006/07/12 17:15:50 sylvieg Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -132,19 +132,28 @@ class LibertyComment extends LibertyContent {
 	}
 
 	function deleteComment() {
-		$sql = "SELECT `comment_id` FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `parent_id` = ?";
-		$rows = $this->mDb->getAll($sql, array($this->mContentId));
+		$ret = FALSE;
+		if( $this->isValid() ) {
+			$this->mDb->StartTrans();
+			$sql = "SELECT `comment_id` FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `parent_id` = ?";
+			$rows = $this->mDb->getAll($sql, array($this->mContentId));
 
-		foreach ($rows as $row) {
-			$comment = new LibertyComment($row['comment_id']);
-			$comment->deleteComment();
+			foreach ($rows as $row) {
+				$comment = new LibertyComment($row['comment_id']);
+				$comment->deleteComment();
+			}
+
+			$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `comment_id` = ?";
+			$rs = $this->mDb->query($sql, array($this->mCommentId));
+
+			if( LibertyAttachable::expunge() ) {
+				$ret = TRUE;
+				$this->mDb->CompleteTrans();
+			} else {
+				$this->mDb->RollbackTrans();
+			}
 		}
-
-		$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `comment_id` = ?";
-		$rs = $this->mDb->query($sql, array($this->mCommentId));
-
-		$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id` = ?";
-		$rs = $this->mDb->query($sql, array($this->mContentId));
+		return $ret;	
 	}
 
 	function userCanEdit($pUserId = NULL) {
