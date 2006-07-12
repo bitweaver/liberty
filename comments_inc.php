@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.18 $
+ * @version  $Revision: 1.19 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.18 2006/07/12 16:47:15 sylvieg Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.19 2006/07/12 17:15:58 hash9 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -151,7 +151,9 @@ if( !empty( $_REQUEST['comment_page'] ) || !empty( $_REQUEST['post_comment_reque
 }
 $commentOffset = !empty( $_REQUEST['comment_page'] ) ? ($_REQUEST['comment_page'] - 1) * $maxComments : 0;
 
-$gComment = new LibertyComment( NULL, $gContent->mContentId );
+if (empty($gComment)) {
+	$gComment = new LibertyComment( NULL, $gContent->mContentId );
+}
 
 $currentPage = !empty( $_REQUEST['comment_page'] ) ? $_REQUEST['comment_page'] : 1;
 
