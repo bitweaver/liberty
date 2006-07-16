@@ -160,9 +160,6 @@ foreach( array_keys( $tables ) AS $tableName ) {
 $gBitInstaller->registerPackageInfo( LIBERTY_PKG_NAME, array(
 	'description' => "Liberty is an integral part and manages all content on your site.",
 	'license' => '<a href="http://www.gnu.org/licenses/licenses.html#LGPL">LGPL</a>',
-	'version' => '0.1',
-	'state' => 'alpha',
-	'dependencies' => '',
 ) );
 
 // ### Indexes
