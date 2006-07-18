@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.114 2006/07/18 14:18:00 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.115 2006/07/18 18:49:53 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -650,6 +650,35 @@ class LibertyContent extends LibertyBase {
 			$this->mPerms = $this->mDb->getAssoc( $query, $bindVars );
 		}
 		return( count( $this->mPerms ) );
+	}
+
+	/**
+	 * This function will replace all permissions for a particular package with the ones set using the content permissions
+	 * 
+	 * @param array $pPackage 
+	 * @access public
+	 * @return TRUE if changes were made to the $gBitUser->mPrefs hash
+	 */
+	function updateUserPermissions( $pPackage = NULL ) {
+		$ret = FALSE;
+		if( $this->isValid() && $this->loadPermissions() ) {
+			global $gBitUser;
+
+			if( empty( $pPackage ) ) {
+				$pPackage = ACTIVE_PACKAGE;
+			}
+
+			// weed out permissions
+			foreach( $gBitUser->mPerms as $key => $userPerm ) {
+				if( $userPerm['package'] != $pPackage ) {
+					$setPerms[$key] = $userPerm;
+				}
+			}
+			$gBitUser->mPerms = array_merge( $setPerms, $this->mPerms );
+
+			$ret = TRUE;
+		}
+		return $ret;
 	}
 
 	/**
