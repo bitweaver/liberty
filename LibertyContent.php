@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.115 2006/07/18 18:49:53 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.116 2006/07/18 19:12:43 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -765,8 +765,8 @@ class LibertyContent extends LibertyBase {
 			$pObjectId = $this->mContentId;
 		}
 		$query = "DELETE FROM `".BIT_DB_PREFIX."users_object_permissions`
-				WHERE `group_id` = ? AND `perm_name` = ? AND `object_id` = ?";
-		$result = $this->mDb->query( $query, array( $pGroupId, $pPermName, $pObjectId ), -1, -1 );
+				WHERE `perm_name` = ? AND `object_id` = ?";
+		$result = $this->mDb->query( $query, array( $pPermName, $pObjectId ), -1, -1 );
 		$query = "INSERT INTO `".BIT_DB_PREFIX."users_object_permissions`
 				(`group_id`,`object_id`, `object_type`, `perm_name`)
 				VALUES ( ?, ?, ?, ? )";
