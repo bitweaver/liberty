@@ -19,7 +19,7 @@
 			{displaycomment comment="$comments[ix]"}
 		{/section}
 
-		{libertypagination hash=$commentsPgnHash}
+		{libertypagination ihash=$commentsPgnHash}
 	</div><!-- end .body -->
 </div><!-- end .comment -->
 {/strip}
