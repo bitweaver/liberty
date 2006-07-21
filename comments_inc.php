@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.19 $
+ * @version  $Revision: 1.20 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.19 2006/07/12 17:15:58 hash9 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.20 2006/07/21 23:50:37 hash9 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -35,6 +35,10 @@
  * required setup
  */
 require_once (LIBERTY_PKG_PATH.'LibertyComment.php');
+
+if ($gBitSystem->isPackageActive('bitboards')) {
+	require_once(BITBOARDS_PKG_PATH.'BitBoardTopic.php');
+}
 
 global $commentsLib, $gBitSmarty;
 
@@ -84,7 +88,20 @@ if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'p_lib
 	if (!empty( $_REQUEST['format_guid'] ) ) {
 		$storeRow['format_guid'] = $_REQUEST['format_guid'];
 	}
-	$storeComment->storeComment($storeRow);
+	if(!($gBitSystem->isPackageActive('bitboards') && BitBoardTopic::isLockedMsg($storeRow['parent_id']))) {
+		$storeComment->storeComment($storeRow);
+		if($gBitSystem->isPackageActive('bitboards') && $gBitSystem->isFeatureActive('bitboards_thread_track')) {
+			$topic_id = substr($storeComment->mInfo['thread_forward_sequence'],0,10);
+			$data = BitBoardTopic::getNotificationData($topic_id);
+			foreach ($data['users'] as $login => $user) {
+				if($data['topic']->mInfo['llc_last_modified']>$user['track_date'] && $data['topic']->mInfo['llc_last_modified']>$user['track_notify_date']) {
+					$data['topic']->sendNotification($user);
+				}
+			}
+		}
+	} else {
+		$formfeedback['warning']="The selected Topic is Locked posting is disabled";
+	}
 }
 
 // $post_comment_request is a flag indicating whether or not to display the comment input form
@@ -119,10 +136,10 @@ if (@BitBase::verifyId($_REQUEST['post_comment_reply_id'])) {
 
 	if (preg_match('/^' . tra('Re:') . '/', $tmpComment->mInfo['title'])) {
 		$comment_prefix = '';
-		}
+	}
 	else {
 		$comment_prefix = tra('Re:') . " ";
-		}
+	}
 	$postComment['title'] = $comment_prefix . $tmpComment->mInfo['title'];
 
 	$gBitSmarty->assign('post_comment_reply_id', $post_comment_reply_id);
@@ -159,17 +176,17 @@ $currentPage = !empty( $_REQUEST['comment_page'] ) ? $_REQUEST['comment_page'] :
 
 #logic to support displaying a single comment -- used when we need a URL pointing to a comment
 if (!empty($_REQUEST['view_comment_id'])) {
-        $commentOffset = $gComment->getNumComments_upto($_REQUEST['view_comment_id']);
+	$commentOffset = $gComment->getNumComments_upto($_REQUEST['view_comment_id']);
 #       echo "commentOffset =$commentOffset= maxComments=$maxComments=\n";
-        $comments_sort_mode = 'commentDate_asc';
-        $comments_display_style = 'flat';
-        $comments_at_top_of_page = 'y';
-        $maxComments = 1;
-        $currentPage = ceil( $commentOffset+1 / $maxComments );
-        }
+	$comments_sort_mode = 'commentDate_asc';
+	$comments_display_style = 'flat';
+	$comments_at_top_of_page = 'y';
+	$maxComments = 1;
+	$currentPage = ceil( $commentOffset+1 / $maxComments );
+}
 else {
-        $commentOffset = ($currentPage - 1) * $maxComments;
-        }
+	$commentOffset = ($currentPage - 1) * $maxComments;
+}
 
 
 // $commentsParentId is the content_id which the comment tree is attached to
@@ -195,6 +212,7 @@ $commentsPgnHash = array(
 	'numPages' => $numCommentPages,
 	'pgnName' => 'comment_page',
 	'page' => $currentPage,
+	'comment_page' => $currentPage,
 	'url' => $comments_return_url,
 	'maxComments' => $maxComments,
 	'comments_sort_mode' => $comments_sort_mode,
@@ -210,4 +228,14 @@ $gBitSmarty->assign('comments_at_top_of_page', ( isset( $comments_at_top_of_page
 $gBitSmarty->assign('comments_style', $comments_display_style);
 $gBitSmarty->assign('comments_sort_mode', $comments_sort_mode);
 $gBitSmarty->assign('textarea_id', 'commentpost');
+
+if (!empty($_REQUEST['post_comment_request'])) {
+	if ($gBitSystem->isPackageActive('bitboards') && BitBoardTopic::isLockedMsg( (@BitBase::verifyId($storeComment->mInfo['parent_id']) ? $storeComment->mInfo['parent_id'] : (!@BitBase::verifyId($_REQUEST['post_comment_reply_id']) ? $commentsParentId : $_REQUEST['post_comment_reply_id'])))) {
+		unset($_REQUEST['post_comment_request']);
+		unset($_GET['post_comment_request']);
+		unset($_POST['post_comment_request']);
+		$formfeedback['warning']="The selected Topic is Locked posting is disabled";
+	}
+}
+
 ?>
