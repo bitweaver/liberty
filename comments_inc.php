@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.20 $
+ * @version  $Revision: 1.21 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.20 2006/07/21 23:50:37 hash9 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.21 2006/07/22 15:08:34 hash9 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -82,6 +82,13 @@ if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'p_lib
 	$storeRow = array();
 	$storeRow['title'] = $_REQUEST['comment_title'];
 	$storeRow['edit'] = $_REQUEST['comment_data'];
+	if (empty($_REQUEST['post_comment_id'])&&$gBitSystem->isPackageActive('bitboards')) {
+		$content_type = $gBitUser->getPreference('signiture_content_type');
+		$content_data = $gBitUser->getPreference('signiture_content_data');
+		if (!empty($content_type) && !empty($content_data)) {
+			$storeRow['edit'] .= "\n{renderer format_guid=$content_type class=mb-signature}$content_data{/renderer}";
+		}
+	}
 	$storeRow['root_id'] = $commentsParentId;
 	$storeRow['parent_id'] = (@BitBase::verifyId($storeComment->mInfo['parent_id']) ? $storeComment->mInfo['parent_id'] : (!@BitBase::verifyId($_REQUEST['post_comment_reply_id']) ? $commentsParentId : $_REQUEST['post_comment_reply_id']));
 	$storeRow['content_id'] = (@BitBase::verifyId($storeComment->mContentId) ? $storeComment->mContentId : NULL);
