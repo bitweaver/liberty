@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.30 2006/07/11 15:09:20 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.31 2006/07/23 00:56:02 jht001 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -104,10 +104,14 @@ class LibertySystem extends LibertyBase {
 	 *
 	 * @return none
 	 **/
-	function scanPlugins( $pPluginsPath = NULL ) {
+	function scanPlugins( $pPluginsPath = NULL, $pOnlyScanActive = FALSE ) {
 		if( empty( $pPluginsPath ) ) {
 			$pPluginsPath = LIBERTY_PKG_PATH.'plugins/';
 		}
+
+		// only loading the active plugins would save lots of work for most sites that don't use all the plugins
+		// not clear how to accomplish this unless we store the plugin file name in the DB like we do
+		// for packages... or we store a guid => to file name table somewhere...
 		if( $pluginDir = opendir( $pPluginsPath ) ) {
 			// Make two passes through the root - 1. to define the DEFINES, and 2. to include the $pScanFile's
 			while (false !== ($plugin = readdir($pluginDir))) {
@@ -116,6 +120,10 @@ class LibertySystem extends LibertyBase {
 				}
 			}
 		}
+
+		// keep plugin list in sorted order
+		asort( $this->mPlugins );
+		
 		// match up storage_type_id to plugin_guids. this _id varies from install to install, but guids are the same
 		foreach( array_keys( $this->mPlugins ) as $guid ) {
 			$handler = &$this->mPlugins[$guid]; //shorthand var alias
@@ -136,7 +144,6 @@ class LibertySystem extends LibertyBase {
 				$this->mDb->query( $sql, array( $guid, $handler['plugin_type'], $handler['description'], $handler['is_active'] ) );
 			}
 		}
-		asort( $this->mPlugins );
 	}
 
 	/**
