@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.116 2006/07/18 19:12:43 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.117 2006/07/23 05:00:20 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -127,7 +127,7 @@ class LibertyContent extends LibertyBase {
 	* with the require values for LibertyContent::store()
 	*/
 	function verify( &$pParamHash ) {
-		global $gLibertySystem, $gBitSystem, $gBitLanguage;
+		global $gLibertySystem, $gBitSystem, $gBitLanguage, $gBitUser;
 
 		// It is possible a derived class set this to something different
 		if( empty( $pParamHash['content_type_guid'] ) ) {
@@ -135,7 +135,6 @@ class LibertyContent extends LibertyBase {
 		}
 
 		if( empty( $pParamHash['user_id'] ) ) {
-			global $gBitUser;
 			$pParamHash['user_id'] = $gBitUser->getUserId();
 		}
 
@@ -190,7 +189,6 @@ class LibertyContent extends LibertyBase {
 		$pParamHash['content_store']['ip'] = $pParamHash['ip'];
 
 		if( !@$this->verifyId( $pParamHash['modifier_user_id'] ) ) {
-			global $gBitUser;
 			$pParamHash['modifier_user_id'] = $gBitUser->getUserId();
 		}
 		$pParamHash['content_store']['modifier_user_id'] = $pParamHash['modifier_user_id'];
@@ -230,8 +228,21 @@ class LibertyContent extends LibertyBase {
 			if ( isset($pParamHash["edit"]) )        $this->mInfo['index_data'] .= $pParamHash["edit"];
 		}
 
-		return( count( $this->mErrors ) == 0 );
+		// content preferences
+		$prefs = array();
+		if( $gBitUser->hasPermission( 'p_liberty_enter_html' ) ) {
+			$prefs[] = 'content_enter_html';
+		}
 
+		foreach( $prefs as $pref ) {
+			if( !empty( $pParamHash['preferences'][$pref] ) ) {
+				$pParamHash['preferences_store'][$pref] = $pParamHash['preferences'][$pref];
+			} else {
+				$pParamHash['preferences_store'][$pref] = NULL;
+			}
+		}
+
+		return( count( $this->mErrors ) == 0 );
 	}
 
 	/**
@@ -288,6 +299,7 @@ class LibertyContent extends LibertyBase {
 					$this->storePreference( $pref, $value );
 				}
 			}
+
 			$this->mDb->CompleteTrans();
 		}
 		return( count( $this->mErrors ) == 0 );
