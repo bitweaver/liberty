@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.renderer.php,v 1.1 2006/07/22 15:08:34 hash9 Exp $
+// $Id: data.renderer.php,v 1.2 2006/07/24 17:50:17 sylvieg Exp $
 
 /**
  * definitions
@@ -41,8 +41,8 @@ if( $gBitSystem->isPackageActive( 'bitboards' ) ) { // Do not include this Plugi
 	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 	);
-	$gLibertySystem->registerPlugin( PLUGIN_GUID_DATABLOG, $pluginParams );
-	$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATABLOG );
+	$gLibertySystem->registerPlugin( PLUGIN_GUID_DATARENDERER, $pluginParams );
+	$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATARENDERER );
 
 	// Help Routine
 	function data_renderer_help() {
