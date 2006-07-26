@@ -3,12 +3,10 @@
  * base package include
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage functions
  */
-
-global $gBitSystem, $gBitUser, $gBitSmarty;
 
 $registerHash = array(
 	'package_name' => 'liberty',
