@@ -1,8 +1,8 @@
 {if !$hide || $smarty.request.post_comment_request || $smarty.request.post_comment_preview}
 	<a name="editcomments"></a>
 
-	{if $post_comment_preview}
-		<h2>{tr}Comments Preview{/tr}</h2>
+	{if $post_comment_preview && !$preview_override}
+		<h2>{tr}{$post_title} Preview{/tr}</h2>
 			<div class="preview">
 				{include file='bitpackage:liberty/display_comment.tpl' comment=$postComment}
 			</div><!-- end .preview -->
@@ -27,9 +27,17 @@
 						{/forminput}
 					</div>
 
+					<div class="row">
+						{formlabel label="Name" for="comments-name"}
+						{forminput}
+							<input type="text" size="50" name="comment_name" id="comments-name" value="{$postComment.anon_name|escape:html}" />
+							{formhelp note=""}
+						{/forminput}
+					</div>
+
 					{assign var=textarea_id value="commentpost"}
 
-					{include file="bitpackage:liberty/edit_format.tpl"}
+					{include file="bitpackage:liberty/edit_format.tpl" gContent=$gComment}
 
 					{if $gBitSystem->isPackageActive( 'smileys' )}
 						{include file="bitpackage:smileys/smileys_full.tpl"}

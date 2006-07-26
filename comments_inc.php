@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.21 $
+ * @version  $Revision: 1.22 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.21 2006/07/22 15:08:34 hash9 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.22 2006/07/26 22:41:45 hash9 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -92,6 +92,7 @@ if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'p_lib
 	$storeRow['root_id'] = $commentsParentId;
 	$storeRow['parent_id'] = (@BitBase::verifyId($storeComment->mInfo['parent_id']) ? $storeComment->mInfo['parent_id'] : (!@BitBase::verifyId($_REQUEST['post_comment_reply_id']) ? $commentsParentId : $_REQUEST['post_comment_reply_id']));
 	$storeRow['content_id'] = (@BitBase::verifyId($storeComment->mContentId) ? $storeComment->mContentId : NULL);
+	$storeRow['anon_name'] = $_REQUEST['comment_name'];
 	if (!empty( $_REQUEST['format_guid'] ) ) {
 		$storeRow['format_guid'] = $_REQUEST['format_guid'];
 	}
@@ -124,10 +125,14 @@ $gBitSmarty->assign_by_ref('post_comment_request', $post_comment_request);
 
 // $post_comment_preview is a flag indicating that the user wants to preview their comment prior to saving it
 if( !empty( $_REQUEST['post_comment_preview'] ) ) {
+	$postComment['user_id'] = $gBitUser->mUserId;
 	$postComment['title'] = $_REQUEST['comment_title'];
+	$postComment['anon_name'] = $_REQUEST['comment_name'];
 	$postComment['data'] = $_REQUEST['comment_data'];
 	$postComment['format_guid'] = PLUGIN_GUID_TIKIWIKI;
 	$postComment['parsed_data'] = LibertyComment::parseData( $postComment );
+	$postComment['created'] = time();
+	$postComment['last_modified'] = time();
 	$gBitSmarty->assign('post_comment_preview', TRUE);
 }
 
@@ -226,8 +231,9 @@ $commentsPgnHash = array(
 	'comments_style' => $comments_display_style,
 	'ianchor' => 'editcomments',
 );
-$gBitSmarty->assign( 'commentsPgnHash', $commentsPgnHash );
-$gBitSmarty->assign('postComment', $postComment);
+$gBitSmarty->assign_by_ref( 'commentsPgnHash', $commentsPgnHash );
+$gBitSmarty->assign_by_ref('postComment', $postComment);
+$gBitSmarty->assign_by_ref('gComment', $gComment);
 
 $gBitSmarty->assign('currentTimestamp', time());
 $gBitSmarty->assign('comments_return_url', $comments_return_url);

@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.27 2006/07/12 17:15:50 sylvieg Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.28 2006/07/26 22:41:45 hash9 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -109,10 +109,11 @@ class LibertyComment extends LibertyContent {
 					$this->mInfo['thread_reverse_sequence'] = strtr($parent_sequence_forward . sprintf("%09d.",$this->mCommentId),
 							'0123456789', '9876543210');
 
-					$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_comments` (`comment_id`, `content_id`, `parent_id`, `root_id`, `thread_forward_sequence`, `thread_reverse_sequence`) VALUES (?,?,?,?,?,?)";
+					$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_comments` (`comment_id`, `content_id`, `parent_id`, `root_id`, `anon_name`, `thread_forward_sequence`, `thread_reverse_sequence`) VALUES (?,?,?,?,?,?,?)";
 
 					$this->mDb->query($sql, array($this->mCommentId, $pStorageHash['content_id'], $pStorageHash['parent_id'],
-						$pStorageHash['root_id'], $this->mInfo['thread_forward_sequence'], $this->mInfo['thread_reverse_sequence']));
+						$pStorageHash['root_id'], $pStorageHash['anon_name'],
+						$this->mInfo['thread_forward_sequence'], $this->mInfo['thread_reverse_sequence']));
 					$this->mInfo['parent_id'] = $pStorageHash['parent_id'];
 					$this->mInfo['content_id'] = $pStorageHash['content_id'];
 					$this->mInfo['root_id'] = $pStorageHash['root_id'];
@@ -146,6 +147,12 @@ class LibertyComment extends LibertyContent {
 			$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `comment_id` = ?";
 			$rs = $this->mDb->query($sql, array($this->mCommentId));
 
+			if (method_exists($this,'expungeMetaData')) {
+				$this->expungeMetaData();
+			} elseif ($gBitSystem->isPackageActive('bitboards')) {
+				BitBoardPost::expungeMetaData($this->mContentId);
+			}
+
 			if( LibertyAttachable::expunge() ) {
 				$ret = TRUE;
 				$this->mDb->CompleteTrans();
@@ -153,25 +160,24 @@ class LibertyComment extends LibertyContent {
 				$this->mDb->RollbackTrans();
 			}
 		}
-		return $ret;	
+		return $ret;
 	}
 
 	function userCanEdit($pUserId = NULL) {
 		global $gBitUser;
 
 		if (empty($pUserId)) {
-			if (!empty($gBitUser)) {
-				return ($gBitUser->isAdmin() || $gBitUser->mUserId == $this->mInfo['user_id']);
-			} else {
-				return FALSE;
-			}
+			$tmpUser = new BitUser($pUserId);
+			$tmpUser->load();
+		} else {
+			$tmpUser = $gBitUser;
 		}
-		if ($pUserId == $this->mInfo['user_id']) {
-			return TRUE;
+		if($tmpUser->isRegistered()) {
+			return ($tmpUser->isAdmin() || ($tmpUser->mUserId == $this->mInfo['user_id']));
+		} elseif($this->mInfo['user_id']==ANONYMOUS_USER_ID) {
+			return (($_SERVER['REMOTE_ADDR']==$this->mInfo['ip'])&&(($this->mInfo['created']-time())<3600));
 		}
-		$tmpUser = new BitUser($pUserId);
-		$tmpUser->load();
-		return ($tmpUser->isAdmin());
+		return FALSE;
 	}
 
     /**
@@ -235,10 +241,11 @@ class LibertyComment extends LibertyContent {
 		// left outer join on root so updater works
 
 		$query = "SELECT"
-			. " lcm.`comment_id` as comment_id, "
-			. " lc.`content_id` as content_id, "
-			. " lcm.`parent_id` as parent_id, "
-			. " lcm.`root_id` as root_id, "
+			. " lcm.`comment_id` AS comment_id, "
+			. " lc.`content_id` AS content_id, "
+			. " lcm.`parent_id` AS parent_id, "
+			. " lcm.`anon_name` AS anon_name, "
+			. " lcm.`root_id` AS root_id, "
 			. " lc.`title` AS `content_title`, "
 			. " rlc.`title` AS `root_content_title`, "
 			. " lc.`created` as created, "
@@ -327,90 +334,22 @@ class LibertyComment extends LibertyContent {
 					FROM `".BIT_DB_PREFIX."liberty_comments` tc LEFT OUTER JOIN
 					 `".BIT_DB_PREFIX."liberty_content` tcn
 					 ON (tc.`content_id` = tcn.`content_id`)
-				    where tc.root_id =? and last_modified < ?
+				    where tc.`root_id` =? and `last_modified` < ?
 					$mid";
 			$commentCount = $this->mDb->getOne($sql, array($contentId, $last_modified));
 		}
 		return $commentCount;
 	}
 
-
-	//input is a set of nested hashes
-	//output is a single flat hash of comments in thread order
-//	function flatten_threads($threaded_comments = NULL) {
-//		$flat_comments = array();
-//		foreach ($threaded_comments as $threaded_comment) {
-//			$flat_comments[] = $threaded_comment;
-//			if (!empty($threaded_comment['children'])) {
-//				$children = $this->flatten_threads($threaded_comment['children']);
-//				foreach ($children as $child) {
-//					array_push($flat_comments, $child );
-//				}
-//			}
-//		}
-//		return $flat_comments;
-//	}
-
 	// Returns a hash containing the comment tree of comments related to this content
 	function getComments( $pContentId = NULL, $pMaxComments = NULL, $pOffset = NULL, $pSortOrder = NULL, $pDisplayMode = NULL ) {
-		if( $pDisplayMode == "flat" ) {
-			return $this->getComments_flat ($pContentId, $pMaxComments, $pOffset, $pSortOrder);
-		} else {
-			#return $this->getComments_threaded ($pContentId, $pMaxComments, $pOffset, $pSortOrder);
-			//use flat mode retreival so we get exactly the number of messages requested.
+		if( $pDisplayMode != "flat" ) {
 			if ($pSortOrder == "commentDate_asc") {
-				return $this->getComments_flat ($pContentId, $pMaxComments, $pOffset, 'thread_asc');
+				$pSortOrder = 'thread_asc';
 			} else {
-				//descending thread order is not currently supported correctly, but we make an attempt anyway
-				return $this->getComments_flat ($pContentId, $pMaxComments, $pOffset, 'thread_desc');
+				$pSortOrder = 'thread_desc';
 			}
 		}
-	}
-
-	// returns a set of nested hashes
-	function getComments_threaded( $pContentId = NULL, $pMaxComments = NULL, $pOffset = NULL, $pSortOrder = NULL ) {
-		static $curLevel = 0;
-
-		$contentId = NULL;
-		$ret = array();
-		if (!$pContentId && $this->mContentId) {
-			$contentId = $this->mContentId;
-		} elseif ($pContentId) {
-			$contentId = $pContentId;
-		}
-
-
-		$sort_order = "ASC";
-		if (!empty($pSortOrder)) {
-			if ($pSortOrder == 'commentDate_desc') {
-				$sort_order = 'DESC';
-			} elseif ($pSortOrder == 'commentDate_asc') {
-				$sort_order = 'ASC';
-			}
-		}
-
-		if ($contentId) {
-			$sql = "SELECT lcom.`comment_id` FROM `".BIT_DB_PREFIX."liberty_comments` lcom, `".BIT_DB_PREFIX."liberty_content` lc
-					WHERE lcom.`parent_id` = ? AND lcom.`content_id` = lc.`content_id` ORDER BY lc.`created` $sort_order";
-			if( $rows = $this->mDb->getAll( $sql, array($contentId), $pMaxComments, $pOffset ) ) {
-				foreach ($rows as $row) {
-					$comment = new LibertyComment( $row['comment_id'] );
-					$comment->mInfo['level'] = $curLevel;
-					$curLevel++;
-					$comment->mInfo['children'] = $this->getComments_threaded($comment->mInfo['content_id']);
-					$comment->mInfo['parsed_data'] = $this->parseData($comment->mInfo);
-					$curLevel--;
-					$ret[] = $comment->mInfo;
-				}
-			}
-		}
-		return $ret;
-	}
-
-
-	// Returns a hash containing the comment tree of comments related to this content
-	function getComments_flat( $pContentId = NULL, $pMaxComments = NULL, $pOffset = NULL, $pSortOrder = NULL ) {
-		static $curLevel = 0;
 
 		$contentId = NULL;
 		$ret = array();
@@ -444,8 +383,8 @@ class LibertyComment extends LibertyContent {
 		if (is_array( $pContentId ) ) {
 			$mid2 = 'in ('.implode(',', array_fill(0, count( $pContentId ), '?')).')';
 			$bindVars = $pContentId;
-			$select1 = ', lcp.content_type_guid as parent_content_type_guid, lcp.title as parent_title ';
-			$join1 = " LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` lcp ON (lcp.content_id = lcom.parent_id) ";
+			$select1 = ', lcp.`content_type_guid` as parent_content_type_guid, lcp.`title` as parent_title ';
+			$join1 = " LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` lcp ON (lcp.`content_id` = lcom.`parent_id`) ";
 		} elseif ($pContentId) {
 			$mid2 = '=?';
 			$bindVars = array( $pContentId );
@@ -457,7 +396,7 @@ class LibertyComment extends LibertyContent {
 		$this->getServicesSql( 'content_list_sql_function', $selectSql, $joinSql, $whereSql, $bindVars, $this );
 
 		if ($pContentId) {
-			$sql = "SELECT lcom.comment_id, lcom.parent_id, lcom.root_id, lcom.thread_forward_sequence, lcom.thread_reverse_sequence, lc.*, uu.`email`, uu.`real_name`, uu.`login` $selectSql $select1
+			$sql = "SELECT lcom.`comment_id`, lcom.`parent_id`, lcom.`root_id`, lcom.`thread_forward_sequence`, lcom.`thread_reverse_sequence`, lcom.`anon_name`, lc.*, uu.`email`, uu.`real_name`, uu.`login` $selectSql $select1
 					FROM `".BIT_DB_PREFIX."liberty_comments` lcom
 						LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lcom.`content_id` = lc.`content_id`)
 						LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uu ON (lc.`user_id` = uu.`user_id`) $joinSql $join1
@@ -467,6 +406,9 @@ class LibertyComment extends LibertyContent {
 				while( $row = $result->FetchRow() ) {
 					$row['parsed_data'] = $this->parseData( $row );
 					$row['level'] = substr_count ( $row['thread_forward_sequence'], '.' ) - 1;
+					$c = new LibertyComment();
+					$c->mInfo=$row;
+					$row['editable'] = $c->userCanEdit();
 					$flat_comments[] = $row;
 				}
 			}

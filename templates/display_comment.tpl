@@ -9,7 +9,7 @@
 			{if $gBitUser->hasPermission( 'p_liberty_post_comments' )}
 				<a href="{$comments_return_url}&amp;post_comment_reply_id={$comment.content_id}&amp;post_comment_request=1#editcomments" rel="nofollow">{biticon ipackage="liberty" iname="reply" iexplain="Reply to this comment"}</a>
 			{/if}
-			{if $gBitUser->isAdmin() || ($gBitUser && $comment.user_id == $gBitUser->mInfo.user_id)}
+			{if $comment.editable}
 				<a href="{$comments_return_url}&amp;post_comment_id={$comment.comment_id}&amp;post_comment_request=1#editcomments" rel="nofollow">{biticon ipackage="liberty" iname="edit" iexplain="Edit"}</a>
 			{/if}
 			{if $gBitUser->isAdmin()}
@@ -18,7 +18,7 @@
 		</div>
 
 		<h3>{$comment.title|escape}</h3>
-		<div class="date">{tr}by{/tr} {displayname hash=$comment}, {$comment.last_modified|bit_long_datetime}</div>
+		<div class="date">{tr}by{/tr} {if $comment.user_id < 0}{$comment.anon_name|escape}{else}{displayname hash=$comment}{/if}, {$comment.last_modified|bit_long_datetime}</div>
 		<div class="content">
 			{include file="bitpackage:liberty/services_inc.tpl" serviceLocation='body' serviceHash=$comment}
 			{$comment.parsed_data}
