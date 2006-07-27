@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.22 $
+ * @version  $Revision: 1.23 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.22 2006/07/26 22:41:45 hash9 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.23 2006/07/27 23:04:39 hash9 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -110,8 +110,9 @@ if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'p_lib
 	} else {
 		$formfeedback['warning']="The selected Topic is Locked posting is disabled";
 	}
+} elseif(!empty($_REQUEST['post_comment_request']) && !$gBitUser->hasPermission( 'p_liberty_post_comments' )) {
+	$formfeedback['warning']="You don't have p_liberty_post_comments";
 }
-
 // $post_comment_request is a flag indicating whether or not to display the comment input form
 if( empty( $_REQUEST['post_comment_request'] ) && !$gBitSystem->isFeatureActive( 'comments_auto_show_form' ) ) {
 	$post_comment_request = NULL;
@@ -144,8 +145,9 @@ if( !empty( $_REQUEST['post_comment_preview'] ) || $post_comment_request ) {
 if (@BitBase::verifyId($_REQUEST['post_comment_reply_id'])) {
 	$post_comment_reply_id = $_REQUEST['post_comment_reply_id'];
 	$tmpComment = new LibertyComment(NULL, $post_comment_reply_id);
-	//$postComment['data'] = $commentsLib->quoteComment($tmpComment->mInfo['data']);  // This is super-ugly, better to just not quote at all, the indented comment indicates what comment it is replying to
-
+	if (!empty($_REQUEST['quote'])) {
+		$postComment['data'] = $tmpComment->getQuoted();
+	}
 	if (preg_match('/^' . tra('Re:') . '/', $tmpComment->mInfo['title'])) {
 		$comment_prefix = '';
 	}

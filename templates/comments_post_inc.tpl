@@ -9,6 +9,7 @@
 	{/if}
 
 	{form action="`$comments_return_url`#editcomments"}
+		{formfeedback hash=$formfeedback}
 		<input type="hidden" name="comments_maxComments" value="{$maxComments}" />
 		<input type="hidden" name="comments_style" value="{$comments_style}" />
 		<input type="hidden" name="comments_sort_mode" value="{$comments_sort_mode}" />

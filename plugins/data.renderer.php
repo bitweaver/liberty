@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,16 +18,15 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.renderer.php,v 1.2 2006/07/24 17:50:17 sylvieg Exp $
+// $Id: data.renderer.php,v 1.3 2006/07/27 23:04:40 hash9 Exp $
 
 /**
  * definitions
  */
 global $gBitSystem, $gBitSmarty;
-if( $gBitSystem->isPackageActive( 'bitboards' ) ) { // Do not include this Plugin if the Package is not active
-	define( 'PLUGIN_GUID_DATARENDERER', 'datarenderer' );
-	global $gLibertySystem;
-	$pluginParams = array (
+define( 'PLUGIN_GUID_DATARENDERER', 'datarenderer' );
+global $gLibertySystem;
+$pluginParams = array (
 	'tag' => 'renderer',
 	'auto_activate' => TRUE,
 	'requires_pair' => TRUE,
@@ -40,9 +39,9 @@ if( $gBitSystem->isPackageActive( 'bitboards' ) ) { // Do not include this Plugi
 	'path' => LIBERTY_PKG_PATH.'plugins/data.renderer.php',
 	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
-	);
-	$gLibertySystem->registerPlugin( PLUGIN_GUID_DATARENDERER, $pluginParams );
-	$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATARENDERER );
+);
+$gLibertySystem->registerPlugin( PLUGIN_GUID_DATARENDERER, $pluginParams );
+$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATARENDERER );
 
 	// Help Routine
 	function data_renderer_help() {
@@ -64,14 +63,9 @@ if( $gBitSystem->isPackageActive( 'bitboards' ) ) { // Do not include this Plugi
 			</tr>
 			<tr class=\"even\">
 				<td>format_guid</td>
-				<td>" . tra( "string") . '<br />' . tra("(required unless content_id is given)") . "</td>
+				<td>" . tra( "string") . '<br />' . tra("(required)") . "</td>
 				<td>" . tra( "Specify what renderer should be used to render the contents") . "</td>
 			</tr>'
-			<tr class=\"odd\">
-				<td>content_id</td>
-				<td>" . tra( "div class") . '<br />' . tra("(optional, overrides format_guid)") . "</td>
-				<td>" . tra( "Specify the content of the outputed div") . "</td>
-			</tr>
 		</table>".
 		tra("Example: ") . "{renderer class=abc format_guid=tiki }.. content ..{/renderer}<br />";
 		return $help;
@@ -81,25 +75,17 @@ if( $gBitSystem->isPackageActive( 'bitboards' ) ) { // Do not include this Plugi
 	function data_renderer($data, $params) { // No change in the parameters with Clyde
 		// The next 2 lines allow access to the $pluginParams given above and may be removed when no longer needed
 		global $gLibertySystem, $gBitSmarty;
-		$pluginParams = $gLibertySystem->mPlugins[PLUGIN_GUID_DATABLOG];
-
-		require_once( BLOGS_PKG_PATH.'BitBlog.php');
-		require_once( LIBERTY_PKG_PATH.'lookup_content_inc.php' );
-
-		$params;
 
 		$data = trim($data);
 
-		if (empty($data) && @LibertyContent::verifyId($rendererHash['content_id'])) {
-			$rendererHash = BitBoardForum::loadContent($rendererHash['content_id']);
-		} elseif (empty($data)) { // If there is NO data to display - why do anything - get out of here
+		if (empty($data)) { // If there is NO data to display - why do anything - get out of here
 			return " ";
-		} else {
-			$rendererHash=array();
-			$rendererHash['content_id']=0;
-			$rendererHash['format_guid'] =$params['format_guid'];
-			$rendererHash['data'] =$data;
 		}
+
+		$rendererHash=array();
+		$rendererHash['content_id']=0;
+		$rendererHash['format_guid'] =$params['format_guid'];
+		$rendererHash['data'] =$data;
 
 		$formatGuid=$rendererHash['format_guid'];
 		$ret = "";
@@ -118,5 +104,4 @@ if( $gBitSystem->isPackageActive( 'bitboards' ) ) { // Do not include this Plugi
 
 		return $display_result;
 	}
-}
 ?>

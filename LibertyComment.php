@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.28 2006/07/26 22:41:45 hash9 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.29 2006/07/27 23:04:39 hash9 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -420,7 +420,13 @@ class LibertyComment extends LibertyContent {
 		return $ret;
 	}
 
-
+	function getQuoted() {
+		$data = $this->mInfo['data'];
+		$pattern = '/\{quote .*\}(.*)\{\/quote\}/i';
+		$replacement = '';
+		$data = preg_replace($pattern, $replacement, $data);
+		return '{quote format_guid="'.$this->mInfo['format_guid'].'" comment_id="'.$this->mCommentId.'" user="'.$this->mInfo['login'].'"}'.trim($data).'{/quote}';
+	}
 
  	// Basic formatting for quoting comments
  	function quoteComment($commentData) {
