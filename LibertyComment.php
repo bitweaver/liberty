@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.29 2006/07/27 23:04:39 hash9 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.30 2006/07/29 15:48:26 hash9 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -166,11 +166,11 @@ class LibertyComment extends LibertyContent {
 	function userCanEdit($pUserId = NULL) {
 		global $gBitUser;
 
-		if (empty($pUserId)) {
+		if (!empty($pUserId)) {
 			$tmpUser = new BitUser($pUserId);
 			$tmpUser->load();
 		} else {
-			$tmpUser = $gBitUser;
+			$tmpUser = &$gBitUser;
 		}
 		if($tmpUser->isRegistered()) {
 			return ($tmpUser->isAdmin() || ($tmpUser->mUserId == $this->mInfo['user_id']));
