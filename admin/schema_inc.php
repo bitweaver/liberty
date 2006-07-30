@@ -3,15 +3,6 @@
 // Common Content tables
 $tables = array(
 
-'liberty_plugins' => "
-	plugin_guid C(16) PRIMARY,
-	plugin_type C(16) NOTNULL,
-	plugin_path C(250),
-	is_active C(1) NOTNULL DEFAULT 'y',
-	plugin_description C(250),
-	maintainer_url C(250)
-",
-
 'liberty_content_types' => "
 	content_type_guid C(16) PRIMARY,
 	content_description C(250) NOTNULL,
@@ -39,7 +30,6 @@ $tables = array(
 	data X
 	CONSTRAINT '
 		, CONSTRAINT `liberty_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )
-		, CONSTRAINT `liberty_content_guid_ref`  FOREIGN KEY (`format_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_plugins`( `plugin_guid` )'
 ",
 
 'liberty_content_history' => "
@@ -122,7 +112,6 @@ $tables = array(
 	caption C(250)
 	CONSTRAINT '
 		, CONSTRAINT `liberty_attachment_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
-		, CONSTRAINT `liberty_attachment_type_ref` FOREIGN KEY (`attachment_plugin_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_plugins`( `plugin_guid` )'
 ",
 
 'liberty_files' => "

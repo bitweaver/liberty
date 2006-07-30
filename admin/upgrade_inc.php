@@ -22,7 +22,6 @@ array( 'DATADICT' => array(
 		'tiki_files'            => 'liberty_files',
 		'tiki_structures'       => 'liberty_structures',
 		'tiki_comments'         => 'liberty_comments',
-		'tiki_plugins'          => 'liberty_plugins',
 		'tiki_content_types'    => 'liberty_content_types',
 		'tiki_link_cache'       => 'liberty_link_cache',
 		'tiki_history'          => 'liberty_content_history',
@@ -366,9 +365,6 @@ array( 'DATADICT' => array(
 	array( 'ALTER' => array(
 		'liberty_action_log' => array(
 			'content_id' => array( 'content_id', 'I4' ),
-		),
-		'liberty_plugins' => array(
-			'plugin_path' => array( 'plugin_path', 'VARCHAR(250)' ),
 		),
 	)),
 )),

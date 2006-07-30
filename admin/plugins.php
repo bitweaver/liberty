@@ -4,6 +4,10 @@ include_once( KERNEL_PKG_PATH.'simple_form_functions_lib.php' );
 
 $gBitSystem->verifyPermission( 'p_admin' );
 
+// Since the normal startup only loads the plugins marked active
+// We need to load the rest of them here so that we can display them all
+$gLibertySystem->scanAllPlugins();
+
 if( isset( $_REQUEST['pluginsave'] ) && !empty( $_REQUEST['pluginsave'] ) ) {
 	if( !empty( $_REQUEST['default_format'] ) && !empty( $_REQUEST['PLUGINS'][$_REQUEST['default_format']][0] ) ) {
 		$gLibertySystem->setActivePlugins( $_REQUEST['PLUGINS'] );

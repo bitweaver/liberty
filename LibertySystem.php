@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.31 2006/07/23 00:56:02 jht001 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.32 2006/07/30 22:22:12 jht001 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -47,6 +47,7 @@ define( 'DEFAULT_ACCEPTABLE_TAGS', '<a><br><b><blockquote><cite><code><div><dd><
 		.'<i><it><img><li><ol><p><pre><span><strong><table><tbody><div><tr><td><th><u><ul>'
 		.'<button><fieldset><form><label><input><option><select><textarea>' );
 
+
 /**
  * Link to base class
  */
@@ -71,12 +72,15 @@ class LibertySystem extends LibertyBase {
 	// Content types
 	var $mContentTypes;
 
+	// File name of last plug that registered
+	var $mPluginFileName;
+
+
 	/**
 	 * Initiate Class
 	 **/
 	function LibertySystem( $pExtras = TRUE ) {
 		LibertyBase::LibertyBase();
-		$this->loadPlugins();
 		if( $pExtras ) {
 			$this->mDataTags = array();
 			$this->loadContentTypes();
@@ -85,37 +89,41 @@ class LibertySystem extends LibertyBase {
 
 	// ****************************** Plugin Functions
 	/**
-	 * Load plugins from database
+	 * Load only active plugins from disk
 	 *
-	 * Populates $this->mPlugins
 	 * @return none
 	 * @access public
 	 **/
-	function loadPlugins() {
-		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX.$this->mPluginsTable."`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
-			while( $row = $rs->fetchRow() ) {
-				$this->mPlugins[$row['plugin_guid']] = $row;
+	function loadActivePlugins() {
+		global $gBitSystem;
+		$active_plugins = $gBitSystem->getConfigMatch("/^liberty_plugin_status_/i", 'y');
+		foreach($active_plugins as $key=>$value) {
+			$plugin_guid = preg_replace( "/^liberty_plugin_status_/", '', $key,1 );
+			$plugin_file_name = $gBitSystem->getConfig("liberty_plugin_file_$plugin_guid");
+			if ( file_exists($plugin_file_name) ) {
+				$this->mPluginFileName = $plugin_file_name;
+				include_once( $plugin_file_name );
 			}
 		}
+	
 	}
 
 	/**
-	 * Scan for plugins and add them to the database if they haven't been added yet
+	 * Load all plugins found in specified directory
+	 * Use loadActivePlugins to load only the active plugins
 	 *
 	 * @return none
 	 **/
-	function scanPlugins( $pPluginsPath = NULL, $pOnlyScanActive = FALSE ) {
+	function scanAllPlugins( $pPluginsPath = NULL ) {
+		global $gBitSystem;
 		if( empty( $pPluginsPath ) ) {
 			$pPluginsPath = LIBERTY_PKG_PATH.'plugins/';
 		}
-
-		// only loading the active plugins would save lots of work for most sites that don't use all the plugins
-		// not clear how to accomplish this unless we store the plugin file name in the DB like we do
-		// for packages... or we store a guid => to file name table somewhere...
+		
 		if( $pluginDir = opendir( $pPluginsPath ) ) {
-			// Make two passes through the root - 1. to define the DEFINES, and 2. to include the $pScanFile's
 			while (false !== ($plugin = readdir($pluginDir))) {
 				if( preg_match( '/\.php$/', $plugin ) ) {
+					$this->mPluginFileName = $pPluginsPath.$plugin;
 					include_once( $pPluginsPath.$plugin );
 				}
 			}
@@ -123,27 +131,48 @@ class LibertySystem extends LibertyBase {
 
 		// keep plugin list in sorted order
 		asort( $this->mPlugins );
-		
-		// match up storage_type_id to plugin_guids. this _id varies from install to install, but guids are the same
-		foreach( array_keys( $this->mPlugins ) as $guid ) {
-			$handler = &$this->mPlugins[$guid]; //shorthand var alias
-			if( !isset( $handler['verified'] ) && $handler['is_active'] =='y' ) {
-				// We are missing a plugin!
-				$sql = "UPDATE `".BIT_DB_PREFIX.$this->mPluginsTable."` SET `is_active`='x' WHERE `plugin_guid`=?";
-				$this->mDb->query( $sql, array( $guid ) );
-				$handler['is_active'] = 'n';
-			} elseif( !empty( $handler['verified'] ) && $handler['is_active'] =='x' ) {
-				//We found a formally missing plugin - re-enable it
-				$sql = "UPDATE `".BIT_DB_PREFIX.$this->mPluginsTable."` SET `is_active`='y' WHERE `plugin_guid`=?";
-				$this->mDb->query( $sql, array( $guid ) );
-				$handler['is_active'] = 'y';
-			} elseif( empty( $handler['verified'] ) && !isset( $handler['is_active'] ) ) {
-				//We found a missing plugin - insert it
-				$handler['is_active'] = ( ( isset( $handler['auto_activate'] ) && $handler['auto_activate'] == FALSE ) ? 'n' : 'y' );
-				$sql = "INSERT INTO `".BIT_DB_PREFIX.$this->mPluginsTable."` ( `plugin_guid`, `plugin_type`, `plugin_description`, `is_active` ) VALUES ( ?, ?, ?, ? )";
-				$this->mDb->query( $sql, array( $guid, $handler['plugin_type'], $handler['description'], $handler['is_active'] ) );
+
+		// There must be at least one format plugin active and set as the default format
+		$format_plugin_count = 0;
+		$default_format_found = 0;
+		$current_default_format_guid = $gBitSystem->getConfig('default_format');
+		foreach( $this->mPlugins as $guid=>$plugin ) {
+		    if ($plugin['is_active'] == 'y') {
+				$plugin_type = $plugin['plugin_type'];
+				if ( $plugin_type == FORMAT_PLUGIN ) {
+					$format_plugin_count++;
+				}
+				if ($current_default_format_guid == $guid) {
+					$default_format_found++;
+				}
 			}
 		}
+
+		// if no current default format or no format plugins active
+		// activate format.tikiwiki and make it the default format plugin
+		if ($format_plugin_count == 0 || $default_format_found == 0) {
+			$guid = PLUGIN_GUID_TIKIWIKI;
+			$config_name = "liberty_plugin_status_" . $guid;
+			$config_value = 'y';
+			$gBitSystem->storeConfig($config_name, $config_value, LIBERTY_PKG_NAME);
+			$gBitSystem->storeConfig( 'default_format', PLUGIN_GUID_TIKIWIKI, LIBERTY_PKG_NAME );
+			//make memory match db
+			$this->loadActivePlugins();
+			}		
+
+		// remove any config settings for plugins that were not on disk
+		$active_plugins = $gBitSystem->getConfigMatch("/^liberty_plugin_status_/i");
+		foreach($active_plugins as $key=>$value) {
+			$plugin_guid = preg_replace( "/^liberty_plugin_status_/", '', $key,1 );
+			if ( !isset($this->mPlugins[$plugin_guid]) ) {
+				$config_name = "liberty_plugin_status_" . $guid;
+				$gBitSystem->storeConfig($config_name, NULL, LIBERTY_PKG_NAME);
+				$config_name = "liberty_plugin_file_" . $guid;
+				$gBitSystem->storeConfig($config_name, NULL, LIBERTY_PKG_NAME);
+			}
+		}
+		
+		
 	}
 
 	/**
@@ -153,7 +182,7 @@ class LibertySystem extends LibertyBase {
 	 * @return TRUE if the plugin is active, FALSE if it's not
 	 **/
 	function isPluginActive( $pPluginGuid ) {
-		return( isset( $this->mPlugins[$pGuid] ) && ($this->mPlugins[$pGuid] == 'y') );
+		return( isset( $this->mPlugins[$pGuid] ) && ($this->mPlugins[$pGuid]['is_active'] == 'y') );
 	}
 
 	/**
@@ -177,30 +206,46 @@ class LibertySystem extends LibertyBase {
 	 * @access public
 	 **/
 	function registerPlugin( $pGuid, $pPluginParams ) {
-		if( isset($this->mPlugins[$pGuid] ) ) {
-			$this->mPlugins[$pGuid]['verified'] = TRUE;
-		} else {
-			$this->mPlugins[$pGuid]['verified'] = FALSE;
-		}
+		global $gBitSystem;
+		#save the plugin_guid <=> filename mapping
+		$config_name = "liberty_plugin_file_" . $pGuid;
+		$gBitSystem->storeConfig($config_name, $this->mPluginFileName, LIBERTY_PKG_NAME);		
+		$config_name = "liberty_plugin_status_" . $pGuid;
+		$plugin_status = $gBitSystem->getConfig($config_name);		
+		if (empty($plugin_status) && isset($pPluginParams['auto_activate']) && $pPluginParams['auto_activate'] == TRUE) {
+			$plugin_status = 'y';
+			$gBitSystem->storeConfig($config_name,$plugin_status, LIBERTY_PKG_NAME);
+			}
+		$this->mPlugins[$pGuid]['is_active'] = $plugin_status;
+		$this->mPlugins[$pGuid]['filename'] = $this->mPluginFileName;
+		$this->mPlugins[$pGuid]['plugin_guid'] = $pGuid;
+		$this->mPlugins[$pGuid]['verified'] = TRUE;
 		$this->mPlugins[$pGuid] = array_merge( $this->mPlugins[$pGuid], $pPluginParams );
 	}
 
 	// @parameter pPluginGuids an array of all the plugin guids that are active. Any left out are *inactive*!
 	function setActivePlugins( $pPluginGuids ) {
+		global $gBitSystem;
+
 		if( is_array( $pPluginGuids ) ) {
-			$sql = "UPDATE `".BIT_DB_PREFIX.$this->mPluginsTable."` SET `is_active`='n' WHERE `is_active`!='x'";
-			$this->mDb->query( $sql );
-			foreach( array_keys( $this->mPlugins ) as $guid ) {
+			#zap list of plugins from DB
+			$gBitSystem->setConfigMatch("/^liberty_plugin_status/i", NULL, 'n', LIBERTY_PKG_NAME);
+			foreach ( $this->mPlugins as $guid=>$plugin ) {
 				$this->mPlugins[$guid]['is_active'] = 'n';
 			}
-
+			#set active those specified
 			foreach( array_keys( $pPluginGuids ) as $guid ) {
-				$sql = "UPDATE `".BIT_DB_PREFIX.$this->mPluginsTable."` SET `is_active`='y' WHERE `plugin_guid`=?";
-				$this->mDb->query( $sql, array( $guid ) );
-				$this->mPlugins[$guid]['is_active'] = 'y';
+				if ( $pPluginGuids[$guid][0] == 'y' ) {
+					$config_name = "liberty_plugin_status_" . $guid;
+					$config_value = 'y';
+					$gBitSystem->storeConfig($config_name, $config_value, LIBERTY_PKG_NAME);
+					if (isset($this->mPlugins[$guid])) {
+						$this->mPlugins[$guid]['is_active'] = 'y';
+						}
+				}
 			}
-			// we just ran some SQL - let's flush the loadPlugins query cache
-			$this->loadPlugins( 0 );
+			//load any plugins made active, but not already loaded
+			$this->loadActivePlugins();
 		}
 	}
 
@@ -509,4 +554,5 @@ function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser ) {
 
 global $gLibertySystem;
 $gLibertySystem = new LibertySystem();
+
 ?>
