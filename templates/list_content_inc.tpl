@@ -35,6 +35,7 @@
 		<th>{smartlink ititle="Content Type" isort=content_type_guid list_page=$listInfo.current_page user_id=$user_id content_type_guid=$contentSelect find=$listInfo.find}</th>
 		<th>{smartlink ititle="Author" isort=$isort_author list_page=$listInfo.current_page user_id=$user_id content_type_guid=$contentSelect find=$listInfo.find}</th>
 		<th colspan="2">{smartlink ititle="Most recent editor" isort=$isort_editor list_page=$listInfo.current_page user_id=$user_id content_type_guid=$contentSelect find=$listInfo.find}</th>
+		<th colspan="2">{smartlink ititle="IP" isort=ip list_page=$listInfo.current_page user_id=$user_id content_type_guid=$contentSelect find=$listInfo.find}</th>
 	</tr>
 	{foreach from=$contentList item=item}
 		<tr class="{cycle values='odd,even'}">
@@ -44,6 +45,7 @@
 			<td>{displayname real_name=$item.creator_real_name user=$item.creator_user}</td>
 			<td style="text-align:right;">{displayname real_name=$item.modifier_real_name user=$item.modifier_user}</td>
 			<td style="text-align:right;">{$item.last_modified|bit_short_date}</td>
+			<td>{$item.ip}</td>
 		</tr>
 	{/foreach}
 </table>
