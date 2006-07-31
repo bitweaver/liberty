@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.117 2006/07/23 05:00:20 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.118 2006/07/31 02:26:58 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -861,9 +861,9 @@ class LibertyContent extends LibertyBase {
 
 		if ($pContentId && ($pContentId != $this->mContentId) && !empty($pPrefName)) {
 			// Get a user preference for an arbitrary user
-			$sql = "SELECT `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `pref_name` = ? and `content_id` = ?";
+			$sql = "SELECT `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=? AND `pref_name`=?";
 
-			$rs = $this->mDb->query($sql, array($pPrefName, $pContentId));
+			$rs = $this->mDb->query($sql, array($pContentId, $pPrefName));
 			$ret = (!empty($rs->fields['pref_value'])) ? $rs->fields['pref_value'] : $pPrefDefault;
 		} else {
 			if( isset( $this->mPrefs ) && isset( $this->mPrefs[$pPrefName] ) ) {
