@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.39 2006/07/11 06:41:41 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.40 2006/07/31 02:23:46 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -486,7 +486,7 @@ function liberty_process_archive( &$pFileHash ) {
 	if( ( is_dir( $baseDir ) || mkdir( $baseDir ) ) && @mkdir( $destDir ) ) {
 		// Some commands don't nicely support extracting to other directories
 		chdir( $destDir );
-		list( $mimeType, $mimeExt ) = split( '/', $pFileHash['type'] );
+		list( $mimeType, $mimeExt ) = split( '/', strtolower( $pFileHash['type'] ) );
 		switch( $mimeExt ) {
 			case 'x-rar-compressed':
 			case 'x-rar':
