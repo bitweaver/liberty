@@ -8,7 +8,7 @@ $upgrades = array(
 		'BWR2' => array(
 			// STEP 1
 array( 'QUERY' =>
-	array( 'PGSQL' => array(
+	array( 'SQL92' => array(
 		"ALTER TABLE `".BIT_DB_PREFIX."tiki_content` ADD `last_hit` INT8 NOT NULL DEFAULT 0",
 		"ALTER TABLE `".BIT_DB_PREFIX."tiki_content` ADD `event_time` INT8 NOT NULL DEFAULT 0",
 		"UPDATE `".BIT_DB_PREFIX."tiki_content` SET `last_hit` = `last_modified` ,`event_time` = 0",
@@ -89,7 +89,7 @@ array( 'DATADICT' => array(
 )),
 
 array( 'QUERY' =>
-	array( 'PGSQL' => array(
+	array( 'SQL92' => array(
 		"UPDATE `".BIT_DB_PREFIX."liberty_content_history` SET `content_id`=(SELECT `content_id` FROM `".BIT_DB_PREFIX."tiki_pages` wp WHERE wp.`page_id`=`".BIT_DB_PREFIX."liberty_content_history`.`page_id`)",
 		"UPDATE `".BIT_DB_PREFIX."liberty_content` SET version=(SELECT `version` from `".BIT_DB_PREFIX."tiki_pages` wp WHERE wp.`content_id`=`".BIT_DB_PREFIX."liberty_content`.`content_id`)"
 	)),
@@ -136,214 +136,216 @@ array( 'PHP' => '
 	);
 
 
-	#bitweaver/jht/make_comments_rss.php on line 43
-	#comment=a:7:{s:10:"content_id";s:4:"5339";
-	#s:13:"content_title";
-	#s:19:"Hong Kong Broadband";
-	#s:7:"created";s:10:"1128187879";
-	#s:13:"last_modified";s:10:"1131332821";
-	#s:5:"title";N;
-	#s:4:"user";s:5:"kcyyk";
-	#s:9:"real_name";s:7:"Kenneth";}
+	if( !empty( $allComments ) ) {
+		#bitweaver/jht/make_comments_rss.php on line 43
+		#comment=a:7:{s:10:"content_id";s:4:"5339";
+		#s:13:"content_title";
+		#s:19:"Hong Kong Broadband";
+		#s:7:"created";s:10:"1128187879";
+		#s:13:"last_modified";s:10:"1131332821";
+		#s:5:"title";N;
+		#s:4:"user";s:5:"kcyyk";
+		#s:9:"real_name";s:7:"Kenneth";}
 
 
-	foreach ($allComments as $comment) {
-		# echo "x=" . serialize($comment) . "\n";
-		# exit;
-		$comment_id = $comment["comment_id"];
-		$parent_content_type = $comment["content_type_guid"];
-		$content_title = $comment["content_title"];
-		$content_id = $comment["content_id"];
-		$parent_id = $comment["parent_id"];
-		$created = $comment["created"];
-		$last_modified = $comment["last_modified"];
-		$title = $comment["title"];
-		$user = $comment["user"];
-		$user_name = $comment["real_name"];
-		$data = $comment["data"];
-		$content_type_guid = $comment["content_type_guid"];
+		foreach ($allComments as $comment) {
+			# echo "x=" . serialize($comment) . "\n";
+			# exit;
+			$comment_id = $comment["comment_id"];
+			$parent_content_type = $comment["content_type_guid"];
+			$content_title = $comment["content_title"];
+			$content_id = $comment["content_id"];
+			$parent_id = $comment["parent_id"];
+			$created = $comment["created"];
+			$last_modified = $comment["last_modified"];
+			$title = $comment["title"];
+			$user = $comment["user"];
+			$user_name = $comment["real_name"];
+			$data = $comment["data"];
+			$content_type_guid = $comment["content_type_guid"];
 
-		// assume not usable as not converted yet
-		$root_id = $comment["root_id"];
+			// assume not usable as not converted yet
+			$root_id = $comment["root_id"];
 
-		//make guess of parent_id -- refine later
-		$root_content_id_of_comment[$content_id] = $parent_id;
+			//make guess of parent_id -- refine later
+			$root_content_id_of_comment[$content_id] = $parent_id;
 
-		$parent_content_id_of_comment[$content_id] = $parent_id;
-		$content_type_guid_of_comment[$content_id] = $content_type_guid;
-		$depth_of_comment[$content_id] =  1;
-		$comment_id_of_comment[$content_id] = $comment_id;
+			$parent_content_id_of_comment[$content_id] = $parent_id;
+			$content_type_guid_of_comment[$content_id] = $content_type_guid;
+			$depth_of_comment[$content_id] =  1;
+			$comment_id_of_comment[$content_id] = $comment_id;
 
-		#  echo "A comment: $comment_id content: $content_id parent: $parent_id root: $root_id title: $title\n";
+			#  echo "A comment: $comment_id content: $content_id parent: $parent_id root: $root_id title: $title\n";
 
-	}
+		}
 
-	#echo serialize($content_type_guid_of_comment),"\n";
+		#echo serialize($content_type_guid_of_comment),"\n";
 
-	//calc comment root and depth
+		//calc comment root and depth
 
-	$loop_done = 0;
-	while (!$loop_done) {
-		$c = 0;
+		$loop_done = 0;
+		while (!$loop_done) {
+			$c = 0;
+			foreach ($allComments as $comment) {
+				$content_id = $comment["content_id"];
+				$comment_id = $comment["comment_id"];
+				$parent_id = $comment["parent_id"];
+				$title = $comment["title"];
+
+				$root_id = $root_content_id_of_comment[$content_id];
+				$root_content_type = empty($content_type_guid_of_comment[$root_id]) ? "notcomment" : $content_type_guid_of_comment[$root_id];
+
+				if ($root_content_type == "bitcomment") {
+					# its a comment on a comment
+					# need to go back one more level
+					$root_content_id_of_comment[$content_id] = $parent_content_id_of_comment[$root_id];
+					$depth_of_comment[$content_id]++;
+					$c++;
+				}
+			}
+			if ($c <= 0) {
+				$loop_done = 1;
+			}
+		}
+
+
+		usort($allComments, "jc");
+
+		function jc ($a, $b) {
+			global $root_table;
+			global $depth_of_comment;
+			global $comment_id_of_comment;
+			global $root_content_id_of_comment;
+
+			$content_id_a = $a["content_id"];
+			$content_id_b = $b["content_id"];
+
+			$parent_id_a = $a["parent_id"];
+			$parent_id_b = $b["parent_id"];
+
+			$root_a = $root_content_id_of_comment[$content_id_a];
+			$root_b = $root_content_id_of_comment[$content_id_b];
+
+
+			$depth_a = $depth_of_comment[$content_id_a];
+			$depth_b = $depth_of_comment[$content_id_b];
+
+			$id_a = $comment_id_of_comment[$content_id_a];
+			$id_b = $comment_id_of_comment[$content_id_b];
+
+			$key_a = sprintf("%08d %08d %08d",$root_a,$depth_a,$parent_id_a);
+			$key_b = sprintf("%08d %08d %08d",$root_b,$depth_b,$parent_id_b);;
+
+			if ($key_a == $key_b) {
+				return 0;
+			}
+
+			return ($key_a < $key_b) ? -1: +1;
+		}
+
 		foreach ($allComments as $comment) {
 			$content_id = $comment["content_id"];
 			$comment_id = $comment["comment_id"];
+			$parent_content_type = $comment["content_type_guid"];
+			$content_title = $comment["content_title"];
 			$parent_id = $comment["parent_id"];
+			$created = $comment["created"];
+			$last_modified = $comment["last_modified"];
 			$title = $comment["title"];
+			$user = $comment["user"];
+			$user_name = $comment["real_name"];
+			$data = $comment["data"];
 
 			$root_id = $root_content_id_of_comment[$content_id];
-			$root_content_type = empty($content_type_guid_of_comment[$root_id]) ? "notcomment" : $content_type_guid_of_comment[$root_id];
+			$depth = $depth_of_comment[$content_id];
 
-			if ($root_content_type == "bitcomment") {
-				# its a comment on a comment
-				# need to go back one more level
-				$root_content_id_of_comment[$content_id] = $parent_content_id_of_comment[$root_id];
-				$depth_of_comment[$content_id]++;
-				$c++;
+			// we used to number sequentially, easier to just use comemnt ID
+			#  $root_table_seq[$parent_id . "-" . $depth] =  empty($root_table_seq[$parent_id . "-" . $depth]) ? 1: $root_table_seq[$parent_id . "-" . $depth] + 1; 
+			$root_table_seq[$parent_id . "-" . $depth] = $comment_id;
+
+			$root_table_seq3[$content_id] = $root_table_seq[$parent_id . "-" . $depth];  
+
+			#  echo "C comment $comment_id content: $content_id parent: $parent_id root: $root_id depth: $depth title: $title\n";
+			#  echo "update bit_liberty_comments set root_id=$root_id where comment_id=$comment_id;\n";
+			$sql = "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `root_id` = ? where `comment_id` = ?";
+			echo $sql . "  ($root_id, $comment_id)\n";
+			$result = $gBitSystem->mDb->query($sql, array($root_id, $comment_id));
+			#echo "result=" . serialize($result) . "\n";
+
+		}
+
+
+		foreach ($allComments as $comment) {
+			$content_id = $comment["content_id"];
+			$comment_id = $comment["comment_id"];
+			$parent_content_type = $comment["content_type_guid"];
+			$content_title = $comment["content_title"];
+			$parent_id = $comment["parent_id"];
+			$created = $comment["created"];
+			$last_modified = $comment["last_modified"];
+			$title = $comment["title"];
+			$user = $comment["user"];
+			$user_name = $comment["real_name"];
+			$data = $comment["data"];
+
+			$root_id = $root_content_id_of_comment[$content_id];
+			$depth = $depth_of_comment[$content_id];
+
+			$seq = sprintf("%09d",$root_table_seq3[$content_id]);
+
+			$x = $parent_id;
+			while (!empty($root_table_seq3[$x])) {
+				$seq = sprintf("%09d",$root_table_seq3[$x]) . "." . $seq;
+				$x = $parent_content_id_of_comment[$x];
 			}
-		}
-		if ($c <= 0) {
-			$loop_done = 1;
-		}
-	}
 
 
-	usort($allComments, "jc");
-
-	function jc ($a, $b) {
-		global $root_table;
-		global $depth_of_comment;
-		global $comment_id_of_comment;
-		global $root_content_id_of_comment;
-
-		$content_id_a = $a["content_id"];
-		$content_id_b = $b["content_id"];
-
-		$parent_id_a = $a["parent_id"];
-		$parent_id_b = $b["parent_id"];
-
-		$root_a = $root_content_id_of_comment[$content_id_a];
-		$root_b = $root_content_id_of_comment[$content_id_b];
+			$seq .= ".";
+			if (strlen($seq) > 25*10) {
+				echo "restricting depth: comment: $comment_id, content_id=$content_id\n";
+				$seq = substr($seq,0,24*10) . sprintf("%09d",$comment_id) . ".";
+			}
 
 
-		$depth_a = $depth_of_comment[$content_id_a];
-		$depth_b = $depth_of_comment[$content_id_b];
+			#  $seq_r .= ".";
 
-		$id_a = $comment_id_of_comment[$content_id_a];
-		$id_b = $comment_id_of_comment[$content_id_b];
+			$seq_r = strtr($seq, "0123456789", "9876543210");
 
-		$key_a = sprintf("%08d %08d %08d",$root_a,$depth_a,$parent_id_a);
-		$key_b = sprintf("%08d %08d %08d",$root_b,$depth_b,$parent_id_b);;
+			#  echo "D comment $comment_id content: $content_id parent: $parent_id root: $root_id depth: $depth title: $title\n";
+			#  echo "  seq=$seq=\n";
+			#  echo " rseq=$seq_r=\n";
 
-		if ($key_a == $key_b) {
-			return 0;
+			#  echo "update bit_liberty_comments set thread_forward_sequence="$seq" where comment_id=$comment_id;\n";
+			#  echo "update bit_liberty_comments set thread_reverse_sequence="$seq_r" where comment_id=$comment_id;\n";
+			$sql = "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `thread_forward_sequence` = ? where `comment_id` = ?";
+			echo $sql . "   ($seq, $comment_id)\n";
+			$result = $gBitSystem->mDb->query($sql, array($seq, $comment_id));
+
+			$sql = "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `thread_reverse_sequence` = ? where `comment_id` = ?";
+			echo $sql . "   ($seq_r, $comment_id)\n";
+			$result = $gBitSystem->mDb->query($sql, array($seq_r, $comment_id));
 		}
 
-		return ($key_a < $key_b) ? -1: +1;
-	}
+		// get content links up to speed
+		require_once( LIBERTY_PKG_PATH."plugins/format.tikiwiki.php");
 
-	foreach ($allComments as $comment) {
-		$content_id = $comment["content_id"];
-		$comment_id = $comment["comment_id"];
-		$parent_content_type = $comment["content_type_guid"];
-		$content_title = $comment["content_title"];
-		$parent_id = $comment["parent_id"];
-		$created = $comment["created"];
-		$last_modified = $comment["last_modified"];
-		$title = $comment["title"];
-		$user = $comment["user"];
-		$user_name = $comment["real_name"];
-		$data = $comment["data"];
-
-		$root_id = $root_content_id_of_comment[$content_id];
-		$depth = $depth_of_comment[$content_id];
-
-		// we used to number sequentially, easier to just use comemnt ID
-		#  $root_table_seq[$parent_id . "-" . $depth] =  empty($root_table_seq[$parent_id . "-" . $depth]) ? 1: $root_table_seq[$parent_id . "-" . $depth] + 1; 
-		$root_table_seq[$parent_id . "-" . $depth] = $comment_id;
-
-		$root_table_seq3[$content_id] = $root_table_seq[$parent_id . "-" . $depth];  
-
-		#  echo "C comment $comment_id content: $content_id parent: $parent_id root: $root_id depth: $depth title: $title\n";
-		#  echo "update bit_liberty_comments set root_id=$root_id where comment_id=$comment_id;\n";
-		$sql = "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `root_id` = ? where `comment_id` = ?";
-		echo $sql . "  ($root_id, $comment_id)\n";
-		$result = $gBitSystem->mDb->query($sql, array($root_id, $comment_id));
-		#echo "result=" . serialize($result) . "\n";
-
-	}
+		$bb = new BitBase;
+		// remove all existing links
+		$query = "DELETE  FROM `".BIT_DB_PREFIX."liberty_content_links` ";
+		$result = $bb->mDb->query($query, array());
 
 
-	foreach ($allComments as $comment) {
-		$content_id = $comment["content_id"];
-		$comment_id = $comment["comment_id"];
-		$parent_content_type = $comment["content_type_guid"];
-		$content_title = $comment["content_title"];
-		$parent_id = $comment["parent_id"];
-		$created = $comment["created"];
-		$last_modified = $comment["last_modified"];
-		$title = $comment["title"];
-		$user = $comment["user"];
-		$user_name = $comment["real_name"];
-		$data = $comment["data"];
-
-		$root_id = $root_content_id_of_comment[$content_id];
-		$depth = $depth_of_comment[$content_id];
-
-		$seq = sprintf("%09d",$root_table_seq3[$content_id]);
-
-		$x = $parent_id;
-		while (!empty($root_table_seq3[$x])) {
-			$seq = sprintf("%09d",$root_table_seq3[$x]) . "." . $seq;
-			$x = $parent_content_id_of_comment[$x];
-		}
-
-
-		$seq .= ".";
-		if (strlen($seq) > 25*10) {
-			echo "restricting depth: comment: $comment_id, content_id=$content_id\n";
-			$seq = substr($seq,0,24*10) . sprintf("%09d",$comment_id) . ".";
-		}
-
-
-		#  $seq_r .= ".";
-
-		$seq_r = strtr($seq, "0123456789", "9876543210");
-
-		#  echo "D comment $comment_id content: $content_id parent: $parent_id root: $root_id depth: $depth title: $title\n";
-		#  echo "  seq=$seq=\n";
-		#  echo " rseq=$seq_r=\n";
-
-		#  echo "update bit_liberty_comments set thread_forward_sequence="$seq" where comment_id=$comment_id;\n";
-		#  echo "update bit_liberty_comments set thread_reverse_sequence="$seq_r" where comment_id=$comment_id;\n";
-		$sql = "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `thread_forward_sequence` = ? where `comment_id` = ?";
-		echo $sql . "   ($seq, $comment_id)\n";
-		$result = $gBitSystem->mDb->query($sql, array($seq, $comment_id));
-
-		$sql = "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `thread_reverse_sequence` = ? where `comment_id` = ?";
-		echo $sql . "   ($seq_r, $comment_id)\n";
-		$result = $gBitSystem->mDb->query($sql, array($seq_r, $comment_id));
-	}
-
-	// get content links up to speed
-	require_once( LIBERTY_PKG_PATH."plugins/format.tikiwiki.php");
-
-	$bb = new BitBase;
-	// remove all existing links
-	$query = "DELETE  FROM `".BIT_DB_PREFIX."liberty_content_links` ";
-	$result = $bb->mDb->query($query, array());
-
-
-	// get list of all wiki pages in tikiwiki format
-	$ci = 0;
-	$query = "SELECT `content_id`, `data` AS `edit`, `title` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `format_guid`=?";
-	if( $result = $bb->mDb->query($query, array( "tikiwiki" ) ) ) {
-		// generate links for each content item
-		while( $row = $result->fetchRow() ) {
-			$content_id = $row["content_id"];
-			$tp = new TikiWikiParser();
-			$tp->storeLinks($row);
-			$ci++;
+		// get list of all wiki pages in tikiwiki format
+		$ci = 0;
+		$query = "SELECT `content_id`, `data` AS `edit`, `title` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `format_guid`=?";
+		if( $result = $bb->mDb->query($query, array( "tikiwiki" ) ) ) {
+			// generate links for each content item
+			while( $row = $result->fetchRow() ) {
+				$content_id = $row["content_id"];
+				$tp = new TikiWikiParser();
+				$tp->storeLinks($row);
+				$ci++;
+			}
 		}
 	}
 '),

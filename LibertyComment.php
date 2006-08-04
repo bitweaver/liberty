@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.30 2006/07/29 15:48:26 hash9 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.31 2006/08/04 09:38:50 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -220,9 +220,8 @@ class LibertyComment extends LibertyContent {
 		LibertyContent::prepGetList( $pParamHash );
 		$sort_mode = $this->mDb->convert_sortmode($pParamHash['sort_mode']);
 
-		$joinSql = '';
-		$whereSql = '';
-		$bindVars = array();
+		$joinSql = $whereSql = '';
+		$bindVars = $ret = array();
 		if ( !empty( $pParamHash['content_type_guid'] ) ) {
 			$whereSql .= " AND rlc.`content_type_guid`=? ";
 			$bindVars[] = $pParamHash['content_type_guid'];
