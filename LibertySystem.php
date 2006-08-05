@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.35 2006/08/01 14:26:23 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.36 2006/08/05 18:04:18 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -61,7 +61,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
 class LibertySystem extends LibertyBase {
 
 	// Hash of plugin data
-	var $mPlugins;
+	var $mPlugins = array();
 
 	// Liberty data tags
 	var $mDataTags;
