@@ -1,11 +1,11 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.17 2006/06/21 10:44:45 bitweaver Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.18 2006/08/05 16:06:58 squareing Exp $ *}
 
 {strip}
 	{if $gBitSystem->isFeatureActive( 'site_edit_help' )}
 		<h2>{tr}Syntax Help{/tr}</h2>
 		{foreach from=$formatplugins item=p}
 			<h3>{$p.title}</h3>
-			{$p.description} {tr}To view syntax help, please visit {jspopup href="http://www.bitweaver.org/wiki/index.php?page=`$p.help_page`" title=$p.help_page class=external}.{/tr}
+			{$p.description} {if $p.help_page}{tr}To view syntax help, please visit {jspopup href="http://www.bitweaver.org/wiki/index.php?page=`$p.help_page`" title=$p.help_page class=external}.{/tr}{/if}
 		{/foreach}
 		<p>{tr}For more information, please visit {jspopup href="http://www.bitweaver.org/" title="www.bitweaver.org" class=external}{/tr}</p>
 
