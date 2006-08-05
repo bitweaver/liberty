@@ -109,6 +109,8 @@ array( 'DATADICT' => array(
 			'root_id' => array( 'root_id', 'I4' ),
 			'thread_forward_sequence' => array( '`thread_forward_sequence`', 'VARCHAR(250)' ),
 			'thread_reverse_sequence' => array( '`thread_reverse_sequence`', 'VARCHAR(250)' ),
+			// some other unrelated fields
+			'anon_name' => array( '`anon_name`', 'VARCHAR(64)' ),
 		),
 	)),
 
