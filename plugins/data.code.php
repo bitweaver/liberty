@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.17 $
+ * @version  $Revision: 1.18 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.17 2006/08/05 16:21:57 squareing Exp $
+// $Id: data.code.php,v 1.18 2006/08/05 17:16:12 squareing Exp $
 
 /**
  * definitions
@@ -62,6 +62,11 @@ function data_code_help() {
 	$help = $help . '<br />' . tra("The Default = ") . '<strong>PHP</strong></td>'
 			.'</tr>'
 			.'<tr class="even">'
+				.'<td>title</td>'
+				.'<td>'.tra( "string").'<br />'.tra("(optional)").'</td>'
+				.'<td>'.tra( "Give the codelisting a title.").'</td>'
+			.'</tr>'
+			.'<tr class="odd">'
 				.'<td>num</td>'
 				.'<td>' .tra( "boolean/number") .'<br />'. tra("(optional)") . '</td>'
 				.'<td>' .tra( "Determins if Line Numbers are displayed with the code. Specifing:")
@@ -185,6 +190,6 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 		$code = "<pre>$code</pre>";
 	}
 
-	return "<!--~np~-->".( !empty( $title ) ? "<p class=\"code highlight\">{$title}</p>" : "" )."<div class='codelisting'>".$code."</div><!--~/np~-->";
+	return "<!--~np~-->".( !empty( $title ) ? '<p class="codetitle highlight">'.tra( 'Codelisting' ).': '.$title.'</p>' : "" )."<div class='codelisting'>".$code."</div><!--~/np~-->";
 }
 ?>
