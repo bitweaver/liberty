@@ -1,10 +1,10 @@
 <?php
 /**
- * $Id: edit_help_inc.php,v 1.9 2006/04/24 21:38:21 squareing Exp $
+ * $Id: edit_help_inc.php,v 1.10 2006/08/05 18:03:37 squareing Exp $
  * edit_help_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage functions
  */
@@ -24,7 +24,9 @@ foreach( array_keys( $gLibertySystem->mPlugins ) as $pluginGuid ) {
 			$pinfo["is_active"] =	$gLibertySystem->mPlugins[$pluginGuid]['is_active'];
 			$pinfo["help_page"] =	!empty( $gLibertySystem->mPlugins[$pluginGuid]['help_page'] ) ?		$gLibertySystem->mPlugins[$pluginGuid]['help_page'] : NULL ;
 			$formatplugins[] = $pinfo;
-	}	}
+		}
+	}
+
 	if( ($gLibertySystem->mPlugins[$pluginGuid]['plugin_type'] == DATA_PLUGIN) && ($gLibertySystem->mPlugins[$pluginGuid]['is_active'] == 'y') ) {
 		if( isset( $gLibertySystem->mPlugins[$pluginGuid]['description'] )) {
 			$pinfo["guid"] =			preg_replace( "/^data/", "", $pluginGuid );
@@ -41,12 +43,17 @@ foreach( array_keys( $gLibertySystem->mPlugins ) as $pluginGuid ) {
 			$pinfo["exthelp"] = 		!empty( $gLibertySystem->mPlugins[$pluginGuid]['help_function'] ) &&
 				function_exists($gLibertySystem->mPlugins[$pluginGuid]['help_function'] ) 						? $gLibertySystem->mPlugins[$pluginGuid]['help_function']() : '';
 			$dataplugins[] = $pinfo;
-}	}	}
-$FirstPluginWinId = $dataplugins[0]["guid"];
-$helpWinId  = 'HelpWindow';
+		}
+	}
+}
 
-$gBitSmarty->assign_by_ref( 'formatplugins', $formatplugins );
-$gBitSmarty->assign_by_ref( 'dataplugins', $dataplugins );
-$gBitSmarty->assign_by_ref( 'helpWinId', $helpWinId );
-$gBitSmarty->assign_by_ref( 'FirstPluginWinId', $FirstPluginWinId );
+if( !empty( $dataplugins ) ) {
+	$FirstPluginWinId = $dataplugins[0]["guid"];
+	$helpWinId  = 'HelpWindow';
+
+	$gBitSmarty->assign_by_ref( 'formatplugins', $formatplugins );
+	$gBitSmarty->assign_by_ref( 'dataplugins', $dataplugins );
+	$gBitSmarty->assign_by_ref( 'helpWinId', $helpWinId );
+	$gBitSmarty->assign_by_ref( 'FirstPluginWinId', $FirstPluginWinId );
+}
 ?>
