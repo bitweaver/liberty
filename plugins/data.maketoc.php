@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.9 2006/07/13 12:59:16 squareing Exp $
+// $Id: data.maketoc.php,v 1.10 2006/08/05 16:21:57 squareing Exp $
 
 /**
  * definitions
@@ -28,7 +28,7 @@ $pluginParams = array (
 	'auto_activate' => TRUE,
 	'requires_pair' => FALSE,
 	'load_function' => '',
-	'title' => 'MakeTOC',
+	'title' => 'Page Table of Contents',
 	'help_page' => 'DataPluginMakeTOC',
 	'description' => tra("Will create a table of contents of the WikiPage based on the headings below."),
 	'help_function' => 'data_maketoc_help',

@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.18 2006/08/05 16:06:58 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.19 2006/08/05 16:21:57 squareing Exp $ *}
 
 {strip}
 	{if $gBitSystem->isFeatureActive( 'site_edit_help' )}
@@ -18,7 +18,7 @@
 								{tr}Select the plugin{/tr}:<br />
 								<select size="15" onchange="javascript:flipMulti(this.options[this.selectedIndex].value,1,1)">
 									{foreach from=$dataplugins item=p}
-										<option value="{$p.guid}">{$p.title|escape}</option>
+										<option value="{$p.guid}">{$p.title|escape} &bull; {ldelim}{$p.tag|lower}{rdelim}</option>
 									{/foreach}
 								</select>
 							</div>

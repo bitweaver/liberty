@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked & Undoubtedly Screwed-Up for (Bitweaver)
 // | by: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.sf.php,v 1.8 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.sf.php,v 1.9 2006/08/05 16:21:57 squareing Exp $
 
 /**
  * definitions
@@ -31,7 +31,7 @@ $pluginParams = array (
 	'auto_activate' => TRUE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_sf',
-	'title' => 'SourceForge (SF)',
+	'title' => 'SourceForge',
 	'help_page' => 'DataPluginSourceForge',
 	'description' => tra("Creates a link to SourceForge. Can link to the Bugs / RFEs / Patches / Support Index pages or individual items on those pages."),
 	'help_function' => 'data_sf_help',

@@ -3,7 +3,7 @@
  * assigned_modules
  *
  * @author     xing
- * @version    $Revision: 1.1 $
+ * @version    $Revision: 1.2 $
  * @package    liberty
  * @subpackage plugins_data
  * @copyright  Copyright (c) 2004, bitweaver.org
@@ -19,7 +19,7 @@ $pluginParams = array (
 	'auto_activate' => TRUE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_span',
-	'title' => 'span (span)',
+	'title' => 'Span',
 	'help_page' => 'DataPluginspan',
 	'description' => tra( "This plugin allows you to easily create a span with a number of optional CSS parameters." ),
 	'help_function' => 'data_span_help',

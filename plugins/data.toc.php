@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.8 2006/06/08 10:24:26 dspt Exp $
+// $Id: data.toc.php,v 1.9 2006/08/05 16:21:57 squareing Exp $
 
 /**
  * definitions
@@ -30,7 +30,7 @@ $pluginParams = array (
 	'auto_activate' => TRUE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_toc',
-	'title' => 'Table Of Contents (TOC)',
+	'title' => 'Structure Table Of Contents',
 	'help_page' => 'DataPluginTOC',
 	'description' => tra("Display a Table Of Contents for Structures"),
 	'help_function' => 'data_toc_help',

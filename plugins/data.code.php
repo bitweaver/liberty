@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.16 $
+ * @version  $Revision: 1.17 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.16 2006/04/12 00:20:11 starrrider Exp $
+// $Id: data.code.php,v 1.17 2006/08/05 16:21:57 squareing Exp $
 
 /**
  * definitions
@@ -86,9 +86,9 @@ if( !function_exists( 'unHtmlEntities' )) { // avoid name collisions
 }
 if( !function_exists( 'deCodeHTML' )) { // avoid name collisions
 	function deCodeHTML($str) {
-	    $str = strtr($str, array_flip(get_html_translation_table(HTML_ENTITIES)));
-    	$str = preg_replace("/&#([0-9]+);/me", "chr('\\1')", $str);
-    	return $str;
+		$str = strtr($str, array_flip(get_html_translation_table(HTML_ENTITIES)));
+		$str = preg_replace("/&#([0-9]+);/me", "chr('\\1')", $str);
+		return $str;
 	}
 }
 
@@ -104,15 +104,16 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 	if (isset($in) ) $source = $in;
 	$source = isset($source) ? strtolower($source) : 'php'; // if not specified the default is HTML
 	if (isset($in)) $num = $in; // This maintains Pre-Clyde Parameters
-    if (isset($num) && (!is_numeric ($num))) {
+	if (isset($num) && (!is_numeric ($num))) {
 		switch (strtoupper($num)) {
-		    case 'TRUE': case 'ON': case 'YES':
-			    $num = 1;
-				break;
-			default: // could have done FALSE/OFF/NO but we want any other value to be False
-			    $num = 0;
-				break;
-	}	}
+		case 'TRUE': case 'ON': case 'YES':
+			$num = 1;
+			break;
+		default: // could have done FALSE/OFF/NO but we want any other value to be False
+			$num = 0;
+			break;
+		}
+	}
 	$num = (isset($num)) ? $num : FALSE;
 
 	// trim any trailing spaces
@@ -165,8 +166,8 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 				if(!preg_match( '/^[ 0-9:]*<\?/i', $code ) ) { // Check it if code starts with PHP tags, if not: add 'em.
 					$code = "<?php\n".$code."?>"; // The require these tags to function
 				}
-			   $code = highlight_string($code, true);
-			   $convmap = array( // Replacement-map to replace Colors
+				$code = highlight_string($code, true);
+				$convmap = array( // Replacement-map to replace Colors
 					'#000000">' => '#004A4A">', // The Default Color
 					'#006600">' => '#2020FF">', // Color for Functions/Variables/Numbers/&/Constants
 					'#0000CC">' => '#209020">', // Color for KeyWords
@@ -184,8 +185,6 @@ function data_code( $data, $params ) { // Pre-Clyde Changes
 		$code = "<pre>$code</pre>";
 	}
 
-
-	$work = "<!--~np~--><div class='codelisting'>". $code ."</div><!--~/np~-->";
-    return $work;
+	return "<!--~np~-->".( !empty( $title ) ? "<p class=\"code highlight\">{$title}</p>" : "" )."<div class='codelisting'>".$code."</div><!--~/np~-->";
 }
 ?>

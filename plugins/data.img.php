@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.4 2006/04/09 19:17:50 bitweaver Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.5 2006/08/05 16:21:57 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAIMG', 'dataimg' );
 global $gLibertySystem;
@@ -8,7 +8,7 @@ $pluginParams = array (
 	'auto_activate' => TRUE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_img',
-	'title' => 'Image {img}',
+	'title' => 'Image',
 	'help_page' => 'DataPluginImg',
 	'description' => tra( "Allows you to insert an image into your page with little effort and a multitude of styling options." ),
 	'help_function' => 'data_img_help',

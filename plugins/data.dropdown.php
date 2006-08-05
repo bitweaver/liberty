@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -27,7 +27,7 @@ $pluginParams = array (
 	'auto_activate' => TRUE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_dropdown',
-	'title' => 'DropDown (DD)',
+	'title' => 'DropDown',
 	'help_page' => 'DataPluginDropDown',
 	'description' => tra("This plugin creates a expandable box of text.. All text should be entered between the ") . "{DD} " . tra("blocks."),
 	'help_function' => 'data_dropdown_help',

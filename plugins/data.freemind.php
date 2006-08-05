@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Southpaw <southpawz@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.freemind.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.freemind.php,v 1.8 2006/08/05 16:21:57 squareing Exp $
 
 /**
  * definitions
@@ -29,7 +29,7 @@ $pluginParams = array (
 	'auto_activate' => TRUE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_freemind',
-	'title' => 'FreeMind (Mind Map)',
+	'title' => 'FreeMind - Mind Map',
 	'help_page' => 'DataPluginFreeMind',
 	'description' => tra("Displays a Freemind mindmap"),
 	'help_function' => 'data_freemind_help',

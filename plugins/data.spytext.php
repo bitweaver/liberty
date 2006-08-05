@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider starrrider@sourceforge.net
 // +----------------------------------------------------------------------+
-// $Id: data.spytext.php,v 1.8 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.spytext.php,v 1.9 2006/08/05 16:21:57 squareing Exp $
 
 /******************
  * Initialization *
@@ -27,7 +27,7 @@ $pluginParams = array (
 	'auto_activate' => TRUE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_spytext',
-	'title' => 'Spy Text (SPYTEXT)',
+	'title' => 'Spy Text',
 	'help_page' => 'DataPluginSpyText',
 	'description' => tra("Allows text to be stored that is only visible to a List of Spys or to a Spy Agency (Group). To anyone else (except an Admin) the text is not be visible."),
 	'help_function' => 'data_spytext_help',
@@ -56,7 +56,7 @@ function data_spytext_help() {
 				.'<td>' . tra( "A List of Spy(s) who can see the Message. Each Spy must be seperated with the | character like this:")
 					."<br /><strong>spy='Fire|Spider|Lester|Xing'</strong>"
 					.'<br />' .tra( "The Message will <strong>ONLY</strong> be displayed to Spys. <strong>HINT:</strong> The Admin is a Spy!")
-			  . '</td>'
+				.'</td>'
 			.'</tr>'
 			.'<tr class="even">'
 				.'<td>agency</td>'
@@ -167,14 +167,16 @@ function data_spytext($data, $params) {
 	} // **************** Elvis has left the building!
 
 	$isSpy = ($gBitUser->isAdmin()) ? TRUE : FALSE; // Admin should always see SpyText
-    $isRealSpy = FALSE; // So Admin does not see EVERY Alert
+	$isRealSpy = FALSE; // So Admin does not see EVERY Alert
 	if (isset($spy)) { // Is the current user on the Spy List
 		$spyArray = explode("|", trim(strtolower($spy))); // spy's allowed to see the message
 		foreach ($spyArray as $i) {
 			if ($i == (strtolower($gBitUser->getTitle()))) {
 				$isSpy = TRUE;
 				$isRealSpy = TRUE;
-	}	}	}
+			}
+		}
+	}
 
 	if (isset($agency)) { // Is the current user in one of the Spy Agencies
 		$spyArray = explode("|", trim(strtolower($agency))); // create an array from the string
@@ -184,7 +186,10 @@ function data_spytext($data, $params) {
 				if (trim(strtolower($g['group_name'])) == $i) {
 					$isSpy = TRUE;
 					$isRealSpy = TRUE;
-	}	}	}	}
+				}
+			}
+		}
+	}
 
 	if (!$isSpy) { // The current user is NOT a Spy - get out of here
 		return " ";
@@ -192,10 +197,10 @@ function data_spytext($data, $params) {
 
 	$addToBox = (isset($to)) ? TRUE : FALSE;
 	if ($addToBox) {
-        $toLine = 'To the Spy: '; // Set Default
-        $agencyLine = 'To the Agency: '; // Set Default
-        $senderLine = 'From Your Source: '; // Set Default
-        $header = explode("|", $to);
+		$toLine = 'To the Spy: '; // Set Default
+		$agencyLine = 'To the Agency: '; // Set Default
+		$senderLine = 'From Your Source: '; // Set Default
+		$header = explode("|", $to);
 		$toLine     = (isset($header[0]) && (($header[0] != '*') && ($header[0] != 'TRUE'))) ? $header[0] .' ' : $toLine;
 		$agencyLine = (isset($header[1]) && ($header[1] != '*')) ? $header[1] .' ' : $agencyLine;
 		$senderLine = (isset($header[2]) && ($header[2] != '*')) ? $header[2] .' ' : $senderLine;
@@ -204,12 +209,13 @@ function data_spytext($data, $params) {
 		if (isset($spy)) { // Provide a Listing of all spys tested
 			$spyArray = explode("|", $spy); // Strip Out the | character
 			natcasesort ($spyArray); // Sort it
-	        foreach ($spyArray as $i) {
+			foreach ($spyArray as $i) {
 				if ($gBitUser->userExists(array('login' => $i))) {
 					$toLine = ($addToLine) ? $toLine . ', ' : $toLine; // misses the first and last Spy
 					$toLine = $toLine.(BitUser::getDisplayName( TRUE, array('login' => $i)));
 					$addToLine = True;
-			}	}
+				}
+			}
 			$toLine = '<tr><td style="vertical-align: top;">' .$toLine. '</td></tr>';
 		}
 
@@ -219,7 +225,7 @@ function data_spytext($data, $params) {
 			natcasesort ($agency_array); // Sort it
 			$listHash = array( 'sort_mode' => 'group_name_asc' );
 			$groups = $gBitUser->getAllGroups( $listHash );
-            foreach ($agency_array as $i) { // TODO - Remove all Non-valid groups - ($i == $i)
+			foreach ($agency_array as $i) { // TODO - Remove all Non-valid groups - ($i == $i)
 				if( $groupId = $gBitUser->groupExists( $i ) ) {
 					$validGroups[$groupId] = $i;
 					$agencyLine = ($addAgencyLine) ? $agencyLine .', ' : $agencyLine; // misses the first and last Agency
@@ -228,7 +234,8 @@ function data_spytext($data, $params) {
 				} else {
 					$k = key( $agency_array );
 					unset( $agency_array[$k] );
-			}	}
+				}
+			}
 			$agencyLine = '<tr><td style="vertical-align: top;">' . $agencyLine . '</td></tr>';
 		}
 
@@ -236,7 +243,7 @@ function data_spytext($data, $params) {
 		if (isset($sender)) { // Provide a Listing of all senders tested
 			$spyArray = explode("|", $sender); // Strip Out the | character
 			natcasesort ($spyArray); // Sort it
-	        foreach ($spyArray as $i) { // TODO - Remove All Non-valid users - ($i == $i)
+			foreach ($spyArray as $i) { // TODO - Remove All Non-valid users - ($i == $i)
 				if ($gBitUser->userExists(array('login' => $i))) {
 					$senderLine = ($addSenderLine) ? $senderLine . ', ' : $senderLine; // misses the first and last Spy
 					$senderLine = $senderLine.(BitUser::getDisplayName( TRUE, array('login' => $i)));
@@ -267,7 +274,8 @@ function data_spytext($data, $params) {
 					$toBox = ($addSenderLine) ? $toBox . $senderLine : $toBox; // Drop fromLine if nothing on it
 				$toBox = $toBox . '</table></div>';
 			$toBox = $toBox . '</div>';
-	}	}
+		}
+	}
 
 	$spyId = 'spydata'.(microtime() * 1000000);
 	$hidden = (isset($hidden)) ? TRUE : FALSE;
@@ -276,8 +284,8 @@ function data_spytext($data, $params) {
 		if ($useIcon) {
 			if ((trim(strtoupper($icon))) == 'TRUE')
 				$spyLink = '<a href="javascript:flip('.$spyId.')"><img src="'.LIBERTY_PKG_URL.'icons/spy.gif"></img></a>'; // Default
-            // --------------------------> TODO - Need to set with Content Id No's
-            if (!isset($spyLink)) {
+			// --------------------------> TODO - Need to set with Content Id No's
+			if (!isset($spyLink)) {
 				$spyLink = '<a href="javascript:flip('.$spyId.')"><img src="'.$icon.'"></img></a>'; // Last Choice - A URL
 			} else {
 				$spyLink = '<a href="javascript:flip('.$spyId.')"><img src="'.LIBERTY_PKG_URL.'icons/spy.gif"></img></a>'; // Default
@@ -297,11 +305,12 @@ function data_spytext($data, $params) {
 					.'</tr>'
 				.'</table>'
 			.'</div>';
-	}	}
-    $ret = ($hidden) ? $spyLink. '<div class="help box" style="display:none;" id="' .$spyId. '">' : '';
-    $ret = ($addToBox) ? $ret.$toBox : $ret;
+		}
+	}
+	$ret = ($hidden) ? $spyLink. '<div class="help box" style="display:none;" id="' .$spyId. '">' : '';
+	$ret = ($addToBox) ? $ret.$toBox : $ret;
 	$ret = $ret .'<div class="help box" style="text-align:left;">'.$data.'</div>';
-    $ret = ($hidden) ? $ret.'</div>' : $ret;
+	$ret = ($hidden) ? $ret.'</div>' : $ret;
 
 // I'm NOT Sure if this should be include or not - especially the way I have it set up
 // I have reduced the number of Alerts that an Admin would recieve - Only Hidden Messages
@@ -313,7 +322,8 @@ function data_spytext($data, $params) {
 		} else {
 			$spyAlert = TRUE;
 			$spyMsg = $alert;
-	}	}
+		}
+	}
 	if (($gBitUser->isAdmin()) && ($hidden)) {
 		$spyMsg = '*UserName*\nThere is Hidden SpyText on this page.';
 		$spyAlert = TRUE;
