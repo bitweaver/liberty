@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.57 $
+ * @version  $Revision: 1.58 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -177,9 +177,6 @@ class TikiWikiParser extends BitBase {
 
 	function storeLinks( &$pParamHash ) {
 		global $gBitSystem;
-		if( !$gBitSystem->isPackageActive( 'wiki') ) {
-			return;
-		}
 
 		if( empty( $pParamHash['content_id'] ) ) {
 			return;
