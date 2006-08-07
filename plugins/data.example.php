@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -26,7 +26,7 @@ $pluginParams = array ( 'tag' => 'EXAM',
 	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_example',
-	'title' => 'Example (EXAM)',
+	'title' => 'Example',
 	'help_page' => 'DataPluginExample',
 	'description' => tra("This Plugin is an Example that does nothing. It functions as a template for the creation of new plugins."),
 	'help_function' => 'data_example_help',

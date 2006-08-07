@@ -34,11 +34,13 @@
 								{if $plugin.plugin_type eq $plugin_type}
 									<tr class="{cycle values="odd,even"}">
 										<td>
-											{if $plugin_type eq 'data'}
-												<h3>{$plugin.title|escape}</h3>
-											{/if}
 											<label for="{$guid}">
-												{$plugin.plugin_description}
+												{if $plugin_type eq 'data'}
+													<h3>{$plugin.title|escape}</h3>
+												{else}
+													<h3>{$plugin.edit_label}</h3>
+												{/if}
+												{$plugin.description}
 											</label>
 										</td>
 										<td>{$guid}</td>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,14 +15,14 @@
 // +----------------------------------------------------------------------+
 // | Author: Southpaw <southpawz@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.freemind.php,v 1.8 2006/08/05 16:21:57 squareing Exp $
+// $Id: data.freemind.php,v 1.9 2006/08/07 22:14:58 squareing Exp $
 
 /**
  * definitions
  */
 global $gLibertySystem;
 
-define( 'PLUGIN_GUID_FREEMIND', 'datafreemind' );
+define( 'PLUGIN_GUID_DATAFREEMIND', 'datafreemind' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'MM',
@@ -38,8 +38,8 @@ $pluginParams = array (
 	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
-$gLibertySystem->registerPlugin( PLUGIN_GUID_FREEMIND, $pluginParams );
-$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_FREEMIND );
+$gLibertySystem->registerPlugin( PLUGIN_GUID_DATAFREEMIND, $pluginParams );
+$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAFREEMIND );
 
 // Help Function
 function data_freemind_help() {

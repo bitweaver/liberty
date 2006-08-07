@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_usercount.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.usercount.php,v 1.6 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.usercount.php,v 1.7 2006/08/07 22:14:58 squareing Exp $
 
 /**
  * definitions
@@ -30,7 +30,7 @@ $pluginParams = array (
 	'auto_activate' => FALSE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_usercount',
-	'title' => 'UserCount<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
+	'title' => 'UserCount - This plugin is not yet functional.', // Remove this line when the plugin becomes operational
 //	'title' => 'UserCount',                                                                                       // and Remove the comment from the start of this line
 	'help_page' => 'DataPluginUserCount',
 	'description' => tra("Will show the number of users. If a Group Name can be included to filter the Groups."),

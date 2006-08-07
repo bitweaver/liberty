@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_article.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.article.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.article.php,v 1.8 2006/08/07 22:14:57 squareing Exp $
 
 /**
  * definitions
@@ -32,7 +32,7 @@ $pluginParams = array (
 	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_article',
-	'title' => 'Article<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin
+	'title' => 'Article - This plugin is not yet functional.', // Remove this line when the plugin
 //	'title' => 'Article',	// and Remove the comment from the start of this line
 	'help_page' => 'DataPluginArticle',
 	'description' => tra("This plugin will display the data from a single field in the specified Article."),

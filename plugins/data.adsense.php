@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author:  xing
 // +----------------------------------------------------------------------+
-// $Id: data.adsense.php,v 1.2 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.adsense.php,v 1.3 2006/08/07 22:14:57 squareing Exp $
 
 /**
  * definitions
@@ -24,7 +24,7 @@
 * Initialization *
 ******************/
 global $gLibertySystem;
-define( 'PLUGIN_GUID_ADSENSE', 'adsense' );
+define( 'PLUGIN_GUID_DATAADSENSE', 'dataadsense' );
 $pluginParams = array (
 	'tag' => 'ADSENSE',
 	'auto_activate' => FALSE,
@@ -39,8 +39,8 @@ $pluginParams = array (
 	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
-$gLibertySystem->registerPlugin( PLUGIN_GUID_ADSENSE, $pluginParams );
-$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_ADSENSE );
+$gLibertySystem->registerPlugin( PLUGIN_GUID_DATAADSENSE, $pluginParams );
+$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAADSENSE );
 /*****************
 * Help Function *
 *****************/

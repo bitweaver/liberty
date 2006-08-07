@@ -1,10 +1,10 @@
 <?php
-// $Id: data.ledgertable.php,v 1.3 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.ledgertable.php,v 1.4 2006/08/07 22:14:58 squareing Exp $
 /**
  * assigned_modules
  *
  * @author   KainX <mej@kainx.org>
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -20,7 +20,7 @@ $pluginParams = array ( 'tag' => 'LEDGERTABLE',
 	'auto_activate' => FALSE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_ledgertable',
-	'title' => 'Ledger Table (LEDGERTABLE)',
+	'title' => 'Ledger Table',
 	'help_page' => 'DataPluginLedgertable',
 	'description' => tra("This Plugin creates a ledger-like table with even/odd row colors, optional top- or left-placed headers, and support for row/column spans."),
 	'help_function' => 'data_ledgertable_help',

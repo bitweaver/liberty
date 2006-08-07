@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -21,7 +21,7 @@
  * Initialization
  */
 global $gLibertySystem;
-define( 'PLUGIN_GUID_DROPDOWN', 'dropdown' );
+define( 'PLUGIN_GUID_DATADROPDOWN', 'datadropdown' );
 $pluginParams = array (
 	'tag' => 'DD',
 	'auto_activate' => TRUE,
@@ -36,8 +36,8 @@ $pluginParams = array (
 	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
-$gLibertySystem->registerPlugin( PLUGIN_GUID_DROPDOWN, $pluginParams );
-$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DROPDOWN );
+$gLibertySystem->registerPlugin( PLUGIN_GUID_DATADROPDOWN, $pluginParams );
+$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATADROPDOWN );
 
 /**
  * Help Function

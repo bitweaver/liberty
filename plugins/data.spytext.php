@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,13 +15,13 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider starrrider@sourceforge.net
 // +----------------------------------------------------------------------+
-// $Id: data.spytext.php,v 1.10 2006/08/05 16:45:28 squareing Exp $
+// $Id: data.spytext.php,v 1.11 2006/08/07 22:14:58 squareing Exp $
 
 /******************
  * Initialization *
  ******************/
 global $gLibertySystem;
-define( 'PLUGIN_GUID_SPYTEXT', 'dataspytext' );
+define( 'PLUGIN_GUID_DATASPYTEXT', 'dataspytext' );
 $pluginParams = array (
 	'tag' => 'SPYTEXT',
 	'auto_activate' => TRUE,
@@ -36,8 +36,8 @@ $pluginParams = array (
 	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
-$gLibertySystem->registerPlugin( PLUGIN_GUID_SPYTEXT, $pluginParams );
-$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_SPYTEXT );
+$gLibertySystem->registerPlugin( PLUGIN_GUID_DATASPYTEXT, $pluginParams );
+$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATASPYTEXT );
 
 /*****************
  * Help Function *

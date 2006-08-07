@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_wikilist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikilist.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.wikilist.php,v 1.8 2006/08/07 22:14:58 squareing Exp $
 
 /**
  * definitions
@@ -30,7 +30,7 @@ $pluginParams = array (
 	'auto_activate' => FALSE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_wikilist',
-	'title' => 'WikiList<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
+	'title' => 'WikiList - This plugin is not yet functional.', // Remove this line when the plugin becomes operational
 //	'title' => 'WikiList',                                                                             // and Remove the comment from the start of this line
 	'help_page' => 'DataPluginWikiList',
 	'description' => tra("Displays an alphabetically sorted list of WikiPages"),

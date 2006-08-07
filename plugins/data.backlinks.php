@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_backlinks.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.backlinks.php,v 1.8 2006/04/14 19:36:18 squareing Exp $
+// $Id: data.backlinks.php,v 1.9 2006/08/07 22:14:57 squareing Exp $
 
 /**
  * definitions
@@ -32,7 +32,7 @@ $pluginParams = array (
 	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_backlinks',
-	'title' => 'BackLinks<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
+	'title' => 'BackLinks - This plugin is not yet functional.', // Remove this line when the plugin becomes operational
 //	'title' => 'BackLinks',                                                                             // and Remove the comment from the start of this line
 	'help_page' => 'DataPluginBackLinks',
 	'description' => tra("This plugin will list all Wiki pages which contains a link to the specified page."),

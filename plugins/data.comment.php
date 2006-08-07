@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,13 +15,13 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.comment.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.comment.php,v 1.8 2006/08/07 22:14:57 squareing Exp $
 
 /******************
  * Initialization *
  ******************/
 global $gLibertySystem;
-define( 'PLUGIN_GUID_COMMENT', 'comment' );
+define( 'PLUGIN_GUID_DATACOMMENT', 'datacomment' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'COMMENT',
@@ -37,8 +37,8 @@ $pluginParams = array (
 	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
-$gLibertySystem->registerPlugin( PLUGIN_GUID_COMMENT, $pluginParams );
-$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_COMMENT );
+$gLibertySystem->registerPlugin( PLUGIN_GUID_DATACOMMENT, $pluginParams );
+$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATACOMMENT );
 /*****************
  * Help Function *
  *****************/

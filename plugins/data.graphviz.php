@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -28,7 +28,7 @@ $pluginParams = array ( 'tag' => 'GRAPHVIZ',
 	'auto_activate' => FALSE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_graphviz',
-	'title' => 'GraphViz (GRAPHVIZ)',
+	'title' => 'GraphViz',
 	'help_page' => 'DataPluginExample',
 	'description' => tra("This plugin renders it's content as a graphviz image (dot or neato)."),
 	'help_function' => 'data_graphviz_help',

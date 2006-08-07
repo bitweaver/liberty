@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,13 +17,13 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.rss.php,v 1.6 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.rss.php,v 1.7 2006/08/07 22:14:58 squareing Exp $
 
 /**
  * definitions
  */
 global $gLibertySystem;
-define( 'PLUGIN_GUID_RSS', 'datarss' );
+define( 'PLUGIN_GUID_DATARSS', 'datarss' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'RSS',
@@ -39,8 +39,8 @@ $pluginParams = array (
 	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
-$gLibertySystem->registerPlugin( PLUGIN_GUID_RSS, $pluginParams );
-$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_RSS );
+$gLibertySystem->registerPlugin( PLUGIN_GUID_DATARSS, $pluginParams );
+$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATARSS );
 
 function rss_extended_help() {
 	return 'NO HELP WRITTEN FOR {RSS}';

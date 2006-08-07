@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_avatar.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.avatar.php,v 1.8 2006/04/30 17:43:37 squareing Exp $
+// $Id: data.avatar.php,v 1.9 2006/08/07 22:14:57 squareing Exp $
 
 /**
  * definitions
@@ -32,7 +32,7 @@ $pluginParams = array (
 	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_avatar',
-	'title' => 'Avatar<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
+	'title' => 'Avatar - This plugin is not yet functional.', // Remove this line when the plugin becomes operational
 //	'title' => 'Avatar',	// and Remove the comment from the start of this line
 	'help_page' => 'DataPluginAvatar',
 	'description' => tra("This plugin will display a User's Avatar as a Link to a page."),

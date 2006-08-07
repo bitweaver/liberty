@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_catorphans.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.catorphans.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.catorphans.php,v 1.8 2006/08/07 22:14:57 squareing Exp $
 
 /**
  * definitions
@@ -32,7 +32,7 @@ $pluginParams = array (
 	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_catorphans',
-	'title' => 'CatOrphans<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
+	'title' => 'CatOrphans - This plugin is not yet functional.', // Remove this line when the plugin becomes operational
 //	'title' => 'CatOrphans',	// and Remove the comment from the start of this line
 	'help_page' => 'DataPluginCatOrphans',
 	'description' => tra("Creates a listing of bitweaver objects that have not been categorized."),

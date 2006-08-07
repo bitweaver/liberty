@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_lang.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.lang.php,v 1.5 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.lang.php,v 1.6 2006/08/07 22:14:58 squareing Exp $
 
 /**
  * definitions
@@ -30,7 +30,7 @@ $pluginParams = array (
 	'auto_activate' => FALSE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_lang',
-	'title' => 'Lang<strong> - This plugin is not yet functional.</strong>', // Remove this line when the plugin becomes operational
+	'title' => 'Lang - This plugin is not yet functional.', // Remove this line when the plugin becomes operational
 //	'title' => 'Lang',	// and Remove the comment from the start of this line
 	'help_page' => 'DataPluginLang',
 	'description' => tra("This plugin will attempt to translate the text between the ") . "{LANG}" . tra(" blocks to the current language. If the translation fails - nothing is displayed."),

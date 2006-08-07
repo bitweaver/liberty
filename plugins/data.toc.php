@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,14 +15,14 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.9 2006/08/05 16:21:57 squareing Exp $
+// $Id: data.toc.php,v 1.10 2006/08/07 22:14:58 squareing Exp $
 
 /**
  * definitions
  */
 global $gLibertySystem;
 
-define( 'PLUGIN_GUID_TOC', 'datatoc' );
+define( 'PLUGIN_GUID_DATATOC', 'datatoc' );
 
 global $gLibertySystem;
 $pluginParams = array (
@@ -39,8 +39,8 @@ $pluginParams = array (
 	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
-$gLibertySystem->registerPlugin( PLUGIN_GUID_TOC, $pluginParams );
-$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_TOC );
+$gLibertySystem->registerPlugin( PLUGIN_GUID_DATATOC, $pluginParams );
+$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATATOC );
 
 function data_toc_help() {
 	return '<table class="data help">'
