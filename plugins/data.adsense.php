@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,11 +15,12 @@
 // +----------------------------------------------------------------------+
 // | Author:  xing
 // +----------------------------------------------------------------------+
-// $Id: data.adsense.php,v 1.3 2006/08/07 22:14:57 squareing Exp $
+// $Id: data.adsense.php,v 1.4 2006/08/08 07:31:15 squareing Exp $
 
 /**
  * definitions
  */
+
 /******************
 * Initialization *
 ******************/
@@ -41,16 +42,34 @@ $pluginParams = array (
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAADSENSE, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAADSENSE );
+
 /*****************
 * Help Function *
 *****************/
 function data_adsense_help() {
-	return 'NO HELP WRITTEN FOR {ADSENSE} YET';
+	return 'NO HELP WRITTEN FOR {ADSENSE} YET. You can set: client, width, height, format, type and channel.';
 }
+
 /****************
 * Load Function *
 ****************/
-function data_adsense($data, $params) {
-	return '<!--~np~--><script type="text/javascript"><!-- ' . "\n" . 'google_ad_client = "pub-xxxxxxxxxxxxxxxx";' . "\n" . 'google_ad_width = 728;' . "\n" . 'google_ad_height = 90;' . "\n" . 'google_ad_format = "728x90_as";' . "\n" . 'google_ad_type = "text_image";' . "\n" . 'google_ad_channel ="";' . "\n" . '//--></script>' . "\n" . '<script type="text/javascript"' . "\n" . ' src="http://pagead2.googlesyndication.com/pagead/show_ads.js">' . "\n" . '</script><!--~/np~-->';
+function data_adsense( $pData, $pParams ) {
+	extract( $pParams );
+	$width   = ( !empty( $width )   ? $width   : "728" );
+	$height  = ( !empty( $height )  ? $height  : "90" );
+	$client  = ( !empty( $client )  ? $client  : "pub-xxxxxxxxxxxxxxxx" );
+	$format  = ( !empty( $format )  ? $format  : "728x90_as" );
+	$type    = ( !empty( $type )    ? $type    : "text_image" );
+	$channel = ( !empty( $channel ) ? $channel : "" );
+
+	return "<!--~np~--><script type=\"text/javascript\">/* <![CDATA[ */
+		google_ad_width   = $width;
+		google_ad_height  = $height;
+		google_ad_client  = \"$client\";
+		google_ad_format  = \"$format\";
+		google_ad_type    = \"$type\";
+		google_ad_channel = \"$channel\";
+	/* ]]> */</script>
+	<script type=\"text/javascript\" src=\"http://pagead2.googlesyndication.com/pagead/show_ads.js\"></script><!--~/np~-->";
 }
 ?>
