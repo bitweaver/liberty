@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.5 2006/08/05 16:21:57 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.6 2006/08/08 14:44:13 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAIMG', 'dataimg' );
 global $gLibertySystem;
@@ -44,8 +44,7 @@ function data_img_help() {
 				.'<td>'.tra( "Multiple styling options available: padding, margin, background, border, text-align, color, font, font-size, font-weight, font-family, align. Please view CSS guidelines on what values these settings take.").'</td>'
 			.'</tr>'
 		.'</table>'
-		. tra( "Example: ")."{img src=http://www.google.at/logos/olympics06_ski_jump.gif float=right border=\"3px solid blue\"}"
-		. tra( "This will display" );
+		. tra( "Example: ")."{img src=http://www.google.at/logos/olympics06_ski_jump.gif float=right border=\"3px solid blue\"}";
 }
 
 function data_img($data, $params) {
@@ -81,8 +80,8 @@ function data_img($data, $params) {
 					$imgdata['div_style'] .= $key.':'.$value.';';
 					break;
 				case 'align':
-					if( $value == 'center' ) {
-						$imgdata['div_style'] .= 'text-align:'.$value.';';
+					if( $value == 'center' || $value == 'middle' ) {
+						$imgdata['div_style'] .= 'text-align:center;';
 					} else {
 						$imgdata['div_style'] .= 'float:'.$value.';';
 					}
