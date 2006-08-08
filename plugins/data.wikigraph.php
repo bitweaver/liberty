@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wolff_borg <wolff_borg@yahoo.com.au>
 // | Reworked from: wikiplugin_wikigraph.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikigraph.php,v 1.11 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.wikigraph.php,v 1.12 2006/08/08 16:06:11 squareing Exp $
 /**
  * definitions
  */
@@ -75,7 +75,7 @@ function data_wikigraph_help() {
 				.'<td>'.tra( "html colour").'<br />'.tra( "(optional)" ).'</td>'
 				.'<td>'.tra( "Background colour of the graph.").' '.tra( "Default").': transparent</td>'
 			.'</tr>'
- 		.'</table>'
+			.'</table>'
 		.tra( "Example: " )."{div preset=centered border='3px solid blue'}";
 	return $help;
 
@@ -109,63 +109,60 @@ function data_wikigraph_help() {
 include_once( WIKI_PKG_PATH.'BitPage.php');
 include_once( UTIL_PKG_PATH.'GraphViz.php' );
 
-function data_wikigraph($data, $params) {
+function data_wikigraph( $pData, $pParams ) {
 	global $gContent, $wikilib;
 
 	$add = "";
 	$ret = " ";
 
-	if( empty( $params['level'] ) ) {
-		$level = 0;
-	}
-
 	$ommit = array( 'title', 'data' );
-	foreach( $params as $param => $value ) {
+	foreach( $pParams as $param => $value ) {
 		if( !in_array( $param, $ommit ) && !is_numeric( $param ) ) {
 			$add .= "&amp;{$param}={$value}";
 		}
 	}
 
-	//extract ($params, EXTR_SKIP);
 	if( empty( $title ) ) {
 		$title = "Wiki-Graph";
 	}
 
-	if( empty( $data ) ) {
-		$data = ( ( !is_object( $gContent ) || empty( $gContent->mInfo['title'] ) ) ? NULL : $gContent->mInfo['title'] );
+	if( empty( $pData ) ) {
+		$pData = ( ( !is_object( $gContent ) || empty( $gContent->mInfo['title'] ) ) ? NULL : $gContent->mInfo['title'] );
 	}
 
-	if( !empty( $data ) ) {
+	$level = isset( $level ) ? $level : "0";
+
+	if( !empty( $pData ) ) {
 		$garg = array(
 			'att' => array(
-				'level'     => $params['level'],
-				'nodesep'   => isset($nodesep) ? $nodesep : ".1",
-				'rankdir'   => isset($rankdir) ? $rankdir : "LR",
-				'bgcolor'   => isset($bgcolor) ? $bgcolor : "transparent",
-				'size'      => isset($size)    ? $size    : ""
+				'level'     => !empty( $level )  ? $level   : ".1",
+				'nodesep'   => isset( $nodesep ) ? $nodesep : ".1",
+				'rankdir'   => isset( $rankdir ) ? $rankdir : "LR",
+				'bgcolor'   => isset( $bgcolor ) ? $bgcolor : "transparent",
+				'size'      => isset( $size )    ? $size    : ""
 			),
 			'node' => array(
-				'fontsize'  => isset($fontsize)      ? $fontsize      : "10",
-				'fontname'  => isset($fontname)      ? $fontname      : "sans",
-				'shape'     => isset($shape)         ? $shape         : "box",
-				'style'     => isset($nodestyle)     ? $nodestyle     : "filled",
-				'color'     => isset($nodecolor)     ? $nodecolor     : "#aaaaaa",
-				'fillcolor' => isset($nodefillcolor) ? $nodefillcolor : "#f5f5f5",
-				'width'     => isset($nodewidth)     ? $nodewidth     : ".1",
-				'height'    => isset($nodeheight)    ? $nodeheight    : ".1"
+				'fontsize'  => isset( $fontsize )      ? $fontsize      : "10",
+				'fontname'  => isset( $fontname )      ? $fontname      : "sans",
+				'shape'     => isset( $shape )         ? $shape         : "box",
+				'style'     => isset( $nodestyle )     ? $nodestyle     : "filled",
+				'color'     => isset( $nodecolor )     ? $nodecolor     : "#aaaaaa",
+				'fillcolor' => isset( $nodefillcolor ) ? $nodefillcolor : "#f5f5f5",
+				'width'     => isset( $nodewidth )     ? $nodewidth     : ".1",
+				'height'    => isset( $nodeheight )    ? $nodeheight    : ".1"
 			),
 			'edge' => array(
-				'color'     => isset($edgecolor) ? $edgecolor : "#aa8866",
-				'style'     => isset($edgestyle) ? $edgestyle : "solid"
+				'color'     => isset( $edgecolor ) ? $edgecolor : "#aa8866",
+				'style'     => isset( $edgestyle ) ? $edgestyle : "solid"
 			)
 		);
 
 		$mapname=md5(uniqid("."));
-		$ret = "<div align='center'><img border='0' src=\"".WIKI_PKG_URL."wiki_graph.php?page=".urlencode($data)."{$add}\" alt='{$title}' usemap='#$mapname' />";
+		$ret = "<div align='center'><img border='0' src=\"".WIKI_PKG_URL."wiki_graph.php?page=".urlencode($pData)."{$add}\" alt='{$title}' usemap='#$mapname' />";
 
-		if( !empty( $data ) && !empty( $params['level'] ) && !empty( $garg ) ) {
-			$mapdata = $wikilib->get_graph_map($data, $params['level'], $garg);
-			$mapdata = preg_replace("/\n|\r/", '', $mapdata);
+		if( !empty( $pData ) && !empty( $garg ) ) {
+			$mapdata = $wikilib->get_graph_map( $pData, $level, $garg );
+			$mapdata = preg_replace( "/\n|\r/", '', $mapdata );
 			$ret .= "<map name='$mapname'>$mapdata</map>";
 			$ret .= "</div>";
 		}
