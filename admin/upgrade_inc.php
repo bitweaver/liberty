@@ -50,6 +50,9 @@ array( 'DATADICT' => array(
 			'to_title' => array( '`to_title`', 'VARCHAR(160)' ),
 		),
 	)),
+	array( 'CREATEINDEX' => array(
+		'liberty_content_links_title_idx' => array( 'liberty_content_links', '`to_title`' ),
+	)),
 )),
 
 // liberty_content_links php stuff comes in large PHP block below
@@ -58,9 +61,6 @@ array( 'QUERY' =>
 		"UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET to_title = (SELECT title FROM `".BIT_DB_PREFIX."liberty_content` lc WHERE `".BIT_DB_PREFIX."liberty_content_links`.`to_content_id`=lc.`content_id`)",
 		"DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE to_title IS NULL",
 		"ALTER TABLE liberty_content_links ALTER to_content_id DROP NOT NULL",
-	)),
-	array( 'CREATEINDEX' => array(
-		'liberty_content_links_title_idx' => array( 'liberty_content_links', '`to_title`' ),
 	)),
 ),
 
