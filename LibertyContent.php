@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.118 2006/07/31 02:26:58 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.119 2006/08/15 16:45:43 sylvieg Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -194,7 +194,11 @@ class LibertyContent extends LibertyBase {
 		$pParamHash['content_store']['modifier_user_id'] = $pParamHash['modifier_user_id'];
 
 		if( empty( $pParamHash['format_guid'] ) ) {
-			$pParamHash['format_guid'] = 'tikiwiki';
+			if ( $current_default_format_guid = $gBitSystem->getConfig( 'default_format' ) ) {
+				$pParamHash['format_guid'] = $current_default_format_guid;
+			} else {
+				$pParamHash['format_guid'] = 'tikiwiki';
+			}
 		}
 		$pParamHash['content_store']['format_guid'] = $pParamHash['format_guid'];
 
