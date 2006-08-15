@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -78,6 +78,7 @@ function purge_html( $pText ) {
 function bithtml_save_data( &$pParamHash ) {
 	static $parser;
 	if( empty( $parser ) ) {
+		require_once( LIBERTY_PKG_PATH.'plugins/format.tikiwiki.php' );
 		$parser = new TikiWikiParser();
 	}
 	if( $pParamHash['edit'] ) {
