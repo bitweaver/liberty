@@ -37,6 +37,43 @@ array( 'DATADICT' => array(
 	)),
 )),
 
+
+// move hits and last_hit to a new table
+array( 'DATADICT' => array(
+	array( 'CREATE' => array (
+		'liberty_content_hits' => "
+			content_id I4 PRIMARY,
+			hits I4 NOTNULL DEFAULT 1,
+			last_hit I8 NOTNULL DEFAULT 1
+	CONSTRAINTS ', CONSTRAINT `liberty_content_hits_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
+		",
+	)),
+)),
+
+array( 'QUERY' =>
+	array( 'SQL92' => array(
+		"INSERT INTO `".BIT_DB_PREFIX."liberty_content_hits` ( content_id, hits, last_hit ) 
+		 SELECT content_id, hits, last_hit from `".BIT_DB_PREFIX."liberty_content`
+		 WHERE 1
+	 ",
+		 
+	)),
+),
+
+
+array( 'DATADICT' => array(
+	array( 'DROPCOLUMN' => array(
+		'liberty_content' => array( '`hits`' ),
+	)),
+)),
+
+array( 'DATADICT' => array(
+	array( 'DROPCOLUMN' => array(
+		'liberty_content' => array( '`last_hit`' ),
+	)),
+)),
+
+
 // content links
 array( 'QUERY' =>
 	array( 'MYSQL' => array(

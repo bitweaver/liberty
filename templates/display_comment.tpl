@@ -19,6 +19,10 @@
 
 		<h3>{$comment.title|escape}</h3>
 		<div class="date">{tr}by{/tr} {if $comment.user_id < 0}{$comment.anon_name|escape}{else}{displayname hash=$comment}{/if}, {$comment.last_modified|bit_long_datetime}</div>
+ ID: { $comment.content_id}
+ Root: { $comment.root_id} Parent: { $comment.parent_id}
+ Thread Forward: {$comment.thread_forward_sequence}
+ Thread Reverse: {$comment.thread_reverse_sequence} 
 		<div class="content">
 			{include file="bitpackage:liberty/services_inc.tpl" serviceLocation='body' serviceHash=$comment}
 			{$comment.parsed_data}

@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.119 2006/08/15 16:45:43 sylvieg Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.120 2006/08/16 06:03:54 jht001 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -197,8 +197,8 @@ class LibertyContent extends LibertyBase {
 			if ( $current_default_format_guid = $gBitSystem->getConfig( 'default_format' ) ) {
 				$pParamHash['format_guid'] = $current_default_format_guid;
 			} else {
-				$pParamHash['format_guid'] = 'tikiwiki';
-			}
+			$pParamHash['format_guid'] = 'tikiwiki';
+		}
 		}
 		$pParamHash['content_store']['format_guid'] = $pParamHash['format_guid'];
 
@@ -302,6 +302,11 @@ class LibertyContent extends LibertyBase {
 				foreach( $pParamHash['preferences_store'] as $pref => $value ) {
 					$this->storePreference( $pref, $value );
 				}
+			}
+
+			// store hits and last hit
+			if( !empty( $pParamHash['content_store']['hits'] )  ) {
+				$this->setHits($pParamHash['content_store']['hits'], $pParamHash['content_store']['last_hit']);
 			}
 
 			$this->mDb->CompleteTrans();
@@ -949,8 +954,49 @@ class LibertyContent extends LibertyBase {
 		global $gBitUser,$gBitSystem;
 		if( empty( $_REQUEST['post_comment_submit'] ) && empty( $_REQUEST['post_comment_request'] ) ) {
 			if( $this->mContentId && ( $gBitUser->mUserId != $this->mInfo['user_id'] ) ) {
-				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content` SET `hits`=`hits`+1, `last_hit`= ? WHERE `content_id` = ?";
+				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_hits` SET `hits`=`hits`+1, `last_hit`= ? WHERE `content_id` = ?";
 				$result = $this->mDb->query( $query, array( $gBitSystem->getUTCTime(), $this->mContentId ) );
+				$affected_rows = $this->mDb->Affected_Rows();
+				if( !$affected_rows ) {
+					$query = "INSERT `".BIT_DB_PREFIX."liberty_content_hits` ( `hits`, `last_hit`, `content_id` ) VALUES (?,?,?)";
+					$result = $this->mDb->query( $query, array( 1, $gBitSystem->getUTCTime(), $this->mContentId ) );
+					}
+			}
+		}
+		return TRUE;
+	}
+
+	/**
+	* Set Hits and Last Hit
+	*
+	* @return bool true ( will not currently report a failure )
+	*/
+	function setHits($pHits, $pLastHit=0) {
+		if( $this->mContentId && !empty($pHits) ) {
+			$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_hits` SET `hits`= ?, `last_hit`= ? WHERE `content_id` = ?";
+			$result = $this->mDb->query( $query, array( $pHits, $pLastHit, $this->mContentId ) );
+			$affected_rows = $this->mDb->Affected_Rows();
+			if( !$affected_rows ) {
+				$query = "INSERT `".BIT_DB_PREFIX."liberty_content_hits` ( `hits`, `last_hit`, `content_id` ) VALUES (?,?,?)";
+				$result = $this->mDb->query( $query, array( $pHits, $pLastHit, $this->mContentId ) );
+			}
+		}
+		return TRUE;
+	}
+
+
+	/**
+	* Get Hits and Last Hit
+	*
+	* @return bool true ( will not currently report a failure )
+	*/
+	function getHits() {
+		if( $this->mContentId  ) {
+			$query = "SELECT `hits`,`last_hit` FROM `".BIT_DB_PREFIX."liberty_content_hits` where `conent_id` = ?";
+			$row = $this->mDb->getRow( $query, array( $this->mContentId ) );
+			if ( !empty($ret) ) {
+				$this->mInfo['hits'] = $row['hits'];
+				$this->mInfo['last_hit'] = $row['last_hit'];
 			}
 		}
 		return TRUE;
@@ -966,8 +1012,10 @@ class LibertyContent extends LibertyBase {
 		global $gBitSystem;
 		$ret = NULL;
 		if( $gBitSystem->isPackageActive( 'wiki' ) ) {
-			$pageWhere = $pCaseSensitive ? 'lc.`title`' : 'LOWER( lc.`title` )';
-			$bindVars = array( ($pCaseSensitive ? $pPageName : strtolower( $pPageName ) ) );
+			$columnExpression = $this->mDb->getCaseLessColumn('lc.title');
+			
+			$pageWhere = $pCaseSensitive ? 'lc.`title`' : $columnExpression;
+			$bindVars = array( ($pCaseSensitive ? $pPageName : strtoupper( $pPageName ) ) );
 			$query = "SELECT `page_id`, wp.`content_id`, `description`, lc.`last_modified`, lc.`title`
 				FROM `".BIT_DB_PREFIX."wiki_pages` wp, `".BIT_DB_PREFIX."liberty_content` lc
 				WHERE lc.`content_id`=wp.`content_id` AND $pageWhere = ?";
@@ -1229,9 +1277,11 @@ class LibertyContent extends LibertyBase {
 		}
 
 		$this->prepGetList( $pListHash );
-		$query = "SELECT DISTINCT(uu.`user_id`) AS hash_key, uu.`user_id`, SUM( lc.`hits` ) AS `ag_hits`, uu.`login``, uu.`real_name`
+		$query = "SELECT DISTINCT(uu.`user_id`) AS hash_key, uu.`user_id`, SUM( lch.`hits` ) AS `ag_hits`, uu.`login``, uu.`real_name`
 				FROM `".BIT_DB_PREFIX."liberty_content` lc INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id`=lc.`user_id` )
-				WHERE uu.`user_id` != ".ANONYMOUS_USER_ID." AND lc.`hits` > 0 $mid
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch 
+					ON `lc`.`content_id` =  `lch`.`content_id`)
+				WHERE uu.`user_id` != ".ANONYMOUS_USER_ID." AND lch.`hits` > 0 $mid
 				GROUP BY uu.`user_id`, uu.`login`, uu.`real_name`
 				ORDER BY `ag_hits` DESC";
 		$result = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
@@ -1389,8 +1439,8 @@ class LibertyContent extends LibertyBase {
 		$query = "SELECT
 				uue.`login` AS `modifier_user`, uue.`real_name` AS `modifier_real_name`, uue.`user_id` AS `modifier_user_id`,
 				uuc.`login` AS `creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`,
-				lc.`hits`,
-				lc.`last_hit`,
+				lch.`hits`,
+				lch.`last_hit`,
 				lc.`event_time`,
 				lc.`title`,
 				lc.`last_modified`,
@@ -1400,6 +1450,8 @@ class LibertyContent extends LibertyBase {
 				lc.`content_id`
 				$selectSql
 			FROM `".BIT_DB_PREFIX."liberty_content` lc
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch 
+					ON `lc`.`content_id` =  `lch`.`content_id`)
 			INNER JOIN `".BIT_DB_PREFIX."users_users` uue ON lc.`modifier_user_id`=uue.`user_id`
 			$joinSql
 			,`".BIT_DB_PREFIX."users_users` uuc

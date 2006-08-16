@@ -20,8 +20,6 @@ $tables = array(
 	last_modified I8 NOTNULL,
 	content_type_guid C(16) NOTNULL,
 	format_guid C(16) NOTNULL,
-	hits I4 NOTNULL DEFAULT 0,
-	last_hit I8 NOTNULL DEFAULT 0,
 	event_time I8 NOTNULL DEFAULT 0,
 	version I4,
 	lang_code C(32),
@@ -31,6 +29,14 @@ $tables = array(
 	CONSTRAINT '
 		, CONSTRAINT `liberty_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )
 ",
+
+'liberty_content_hits' => "
+	content_id I4 PRIMARY,
+	hits I4 NOTNULL DEFAULT 1,
+	last_hit I8 NOTNULL DEFAULT 1
+	CONSTRAINT ', CONSTRAINT `liberty_content_hits_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
+",
+
 
 'liberty_content_history' => "
 	content_id I4 PRIMARY,
