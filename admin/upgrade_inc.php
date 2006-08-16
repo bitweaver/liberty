@@ -64,6 +64,7 @@ array( 'QUERY' =>
 array( 'DATADICT' => array(
 	array( 'DROPCOLUMN' => array(
 		'liberty_content' => array( '`hits`' ),
+		'liberty_content' => array( '`last_hit`' ),
 	)),
 )),
 
