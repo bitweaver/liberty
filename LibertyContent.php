@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.120 2006/08/16 06:03:54 jht001 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.121 2006/08/18 09:24:16 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -958,9 +958,9 @@ class LibertyContent extends LibertyBase {
 				$result = $this->mDb->query( $query, array( $gBitSystem->getUTCTime(), $this->mContentId ) );
 				$affected_rows = $this->mDb->Affected_Rows();
 				if( !$affected_rows ) {
-					$query = "INSERT `".BIT_DB_PREFIX."liberty_content_hits` ( `hits`, `last_hit`, `content_id` ) VALUES (?,?,?)";
+					$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_hits` ( `hits`, `last_hit`, `content_id` ) VALUES (?,?,?)";
 					$result = $this->mDb->query( $query, array( 1, $gBitSystem->getUTCTime(), $this->mContentId ) );
-					}
+				}
 			}
 		}
 		return TRUE;
@@ -977,7 +977,7 @@ class LibertyContent extends LibertyBase {
 			$result = $this->mDb->query( $query, array( $pHits, $pLastHit, $this->mContentId ) );
 			$affected_rows = $this->mDb->Affected_Rows();
 			if( !$affected_rows ) {
-				$query = "INSERT `".BIT_DB_PREFIX."liberty_content_hits` ( `hits`, `last_hit`, `content_id` ) VALUES (?,?,?)";
+				$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_hits` ( `hits`, `last_hit`, `content_id` ) VALUES (?,?,?)";
 				$result = $this->mDb->query( $query, array( $pHits, $pLastHit, $this->mContentId ) );
 			}
 		}
