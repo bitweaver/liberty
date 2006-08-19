@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.123 2006/08/19 16:24:32 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.124 2006/08/19 18:59:43 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1166,6 +1166,16 @@ class LibertyContent extends LibertyBase {
 			$ret = '#';
 		}
 		return $ret;
+	}
+
+	/**
+	* Not-so-pure virtual function that returns Request_URI to a content's thumbnail representation. It is up to the derived content what exactly this means
+	* If not implemented in the content's class, this class will return NULL, which is an acceptable case meaning no thumbnail is available.
+	* FisheyeGallery, BitUser might return pictures, BitArticle might return the article topic image, etc.
+	* @param string Size of the url to return
+	* @return string Formated URL address to display the page.
+	*/
+	function getThumbnailUrl( $pSize='small' ) {
 	}
 
 	/**
