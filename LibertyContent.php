@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.121 2006/08/18 09:24:16 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.122 2006/08/19 14:08:21 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1450,8 +1450,7 @@ class LibertyContent extends LibertyBase {
 				lc.`content_id`
 				$selectSql
 			FROM `".BIT_DB_PREFIX."liberty_content` lc
-				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch 
-					ON `lc`.`content_id` =  `lch`.`content_id`)
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON( `lc`.`content_id` =  `lch`.`content_id`)
 			INNER JOIN `".BIT_DB_PREFIX."users_users` uue ON lc.`modifier_user_id`=uue.`user_id`
 			$joinSql
 			,`".BIT_DB_PREFIX."users_users` uuc
