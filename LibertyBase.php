@@ -3,7 +3,7 @@
  * Base class for Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.10 2006/02/11 12:25:11 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.11 2006/08/19 16:24:32 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -55,13 +55,7 @@ class LibertyBase extends BitBase {
 
 		if( BitBase::verifyId( $pContentId ) ) {
 			if( empty( $pContentGuid ) ) {
-				$ret = $gLibertySystem->mDb->getRow( "SELECT `content_type_guid` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=?", array( $pContentId ) );
-//				if ( !empty($gBitUser->mGroups[$ret['group_id']] ) ) {
-					$pContentGuid = $ret['content_type_guid'];
-//				} else {
-//					$gBitSystem->fatalError( 'You do not have permission to access this item' );
-//					$ret = NULL;
-//				}	 
+				$pContentGuid = $gLibertySystem->mDb->getOne( "SELECT `content_type_guid` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=?", array( $pContentId ) );
 			}
 			if( !empty( $pContentGuid ) && isset( $gLibertySystem->mContentTypes[$pContentGuid] ) ) {
 				$type = $gLibertySystem->mContentTypes[$pContentGuid];

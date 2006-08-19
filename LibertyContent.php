@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.122 2006/08/19 14:08:21 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.123 2006/08/19 16:24:32 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -341,7 +341,7 @@ class LibertyContent extends LibertyBase {
 			$this->expungeComments();
 
 			$this->invokeServices( 'content_expunge_function', $this );
-			if( $func = $gLibertySystem->getPluginFunction( $this->mInfo['format_guid'], 'expunge_function' ) ) {
+			if( $func = $gLibertySystem->getPluginFunction( $this->getField( 'format_guid' ), 'expunge_function' ) ) {
 				$func( $this->mContentId );
 			}
 
@@ -1280,7 +1280,7 @@ class LibertyContent extends LibertyBase {
 		$query = "SELECT DISTINCT(uu.`user_id`) AS hash_key, uu.`user_id`, SUM( lch.`hits` ) AS `ag_hits`, uu.`login``, uu.`real_name`
 				FROM `".BIT_DB_PREFIX."liberty_content` lc INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id`=lc.`user_id` )
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch 
-					ON `lc`.`content_id` =  `lch`.`content_id`)
+					ON (`lc`.`content_id` =  `lch`.`content_id`)
 				WHERE uu.`user_id` != ".ANONYMOUS_USER_ID." AND lch.`hits` > 0 $mid
 				GROUP BY uu.`user_id`, uu.`login`, uu.`real_name`
 				ORDER BY `ag_hits` DESC";
