@@ -28,13 +28,15 @@
 						{/forminput}
 					</div>
 
-					<div class="row">
-						{formlabel label="Name" for="comments-name"}
-						{forminput}
-							<input type="text" size="50" name="comment_name" id="comments-name" value="{$postComment.anon_name|escape:html}" />
-							{formhelp note=""}
-						{/forminput}
-					</div>
+					{if ! $gBitUser->isRegistered()}
+						<div class="row">
+							{formlabel label="Name" for="comments-name"}
+							{forminput}
+								<input type="text" size="50" name="comment_name" id="comments-name" value="{$postComment.anon_name|escape:html}" />
+								{formhelp note=""}
+							{/forminput}
+						</div>
+					{/if}
 
 					{assign var=textarea_id value="commentpost"}
 
