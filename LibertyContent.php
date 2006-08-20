@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.124 2006/08/19 18:59:43 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.125 2006/08/20 22:38:16 hash9 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -391,13 +391,20 @@ class LibertyContent extends LibertyBase {
 		$ret = NULL;
 		if( $this->isValid() ) {
 			global $gBitSystem;
+
+			$selectSql = '';
+			$joinSql = '';
+			$whereSql = '';
+			$bindVars = array();
+			$this->getServicesSql( 'content_list_history_sql_function', $selectSql, $joinSql, $whereSql, $bindVars );
+
 			$versionSql = '';
 			if( @BitBase::verifyId( $pUserId ) ) {
-				$bindVars = array( $pUserId );
-				$whereSql = ' th.`user_id`=? ';
+				$bindVars[] = $pUserId;
+				$whereSql .= ' th.`user_id`=? ';
 			} else {
-				$bindVars = array( $this->mContentId );
-				$whereSql = ' th.`content_id`=? ';
+				$bindVars[] = $this->mContentId;
+				$whereSql .= ' th.`content_id`=? ';
 			}
 			if( !empty( $pVersion ) ) {
 				array_push( $bindVars, $pVersion );
@@ -406,9 +413,11 @@ class LibertyContent extends LibertyBase {
 			$query = "SELECT lc.`title`, th.*,
 				uue.`login` AS modifier_user, uue.`real_name` AS modifier_real_name,
 				uuc.`login` AS creator_user, uuc.`real_name` AS creator_real_name
+				$selectSql
 				FROM `".BIT_DB_PREFIX."liberty_content_history` th INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id` = th.`content_id`)
 				LEFT JOIN `".BIT_DB_PREFIX."users_users` uue ON (uue.`user_id` = th.`user_id`)
 				LEFT JOIN `".BIT_DB_PREFIX."users_users` uuc ON (uuc.`user_id` = lc.`user_id`)
+				$joinSql
 				WHERE $whereSql $versionSql order by th.`version` desc";
 
 			$result = $this->mDb->query( $query, $bindVars, $max_records, $pOffset );
@@ -466,6 +475,9 @@ class LibertyContent extends LibertyBase {
 			if( $result->numRows() ) {
 				$res = $result->fetchRow();
 				$res['comment'] = 'Rollback to version '.$pVersion.' by '.$gBitUser->getDisplayName();
+				if (!empty($comment)) {
+					$res['comment'] .=" $comment";
+				}
 				// JHT 2005-06-19_15:22:18
 				// set ['force_history'] to
 				// make sure we don't destory current content without leaving a copy in history
@@ -1439,6 +1451,8 @@ class LibertyContent extends LibertyBase {
 			$orderTable = '';
 		} elseif( !empty( $pListHash['order_table'] ) ) {
 			$orderTable = $pListHash['order_table'];
+		} elseif ( !empty( $pListHash['sort_mode'] ) && strtolower(substr($pListHash['sort_mode'],0,4))=='hits') {
+			$orderTable = 'lch.';
 		} else {
 			$orderTable = 'lc.';
 		}
