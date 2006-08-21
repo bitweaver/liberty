@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.32 2006/08/21 11:11:20 hash9 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.33 2006/08/21 18:13:03 hash9 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -136,6 +136,7 @@ class LibertyComment extends LibertyContent {
 	}
 
 	function deleteComment() {
+		global $gBitSystem;
 		$ret = FALSE;
 		if( $this->isValid() ) {
 			$this->mDb->StartTrans();
