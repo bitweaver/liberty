@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.23 $
+ * @version  $Revision: 1.24 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.23 2006/07/27 23:04:39 hash9 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.24 2006/08/21 11:11:20 hash9 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -92,7 +92,9 @@ if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'p_lib
 	$storeRow['root_id'] = $commentsParentId;
 	$storeRow['parent_id'] = (@BitBase::verifyId($storeComment->mInfo['parent_id']) ? $storeComment->mInfo['parent_id'] : (!@BitBase::verifyId($_REQUEST['post_comment_reply_id']) ? $commentsParentId : $_REQUEST['post_comment_reply_id']));
 	$storeRow['content_id'] = (@BitBase::verifyId($storeComment->mContentId) ? $storeComment->mContentId : NULL);
-	$storeRow['anon_name'] = $_REQUEST['comment_name'];
+	if (!empty($_REQUEST['comment_name'])) {
+		$storeRow['anon_name'] = $_REQUEST['comment_name'];
+	}
 	if (!empty( $_REQUEST['format_guid'] ) ) {
 		$storeRow['format_guid'] = $_REQUEST['format_guid'];
 	}
@@ -128,7 +130,9 @@ $gBitSmarty->assign_by_ref('post_comment_request', $post_comment_request);
 if( !empty( $_REQUEST['post_comment_preview'] ) ) {
 	$postComment['user_id'] = $gBitUser->mUserId;
 	$postComment['title'] = $_REQUEST['comment_title'];
-	$postComment['anon_name'] = $_REQUEST['comment_name'];
+	if (!empty($_REQUEST['comment_name'])) {
+		$postComment['anon_name'] = $_REQUEST['comment_name'];
+	}
 	$postComment['data'] = $_REQUEST['comment_data'];
 	$postComment['format_guid'] = PLUGIN_GUID_TIKIWIKI;
 	$postComment['parsed_data'] = LibertyComment::parseData( $postComment );

@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.31 2006/08/04 09:38:50 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.32 2006/08/21 11:11:20 hash9 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -79,6 +79,9 @@ class LibertyComment extends LibertyContent {
 		}
 		if (!$pStorageHash['root_id']) {
 			$this->mErrors['root_id'] = "Missing root id for comment";
+		}
+		if (empty($pStorageHash['anon_name'])) {
+			$pStorageHash['anon_name']=null;
 		}
 		return (count($this->mErrors) == 0);
 	}
