@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.125 2006/08/20 22:38:16 hash9 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.126 2006/08/22 18:13:45 sylvieg Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -350,6 +350,10 @@ class LibertyContent extends LibertyBase {
 			// Remove individual permissions for this object if they exist
 			$query = "delete from `".BIT_DB_PREFIX."users_object_permissions` where `object_id`=? and `object_type`=?";
 			$result = $this->mDb->query( $query, array( $this->mContentId, $this->mContentTypeGuid ) );
+
+			// Remove hits
+			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_hits` WHERE `content_id` = ?";
+			$result = $this->mDb->query( $query, array( $this->mContentId ) );
 
 			// Remove content preferences
 			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id` = ?";
