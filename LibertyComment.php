@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.33 2006/08/21 18:13:03 hash9 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.34 2006/08/22 18:14:22 sylvieg Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -154,6 +154,7 @@ class LibertyComment extends LibertyContent {
 			if (method_exists($this,'expungeMetaData')) {
 				$this->expungeMetaData();
 			} elseif ($gBitSystem->isPackageActive('bitboards')) {
+				require_once(BITBOARDS_PKG_PATH.'BitBoardPost.php');
 				BitBoardPost::expungeMetaData($this->mContentId);
 			}
 
