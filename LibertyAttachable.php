@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.40 2006/07/31 02:23:46 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.41 2006/08/23 19:52:31 sylvieg Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -250,6 +250,9 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 							$storeRow['upload']['type'] = $gBitSystem->lookupMimeType( $ext );
 						}
 						$storeRow['upload']['dest_path'] = $this->getStorageBranch( $storeRow['attachment_id'], $pParamHash['user_id'], 'images' );
+						if (!empty( $pParamHash['thumbsizes'] ) ) {
+							$storeRow['upload']['thumbsizes'] = $pParamHash['thumbsizes'];
+						}
 						$storagePath = liberty_process_upload( $storeRow );
 						// We're gonna store to local file system & liberty_files table
 						if( empty( $storagePath ) ) {
