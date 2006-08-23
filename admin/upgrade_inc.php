@@ -63,14 +63,9 @@ array( 'QUERY' =>
 
 array( 'DATADICT' => array(
 	array( 'DROPCOLUMN' => array(
-		'liberty_content' => array( '`hits`' ),
-		'liberty_content' => array( '`last_hit`' ),
-	)),
-)),
-
-array( 'DATADICT' => array(
-	array( 'DROPCOLUMN' => array(
-		'liberty_content' => array( '`last_hit`' ),
+		'liberty_content' => array( 
+			'`hits`',
+		    '`last_hit`' ),
 	)),
 )),
 
@@ -89,7 +84,7 @@ array( 'DATADICT' => array(
 		),
 	)),
 	array( 'CREATEINDEX' => array(
-		'liberty_content_links_title_idx' => array( 'liberty_content_links', '`to_title`' ),
+		'liberty_content_links_title_idx' => array( 'liberty_content_links', '`to_title`', array() ),
 	)),
 )),
 
@@ -98,7 +93,7 @@ array( 'QUERY' =>
 	array( 'SQL92' => array(
 		"UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET to_title = (SELECT title FROM `".BIT_DB_PREFIX."liberty_content` lc WHERE `".BIT_DB_PREFIX."liberty_content_links`.`to_content_id`=lc.`content_id`)",
 		"DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE to_title IS NULL",
-		"ALTER TABLE liberty_content_links ALTER to_content_id DROP NOT NULL",
+#		"ALTER TABLE liberty_content_links ALTER to_content_id DROP NOT NULL",
 	)),
 ),
 
@@ -145,10 +140,10 @@ array( 'DATADICT' => array(
 	array( 'ALTER' => array (
 		'liberty_comments' => array(
 			'root_id' => array( 'root_id', 'I4' ),
-			'thread_forward_sequence' => array( '`thread_forward_sequence`', 'VARCHAR(250)' ),
-			'thread_reverse_sequence' => array( '`thread_reverse_sequence`', 'VARCHAR(250)' ),
+			'thread_forward_sequence' => '`thread_forward_sequence` C(250)',
+			'thread_reverse_sequence' => '`thread_reverse_sequence` C(250)' ,
 			// some other unrelated fields
-			'anon_name' => array( '`anon_name`', 'VARCHAR(64)' ),
+			'anon_name' => '`anon_name` C(64)' ,
 		),
 	)),
 
@@ -199,7 +194,7 @@ array( 'PHP' => '
 			$created = $comment["created"];
 			$last_modified = $comment["last_modified"];
 			$title = $comment["title"];
-			$user = $comment["user"];
+			$user = $comment["creator_user"];
 			$user_name = $comment["real_name"];
 			$data = $comment["data"];
 			$content_type_guid = $comment["content_type_guid"];
@@ -249,7 +244,6 @@ array( 'PHP' => '
 		}
 
 
-		usort($allComments, "jc");
 
 		function jc ($a, $b) {
 			global $root_table;
@@ -283,6 +277,8 @@ array( 'PHP' => '
 			return ($key_a < $key_b) ? -1: +1;
 		}
 
+		usort($allComments, "jc");
+
 		foreach ($allComments as $comment) {
 			$content_id = $comment["content_id"];
 			$comment_id = $comment["comment_id"];
@@ -292,7 +288,7 @@ array( 'PHP' => '
 			$created = $comment["created"];
 			$last_modified = $comment["last_modified"];
 			$title = $comment["title"];
-			$user = $comment["user"];
+			$user = $comment["creator_user"];
 			$user_name = $comment["real_name"];
 			$data = $comment["data"];
 
@@ -324,7 +320,7 @@ array( 'PHP' => '
 			$created = $comment["created"];
 			$last_modified = $comment["last_modified"];
 			$title = $comment["title"];
-			$user = $comment["user"];
+			$user = $comment["creator_user"];
 			$user_name = $comment["real_name"];
 			$data = $comment["data"];
 
