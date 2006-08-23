@@ -55,6 +55,20 @@
 				{/forminput}
 			</div>
 
+			<div class="row">
+				{formlabel label="Default post textarea lines number" for="comments_default_post_lines"}
+				{forminput}
+					<select name="comments_default_post_lines" id="comments_default_post_lines">
+						<option value="6" {if $gBitSystem->getConfig('comments_default_post_lines') eq 6}selected="selected"{/if}>6</option>
+						<option value="10" {if $gBitSystem->getConfig('comments_default_post_lines') eq 10}selected="selected"{/if}>10</option>
+						<option value="20" {if $gBitSystem->getConfig('comments_default_post_lines') eq 20}selected="selected"{/if}>20</option>
+						<option value="30" {if $gBitSystem->getConfig('comments_default_post_lines') eq 30}selected="selected"{/if}>30</option>
+					</select>
+					{formhelp note="Default number of lines in the comment post textarea."}
+					
+				{/forminput}
+			</div>
+
 			<div class="row submit">
 				<input type="submit" name="change_prefs" value="{tr}Change preferences{/tr}" />
 			</div>

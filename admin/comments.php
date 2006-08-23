@@ -34,7 +34,7 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
 
-	$formValues = array('comments_per_page', 'comments_default_ordering', 'comments_default_display_mode' );
+	$formValues = array('comments_per_page', 'comments_default_ordering', 'comments_default_display_mode' , 'comments_default_post_lines');
 	foreach( $formValues as $item ) {
 		simple_set_value( $item, LIBERTY_PKG_NAME );
 	}

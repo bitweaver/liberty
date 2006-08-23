@@ -53,7 +53,7 @@
 					<div class="row">
 						{formlabel label="Comment" for="commentpost"}
 						{forminput}
-							<textarea {spellchecker} id="commentpost" name="comment_data" rows="6" cols="50">{$postComment.data}</textarea>
+							<textarea {spellchecker} id="commentpost" name="comment_data" rows="{$gBitSystem->getConfig('comments_default_post_lines', 6)}" cols="50">{$postComment.data}</textarea>
 						{/forminput}
 					</div>
 
