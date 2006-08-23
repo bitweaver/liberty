@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.19 2006/08/05 16:21:57 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.20 2006/08/23 03:59:23 nickpalmer Exp $ *}
 
 {strip}
 	{if $gBitSystem->isFeatureActive( 'site_edit_help' )}
@@ -45,7 +45,7 @@
 					</tr>
 				</table>
 			<script type="text/javascript">/*<![CDATA[*/
-				show('hidefromnonjsbrowsers');
+				showById('hidefromnonjsbrowsers');
 				flipMulti('{$FirstPluginWinId}',1,1);
 			/*]]>*/</script>
 		{/if}

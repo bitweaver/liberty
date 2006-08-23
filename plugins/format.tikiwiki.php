@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.58 $
+ * @version  $Revision: 1.59 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -23,7 +23,7 @@ $pluginParams = array (
 	'expunge_function' => 'tikiwiki_expunge',
 	'description' => 'TikiWiki Syntax Format Parser',
 	'edit_label' => 'Tiki Wiki Syntax',
-	'edit_field' => '<input type="radio" name="format_guid" value="'.PLUGIN_GUID_TIKIWIKI.'"',
+	'edit_field' => PLUGIN_GUID_TIKIWIKI,
 	'help_page' => 'TikiWikiSyntax',
 	'plugin_type' => FORMAT_PLUGIN
 );

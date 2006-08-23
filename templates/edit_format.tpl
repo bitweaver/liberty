@@ -25,7 +25,7 @@
 				{forminput}
 					{counter name=nb print=false assign=nb}
 					<label>
-						{$plugin.edit_field}
+						<input type=radio name="{$format_guid_variable|default:"format_guid"}" value="{$plugin.edit_field}"
 						{if $gContent->mInfo.format_guid eq $plugin.plugin_guid}
 							checked="checked"
 						{elseif !$gContent->mInfo.format_guid and $plugin.plugin_guid eq $gBitSystem->getConfig('default_format')}
@@ -36,11 +36,11 @@
 								{foreach from=$gLibertySystem->mPlugins item=tag key=guid}
 									{if $tag.is_active eq 'y' and $tag.edit_field and $tag.plugin_type eq 'format'}
 										{if $tag.plugin_guid eq $plugin.plugin_guid}
-											show
+											showById
 										{else}
-											hide
+											hideById
 										{/if}
-										('qt{$tag.plugin_guid}');
+										('qt{$textarea_id}{$tag.plugin_guid}'); 
 									{/if}
 								{/foreach}
 							{/if}
@@ -69,7 +69,7 @@
 {if $nb > 2}
 	{$capture_format}
 {else}
-	<input type="hidden" name="format_guid" value="{$formatplugins[0].guid}" />
+	<input type="hidden" name="{$format_guid_variable|default:"format_guid"}" value="{$formatplugins[0].guid}" />
 {/if}
 	
 {/strip}
