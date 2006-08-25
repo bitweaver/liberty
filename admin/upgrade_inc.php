@@ -17,18 +17,21 @@ array( 'QUERY' =>
 
 array( 'DATADICT' => array(
 	array( 'RENAMETABLE' => array(
-		'tiki_content'          => 'liberty_content',
-		'tiki_attachments'      => 'liberty_attachments',
-		'tiki_files'            => 'liberty_files',
-		'tiki_structures'       => 'liberty_structures',
-		'tiki_comments'         => 'liberty_comments',
-		'tiki_content_types'    => 'liberty_content_types',
-		'tiki_link_cache'       => 'liberty_link_cache',
-		'tiki_history'          => 'liberty_content_history',
-		'tiki_actionlog'        => 'liberty_action_log',
-		'tiki_copyrights'       => 'liberty_copyrights',
-		'tiki_links'            => 'liberty_content_links',
-		'tiki_user_preferences' => 'liberty_content_prefs',
+		'tiki_content'                 => 'liberty_content',
+		'tiki_content_id_seq'          => 'liberty_content_id_seq',
+		'tiki_attachments'             => 'liberty_attachments',
+		'tiki_files'                   => 'liberty_files',
+		'tiki_structures'              => 'liberty_structures',
+		'tiki_structures_id_seq'       => 'liberty_structures_id_seq',
+		'tiki_comments'                => 'liberty_comments',
+		'tiki_comments_comment_id_seq' => 'liberty_comments_comment_id_seq',
+		'tiki_content_types'           => 'liberty_content_types',
+		'tiki_link_cache'              => 'liberty_link_cache',
+		'tiki_history'                 => 'liberty_content_history',
+		'tiki_actionlog'               => 'liberty_action_log',
+		'tiki_copyrights'              => 'liberty_copyrights',
+		'tiki_links'                   => 'liberty_content_links',
+		'tiki_user_preferences'        => 'liberty_content_prefs',
 	)),
 	array( 'ALTER' => array(
 		'liberty_content' => array(
@@ -424,9 +427,20 @@ array( 'DATADICT' => array(
 		),
 		'liberty_content_prefs' => array(
 			'`value`' => '`pref_value` C(250)',
+			'`user_id`'=> 'content_id I4',
 		),
 	)),
+	array( 'CREATEINDEX' => array(
+		'liberty_content_prefs_idx' => array( 'liberty_content_prefs', '`content_id`,`pref_name`', array() ),
+	)),
 )),
+
+array( 'QUERY' =>
+	array( 'MYSQL' => array(
+		"ALTER TABLE `".BIT_DB_PREFIX."liberty_content_prefs` DROP PRIMARY KEY",
+	)),
+),
+
 
 // rename some liberty_content_prefs
 array( 'QUERY' =>
