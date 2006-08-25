@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.127 2006/08/25 18:59:36 sylvieg Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.128 2006/08/25 19:41:18 sylvieg Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1420,6 +1420,11 @@ class LibertyContent extends LibertyBase {
 		} elseif( !empty( $pListHash['content_type_guid'] ) && is_array( $pListHash['content_type_guid'] ) ) {
 			$whereSql .= " AND lc.`content_type_guid` IN ( ".implode( ',',array_fill ( 0, count( $pListHash['content_type_guid'] ),'?' ) )." )";
 			$bindVars = array_merge( $bindVars, $pListHash['content_type_guid'] );
+		}
+
+		if ( !empty( $pListHash['last_modified'] ) ) {
+			$whereSql .= ' AND lc.`last_modified` >= ?';
+			$bindVars[] = $pListHash['last_modified'];
 		}
 
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
