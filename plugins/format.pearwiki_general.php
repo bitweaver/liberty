@@ -10,44 +10,45 @@
  */
 global $gLibertySystem;
 
-$genPluginParams = array (
-'store_function' => 'pearwiki_general_save_data',
-'verify_function' => 'pearwiki_general_verify_data',
-'plugin_type' => FORMAT_PLUGIN
-);
+if( @include_once('PEAR/Registry.php') ) {
+	$genPluginParams = array (
+		'store_function' => 'pearwiki_general_save_data',
+		'verify_function' => 'pearwiki_general_verify_data',
+		'plugin_type' => FORMAT_PLUGIN
+	);
 
-require_once('PEAR/Registry.php');
-$reg = new PEAR_Registry;
-foreach ($reg->listPackages() as $package) {
-	if (substr($package,0,strlen("text_wiki"))=="text_wiki") {
-		$inf = $reg->packageInfo($package);
-		$package = $inf['package'];
-		$p = substr($package,strlen("text_wiki"));
-		if (empty($p)) {
-			$parser = "Text_Wiki";
-			$parser_class = "Default";
-		} else {
-			$parser = substr($p,1);
-			$parser_class = $parser;
-		}
-		$f = create_function('&$pParseHash, &$pCommonObject','return pearwiki_general_parse_data("'.$parser_class.'",$pParseHash, $pCommonObject);');
-		$guid = "pearwiki_$parser";
-		if (strlen($guid)>16) {
-			$guid = "pw_$parser";
-		}
-		if (strlen($guid)>16) {
-			$guid = substr($guid,0,16);
-		}
-		$insPluginParams =  array(
-		'load_function' => $f,
-		'edit_field' => "<input type=\"radio\" name=\"format_guid\" value=\"$guid\"",
-		'description' => "Pear Wiki Parser for $parser Syntax.",
-		'edit_label' => "$parser Syntax, parsed by Pear::Text_Wiki$p",
-		'help_page' => "{$parser}Syntax",
-		'auto_activate' => true,
-		);
-		$gLibertySystem->registerPlugin( $guid, array_merge($genPluginParams,$insPluginParams) );
+	$reg = new PEAR_Registry;
+	foreach ($reg->listPackages() as $package) {
+		if (substr($package,0,strlen("text_wiki"))=="text_wiki") {
+			$inf = $reg->packageInfo($package);
+			$package = $inf['package'];
+			$p = substr($package,strlen("text_wiki"));
+			if (empty($p)) {
+				$parser = "Text_Wiki";
+				$parser_class = "Default";
+			} else {
+				$parser = substr($p,1);
+				$parser_class = $parser;
+			}
+			$f = create_function('&$pParseHash, &$pCommonObject','return pearwiki_general_parse_data("'.$parser_class.'",$pParseHash, $pCommonObject);');
+			$guid = "pearwiki_$parser";
+			if (strlen($guid)>16) {
+				$guid = "pw_$parser";
+			}
+			if (strlen($guid)>16) {
+				$guid = substr($guid,0,16);
+			}
+			$insPluginParams =  array(
+				'load_function' => $f,
+				'edit_field' => "<input type=\"radio\" name=\"format_guid\" value=\"$guid\"",
+				'description' => "Pear Wiki Parser for $parser Syntax.",
+				'edit_label' => "$parser Syntax, parsed by Pear::Text_Wiki$p",
+				'help_page' => "{$parser}Syntax",
+				'auto_activate' => true,
+			);
+			$gLibertySystem->registerPlugin( $guid, array_merge($genPluginParams,$insPluginParams) );
 
+		}
 	}
 }
 
