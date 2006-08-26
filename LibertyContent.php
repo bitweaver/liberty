@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.128 2006/08/25 19:41:18 sylvieg Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.129 2006/08/26 10:30:12 jht001 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1008,9 +1008,9 @@ class LibertyContent extends LibertyBase {
 	*/
 	function getHits() {
 		if( $this->mContentId  ) {
-			$query = "SELECT `hits`,`last_hit` FROM `".BIT_DB_PREFIX."liberty_content_hits` where `conent_id` = ?";
+			$query = "SELECT `hits`,`last_hit` FROM `".BIT_DB_PREFIX."liberty_content_hits` where `content_id` = ?";
 			$row = $this->mDb->getRow( $query, array( $this->mContentId ) );
-			if ( !empty($ret) ) {
+			if ( !empty($row) ) {
 				$this->mInfo['hits'] = $row['hits'];
 				$this->mInfo['last_hit'] = $row['last_hit'];
 			}
