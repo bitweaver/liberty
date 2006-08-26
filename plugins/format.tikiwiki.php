@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.59 $
+ * @version  $Revision: 1.60 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -365,11 +365,11 @@ class TikiWikiParser extends BitBase {
 
 
 	// This recursive function handles pre- and no-parse sections and plugins
-	function parse_first(&$data, &$preparsed, &$noparsed) {
+	function parse_first(&$data, &$preparsed, &$noparsed, &$pCommonObject) {
 		global $gLibertySystem;
 		$this->parse_pp_np($data, $preparsed, $noparsed);
 		// Handle pre- and no-parse sections
-		parse_data_plugins( $data, $preparsed, $noparsed, $this );
+		parse_data_plugins( $data, $preparsed, $noparsed, $this, $pCommonObject );
 	}
 
 
@@ -770,7 +770,7 @@ class TikiWikiParser extends BitBase {
 		// Handle pre- and no-parse sections and plugins
 		$preparsed = array();
 		$noparsed = array();
-		$this->parse_first($data, $preparsed, $noparsed);
+		$this->parse_first($data, $preparsed, $noparsed, $pCommonObject);
 
 		// Extract [link] sections (to be re-inserted later)
 		$noparsedlinks = array();

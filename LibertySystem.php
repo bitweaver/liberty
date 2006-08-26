@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.39 2006/08/20 22:39:22 hash9 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.40 2006/08/26 21:12:00 jht001 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -454,7 +454,7 @@ class LibertySystem extends LibertyBase {
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser ) {
+function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser, &$pCommonObject ) {
 	global $gLibertySystem;
 	// Find the plugins
 	// note: $curlyTags[0] is the complete match, $curlyTags[1] is plugin name, $curlyTags[2] is plugin arguments
@@ -551,7 +551,7 @@ function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser ) {
 					$arguments = parse_xml_attributes( $paramString );
 				}
 
-				if( $ret = $loadFunc( $plugin_data, $arguments ) ) {
+				if( $ret = $loadFunc( $plugin_data, $arguments, $pCommonObject ) ) {
 					// temporarily replace end of lines so tables and other things render properly
 //					$ret = preg_replace( "/\n/", '#EOL', $ret );
 
