@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -90,7 +90,7 @@ function bithtml_parse_data( &$pParseHash, &$pCommonObject ) {
 	global $gLibertySystem;
 	$ret = $pParseHash['data'];
 	// eventually we should strip tags, maybe tikilink, or other things.
-	parse_data_plugins( $ret, $foo, $bar, $empty );
+	parse_data_plugins( $ret, $foo, $bar, $empty, $pCommonObject );
 	// this function is called manually, since it processes the HTML code
 	if( preg_match( "/\{maketoc.*?\}/i", $ret ) && @$gLibertySystem->mPlugins['datamaketoc']['is_active'] == 'y' ) {
 		$ret = data_maketoc( $ret );
