@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.10 2006/08/05 16:21:57 squareing Exp $
+// $Id: data.maketoc.php,v 1.11 2006/08/27 00:02:24 jht001 Exp $
 
 /**
  * definitions
@@ -68,6 +68,11 @@ function data_maketoc_help() {
 				<td>class</td>
 				<td>'.tra( "string").'<br />('.tra("optional").')</td>
 				<td>'.tra( 'Override the class of the maketoc div.' ).'</td>
+			</tr>
+			<tr class="odd">
+				<td>class</td>
+				<td>'.tra( "string").'<br />('.tra("optional").')</td>
+				<td>'.tra( 'Override the width of the maketoc div.' ).'</td>
 			</tr>
 		</table>'.
 		tra("Example: ").'{MAKETOC maxdepth=3 include=all backtotop=true}';
@@ -211,7 +216,21 @@ function maketoc_create_list( $pTocHash, $pParams ) {
 		$toplink = '';
 	}
 
-	$list = '<div class="'.( !empty( $pParams['class'] ) ? $pParams['class'] : "maketoc" ).'"><h3>'.( !empty( $pParams['title'] ) ? $pParams['title'] : tra( 'Page Contents' ) ).'</h3>'.$list.$toplink.'</div>';
+
+    $width = '';
+    if ( !empty( $pParams['width'] ) ) {
+    	$work = $pParams['width'];
+    	if (preg_match('/^\d+(\%|em|cm|px)*$/',$work)) {
+    		$width = "style=\"width:$work;\"";
+			}
+    	}
+
+	$class = 'class="maketoc"';
+	if ( !empty( $pParams['class'] ) ) {
+		$class = 'class="' . $pParams['class'] . '"';
+		}
+
+	$list = "<div $class $width ><h3>" .( !empty( $pParams['title'] ) ? $pParams['title'] : tra( 'Page Contents' ) ).'</h3>'.$list.$toplink.'</div>';
 
 	return $list;
 }
