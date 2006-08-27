@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.129 2006/08/26 10:30:12 jht001 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.130 2006/08/27 19:39:58 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -276,8 +276,7 @@ class LibertyContent extends LibertyBase {
 
 			if( !empty( $pParamHash['force_history'] ) || ( empty( $pParamHash['minor'] ) && $this->getField( 'version' ) && $pParamHash['field_changed'] )) {
 				if( empty( $pParamHash['has_no_history'] ) ) {
-					$query = "insert into `".BIT_DB_PREFIX."liberty_content_history`( `content_id`, `version`, `last_modified`, `user_id`, `ip`, `history_comment`, `data`, `description`, `format_guid`) values(?,?,?,?,?,?,?,?,?)";
-					$result = $this->mDb->query( $query, array( $this->mContentId, (int)$this->getField( 'version' ), (int)$this->getField( 'last_modified' ) , $this->getField( 'modifier_user_id' ), $this->getField( 'ip' ), $this->getField( 'history_comment' ), $this->getField( 'data' ), $this->getField( 'description' ), $this->getField( 'format_guid' ) ) );
+					$this->storeHistory();
 				}
 				$action = "Created";
 				$mailEvents = 'wiki_page_changes';
@@ -370,6 +369,16 @@ class LibertyContent extends LibertyBase {
 	}
 
 	// *********  History functions for the wiki ********** //
+	function storeHistory() {
+		$ret = FALSE;
+		if( $this->isValid() ) {
+			$query = "insert into `".BIT_DB_PREFIX."liberty_content_history`( `content_id`, `version`, `last_modified`, `user_id`, `ip`, `history_comment`, `data`, `description`, `format_guid`) values(?,?,?,?,?,?,?,?,?)";
+			$result = $this->mDb->query( $query, array( $this->mContentId, (int)$this->getField( 'version' ), (int)$this->getField( 'last_modified' ) , $this->getField( 'modifier_user_id' ), $this->getField( 'ip' ), $this->getField( 'history_comment' ), $this->getField( 'data' ), $this->getField( 'description' ), $this->getField( 'format_guid' ) ) );
+			$ret = TRUE;
+		}
+		return( $ret );
+	}
+	
 	/**
 	* Get count of the number of historic records for the page
 	* @return count
@@ -1188,10 +1197,12 @@ class LibertyContent extends LibertyBase {
 	* Not-so-pure virtual function that returns Request_URI to a content's thumbnail representation. It is up to the derived content what exactly this means
 	* If not implemented in the content's class, this class will return NULL, which is an acceptable case meaning no thumbnail is available.
 	* FisheyeGallery, BitUser might return pictures, BitArticle might return the article topic image, etc.
-	* @param string Size of the url to return
+	* @param string Size of the url to return - should be a standard thumbnail size such as 'icon', 'avatar', 'small', 'medium', or 'large'
+	* @param int optional contentId tp generate the thumbnail, if empty, the mContentId variable should be used
+	* @param int optional secondary id, such as user_id or products_id, etc
 	* @return string Formated URL address to display the page.
 	*/
-	function getThumbnailUrl( $pSize='small' ) {
+	function getThumbnailUrl( $pSize='small', $pContentId=NULL, $pSecondaryId=NULL ) {
 	}
 
 	/**
