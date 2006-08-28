@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.rss.php,v 1.7 2006/08/07 22:14:58 squareing Exp $
+// $Id: data.rss.php,v 1.8 2006/08/28 07:52:25 jht001 Exp $
 
 /**
  * definitions
@@ -47,7 +47,7 @@ function rss_extended_help() {
 }
 
 function rss_parse_data( $data, $params ) {
-	$repl = '';
+  $repl = '';
   if( @BitBase::verifyId( $params['id'] ) ) {
  		global $rsslib;
 		require_once( RSS_PKG_PATH.'rss_lib.php' );
@@ -59,7 +59,7 @@ function rss_parse_data( $data, $params ) {
 
 		$repl = '<ul class="rsslist">';
 
-		for ($j = 1; $j < count($items) && $j < $max; $j++) {
+		for ($j = 0; $j < count($items) && $j < $max; $j++) {
 			$repl .= '<li><a href="' . $items[$j]["link"] . '">' . $items[$j]["title"] . '</a>';
 			if ($items[$j]["pubdate"] <> '') {
 				$repl .= ' <small>('.$items[$j]["pubdate"].')</small>';
@@ -71,6 +71,7 @@ function rss_parse_data( $data, $params ) {
 	}else{
 		$repl = '<b>rss can not be found, id must be a number</b>';
 	}
+
 	return $repl;
 }
 
