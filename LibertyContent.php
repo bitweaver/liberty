@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.131 2006/08/29 12:56:10 sylvieg Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.132 2006/08/29 19:58:21 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -225,6 +225,8 @@ class LibertyContent extends LibertyBase {
 		} else {
 			$pParamHash['content_store']['version'] = $this->mInfo['version'] + 1;
 		}
+
+		// search related stuff
 		if ( ( !(isset($this->mInfo['no_index']) and $this->mInfo['no_index'] == true ) ) and !isset($this->mInfo['index_data']) ) {
 			$this->mInfo['index_data'] = "";
 			if ( isset($pParamHash["title"]) )       $this->mInfo['index_data'] .= $pParamHash["title"] . ' ';
