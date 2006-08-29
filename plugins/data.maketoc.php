@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.11 2006/08/27 00:02:24 jht001 Exp $
+// $Id: data.maketoc.php,v 1.12 2006/08/29 23:11:18 squareing Exp $
 
 /**
  * definitions
@@ -92,21 +92,21 @@ function data_maketoc( $data ) {
 	// remove any html tags from the output text and generate link ids
 	foreach( $headers[2] as $output ) {
 		$outputs[] = preg_replace( "/<[^>]*>/", "", $output );
-		$anchor = substr( preg_replace( "/<[^>]*>|[^\w|\d]*/", "", $output ), 0, 40 );
-		$anchors[] = !empty( $anchor) ? $anchor : 'id'.microtime() * 1000000;
+		$id = substr( preg_replace( "/<[^>]*>|[^\w|\d]*/", "", $output ), 0, 40 );
+		$ids[] = !empty( $id ) ? $id : 'id'.microtime() * 1000000;
 	}
 
 	// insert the <a name> tags in the right places
 	foreach( $headers[0] as $k => $header ) {
-		$anchor = '<a name="'.$anchors[$k].'"></a>';
-		$data = preg_replace( "/".preg_quote( $header, "/" )."/", $anchor.$header, $data );
+		$reconstructed = "<h{$headers[1][$k]} id=\"{$ids[$k]}\">{$headers[2][$k]}</h{$headers[1][$k]}>";
+		$data = preg_replace( "/".preg_quote( $header, "/" )."/", $reconstructed, $data );
 	}
 
 	if( !empty( $outputs ) ) {
 		$tocHash = array(
 			'outputs' => $outputs,
-			'anchors' => $anchors,
-			'levels' => $headers[1],
+			'ids'     => $ids,
+			'levels'  => $headers[1],
 		);
 
 		// (<br[ |\/]*>){0,1} removes up to one occurance of <br> | <br > | <br /> | <br/> or similar variants
@@ -186,7 +186,7 @@ function maketoc_create_list( $pTocHash, $pParams ) {
 			}
 
 			if( $depth <= $maxdepth ) {
-				$list .= '<li><a href="#'.$anchors[$k].'">'.$output.'</a>';
+				$list .= '<li><a href="#'.$ids[$k].'">'.$output.'</a>';
 			}
 			if( $levels[$k] >= @$levels[$k+1] ) {
 				if( $depth <= $maxdepth ) {
@@ -211,26 +211,26 @@ function maketoc_create_list( $pTocHash, $pParams ) {
 	}
 
 	if( isset( $pParams['backtotop'] ) && $pParams['backtotop'] == 'true' ) {
-		$toplink = '<a href="#top">'.tra( 'back to top' ).'</a>';
+		$toplink = '<a href="#content">'.tra( 'back to top' ).'</a>';
 	} else {
 		$toplink = '';
 	}
 
 
-    $width = '';
-    if ( !empty( $pParams['width'] ) ) {
-    	$work = $pParams['width'];
-    	if (preg_match('/^\d+(\%|em|cm|px)*$/',$work)) {
-    		$width = "style=\"width:$work;\"";
-			}
-    	}
+	$width = '';
+	if( !empty( $pParams['width'] ) ) {
+		$work = $pParams['width'];
+		if( preg_match( '/^\d+(\%|em|cm|px|pt)*$/',$work ) ) {
+			$width = "style=\"width:$work;\"";
+		}
+	}
 
 	$class = 'class="maketoc"';
-	if ( !empty( $pParams['class'] ) ) {
-		$class = 'class="' . $pParams['class'] . '"';
-		}
+	if( !empty( $pParams['class'] ) ) {
+		$class = 'class="'.$pParams['class'].'"';
+	}
 
-	$list = "<div $class $width ><h3>" .( !empty( $pParams['title'] ) ? $pParams['title'] : tra( 'Page Contents' ) ).'</h3>'.$list.$toplink.'</div>';
+	$list = "<div $class $width><h3>" .( !empty( $pParams['title'] ) ? $pParams['title'] : tra( 'Page Contents' ) ).'</h3>'.$list.$toplink.'</div>';
 
 	return $list;
 }
