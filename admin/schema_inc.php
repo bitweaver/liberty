@@ -162,7 +162,7 @@ $indices = array (
 	'content_title_idx' => array( 'table' => 'liberty_content', 'cols' => 'title', 'opts' => NULL ),
 	'content_user_idx' => array( 'table' => 'liberty_content', 'cols' => 'user_id', 'opts' => NULL ),
 	'content_moduser_idx' => array( 'table' => 'liberty_content', 'cols' => 'modifier_user_id', 'opts' => NULL ),
-	'content_hits_idx' => array( 'table' => 'liberty_content', 'cols' => 'hits', 'opts' => NULL ),
+	'content_content_hits_idx' => array( 'table' => 'liberty_content_hits', 'cols' => 'content_id', 'opts' => NULL ),
 	'comments_object_idx' => array( 'table' => 'liberty_comments', 'cols' => 'content_id', 'opts' => NULL ),
 	'comments_parent_idx' => array( 'table' => 'liberty_comments', 'cols' => 'parent_id', 'opts' => NULL ),
 	'attachments_hits_idx' => array( 'table' => 'liberty_attachments', 'cols' => 'hits', 'opts' => NULL ),
