@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.130 2006/08/27 19:39:58 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.131 2006/08/29 12:56:10 sylvieg Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1368,10 +1368,22 @@ class LibertyContent extends LibertyBase {
 
 		$this->prepGetList( $pListHash );
 
-		$selectSql = '';
-		$joinSql = '';
-		$whereSql = '';
+		$hashSql = array('select'=>array(), 'join'=>array(),'where'=>array() );
 		$bindVars = array();
+		if (!empty($pListHash['content_type_guid']) && is_array($pListHash['content_type_guid'])) {
+			foreach ($pListHash['content_type_guid'] as $contentTypeGuid) {
+				$this->getFilter($contentTypeGuid, $hashSql, $bindVars, $pListHash);
+			}
+		} else {
+			$this->getFilter($pListHash['content_type_guid'], $hashSql, $bindVars, $pListHash);
+		}
+
+		$selectSql = implode(',', $hashSql['select']);
+		if (!empty($selectSql)) {
+			$selectSql =','.$selectSql;
+		}
+		$joinSql = implode(',', $hashSql['join']);
+		$whereSql = implode(',', $hashSql['where']);
 		$this->getServicesSql( 'content_list_sql_function', $selectSql, $joinSql, $whereSql, $bindVars, NULL, $pListHash );
 
 		if( $pListHash['sort_mode'] == 'size_desc' ) {
@@ -1885,6 +1897,20 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 		return TRUE;
+	}
+	function getFilter($pContentTypeGuid, &$pSql,&$pBindVars, $pHash = null) {
+		global $gLibertySystem;
+		foreach ($gLibertySystem->mContentTypes as $type) {
+			if ($type['content_type_guid'] == $pContentTypeGuid) {
+				$path = constant(strtoupper($type['handler_package']).'_PKG_PATH');	
+				require_once($path.$type['handler_file']);
+				$content = new $type['handler_class'];
+				if (method_exists($content, 'getFilterSql')) {
+					$content->getFilterSql($pSql, $pBindVars, $pHash);
+				}
+			}
+		}
+		
 	}
 }
 ?>
