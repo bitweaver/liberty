@@ -10,7 +10,7 @@
  */
 global $gLibertySystem;
 
-if( @include_once('PEAR/Registry.php') ) {
+if( @include_once('PEAR/Registry.php') && @include_once( 'Text/Wiki.php' ) ) {
 	$genPluginParams = array (
 		'store_function' => 'pearwiki_general_save_data',
 		'verify_function' => 'pearwiki_general_verify_data',
@@ -65,7 +65,6 @@ function pearwiki_general_parse_data( $parser_fmt, &$pParseHash, &$pCommonObject
 		define('PAGE_SEP', 'PAGE MARKER HERE*&^%$#^$%*PAGEMARKERHERE');
 	}
 
-	require_once 'Text/Wiki.php';
 	$parser = Text_Wiki::singleton($parser_fmt);
 	if (PEAR::isError($parser)) {
 		vd($parser);
