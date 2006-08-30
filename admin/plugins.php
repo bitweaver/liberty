@@ -16,11 +16,6 @@ if( isset( $_REQUEST['pluginsave'] ) && !empty( $_REQUEST['pluginsave'] ) ) {
 	} else {
 		$gBitSmarty->assign( 'errorMsg', 'You cannot disable the default format');
 	}
-
-	$formToggles = array( 'allow_html' );
-	foreach( $formToggles as $item ) {
-		simple_set_toggle( $item, LIBERTY_PKG_NAME );
-	}
 }
 
 // Sort the plugins to avoild splitting tables
