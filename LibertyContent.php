@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.133 2006/08/31 04:20:26 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.134 2006/08/31 22:00:22 sylvieg Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1371,21 +1371,27 @@ class LibertyContent extends LibertyBase {
 		$this->prepGetList( $pListHash );
 
 		$hashSql = array('select'=>array(), 'join'=>array(),'where'=>array() );
-		$bindVars = array();
+		$hashBindVars = array('select'=>array(), 'where'=>array(), 'join'=>array());
 		if (!empty($pListHash['content_type_guid']) && is_array($pListHash['content_type_guid'])) {
 			foreach ($pListHash['content_type_guid'] as $contentTypeGuid) {
-				$this->getFilter($contentTypeGuid, $hashSql, $bindVars, $pListHash);
+				$this->getFilter($contentTypeGuid, $hashSql, $hashBindVars, $pListHash);
 			}
-		} else {
-			$this->getFilter($pListHash['content_type_guid'], $hashSql, $bindVars, $pListHash);
+		} elseif (!empty($pListHash['content_type_guid'])) {
+			$this->getFilter($pListHash['content_type_guid'], $hashSql, $hashBindVars, $pListHash);
 		}
 
-		$selectSql = implode(',', $hashSql['select']);
-		if (!empty($selectSql)) {
-			$selectSql =','.$selectSql;
+		if (!empty($hashSql['select'])) {
+			$selectSql = ','.implode(',', $hashSql['select']);
+		} else {
+			$selectSql = '';
 		}
-		$joinSql = implode(',', $hashSql['join']);
-		$whereSql = implode(',', $hashSql['where']);
+		$joinSql = implode(' ', $hashSql['join']);
+		$whereSql = '';
+		if (empty($hashBindVars['join'])) {
+			$bindVars = array();
+		} else {
+			$bindVars = $hashBindVars['join'];
+		}
 		$this->getServicesSql( 'content_list_sql_function', $selectSql, $joinSql, $whereSql, $bindVars, NULL, $pListHash );
 
 		if( $pListHash['sort_mode'] == 'size_desc' ) {
@@ -1490,6 +1496,12 @@ class LibertyContent extends LibertyBase {
 		} else {
 			$orderTable = 'lc.';
 		}
+		if (!empty($hashSql['where'])) {
+			$whereSql .= ' AND '.implode(' ', $hashSql['where']);
+		}
+		if (!empty($hashBindVars['where'])) {
+			$bindVars = array_merge($bindVars, $hashBindVars['where']);
+		}
 
 		// If sort mode is versions then offset is 0, max_records is -1 (again) and sort_mode is nil
 		// If sort mode is links then offset is 0, max_records is -1 (again) and sort_mode is nil
@@ -1508,19 +1520,25 @@ class LibertyContent extends LibertyBase {
 				lc.`content_id`
 				$selectSql
 			FROM `".BIT_DB_PREFIX."liberty_content` lc
-				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON( `lc`.`content_id` =  `lch`.`content_id`)
-			INNER JOIN `".BIT_DB_PREFIX."users_users` uue ON lc.`modifier_user_id`=uue.`user_id`
-			$joinSql
 			,`".BIT_DB_PREFIX."users_users` uuc
-			WHERE lc.`user_id`=uuc.`user_id` $whereSql
+			LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON( `lc`.`content_id` =  `lch`.`content_id`)
+			INNER JOIN `".BIT_DB_PREFIX."users_users` uue ON (lc.`modifier_user_id`=uue.`user_id`)
+			$joinSql
+			WHERE lc.`user_id`=uuc.`user_id`
+			$whereSql
 			ORDER BY ".$orderTable.$this->mDb->convert_sortmode($pListHash['sort_mode']);
 		$query_cant = "select count(lc.`content_id`) FROM `".BIT_DB_PREFIX."liberty_content` lc
-			$joinSql, `".BIT_DB_PREFIX."users_users` uu
-			WHERE uu.`user_id`=lc.`user_id` $whereSql";
+			, `".BIT_DB_PREFIX."users_users` uu
+			$joinSql
+			WHERE uu.`user_id`=lc.`user_id`
+			$whereSql";
 		// previous cant query - updated by xing
 		// $query_cant = "select count(*) from `".BIT_DB_PREFIX."wiki_pages` wp INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id` = wp.`content_id`) $mid";
-		$result = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
 		$cant = $this->mDb->getOne( $query_cant, $bindVars );
+		if (!empty($hashBindVars['select'])) {
+			$bindVars = array_merge($hashBindVars['select'], $bindVars);
+		}
+		$result = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
 		$ret = array();
 		$contentTypes = $gLibertySystem->mContentTypes;
 		while( $aux = $result->fetchRow() ) {
@@ -1901,11 +1919,11 @@ class LibertyContent extends LibertyBase {
 		return TRUE;
 	}
 	function getFilter($pContentTypeGuid, &$pSql,&$pBindVars, $pHash = null) {
-		global $gLibertySystem;
+		global $gLibertySystem, $gBitSystem;
 		foreach ($gLibertySystem->mContentTypes as $type) {
 			if ($type['content_type_guid'] == $pContentTypeGuid) {
-				$path = constant(strtoupper($type['handler_package']).'_PKG_PATH');	
-				require_once($path.$type['handler_file']);
+				$path = $gBitSystem->mPackages[$type['handler_package']]['path'];//constant(strtoupper($type['handler_package']).'_PKG_PATH');	
+				include_once($path.$type['handler_file']);
 				$content = new $type['handler_class'];
 				if (method_exists($content, 'getFilterSql')) {
 					$content->getFilterSql($pSql, $pBindVars, $pHash);
