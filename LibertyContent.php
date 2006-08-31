@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.132 2006/08/29 19:58:21 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.133 2006/08/31 04:20:26 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1316,7 +1316,7 @@ class LibertyContent extends LibertyBase {
 		}
 
 		$this->prepGetList( $pListHash );
-		$query = "SELECT DISTINCT(uu.`user_id`) AS hash_key, uu.`user_id`, SUM( lch.`hits` ) AS `ag_hits`, uu.`login``, uu.`real_name`
+		$query = "SELECT DISTINCT(uu.`user_id`) AS hash_key, uu.`user_id`, SUM( lch.`hits` ) AS `ag_hits`, uu.`login`, uu.`real_name`
 				FROM `".BIT_DB_PREFIX."liberty_content` lc INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id`=lc.`user_id` )
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch 
 					ON (`lc`.`content_id` =  `lch`.`content_id`)
