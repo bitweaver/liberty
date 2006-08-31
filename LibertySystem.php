@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.40 2006/08/26 21:12:00 jht001 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.41 2006/08/31 06:53:16 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -31,16 +31,17 @@ define( 'DATA_PLUGIN', 'data' );
 define( 'LIBERTY_SERVICE_ACCESS_CONTROL', 'access_control' );
 define( 'LIBERTY_SERVICE_CATEGORIZATION', 'categorization' );
 define( 'LIBERTY_SERVICE_COMMERCE', 'commerce' );
-define( 'LIBERTY_SERVICE_METADATA', 'metadata' );
-define( 'LIBERTY_SERVICE_MENU', 'menu' );
-define( 'LIBERTY_SERVICE_DOCUMENT_GENERATION', 'document_generation' );
-define( 'LIBERTY_SERVICE_SEARCH', 'search');
-define( 'LIBERTY_SERVICE_RATING', 'rating');
-define( 'LIBERTY_SERVICE_TRANSLATION', 'translation');
-define( 'LIBERTY_SERVICE_TRANSLITERATION', 'transliteration');
 define( 'LIBERTY_SERVICE_CONTENT_TEMPLATES', 'content_templates');
+define( 'LIBERTY_SERVICE_DOCUMENT_GENERATION', 'document_generation' );
+define( 'LIBERTY_SERVICE_FORUMS', 'forums' );
 define( 'LIBERTY_SERVICE_GEO', 'global_positioning' );
 define( 'LIBERTY_SERVICE_MAPS', 'map_display' );
+define( 'LIBERTY_SERVICE_METADATA', 'metadata' );
+define( 'LIBERTY_SERVICE_MENU', 'menu' );
+define( 'LIBERTY_SERVICE_RATING', 'rating');
+define( 'LIBERTY_SERVICE_SEARCH', 'search');
+define( 'LIBERTY_SERVICE_TRANSLATION', 'translation');
+define( 'LIBERTY_SERVICE_TRANSLITERATION', 'transliteration');
 
 define( 'LIBERTY_TEXT_AREA', 'editliberty');
 define( 'LIBERTY_UPLOAD', 'upload');
