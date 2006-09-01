@@ -19,13 +19,13 @@
 		{/if}
 
 		<div class="row">
-			{formlabel label="Content" for="content"}
+			{formlabel label="Content" for="lib-content"}
 			{forminput}
 				{html_options onchange="submit();" options=$contentTypes name=content_type_guid selected=$contentSelect}
 			{/forminput}
 
 			{forminput}
-				{html_options multiple="multiple" id="content" size="12" name="content[]" values=$contentList options=$contentList}
+				{html_options multiple="multiple" id="lib-content" size="12" name="content[]" values=$contentList options=$contentList}
 			{/forminput}
 
 			{forminput}
