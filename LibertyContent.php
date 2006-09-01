@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.134 2006/08/31 22:00:22 sylvieg Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.135 2006/09/01 12:48:48 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1520,13 +1520,14 @@ class LibertyContent extends LibertyBase {
 				lc.`content_id`
 				$selectSql
 			FROM `".BIT_DB_PREFIX."liberty_content` lc
-			,`".BIT_DB_PREFIX."users_users` uuc
-			LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON( `lc`.`content_id` =  `lch`.`content_id`)
-			INNER JOIN `".BIT_DB_PREFIX."users_users` uue ON (lc.`modifier_user_id`=uue.`user_id`)
-			$joinSql
+				INNER JOIN `".BIT_DB_PREFIX."users_users` uuc ON (lc.`modifier_user_id`=uuc.`user_id`)
+				INNER JOIN `".BIT_DB_PREFIX."users_users` uue ON (lc.`modifier_user_id`=uue.`user_id`)
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON( lc.`content_id` =  lch.`content_id`)
+				$joinSql
 			WHERE lc.`user_id`=uuc.`user_id`
-			$whereSql
+				$whereSql
 			ORDER BY ".$orderTable.$this->mDb->convert_sortmode($pListHash['sort_mode']);
+
 		$query_cant = "select count(lc.`content_id`) FROM `".BIT_DB_PREFIX."liberty_content` lc
 			, `".BIT_DB_PREFIX."users_users` uu
 			$joinSql
