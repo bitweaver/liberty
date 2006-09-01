@@ -102,6 +102,8 @@ function data_quote($data, $params) {
 		$citeurl = $c->getDisplayUrl();
 		$cite = ' cite="'.$citeurl.'"';
 
+		require_once $gBitSmarty->_get_plugin_filepath( 'modifier','reltime' );
+
 		$extra.="<a href=\"";
 		$extra.=$citeurl;
 		$extra.="\" title=\"";
@@ -110,7 +112,7 @@ function data_quote($data, $params) {
 		$extra.=$c->mInfo['title'];
 		$extra.="</a>";
 		$extra.=" (";
-		$extra.=reltime($c->mInfo['created'],'short');
+		$extra.=smarty_modifier_reltime($c->mInfo['created'],'short');
 		$extra.=") ";
 		if (empty($user)) {
 			$user = $c->mInfo['login'];
@@ -124,13 +126,13 @@ function data_quote($data, $params) {
 		$display_user = "<a href=\"".$u->getDisplayUrl()."\" title=\"".$u->mInfo['display_name']."\">".$u->mInfo['display_name']."</a>";
 	}
 
-	$display_result = "<div class=\"quote\">";
+	$display_result = "";
 
 	if (!empty($display_user)) {
-		$display_result .="<span class=\"quote-title\">{$extra}{$display_user} ".tra( "wrote" ).":</span>";
+		$display_result .="<p class=\"quotetitle\">{$extra}{$display_user} ".tra( "wrote" ).":</p>";
 	}
 
-	$display_result .="<blockquote{$cite}>$ret</blockquote></div>";
+	$display_result .="<blockquote{$cite}><div>$ret</div></blockquote>";
 
 	return $display_result;
 }
