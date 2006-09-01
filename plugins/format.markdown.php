@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -43,7 +43,7 @@ function markdown_parse_data( &$pParseHash, &$pCommonObject ) {
 	global $gLibertySystem;
 	$ret = Markdown( $pParseHash['data'] );
 	// eventually we should strip tags, maybe tikilink, or other things.
-	parse_data_plugins( $ret, $foo, $bar, $empty );
+	parse_data_plugins( $ret, $foo, $bar, $empty, $pCommonObject );
 	// this function is called manually, since it processes the HTML code
 	if( preg_match( "/\{maketoc.*?\}/i", $ret ) && @$gLibertySystem->mPlugins['datamaketoc']['is_active'] == 'y' ) {
 		$ret = data_maketoc( $ret );
