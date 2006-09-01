@@ -27,18 +27,18 @@ global $gBitSystem, $gBitSmarty;
 define( 'PLUGIN_GUID_DATAQUOTE', 'dataquote' );
 global $gLibertySystem;
 $pluginParams = array (
-'tag' => 'quote',
-'auto_activate' => TRUE,
-'requires_pair' => TRUE,
-'load_function' => 'data_quote',
-'help_function' => 'data_quote_help',
-'title' => 'Quote',
-'help_page' => 'DataPluginQuote',
-'description' => tra( "This plugin will render the given content as discribed by the content_type given" ),
-'syntax' => "{quote format_guid= user= comment_id= }.. content ..{/quote}",
-'path' => LIBERTY_PKG_PATH.'plugins/data.quote.php',
-'security' => 'registered',
-'plugin_type' => DATA_PLUGIN
+	'tag' => 'quote',
+	'auto_activate' => TRUE,
+	'requires_pair' => TRUE,
+	'load_function' => 'data_quote',
+	'help_function' => 'data_quote_help',
+	'title' => 'Quote',
+	'help_page' => 'DataPluginQuote',
+	'description' => tra( "This plugin will render the given content as discribed by the content_type given" ),
+	'syntax' => "{quote format_guid= user= comment_id= }.. content ..{/quote}",
+	'path' => LIBERTY_PKG_PATH.'plugins/data.quote.php',
+	'security' => 'registered',
+	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAQUOTE, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAQUOTE );
@@ -72,13 +72,12 @@ function data_quote_help() {
 }
 
 // Executable Routine
-function data_quote($data, $params) { // No change in the parameters with Clyde
-	// The next 2 lines allow access to the $pluginParams given above and may be removed when no longer needed
+function data_quote($data, $params) {
 	global $gLibertySystem, $gBitSmarty;
 
 	$rendererHash=array();
 	$rendererHash['content_id']=0;
-	$rendererHash['format_guid'] =$params['format_guid'];
+	$rendererHash['format_guid']=$params['format_guid'];
 	$rendererHash['data'] = trim($data);
 	$formatGuid=$rendererHash['format_guid'];
 	$ret = "";
@@ -86,8 +85,7 @@ function data_quote($data, $params) { // No change in the parameters with Clyde
 		$ret = $func( $rendererHash, $this );
 	}
 
-	$display_result = "<div class=\"quote\">";
-	$extra = '';
+	$extra = $cite = '';
 	$user = $params['user'];
 
 	if (!empty($params['comment_id'])) {
@@ -100,8 +98,12 @@ function data_quote($data, $params) { // No change in the parameters with Clyde
 		if (empty($c->mInfo['title'])) {
 			$c->mInfo['title']="#".$c->mCommentId;
 		}
+
+		$citeurl = $c->getDisplayUrl();
+		$cite = ' cite="'.$citeurl.'"';
+
 		$extra.="<a href=\"";
-		$extra.=$c->getDisplayUrl();
+		$extra.=$citeurl;
 		$extra.="\" title=\"";
 		$extra.=$c->mInfo['title'];
 		$extra.="\">";
@@ -111,7 +113,6 @@ function data_quote($data, $params) { // No change in the parameters with Clyde
 		$extra.=reltime($c->mInfo['created'],'short');
 		$extra.=") ";
 		if (empty($user)) {
-			vd($mInfo);
 			$user = $c->mInfo['login'];
 		}
 	}
@@ -123,11 +124,13 @@ function data_quote($data, $params) { // No change in the parameters with Clyde
 		$display_user = "<a href=\"".$u->getDisplayUrl()."\" title=\"".$u->mInfo['display_name']."\">".$u->mInfo['display_name']."</a>";
 	}
 
+	$display_result = "<div class=\"quote\">";
+
 	if (!empty($display_user)) {
-		$display_result .="<span class=\"quote-title\">{$extra}{$display_user} wrote:</span>";
+		$display_result .="<span class=\"quote-title\">{$extra}{$display_user} ".tra( "wrote" ).":</span>";
 	}
 
-	$display_result .="<blockquote>$ret</blockquote></div>";
+	$display_result .="<blockquote{$cite}>$ret</blockquote></div>";
 
 	return $display_result;
 }
