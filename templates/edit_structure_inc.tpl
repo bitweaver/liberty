@@ -22,16 +22,16 @@
 
 	<div class="navbar">
 		<ul>
-			<li><a id="tree-moveUp"    href="javascript:void(0)">{biticon ipackage=liberty iexplain="Up"     iname=nav_up}</a></li>
-			<li><a id="tree-moveDown"  href="javascript:void(0)">{biticon ipackage=liberty iexplain="Down"   iname=nav_down}</a></li>
-			<li><a id="tree-moveLeft"  href="javascript:void(0)">{biticon ipackage=liberty iexplain="Left"   iname=nav_prev}</a></li>
-			<li><a id="tree-moveRight" href="javascript:void(0)">{biticon ipackage=liberty iexplain="Right"  iname=nav_next}</a></li>
+			<li><a id="tree-moveUp"    href="javascript:void(0)">{biticon ipackage=liberty iname=nav_up iexplain="Up"}</a></li>
+			<li><a id="tree-moveDown"  href="javascript:void(0)">{biticon ipackage=liberty iname=nav_down iexplain="Down"}</a></li>
+			<li><a id="tree-moveLeft"  href="javascript:void(0)">{biticon ipackage=liberty iname=nav_prev iexplain="Left"}</a></li>
+			<li><a id="tree-moveRight" href="javascript:void(0)">{biticon ipackage=liberty iname=nav_next iexplain="Right"}</a></li>
 			{if !$no_delete}
-				<li><a id="tree-remove"    href="javascript:void(0)">{biticon ipackage=liberty iexplain="Remove" iname=delete}</a></li>
+				<li><a id="tree-remove"    href="javascript:void(0)">{biticon ipackage=liberty iname=delete iexplain="Remove"}</a></li>
 			{else}
 				<input id="tree-remove" type="hidden" value="dummy">
 			{/if}
-			<li><a id="tree-convert"   href="javascript:void(0)">{biticon ipackage=liberty iexplain="Folder" iname=tree-folder} &larr; &rarr; {biticon ipackage=liberty iexplain="Document" iname=tree-doc}</a></li>
+			<li><a id="tree-convert"   href="javascript:void(0)">{biticon ipackage=liberty iname=tree-folder iexplain="Folder"} &larr; &rarr; {biticon ipackage=liberty iname=tree-doc iexplain="Document"}</a></li>
 			<li><div id="tree-tooltip" class="tree-tooltip"></div>
 		</ul>
 	</div>
