@@ -22,12 +22,12 @@
 
 	<div class="navbar">
 		<ul>
-			<li><a id="tree-moveUp"    href="javascript:void(0)">{biticon ipackage=liberty iname=nav_up iexplain="Up"}</a></li>
-			<li><a id="tree-moveDown"  href="javascript:void(0)">{biticon ipackage=liberty iname=nav_down iexplain="Down"}</a></li>
-			<li><a id="tree-moveLeft"  href="javascript:void(0)">{biticon ipackage=liberty iname=nav_prev iexplain="Left"}</a></li>
-			<li><a id="tree-moveRight" href="javascript:void(0)">{biticon ipackage=liberty iname=nav_next iexplain="Right"}</a></li>
+			<li><a id="tree-moveUp"    href="javascript:void(0)">{biticon ipackage="icons" iname="go-up" iexplain="Up"}</a></li>
+			<li><a id="tree-moveDown"  href="javascript:void(0)">{biticon ipackage="icons" iname="go-down" iexplain="Down"}</a></li>
+			<li><a id="tree-moveLeft"  href="javascript:void(0)">{biticon ipackage="icons" iname="go-previous" iexplain="Left"}</a></li>
+			<li><a id="tree-moveRight" href="javascript:void(0)">{biticon ipackage="icons" iname="go-next" iexplain="Right"}</a></li>
 			{if !$no_delete}
-				<li><a id="tree-remove"    href="javascript:void(0)">{biticon ipackage=liberty iname=delete iexplain="Remove"}</a></li>
+				<li><a id="tree-remove"    href="javascript:void(0)">{biticon ipackage="icons" iname="edit-delete" iexplain="Remove"}</a></li>
 			{else}
 				<input id="tree-remove" type="hidden" value="dummy">
 			{/if}

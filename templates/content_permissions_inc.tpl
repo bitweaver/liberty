@@ -51,7 +51,7 @@
 				{$perm.perm_desc}
 			</td>
 			<td align="right">
-				{smartlink ititle="Remove Permission" ibiticon="liberty/delete" action=remove content_id=$gContent->mContentId perm=$perm.perm_name group_id=$perm.group_id}
+				{smartlink ititle="Remove Permission" ibiticon="icons/edit-delete" action=remove content_id=$gContent->mContentId perm=$perm.perm_name group_id=$perm.group_id}
 			</td>
 		</tr>
 	{foreachelse}

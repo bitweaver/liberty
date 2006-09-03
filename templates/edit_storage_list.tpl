@@ -22,7 +22,7 @@
 							<a href="{$attachmentActionBaseURL}&amp;detachAttachment={$attachmentId}">{biticon ipackage=liberty iname="detach" iexplain="detach"}</a>
 						{/if}
 						{if $gBitUser->isAdmin() ||  $storage.user_id == $gBitUser->mUserId}
-							<a href="{$attachmentActionBaseURL}&amp;deleteAttachment={$attachmentId}">{biticon ipackage=liberty iname="delete" iexplain="delete"}</a>
+							<a href="{$attachmentActionBaseURL}&amp;deleteAttachment={$attachmentId}">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
 						{/if}
 					</td>
 				</tr>
