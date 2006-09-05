@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage functions
  */
@@ -76,18 +76,18 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 			} else {
 				vd( $gStructure->mErrors );
 			}
+		} elseif( $_REQUEST["action"] == 'remove' ) {
+			$gBitSystem->setBrowserTitle( 'Confirm removal of '.$gContent->getTitle() );
+			$formHash['action'] = 'remove';
+			$formHash['remove'] = TRUE;
+			$formHash['structure_id'] = $_REQUEST['structure_id'];
+			$msgHash = array(
+				'label' => 'Remove content from Structure',
+				'confirm_item' => $gContent->getTitle().'<br />and any subitems',
+				'warning' => 'This will remove the content from the structure but will <strong>not</strong> modify or remove the content itself.',
+			);
+			$gBitSystem->confirmDialog( $formHash,$msgHash );
 		}
-
-		$gBitSystem->setBrowserTitle( 'Confirm removal of '.$gContent->getTitle() );
-		$formHash['action'] = 'remove';
-		$formHash['remove'] = TRUE;
-		$formHash['structure_id'] = $_REQUEST['structure_id'];
-		$msgHash = array(
-			'label' => 'Remove content from Structure',
-			'confirm_item' => $gContent->getTitle().'<br />and any subitems',
-			'warning' => 'This will remove the content from the structure but will <strong>not</strong> modify or remove the content itself.',
-		);
-		$gBitSystem->confirmDialog( $formHash,$msgHash );
 	} elseif (isset($_REQUEST["move_node"])) {
 		if ($_REQUEST["move_node"] == '1') {
 			$gStructure->moveNodeWest();
