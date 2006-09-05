@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.13 $
+ * @version  $Revision: 1.14 $
  * @package  liberty
  * @subpackage functions
  */
@@ -68,9 +68,8 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 		}
 	}
 
-	if( ( isset( $_REQUEST["action"] ) && ( $_REQUEST["action"] == 'remove' ) ) || isset( $_REQUEST["confirm"] ) ) {
-
-		if( isset( $_REQUEST["confirm"] ) ) {
+	if( ( isset( $_REQUEST["action"] ) && ( $_REQUEST["action"] == 'remove' ) ) || !empty( $_REQUEST["confirm"] ) ) {
+		if( $_REQUEST["action"] == 'remove' && !empty( $_REQUEST["confirm"] ) ) {
 			if( $gStructure->s_remove_page( $_REQUEST["structure_id"], false ) ) {
 				header( "Location: ".$_SERVER['PHP_SELF'].'?structure_id='.$gStructure->mInfo["parent_id"] );
 				die;
@@ -78,7 +77,9 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 				vd( $gStructure->mErrors );
 			}
 		}
+
 		$gBitSystem->setBrowserTitle( 'Confirm removal of '.$gContent->getTitle() );
+		$formHash['action'] = 'remove';
 		$formHash['remove'] = TRUE;
 		$formHash['structure_id'] = $_REQUEST['structure_id'];
 		$msgHash = array(
