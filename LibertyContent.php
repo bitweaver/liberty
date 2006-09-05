@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.135 2006/09/01 12:48:48 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.136 2006/09/05 15:09:51 sylvieg Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1357,12 +1357,14 @@ class LibertyContent extends LibertyBase {
 	/**
 	* Get a list of all structures this content is a member of
 	*
-	* @param string Content GUID to limit the list to
-	* @param integer Number of the first record to access ( used to page the list )
-	* @param integer Number of records to return
-	* @param string Name of the field to sort by ( extended by _asc or _desc for sort direction )
-	* @param array List of text elements to filter the results by
-	* @param integer User ID - If set, then only the objcets created by that user will be returned
+	* @param string $pListHash['content_type_guid'] Content GUID to limit the list to
+	* @param integer $pListHash['max_records'] Number of the first record to access ( used to page the list )
+	* @param integer $pListHash['offset'] Number of records to return
+	* @param string $pListHash['sort_mode'] Name of the field to sort by ( extended by _asc or _desc for sort direction )
+	* @param array $pListHash['find'] List of text elements to filter the results by
+	* @param integer $pListHash[''] User ID - If set, then only the objcets created by that user will be returned
+	* $pListHash['last_modified'] date - modified since
+	* $pListHash['end_date'] date - modified before
 	* @return array An array of mInfo type arrays of content objects
 	**/
 	function getContentList( $pListHash ) {
@@ -1456,6 +1458,10 @@ class LibertyContent extends LibertyBase {
 		if ( !empty( $pListHash['last_modified'] ) ) {
 			$whereSql .= ' AND lc.`last_modified` >= ?';
 			$bindVars[] = $pListHash['last_modified'];
+		}
+		if ( !empty( $pListHash['end_date'] ) ) {
+			$whereSql .= ' AND lc.`last_modified` >= ?';
+			$bindVars[] = $pListHash['end_date'];
 		}
 
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
