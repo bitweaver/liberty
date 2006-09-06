@@ -3,7 +3,7 @@
  * Base class for Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.11 2006/08/19 16:24:32 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.12 2006/09/06 16:02:55 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -54,6 +54,9 @@ class LibertyBase extends BitBase {
 		global $gLibertySystem, $gBitUser, $gBitSystem;
 
 		if( BitBase::verifyId( $pContentId ) ) {
+			// remove non integer bits from structure_id and content_id requests
+			// can happen with period's at the end of url's that are email'ed around
+			$pContentId = preg_replace( '/[\D]/', '', $pContentId );
 			if( empty( $pContentGuid ) ) {
 				$pContentGuid = $gLibertySystem->mDb->getOne( "SELECT `content_type_guid` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=?", array( $pContentId ) );
 			}
