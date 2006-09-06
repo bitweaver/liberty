@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.142 2006/09/06 22:07:14 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.143 2006/09/06 22:29:22 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1514,9 +1514,14 @@ class LibertyContent extends LibertyBase {
 		// If sort mode is versions then offset is 0, max_records is -1 (again) and sort_mode is nil
 		// If sort mode is links then offset is 0, max_records is -1 (again) and sort_mode is nil
 		// If sort mode is backlinks then offset is 0, max_records is -1 (again) and sort_mode is nil
-		$query = "SELECT
-				uue.`login` AS `modifier_user`, uue.`real_name` AS `modifier_real_name`, uue.`user_id` AS `modifier_user_id`,
-				uuc.`login` AS `creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`,
+		$query = "
+			SELECT
+				uue.`login` AS `modifier_user`,
+				uue.`real_name` AS `modifier_real_name`,
+				uue.`user_id` AS `modifier_user_id`,
+				uuc.`login` AS `creator_user`,
+				uuc.`real_name` AS `creator_real_name`,
+				uuc.`user_id` AS `creator_user_id`,
 				lch.`hits`,
 				lch.`last_hit`,
 				lc.`event_time`,
@@ -1535,14 +1540,16 @@ class LibertyContent extends LibertyBase {
 				$whereSql
 			ORDER BY ".$orderTable.$this->mDb->convert_sortmode($pListHash['sort_mode']);
 
-		$query_cant = "select count(lc.`content_id`) FROM `".BIT_DB_PREFIX."liberty_content` lc
-			, `".BIT_DB_PREFIX."users_users` uu
+		$query_cant = "
+			SELECT
+				COUNT(lc.`content_id`)
+			FROM `".BIT_DB_PREFIX."liberty_content` lc
+				INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (lc.`modifier_user_id`=uu.`user_id`)
 			$joinSql
 			$whereSql";
-		// previous cant query - updated by xing
-		// $query_cant = "select count(*) from `".BIT_DB_PREFIX."wiki_pages` wp INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id` = wp.`content_id`) $mid";
 		$cant = $this->mDb->getOne( $query_cant, $bindVars );
-		if (!empty($hashBindVars['select'])) {
+
+		if( !empty( $hashBindVars['select'] ) ) {
 			$bindVars = array_merge($hashBindVars['select'], $bindVars);
 		}
 		$result = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
