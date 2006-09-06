@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.140 2006/09/06 21:58:10 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.141 2006/09/06 22:02:52 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1509,7 +1509,7 @@ class LibertyContent extends LibertyBase {
 		if (!empty($hashBindVars['where'])) {
 			$bindVars = array_merge($bindVars, $hashBindVars['where']);
 		}
-		$whereSql = preg_replace( '/^[\s]AND /', 'WHERE ', $whereSql );
+		$whereSql = preg_replace( '/^[\s]*AND\b/', 'WHERE ', $whereSql );
 
 		// If sort mode is versions then offset is 0, max_records is -1 (again) and sort_mode is nil
 		// If sort mode is links then offset is 0, max_records is -1 (again) and sort_mode is nil
