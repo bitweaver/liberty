@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.24 $
+ * @version  $Revision: 1.25 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.24 2006/08/21 11:11:20 hash9 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.25 2006/09/06 09:02:47 spiderr Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -46,9 +46,9 @@ $postComment = array();
 $formfeedback = array();
 $gBitSmarty->assign_by_ref('formfeedback', $formfeedback);
 
-if( @BitBase::verifyId($_REQUEST['delete_comment_id']) && $gBitUser->hasPermission( 'p_liberty_post_comments' )) {
+if( @BitBase::verifyId($_REQUEST['delete_comment_id']) ) {
 	$deleteComment = new LibertyComment($_REQUEST['delete_comment_id']);
-	if( @BitBase::verifyId($deleteComment->mInfo['content_id'] ) ) {
+	if( $deleteComment->isValid() && $gBitUser->hasPermission('p_liberty_admin_comments') ) {
 		$deleteComment->deleteComment();
 	}
 }

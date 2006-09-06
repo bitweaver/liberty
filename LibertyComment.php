@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.34 2006/08/22 18:14:22 sylvieg Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.35 2006/09/06 09:02:46 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -36,6 +36,7 @@ class LibertyComment extends LibertyContent {
 		$this->mCommentId = $pCommentId;
 		$this->mContentId = $pContentId;
 		$this->mInfo = $pInfo;
+		$this->mAdminContentPerm = 'p_liberty_admin_comments';
 
 		if ($this->mCommentId || $this->mContentId) {
 			$this->loadComment();

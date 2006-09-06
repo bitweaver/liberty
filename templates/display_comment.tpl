@@ -9,10 +9,10 @@
 			{if $gBitUser->hasPermission( 'p_liberty_post_comments' )}
 				<a href="{$comments_return_url}&amp;post_comment_reply_id={$comment.content_id}&amp;post_comment_request=1#editcomments" rel="nofollow">{biticon ipackage="icons" iname="mail-reply-sender" iexplain="Reply to this comment"}</a>
 			{/if}
-			{if $comment.editable}
+			{if $gBitUser->hasPermission('p_liberty_admin_comments') || ($gBitUser && $comment.user_id == $gBitUser->mInfo.user_id) || $comment.editable}
 				<a href="{$comments_return_url}&amp;post_comment_id={$comment.comment_id}&amp;post_comment_request=1#editcomments" rel="nofollow">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="Edit"}</a>
 			{/if}
-			{if $gBitUser->isAdmin()}
+			{if $gBitUser->hasPermission('p_liberty_admin_comments')}
 				<a href="{$comments_return_url}&amp;delete_comment_id={$comment.comment_id}" rel="nofollow">{biticon ipackage="icons" iname="edit-delete" iexplain="Remove"}</a>
 			{/if}
 		</div>

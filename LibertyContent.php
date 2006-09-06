@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.136 2006/09/05 15:09:51 sylvieg Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.137 2006/09/06 09:02:47 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1159,6 +1159,7 @@ class LibertyContent extends LibertyBase {
 	* @return string Formated html the link to display the page.
 	*/
 	function getDisplayLink( $pLinkText, $pMixed ) {
+		$ret = '';
 		if( empty( $pLinkText ) && !empty( $this ) ) {
 			$pLinkText = $this->getTitle();
 		} elseif( empty( $pLinkText ) && !empty( $pMixed['title'] ) ) {
@@ -1679,8 +1680,23 @@ class LibertyContent extends LibertyBase {
 			$formatGuid = $pFormatGuid;
 		}
 
+/* <<<<<<< LibertyContent.php
+		// get the content id if we have one to get
+		if( is_array( $pMixed ) && !empty( $pMixed['content_id'] ) ) {
+			$contentId = $pMixed['content_id'];
+		} elseif( is_object( $this ) && !empty( $this->mContentId ) ) {
+			$contentId = $this->mContentId;
+		} else {
+			$contentId = NULL;
+		}
+
+		$ret = $data;
+
+		if( $data && $formatGuid ) {
+======= */
 		$ret = $parseHash['data'];
 		if( !empty( $parseHash['data'] ) && $formatGuid ) {
+//>>>>>>> 1.116
 			global $gLibertySystem;
 			if( $func = $gLibertySystem->getPluginFunction( $formatGuid, 'load_function' ) ) {
 				$ret = $func( $parseHash, $this );
