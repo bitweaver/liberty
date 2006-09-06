@@ -47,6 +47,7 @@
 						"
 					/> {$plugin.edit_label}</label>
 					{if $plugin.plugin_guid == "tikiwiki"}
+						{assign var=format_options value=true}
 						&nbsp;&nbsp;
 						{if $gBitUser->hasPermission( 'p_liberty_enter_html' )}
 							<label><input type="checkbox" name="preferences[content_enter_html]" value="y" id="html" {if $gContent->mPrefs.content_enter_html}checked="checked" {/if}/> {tr}Allow HTML{/tr}</label>
@@ -66,10 +67,10 @@
 	</div>
 {/capture}
 
-{if $nb > 2}
+{if $nb > 2 or $format_options}
 	{$capture_format}
 {else}
 	<input type="hidden" name="{$format_guid_variable|default:"format_guid"}" value="{$formatplugins[0].guid}" />
 {/if}
-	
+
 {/strip}
