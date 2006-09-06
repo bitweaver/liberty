@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.19 $
+ * @version  $Revision: 1.20 $
  * @package  liberty
  * @subpackage functions
  */
@@ -59,6 +59,9 @@ if ( !empty( $_REQUEST['output'] ) ){
     	header( "Content-Type: text/xml\n\n" );
     	print $xml;
     	break;
+    case 'raw':
+      //means we just want the contents of $contentList when we include this file
+      break;
   }
 } else {
 	$gBitSystem->setBrowserTitle( 'List Content' );
