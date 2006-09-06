@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.139 2006/09/06 21:48:28 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.140 2006/09/06 21:58:10 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1532,7 +1532,6 @@ class LibertyContent extends LibertyBase {
 				INNER JOIN `".BIT_DB_PREFIX."users_users` uue ON (lc.`modifier_user_id`=uue.`user_id`)
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON( lc.`content_id` =  lch.`content_id`)
 				$joinSql
-			WHERE lc.`user_id`=lc.`user_id`
 				$whereSql
 			ORDER BY ".$orderTable.$this->mDb->convert_sortmode($pListHash['sort_mode']);
 
