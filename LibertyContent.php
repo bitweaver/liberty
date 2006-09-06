@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.138 2006/09/06 21:01:32 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.139 2006/09/06 21:48:28 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1509,6 +1509,7 @@ class LibertyContent extends LibertyBase {
 		if (!empty($hashBindVars['where'])) {
 			$bindVars = array_merge($bindVars, $hashBindVars['where']);
 		}
+		$whereSql = preg_replace( '/^[\s]AND /', 'WHERE ', $whereSql );
 
 		// If sort mode is versions then offset is 0, max_records is -1 (again) and sort_mode is nil
 		// If sort mode is links then offset is 0, max_records is -1 (again) and sort_mode is nil
@@ -1538,7 +1539,6 @@ class LibertyContent extends LibertyBase {
 		$query_cant = "select count(lc.`content_id`) FROM `".BIT_DB_PREFIX."liberty_content` lc
 			, `".BIT_DB_PREFIX."users_users` uu
 			$joinSql
-			WHERE uu.`user_id`=lc.`user_id`
 			$whereSql";
 		// previous cant query - updated by xing
 		// $query_cant = "select count(*) from `".BIT_DB_PREFIX."wiki_pages` wp INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id` = wp.`content_id`) $mid";
