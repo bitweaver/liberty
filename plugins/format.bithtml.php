@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -105,7 +105,7 @@ function bithtml_parse_data( &$pParseHash, &$pCommonObject ) {
 		foreach (array_unique($pages[1])as $page_parse) {
 			// This is a hack for now. page_exists_desc should not be needed here since blogs and articles use this function
 			$exists = $pCommonObject->pageExists( $page_parse, $pCommonObject->mContentId, $pCommonObject );
-			$repl = BitPage::getDisplayLink( $page_parse, $exists );
+			$repl = $pCommonObject->getDisplayLink( $page_parse, $exists );
 			$page_parse_pq = preg_quote($page_parse, "/");
 			$ret = preg_replace("/\(\($page_parse_pq\)\)/", "$repl", $ret);
 		}
