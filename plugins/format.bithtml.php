@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -87,11 +87,6 @@ function bithtml_save_data( &$pParamHash ) {
 }
 
 function bithtml_parse_data( &$pParseHash, &$pCommonObject ) {
-        //fix roaming "BitPage not found" error  This may be a bit of a hack, but it's working for me - windblown
-        global $gBitSystem;
-        if( $gBitSystem->isPackageActive('wiki')) {
-                require_once( WIKI_PKG_PATH.'BitPage.php' );
-        }
 	global $gLibertySystem;
 	$ret = $pParseHash['data'];
 	// eventually we should strip tags, maybe tikilink, or other things.
