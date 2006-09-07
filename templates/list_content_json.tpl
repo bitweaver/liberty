@@ -8,6 +8,7 @@
     {ldelim}
 		  "content_id":{$listcontent[n].content_id},
 		  "content_type_guid":'{$listcontent[n].content_type_guid}',
+		  "content_description":'{$listcontent[n].content_description}',
 		  "lat":{$listcontent[n].lat},
 		  "lng":{$listcontent[n].lng},
 		  "title":'{$listcontent[n].title}',
