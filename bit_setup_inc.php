@@ -3,7 +3,7 @@
  * base package include
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage functions
  */
@@ -15,20 +15,21 @@ $registerHash = array(
 );
 $gBitSystem->registerPackage( $registerHash );
 
-	require_once( LIBERTY_PKG_PATH.'LibertySystem.php' );
+require_once( LIBERTY_PKG_PATH.'LibertySystem.php' );
 
-	global $gLibertySystem;
+global $gLibertySystem;
+$gLibertySystem = new LibertySystem();
 
-	// load only the active plugins unless this is the first run after an install
-	$current_default_format_guid = $gBitSystem->getConfig( 'default_format' );
-	$plugin_status = $gBitSystem->getConfig( 'liberty_plugin_status_'.$current_default_format_guid );
-	if( empty( $current_default_format_guid ) || empty( $plugin_status ) || $plugin_status != 'y' ) {
-		$gLibertySystem->scanAllPlugins();
-	} else {
-		$gLibertySystem->loadActivePlugins();
-	}
+// load only the active plugins unless this is the first run after an install
+$current_default_format_guid = $gBitSystem->getConfig( 'default_format' );
+$plugin_status = $gBitSystem->getConfig( 'liberty_plugin_status_'.$current_default_format_guid );
+if( empty( $current_default_format_guid ) || empty( $plugin_status ) || $plugin_status != 'y' ) {
+	$gLibertySystem->scanAllPlugins();
+} else {
+	$gLibertySystem->loadActivePlugins();
+}
 
-	$gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
+$gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
 
 
 ?>
