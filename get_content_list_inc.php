@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage functions
  */
@@ -39,10 +39,14 @@ if( empty( $contentListHash ) ) {
 }
 
 if ( !empty($_REQUEST['up_lat']) && !empty($_REQUEST['up_lng']) && !empty($_REQUEST['down_lat']) && !empty($_REQUEST['down_lng']) ){
-  $contentListHash['up']['lat'] = $_REQUEST['up_lat'];
-  $contentListHash['up']['lng'] = $_REQUEST['up_lng'];
-  $contentListHash['down']['lat'] = $_REQUEST['down_lat'];
-  $contentListHash['down']['lng'] = $_REQUEST['down_lng'];
+  $contentListHash['up'] = array(
+   'lat' = $_REQUEST['up_lat'];
+   'lng' = $_REQUEST['up_lng'];
+  );
+  $contentListHash['down'] = array(
+   'lat' = $_REQUEST['down_lat'];
+   'lng' = $_REQUEST['down_lng'];
+  );
 }
 
 if (!empty($_REQUEST['geonotnull'])){
