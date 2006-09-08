@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.18 $
+ * @version  $Revision: 1.19 $
  * @package  liberty
  * @subpackage functions
  */
@@ -47,19 +47,17 @@ if( empty( $contentListHash ) ) {
 }
 
 // Gate on positional data
-if( !empty( $_REQUEST['up_lat'] ) && !empty( $_REQUEST['up_lng'] ) && !empty( $_REQUEST['down_lat'] ) && !empty( $_REQUEST['down_lng'] ) ) {
-	$contentListHash['up'] = array (
-		'lat' => $_REQUEST['up_lat'],
-		'lng' => $_REQUEST['up_lng'],
-	);
-	$contentListHash['down'] = array (
-		'lat' => $_REQUEST['down_lat'],
-		'lng' => $_REQUEST['down_lng'],
+if( !empty( $_REQUEST['up_lat'] ) && !empty( $_REQUEST['down_lng'] ) && !empty( $_REQUEST['down_lat'] ) && !empty( $_REQUEST['left_lng'] ) ) {
+	$contentListHash['geo_coords'] = array (
+		'up_lat' => $_REQUEST['up_lat'],
+		'right_lng' => $_REQUEST['right_lng'],
+		'down_lat' => $_REQUEST['down_lat'],
+		'left_lng' => $_REQUEST['left_lng'],
 	);
 }
 
 // Only return data that contains geo positional information
-$contentListHash['geonotnull'] = !empty( $_REQUEST['geonotnull'] );
+$contentListHash['geo_notnull'] = !empty( $_REQUEST['geo_notnull'] );
 
 // Gate on categorised content
 if( !empty( $_REQUEST['category_filter'] ) ) {
