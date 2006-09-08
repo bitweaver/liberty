@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.19 $
+ * @version  $Revision: 1.20 $
  * @package  liberty
  * @subpackage functions
  */
@@ -25,6 +25,7 @@ if( !empty($_REQUEST['content_type_guid']) ){
 
 // get_content_list_inc doesn't use $_REQUEST parameters as it might not be the only list in the page that needs sorting and limiting
 if( empty( $contentListHash ) ) {
+	$contentListHash = $_REQUEST;
 	$contentListHash = array(
 		'content_type_guid' => $contentSelect = empty( $_REQUEST['content_type_guid'] ) ? NULL : $contentTypeGuids,
 		// pagination offset
@@ -44,28 +45,6 @@ if( empty( $contentListHash ) ) {
 		// only display content modified before this (UTC timestamp)
 		'until_date'        => !empty( $_REQUEST["until_date"] ) ? $_REQUEST["until_date"] : NULL,
 	);
-}
-
-// Gate on positional data
-if( !empty( $_REQUEST['up_lat'] ) && !empty( $_REQUEST['down_lng'] ) && !empty( $_REQUEST['down_lat'] ) && !empty( $_REQUEST['left_lng'] ) ) {
-	$contentListHash['geo_coords'] = array (
-		'up_lat' => $_REQUEST['up_lat'],
-		'right_lng' => $_REQUEST['right_lng'],
-		'down_lat' => $_REQUEST['down_lat'],
-		'left_lng' => $_REQUEST['left_lng'],
-	);
-}
-
-// Only return data that contains geo positional information
-$contentListHash['geo_notnull'] = !empty( $_REQUEST['geo_notnull'] );
-
-// Gate on categorised content
-if( !empty( $_REQUEST['category_filter'] ) ) {
-	if( is_array( $_REQUEST['category_filter'] ) ) {
-		$contentListHash['category_filter'] = $_REQUEST['category_filter'];
-	} else {
-		$contentListHash['category_filter'] = explode( ",", $_REQUEST['category_filter'] );
-	}
 }
 
 // Finally we're ready to get some content
