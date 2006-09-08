@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.43 2006/09/08 16:38:20 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.44 2006/09/08 19:07:33 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -580,4 +580,6 @@ function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser, &$pComm
 	}
 }
 
+global $gLibertySystem;
+$gLibertySystem = new LibertySystem();
 ?>
