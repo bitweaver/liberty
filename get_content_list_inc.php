@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.13 $
+ * @version  $Revision: 1.14 $
  * @package  liberty
  * @subpackage functions
  */
@@ -43,6 +43,10 @@ if ( !empty($_REQUEST['up_lat']) && !empty($_REQUEST['up_lng']) && !empty($_REQU
   $contentListHash['up']['lng'] = $_REQUEST['up_lng'];
   $contentListHash['down']['lat'] = $_REQUEST['down_lat'];
   $contentListHash['down']['lng'] = $_REQUEST['down_lng'];
+}
+
+if (!empty($_REQUEST['geonotnull'])){
+  $contentListHash['geonotnull'] = $_REQUEST['geonotnull'];
 }
 
 //bleck! wish this service call could be tied to a service name, instead of a specific key for the package
