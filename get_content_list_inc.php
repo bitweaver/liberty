@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.23 $
+ * @version  $Revision: 1.24 $
  * @package  liberty
  * @subpackage functions
  */
@@ -25,8 +25,6 @@ if( !empty($_REQUEST['content_type_guid']) ){
 
 // get_content_list_inc doesn't use $_REQUEST parameters as it might not be the only list in the page that needs sorting and limiting
 if( empty( $contentListHash ) ) {
-	$contentListHash = $_REQUEST;
-
 	$contentListHash = array(
 		'content_type_guid' => $contentSelect = empty( $_REQUEST['content_type_guid'] ) ? NULL : $contentTypeGuids,
 		// pagination offset
@@ -54,6 +52,8 @@ if( empty( $contentListHash ) ) {
 			}
 		}
 	}
+
+	$contentListHash = array_merge( $_REQUEST, $contentListHash );
 }
 
 // Finally we're ready to get some content
