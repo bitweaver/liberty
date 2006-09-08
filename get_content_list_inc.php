@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.22 $
+ * @version  $Revision: 1.23 $
  * @package  liberty
  * @subpackage functions
  */
@@ -49,7 +49,7 @@ if( empty( $contentListHash ) ) {
 
 	if( !empty( $_REQUEST['output'] ) && ( $_REQUEST['output'] == 'json' || $_REQUEST['output'] == 'ajax' ) ) {
 		foreach( $_REQUEST as $key => $value ) {
-			if( strstr( ',', $value ) ) {
+			if( strstr( $value, ',' ) ) {
 				$_REQUEST[$key] = explode( ",", $value );
 			}
 		}
