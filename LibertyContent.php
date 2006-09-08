@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.143 2006/09/06 22:29:22 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.144 2006/09/08 20:29:11 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1407,14 +1407,16 @@ class LibertyContent extends LibertyBase {
 
 		$old_sort_mode = '';
 
-		if (in_array($pListHash['sort_mode'], array(
-				'versions_desc',
-				'versions_asc',
-				'links_asc',
-				'links_desc',
-				'backlinks_asc',
-				'backlinks_desc'
-				))) {
+		$sortHash = array(
+			'versions_desc',
+			'versions_asc',
+			'links_asc',
+			'links_desc',
+			'backlinks_asc',
+			'backlinks_desc'
+		);
+
+		if( in_array( $pListHash['sort_mode'], $sortHash ) ) {
 			$old_offset = $pListHash['offset'];
 			$old_max_records = $pListHash['max_records'];
 			$old_sort_mode = $pListHash['sort_mode'];
@@ -1456,13 +1458,16 @@ class LibertyContent extends LibertyBase {
 			$bindVars = array_merge( $bindVars, $pListHash['content_type_guid'] );
 		}
 
-		if ( !empty( $pListHash['last_modified'] ) ) {
-			$whereSql .= ' AND lc.`last_modified` >= ?';
-			$bindVars[] = $pListHash['last_modified'];
+		// only display content modified more recently than this (UTC timestamp)
+		if ( !empty( $pListHash['from_date'] ) ) {
+			$whereSql .= ' AND lc.`last_modified` <= ?';
+			$bindVars[] = $pListHash['from_date'];
 		}
-		if ( !empty( $pListHash['end_date'] ) ) {
+
+		// only display content modified before this (UTC timestamp)
+		if ( !empty( $pListHash['until_date'] ) ) {
 			$whereSql .= ' AND lc.`last_modified` >= ?';
-			$bindVars[] = $pListHash['end_date'];
+			$bindVars[] = $pListHash['until_date'];
 		}
 
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
@@ -1483,26 +1488,29 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 
-		if( in_array( $pListHash['sort_mode'], array(
-				'content_id_desc',
-				'content_id_asc',
-				'modifier_user_desc',
-				'modifier_user_asc',
-				'modifier_real_name_desc',
-				'modifier_real_name_asc',
-				'creator_user_desc',
-				'creator_user_asc',
-				'creator_real_name_desc',
-				'creator_real_name_asc',
-		))) {
+		$sortHash = array(
+			'content_id_desc',
+			'content_id_asc',
+			'modifier_user_desc',
+			'modifier_user_asc',
+			'modifier_real_name_desc',
+			'modifier_real_name_asc',
+			'creator_user_desc',
+			'creator_user_asc',
+			'creator_real_name_desc',
+			'creator_real_name_asc',
+		);
+
+		if( in_array( $pListHash['sort_mode'], $sortHash ) ) {
 			$orderTable = '';
 		} elseif( !empty( $pListHash['order_table'] ) ) {
 			$orderTable = $pListHash['order_table'];
-		} elseif ( !empty( $pListHash['sort_mode'] ) && strtolower(substr($pListHash['sort_mode'],0,4))=='hits') {
+		} elseif( !empty( $pListHash['sort_mode'] ) && strtolower( substr( $pListHash['sort_mode'], 0, 4 ) ) =='hits' ) {
 			$orderTable = 'lch.';
 		} else {
 			$orderTable = 'lc.';
 		}
+
 		if (!empty($hashSql['where'])) {
 			$whereSql .= ' AND '.implode(' ', $hashSql['where']);
 		}
@@ -1890,14 +1898,34 @@ class LibertyContent extends LibertyBase {
 	}
 
 	// -------------------- Cache Funtions -------------------- //
+
+	/**
+	 * Get the URL where we store liberty cached content
+	 * 
+	 * @access public
+	 * @return relative URL
+	 */
 	function getCacheBaseUrl() {
 		return TEMP_PKG_URL.LIBERTY_PKG_NAME.'/cache/';
 	}
 
+	/**
+	 * Get the path where we store liberty cached content
+	 * 
+	 * @access public
+	 * @return absolute path
+	 */
 	function getCacheBasePath() {
 		return str_replace( '//', '/', BIT_ROOT_PATH.LibertyContent::getCacheBaseUrl() );
 	}
 
+	/**
+	 * Get the path to directory where an individual cache item is stored
+	 * 
+	 * @param array $pContentId 
+	 * @access public
+	 * @return path on success, FALSE on failure
+	 */
 	function getCachePath( $pContentId = NULL ) {
 		if( empty( $pContentId ) && @BitBase::verifyId( $this->mContentId ) ) {
 			$pContentId = $this->mContentId;
@@ -1926,6 +1954,13 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
+	/**
+	 * Get the path to file where an individual cache item is stored
+	 * 
+	 * @param array $pContentId 
+	 * @access public
+	 * @return filename on success, FALSE on failure
+	 */
 	function getCacheFile( $pContentId = NULL, $pCacheExtension = NULL ) {
 		if( $ret = LibertyContent::getCachePath( $pContentId ) ) {
 			return( $ret.$pContentId.( !empty( $pCacheExtension ) ? '.'.$pCacheExtension : '') );
@@ -1934,6 +1969,13 @@ class LibertyContent extends LibertyBase {
 		}
 	}
 
+	/**
+	 * Delete cache file for a given content item
+	 * 
+	 * @param array $pContentId 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure
+	 */
 	function expungeCacheFile( $pContentId = NULL ) {
 		if( @BitBase::verifyId( $pContentId ) ) {
 			// we need to unlink all files with the same id and any extension
@@ -1947,7 +1989,8 @@ class LibertyContent extends LibertyBase {
 		}
 		return TRUE;
 	}
-	function getFilter($pContentTypeGuid, &$pSql,&$pBindVars, $pHash = null) {
+
+	function getFilter( $pContentTypeGuid, &$pSql, &$pBindVars, $pHash = null) {
 		global $gLibertySystem, $gBitSystem;
 		foreach ($gLibertySystem->mContentTypes as $type) {
 			if ($type['content_type_guid'] == $pContentTypeGuid) {
@@ -1959,7 +2002,6 @@ class LibertyContent extends LibertyBase {
 				}
 			}
 		}
-		
 	}
 }
 ?>

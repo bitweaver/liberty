@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.17 $
+ * @version  $Revision: 1.18 $
  * @package  liberty
  * @subpackage functions
  */
@@ -19,45 +19,58 @@ if( empty( $gContent ) || !is_object( $gContent ) ) {
 	$gContent = new LibertyContent();
 }
 
-if ( !empty($_REQUEST['content_type_guid']) ){
-  $content_guids = explode(",", $_REQUEST['content_type_guid']);
+if( !empty($_REQUEST['content_type_guid']) ){
+	$contentTypeGuids = explode( ",", $_REQUEST['content_type_guid'] );
 }
 
 // get_content_list_inc doesn't use $_REQUEST parameters as it might not be the only list in the page that needs sorting and limiting
 if( empty( $contentListHash ) ) {
 	$contentListHash = array(
-		'content_type_guid' =>   $contentSelect = empty( $_REQUEST['content_type_guid'] ) ? NULL : $content_guids,
-		'offset' =>              !empty( $offset_content ) ? $offset_content : NULL,
-		'max_records' =>         !empty( $max_content ) ? $max_content : 100,
-		'sort_mode' =>           !empty( $content_sort_mode ) ? $content_sort_mode : 'title_asc',
-		'find' =>                !empty( $_REQUEST["find_objects"] ) ? $_REQUEST["find_objects"] : NULL,
-		'page' =>                !empty( $_REQUEST["list_page"] ) ? $_REQUEST["list_page"] : NULL,
-		'user_id' =>             @BitBase::verifyId( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : NULL,
-		'last_modified' =>       !empty( $_REQUEST["last_modified"] ) ? $_REQUEST["last_modified"] : NULL,
-		'end_date' =>            !empty( $_REQUEST["end_date"] ) ? $_REQUEST["end_date"] : NULL,
+		'content_type_guid' => $contentSelect = empty( $_REQUEST['content_type_guid'] ) ? NULL : $contentTypeGuids,
+		// pagination offset
+		'offset'            => !empty( $offset_content ) ? $offset_content : NULL,
+		// maximum number of records displayed on a page
+		'max_records'       => !empty( $max_content ) ? $max_content : 100,
+		// sort by this: <table column>_asc (or _desc)
+		'sort_mode'         => !empty( $content_sort_mode ) ? $content_sort_mode : 'title_asc',
+		// limit the result to this set
+		'find'              => !empty( $_REQUEST["find_objects"] ) ? $_REQUEST["find_objects"] : NULL,
+		// display this page number - replaces antiquated offset
+		'page'              => !empty( $_REQUEST["list_page"] ) ? $_REQUEST["list_page"] : NULL,
+		// only display content by this user
+		'user_id'           => @BitBase::verifyId( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : NULL,
+		// only display content modified more recently than this (UTC timestamp)
+		'from_date'         => !empty( $_REQUEST["from_date"] ) ? $_REQUEST["from_date"] : NULL,
+		// only display content modified before this (UTC timestamp)
+		'until_date'        => !empty( $_REQUEST["until_date"] ) ? $_REQUEST["until_date"] : NULL,
 	);
 }
 
-if ( !empty($_REQUEST['up_lat']) && !empty($_REQUEST['up_lng']) && !empty($_REQUEST['down_lat']) && !empty($_REQUEST['down_lng']) ){
-  $contentListHash['up'] = array(
-   'lat' => $_REQUEST['up_lat'],
-   'lng' => $_REQUEST['up_lng']
-  );
-  $contentListHash['down'] = array(
-   'lat' => $_REQUEST['down_lat'],
-   'lng' => $_REQUEST['down_lng']
-  );
+// Gate on positional data
+if( !empty( $_REQUEST['up_lat'] ) && !empty( $_REQUEST['up_lng'] ) && !empty( $_REQUEST['down_lat'] ) && !empty( $_REQUEST['down_lng'] ) ) {
+	$contentListHash['up'] = array (
+		'lat' => $_REQUEST['up_lat'],
+		'lng' => $_REQUEST['up_lng'],
+	);
+	$contentListHash['down'] = array (
+		'lat' => $_REQUEST['down_lat'],
+		'lng' => $_REQUEST['down_lng'],
+	);
 }
 
-if (!empty($_REQUEST['geonotnull'])){
-  $contentListHash['geonotnull'] = $_REQUEST['geonotnull'];
+// Only return data that contains geo positional information
+$contentListHash['geonotnull'] = !empty( $_REQUEST['geonotnull'] );
+
+// Gate on categorised content
+if( !empty( $_REQUEST['category_filter'] ) ) {
+	if( is_array( $_REQUEST['category_filter'] ) ) {
+		$contentListHash['category_filter'] = $_REQUEST['category_filter'];
+	} else {
+		$contentListHash['category_filter'] = explode( ",", $_REQUEST['category_filter'] );
+	}
 }
 
-//bleck! wish this service call could be tied to a service name, instead of a specific key for the package
-if ( !empty($_REQUEST['pigeonholes']) ){
- $contentListHash['pigeonholes'] = explode(",", $_REQUEST['pigeonholes']);
-}
-
+// Finally we're ready to get some content
 $contentList = $gContent->getContentList( $contentListHash );
 
 $contentTypes = array( '' => 'All Content' );
