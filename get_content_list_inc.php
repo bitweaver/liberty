@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.20 $
+ * @version  $Revision: 1.21 $
  * @package  liberty
  * @subpackage functions
  */
@@ -26,6 +26,7 @@ if( !empty($_REQUEST['content_type_guid']) ){
 // get_content_list_inc doesn't use $_REQUEST parameters as it might not be the only list in the page that needs sorting and limiting
 if( empty( $contentListHash ) ) {
 	$contentListHash = $_REQUEST;
+
 	$contentListHash = array(
 		'content_type_guid' => $contentSelect = empty( $_REQUEST['content_type_guid'] ) ? NULL : $contentTypeGuids,
 		// pagination offset
@@ -45,6 +46,14 @@ if( empty( $contentListHash ) ) {
 		// only display content modified before this (UTC timestamp)
 		'until_date'        => !empty( $_REQUEST["until_date"] ) ? $_REQUEST["until_date"] : NULL,
 	);
+
+	if( !empty( $_REQUEST['output'] ) && ( $_REQUEST['output'] == 'json' || $_REQUEST['output'] == 'ajax' ) ) {
+		foreach( $_REQUEST as $key => $value ) {
+			if( strstr( ',' ) ) {
+				$_REQUEST[$key] = explode( ",", $value );
+			}
+		}
+	}
 }
 
 // Finally we're ready to get some content
