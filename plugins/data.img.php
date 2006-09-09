@@ -1,21 +1,23 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.6 2006/08/08 14:44:13 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.7 2006/09/09 19:55:35 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAIMG', 'dataimg' );
 global $gLibertySystem;
 $pluginParams = array (
-	'tag' => 'IMG',
+	'tag'           => 'img',
 	'auto_activate' => TRUE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_img',
-	'title' => 'Image',
-	'help_page' => 'DataPluginImg',
-	'description' => tra( "Allows you to insert an image into your page with little effort and a multitude of styling options." ),
+	'title'         => 'Image',
+	'help_page'     => 'DataPluginImg',
+	'description'   => tra( "Allows you to insert an image into your page with little effort and a multitude of styling options." ),
 	'help_function' => 'data_img_help',
-	'syntax' => "{img src=http://www.google.at/logos/olympics06_ski_jump.gif}",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.img.php',
-	'security' => 'registered',
-	'plugin_type' => DATA_PLUGIN
+	'syntax'        => "{img src=http://www.google.at/logos/olympics06_ski_jump.gif}",
+	'path'          => LIBERTY_PKG_PATH.'plugins/data.img.php',
+	'security'      => 'registered',
+	'plugin_type'   => DATA_PLUGIN,
+	'biticon'       => '{biticon class="quicktag icon" ipackage=quicktags iname=image iexplain="Image"}',
+	'taginsert'     => '{img src= width= height= align= desc= link=}'
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAIMG, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAIMG );

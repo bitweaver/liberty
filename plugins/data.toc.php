@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.10 2006/08/07 22:14:58 squareing Exp $
+// $Id: data.toc.php,v 1.11 2006/09/09 19:55:35 squareing Exp $
 
 /**
  * definitions
@@ -26,18 +26,20 @@ define( 'PLUGIN_GUID_DATATOC', 'datatoc' );
 
 global $gLibertySystem;
 $pluginParams = array (
-	'tag' => 'toc',
+	'tag'           => 'toc',
 	'auto_activate' => TRUE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_toc',
-	'title' => 'Structure Table Of Contents',
-	'help_page' => 'DataPluginTOC',
-	'description' => tra("Display a Table Of Contents for Structures"),
+	'title'         => 'Structure Table Of Contents',
+	'help_page'     => 'DataPluginTOC',
+	'description'   => tra("Display a Table Of Contents for Structures"),
 	'help_function' => 'data_toc_help',
-	'syntax' => '{TOC structure_id= }',
-	'path' => LIBERTY_PKG_PATH.'plugins/data.toc.php',
-	'security' => 'registered',
-	'plugin_type' => DATA_PLUGIN
+	'syntax'        => '{toc structure_id= }',
+	'path'          => LIBERTY_PKG_PATH.'plugins/data.toc.php',
+	'security'      => 'registered',
+	'plugin_type'   => DATA_PLUGIN,
+	'biticon'       => '{biticon class="quicktag icon" ipackage=quicktags iname=toc iexplain="Structure Table of Contents"}',
+	'taginsert'     => '{toc}'
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATATOC, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATATOC );

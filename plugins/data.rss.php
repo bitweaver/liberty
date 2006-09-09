@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.rss.php,v 1.8 2006/08/28 07:52:25 jht001 Exp $
+// $Id: data.rss.php,v 1.9 2006/09/09 19:55:35 squareing Exp $
 
 /**
  * definitions
@@ -26,18 +26,20 @@ global $gLibertySystem;
 define( 'PLUGIN_GUID_DATARSS', 'datarss' );
 global $gLibertySystem;
 $pluginParams = array (
-	'tag' => 'RSS',
+	'tag'           => 'rss',
 	'auto_activate' => TRUE,
 	'requires_pair' => FALSE,
 	'load_function' => 'rss_parse_data',
-	'title' => 'RSS Feed',
-	'help_page' => 'DataPluginRSS',
-	'description' => tra("Display RSS Feeds"),
+	'title'         => 'RSS Feed',
+	'help_page'     => 'DataPluginRSS',
+	'description'   => tra("Display RSS Feeds"),
 	'help_function' => 'rss_extended_help',
-	'syntax' => "{RSS id= max= }",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.rss.php',
-	'security' => 'registered',
-	'plugin_type' => DATA_PLUGIN
+	'syntax'        => "{RSS id= max= }",
+	'path'          => LIBERTY_PKG_PATH.'plugins/data.rss.php',
+	'security'      => 'registered',
+	'plugin_type'   => DATA_PLUGIN,
+	'biticon'       => '{biticon class="quicktag icon" ipackage=quicktags iname=rss iexplain="RSS Feed"}',
+	'taginsert'     => '{rss}'
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATARSS, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATARSS );

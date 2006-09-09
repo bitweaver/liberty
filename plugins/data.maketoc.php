@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.12 2006/08/29 23:11:18 squareing Exp $
+// $Id: data.maketoc.php,v 1.13 2006/09/09 19:55:35 squareing Exp $
 
 /**
  * definitions
@@ -24,18 +24,20 @@ define( 'PLUGIN_GUID_DATAMAKETOC', 'datamaketoc' );
 global $gLibertySystem;
 global $gContent;
 $pluginParams = array (
-	'tag' => 'MAKETOC',
+	'tag'           => 'maketoc',
 	'auto_activate' => TRUE,
 	'requires_pair' => FALSE,
 	'load_function' => '',
-	'title' => 'Page Table of Contents',
-	'help_page' => 'DataPluginMakeTOC',
-	'description' => tra("Will create a table of contents of the WikiPage based on the headings below."),
+	'title'         => 'Page Table of Contents',
+	'help_page'     => 'DataPluginMakeTOC',
+	'description'   => tra("Will create a table of contents of the WikiPage based on the headings below."),
 	'help_function' => 'data_maketoc_help',
-	'syntax' => "{MAKETOC}",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.maketoc.php',
-	'security' => 'registered',
-	'plugin_type' => DATA_PLUGIN
+	'syntax'        => "{MAKETOC}",
+	'path'          => LIBERTY_PKG_PATH.'plugins/data.maketoc.php',
+	'security'      => 'registered',
+	'plugin_type'   => DATA_PLUGIN,
+	'biticon'       => '{biticon class="quicktag icon" ipackage=quicktags iname=maketoc iexplain="Page Table of Contents"}',
+	'taginsert'     => '{maketoc}'
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAMAKETOC, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAMAKETOC );
