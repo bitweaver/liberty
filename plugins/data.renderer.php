@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.renderer.php,v 1.3 2006/07/27 23:04:40 hash9 Exp $
+// $Id: data.renderer.php,v 1.4 2006/09/09 13:41:32 squareing Exp $
 
 /**
  * definitions
@@ -65,7 +65,7 @@ $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATARENDERER
 				<td>format_guid</td>
 				<td>" . tra( "string") . '<br />' . tra("(required)") . "</td>
 				<td>" . tra( "Specify what renderer should be used to render the contents") . "</td>
-			</tr>'
+			</tr>
 		</table>".
 		tra("Example: ") . "{renderer class=abc format_guid=tiki }.. content ..{/renderer}<br />";
 		return $help;

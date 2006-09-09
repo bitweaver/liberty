@@ -65,7 +65,7 @@ function data_quote_help() {
 				<td>format_guid</td>
 				<td>" . tra( "string") . '<br />' . tra("(required)") . "</td>
 				<td>" . tra( "Specify what renderer should be used to render the contents") . "</td>
-			</tr>'
+			</tr>
 		</table>".
 	tra("Example: ") . '{quote format_guid="tikiwiki" comment_id="7" user="user"} ... {/quote}<br />';
 	return $help;

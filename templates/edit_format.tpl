@@ -25,7 +25,7 @@
 				{forminput}
 					{counter name=nb print=false assign=nb}
 					<label>
-						<input type=radio name="{$format_guid_variable|default:"format_guid"}" value="{$plugin.edit_field}"
+						<input type="radio" name="{$format_guid_variable|default:"format_guid"}" value="{$plugin.edit_field}"
 						{if $gContent->mInfo.format_guid eq $plugin.plugin_guid}
 							checked="checked"
 						{elseif !$gContent->mInfo.format_guid and $plugin.plugin_guid eq $gBitSystem->getConfig('default_format')}
