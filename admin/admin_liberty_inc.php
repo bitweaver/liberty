@@ -1,11 +1,21 @@
 <?php
 $formLibertyFeatures = array(
-	"liberty_quota" => array(
+	"liberty_cache_pages" => array(
+		'label' => 'External page cache',
+		'note' => 'Enabling this will download and cache external pages that are included.',
+	),
+	"liberty_cache_images" => array(
+		'label' => 'External image cache',
+		'note' => 'Enabling this will download and cache external images that are included.',
+	),
+);
+if( $gBitSystem->isPackageActive( 'quota' ) ) {
+	$formLibertyFeatures['liberty_quota'] = array(
 		'label' => 'Quota Usage System',
 		'note' => 'Limit users\' disk usage.',
 		'page' => '',
-	),
-);
+	);
+}
 $gBitSmarty->assign( 'formLibertyFeatures', $formLibertyFeatures );
 
 $formImageFeatures = array(
