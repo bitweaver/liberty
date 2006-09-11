@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.62 $
+ * @version  $Revision: 1.63 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -1057,8 +1057,11 @@ class TikiWikiParser extends BitBase {
 					} else {
 						$repl = BitPage::getDisplayLink( $page_parse, $exists );
 					}
-					$slashedParse = preg_replace( "/([\/\[\]\(\)])/", "\\\\$1", $page_parse );
-					$data = preg_replace("/([ \n\t\r\,\;]|^)".$slashedParse."($|[ \n\t\r\,\;\.])/", "$1"."$repl"."$2", $data);
+					// use preg_quote instead
+					//$slashedParse = preg_replace( "/([\/\[\]\(\)])/", "\\\\$1", $page_parse );
+					// not sure why this is here - it breaks numeric 'create page' links in tables
+					//$data = preg_replace("/([ \n\t\r\,\;]|^)".$slashedParse."($|[ \n\t\r\,\;\.])/", "$1"."$repl"."$2", $data);
+					$data = preg_replace( "/".preg_quote( $page_parse, "/" )."/", $repl, $data);
 					//$data = str_replace($page_parse,$repl,$data);
 				}
 			}
@@ -1138,43 +1141,43 @@ class TikiWikiParser extends BitBase {
 				$cols = array();
 
 				for ($i = 0; $i < count($tables[0]); $i++) {
-				$rows = explode('||', $tables[0][$i]);
+					$rows = explode('||', $tables[0][$i]);
 
-				$col[$i] = array();
+					$col[$i] = array();
 
-				for ($j = 0; $j < count($rows); $j++) {
-					$cols[$i][$j] = explode('|', $rows[$j]);
+					for ($j = 0; $j < count($rows); $j++) {
+						$cols[$i][$j] = explode('|', $rows[$j]);
 
-					if (count($cols[$i][$j]) > $maxcols)
-					$maxcols = count($cols[$i][$j]);
-				}
+						if (count($cols[$i][$j]) > $maxcols)
+							$maxcols = count($cols[$i][$j]);
+					}
 				}
 
 				for ($i = 0; $i < count($tables[0]); $i++) {
-				$repl = '<table class="bittable">';
+					$repl = '<table class="bittable">';
 
-				for ($j = 0; $j < count($cols[$i]); $j++) {
-					$ncols = count($cols[$i][$j]);
+					for ($j = 0; $j < count($cols[$i]); $j++) {
+						$ncols = count($cols[$i][$j]);
 
-					if ($ncols == 1 && !$cols[$i][$j][0])
-						continue;
+						if ($ncols == 1 && !$cols[$i][$j][0])
+							continue;
 
-					$repl .= '<tr class="'.( ( $j % 2 ) ? 'even' : 'odd' ).'">';
+						$repl .= '<tr class="'.( ( $j % 2 ) ? 'even' : 'odd' ).'">';
 
-					for ($k = 0; $k < $ncols; $k++) {
-						$repl .= '<td ';
+						for ($k = 0; $k < $ncols; $k++) {
+							$repl .= '<td ';
 
-						if ($k == $ncols - 1 && $ncols < $maxcols)
-							$repl .= ' colspan="' . ($maxcols - $k).'"';
+							if ($k == $ncols - 1 && $ncols < $maxcols)
+								$repl .= ' colspan="' . ($maxcols - $k).'"';
 
-						$repl .= '>' . $cols[$i][$j][$k] . '</td>';
+							$repl .= '>' . $cols[$i][$j][$k] . '</td>';
+						}
+
+						$repl .= '</tr>';
 					}
 
-					$repl .= '</tr>';
-				}
-
-				$repl .= '</table>';
-				$data = str_replace($tables[0][$i], $repl, $data);
+					$repl .= '</table>';
+					$data = str_replace($tables[0][$i], $repl, $data);
 				}
 			}
 		} else {
@@ -1186,42 +1189,42 @@ class TikiWikiParser extends BitBase {
 				$cols = array();
 
 				for ($i = 0; $i < count($tables[0]); $i++) {
-				$rows = split("\n|\<br\/\>", $tables[0][$i]);
-				$col[$i] = array();
+					$rows = split("\n|\<br\/\>", $tables[0][$i]);
+					$col[$i] = array();
 
-				for ($j = 0; $j < count($rows); $j++) {
-					$rows[$j] = str_replace('||', '', $rows[$j]);
-					$cols[$i][$j] = explode('|', $rows[$j]);
-					if (count($cols[$i][$j]) > $maxcols)
-					$maxcols = count($cols[$i][$j]);
-				}
+					for ($j = 0; $j < count($rows); $j++) {
+						$rows[$j] = str_replace('||', '', $rows[$j]);
+						$cols[$i][$j] = explode('|', $rows[$j]);
+						if (count($cols[$i][$j]) > $maxcols)
+							$maxcols = count($cols[$i][$j]);
+					}
 				}
 
 				for ($i = 0; $i < count($tables[0]); $i++) {
-				$repl = '<table class="bittable">';
+					$repl = '<table class="bittable">';
 
-				for ($j = 0; $j < count($cols[$i]); $j++) {
-					$ncols = count($cols[$i][$j]);
+					for ($j = 0; $j < count($cols[$i]); $j++) {
+						$ncols = count($cols[$i][$j]);
 
-					if ($ncols == 1 && !$cols[$i][$j][0])
-						continue;
+						if ($ncols == 1 && !$cols[$i][$j][0])
+							continue;
 
-					$repl .= '<tr class="'.( ( $j % 2 ) ? 'even' : 'odd' ).'">';
+						$repl .= '<tr class="'.( ( $j % 2 ) ? 'even' : 'odd' ).'">';
 
-					for ($k = 0; $k < $ncols; $k++) {
-						$repl .= '<td ';
+						for ($k = 0; $k < $ncols; $k++) {
+							$repl .= '<td ';
 
-						if ($k == $ncols - 1 && $ncols < $maxcols)
-							$repl .= ' colspan="' . ($maxcols - $k).'"';
+							if ($k == $ncols - 1 && $ncols < $maxcols)
+								$repl .= ' colspan="' . ($maxcols - $k).'"';
 
-						$repl .= '>' . $cols[$i][$j][$k] . '</td>';
+							$repl .= '>' . $cols[$i][$j][$k] . '</td>';
+						}
+
+						$repl .= '</tr>';
 					}
 
-					$repl .= '</tr>';
-				}
-
-				$repl .= '</table>';
-				$data = str_replace($tables[0][$i], $repl, $data);
+					$repl .= '</table>';
+					$data = str_replace($tables[0][$i], $repl, $data);
 				}
 			}
 		}
