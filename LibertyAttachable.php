@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.41 2006/08/23 19:52:31 sylvieg Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.42 2006/09/11 19:33:13 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -447,6 +447,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 function liberty_process_upload( &$pFileHash ) {
 	// Check for evil file extensions that could be execed on the server
 	if( preg_match( '/(.pl|.php|.php3|.php4|.phtml|.cgi|.asp|.sh|.shtml)$/', $pFileHash['upload']['name'] ) ) {
+		$pFileHash['upload']['type'] = 'text/plain';
 		$pFileHash['upload']['name'] = $pFileHash['upload']['name'].'.txt';
 	}
 	// Thumbs.db is a windows My Photos/ folder file, and seems to really piss off imagick
