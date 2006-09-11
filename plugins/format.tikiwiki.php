@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.63 $
+ * @version  $Revision: 1.64 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -808,49 +808,6 @@ class TikiWikiParser extends BitBase {
 		// Parse MediaWiki-style pipe syntax tables.
 		if ((strpos($data, "\n{|") !== FALSE) && (strpos($data, "\n|}") !== FALSE)) {
 			$data = $this->parse_mediawiki_tables($data);
-		}
-
-		// Replace links to slideshows
-		if ($gBitSystem->getConfig('feature_drawings') == 'y') {
-			// Replace drawings
-			// Replace rss modules
-			$pars = parse_url($_SERVER["REQUEST_URI"]);
-
-			$pars_parts = split('/', $pars["path"]);
-			$pars = array();
-
-			for ($i = 0; $i < count($pars_parts) - 1; $i++) {
-				$pars[] = $pars_parts[$i];
-			}
-
-			$pars = join('/', $pars);
-
-			/* i don't think we need this - move this to a plugin if someone needs it - xing
-			if (preg_match_all("/\{draw +name=([A-Za-z_\-0-9]+) *\}/", $data, $draws)) {
-				//$this->invalidate_cache($page);
-				for ($i = 0; $i < count($draws[0]); $i++) {
-					$id = $draws[1][$i];
-
-					$repl = '';
-					$name = $id . '.gif';
-
-					if (file_exists("img/wiki/$bitdomain$name")) {
-						if ($gBitUser->hasPermission( 'bit_p_edit_drawings' ) || $gBitUser->hasPermission( 'bit_p_admin_drawings' )) {
-						$repl = "<a href='#' onclick=\"javascript:window.open('".DRAWINGS_PKG_URL."edit.php?page=" . urlencode($page). "&amp;path=$pars&amp;drawing={$id}','','menubar=no,width=252,height=25');\"><img border='0' src='img/wiki/$bitdomain$name' alt='click to edit' /></a>";
-						} else {
-						$repl = "<img border='0' src='img/wiki/$bitdomain$name' alt='a drawing' />";
-						}
-					} else {
-						if ($gBitUser->hasPermission( 'bit_p_edit_drawings' ) || $gBitUser->hasPermission( 'bit_p_admin_drawings' )) {
-							$repl = "<a href='".DRAWINGS_PKG_URL."edit.php?page=" . urlencode($page). "&amp;path=$pars&amp;drawing={$id}' onkeypress='popUpWin(this.href,'fullScreen',0,0);' onclick='popUpWin(this.href,'fullScreen',0,0);return false;','','menubar=no,width=252,height=25');\">click here to create draw $id</a>";
-						} else {
-							$repl = tra('drawing not found');
-						}
-					}
-					$data = str_replace($draws[0][$i], $repl, $data);
-				}
-			}
-			*/
 		}
 
 		// ============================================= this should go - xing
