@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.44 2006/09/08 19:07:33 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.45 2006/09/11 18:59:48 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -424,7 +424,7 @@ class LibertySystem extends LibertyBase {
 			global $gBitSmarty;
 			require_once $gBitSmarty->_get_plugin_filepath( 'function','biticon' );
 
-			$ext = $parts[1];
+			$ext = strtolower( $parts[1] );
 			$biticon = array(
 				'ipackage' => 'liberty',
 				'ipath' => 'mime/',
@@ -434,7 +434,7 @@ class LibertySystem extends LibertyBase {
 			);
 
 			if( !$ret = smarty_function_biticon( $biticon,$gBitSmarty ) ) {
-				$biticon['iname'] = $pExt;
+				$biticon['iname'] = strtolower( $pExt );
 				if( !$ret = smarty_function_biticon( $biticon,$gBitSmarty ) ) {
 					$biticon['iname'] = 'generic';
 					$ret = smarty_function_biticon( $biticon,$gBitSmarty );
