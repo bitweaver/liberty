@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.29 2006/09/01 12:43:43 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.30 2006/09/12 22:31:53 sylvieg Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -233,9 +233,9 @@ class LibertyStructure extends LibertyBase {
 		$row_max = count( $children );
 
 		// we need to insert the root structure item first
-		if( strlen( $pParentPos ) == 0 && ( $pParentId == 0 || $pStructureHash[0]['root_structure_id'] == $pParentId ) ) {
+		if (!$pLevel) {
 			foreach( $pStructureHash as $node ) {
-				if( $node['structure_id'] == $node['root_structure_id'] ) {
+			  if( ( $pParentId == 0 && $node['structure_id'] == $node['root_structure_id'] ) || $node['structure_id'] == $pParentId) {
 					$aux		  = $node;
 					$aux["first"] = true;
 					$aux["last"]  = true;
