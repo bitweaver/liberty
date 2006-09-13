@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.144 2006/09/08 20:29:11 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.145 2006/09/13 01:28:32 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -71,6 +71,11 @@ class LibertyContent extends LibertyBase {
 	*/
 	var $mPerms;
 	/**
+	* Preferences hash specific to this LibertyContent object - accessed via getPreference/storePreference
+	* @private
+	*/
+	var $mPrefs;
+	/**
 	* Admin control permission specific to this LibertyContent type
 	* @private
 	*/
@@ -81,6 +86,7 @@ class LibertyContent extends LibertyBase {
 	*/
 	function LibertyContent () {
 		LibertyBase::LibertyBase();
+		$this->mPrefs = NULL; // init to NULL so getPreference can determine if a load is necessary
 		$this->mPerms = array();
 		if( empty( $this->mAdminContentPerm ) ) {
 			$this->mAdminContentPerm = 'p_admin_content';
@@ -902,6 +908,9 @@ class LibertyContent extends LibertyBase {
 			$rs = $this->mDb->query($sql, array($pContentId, $pPrefName));
 			$ret = (!empty($rs->fields['pref_value'])) ? $rs->fields['pref_value'] : $pPrefDefault;
 		} else {
+			if( is_null( $this->mPrefs ) ) {
+				$this->loadPreferences();
+			}
 			if( isset( $this->mPrefs ) && isset( $this->mPrefs[$pPrefName] ) ) {
 				$ret = $this->mPrefs[$pPrefName];
 			} else {
@@ -915,6 +924,7 @@ class LibertyContent extends LibertyBase {
 		if( @BitBase::verifyId( $pContentId ) ) {
 			return $this->mDb->getAssoc( "SELECT `pref_name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $pContentId ) );
 		} elseif( $this->isValid() ) {
+			// If no results, getAssoc will return an empty array (ie not a true NULL value) so getPreference can tell we have attempted a load
 			$this->mPrefs = @$this->mDb->getAssoc( "SELECT `pref_name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $this->mContentId ) );
 		}
 	}
