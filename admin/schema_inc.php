@@ -51,14 +51,19 @@ $tables = array(
 	CONSTRAINT ', CONSTRAINT `liberty_history_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
 ",
 
+// rename log_action to log_message
+// rename action_comment to error_message
+// error_message 200 chars to 250
+// add NOTNULL to last_modified
+// remove NOTNULL from content_id
 'liberty_action_log' => "
-	content_id I4 NOTNULL,
+	content_id I4,
 	user_id I4 NOTNULL,
-	log_action C(255) NOTNULL,
-	last_modified I8,
+	last_modified I8 NOTNULL,
 	title C(160),
 	ip C(15),
-	action_comment C(200)
+	log_message C(250) NOTNULL,
+	error_message C(250)
 ",
 
 'liberty_copyrights' => "
@@ -190,10 +195,13 @@ $gBitInstaller->registerSchemaSequences( LIBERTY_PKG_NAME, $sequences );
 
 // ### Default Preferences
 $gBitInstaller->registerPreferences( LIBERTY_PKG_NAME, array(
-	array(LIBERTY_PKG_NAME, 'liberty_cache_images','n'),
-	array(LIBERTY_PKG_NAME, 'liberty_cache_pages','n'),
-	array(LIBERTY_PKG_NAME, 'default_format','tikiwiki'),
+	//array(LIBERTY_PKG_NAME, 'liberty_cache_images','n'),
+	//array(LIBERTY_PKG_NAME, 'liberty_cache_pages','n'),
+	// This is dealt with by the installer
+	//array(LIBERTY_PKG_NAME, 'default_format','tikiwiki'),
 	array(LIBERTY_PKG_NAME, 'liberty_auto_display_attachment_thumbs', 'small'),
+	// enable action logging by default
+	array(LIBERTY_PKG_NAME, 'liberty_action_log', 'y'),
 //	array(LIBERTY_PKG_NAME, 'liberty_attachment_link_format', 'wiki') not needed anymore since we use js in the edit page now (depends on format of content)
 ) );
 

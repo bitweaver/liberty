@@ -2,6 +2,7 @@
 <ul>
 	<li><a class="item" href="{$smarty.const.KERNEL_PKG_URL}admin/index.php?page=liberty">{tr}Liberty Settings{/tr}</a></li>
 	<li><a class="item" href="{$smarty.const.LIBERTY_PKG_URL}admin/plugins.php">{tr}Plugins{/tr}</a></li>
+	<li><a class="item" href="{$smarty.const.LIBERTY_PKG_URL}admin/action_logs.php">{tr}Action Logs{/tr}</a></li>
 	<li><a class="item" href="{$smarty.const.LIBERTY_PKG_URL}admin/comments.php">{tr}Comments{/tr}</a></li>
 	{if $gBitSystem->isPackageActive( 'pdf' ) }
 		<li><a class="item" href="{$smarty.const.KERNEL_PKG_URL}admin/index.php?page=pdf">{tr}PDF Settings{/tr}</a></li>

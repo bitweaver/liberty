@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.145 2006/09/13 01:28:32 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.146 2006/09/15 21:43:13 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -203,8 +203,8 @@ class LibertyContent extends LibertyBase {
 			if ( $current_default_format_guid = $gBitSystem->getConfig( 'default_format' ) ) {
 				$pParamHash['format_guid'] = $current_default_format_guid;
 			} else {
-			$pParamHash['format_guid'] = 'tikiwiki';
-		}
+				$pParamHash['format_guid'] = 'tikiwiki';
+			}
 		}
 		$pParamHash['content_store']['format_guid'] = $pParamHash['format_guid'];
 
@@ -275,11 +275,13 @@ class LibertyContent extends LibertyBase {
 				$this->mInfo['content_type_guid'] = $pParamHash['content_type_guid'];
 				$this->mContentId = $pParamHash['content_store']['content_id'];
 				$result = $this->mDb->associateInsert( $table, $pParamHash['content_store'] );
+				$this->mLogs['content_store'] = "Content was added.";
 			} else {
 				if( !empty( $pParamHash['content_store']['title'] ) && !empty( $this->mInfo['title'] ) ) {
 					$renamed = $pParamHash['content_store']['title'] != $this->mInfo['title'];
 				}
 				$result = $this->mDb->associateUpdate( $table, $pParamHash['content_store'], array("content_id" => $pParamHash['content_id'] ) );
+				$this->mLogs['content_store'] = "Content was updated.";
 			}
 
 			if( !empty( $pParamHash['force_history'] ) || ( empty( $pParamHash['minor'] ) && $this->getField( 'version' ) && $pParamHash['field_changed'] )) {
@@ -302,6 +304,7 @@ class LibertyContent extends LibertyBase {
 			// If we renamed the page, we need to update the backlinks
 			if( !empty( $renamed ) && $func = $gLibertySystem->getPluginFunction( $pParamHash['format_guid'], 'rename_function' ) ) {
 				$ret = $func( $this->mContentId, $this->mInfo['title'], $pParamHash['content_store']['title'], $this );
+				$this->mLogs['rename_page'] = "Page was renamed from {$this->mInfo['title']} to {$pParamHash['content_store']['title']}.";
 			}
 
 			// store content preferences
@@ -315,6 +318,9 @@ class LibertyContent extends LibertyBase {
 			if( !empty( $pParamHash['content_store']['hits'] )  ) {
 				$this->setHits($pParamHash['content_store']['hits'], $pParamHash['content_store']['last_hit']);
 			}
+
+			// store any messages in the logs
+			$this->storeActionLog( $pParamHash );
 
 			$this->mDb->CompleteTrans();
 		}
@@ -352,6 +358,7 @@ class LibertyContent extends LibertyBase {
 				$func( $this->mContentId );
 			}
 
+			// remove entries in the history
 			$this->expungeVersion();
 
 			// Remove individual permissions for this object if they exist
@@ -369,6 +376,9 @@ class LibertyContent extends LibertyBase {
 			// Remove content
 			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id` = ?";
 			$result = $this->mDb->query( $query, array( $this->mContentId ) );
+
+			$this->mLogs['content_expunge'] = "Content was deleted.";
+			$this->storeActionLog( $logHash );
 
 			$this->mDb->CompleteTrans();
 			$ret = TRUE;
@@ -474,7 +484,7 @@ class LibertyContent extends LibertyBase {
 			}
 			$action = "Removed last version";
 			$t = $gBitSystem->getUTCTime();
-			$query = "insert into `".BIT_DB_PREFIX."liberty_action_log`( `log_action`, `content_id`, `last_modified`, `user_id`, `ip`, `action_comment`) values( ?, ?, ?, ?, ?, ?)";
+			$query = "insert into `".BIT_DB_PREFIX."liberty_action_log`( `log_message`, `content_id`, `last_modified`, `user_id`, `ip`, `error_message`) values( ?, ?, ?, ?, ?, ?)";
 			$result = $this->mDb->query($query, array( $action, $this->mContentId, $t, ROOT_USER_ID, $_SERVER["REMOTE_ADDR"], $comment ) );
 		}
 	}
@@ -543,7 +553,7 @@ class LibertyContent extends LibertyBase {
 				global $gBitSystem;
 				$action = "Removed version $pVersion";
 				$t = $gBitSystem->getUTCTime();
-				$query = "insert into `".BIT_DB_PREFIX."liberty_action_log`(`log_action`,`content_id`,`last_modified`,`user_id`,`ip`,`action_comment`) values(?,?,?,?,?,?)";
+				$query = "insert into `".BIT_DB_PREFIX."liberty_action_log`(`log_message`,`content_id`,`last_modified`,`user_id`,`ip`,`error_message`) values(?,?,?,?,?,?)";
 				$result = $this->mDb->query($query,array($action,$this->mContentId,$t,ROOT_USER_ID,$_SERVER["REMOTE_ADDR"],$comment));
 				$ret = TRUE;
 			}
@@ -2012,6 +2022,188 @@ class LibertyContent extends LibertyBase {
 				}
 			}
 		}
+	}
+
+	// -------------------- Action Logging Funtions -------------------- //
+
+	/**
+	 * storeActionLog 
+	 * Note: use $gBitSystem throughout that this function can be called statically if needed
+	 * 
+	 * @param array $pParamHash 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function storeActionLog( $pParamHash ) {
+		global $gBitSystem;
+		if( $gBitSystem->isFeatureActive( 'liberty_action_log' ) && LibertyContent::verifyActionLog( $pParamHash ) ) {
+			$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_action_log", $pParamHash['action_log_store'] );
+		}
+	}
+
+	/**
+	 * verify the data in the action log is ready for storing
+	 * First checks $pParamHash['action_log'] for information and then the content_store stuff
+	 * Note: use $gBitSystem throughout that this function can be called statically if needed
+	 * 
+	 * @param array $pParamHash 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function verifyActionLog( &$pParamHash ) {
+		global $gBitUser, $gBitSystem;
+
+		// content_id isn't strictly needed
+		if( @BitBase::verifyId( $pParamHash['action_log']['content_id'] ) ) {
+			$pParamHash['action_log_store']['content_id'] = $pParamHash['action_log']['content_id'];
+		} elseif( @BitBase::verifyId( $pParamHash['content_id'] ) ) {
+			$pParamHash['action_log_store']['content_id'] = $pParamHash['content_id'];
+		} elseif( !empty( $this ) && @BitBase::verifyId( $this->mContentId ) ) {
+			$pParamHash['action_log_store']['content_id'] = $this->mContentId;
+		}
+
+		// generic information needed in log
+		if( !empty( $pParamHash['action_log']['user_id'] ) ) {
+			$pParamHash['action_log_store']['user_id'] = $pParamHash['action_log']['user_id'];
+		} else {
+			$pParamHash['action_log_store']['user_id'] = $gBitUser->mUserId;
+		}
+
+		if( !empty( $pParamHash['action_log']['title'] ) ) {
+			$pParamHash['action_log_store']['title'] = $pParamHash['action_log']['title'];
+		} elseif( !empty( $pParamHash['content_store']['title'] ) ) {
+			$pParamHash['action_log_store']['title'] = $pParamHash['title'];
+		} elseif( !empty( $this ) && !empty( $this->mInfo['title'] ) ) {
+			$pParamHash['action_log_store']['title'] = $this->mInfo['title'];
+		} else {
+			return FALSE;
+		}
+
+		// IP of the user
+		if( empty( $pParamHash['action_log']['ip'] ) ) {
+			if( !empty( $pParamHash['content_store']['ip'] ) ) {
+				$pParamHash['action_log']['ip'] = $pParamHash['content_store']['ip'];
+			} elseif( empty( $_SERVER["REMOTE_ADDR"] ) ) {
+				$pParamHash['action_log']['ip'] = '127.0.0.1';
+			} else {
+				$pParamHash['action_log']['ip'] = $_SERVER["REMOTE_ADDR"];
+			}
+		}
+		$pParamHash['action_log_store']['ip'] = $pParamHash['action_log']['ip'];
+
+		// Timestamp - don't think we should be able to override this
+/*
+		if( @BitBase::verifyId( $pParamHash['action_log']['last_modified'] ) ) {
+			$pParamHash['action_log_store']['last_modified'] = $pParamHash['action_log']['last_modified'];
+		} elseif( @BitBase::verifyId( $pParamHash['content_store']['last_modifed'] ) ) {
+			$pParamHash['action_log_store']['last_modified'] = $pParamHash['content_store']['last_modified'];
+		} else {
+			$pParamHash['action_log_store']['last_modified'] = $gBitSystem->getUTCTime();
+		}
+*/
+		$pParamHash['action_log_store']['last_modified'] = $gBitSystem->getUTCTime();
+
+		// the log message
+		$log_action = '';
+		if( empty( $pParamHash['action_log']['log_message'] ) && !empty( $this ) && !empty( $this->mLogs ) ) {
+			foreach( $this->mLogs as $key => $msg ) {
+				$log_action .= "$msg\n";
+			}
+		} elseif( !empty( $pParamHash['action_log']['log_message'] ) ) {
+			$log_action = $pParamHash['action_log']['log_message'];
+		}
+
+		// trim down log
+		if( !empty( $log_action ) ) {
+			$pParamHash['action_log_store']['log_message'] = substr( $log_action, 0, 250 );
+		} else {
+			return FALSE;
+		}
+
+		// error message - default is to put in any stuff in mErrors
+		$action_error = '';
+		if( empty( $pParamHash['action_log']['error_message'] ) && !empty( $this ) && !empty( $this->mErrors ) ) {
+			foreach( $this->mErrors as $key => $msg ) {
+				$action_error .= "$msg\n";
+			}
+		} elseif( !empty( $pParamHash['action_log']['error_message'] ) ) {
+			$action_error = $pParamHash['action_log']['error_message'];
+		}
+
+		// trim down error message
+		if( !empty( $action_error ) ) {
+			$pParamHash['action_log_store']['error_message'] = substr( $action_error, 0, 250 );
+		}
+
+		// if we get as far as here, we can
+		return TRUE;
+	}
+
+	/**
+	 * Get a list of action log entries
+	 * 
+	 * @param array $pListHash List options
+	 * @access public
+	 * @return List of entries on success, FALSE on failure
+	 */
+	function getActionLogs( &$pListHash ) {
+		LibertyContent::prepGetList( $pListHash );
+
+		$ret = $bindVars = array();
+		$selectSql = $joinSql = $orderSql = $whereSql = '';
+
+		if( !empty( $pListHash['find'] ) ) {
+			$whereSql .= empty( $whereSql ) ? ' WHERE ' : ' AND ';
+			$whereSql .= " UPPER( lal.`log_message` ) LIKE ? ";
+			$bindVars[] = '%'.strtoupper( $pListHash['find'] ).'%';
+		}
+
+		if( !empty( $pListHash['find_title'] ) ) {
+			$whereSql .= empty( $whereSql ) ? ' WHERE ' : ' AND ';
+			$whereSql .= " UPPER( lal.`title` ) LIKE ? ";
+			$bindVars[] = '%'.strtoupper( $pListHash['find_log'] ).'%';
+		}
+
+		if( !empty( $pListHash['sort_mode'] ) ) {
+			$orderSql = " ORDER BY ".$this->mDb->convert_sortmode( $pListHash['sort_mode'] )." ";
+		}
+
+		$query = "
+			SELECT lal.*,
+				lc.`content_type_guid`, lc.`created`, lct.`content_description`,
+				uue.`login` AS modifier_user, uue.`real_name` AS modifier_real_name
+			FROM `".BIT_DB_PREFIX."liberty_action_log` lal
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( lc.`content_id` = lal.`content_id` )
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_types` lct ON ( lct.`content_type_guid` = lc.`content_type_guid` )
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uue ON ( uue.`user_id` = lal.`user_id` )
+			$whereSql $orderSql";
+
+		$result = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
+
+		while( $aux = $result->fetchRow() ) {
+			$aux['user']         = $aux['modifier_user'];
+			$aux['editor']       = ( isset( $aux['modifier_real_name'] ) ? $aux['modifier_real_name'] : $aux['modifier_user'] );
+			$aux['display_name'] = BitUser::getTitle( $aux );
+			$ret[]               = $aux;
+		}
+
+		$query = "SELECT COUNT( lal.`user_id` ) FROM `".BIT_DB_PREFIX."liberty_action_log` lal $whereSql";
+		$pListHash['cant'] = $this->mDb->getOne( $query, $bindVars );
+		LibertyContent::postGetList( $pListHash );
+
+		return $ret;
+	}
+
+	/**
+	 * expungeActionLog 
+	 * 
+	 * @param array $pContentId Content Id of which you want to remove the logs
+	 * @param array $pTimeStamp Anything older than this timestamp is removed
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function expungeActionLog( $pContentId = NULL, $pTimeStamp = NULL ) {
+		// TODO
 	}
 }
 ?>

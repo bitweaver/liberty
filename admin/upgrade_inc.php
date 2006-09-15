@@ -38,6 +38,14 @@ array( 'DATADICT' => array(
 			'lang_code' => array( '`lang_code`', 'VARCHAR(32)' ),
 		),
 	)),
+	array( 'ALTER' => array(
+		'liberty_action_log' => array(
+			'log_action' => array( '`log_message`', 'VARCHAR(250)' ),
+			'action_comment' => array( '`error_message`', 'VARCHAR(250)' ),
+			// don't know how to remove NOTNULL from content_id using upgrader - does this work?
+			'content_id' => array( '`content_id`', 'I4' ),
+		),
+	)),
 )),
 
 
