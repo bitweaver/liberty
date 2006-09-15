@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.35 2006/09/06 09:02:46 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.36 2006/09/15 22:10:39 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -75,6 +75,7 @@ class LibertyComment extends LibertyContent {
 	}
 
 	function verifyComment(&$pStorageHash) {
+		global $gBitUser;
 		if (!$pStorageHash['parent_id']) {
 			$this->mErrors['parent_id'] = "Missing parent id for comment";
 		}
@@ -84,45 +85,48 @@ class LibertyComment extends LibertyContent {
 		if (empty($pStorageHash['anon_name'])) {
 			$pStorageHash['anon_name']=null;
 		}
+		if( !$gBitUser->hasPermission( 'p_users_bypass_captcha' ) ) {
+			if( empty( $pStorageHash['captcha'] ) || $_SESSION['captcha']!=$pStorageHash['captcha'] ) {
+				$this->mErrors['store'] = tra( 'Incorrect validation code' );
+			}
+		}
 		return (count($this->mErrors) == 0);
 	}
 
 	function storeComment($pStorageHash) {
 		$pStorageHash['content_type_guid'] = BITCOMMENT_CONTENT_TYPE_GUID;
 		if (!$this->mCommentId) {
-			if( LibertyContent::store( $pStorageHash ) ) {
-				if ($this->verifyComment($pStorageHash)) {
-					$this->mCommentId = $this->mDb->GenID( 'liberty_comment_id_seq');
+			if( $this->verifyComment($pStorageHash) && LibertyContent::store( $pStorageHash ) ) {
+				$this->mCommentId = $this->mDb->GenID( 'liberty_comment_id_seq');
 
 
-					if (!empty($pStorageHash['parent_id'])) {
-						$parentComment = new LibertyComment(NULL,$pStorageHash['parent_id']);
-					}
-					$parent_sequence_forward = '';
-					$parent_sequence_reverse = '';
-					if (!empty($parentComment->mInfo['thread_forward_sequence'])) {
-						$parent_sequence_forward = $parentComment->mInfo['thread_forward_sequence'];
-						$parent_sequence_reverse = $parentComment->mInfo['thread_reverse_sequence'];
-						}
-					# if nesting level > 25 deep, put it on level 25
-					if (strlen($parent_sequence_forward) > 10*24) {
-						$parent_sequence_forward = substr($parent_sequence_forward,0,10*24);
-						}
-
-					$this->mInfo['thread_forward_sequence'] = $parent_sequence_forward . sprintf("%09d.",$this->mCommentId);
-					$this->mInfo['thread_reverse_sequence'] = strtr($parent_sequence_forward . sprintf("%09d.",$this->mCommentId),
-							'0123456789', '9876543210');
-
-					$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_comments` (`comment_id`, `content_id`, `parent_id`, `root_id`, `anon_name`, `thread_forward_sequence`, `thread_reverse_sequence`) VALUES (?,?,?,?,?,?,?)";
-
-					$this->mDb->query($sql, array($this->mCommentId, $pStorageHash['content_id'], $pStorageHash['parent_id'],
-						$pStorageHash['root_id'], $pStorageHash['anon_name'],
-						$this->mInfo['thread_forward_sequence'], $this->mInfo['thread_reverse_sequence']));
-					$this->mInfo['parent_id'] = $pStorageHash['parent_id'];
-					$this->mInfo['content_id'] = $pStorageHash['content_id'];
-					$this->mInfo['root_id'] = $pStorageHash['root_id'];
-					$this->mContentId = $pStorageHash['content_id'];
+				if (!empty($pStorageHash['parent_id'])) {
+					$parentComment = new LibertyComment(NULL,$pStorageHash['parent_id']);
 				}
+				$parent_sequence_forward = '';
+				$parent_sequence_reverse = '';
+				if (!empty($parentComment->mInfo['thread_forward_sequence'])) {
+					$parent_sequence_forward = $parentComment->mInfo['thread_forward_sequence'];
+					$parent_sequence_reverse = $parentComment->mInfo['thread_reverse_sequence'];
+					}
+				# if nesting level > 25 deep, put it on level 25
+				if (strlen($parent_sequence_forward) > 10*24) {
+					$parent_sequence_forward = substr($parent_sequence_forward,0,10*24);
+					}
+
+				$this->mInfo['thread_forward_sequence'] = $parent_sequence_forward . sprintf("%09d.",$this->mCommentId);
+				$this->mInfo['thread_reverse_sequence'] = strtr($parent_sequence_forward . sprintf("%09d.",$this->mCommentId),
+						'0123456789', '9876543210');
+
+				$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_comments` (`comment_id`, `content_id`, `parent_id`, `root_id`, `anon_name`, `thread_forward_sequence`, `thread_reverse_sequence`) VALUES (?,?,?,?,?,?,?)";
+
+				$this->mDb->query($sql, array($this->mCommentId, $pStorageHash['content_id'], $pStorageHash['parent_id'],
+					$pStorageHash['root_id'], $pStorageHash['anon_name'],
+					$this->mInfo['thread_forward_sequence'], $this->mInfo['thread_reverse_sequence']));
+				$this->mInfo['parent_id'] = $pStorageHash['parent_id'];
+				$this->mInfo['content_id'] = $pStorageHash['content_id'];
+				$this->mInfo['root_id'] = $pStorageHash['root_id'];
+				$this->mContentId = $pStorageHash['content_id'];
 			}
 		} else {
 			if( $this->verifyComment($pStorageHash) && LibertyContent::store($pStorageHash) ) {

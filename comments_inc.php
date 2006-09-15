@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.25 $
+ * @version  $Revision: 1.26 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.25 2006/09/06 09:02:47 spiderr Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.26 2006/09/15 22:10:39 spiderr Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -92,6 +92,9 @@ if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'p_lib
 	$storeRow['root_id'] = $commentsParentId;
 	$storeRow['parent_id'] = (@BitBase::verifyId($storeComment->mInfo['parent_id']) ? $storeComment->mInfo['parent_id'] : (!@BitBase::verifyId($_REQUEST['post_comment_reply_id']) ? $commentsParentId : $_REQUEST['post_comment_reply_id']));
 	$storeRow['content_id'] = (@BitBase::verifyId($storeComment->mContentId) ? $storeComment->mContentId : NULL);
+	if( !empty( $_REQUEST['captcha'] ) ) {
+		$storeRow['captcha'] = $_REQUEST['captcha'];
+	}
 	if (!empty($_REQUEST['comment_name'])) {
 		$storeRow['anon_name'] = $_REQUEST['comment_name'];
 	}
@@ -99,15 +102,22 @@ if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'p_lib
 		$storeRow['format_guid'] = $_REQUEST['format_guid'];
 	}
 	if(!($gBitSystem->isPackageActive('bitboards') && BitBoardTopic::isLockedMsg($storeRow['parent_id']))) {
-		$storeComment->storeComment($storeRow);
-		if($gBitSystem->isPackageActive('bitboards') && $gBitSystem->isFeatureActive('bitboards_thread_track')) {
-			$topic_id = substr($storeComment->mInfo['thread_forward_sequence'],0,10);
-			$data = BitBoardTopic::getNotificationData($topic_id);
-			foreach ($data['users'] as $login => $user) {
-				if($data['topic']->mInfo['llc_last_modified']>$user['track_date'] && $data['topic']->mInfo['llc_last_modified']>$user['track_notify_date']) {
-					$data['topic']->sendNotification($user);
+		if( $storeComment->storeComment($storeRow) ) {
+			if($gBitSystem->isPackageActive('bitboards') && $gBitSystem->isFeatureActive('bitboards_thread_track')) {
+				$topic_id = substr($storeComment->mInfo['thread_forward_sequence'],0,10);
+				$data = BitBoardTopic::getNotificationData($topic_id);
+				foreach ($data['users'] as $login => $user) {
+					if($data['topic']->mInfo['llc_last_modified']>$user['track_date'] && $data['topic']->mInfo['llc_last_modified']>$user['track_notify_date']) {
+						$data['topic']->sendNotification($user);
+					}
 				}
 			}
+		} else {
+			$formfeedback['error']=$storeComment->mErrors;
+			$postComment['data'] = $_REQUEST['comment_data'];
+			$postComment['title'] = $_REQUEST['comment_title'];
+			$postComment['anon_name'] = $_REQUEST['comment_name'];
+			$_REQUEST['post_comment_request'] = TRUE;
 		}
 	} else {
 		$formfeedback['warning']="The selected Topic is Locked posting is disabled";

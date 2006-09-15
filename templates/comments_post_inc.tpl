@@ -27,7 +27,7 @@
 						{formhelp note=""}
 					{/forminput}
 				</div>
-
+				
 				{if ! $gBitUser->isRegistered()}
 					<div class="row">
 						{formlabel label="Name" for="comments-name"}
@@ -56,6 +56,8 @@
 						<textarea {spellchecker} id="commentpost" name="comment_data" rows="{$gBitSystem->getConfig('comments_default_post_lines', 6)}" cols="50">{$postComment.data}</textarea>
 					{/forminput}
 				</div>
+
+				{captcha style="row"}
 
 				<div class="row submit">
 					<input type="submit" name="post_comment_preview" value="{tr}Preview{/tr}"/>&nbsp;
