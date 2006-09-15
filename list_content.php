@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.20 $
+ * @version  $Revision: 1.21 $
  * @package  liberty
  * @subpackage functions
  */
@@ -41,7 +41,7 @@ if ( !empty( $_REQUEST['output'] ) ){
   switch ($_REQUEST['output']){
     case 'json':
       $gBitSmarty->assign_by_ref('listcontent', $contentList['data']);
-      header("content-type:text/javascript");			
+	  header('Content-type:application/json');
       $gBitSmarty->display( 'bitpackage:liberty/list_content_json.tpl' );
       break;
     case 'ajax':
