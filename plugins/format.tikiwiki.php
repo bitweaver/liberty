@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.65 $
+ * @version  $Revision: 1.66 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -1015,11 +1015,10 @@ class TikiWikiParser extends BitBase {
 						$repl = BitPage::getDisplayLink( $page_parse, $exists );
 					}
 					// use preg_quote instead
-					// This breaks numeric 'create page' links in tables for unregistered users
-					//$slashed = preg_replace( "/([\/\[\]\(\)])/", "\\\\$1", $page_parse );
-					//$data = preg_replace("/([ \n\t\r\,\;]|^)".$slashedParse."($|[ \n\t\r\,\;\.])/", "$1"."$repl"."$2", $data);
-					$data = preg_replace( "/([\s\,\;]|^)".preg_quote( $page_parse, "/" )."($|[\,\;\.])/", "$1".$repl."$2", $data);
-					//$test = preg_match( "/([\s\,\;]|^)".preg_quote( $page_parse, "/" )."($|[\,\;\.])/", $data);
+					// This original breaks numeric 'create page' links in tables for unregistered users
+					$slashed = preg_replace( "/([\/\[\]\(\)])/", "\\\\$1", $page_parse );
+					//$data = preg_replace("/([ \n\t\r\,\;]|^)".$slashed."($|[ \n\t\r\,\;\.])/", "$1"."$repl"."$2", $data);
+					$data = preg_replace( "#\b$slashed\b#", $repl, $data);
 					//$data = preg_replace( "/".preg_quote( $page_parse, "/" )."/", $repl, $data);
 					//$data = str_replace($page_parse,$repl,$data);
 				}
