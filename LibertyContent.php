@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.148 2006/09/16 05:34:29 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.149 2006/09/16 08:24:47 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1714,23 +1714,8 @@ class LibertyContent extends LibertyBase {
 			$formatGuid = $pFormatGuid;
 		}
 
-/* <<<<<<< LibertyContent.php
-		// get the content id if we have one to get
-		if( is_array( $pMixed ) && !empty( $pMixed['content_id'] ) ) {
-			$contentId = $pMixed['content_id'];
-		} elseif( is_object( $this ) && !empty( $this->mContentId ) ) {
-			$contentId = $this->mContentId;
-		} else {
-			$contentId = NULL;
-		}
-
-		$ret = $data;
-
-		if( $data && $formatGuid ) {
-======= */
 		$ret = $parseHash['data'];
 		if( !empty( $parseHash['data'] ) && $formatGuid ) {
-//>>>>>>> 1.116
 			global $gLibertySystem;
 			if( $func = $gLibertySystem->getPluginFunction( $formatGuid, 'load_function' ) ) {
 				$ret = $func( $parseHash, $this );
