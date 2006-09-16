@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.36 2006/09/15 22:10:39 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.37 2006/09/16 09:52:00 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -79,17 +79,19 @@ class LibertyComment extends LibertyContent {
 		if (!$pStorageHash['parent_id']) {
 			$this->mErrors['parent_id'] = "Missing parent id for comment";
 		}
+
 		if (!$pStorageHash['root_id']) {
 			$this->mErrors['root_id'] = "Missing root id for comment";
 		}
+
 		if (empty($pStorageHash['anon_name'])) {
 			$pStorageHash['anon_name']=null;
 		}
-		if( !$gBitUser->hasPermission( 'p_users_bypass_captcha' ) ) {
-			if( empty( $pStorageHash['captcha'] ) || $_SESSION['captcha']!=$pStorageHash['captcha'] ) {
-				$this->mErrors['store'] = tra( 'Incorrect validation code' );
-			}
+
+		if( !$gBitUser->verifyCaptcha( $pParamHash['captcha'] ) ) {
+			$this->mErrors['store'] = tra( 'Incorrect validation code' );
 		}
+
 		return (count($this->mErrors) == 0);
 	}
 
@@ -108,11 +110,11 @@ class LibertyComment extends LibertyContent {
 				if (!empty($parentComment->mInfo['thread_forward_sequence'])) {
 					$parent_sequence_forward = $parentComment->mInfo['thread_forward_sequence'];
 					$parent_sequence_reverse = $parentComment->mInfo['thread_reverse_sequence'];
-					}
+				}
 				# if nesting level > 25 deep, put it on level 25
 				if (strlen($parent_sequence_forward) > 10*24) {
 					$parent_sequence_forward = substr($parent_sequence_forward,0,10*24);
-					}
+				}
 
 				$this->mInfo['thread_forward_sequence'] = $parent_sequence_forward . sprintf("%09d.",$this->mCommentId);
 				$this->mInfo['thread_reverse_sequence'] = strtr($parent_sequence_forward . sprintf("%09d.",$this->mCommentId),

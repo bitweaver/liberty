@@ -57,7 +57,7 @@
 					{/forminput}
 				</div>
 
-				{captcha style="row"}
+				{captcha variant="row"}
 
 				<div class="row submit">
 					<input type="submit" name="post_comment_preview" value="{tr}Preview{/tr}"/>&nbsp;

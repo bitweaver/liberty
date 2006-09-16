@@ -8,15 +8,31 @@ $formLibertyFeatures = array(
 		'label' => 'External image cache',
 		'note' => 'Enabling this will download and cache external images that are included.',
 	),
+	"liberty_cache_images" => array(
+		'label' => 'External image cache',
+		'note' => 'Enabling this will download and cache external images that are included.',
+	),
 );
+
 if( $gBitSystem->isPackageActive( 'quota' ) ) {
 	$formLibertyFeatures['liberty_quota'] = array(
 		'label' => 'Quota Usage System',
 		'note' => 'Limit users\' disk usage.',
-		'page' => '',
 	);
 }
 $gBitSmarty->assign( 'formLibertyFeatures', $formLibertyFeatures );
+
+$formCaptcha = array(
+	"liberty_use_captcha_freecap" => array(
+		'label' => 'Use Freecap',
+		'note' => 'Use the Freecap captcha library to create the captcha. This produces nicer and better images than the bitweaver internal captcha method.',
+	),
+	"freecap_use_dict" => array(
+		'label' => 'Use Dictionary',
+		'note' => 'Freecap can use real words or use random letters. Random letters are more difficult to decipher for humans as well as for bots.',
+	),
+);
+$gBitSmarty->assign( 'formCaptcha', $formCaptcha );
 
 $formImageFeatures = array(
 	"liberty_jpeg_originals" => array(
@@ -31,7 +47,7 @@ $formValues = array( 'image_processor', 'liberty_attachment_link_format', 'comme
 
 if( !empty( $_REQUEST['change_prefs'] ) ) {
 	$errors = array();
-	$formFeatures = array_merge( $formLibertyFeatures, $formImageFeatures );
+	$formFeatures = array_merge( $formLibertyFeatures, $formImageFeatures, $formCaptcha );
 	foreach( $formFeatures as $item => $data ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
