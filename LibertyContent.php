@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.147 2006/09/15 22:10:39 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.148 2006/09/16 05:34:29 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -378,7 +378,7 @@ class LibertyContent extends LibertyBase {
 			$result = $this->mDb->query( $query, array( $this->mContentId ) );
 
 			$this->mLogs['content_expunge'] = "Content was deleted.";
-// logHash undefined?! to be fixed I woudl assume -- spider			$this->storeActionLog( $logHash );
+			$this->storeActionLog();
 
 			$this->mDb->CompleteTrans();
 			$ret = TRUE;
@@ -2034,7 +2034,7 @@ class LibertyContent extends LibertyBase {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function storeActionLog( $pParamHash ) {
+	function storeActionLog( $pParamHash = NULL ) {
 		global $gBitSystem;
 		if( $gBitSystem->isFeatureActive( 'liberty_action_log' ) && LibertyContent::verifyActionLog( $pParamHash ) ) {
 			$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_action_log", $pParamHash['action_log_store'] );
