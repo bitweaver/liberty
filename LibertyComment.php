@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.37 2006/09/16 09:52:00 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.38 2006/09/17 18:48:07 bitweaver Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -74,18 +74,19 @@ class LibertyComment extends LibertyContent {
 		return count($this->mInfo);
 	}
 
-	function verifyComment(&$pStorageHash) {
+	function verifyComment(&$pParamHash) {
 		global $gBitUser;
-		if (!$pStorageHash['parent_id']) {
+
+		if (!$pParamHash['parent_id']) {
 			$this->mErrors['parent_id'] = "Missing parent id for comment";
 		}
 
-		if (!$pStorageHash['root_id']) {
+		if (!$pParamHash['root_id']) {
 			$this->mErrors['root_id'] = "Missing root id for comment";
 		}
 
-		if (empty($pStorageHash['anon_name'])) {
-			$pStorageHash['anon_name']=null;
+		if (empty($pParamHash['anon_name'])) {
+			$pParamHash['anon_name']=null;
 		}
 
 		if( !$gBitUser->verifyCaptcha( $pParamHash['captcha'] ) ) {
@@ -95,15 +96,15 @@ class LibertyComment extends LibertyContent {
 		return (count($this->mErrors) == 0);
 	}
 
-	function storeComment($pStorageHash) {
-		$pStorageHash['content_type_guid'] = BITCOMMENT_CONTENT_TYPE_GUID;
+	function storeComment( &$pParamHash ) {
+		$pParamHash['content_type_guid'] = BITCOMMENT_CONTENT_TYPE_GUID;
 		if (!$this->mCommentId) {
-			if( $this->verifyComment($pStorageHash) && LibertyContent::store( $pStorageHash ) ) {
+			if( $this->verifyComment($pParamHash) && LibertyContent::store( $pParamHash ) ) {
 				$this->mCommentId = $this->mDb->GenID( 'liberty_comment_id_seq');
 
 
-				if (!empty($pStorageHash['parent_id'])) {
-					$parentComment = new LibertyComment(NULL,$pStorageHash['parent_id']);
+				if (!empty($pParamHash['parent_id'])) {
+					$parentComment = new LibertyComment(NULL,$pParamHash['parent_id']);
 				}
 				$parent_sequence_forward = '';
 				$parent_sequence_reverse = '';
@@ -122,21 +123,21 @@ class LibertyComment extends LibertyContent {
 
 				$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_comments` (`comment_id`, `content_id`, `parent_id`, `root_id`, `anon_name`, `thread_forward_sequence`, `thread_reverse_sequence`) VALUES (?,?,?,?,?,?,?)";
 
-				$this->mDb->query($sql, array($this->mCommentId, $pStorageHash['content_id'], $pStorageHash['parent_id'],
-					$pStorageHash['root_id'], $pStorageHash['anon_name'],
+				$this->mDb->query($sql, array($this->mCommentId, $pParamHash['content_id'], $pParamHash['parent_id'],
+					$pParamHash['root_id'], $pParamHash['anon_name'],
 					$this->mInfo['thread_forward_sequence'], $this->mInfo['thread_reverse_sequence']));
-				$this->mInfo['parent_id'] = $pStorageHash['parent_id'];
-				$this->mInfo['content_id'] = $pStorageHash['content_id'];
-				$this->mInfo['root_id'] = $pStorageHash['root_id'];
-				$this->mContentId = $pStorageHash['content_id'];
+				$this->mInfo['parent_id'] = $pParamHash['parent_id'];
+				$this->mInfo['content_id'] = $pParamHash['content_id'];
+				$this->mInfo['root_id'] = $pParamHash['root_id'];
+				$this->mContentId = $pParamHash['content_id'];
 			}
 		} else {
-			if( $this->verifyComment($pStorageHash) && LibertyContent::store($pStorageHash) ) {
+			if( $this->verifyComment($pParamHash) && LibertyContent::store($pParamHash) ) {
 				$sql = "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `parent_id` = ?, `content_id`= ? WHERE `comment_id` = ?";
-				$this->mDb->query($sql, array($pStorageHash['parent_id'], $pStorageHash['content_id'], $this->mCommentId));
-				$this->mInfo['parent_id'] = $pStorageHash['parent_id'];
-				$this->mInfo['content_id'] = $pStorageHash['content_id'];
-				$this->mContentId = $pStorageHash['content_id'];
+				$this->mDb->query($sql, array($pParamHash['parent_id'], $pParamHash['content_id'], $this->mCommentId));
+				$this->mInfo['parent_id'] = $pParamHash['parent_id'];
+				$this->mInfo['content_id'] = $pParamHash['content_id'];
+				$this->mContentId = $pParamHash['content_id'];
 			}
 		}
 		return (count($this->mErrors) == 0);
