@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.38 2006/09/17 18:48:07 bitweaver Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.39 2006/09/17 20:18:39 bitweaver Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -91,6 +91,18 @@ class LibertyComment extends LibertyContent {
 
 		if( !$gBitUser->verifyCaptcha( $pParamHash['captcha'] ) ) {
 			$this->mErrors['store'] = tra( 'Incorrect validation code' );
+		}
+
+		if( empty( $pParamHash['edit'] ) ) {
+			$this->mErrors['store'] = tra( 'Your comment was empty.' );
+		} else {
+			$dupeQuery = "SELECT `data` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `user_id`=? AND `content_type_guid`='".BITCOMMENT_CONTENT_TYPE_GUID."' AND `ip`=? ORDER BY `last_modified` DESC";
+			if( $lastPostData = $this->mDb->getOne( $dupeQuery, array( $gBitUser->mUserId, $_SERVER['REMOTE_ADDR'] ) ) ) {
+				vd( $lastPostData );
+				if( trim( $lastPostData ) == trim( $pParamHash['edit'] ) ) {
+					$this->mErrors['store'] = tra( 'Duplicate comment.' );	
+				}
+			}
 		}
 
 		return (count($this->mErrors) == 0);
