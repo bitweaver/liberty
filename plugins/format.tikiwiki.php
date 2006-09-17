@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.67 $
+ * @version  $Revision: 1.68 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -1053,7 +1053,7 @@ class TikiWikiParser extends BitBase {
 			}
 
 			// comments and anonymously created pages get nofollow
-			if( ($pCommonObject && get_class( $pCommonObject ) == 'comments') || ( isset( $pCommonObject->mInfo['user_id'] ) &&  $pCommonObject->mInfo['user_id'] == ANONYMOUS_USER_ID ) ) {
+			if( $pCommonObject && (get_class( $pCommonObject ) == 'comments' || ( isset( $pCommonObject->mInfo['user_id'] ) &&  $pCommonObject->mInfo['user_id'] == ANONYMOUS_USER_ID ) ) {
 				$class .= ' rel="nofollow" ';
 			}
 
