@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.39 2006/09/17 20:18:39 bitweaver Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.40 2006/09/17 22:16:39 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -89,7 +89,7 @@ class LibertyComment extends LibertyContent {
 			$pParamHash['anon_name']=null;
 		}
 
-		if( !$gBitUser->verifyCaptcha( $pParamHash['captcha'] ) ) {
+		if( !@$gBitUser->verifyCaptcha( $pParamHash['captcha'] ) ) {
 			$this->mErrors['store'] = tra( 'Incorrect validation code' );
 		}
 
