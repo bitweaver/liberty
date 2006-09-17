@@ -1,5 +1,5 @@
 {strip}
-{if $comments_style eq 'threaded'}
+{if $comments_style eq 'threaded' && $comment.level}
 	<div style="margin-left: {math equation="level * marginIncrement" level=$comment.level marginIncrement=20}px">
 {else}
 	<div style="margin-left: 0px">
