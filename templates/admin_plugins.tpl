@@ -8,7 +8,7 @@
 	</div>
 
 	<div class="body">
-		{form legend="Liberty Plugins"}
+		{form}
 			{formfeedback error=$errorMsg}
 			{jstabs}
 				{foreach from=$pluginTypes item=plugin_type key=plugin_type_label}
@@ -34,14 +34,12 @@
 								{if $plugin.plugin_type eq $plugin_type}
 									<tr class="{cycle values="odd,even"}">
 										<td>
-											<label for="{$guid}">
 												{if $plugin_type eq 'data'}
 													<h3>{$plugin.title|escape}</h3>
 												{else}
 													<h3>{$plugin.edit_label}</h3>
 												{/if}
 												{$plugin.description}
-											</label>
 										</td>
 										<td>{$guid}</td>
 										{if $plugin_type eq 'format'}
