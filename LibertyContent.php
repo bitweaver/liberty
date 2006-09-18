@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.149 2006/09/16 08:24:47 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.150 2006/09/18 08:21:36 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1060,26 +1060,13 @@ class LibertyContent extends LibertyBase {
 		$ret = NULL;
 		if( $gBitSystem->isPackageActive( 'wiki' ) ) {
 			$columnExpression = $this->mDb->getCaseLessColumn('lc.title');
-			
+
 			$pageWhere = $pCaseSensitive ? 'lc.`title`' : $columnExpression;
 			$bindVars = array( ($pCaseSensitive ? $pPageName : strtoupper( $pPageName ) ) );
 			$query = "SELECT `page_id`, wp.`content_id`, `description`, lc.`last_modified`, lc.`title`
 				FROM `".BIT_DB_PREFIX."wiki_pages` wp, `".BIT_DB_PREFIX."liberty_content` lc
 				WHERE lc.`content_id`=wp.`content_id` AND $pageWhere = ?";
 			$ret = $this->mDb->getAll( $query, $bindVars );
-			if( empty( $ret ) ) {
-				$ret = NULL; // we don't want an empty array
-// no longer need this with new liberty_content_link structure
-//			} elseif( @BitBase::verifyId( $pContentId ) ) {
-//				// when page has been found, we insert the links into liberty_content_links
-//				foreach( $ret as $link ) {
-//					$storeHash['from_content_id'] = $pContentId;
-//					$storeHash['to_content_id'] = $link['content_id'];
-//					if( !$this->mDb->getOne( "SELECT `from_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=? AND `to_content_id`=?", array( $storeHash['from_content_id'], $storeHash['to_content_id'] ) ) ) {
-//						$this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_links", $storeHash );
-//					}
-//				}
-			}
 		}
 		return $ret;
 	}
