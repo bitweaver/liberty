@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.150 2006/09/18 08:21:36 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.151 2006/09/19 06:58:24 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2044,7 +2044,7 @@ class LibertyContent extends LibertyBase {
 		if( !empty( $pParamHash['action_log']['title'] ) ) {
 			$pParamHash['action_log_store']['title'] = $pParamHash['action_log']['title'];
 		} elseif( !empty( $pParamHash['content_store']['title'] ) ) {
-			$pParamHash['action_log_store']['title'] = $pParamHash['title'];
+			$pParamHash['action_log_store']['title'] = $pParamHash['content_store']['title'];
 		} elseif( !empty( $this ) && !empty( $this->mInfo['title'] ) ) {
 			$pParamHash['action_log_store']['title'] = $this->mInfo['title'];
 		} else {
