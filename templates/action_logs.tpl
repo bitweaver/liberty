@@ -32,7 +32,7 @@
 		<th>{smartlink ititle="ID" isort=content_id page=$listInfo.page}</th>
 		<th>{smartlink ititle="Title" isort=title page=$listInfo.page}</th>
 		<th>{smartlink ititle="Log Entry" isort=action_log page=$listInfo.page}</th>
-		<th>{smartlink ititle="Content Type" isort=content_dscription page=$listInfo.page}</th>
+		<th>{smartlink ititle="Content Type" isort=content_description page=$listInfo.page}</th>
 		<th>{smartlink ititle="Log time" isort=last_modified page=$listInfo.page idefault=1}</th>
 		<th>{smartlink ititle="Modified by" isort=user_id page=$listInfo.page} [{smartlink ititle="IP" isort=ip page=$listInfo.page}]</th>
 		<th>{tr}Actions{/tr}</th>
