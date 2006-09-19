@@ -22,6 +22,9 @@ if( !empty( $_REQUEST['apply_settings'] ) ) {
 	foreach( array_keys( $settings ) as $item ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
+	if( !empty( $_REQUEST['log_prune'] ) ) {
+		$gContent->expungeActionLog( $_REQUEST['log_prune'] );
+	}
 }
 
 // get list of log entries

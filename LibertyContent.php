@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.151 2006/09/19 06:58:24 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.152 2006/09/19 18:50:18 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2169,13 +2169,20 @@ class LibertyContent extends LibertyBase {
 	/**
 	 * expungeActionLog 
 	 * 
-	 * @param array $pContentId Content Id of which you want to remove the logs
-	 * @param array $pTimeStamp Anything older than this timestamp is removed
+	 * @param array $pTimeSpan Anything older than this timespan will be removed
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function expungeActionLog( $pContentId = NULL, $pTimeStamp = NULL ) {
-		// TODO
+	function expungeActionLog( $pTimeSpan = NULL ) {
+		global $gBitSystem;
+		$where = '';
+		$bindVars = array();
+		if( @BitBase::verifyId( $pTimeSpan ) ) {
+			$where = "WHERE `last_modified` < ?";
+			$bindVars[] = $gBitSystem->mServerTimestamp->getUTCTime() - $pTimeSpan;
+		}
+		$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_action_log` $where", $bindVars );
+		return TRUE;
 	}
 }
 ?>
