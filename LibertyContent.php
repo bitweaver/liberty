@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.152 2006/09/19 18:50:18 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.153 2006/09/19 20:14:38 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1467,13 +1467,13 @@ class LibertyContent extends LibertyBase {
 
 		// only display content modified more recently than this (UTC timestamp)
 		if ( !empty( $pListHash['from_date'] ) ) {
-			$whereSql .= ' AND lc.`last_modified` <= ?';
+			$whereSql .= ' AND lc.`last_modified` >= ?';
 			$bindVars[] = $pListHash['from_date'];
 		}
 
 		// only display content modified before this (UTC timestamp)
 		if ( !empty( $pListHash['until_date'] ) ) {
-			$whereSql .= ' AND lc.`last_modified` >= ?';
+			$whereSql .= ' AND lc.`last_modified` <= ?';
 			$bindVars[] = $pListHash['until_date'];
 		}
 
