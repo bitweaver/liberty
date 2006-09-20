@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.24 $
+ * @version  $Revision: 1.25 $
  * @package  liberty
  * @subpackage functions
  */
@@ -45,10 +45,12 @@ if( empty( $contentListHash ) ) {
 		'until_date'        => !empty( $_REQUEST["until_date"] ) ? $_REQUEST["until_date"] : NULL,
 	);
 
-	if( !empty( $_REQUEST['output'] ) && ( $_REQUEST['output'] == 'json' || $_REQUEST['output'] == 'ajax' ) ) {
+	if( !empty( $_REQUEST['output'] ) && ( $_REQUEST['output'] == 'json' || $_REQUEST['output'] == 'ajax' ) ) {	
 		foreach( $_REQUEST as $key => $value ) {
-			if( strstr( $value, ',' ) ) {
-				$_REQUEST[$key] = explode( ",", $value );
+			if ( !is_array($value) ){
+				if( strstr( $value, ',' ) ) {
+					$_REQUEST[$key] = explode( ",", $value );
+				}
 			}
 		}
 	}
