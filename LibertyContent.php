@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.153 2006/09/19 20:14:38 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.154 2006/09/20 15:00:50 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -275,13 +275,13 @@ class LibertyContent extends LibertyBase {
 				$this->mInfo['content_type_guid'] = $pParamHash['content_type_guid'];
 				$this->mContentId = $pParamHash['content_store']['content_id'];
 				$result = $this->mDb->associateInsert( $table, $pParamHash['content_store'] );
-				$this->mLogs['content_store'] = "Content was added.";
+				$this->mLogs['content_store'] = "Created.";
 			} else {
 				if( !empty( $pParamHash['content_store']['title'] ) && !empty( $this->mInfo['title'] ) ) {
 					$renamed = $pParamHash['content_store']['title'] != $this->mInfo['title'];
 				}
 				$result = $this->mDb->associateUpdate( $table, $pParamHash['content_store'], array("content_id" => $pParamHash['content_id'] ) );
-				$this->mLogs['content_store'] = "Content was updated.";
+				$this->mLogs['content_store'] = "Updated.";
 			}
 
 			if( !empty( $pParamHash['force_history'] ) || ( empty( $pParamHash['minor'] ) && $this->getField( 'version' ) && $pParamHash['field_changed'] )) {
@@ -304,7 +304,7 @@ class LibertyContent extends LibertyBase {
 			// If we renamed the page, we need to update the backlinks
 			if( !empty( $renamed ) && $func = $gLibertySystem->getPluginFunction( $pParamHash['format_guid'], 'rename_function' ) ) {
 				$ret = $func( $this->mContentId, $this->mInfo['title'], $pParamHash['content_store']['title'], $this );
-				$this->mLogs['rename_page'] = "Page was renamed from {$this->mInfo['title']} to {$pParamHash['content_store']['title']}.";
+				$this->mLogs['rename_page'] = "Renamed from {$this->mInfo['title']} to {$pParamHash['content_store']['title']}.";
 			}
 
 			// store content preferences
@@ -377,7 +377,7 @@ class LibertyContent extends LibertyBase {
 			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id` = ?";
 			$result = $this->mDb->query( $query, array( $this->mContentId ) );
 
-			$this->mLogs['content_expunge'] = "Content was deleted.";
+			$this->mLogs['content_expunge'] = "Deleted.";
 			$this->storeActionLog();
 
 			$this->mDb->CompleteTrans();
