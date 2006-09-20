@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.70 $
+ * @version  $Revision: 1.71 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -57,16 +57,47 @@ function tikiwiki_expunge( $pContentId ) {
 }
 
 function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
-	$query = "SELECT `from_content_id`, `data`
-			  FROM `".BIT_DB_PREFIX."liberty_content_links` lcl
-				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcl.`from_content_id`=lc.`content_id` )
-			  WHERE `to_content_id` = ?";
-	if( $result = $pCommonObject->mDb->query($query, array( $pContentId ) ) ) {
+	$query = "
+		SELECT `from_content_id`, `data`
+		FROM `".BIT_DB_PREFIX."liberty_content_links` lcl
+			INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcl.`from_content_id`=lc.`content_id` )
+		WHERE `to_content_id` = ?";
+
+	if( $result = $pCommonObject->mDb->query( $query, array( $pContentId ) ) ) {
 		while( $row = $result->fetchRow() ) {
-			$data = preg_replace( '/(\W|\(\()('.$pOldName.')(\W|\)\))/', '\\1'.$pNewName.'\\3', $row['data'] );
+			// check if there are occasions of the old name with alternate display link name
+			// ((WikiLink|Description))
+			$pattern[] = "!
+				\({2}              # check for ((
+				\b$pOldName\b      # make sure the old name is on it's own
+				\|                 # the seperating deliminator
+				([^\)]*)           # get as many characters as possible up to the next ) - put this in $1
+				\){2}              # closing brackets ))
+			!x";
+			// replace with new name leaving description in tact
+			$replace[] = "(($pNewName|$1))";
+
+
+			// ((WikiLink)) or WikiLink
+			$pattern[] = "!
+				(\({2})?           # check for (( - optional - put this in $1
+				\b$pOldName\b      # make sure the old name is on it's own
+				(\){2})?           # closing brackets )) - optional - put this in $2
+			!x";
+
+			// the replacement depends on the new name
+			if( preg_match( "! !", $pNewName ) ) {
+				// since we have a space in the final name, we need to have (( and )) to make the link work
+				$replace[] = "(($pNewName))";
+			} else {
+				// no spaces in the new name either, so we only insert the (( and )) if the author used them to start off with
+				$replace[] = "$1$pNewName$2";
+			}
+
+			$data = preg_replace( $pattern, $replace, $row['data'] );
 			if( md5( $data ) != md5( $row['data'] ) ) {
 				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content` SET `data`=? WHERE `content_id`=?";
-				$pCommonObject->mDb->query($query, array( $data, $row['from_content_id'] ) );
+				$pCommonObject->mDb->query( $query, array( $data, $row['from_content_id'] ) );
 
 				// remove any chached files pointing here
 				LibertyContent::expungeCacheFile( $row['from_content_id'] );
@@ -74,7 +105,7 @@ function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
 		}
 	}
 
-	#Fix up titles in the link table
+	# Fix up titles in the link table
 	$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET `to_title`=? WHERE `to_content_id`=?";
 	$pCommonObject->mDb->query( $query, array( $pNewName, $pContentId ) );
 }
