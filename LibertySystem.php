@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.45 2006/09/11 18:59:48 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.46 2006/09/20 23:02:43 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -69,6 +69,9 @@ class LibertySystem extends LibertyBase {
 
 	// Liberty data tags
 	var $mDataTags;
+
+	// Content Status
+	var $mContentStatus;
 
 	// Content types
 	var $mContentTypes;
@@ -274,6 +277,10 @@ class LibertySystem extends LibertyBase {
 			$ret = $this->mPlugins[$pGuid][$pFunctionName];
 		}
 		return $ret;
+	}
+
+	function getContentStatus() {
+		return( $this->mDb->getAssoc( "SELECT `content_status_id`,`content_status_name` FROM `".BIT_DB_PREFIX."liberty_content_status`" ) );
 	}
 
 	// ****************************** Content Type Functions

@@ -12,6 +12,11 @@ $tables = array(
 	handler_file C(128)
 ",
 
+'liberty_content_status' => "
+	content_status_id I4 PRIMARY KEY,
+	content_status_name C(128) NOTNULL
+",
+
 'liberty_content' => "
 	content_id I4 PRIMARY,
 	user_id I4 NOTNULL,
@@ -27,6 +32,7 @@ $tables = array(
 	ip C(39),
 	data X
 	CONSTRAINT '
+		, CONSTRAINT `liberty_content_status_ref` FOREIGN KEY (`content_status_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content_status`( `content_status_id` )
 		, CONSTRAINT `liberty_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )
 ",
 
@@ -168,6 +174,7 @@ $indices = array (
 	'content_user_idx' => array( 'table' => 'liberty_content', 'cols' => 'user_id', 'opts' => NULL ),
 	'content_moduser_idx' => array( 'table' => 'liberty_content', 'cols' => 'modifier_user_id', 'opts' => NULL ),
 	'content_content_hits_idx' => array( 'table' => 'liberty_content_hits', 'cols' => 'content_id', 'opts' => NULL ),
+	'content_status_idx' => array( 'table' => 'liberty_content', 'cols' => 'content_status_id', 'opts' => NULL ),
 	'comments_object_idx' => array( 'table' => 'liberty_comments', 'cols' => 'content_id', 'opts' => NULL ),
 	'comments_parent_idx' => array( 'table' => 'liberty_comments', 'cols' => 'parent_id', 'opts' => NULL ),
 	'attachments_hits_idx' => array( 'table' => 'liberty_attachments', 'cols' => 'hits', 'opts' => NULL ),

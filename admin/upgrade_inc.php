@@ -16,6 +16,18 @@ array( 'QUERY' =>
 ),
 
 array( 'DATADICT' => array(
+	array( 'CREATE' => array (
+		'liberty_content_hits' => "
+			content_id I4 PRIMARY,
+			hits I4 NOTNULL DEFAULT 1,
+			last_hit I8 NOTNULL DEFAULT 1
+	CONSTRAINTS ', CONSTRAINT `liberty_content_hits_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
+		",
+		'liberty_content_status' => "
+			content_status_id I4 PRIMARY KEY,
+			content_status_name C(128) NOTNULL
+		",
+	)),
 	array( 'RENAMETABLE' => array(
 		'tiki_content'                 => 'liberty_content',
 		'tiki_content_id_seq'          => 'liberty_content_id_seq',
@@ -36,6 +48,7 @@ array( 'DATADICT' => array(
 	array( 'ALTER' => array(
 		'liberty_content' => array(
 			'lang_code' => array( '`lang_code`', 'VARCHAR(32)' ),
+			'content_status_id' => array( '`content_status_id`', 'I4' ),
 		),
 	)),
 	array( 'ALTER' => array(
@@ -50,17 +63,6 @@ array( 'DATADICT' => array(
 
 
 // move hits and last_hit to a new table
-array( 'DATADICT' => array(
-	array( 'CREATE' => array (
-		'liberty_content_hits' => "
-			content_id I4 PRIMARY,
-			hits I4 NOTNULL DEFAULT 1,
-			last_hit I8 NOTNULL DEFAULT 1
-	CONSTRAINTS ', CONSTRAINT `liberty_content_hits_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
-		",
-	)),
-)),
-
 array( 'QUERY' =>
 	array( 'SQL92' => array(
 		"INSERT INTO `".BIT_DB_PREFIX."liberty_content_hits` ( content_id, hits, last_hit ) 

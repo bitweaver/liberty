@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.154 2006/09/20 15:00:50 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.155 2006/09/20 23:02:43 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -32,6 +32,10 @@ if( !defined( 'BIT_CONTENT_MAX_TITLE_LEN' ) ) {
 define( 'BIT_CONTENT_MAX_LANGUAGE_LEN', 4);
 define( 'BIT_CONTENT_MAX_IP_LEN', 39);
 define( 'BIT_CONTENT_MAX_FORMAT_GUID_LEN', 16);
+
+if( !defined( 'BIT_CONTENT_DEFAULT_STATUS' ) ) {
+	define( 'BIT_CONTENT_DEFAULT_STATUS', 50);
+}
 
 /**
  * required setup
@@ -153,6 +157,8 @@ class LibertyContent extends LibertyBase {
 				$pParamHash['content_id'] = $this->mContentId;
 			}
 		}
+
+		$pParamHash['content_store']['content_status_id'] = (@BitBase::verifyId( $_REQUEST['content_status_id'] ) ? $_REQUEST['content_status_id'] : $gBitSystem->getConfig( 'liberty_default_status', BIT_CONTENT_DEFAULT_STATUS ));
 
 		$pParamHash['field_changed'] = empty( $pParamHash['content_id'] )
 					|| (!empty($this->mInfo["data"]) && !empty($pParamHash["edit"]) && (md5($this->mInfo["data"]) != md5($pParamHash["edit"])))
