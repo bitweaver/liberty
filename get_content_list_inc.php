@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.25 $
+ * @version  $Revision: 1.26 $
  * @package  liberty
  * @subpackage functions
  */
@@ -19,8 +19,12 @@ if( empty( $gContent ) || !is_object( $gContent ) ) {
 	$gContent = new LibertyContent();
 }
 
-if( !empty($_REQUEST['content_type_guid']) ){
-	$contentTypeGuids = explode( ",", $_REQUEST['content_type_guid'] );
+if( !empty($_REQUEST['content_type_guid'])){
+	if (!is_array($_REQUEST['content_type_guid'])){
+		$contentTypeGuids = explode( ",", $_REQUEST['content_type_guid'] );
+	}else{
+		$contentTypeGuids = $_REQUEST['content_type_guid'];
+	}
 }
 
 // get_content_list_inc doesn't use $_REQUEST parameters as it might not be the only list in the page that needs sorting and limiting
