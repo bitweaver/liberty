@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.40 2006/09/17 22:16:39 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.41 2006/09/20 02:09:39 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -98,7 +98,6 @@ class LibertyComment extends LibertyContent {
 		} else {
 			$dupeQuery = "SELECT `data` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `user_id`=? AND `content_type_guid`='".BITCOMMENT_CONTENT_TYPE_GUID."' AND `ip`=? ORDER BY `last_modified` DESC";
 			if( $lastPostData = $this->mDb->getOne( $dupeQuery, array( $gBitUser->mUserId, $_SERVER['REMOTE_ADDR'] ) ) ) {
-				vd( $lastPostData );
 				if( trim( $lastPostData ) == trim( $pParamHash['edit'] ) ) {
 					$this->mErrors['store'] = tra( 'Duplicate comment.' );	
 				}
