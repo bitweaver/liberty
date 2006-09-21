@@ -228,6 +228,7 @@ $gBitInstaller->registerSchemaDefault( LIBERTY_PKG_NAME, array(
 	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (102, 'Commercial')",
 	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (200, 'Recommended')",
 	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (999, 'Copy Protected')",
+	"UPDATE `".BIT_DB_PREFIX."liberty_content` SET `content_status_id`=50",
 ) );
 
 
