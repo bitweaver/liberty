@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.71 $
+ * @version  $Revision: 1.72 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -975,8 +975,18 @@ class TikiWikiParser extends BitBase {
 			}
 		}
 
+		// We need to remove ))wWikiWords(( before links get made.
+		// users just need to be strict about not inserting spaces between 
+		// words and brackets
+		$data = preg_replace( "!
+			\){2}               # check for ))
+			([\w_\-]+?)         # any letter plus - and _ - placed in $1
+			\({2}               # closing ((
+			!x", "$1", $data
+		);
+
 		// New syntax for wiki pages ((name)) Where name can be anything
-		preg_match_all("/\(\(([^\)][^\)]+)\)\)/", $data, $pages);
+		preg_match_all("/\({2}(.+?)\){2}/", $data, $pages);
 		foreach (array_unique($pages[1])as $page_parse) {
 			$repl2 = true;
 
@@ -1017,6 +1027,7 @@ class TikiWikiParser extends BitBase {
 		// If they are parenthesized then don't treat as links
 		// Prevent ))PageName(( from being expanded	\"\'
 		//[A-Z][a-z0-9_\-]+[A-Z][a-z0-9_\-]+[A-Za-z0-9\-_]*
+
 		if( $gBitSystem->isPackageActive( 'wiki' ) && $gBitSystem->isFeatureActive( 'wiki_words' ) ) {
 			// The first part is now mandatory to prevent [Foo|MyPage] from being converted!
 			// the {2} is curious but seems to prevent things like "__Administration / Modules__" getting linked - spiderr
@@ -1055,8 +1066,6 @@ class TikiWikiParser extends BitBase {
 				}
 			}
 		}
-		// This protects ))word((, I think?
-		$data = preg_replace("/([ \n\t\r\,\;]|^)\)\)([^\(]+)\(\(($|[ \n\t\r\,\;\.])/", "$1" . "$2" . "$3", $data);
 
 		// reinsert hash-replaced links into page
 		foreach ($noparsedlinks as $np) {
