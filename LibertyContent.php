@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.155 2006/09/20 23:02:43 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.156 2006/09/21 07:02:07 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1898,23 +1898,13 @@ class LibertyContent extends LibertyBase {
 	// -------------------- Cache Funtions -------------------- //
 
 	/**
-	 * Get the URL where we store liberty cached content
-	 * 
-	 * @access public
-	 * @return relative URL
-	 */
-	function getCacheBaseUrl() {
-		return TEMP_PKG_URL.LIBERTY_PKG_NAME.'/cache/';
-	}
-
-	/**
 	 * Get the path where we store liberty cached content
 	 * 
 	 * @access public
 	 * @return absolute path
 	 */
 	function getCacheBasePath() {
-		return str_replace( '//', '/', BIT_ROOT_PATH.LibertyContent::getCacheBaseUrl() );
+		return str_replace( '//', '/', TEMP_PKG_PATH.LIBERTY_PKG_NAME.'/cache/' );
 	}
 
 	/**
@@ -1931,15 +1921,15 @@ class LibertyContent extends LibertyBase {
 
 		$ret = FALSE;
 		if( @BitBase::verifyId( $pContentId ) ) {
-			$baseUrl = NULL;
-			$pathParts   = split( '/', LibertyContent::getCacheBaseUrl() );
-			$pathParts[] = (int)($pContentId % 1000);
+			$baseUrl = '/';
+			$pathParts   = split( '/', LibertyContent::getCacheBasePath() );
+			$pathParts[] = (int)( $pContentId % 1000 );
 
 			foreach( $pathParts as $p ) {
 				if( !empty( $p ) || $p === 0 ) {
 					$baseUrl .= $p.'/';
-					if( !file_exists( BIT_ROOT_PATH.$baseUrl ) ) {
-						if( @!mkdir( BIT_ROOT_PATH.$baseUrl ) ) {
+					if( !file_exists( $baseUrl ) ) {
+						if( @!mkdir( $baseUrl ) ) {
 							// ACK, something went very wrong.
 							$baseUrl = FALSE;
 							break;
@@ -1947,7 +1937,7 @@ class LibertyContent extends LibertyBase {
 					}
 				}
 			}
-			$ret = BIT_ROOT_PATH.$baseUrl;
+			$ret = $baseUrl;
 		}
 		return $ret;
 	}
