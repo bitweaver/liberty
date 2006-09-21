@@ -12,8 +12,8 @@ $tables = array(
 	handler_file C(128)
 ",
 
-'liberty_content_status' => "
-	content_status_id I4 PRIMARY KEY,
+'`liberty_content_status`' => "
+	content_status_id I4 PRIMARY,
 	content_status_name C(128) NOTNULL
 ",
 
@@ -25,6 +25,7 @@ $tables = array(
 	last_modified I8 NOTNULL,
 	content_type_guid C(16) NOTNULL,
 	format_guid C(16) NOTNULL,
+	content_status_id I4 NOTNULL,
 	event_time I8 NOTNULL DEFAULT 0,
 	version I4,
 	lang_code C(32),
@@ -211,6 +212,24 @@ $gBitInstaller->registerPreferences( LIBERTY_PKG_NAME, array(
 	array(LIBERTY_PKG_NAME, 'liberty_action_log', 'y'),
 //	array(LIBERTY_PKG_NAME, 'liberty_attachment_link_format', 'wiki') not needed anymore since we use js in the edit page now (depends on format of content)
 ) );
+
+$gBitInstaller->registerSchemaDefault( LIBERTY_PKG_NAME, array(
+	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-999, 'Deleted')",
+	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-998, 'Spam')",
+	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-201, 'Suspended')",
+	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-100, 'Denied')",
+	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-40, 'Private')",
+	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-30, 'Password Protected')",
+	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-20, 'Group Protected')",
+	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-10, 'Hidden')",
+	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (10, 'Draft')",
+	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (50, 'Available')",
+	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (101, 'Pending Approval')",
+	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (102, 'Commercial')",
+	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (200, 'Recommended')",
+	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (999, 'Copy Protected')",
+) );
+
 
 // ### Default UserPermissions
 $gBitInstaller->registerUserPermissions( LIBERTY_PKG_NAME, array(
