@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.156 2006/09/21 07:02:07 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.157 2006/09/22 17:51:36 sylvieg Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -378,6 +378,10 @@ class LibertyContent extends LibertyBase {
 			// Remove content preferences
 			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id` = ?";
 			$result = $this->mDb->query( $query, array( $this->mContentId ) );
+
+			// Remove content links
+			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `to_content_id` = ? or `from_content_id` = ?";
+			$result = $this->mDb->query( $query, array( $this->mContentId, $this->mContentId ) );
 
 			// Remove content
 			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id` = ?";
@@ -1382,6 +1386,7 @@ class LibertyContent extends LibertyBase {
 	* @return array An array of mInfo type arrays of content objects
 	**/
 	function getContentList( $pListHash ) {
+
 		global $gLibertySystem, $gBitSystem, $gBitUser, $gBitSmarty;
 
 		$this->prepGetList( $pListHash );
