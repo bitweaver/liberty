@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.27 $
+ * @version  $Revision: 1.28 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.27 2006/09/23 04:06:48 spiderr Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.28 2006/09/25 22:40:51 sylvieg Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -146,7 +146,7 @@ if( !empty( $_REQUEST['post_comment_preview'] ) ) {
 		$postComment['anon_name'] = $_REQUEST['comment_name'];
 	}
 	$postComment['data'] = $_REQUEST['comment_data'];
-	$postComment['format_guid'] = PLUGIN_GUID_TIKIWIKI;
+	$postComment['format_guid'] = empty( $_REQUEST['format_guid'])? PLUGIN_GUID_TIKIWIKI: $_REQUEST['format_guid'];
 	$postComment['parsed_data'] = LibertyComment::parseData( $postComment );
 	$postComment['created'] = time();
 	$postComment['last_modified'] = time();
