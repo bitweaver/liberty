@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.7 2006/09/09 19:55:35 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.8 2006/09/27 21:42:06 squareing Exp $
 // Initialization
 define( 'PLUGIN_GUID_DATAIMG', 'dataimg' );
 global $gLibertySystem;
@@ -68,6 +68,9 @@ function data_img($data, $params) {
 						$imgdata['img_style'] .= $key.':'.$value.';';
 					}
 					break;
+				case 'class':
+					$class = $value;
+					break;
 				case 'float':
 				case 'padding':
 				case 'margin':
@@ -111,8 +114,8 @@ function data_img($data, $params) {
 		}
 
 		// finally, wrap the image with a div
-		if( !empty( $imgdata['div_style'] ) || !empty( $imgdata['desc'] ) ) {
-			$ret = '<div class="img-plugin" style="'.$imgdata['div_style'].'">'.$ret.'<br />'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : '' ).'</div>';
+		if( !empty( $imgdata['div_style'] ) || !empty( $class ) || !empty( $imgdata['desc'] ) ) {
+			$ret = '<div class="'.( !empty( $class ) ? $class : "img-plugin" ).'" style="'.$imgdata['div_style'].'">'.$ret.'<br />'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : '' ).'</div>';
 		}
 	} else {
 		$ret = '<span class="warning">'.tra( 'When using <strong>{img}</strong> the <strong>src</strong> parameter is required.' ).'</span>';
