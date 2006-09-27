@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.13 $
+ * @version  $Revision: 1.14 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.13 2006/09/09 19:55:35 squareing Exp $
+// $Id: data.maketoc.php,v 1.14 2006/09/27 21:41:27 squareing Exp $
 
 /**
  * definitions
@@ -72,7 +72,7 @@ function data_maketoc_help() {
 				<td>'.tra( 'Override the class of the maketoc div.' ).'</td>
 			</tr>
 			<tr class="odd">
-				<td>class</td>
+				<td>width</td>
 				<td>'.tra( "string").'<br />('.tra("optional").')</td>
 				<td>'.tra( 'Override the width of the maketoc div.' ).'</td>
 			</tr>
@@ -118,7 +118,7 @@ function data_maketoc( $data ) {
 
 		foreach( $sections as $k => $section ) {
 			// count headers in each section that we know where to begin and where to stop
-			preg_match_all( "/<h(.)>.*?<\/h.>/i", $section, $hs );
+			preg_match_all( "!<h(\d)[^>]*>.*?</h\d>!i", $section, $hs );
 			$tocHash['tocCounts'][] = count( $hs[0] );
 			$tocHash['tocKey'] = $k;
 			$ret .= maketoc_create_list( $tocHash, $params[$k] ).$section;
@@ -143,7 +143,7 @@ function maketoc_create_list( $pTocHash, $pParams ) {
 	$ignore = 0;
 	if( !isset( $pParams['include'] ) || $pParams['include'] != 'all' ) {
 		for( $i = 0; $i < $tocKey; $i++ ) {
-			$ignore += $tocCounts[$i];
+			$ignore += $pTocHash['tocCounts'][$i];
 		}
 	}
 
