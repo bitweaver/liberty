@@ -2,18 +2,18 @@
 {if $structureInfo.structure_path}
 	<div class="structurebar">
 		{if $gBitSystem->isFeatureActive( 'wiki_book_show_path' )}
-			<span class="path">
+			<div class="path">
 				{section loop=$structureInfo.structure_path name=ix}
 					{if $structureInfo.structure_path[ix].parent_id} &raquo; {/if}
 					<a href="index.php?structure_id={$structureInfo.structure_path[ix].structure_id}">
 						{$structureInfo.structure_path[ix].title|escape}
 					</a>
 				{/section}
-			</span>
+			</div>
 		{/if}
 
 		{if $gBitSystem->isFeatureActive( 'wiki_book_show_navigation' )}
-			<span class="navigation">
+			<div class="navigation">
 				<span class="left">
 					{if $structureInfo.prev and $structureInfo.prev.structure_id}
 						<a href="index.php?structure_id={$structureInfo.prev.structure_id}">
@@ -37,7 +37,7 @@
 						</a>
 					{else}&nbsp;{/if}
 				</span>
-			</span><!-- end .navigation -->
+			</div><!-- end .navigation -->
 		{/if}
 		<div class="clear"></div>
 	</div><!-- end .structure -->
