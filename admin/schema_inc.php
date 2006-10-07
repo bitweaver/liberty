@@ -34,7 +34,14 @@ $tables = array(
 	data X
 	CONSTRAINT '
 		, CONSTRAINT `liberty_content_status_ref` FOREIGN KEY (`content_status_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content_status`( `content_status_id` )
-		, CONSTRAINT `liberty_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )
+		, CONSTRAINT `liberty_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )'
+",
+
+'liberty_aliases' => "
+    alias_title C(250) PRIMARY,
+    content_id INT NOTNULL PRIMARY
+    CONSTRAINT '
+        , CONSTRAINT liberty_aliases_content_fkey FOREIGN KEY `content_id` REFERENCES `".BIT_DB_PREFIX."liberty_content`(`content_id`) '
 ",
 
 'liberty_content_hits' => "
@@ -176,6 +183,7 @@ $indices = array (
 	'content_moduser_idx' => array( 'table' => 'liberty_content', 'cols' => 'modifier_user_id', 'opts' => NULL ),
 	'content_content_hits_idx' => array( 'table' => 'liberty_content_hits', 'cols' => 'content_id', 'opts' => NULL ),
 	'content_status_idx' => array( 'table' => 'liberty_content', 'cols' => 'content_status_id', 'opts' => NULL ),
+	'content_alias_title_idx' => array( 'table' => 'liberty_aliases', 'cols' => 'alias_title', 'opts' => NULL ),
 	'comments_object_idx' => array( 'table' => 'liberty_comments', 'cols' => 'content_id', 'opts' => NULL ),
 	'comments_parent_idx' => array( 'table' => 'liberty_comments', 'cols' => 'parent_id', 'opts' => NULL ),
 	'attachments_hits_idx' => array( 'table' => 'liberty_attachments', 'cols' => 'hits', 'opts' => NULL ),

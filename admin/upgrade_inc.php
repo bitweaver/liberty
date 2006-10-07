@@ -27,6 +27,12 @@ array( 'DATADICT' => array(
 			content_status_id I4 PRIMARY KEY,
 			content_status_name C(128) NOTNULL
 		",
+		'liberty_aliases' => "
+			alias_title C(250) PRIMARY,
+			content_id INT NOTNULL PRIMARY
+			CONSTRAINT '
+				, CONSTRAINT liberty_aliases_content_fkey FOREIGN KEY `content_id` REFERENCES `".BIT_DB_PREFIX."liberty_content`(`content_id`) '
+		",
 	)),
 	array( 'RENAMETABLE' => array(
 		'tiki_content'                 => 'liberty_content',
