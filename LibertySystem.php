@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.46 2006/09/20 23:02:43 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.47 2006/10/11 09:58:22 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -128,7 +128,7 @@ class LibertySystem extends LibertyBase {
 		}
 
 		if( $pluginDir = opendir( $pPluginsPath ) ) {
-			while (false !== ($plugin = readdir($pluginDir))) {
+			while( FALSE !== ( $plugin = readdir( $pluginDir ) ) ) {
 				if( preg_match( '/\.php$/', $plugin ) ) {
 					$this->mPluginFileName = $pPluginsPath.$plugin;
 					include_once( $pPluginsPath.$plugin );
@@ -143,7 +143,7 @@ class LibertySystem extends LibertyBase {
 		$format_plugin_count = 0;
 		$default_format_found = 0;
 		$current_default_format_guid = $gBitSystem->getConfig( 'default_format' );
-		foreach( $this->mPlugins as $guid=>$plugin ) {
+		foreach( $this->mPlugins as $guid => $plugin ) {
 			if( $plugin['is_active'] == 'y' ) {
 				$plugin_type = $plugin['plugin_type'];
 				if( $plugin_type == FORMAT_PLUGIN ) {
@@ -158,27 +158,31 @@ class LibertySystem extends LibertyBase {
 		// if no current default format or no format plugins active
 		// activate format.tikiwiki and make it the default format plugin
 		// This happens during installation and therefore requires that we include the plugin file for the constant definitions
-		$plugin_file = LIBERTY_PKG_PATH.'plugins/format.tikiwiki.php';
-		if( $format_plugin_count == 0 || $default_format_found == 0 && is_file( $plugin_file ) ) {
-			require_once( $plugin_file );
-			$guid = PLUGIN_GUID_TIKIWIKI;
-			$config_name = "{$this->mSystem}_plugin_status_" . $guid;
-			$config_value = 'y';
-			$gBitSystem->storeConfig( $config_name, $config_value, LIBERTY_PKG_NAME );
-			$gBitSystem->storeConfig( 'default_format', PLUGIN_GUID_TIKIWIKI, LIBERTY_PKG_NAME );
-			//make memory match db
-			$this->loadActivePlugins();
+
+		// only execute the following if this class hasn't been extended
+		if( $mSystem == LIBERTY_PKG_NAME ) {
+			$plugin_file = LIBERTY_PKG_PATH.'plugins/format.tikiwiki.php';
+			if( $format_plugin_count == 0 || $default_format_found == 0 && is_file( $plugin_file ) ) {
+				require_once( $plugin_file );
+				$guid = PLUGIN_GUID_TIKIWIKI;
+				$config_name = "{$this->mSystem}_plugin_status_" . $guid;
+				$config_value = 'y';
+				$gBitSystem->storeConfig( $config_name, $config_value, LIBERTY_PKG_NAME );
+				$gBitSystem->storeConfig( 'default_format', PLUGIN_GUID_TIKIWIKI, LIBERTY_PKG_NAME );
+				//make memory match db
+				$this->loadActivePlugins();
+			}
 		}
 
 		// remove any config settings for plugins that were not on disk
 		$active_plugins = $gBitSystem->getConfigMatch("/^{$this->mSystem}_plugin_status_/i");
-		foreach($active_plugins as $key=>$value) {
+		foreach( $active_plugins as $key=>$value ) {
 			$plugin_guid = preg_replace( "/^{$this->mSystem}_plugin_status_/", '', $key,1 );
-			if ( !isset($this->mPlugins[$plugin_guid]) ) {
+			if( !isset( $this->mPlugins[$plugin_guid] ) ) {
 				$config_name = "{$this->mSystem}_plugin_status_" . $guid;
-				$gBitSystem->storeConfig($config_name, NULL, LIBERTY_PKG_NAME);
+				$gBitSystem->storeConfig( $config_name, NULL, LIBERTY_PKG_NAME );
 				$config_name = "{$this->mSystem}_plugin_file_" . $guid;
-				$gBitSystem->storeConfig($config_name, NULL, LIBERTY_PKG_NAME);
+				$gBitSystem->storeConfig( $config_name, NULL, LIBERTY_PKG_NAME );
 			}
 		}
 	}
@@ -190,7 +194,7 @@ class LibertySystem extends LibertyBase {
 	 * @return TRUE if the plugin is active, FALSE if it's not
 	 **/
 	function isPluginActive( $pPluginGuid ) {
-		return( isset( $this->mPlugins[$pGuid] ) && ($this->mPlugins[$pGuid]['is_active'] == 'y') );
+		return( isset( $this->mPlugins[$pGuid] ) && ( $this->mPlugins[$pGuid]['is_active'] == 'y' ) );
 	}
 
 	/**
