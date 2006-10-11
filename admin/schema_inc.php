@@ -12,7 +12,7 @@ $tables = array(
 	handler_file C(128)
 ",
 
-'`liberty_content_status`' => "
+'liberty_content_status' => "
 	content_status_id I4 PRIMARY,
 	content_status_name C(128) NOTNULL
 ",
