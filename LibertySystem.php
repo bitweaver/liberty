@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.47 2006/10/11 09:58:22 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.48 2006/10/11 10:18:56 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -160,7 +160,7 @@ class LibertySystem extends LibertyBase {
 		// This happens during installation and therefore requires that we include the plugin file for the constant definitions
 
 		// only execute the following if this class hasn't been extended
-		if( $mSystem == LIBERTY_PKG_NAME ) {
+		if( $this->mSystem == LIBERTY_PKG_NAME ) {
 			$plugin_file = LIBERTY_PKG_PATH.'plugins/format.tikiwiki.php';
 			if( $format_plugin_count == 0 || $default_format_found == 0 && is_file( $plugin_file ) ) {
 				require_once( $plugin_file );
