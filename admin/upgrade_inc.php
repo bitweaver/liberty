@@ -21,7 +21,7 @@ array( 'DATADICT' => array(
 			content_id I4 PRIMARY,
 			hits I4 NOTNULL DEFAULT 1,
 			last_hit I8 NOTNULL DEFAULT 1
-	CONSTRAINTS ', CONSTRAINT `liberty_content_hits_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
+			CONSTRAINTS ', CONSTRAINT `liberty_content_hits_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
 		",
 		'liberty_content_status' => "
 			content_status_id I4 PRIMARY KEY,
@@ -201,21 +201,11 @@ array( 'PHP' => '
 		)
 	);
 
-
-	if( !empty( $allComments ) ) {
-		#bitweaver/jht/make_comments_rss.php on line 43
-		#comment=a:7:{s:10:"content_id";s:4:"5339";
-		#s:13:"content_title";
-		#s:19:"Hong Kong Broadband";
-		#s:7:"created";s:10:"1128187879";
-		#s:13:"last_modified";s:10:"1131332821";
-		#s:5:"title";N;
-		#s:4:"user";s:5:"kcyyk";
-		#s:9:"real_name";s:7:"Kenneth";}
-
+	// Removed for now - seems infinite loop - SPIDERR. Needs fix review from jht001
+	if( FALSE && !empty( $allComments ) ) {
 
 		foreach ($allComments as $comment) {
-			# echo "x=" . serialize($comment) . "\n";
+			error_log( "x=" . serialize($comment) );
 			# exit;
 			$comment_id = $comment["comment_id"];
 			$parent_content_type = $comment["content_type_guid"];
@@ -245,10 +235,9 @@ array( 'PHP' => '
 
 		}
 
-		#echo serialize($content_type_guid_of_comment),"\n";
+		error_log( serialize($content_type_guid_of_comment) );
 
 		//calc comment root and depth
-
 		$loop_done = 0;
 		while (!$loop_done) {
 			$c = 0;
@@ -262,13 +251,14 @@ array( 'PHP' => '
 				$root_content_type = empty($content_type_guid_of_comment[$root_id]) ? "notcomment" : $content_type_guid_of_comment[$root_id];
 
 				if ($root_content_type == "bitcomment") {
-					# its a comment on a comment
-					# need to go back one more level
+					// its a comment on a comment
+					// need to go back one more level
 					$root_content_id_of_comment[$content_id] = $parent_content_id_of_comment[$root_id];
 					$depth_of_comment[$content_id]++;
 					$c++;
 				}
 			}
+			
 			if ($c <= 0) {
 				$loop_done = 1;
 			}
