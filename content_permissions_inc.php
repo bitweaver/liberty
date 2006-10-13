@@ -1,4 +1,9 @@
 <?php
+/**
+ * @version  $Revision: 1.2 $
+ * @package  liberty
+ * @subpackage functions
+ */
 if( !empty( $verify_permission ) ) {
 	$gBitSystem->verifyPermission( $verify_permission );
 } else {

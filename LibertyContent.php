@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.157 2006/09/22 17:51:36 sylvieg Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.158 2006/10/13 12:44:59 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1727,7 +1727,7 @@ class LibertyContent extends LibertyBase {
 	* Special parsing for multipage articles
 	*
 	* Temporarily remove <pre>...</pre> sections to protect
-	* from broke <pre> tags and leave well known <pre>
+	* from broke <pre>pre</pre> tags and leave well known <pre>pre</pre>
 	* behaviour (i.e. type all text inside AS IS w/o
 	* any interpretation)
 	* @param string Data to process

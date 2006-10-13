@@ -1,5 +1,11 @@
 <?php
-// settings that are useful to know about at upload time
+/**
+ * @version  $Revision: 1.4 $
+ * @package  liberty
+ * @subpackage functions
+ * 
+ * settings that are useful to know about at upload time
+ */
 $postMax = str_replace( 'M', '', ini_get( 'post_max_size' ));
 $uploadMax = str_replace( 'M', '', ini_get( 'upload_max_filesize' ) );
 
@@ -7,7 +13,9 @@ if( $postMax < $uploadMax ) {
 	$uploadMax = $postMax;
 }
 
-// calculate user quota
+/** 
+ * calculate user quota
+ */
 if( $gBitSystem->isPackageActive( 'quota' ) ) {
 	require_once( QUOTA_PKG_PATH.'calculate_quota_inc.php' );
 }
