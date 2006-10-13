@@ -39,7 +39,7 @@ $tables = array(
 
 'liberty_aliases' => "
 	content_id I4 PRIMARY,
-	alias_title C(250) PRIMARY
+	alias_title C(190) PRIMARY
 	CONSTRAINT '
 		, CONSTRAINT liberty_aliases_content_fkey FOREIGN KEY( `content_id` ) REFERENCES `".BIT_DB_PREFIX."liberty_content` ( `content_id` )'
 ",
