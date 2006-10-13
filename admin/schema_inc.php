@@ -38,17 +38,17 @@ $tables = array(
 ",
 
 'liberty_aliases' => "
-    alias_title C(250) PRIMARY,
-    content_id INT NOTNULL PRIMARY
-    CONSTRAINT '
-        , CONSTRAINT liberty_aliases_content_fkey FOREIGN KEY `content_id` REFERENCES `".BIT_DB_PREFIX."liberty_content`(`content_id`) '
+	content_id I4 PRIMARY,
+	alias_title C(250) PRIMARY
+	CONSTRAINT '
+		, CONSTRAINT liberty_aliases_content_fkey FOREIGN KEY( `content_id` ) REFERENCES `".BIT_DB_PREFIX."liberty_content` ( `content_id` )'
 ",
 
 'liberty_content_hits' => "
 	content_id I4 PRIMARY,
 	hits I4 NOTNULL DEFAULT 1,
 	last_hit I8 NOTNULL DEFAULT 1
-	CONSTRAINT ', CONSTRAINT `liberty_content_hits_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
+	CONSTRAINT ', CONSTRAINT `liberty_content_hits_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` ( `content_id` )'
 ",
 
 
