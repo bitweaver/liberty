@@ -1,6 +1,14 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.8 2006/09/27 21:42:06 squareing Exp $
-// Initialization
+/**
+ * @version  $Revision: 1.9 $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.9 2006/10/13 09:23:08 lsces Exp $
+ * @package  liberty
+ * @subpackage plugins_data
+ */
+
+/**
+ * definitions
+ */
 define( 'PLUGIN_GUID_DATAIMG', 'dataimg' );
 global $gLibertySystem;
 $pluginParams = array (

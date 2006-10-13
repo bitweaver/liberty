@@ -1,4 +1,13 @@
 <?php
+/**
+ * @version  $Revision: 1.3 $
+ * @package  liberty
+ * @subpackage plugins_data
+ */
+
+/**
+ * definitions
+ */
 global $gBitSystem;
 if( $gBitSystem->isPackageActive( 'tidbits' ) ) {
 	define( 'PLUGIN_GUID_DATACOOKIE', 'datacookie' );
