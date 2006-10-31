@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.42 2006/09/11 19:33:13 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.43 2006/10/31 14:28:26 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -918,6 +918,9 @@ function liberty_imagick_can_thumbnail_image( $pMimeType ) {
 // =-=-=-=-=-=-=-=-=-=- magickwand functions -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
+	global $gBitSystem;
+	// static var here is crucial
+	static $rgbConverts = array();
 	$magickWand = NewMagickWand();
 	$pFileHash['error'] = NULL;
 	$ret = NULL;
@@ -925,7 +928,6 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
 		// This has to come BEFORE the MagickReadImage
 		if( $isPdf ) {
-			MagickSetImageColorspace( $magickWand, MW_RGBColorspace );
 			MagickSetImageUnits( $magickWand, MW_PixelsPerInchResolution );
 			$rez =  empty( $pFileHash['max_width'] ) || $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION ? 250 : 72;
 			MagickSetResolution( $magickWand, 300, 300 );
@@ -934,12 +936,34 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 //			$pFileHash['error'] = $error;
 			$destUrl = liberty_process_generic( $pFileHash, FALSE );
 		} else {
+			if( MagickGetImageColorspace( $magickWand ) == MW_CMYKColorspace ) {
+				MagickRemoveImageProfile( $magickWand, "ICC" );
+				MagickSetImageProfile( $magickWand, 'ICC', file_get_contents( UTIL_PKG_PATH.'icc/USWebCoatedSWOP.icc' ) );	
+				MagickProfileImage($magickWand, 'ICC', file_get_contents( UTIL_PKG_PATH.'icc/srgb.icm' ) ); 
 
+				MagickSetImageColorspace( $magickWand, MW_RGBColorspace );
+				if( in_array( 'original', $pFileHash['thumbsizes'] )
+					&& $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' )
+					&& empty( $rgbConverts[$pFileHash['dest_path']] )
+				) {
+					// Colorpsace conversion  - jpeg version of original
+					$originalHash = $pFileHash;
+					$originalHash['dest_base_name'] = 'original';
+					$originalHash['name'] = 'original.jpg';
+					$originalHash['max_width'] = MAX_THUMBNAIL_DIMENSION;
+					$originalHash['max_height'] = MAX_THUMBNAIL_DIMENSION;
+					$originalHash['colorspace_conversion'] = TRUE;
+					// keep track of all files we have colorspace converted to avoid infinite loops
+					$rgbConverts[$pFileHash['dest_path']] = TRUE;
+					$originalHash['original_path'] = liberty_magickwand_resize_image( $originalHash );
+				}
+
+
+			}
 			if( $isPdf ) {
 				MagickResetIterator( $magickWand );
 				MagickNextImage( $magickWand );
 			}
-
 			MagickSetImageCompressionQuality( $magickWand, 85 );
 			$iwidth = round( MagickGetImageWidth( $magickWand ) );
 			$iheight = round( MagickGetImageHeight( $magickWand ) );
@@ -960,7 +984,7 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 			}
 
 			list($type, $mimeExt) = split( '/', strtolower( $itype ) );
-			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || ($mimeExt != 'jpeg')) ) {
+			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || ($mimeExt != 'jpeg')) || !empty( $pFileHash['colorspace_conversion'] ) ) {
 				// We have to resize. *ALL* resizes are converted to jpeg
 				$destExt = '.jpg';
 				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
