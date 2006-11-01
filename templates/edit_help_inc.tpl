@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.20 2006/08/23 03:59:23 nickpalmer Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.21 2006/11/01 09:02:15 squareing Exp $ *}
 
 {strip}
 	{if $gBitSystem->isFeatureActive( 'site_edit_help' )}
@@ -11,39 +11,32 @@
 
 		{if $dataplugins|count ne 0}
 			<h2>{tr}Data Plugin Help{/tr}</h2>
-				<table class="data help">
-					<tr>
-						<td rowspan="2" style="vertical-align:top; width:1px;">
-							<div id="hidefromnonjsbrowsers" style="display:none;">
-								{tr}Select the plugin{/tr}:<br />
-								<select size="15" onchange="javascript:flipMulti(this.options[this.selectedIndex].value,1,1)">
-									{foreach from=$dataplugins item=p}
-										<option value="{$p.guid}">{$p.title|escape} &bull; {ldelim}{$p.tag|lower}{rdelim}</option>
-									{/foreach}
-								</select>
-							</div>
-						</td>
+			<div id="hidefromnonjsbrowsers" style="display:none;">
+				{tr}Select the plugin{/tr}:<br />
+				<select size="5" onchange="javascript:flipMulti(this.options[this.selectedIndex].value,1,1)">
+					{foreach from=$dataplugins item=p}
+						<option value="{$p.guid}">{$p.title|escape} &bull; {ldelim}{$p.tag|lower}{rdelim}</option>
+					{/foreach}
+				</select>
+			</div>
 
-						<td style="vertical-align:top;">
-							{foreach from=$dataplugins item=p}
-								<script type="text/javascript">/*<![CDATA[*/
-									document.write( '<div id="{$p.guid}1" style="display:none;">' );
-								/*]]>*/</script>
-									<h2>{tr}Plugin{/tr}: {$p.title}</h2>
-									<ul>
-										<li class="{cycle values="odd,even"}"><strong>{tr}Syntax{/tr}:</strong> <a href="#" title="{tr}Click to insert syntax into editor{/tr}" onclick="javascript:insertAt('{$textarea_id}','{$p.syntax}')">{$p.syntax}</a></li>
-										<li class="{cycle}"><strong>{tr}Description{/tr}:</strong> {$p.description}</li>
-										<li class="{cycle}"><strong>{tr}Online Help{/tr}:</strong> {jspopup href="http://www.bitweaver.org/wiki/`$p.help_page`" title=`$p.help_page` class="external"}</li>
-									</ul>
-									<br /><br />
-									{$p.exthelp}
-								<script type="text/javascript">/*<![CDATA[*/
-									document.write( '</div>' );
-								/*]]>*/</script>
-							{/foreach}
-						</td>
-					</tr>
-				</table>
+			{foreach from=$dataplugins item=p}
+				<script type="text/javascript">/*<![CDATA[*/
+					document.write( '<div id="{$p.guid}1" style="display:none;">' );
+				/*]]>*/</script>
+					<h2>{tr}Plugin{/tr}: {$p.title}</h2>
+					<ul>
+						<li class="{cycle values="odd,even"}"><strong>{tr}Syntax{/tr}:</strong> <a href="#" title="{tr}Click to insert syntax into editor{/tr}" onclick="javascript:insertAt('{$textarea_id}','{$p.syntax}')">{$p.syntax}</a></li>
+						<li class="{cycle}"><strong>{tr}Description{/tr}:</strong> {$p.description}</li>
+						<li class="{cycle}"><strong>{tr}Online Help{/tr}:</strong> {jspopup href="http://www.bitweaver.org/wiki/`$p.help_page`" title=`$p.help_page` class="external"}</li>
+					</ul>
+					<br /><br />
+					{$p.exthelp}
+				<script type="text/javascript">/*<![CDATA[*/
+					document.write( '</div>' );
+				/*]]>*/</script>
+			{/foreach}
+
 			<script type="text/javascript">/*<![CDATA[*/
 				showById('hidefromnonjsbrowsers');
 				flipMulti('{$FirstPluginWinId}',1,1);
