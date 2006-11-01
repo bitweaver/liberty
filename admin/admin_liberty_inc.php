@@ -20,6 +20,14 @@ if( $gBitSystem->isPackageActive( 'quota' ) ) {
 		'note' => 'Limit users\' disk usage.',
 	);
 }
+
+if( $gBitSystem->isPackageActive( 'protector' ) ) {
+	$formLibertyFeatures['protector_single_group'] = array(
+		'label' => 'Protector System Single group per content item',
+		'note' => 'Limit the protector system to asign a content item to a single group. The alternative allows content in multiple groups.',
+	);
+}
+
 $gBitSmarty->assign( 'formLibertyFeatures', $formLibertyFeatures );
 
 $formCaptcha = array(
