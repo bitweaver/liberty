@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.rss.php,v 1.9 2006/09/09 19:55:35 squareing Exp $
+// $Id: data.rss.php,v 1.10 2006/11/01 08:36:47 squareing Exp $
 
 /**
  * definitions
@@ -38,7 +38,7 @@ $pluginParams = array (
 	'path'          => LIBERTY_PKG_PATH.'plugins/data.rss.php',
 	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN,
-	'biticon'       => '{biticon class="quicktag icon" ipackage=quicktags iname=rss iexplain="RSS Feed"}',
+	'biticon'       => '{biticon iclass="quicktag icon" ipackage=quicktags iname=rss iexplain="RSS Feed"}',
 	'taginsert'     => '{rss}'
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATARSS, $pluginParams );

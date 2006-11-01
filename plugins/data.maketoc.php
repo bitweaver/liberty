@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.14 2006/09/27 21:41:27 squareing Exp $
+// $Id: data.maketoc.php,v 1.15 2006/11/01 08:36:47 squareing Exp $
 
 /**
  * definitions
@@ -36,7 +36,7 @@ $pluginParams = array (
 	'path'          => LIBERTY_PKG_PATH.'plugins/data.maketoc.php',
 	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN,
-	'biticon'       => '{biticon class="quicktag icon" ipackage=quicktags iname=maketoc iexplain="Page Table of Contents"}',
+	'biticon'       => '{biticon iclass="quicktag icon" ipackage=quicktags iname=maketoc iexplain="Page Table of Contents"}',
 	'taginsert'     => '{maketoc}'
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAMAKETOC, $pluginParams );

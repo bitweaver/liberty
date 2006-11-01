@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.9 2006/10/13 09:23:08 lsces Exp $
+ * @version  $Revision: 1.10 $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.10 2006/11/01 08:36:47 squareing Exp $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -24,7 +24,7 @@ $pluginParams = array (
 	'path'          => LIBERTY_PKG_PATH.'plugins/data.img.php',
 	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN,
-	'biticon'       => '{biticon class="quicktag icon" ipackage=quicktags iname=image iexplain="Image"}',
+	'biticon'       => '{biticon iclass="quicktag icon" ipackage=quicktags iname=image iexplain="Image"}',
 	'taginsert'     => '{img src= width= height= align= desc= link=}'
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAIMG, $pluginParams );
