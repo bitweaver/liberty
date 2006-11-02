@@ -16,7 +16,9 @@ if( isset( $_REQUEST['pluginsave'] ) && !empty( $_REQUEST['pluginsave'] ) ) {
 	} else {
 		$gBitSmarty->assign( 'errorMsg', 'You cannot disable the default format');
 	}
+	$gBitSystem->storeConfig( 'content_allow_html', !empty( $_REQUEST['content_allow_html'] ) );
 }
+
 
 // Sort the plugins to avoild splitting tables
 foreach( $gLibertySystem->mPlugins as $key => $row ) {

@@ -64,8 +64,14 @@
 							<div class="row">
 								{formlabel label="Allow HTML" for="allow_html"}
 								{forminput}
-									To allow use of HTML in any format, assign the <a href="{$smarty.const.USERS_PKG_URL}admin/edit_group.php">p_liberty_enter_html permission</a>.
+									<input type="checkbox" name="content_allow_html" value="y" {if $gBitSystem->isFeatureActive('content_allow_html')}checked="checked"{/if} />
+									This will render HTML in all content pages if it is present. This is a security risk to allow HTML entry by untrusted users, but is usually required for existing installations. For a more controlled environment, assign the <a href="{$smarty.const.USERS_PKG_URL}admin/edit_group.php">p_liberty_enter_html permission</a>.
 									{formhelp note="Allow the use of HTML in tikiwiki format content."}
+								{/forminput}
+							</div>
+							<div class="row">
+								{formlabel label="Allow HTML" for="allow_html"}
+								{forminput}
 								{/forminput}
 							</div>
 						{/if}

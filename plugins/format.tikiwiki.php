@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.72 $
+ * @version  $Revision: 1.73 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -786,7 +786,7 @@ class TikiWikiParser extends BitBase {
 			}
 
 			$data = strip_tags( $data, $acceptableTags );
-		} else {
+		} elseif( !$gBitSystem->isFeatureActive( 'content_allow_html' ) ) {
 			// convert HTML to chars
 			$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
 		}
