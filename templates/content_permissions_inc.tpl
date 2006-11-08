@@ -42,7 +42,7 @@
 		<th>{tr}Permission{/tr}</th>
 		<th>{tr}Action{/tr}</th>
 	</tr>
-	{foreach from=$gContent->mPerms item=perm}
+	{foreach from=$assignedPerms item=perm}
 		<tr class="{cycle values="even,odd"}">
 			<td>{$perm.group_name}</td>
 			<td>

@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.159 2006/11/02 16:14:23 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.160 2006/11/08 07:59:52 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -708,22 +708,58 @@ vd( $this->mErrors );
 	// -------------------------------- Content Permission Funtions
 
 	/**
-	* Check permissions for the object that has been loaded against the permission database
+	 * Load all permissions assigned to a given object. This is not for general consumption.
+	 * This funtions sole purpose is for displaying purposes. if you want to get all permissions
+	 * assigned to a given object use LibertyContent::loadPermissions();
+	 * 
+	 * @access public
+	 */
+	function loadAllObjectPermissions() {
+		global $gBitUser;
+		$ret = FALSE;
+		if( $this->isValid() && empty( $this->mPerms ) && $this->mContentTypeGuid ) {
+			$query = "
+				SELECT uop.`perm_name`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
+				FROM `".BIT_DB_PREFIX."users_object_permissions` uop
+					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( uop.`group_id`=ug.`group_id` )
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=uop.`perm_name` )
+				WHERE uop.`object_id` = ?
+					AND uop.`object_type` = ?";
+			$bindVars = array( $this->mContentId, $this->mContentTypeGuid );
+			$ret = $this->mDb->getAll( $query, $bindVars );
+		}
+		return( $ret );
+	}
+
+	/**
+	 * Check permissions for the object that has been loaded against the permission database
 	 * 
 	 * @access public
 	 * @return TRUE if permissions were inserted into $this->mPerms
 	 */
 	function loadPermissions() {
+		global $gBitUser;
+		$perms = array();
 		if( $this->isValid() && empty( $this->mPerms ) && $this->mContentTypeGuid ) {
-			$query = "SELECT uop.`perm_name` AS `hash_key`, uop.`perm_name`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
-					FROM `".BIT_DB_PREFIX."users_object_permissions` uop
-						INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( uop.`group_id`=ug.`group_id` )
-						LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=uop.`perm_name` )
-					WHERE uop.`object_id` = ? AND uop.`object_type` = ?";
+			$query = "
+				SELECT uop.`perm_name`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
+				FROM `".BIT_DB_PREFIX."users_object_permissions` uop
+					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( uop.`group_id`=ug.`group_id` )
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=uop.`perm_name` )
+				WHERE uop.`object_id` = ?
+					AND uop.`object_type` = ?";
 			$bindVars = array( $this->mContentId, $this->mContentTypeGuid );
-			$this->mPerms = $this->mDb->getAssoc( $query, $bindVars );
+			$perms = $this->mDb->getAll( $query, $bindVars );
+
+			// check what permissions apply to this user
+			$userGroups = array_keys( $gBitUser->mGroups );
+			foreach( $perms as $perm ) {
+				if( in_array( $perm['group_id'], $userGroups ) ) {
+					$this->mPerms[$perm['perm_name']] = $perm;
+				}
+			}
 		}
-		return( count( $this->mPerms ) );
+		return( count( $perms ) );
 	}
 
 	/**
@@ -838,12 +874,14 @@ vd( $this->mErrors );
 		if( !@$this->verifyId( $pObjectId ) ) {
 			$pObjectId = $this->mContentId;
 		}
-		$query = "DELETE FROM `".BIT_DB_PREFIX."users_object_permissions`
-				WHERE `perm_name` = ? AND `object_id` = ?";
-		$result = $this->mDb->query( $query, array( $pPermName, $pObjectId ), -1, -1 );
-		$query = "INSERT INTO `".BIT_DB_PREFIX."users_object_permissions`
-				(`group_id`,`object_id`, `object_type`, `perm_name`)
-				VALUES ( ?, ?, ?, ? )";
+		$query = "
+			DELETE FROM `".BIT_DB_PREFIX."users_object_permissions`
+			WHERE `group_id` = ? AND `perm_name` = ? AND `object_id` = ?";
+		$result = $this->mDb->query( $query, array( $pGroupId, $pPermName, $pObjectId ), -1, -1 );
+		$query = "
+			INSERT INTO `".BIT_DB_PREFIX."users_object_permissions`
+			( `group_id`,`object_id`, `object_type`, `perm_name` )
+			VALUES( ?, ?, ?, ? )";
 		$result = $this->mDb->query( $query, array( $pGroupId, $pObjectId, $this->mContentTypeGuid, $pPermName ) );
 		return TRUE;
 	}

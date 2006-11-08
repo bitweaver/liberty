@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  liberty
  * @subpackage functions
  */
@@ -45,7 +45,8 @@ if( !empty( $_REQUEST["group_id"] ) && !empty( $gContent->mContentId ) && !empty
 }
 
 // Now we have to get the individual object permissions if any
-$gContent->loadPermissions();
+$assignedPerms = $gContent->loadAllObjectPermissions();
+$gBitSmarty->assign( 'assignedPerms', $assignedPerms );
 
 // Get a list of groups
 $listHash = array( 'sort_mode' => 'group_name_asc' );
