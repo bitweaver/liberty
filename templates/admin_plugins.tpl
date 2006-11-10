@@ -69,11 +69,6 @@
 									{formhelp note="Allow the use of HTML in tikiwiki format content."}
 								{/forminput}
 							</div>
-							<div class="row">
-								{formlabel label="Allow HTML" for="allow_html"}
-								{forminput}
-								{/forminput}
-							</div>
 						{/if}
 					{/jstab}
 				{/foreach}
