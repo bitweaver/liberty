@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.160 2006/11/08 07:59:52 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.161 2006/11/10 06:02:05 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -370,6 +370,11 @@ class LibertyContent extends LibertyBase {
 			// Remove individual permissions for this object if they exist
 			$query = "delete from `".BIT_DB_PREFIX."users_object_permissions` where `object_id`=? and `object_type`=?";
 			$result = $this->mDb->query( $query, array( $this->mContentId, $this->mContentTypeGuid ) );
+
+			// Remove structures
+			// it's not this simple. what about orphans? needs real work. :( xoxo - spider
+//			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `content_id` = ?";
+//			$result = $this->mDb->query( $query, array( $this->mContentId ) );
 
 			// Remove hits
 			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_hits` WHERE `content_id` = ?";
