@@ -243,6 +243,7 @@ $gBitInstaller->registerSchemaDefault( LIBERTY_PKG_NAME, array(
 // ### Default UserPermissions
 $gBitInstaller->registerUserPermissions( LIBERTY_PKG_NAME, array(
 	array('p_liberty_edit_html_style', 'Can include style information in HTML', 'editors', LIBERTY_PKG_NAME),
+	array('p_liberty_list_content', 'Can list content', 'basic', LIBERTY_PKG_NAME),
 	array('p_liberty_admin_comments', 'Can administer comments', 'editors', LIBERTY_PKG_NAME),
 	array('p_liberty_post_comments', 'Can post new comments', 'registered', LIBERTY_PKG_NAME),
 	array('p_liberty_read_comments', 'Can read comments', 'basic', LIBERTY_PKG_NAME),

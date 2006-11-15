@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.21 $
+ * @version  $Revision: 1.22 $
  * @package  liberty
  * @subpackage functions
  */
@@ -12,6 +12,8 @@
  * required setup
  */
 require_once("../bit_setup_inc.php");
+
+$gBitSystem->verifyPermission( 'p_liberty_list_content' );
 
 // some content specific offsets and pagination settings
 if( !empty( $_REQUEST['sort_mode'] ) ) {
