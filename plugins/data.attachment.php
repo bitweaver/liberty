@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.6 2006/05/18 18:26:37 squareing Exp $
+// $Id: data.attachment.php,v 1.7 2006/11/16 16:45:46 squareing Exp $
 
 /**
  * definitions
@@ -59,7 +59,7 @@ function data_attachment_help() {
 				.'<td>size</td>'
 				.'<td>' . tra( "key-words") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "If the Attachment is an image, you can specify the size of the thumbnail displayed. Possible values are:") . ' <strong>avatar, small, medium, large, original</strong> '
-				. tra("(Default = ") . '<strong>medium</strong>)</td>'
+				. tra( "(Default = " ) . '<strong>medium</strong>)</td>'
 			.'</tr>'
 			.'<tr class="odd">'
 				.'<td>link</td>'
@@ -68,19 +68,12 @@ function data_attachment_help() {
 				. tra("(Default = ") . '<strong>'.tra( 'link to source image' ).'</strong>)</td>'
 			.'</tr>'
 			.'<tr class="even">'
-				.'<td>align</td>'
-				.'<td>' . tra( "key-words") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Specifies how the Image / Attachment is to be alligned on the page. Possible values are:") . ' <strong>left, center, right</strong> '
-				. tra("(Default = ") . '<strong>'.tra( 'none - attachment is shown inline' ).'</strong>)</td>'
-			.'</tr>'
-			.'<tr class="odd">'
-				.'<td>float</td>'
-				.'<td>' . tra( "key-words") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Specifies how the Image / Attachment is to float on the page. Behaviour of float is different to align. Possible values are:") . ' <strong>left, right</strong> '
-				. tra("(Default = ") . '<strong>'.tra( 'none - attachment is shown inline' ).'</strong>)</td>'
+				.'<td>'.tra( "styling" ).'</td>'
+				.'<td>'.tra( "string").'<br />'.tra("(optional)").'</td>'
+				.'<td>'.tra( "Multiple styling options available: padding, margin, background, border, text-align, color, font, font-size, font-weight, font-family, align. Please view CSS guidelines on what values these settings take.").'</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . "{ATTACHMENT id='13' size='small' align='center' link='http://www.google.com'}";
+		. tra("Example: ") . "{ATTACHMENT id='13' size='small' text-align='center' link='http://www.google.com'}";
 	return $help;
 }
 
@@ -92,9 +85,10 @@ function data_attachment($data, $params) { // NOTE: The original plugin had seve
 		// many sites use the old style required second "closing" empty tag
 		return $ret;
 	}
+
 	$liba = new LibertyAttachable();
 	if( !$att = $liba->getAttachment( $params['id'] ) ) {
-	    $ret = tra("__Error__ - The plugin") . " __~np~{ATTACHMENT}~/np~__ " . tra("was given the parameter") . " id=" . $params['id'] . tra(" which is not valid.\n");
+	    $ret = tra( "The attachment id given is not valid." );
    	    return $ret;
    	}
 
@@ -105,20 +99,72 @@ function data_attachment($data, $params) { // NOTE: The original plugin had seve
 		$thumburl = ( !empty( $params['size'] ) && !empty( $att['thumbnail_url'][$params['size']] ) ? $att['thumbnail_url'][$params['size']] : $att['thumbnail_url']['medium'] );
 	}
 
-	// use specified link as href. insert default link to source only when source not already displayed
-	if( !empty( $params['link'] ) && $params['link'] == 'false' ) {
-		$href = '';
-	} elseif( !empty( $params['link'] ) ) {
-		$href = ' href="'.$params['link'].'"';
-	} elseif( empty( $params['size'] ) || $params['size'] != 'original' ) {
-		$href = ' href="'.$att['source_url'].'"';
-	} else {
-		$href = '';
+	$attstring = array();
+	$attstring['div_style'] = '';
+
+	foreach( $params as $key => $value ) {
+		if( !empty( $value ) ) {
+			switch( $key ) {
+				// rename a couple of parameters
+				case 'background-color':
+					$key = 'background';
+				case 'description':
+					$key = 'desc';
+				case 'class':
+					$class = $value;
+					break;
+				case 'float':
+				case 'padding':
+				case 'margin':
+				case 'background':
+				case 'border':
+				case 'text-align':
+				case 'color':
+				case 'font':
+				case 'font-size':
+				case 'font-weight':
+				case 'font-family':
+					$attstring['div_style'] .= $key.':'.$value.';';
+					break;
+				case 'align':
+					if( $value == 'center' || $value == 'middle' ) {
+						$attstring['div_style'] .= 'text-align:center;';
+					} else {
+						$attstring['div_style'] .= 'float:'.$value.';';
+					}
+					break;
+				default:
+					$attstring[$key] = $value;
+					break;
+			}
+		}
 	}
 
-	$aloat = ( !empty( $params['align'] ) ? '<div style="text-align:'.$params['align'].';">' : NULL );
-	$aloat = ( ( !empty( $params['float'] ) && empty( $aloat ) ) ? '<div style="float:'.$params['float'].';">' : NULL );
-	$ret =  $aloat.'<a'.$href.'><img src="'.$thumburl.'"/></a>'.(!empty($aloat)?'</div>':'');
+	// check if we have a valid thumbnail
+	if( !empty( $thumburl ) ) {
+		// set up image first
+		$ret = '<img'.
+				' alt="'.  ( !empty( $attstring['desc'] ) ? $attstring['desc'] : tra( 'Image' ) ).'"'.
+				' title="'.( !empty( $attstring['desc'] ) ? $attstring['desc'] : tra( 'Image' ) ).'"'.
+				' src="'  .$thumburl.'"'.
+			' />';
+
+		// use specified link as href. insert default link to source only when source not already displayed
+		if( !empty( $params['link'] ) && $params['link'] == 'false' ) {
+		} elseif( !empty( $params['link'] ) ) {
+			$ret = '<a href="'.trim( $attstring['link'] ).'">'.$ret.'</a>';
+		} elseif( empty( $params['size'] ) || $params['size'] != 'original' ) {
+			$ret = '<a href="'.trim( $att['source_url'] ).'">'.$ret.'</a>';
+		}
+
+		// finally, wrap the image with a div
+		if( !empty( $attstring['div_style'] ) || !empty( $class ) || !empty( $attstring['desc'] ) ) {
+			$ret = '<div class="'.( !empty( $class ) ? $class : "img-plugin" ).'" style="'.$attstring['div_style'].'">'.$ret.'<br />'.( !empty( $attstring['desc'] ) ? $attstring['desc'] : '' ).'</div>';
+		}
+	} else {
+	    $ret = tra( "The attachment id given is not valid." );
+	}
+
 	return $ret;
 }
 ?>
