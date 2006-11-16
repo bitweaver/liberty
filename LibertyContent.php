@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.161 2006/11/10 06:02:05 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.162 2006/11/16 17:38:56 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -158,8 +158,7 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 
-		$pParamHash['content_store']['content_status_id'] = (@BitBase::verifyId( $_REQUEST['content_status_id'] ) ? $_REQUEST['content_status_id'] : $gBitSystem->getConfig( 'liberty_default_status', BIT_CONTENT_DEFAULT_STATUS ));
-
+		$pParamHash['content_store']['content_status_id'] = (@BitBase::verifyId( $pParamHash['content_status_id'] ) ? $pParamHash['content_status_id'] : $gBitSystem->getConfig( 'liberty_default_status', BIT_CONTENT_DEFAULT_STATUS ));
 		$pParamHash['field_changed'] = empty( $pParamHash['content_id'] )
 					|| (!empty($this->mInfo["data"]) && !empty($pParamHash["edit"]) && (md5($this->mInfo["data"]) != md5($pParamHash["edit"])))
 					|| (!empty($pParamHash["title"]) && !empty($this->mInfo["title"]) && (md5($this->mInfo["title"]) != md5($pParamHash["title"])));
@@ -825,6 +824,22 @@ vd( $this->mErrors );
 
 		return( $ret );
 	}
+
+	function isPrivate() {
+		global $gBitSystem;
+		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_private', -40 ) );
+	}
+
+	function isProtected() {
+		global $gBitSystem;
+		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_protected', -20 ) );
+	}
+
+	function isHidden() {
+		global $gBitSystem;
+		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_hidden', -10 ) );
+	}
+
 
 	/**
 	* Determine if current user has the ability to administer this type of content
