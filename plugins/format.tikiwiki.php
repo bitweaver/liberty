@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.73 $
+ * @version  $Revision: 1.74 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -967,8 +967,11 @@ class TikiWikiParser extends BitBase {
 						$repl .= '&nbsp;<img src="img/icons/new.gif" border="0" alt="'.tra("new").'" />';
 					}
 				} else {
-					$uri_ref = WIKI_PKG_URL."edit.php?page=" . urlencode($pages[1][$i]);
-					$repl = ' <a class="create" href="'.$uri_ref.'">'.( (strlen(trim($text[0])) > 0 ? $text[0] : $pages[1][$i]) ).'</a>';
+					$repl = strlen( trim( $text[0] ) ) > 0 ? $text[0] : $pages[1][$i];
+					if( $gBitUser->hasPermission( 'p_wiki_edit_page' ) ) {
+						$uri_ref = WIKI_PKG_URL."edit.php?page=" . urlencode($pages[1][$i]);
+						$repl = ' <a class="create" href="'.$uri_ref.'">'.$repl.'</a>';
+					}
 				}
 
 				$data = preg_replace($pattern, "$repl", $data);
