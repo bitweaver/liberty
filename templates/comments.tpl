@@ -9,7 +9,6 @@
 	</div>
 
 	<div class="body">
-	
 		{include file="bitpackage:liberty/comments_post_inc.tpl" post_title="Post Comment"}
 
 		{include file="bitpackage:liberty/comments_display_option_bar.tpl"}

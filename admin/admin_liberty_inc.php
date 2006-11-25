@@ -1,5 +1,9 @@
 <?php
 $formLibertyFeatures = array(
+	"liberty_display_status" => array(
+		'label' => 'Display content status',
+		'note' => 'Display a status selection menu when editing content (not fully developed, experimental feature).',
+	),
 	"liberty_cache_pages" => array(
 		'label' => 'External page cache',
 		'note' => 'Enabling this will download and cache external pages that are included.',
