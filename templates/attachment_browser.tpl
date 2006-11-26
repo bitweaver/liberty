@@ -19,7 +19,7 @@
 <table class="data">
 	<caption>{tr}Available Attachements{/tr} <span class="total">[ {$userAttachments.cant} ]</span></caption>
 	{counter start=-1 name="cells" print=false}
-	{foreach from=$userAttachments.data item=attachment key=foo}
+	{foreach from=$userAttachments item=attachment key=foo}
 		{counter name="cells" assign="cells" print=false}
 		{if $cells % 2 eq 0}
 			<tr class="{cycle values="odd,even"}">
@@ -46,4 +46,5 @@
 </table>
 
 {libertypagination pgnName="pgnPage" pgnPage=$curPage numPages=$numPages offset=$smarty.request.offset ajaxId=attbrowser}
+{pagination ajaxId=attbrowser}
 {/strip}

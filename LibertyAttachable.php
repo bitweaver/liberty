@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.44 2006/11/09 02:52:10 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.45 2006/11/26 12:51:58 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -286,6 +286,64 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			}
 		}
 		return( count( $this->mErrors ) == 0 );
+	}
+
+	/**
+	 * Get a list of all available attachments
+	 * 
+	 * @param array $pListHash 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function getAttachmentList( &$pListHash ) {
+		global $gLibertySystem, $gBitUser;
+
+		$this->prepGetList( $pListHash );
+
+		// initialise some variables
+		$attachments = $ret = $bindVars = array();
+		$whereSql = '';
+
+		// only admin may view attachments from other users
+		if( !$gBitUser->isAdmin() ) {
+			$pListHash['user_id'] = $this->mUserId;
+		}
+
+		if( !empty( $pListHash['user_id'] ) ) {
+			$whereSql .= empty( $whereSql ) ? ' WHERE ' : ' AND ';
+			$whereSql .= " la.user_id = ? ";
+			$bindVars[] = $pListHash['user_id'];
+		}
+
+		$query = "
+			SELECT DISTINCT( la.`foreign_id` ) AS `hash_key`, la.*
+			FROM `".BIT_DB_PREFIX."liberty_attachments` la
+				INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON( la.`user_id` = uu.`user_id` )
+			$whereSql
+		";
+
+		$result = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
+		while( $res = $result->fetchRow() ) {
+			$attachments[] = $res;
+		}
+
+		$ret = array();
+		foreach( $attachments as $attachment ) {
+			$loadFunc = $gLibertySystem->getPluginFunction( $attachment['attachment_plugin_guid'], 'load_function' );
+			$ret[] = $loadFunc( $attachment );
+		}
+
+		// count all entries
+		$query = "
+			SELECT COUNT( DISTINCT( la.`foreign_id` ) )
+			FROM `".BIT_DB_PREFIX."liberty_attachments` la
+			$whereSql
+		";
+
+		$pListHash['cant'] = $this->mDb->getOne( $query, $bindVars );
+		$this->postGetList( $pListHash );
+
+		return $ret;
 	}
 
 	// Clone an existing attachment but have it reference another content_id
