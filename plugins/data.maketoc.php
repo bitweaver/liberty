@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.15 $
+ * @version  $Revision: 1.16 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.15 2006/11/01 08:36:47 squareing Exp $
+// $Id: data.maketoc.php,v 1.16 2006/11/26 14:51:45 squareing Exp $
 
 /**
  * definitions
@@ -75,6 +75,11 @@ function data_maketoc_help() {
 				<td>width</td>
 				<td>'.tra( "string").'<br />('.tra("optional").')</td>
 				<td>'.tra( 'Override the width of the maketoc div.' ).'</td>
+			</tr>
+			<tr class="even">
+				<td>type</td>
+				<td>'.tra( "key words").'<br />('.tra("optional").')</td>
+				<td>'.tra( 'Setting this to dropdown will create a dropdown instead of the default nested list of headings.' ).'</td>
 			</tr>
 		</table>'.
 		tra("Example: ").'{MAKETOC maxdepth=3 include=all backtotop=true}';
@@ -148,67 +153,81 @@ function maketoc_create_list( $pTocHash, $pParams ) {
 	}
 
 	$list = '';
-	// start with the generation of the nested <ul> list
-	foreach( $outputs as $k => $output ) {
-		if( $k >= $ignore ) {
-			$j = 0;
 
-			// open <ul> tags, store them in $open and set $depth
-			for( $i = $prev; $i < $levels[$k]; $i++ ) {
-				if( $j++ == 0 ) {
-					array_unshift( $open, $prev );
-				}
-				if( $depth < $maxdepth ) {
-					$list .= '<ul>';
-				}
-				$depth++;
+	// create a dropdown that will zap user to selection
+	if( !empty( $pParams['type'] ) && $pParams['type'] == 'dropdown' ) {
+		$list .= '<form action="'.BIT_ROOT_URL.'">';
+		$list .= '<select name="url" id="maketoc" onchange="location.href=form.url.options[form.url.selectedIndex].value">';
+		foreach( $outputs as $k => $output ) {
+			if( $k >= $ignore ) {
+				$list .= '<option value="#'.$ids[$k].'">'.str_pad( '', ( $levels[$k] - 1 ) * 6, '&nbsp;' ).'&bull; '.$output.'</a>';
 			}
+		}
+		$list .= "</select>";
+		$list .= '</form>';
+	} else {
+		// start with the generation of the nested <ul> list
+		foreach( $outputs as $k => $output ) {
+			if( $k >= $ignore ) {
+				$j = 0;
 
-			// close the <ul> tags as appropriate and update $open and $depth
-			for( $i = $prev; $i > $levels[$k]; $i -= 1 ) {
-				// close any <li> tags if needed
+				// open <ul> tags, store them in $open and set $depth
+				for( $i = $prev; $i < $levels[$k]; $i++ ) {
+					if( $j++ == 0 ) {
+						array_unshift( $open, $prev );
+					}
+					if( $depth < $maxdepth ) {
+						$list .= '<ul>';
+					}
+					$depth++;
+				}
+
+				// close the <ul> tags as appropriate and update $open and $depth
+				for( $i = $prev; $i > $levels[$k]; $i -= 1 ) {
+					// close any <li> tags if needed
+					if( $depth == $open[0] ) {
+						if( $depth <= $maxdepth ) {
+							$list .= '</li>';
+						}
+						array_shift( $open );
+					}
+					if( $depth <= $maxdepth ) {
+						$list .= '</ul>';
+					}
+					$depth -= 1;
+				}
+
+				// close any <li> items that haven't been dealt with above
 				if( $depth == $open[0] ) {
 					if( $depth <= $maxdepth ) {
 						$list .= '</li>';
 					}
 					array_shift( $open );
 				}
-				if( $depth <= $maxdepth ) {
-					$list .= '</ul>';
-				}
-				$depth -= 1;
-			}
 
-			// close any <li> items that haven't been dealt with above
-			if( $depth == $open[0] ) {
+				if( $depth <= $maxdepth ) {
+					$list .= '<li><a href="#'.$ids[$k].'">'.$output.'</a>';
+				}
+				if( $levels[$k] >= @$levels[$k+1] ) {
+					if( $depth <= $maxdepth ) {
+						$list .= '</li>';
+					}
+				}
+				$prev = $levels[$k];
+			}
+		}
+
+		// close off any remaning tags
+		for( $i = $depth; $i > 0; $i -= 1 ) {
+			if( $i == $open[0] ) {
 				if( $depth <= $maxdepth ) {
 					$list .= '</li>';
 				}
 				array_shift( $open );
 			}
-
 			if( $depth <= $maxdepth ) {
-				$list .= '<li><a href="#'.$ids[$k].'">'.$output.'</a>';
+				$list .= '</ul>';
 			}
-			if( $levels[$k] >= @$levels[$k+1] ) {
-				if( $depth <= $maxdepth ) {
-					$list .= '</li>';
-				}
-			}
-			$prev = $levels[$k];
-		}
-	}
-
-	// close off any remaning tags
-	for( $i = $depth; $i > 0; $i -= 1 ) {
-		if( $i == $open[0] ) {
-			if( $depth <= $maxdepth ) {
-				$list .= '</li>';
-			}
-			array_shift( $open );
-		}
-		if( $depth <= $maxdepth ) {
-			$list .= '</ul>';
 		}
 	}
 
