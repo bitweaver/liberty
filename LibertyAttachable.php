@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.45 2006/11/26 12:51:58 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.46 2006/11/27 15:10:04 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -306,7 +306,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 		// only admin may view attachments from other users
 		if( !$gBitUser->isAdmin() ) {
-			$pListHash['user_id'] = $this->mUserId;
+			$pListHash['user_id'] = $gBitUser->mUserId;
 		}
 
 		if( !empty( $pListHash['user_id'] ) ) {
