@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.46 2006/11/27 15:10:04 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.47 2006/12/03 06:36:53 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -250,8 +250,8 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 							$storeRow['upload']['type'] = $gBitSystem->lookupMimeType( $ext );
 						}
 						$storeRow['upload']['dest_path'] = $this->getStorageBranch( $storeRow['attachment_id'], $pParamHash['user_id'], 'images' );
-						if (!empty( $pParamHash['thumbsizes'] ) ) {
-							$storeRow['upload']['thumbsizes'] = $pParamHash['thumbsizes'];
+						if (!empty( $pParamHash['thumbnail_sizes'] ) ) {
+							$storeRow['upload']['thumbnail_sizes'] = $pParamHash['thumbnail_sizes'];
 						}
 						$storagePath = liberty_process_upload( $storeRow );
 						// We're gonna store to local file system & liberty_files table
@@ -497,7 +497,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
  * @param array $pFileHash['upload']['dest_path'] (required) Relative path where you want to store the file
  * @param array $pFileHash['upload']['source_file'] (required) Absolute path to file including file name
  * @param boolean $pFileHash['upload']['thumbnail'] (optional) Set to FALSE if you don't want to generate thumbnails
- * @param array $pFileHash['upload']['thumbsizes'] (optional) Decide what sizes thumbnails you want to create: icon, avatar, small, medium, large
+ * @param array $pFileHash['upload']['thumbnail_sizes'] (optional) Decide what sizes thumbnails you want to create: icon, avatar, small, medium, large
  * @param boolean $pMoveFile (optional) specify if you want to move or copy the original file
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
@@ -648,8 +648,8 @@ function liberty_process_image( &$pFileHash ) {
 
 
 function liberty_clear_thumbnails( &$pFileHash ) {
-	$thumbsizes = array( 'icon', 'avatar', 'small', 'medium', 'large' );
-	foreach( $thumbsizes as $size ) {
+	$thumbnail_sizes = array( 'icon', 'avatar', 'small', 'medium', 'large' );
+	foreach( $thumbnail_sizes as $size ) {
 		$fullPath =  BIT_ROOT_PATH.$pFileHash['dest_path']."$size.jpg";
 		if( file_exists( $fullPath ) ) {
 			unlink( $fullPath );
@@ -659,36 +659,32 @@ function liberty_clear_thumbnails( &$pFileHash ) {
 
 function liberty_get_function( $pType ) {
 	global $gBitSystem;
-	$ret = NULL;
-	switch( $gBitSystem->getConfig( 'image_processor' ) ) {
-		case 'imagick':
-			$ret = 'liberty_imagick_'.$pType.'_image';
-			break;
-		case 'magickwand':
-			$ret = 'liberty_magickwand_'.$pType.'_image';
-			break;
-		default:
-			$ret = 'liberty_gd_'.$pType.'_image';
-			break;
-	}
-	return $ret;
+	return 'liberty_'.$gBitSystem->getConfig( 'image_processor', 'gd' ).'_'.$pType.'_image';
 }
 
 define( 'MAX_THUMBNAIL_DIMENSION', 99999 );
 
 function liberty_generate_thumbnails( &$pFileHash ) {
-	global $gBitSystem;
+	global $gBitSystem, $gThumbSizes;
 	$resizeFunc = liberty_get_function( 'resize' );
 
 	// allow custom selecteion of thumbnail sizes
-	if( empty( $pFileHash['thumbsizes'] ) ) {
-		$pFileHash['thumbsizes'] = array( 'icon', 'avatar', 'small', 'medium', 'large', 'original' );
+	if( empty( $pFileHash['thumbnail_sizes'] ) ) {
+		$pFileHash['thumbnail_sizes'] = array( 'icon', 'avatar', 'small', 'medium', 'large' );
 	}
 
-	if( in_array( 'original', $pFileHash['thumbsizes'] )
-		&& !preg_match( '/image\/(gif|jpg|jpeg|png)/', strtolower( $pFileHash['type'] ) )
-		&& $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' )
-	) {
+	if( empty( $gThumbSizes ) ) {
+		$gThumbSizes = array( 
+			'icon' => array( 'width'=>48, 'height'=>48 ), 
+			'avatar' => array( 'width'=>100, 'height'=>100 ), 
+			'small' => array( 'width'=>160, 'height'=>120 ), 
+			'medium' => array( 'width'=>400, 'height'=>300 ), 
+			'large' => array( 'width'=>800, 'height'=>600 ), 
+		);
+	}
+
+	if( (!preg_match( '/image\/(gif|jpg|jpeg|png)/', strtolower( $pFileHash['type'] ) ) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ))
+		|| in_array( 'original', $pFileHash['thumbnail_sizes'] ) ) {
 		// jpeg version of original
 		$pFileHash['dest_base_name'] = 'original';
 		$pFileHash['name'] = 'original.jpg';
@@ -696,45 +692,16 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$pFileHash['max_height'] = MAX_THUMBNAIL_DIMENSION;
 		$pFileHash['original_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
 	}
-	if( in_array( 'icon', $pFileHash['thumbsizes'] ) ) {
-		// Icon thumb is 48x48
-		$pFileHash['dest_base_name'] = 'icon';
-		$pFileHash['name'] = 'icon.jpg';
-		$pFileHash['max_width'] = 48;
-		$pFileHash['max_height'] = 48;
-		$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
-	}
-	if( in_array( 'avatar', $pFileHash['thumbsizes'] ) ) {
-		// Avatar thumb is 100x100
-		$pFileHash['dest_base_name'] = 'avatar';
-		$pFileHash['name'] = 'avatar.jpg';
-		$pFileHash['max_width'] = 100;
-		$pFileHash['max_height'] = 100;
-		$pFileHash['small_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
-	}
-	if( in_array( 'small', $pFileHash['thumbsizes'] ) ) {
-		// Small thumb is 160x120
-		$pFileHash['dest_base_name'] = 'small';
-		$pFileHash['name'] = 'small.jpg';
-		$pFileHash['max_width'] = 160;
-		$pFileHash['max_height'] = 120;
-		$pFileHash['small_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
-	}
-	if( in_array( 'medium', $pFileHash['thumbsizes'] ) ) {
-		// Medium thumb is 400x300
-		$pFileHash['dest_base_name'] = 'medium';
-		$pFileHash['name'] = 'medium.jpg';
-		$pFileHash['max_width'] = 400;
-		$pFileHash['max_height'] = 300;
-		$pFileHash['medium_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
-	}
-	if( in_array( 'large', $pFileHash['thumbsizes'] ) ) {
-		// Large thumb is 800x600
-		$pFileHash['dest_base_name'] = 'large';
-		$pFileHash['name'] = 'large.jpg';
-		$pFileHash['max_width'] = 800;
-		$pFileHash['max_height'] = 600;
-		$pFileHash['large_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
+
+	foreach( $pFileHash['thumbnail_sizes'] as $thumbSize ) {
+		if( isset( $gThumbSizes[$thumbSize] ) ) {
+			// Icon thumb is 48x48
+			$pFileHash['dest_base_name'] = $thumbSize;
+			$pFileHash['name'] = $thumbSize.'.jpg';
+			$pFileHash['max_width'] = $gThumbSizes[$thumbSize]['width'];
+			$pFileHash['max_height'] = $gThumbSizes[$thumbSize]['height'];
+			$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
+		}
 	}
 }
 
@@ -1000,7 +967,7 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 				MagickProfileImage($magickWand, 'ICC', file_get_contents( UTIL_PKG_PATH.'icc/srgb.icm' ) ); 
 
 				MagickSetImageColorspace( $magickWand, MW_RGBColorspace );
-				if( in_array( 'original', $pFileHash['thumbsizes'] )
+				if( in_array( 'original', $pFileHash['thumbnail_sizes'] )
 					&& $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' )
 					&& empty( $rgbConverts[$pFileHash['dest_path']] )
 				) {
