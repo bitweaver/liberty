@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.163 2006/12/08 08:43:13 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.164 2006/12/08 13:48:55 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -280,6 +280,14 @@ class LibertyContent extends LibertyBase {
 				$this->mInfo['content_type_guid'] = $pParamHash['content_type_guid'];
 				$this->mContentId = $pParamHash['content_store']['content_id'];
 				$result = $this->mDb->associateInsert( $table, $pParamHash['content_store'] );
+
+				// store content preferences
+				if( @is_array( $pParamHash['preferences_store'] ) ) {
+					foreach( $pParamHash['preferences_store'] as $pref => $value ) {
+						$this->storePreference( $pref, $value );
+					}
+				}
+
 				$this->mLogs['content_store'] = "Created";
 			} else {
 				if( !empty( $pParamHash['content_store']['title'] ) && !empty( $this->mInfo['title'] ) ) {
@@ -595,7 +603,7 @@ vd( $this->mErrors );
 	* Check mContentId to establish if the object has been loaded with a valid record
 	*/
 	function isValid() {
-		return( $this->verifyId( $this->mContentId ) );
+		return( BitBase::verifyId( $this->mContentId ) );
 	}
 
 	/**
@@ -1026,18 +1034,18 @@ vd( $this->mErrors );
 	*/
 	function storePreference( $pPrefName, $pPrefValue = NULL ) {
 		$ret = FALSE;
-		if( $this->isValid() ) {
+		if( LibertyContent::isValid() ) {
 			// validate any preferences
 			if( $pPrefName == 'users_homepage' && !preg_match( '/^http:\/\//', $pPrefValue ) ) {
 				$pPrefValue = 'http://'.$pPrefValue;
 			}
-			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=? AND `pref_name`=?";
-			$bindvars=array( $this->mContentId, $pPrefName );
-			$result = $this->mDb->query($query, $bindvars);
+			$query    = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=? AND `pref_name`=?";
+			$bindvars = array( $this->mContentId, $pPrefName );
+			$result   = $this->mDb->query($query, $bindvars);
 			if( !is_null( $pPrefValue ) ) {
-				$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_prefs` (`content_id`,`pref_name`,`pref_value`) VALUES(?, ?, ?)";
-				$bindvars[]=$pPrefValue;
-				$result = $this->mDb->query($query, $bindvars);
+				$query      = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_prefs` (`content_id`,`pref_name`,`pref_value`) VALUES(?, ?, ?)";
+				$bindvars[] = $pPrefValue;
+				$result     = $this->mDb->query( $query, $bindvars );
 				$this->mPrefs[$pPrefName] = $pPrefValue;
 			}
 			$this->mPrefs[$pPrefName] = $pPrefValue;
