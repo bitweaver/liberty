@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.74 $
+ * @version  $Revision: 1.75 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -66,31 +66,32 @@ function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
 	if( $result = $pCommonObject->mDb->query( $query, array( $pContentId ) ) ) {
 		while( $row = $result->fetchRow() ) {
 			// check if there are occasions of the old name with alternate display link name
-			// ((WikiLink|Description))
-			$pattern[] = "!
-				\({2}              # check for ((
-				\b$pOldName\b      # make sure the old name is on it's own
-				\|                 # the seperating deliminator
-				([^\)]*)           # get as many characters as possible up to the next ) - put this in $1
-				\){2}              # closing brackets ))
-			!x";
-			// replace with new name leaving description in tact
+			// --- ((WikiLink|Description))
+			// \({2}              # check for ((
+			// \b$pOldName\b      # make sure the old name is on it's own
+			// \|                 # the seperating deliminator
+			// ([^\)]*)           # get as many characters as possible up to the next ) - put this in $1
+			// \){2}              # closing brackets ))
+			$pattern[] = "!\({2}\b$pOldName\b\|([^\)]*)\){2}!";
+
+			// - replace with new name leaving description in tact
 			$replace[] = "(($pNewName|$1))";
 
 
-			// ((WikiLink)) or WikiLink
-			$pattern[] = "!
-				(\({2})?           # check for (( - optional - put this in $1
-				\b$pOldName\b      # make sure the old name is on it's own
-				(\){2})?           # closing brackets )) - optional - put this in $2
-			!x";
+			// --- ((WikiLink)) or WikiLink
+			// (\({2})?           # check for (( - optional - put this in $1
+			// \b$pOldName\b      # make sure the old name is on it's own
+			// (\){2})?           # closing brackets )) - optional - put this in $2
+			$pattern[] = "!(\({2})?\b$pOldName\b(\){2})?!";
 
-			// the replacement depends on the new name
+			// - the replacement depends on the new name
 			if( preg_match( "! !", $pNewName ) ) {
-				// since we have a space in the final name, we need to have (( and )) to make the link work
+				// since we have a space in the final name, we need to have (( 
+				// and )) to make the link work
 				$replace[] = "(($pNewName))";
 			} else {
-				// no spaces in the new name either, so we only insert the (( and )) if the author used them to start off with
+				// no spaces in the new name either, so we only insert the (( 
+				// and )) if the author used them to start off with
 				$replace[] = "$1$pNewName$2";
 			}
 
