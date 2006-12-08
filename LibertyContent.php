@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.162 2006/11/16 17:38:56 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.163 2006/12/08 08:43:13 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -280,13 +280,13 @@ class LibertyContent extends LibertyBase {
 				$this->mInfo['content_type_guid'] = $pParamHash['content_type_guid'];
 				$this->mContentId = $pParamHash['content_store']['content_id'];
 				$result = $this->mDb->associateInsert( $table, $pParamHash['content_store'] );
-				$this->mLogs['content_store'] = "Created.";
+				$this->mLogs['content_store'] = "Created";
 			} else {
 				if( !empty( $pParamHash['content_store']['title'] ) && !empty( $this->mInfo['title'] ) ) {
 					$renamed = $pParamHash['content_store']['title'] != $this->mInfo['title'];
 				}
 				$result = $this->mDb->associateUpdate( $table, $pParamHash['content_store'], array("content_id" => $pParamHash['content_id'] ) );
-				$this->mLogs['content_store'] = "Updated.";
+				$this->mLogs['content_store'] = "Updated";
 			}
 
 			if( !empty( $pParamHash['force_history'] ) || ( empty( $pParamHash['minor'] ) && $this->getField( 'version' ) && $pParamHash['field_changed'] )) {
@@ -391,7 +391,7 @@ class LibertyContent extends LibertyBase {
 			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id` = ?";
 			$result = $this->mDb->query( $query, array( $this->mContentId ) );
 
-			$this->mLogs['content_expunge'] = "Deleted.";
+			$this->mLogs['content_expunge'] = "Deleted";
 			$this->storeActionLog();
 
 			$this->mDb->CompleteTrans();
