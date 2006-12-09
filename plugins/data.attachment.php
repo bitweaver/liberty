@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.7 2006/11/16 16:45:46 squareing Exp $
+// $Id: data.attachment.php,v 1.8 2006/12/09 10:39:58 squareing Exp $
 
 /**
  * definitions
@@ -159,7 +159,7 @@ function data_attachment($data, $params) { // NOTE: The original plugin had seve
 
 		// finally, wrap the image with a div
 		if( !empty( $attstring['div_style'] ) || !empty( $class ) || !empty( $attstring['desc'] ) ) {
-			$ret = '<div class="'.( !empty( $class ) ? $class : "img-plugin" ).'" style="'.$attstring['div_style'].'">'.$ret.'<br />'.( !empty( $attstring['desc'] ) ? $attstring['desc'] : '' ).'</div>';
+			$ret = '<div class="'.( !empty( $class ) ? $class : "att-plugin" ).'" style="'.$attstring['div_style'].'">'.$ret.'<br />'.( !empty( $attstring['desc'] ) ? $attstring['desc'] : '' ).'</div>';
 		}
 	} else {
 	    $ret = tra( "The attachment id given is not valid." );
