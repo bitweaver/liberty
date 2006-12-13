@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.164 2006/12/08 13:48:55 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.165 2006/12/13 22:33:27 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -105,6 +105,7 @@ class LibertyContent extends LibertyBase {
 			global $gLibertySystem, $gBitSystem, $gBitUser;
 			$this->loadPreferences();
 			$this->mInfo['content_type'] = $gLibertySystem->mContentTypes[$this->mInfo['content_type_guid']];
+			$this->invokeServices('content_load_function', $this);
 		}
 	}
 
