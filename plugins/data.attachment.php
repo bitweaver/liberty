@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.9 2006/12/13 18:01:38 squareing Exp $
+// $Id: data.attachment.php,v 1.10 2006/12/13 20:10:36 squareing Exp $
 
 /**
  * definitions
@@ -88,9 +88,9 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 
 	$liba = new LibertyAttachable();
 	if( !$att = $liba->getAttachment( $pParams['id'] ) ) {
-	    $ret = tra( "The attachment id given is not valid." );
-   	    return $ret;
-   	}
+		$ret = tra( "The attachment id given is not valid." );
+		return $ret;
+	}
 
 	// insert source url if we need the original file
 	if( !empty( $pParams['size'] ) && $pParams['size'] == 'original' ) {
