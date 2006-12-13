@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.48 2006/10/11 10:18:56 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.49 2006/12/13 18:01:37 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -593,4 +593,59 @@ function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser, &$pComm
 
 global $gLibertySystem;
 $gLibertySystem = new LibertySystem();
+
+
+
+// generic functions that make the life of a plugin easier
+/**
+ * pass in the plugin paramaters and out comes a hash with usable styling information
+ * 
+ * @param array $pParamHash 
+ * @access public
+ * @return hash full of styling goodies
+ */
+function liberty_plugins_div_style( $pParamHash ) {
+	$ret = array();
+	$ret['style'] = '';
+
+	if( !empty( $pParamHash ) && is_array( $pParamHash ) ) {
+		foreach( $pParamHash as $key => $value ) {
+			if( !empty( $value ) ) {
+				switch( $key ) {
+					// rename a couple of parameters
+					case 'background-color':
+						$key = 'background';
+					case 'desc':
+						$key = 'description';
+					// these are used as-is
+					case 'float':
+					case 'padding':
+					case 'margin':
+					case 'background':
+					case 'border':
+					case 'text-align':
+					case 'color':
+					case 'font':
+					case 'font-size':
+					case 'font-weight':
+					case 'font-family':
+						$ret['style'] .= "$key:$value;";
+						break;
+					case 'align':
+						if( $value == 'center' || $value == 'middle' ) {
+							$ret['style'] .= 'text-align:center;';
+						} else {
+							$ret['style'] .= "float:$value;";
+						}
+						break;
+					default:
+						$ret[$key] = $value;
+						break;
+				}
+			}
+		}
+	}
+
+	return $ret;
+}
 ?>

@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.10 2006/11/01 08:36:47 squareing Exp $
+ * @version  $Revision: 1.11 $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.11 2006/12/13 18:01:38 squareing Exp $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -25,7 +25,7 @@ $pluginParams = array (
 	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN,
 	'biticon'       => '{biticon iclass="quicktag icon" ipackage=quicktags iname=image iexplain="Image"}',
-	'taginsert'     => '{img src= width= height= align= desc= link=}'
+	'taginsert'     => '{img src= width= height= align= description= link=}'
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAIMG, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAIMG );
@@ -57,73 +57,45 @@ function data_img_help() {
 		. tra( "Example: ")."{img src=http://www.google.at/logos/olympics06_ski_jump.gif float=right border=\"3px solid blue\"}";
 }
 
-function data_img($data, $params) {
-	$imgdata = array();
-	$imgdata['img_style'] = '';
-	$imgdata['div_style'] = '';
+function data_img( $pData, $pParams ) {
+	$div = liberty_plugins_div_style( $pParams );
+	$div['img_style'] = '';
 
-	foreach( $params as $key => $value ) {
+	foreach( $pParams as $key => $value ) {
 		if( !empty( $value ) ) {
 			switch( $key ) {
 				// rename a couple of parameters
-				case 'background-color':
-					$key = 'background';
-				case 'description':
-					$key = 'desc';
 				case 'width':
 				case 'height':
-					if( preg_match( "/^\d/", $value ) ) {
-						$imgdata['img_style'] .= $key.':'.$value.';';
+					if( preg_match( "/^\d+(em|px|%|pt)$/", $value ) ) {
+						$div['img_style'] .= $key.':'.$value.';';
+					} elseif( preg_match( "/^\d+$/", $value ) ) {
+						$div['img_style'] .= $key.':'.$value.'px;';
 					}
-					break;
-				case 'class':
-					$class = $value;
-					break;
-				case 'float':
-				case 'padding':
-				case 'margin':
-				case 'background':
-				case 'border':
-				case 'text-align':
-				case 'color':
-				case 'font':
-				case 'font-size':
-				case 'font-weight':
-				case 'font-family':
-					$imgdata['div_style'] .= $key.':'.$value.';';
-					break;
-				case 'align':
-					if( $value == 'center' || $value == 'middle' ) {
-						$imgdata['div_style'] .= 'text-align:center;';
-					} else {
-						$imgdata['div_style'] .= 'float:'.$value.';';
-					}
-					break;
-				default:
-					$imgdata[$key] = $value;
 					break;
 			}
 		}
 	}
 
 	// check if we have a source to load an image from
-	if( !empty( $imgdata['src'] ) ) {
+	if( !empty( $div['src'] ) ) {
 		// set up image first
+		$alt = ( !empty( $div['description'] ) ? $div['description'] : tra( 'Image' ) );
 		$ret = '<img'.
-				' alt="'.  ( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : tra( 'Image' ) ).'"'.
-				' title="'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : tra( 'Image' ) ).'"'.
-				' src="'  .$imgdata['src'].'"'.
-				' style="'.$imgdata['img_style'].'"'.
+				' alt="'.  $alt.'"'.
+				' title="'.$alt.'"'.
+				' src="'  .$div['src'].'"'.
+				' style="'.$div['img_style'].'"'.
 			' />';
 
 		// if this image is linking to something, wrap the image with the <a>
-		if( !empty( $imgdata['link'] ) ) {
-			$ret = '<a href="'.trim( $imgdata['link'] ).'">'.$ret.'</a>';
+		if( !empty( $div['link'] ) ) {
+			$ret = '<a href="'.trim( $div['link'] ).'">'.$ret.'</a>';
 		}
 
 		// finally, wrap the image with a div
-		if( !empty( $imgdata['div_style'] ) || !empty( $class ) || !empty( $imgdata['desc'] ) ) {
-			$ret = '<div class="'.( !empty( $class ) ? $class : "img-plugin" ).'" style="'.$imgdata['div_style'].'">'.$ret.'<br />'.( !empty( $imgdata['desc'] ) ? $imgdata['desc'] : '' ).'</div>';
+		if( !empty( $div['style'] ) || !empty( $class ) || !empty( $div['description'] ) ) {
+			$ret = '<div class="'.( !empty( $div['class'] ) ? $div['class'] : "img-plugin" ).'" style="'.$div['style'].'">'.$ret.'<br />'.( !empty( $div['description'] ) ? $div['description'] : '' ).'</div>';
 		}
 	} else {
 		$ret = '<span class="warning">'.tra( 'When using <strong>{img}</strong> the <strong>src</strong> parameter is required.' ).'</span>';

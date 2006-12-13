@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.8 2006/12/09 10:39:58 squareing Exp $
+// $Id: data.attachment.php,v 1.9 2006/12/13 18:01:38 squareing Exp $
 
 /**
  * definitions
@@ -77,89 +77,50 @@ function data_attachment_help() {
 	return $help;
 }
 
-function data_attachment($data, $params) { // NOTE: The original plugin had several parameters that have been dropped
+function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had several parameters that have been dropped
 	// at a minimum, return blank string (not empty) so we still replace the tag
 	$ret = ' ';
-	if( empty( $params['id'] ) ) {
+	if( empty( $pParams['id'] ) ) {
 		// The Manditory Parameter is missing. we are not gonna trow an error, and just return empty since
 		// many sites use the old style required second "closing" empty tag
 		return $ret;
 	}
 
 	$liba = new LibertyAttachable();
-	if( !$att = $liba->getAttachment( $params['id'] ) ) {
+	if( !$att = $liba->getAttachment( $pParams['id'] ) ) {
 	    $ret = tra( "The attachment id given is not valid." );
    	    return $ret;
    	}
 
 	// insert source url if we need the original file
-	if( !empty( $params['size'] ) && $params['size'] == 'original' ) {
+	if( !empty( $pParams['size'] ) && $pParams['size'] == 'original' ) {
 		$thumburl = $att['source_url'];
 	} else {
-		$thumburl = ( !empty( $params['size'] ) && !empty( $att['thumbnail_url'][$params['size']] ) ? $att['thumbnail_url'][$params['size']] : $att['thumbnail_url']['medium'] );
-	}
-
-	$attstring = array();
-	$attstring['div_style'] = '';
-
-	foreach( $params as $key => $value ) {
-		if( !empty( $value ) ) {
-			switch( $key ) {
-				// rename a couple of parameters
-				case 'background-color':
-					$key = 'background';
-				case 'description':
-					$key = 'desc';
-				case 'class':
-					$class = $value;
-					break;
-				case 'float':
-				case 'padding':
-				case 'margin':
-				case 'background':
-				case 'border':
-				case 'text-align':
-				case 'color':
-				case 'font':
-				case 'font-size':
-				case 'font-weight':
-				case 'font-family':
-					$attstring['div_style'] .= $key.':'.$value.';';
-					break;
-				case 'align':
-					if( $value == 'center' || $value == 'middle' ) {
-						$attstring['div_style'] .= 'text-align:center;';
-					} else {
-						$attstring['div_style'] .= 'float:'.$value.';';
-					}
-					break;
-				default:
-					$attstring[$key] = $value;
-					break;
-			}
-		}
+		$thumburl = ( !empty( $pParams['size'] ) && !empty( $att['thumbnail_url'][$pParams['size']] ) ? $att['thumbnail_url'][$pParams['size']] : $att['thumbnail_url']['medium'] );
 	}
 
 	// check if we have a valid thumbnail
 	if( !empty( $thumburl ) ) {
+		$div = liberty_plugins_div_style( $pParams );
+
 		// set up image first
 		$ret = '<img'.
-				' alt="'.  ( !empty( $attstring['desc'] ) ? $attstring['desc'] : tra( 'Image' ) ).'"'.
-				' title="'.( !empty( $attstring['desc'] ) ? $attstring['desc'] : tra( 'Image' ) ).'"'.
+				' alt="'.  ( !empty( $div['description'] ) ? $div['description'] : tra( 'Image' ) ).'"'.
+				' title="'.( !empty( $div['description'] ) ? $div['description'] : tra( 'Image' ) ).'"'.
 				' src="'  .$thumburl.'"'.
 			' />';
 
 		// use specified link as href. insert default link to source only when source not already displayed
-		if( !empty( $params['link'] ) && $params['link'] == 'false' ) {
-		} elseif( !empty( $params['link'] ) ) {
-			$ret = '<a href="'.trim( $attstring['link'] ).'">'.$ret.'</a>';
-		} elseif( empty( $params['size'] ) || $params['size'] != 'original' ) {
+		if( !empty( $pParams['link'] ) && $pParams['link'] == 'false' ) {
+		} elseif( !empty( $pParams['link'] ) ) {
+			$ret = '<a href="'.trim( $pParams['link'] ).'">'.$ret.'</a>';
+		} elseif( empty( $pParams['size'] ) || $pParams['size'] != 'original' ) {
 			$ret = '<a href="'.trim( $att['source_url'] ).'">'.$ret.'</a>';
 		}
 
 		// finally, wrap the image with a div
-		if( !empty( $attstring['div_style'] ) || !empty( $class ) || !empty( $attstring['desc'] ) ) {
-			$ret = '<div class="'.( !empty( $class ) ? $class : "att-plugin" ).'" style="'.$attstring['div_style'].'">'.$ret.'<br />'.( !empty( $attstring['desc'] ) ? $attstring['desc'] : '' ).'</div>';
+		if( !empty( $div['style'] ) || !empty( $class ) || !empty( $div['description'] ) ) {
+			$ret = '<div class="'.( !empty( $div['class'] ) ? $div['class'] : "att-plugin" ).'" style="'.$div['style'].'">'.$ret.'<br />'.( !empty( $div['description'] ) ? $div['description'] : '' ).'</div>';
 		}
 	} else {
 	    $ret = tra( "The attachment id given is not valid." );
