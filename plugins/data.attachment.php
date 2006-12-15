@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.10 2006/12/13 20:10:36 squareing Exp $
+// $Id: data.attachment.php,v 1.11 2006/12/15 20:42:44 squareing Exp $
 
 /**
  * definitions
@@ -110,20 +110,28 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 				' src="'  .$thumburl.'"'.
 			' />';
 
-		// use specified link as href. insert default link to source only when source not already displayed
+		$ret .= ( !empty( $att['file_details'] ) ? '<br />'.$att['file_details'] : '' );
+
+		// use specified link as href. insert default link to source only when 
+		// source not already displayed
 		if( !empty( $pParams['link'] ) && $pParams['link'] == 'false' ) {
 		} elseif( !empty( $pParams['link'] ) ) {
 			$ret = '<a href="'.trim( $pParams['link'] ).'">'.$ret.'</a>';
 		} elseif( empty( $pParams['size'] ) || $pParams['size'] != 'original' ) {
-			$ret = '<a href="'.trim( $att['source_url'] ).'">'.$ret.'</a>';
+			if( !empty( $att['download_url'] ) ) {
+				$ret = '<a href="'.trim( $att['download_url'] ).'">'.$ret.'</a>';
+			} else {
+				$ret = '<a href="'.trim( $att['source_url'] ).'">'.$ret.'</a>';
+			}
 		}
 
-		// finally, wrap the image with a div
-		if( !empty( $div['style'] ) || !empty( $class ) || !empty( $div['description'] ) ) {
-			$ret = '<div class="'.( !empty( $div['class'] ) ? $div['class'] : "att-plugin" ).'" style="'.$div['style'].'">'.$ret.'<br />'.( !empty( $div['description'] ) ? $div['description'] : '' ).'</div>';
-		}
+		// finally, wrap the output with a div
+		$ret =
+			'<div class="'.( !empty( $div['class'] ) ? $div['class'] : "att-plugin" ).'" style="'.$div['style'].'">'. $ret.
+			( !empty( $div['description'] )  ? '<br />'.$div['description']  : '' ).
+			'</div>';
 	} else {
-	    $ret = tra( "The attachment id given is not valid." );
+		$ret = tra( "The attachment id given is not valid." );
 	}
 
 	return $ret;

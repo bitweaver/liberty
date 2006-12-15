@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.49 2006/12/13 18:01:37 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.50 2006/12/15 20:42:44 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -606,18 +606,21 @@ $gLibertySystem = new LibertySystem();
  */
 function liberty_plugins_div_style( $pParamHash ) {
 	$ret = array();
-	$ret['style'] = '';
+	$ret['style'] = $ret['description'] = '';
 
 	if( !empty( $pParamHash ) && is_array( $pParamHash ) ) {
 		foreach( $pParamHash as $key => $value ) {
 			if( !empty( $value ) ) {
 				switch( $key ) {
-					// rename a couple of parameters
-					case 'background-color':
-						$key = 'background';
+					// description
 					case 'desc':
 						$key = 'description';
-					// these are used as-is
+					case 'description':
+						$ret[$key] = $value;
+						break;
+					// styling
+					case 'background-color':
+						$key = 'background';
 					case 'float':
 					case 'padding':
 					case 'margin':
@@ -631,6 +634,7 @@ function liberty_plugins_div_style( $pParamHash ) {
 					case 'font-family':
 						$ret['style'] .= "$key:$value;";
 						break;
+					// align and float are special
 					case 'align':
 						if( $value == 'center' || $value == 'middle' ) {
 							$ret['style'] .= 'text-align:center;';
@@ -638,6 +642,7 @@ function liberty_plugins_div_style( $pParamHash ) {
 							$ret['style'] .= "float:$value;";
 						}
 						break;
+					// default just gets re-assigned
 					default:
 						$ret[$key] = $value;
 						break;

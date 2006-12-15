@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.11 2006/12/13 18:01:38 squareing Exp $
+ * @version  $Revision: 1.12 $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.12 2006/12/15 20:42:44 squareing Exp $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -78,13 +78,13 @@ function data_img( $pData, $pParams ) {
 	}
 
 	// check if we have a source to load an image from
-	if( !empty( $div['src'] ) ) {
+	if( !empty( $pParams['src'] ) ) {
 		// set up image first
 		$alt = ( !empty( $div['description'] ) ? $div['description'] : tra( 'Image' ) );
 		$ret = '<img'.
 				' alt="'.  $alt.'"'.
 				' title="'.$alt.'"'.
-				' src="'  .$div['src'].'"'.
+				' src="'  .$pParams['src'].'"'.
 				' style="'.$div['img_style'].'"'.
 			' />';
 
