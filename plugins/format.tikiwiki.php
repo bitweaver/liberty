@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.75 $
+ * @version  $Revision: 1.76 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -920,7 +920,7 @@ class TikiWikiParser extends BitBase {
 		$data = preg_replace('/%%%/', '<br />', $data);
 
 		// New syntax for wiki pages ((name|desc)) Where desc can be anything
-		preg_match_all("/\(\(($this->mWikiWordRegex)\|(.+?)\)\)/", $data, $pages);
+		preg_match_all("/\(\(({$this->mWikiWordRegex})\|(.+?)\)\)/", $data, $pages);
 
 		for ($i = 0; $i < count($pages[1]); $i++) {
 			$pattern = $pages[0][$i];
@@ -947,7 +947,7 @@ class TikiWikiParser extends BitBase {
 				}
 			}
 
-			if ($repl2) {
+			if( $repl2 ) {
 				// 24-Jun-2003, by zaufi
 				// TODO: future optimize: get page description and modification time at once.
 
@@ -958,33 +958,34 @@ class TikiWikiParser extends BitBase {
 
 				if( $exists = $this->pageExists( $pages[1][$i], $pageList, $pCommonObject, $contentId ) ) {
 					$modTime = count( $exists ) == 1 ? (isset( $exists['last_modified'] ) ? (int)$exists['last_modified'] : 0 ) : 0;
-					$uri_ref = WIKI_PKG_URL."index.php?page=" . urlencode($pages[1][$i]);
-
-					$repl = '<a title="'.$exists["description"].'" href="'.$uri_ref.'">'.( (strlen(trim($text[0])) > 0 ? $text[0] : $pages[1][$i]) ).'</a>';
-
-					// Check is timeout expired?
-					if (isset($text[1]) && (time() - $modTime ) < intval($text[1])) {
-						// Append small 'new' image. TODO: possible 'updated' image more suitable...
-						$repl .= '&nbsp;<img src="img/icons/new.gif" border="0" alt="'.tra("new").'" />';
+					$repl = BitPage::getDisplayLink( $pages[1][$i], $exists );
+					if( strlen( trim( $text[0] ) ) > 0 ) {
+						$repl = preg_replace( "#{$pages[1][$i]}</a>$#", "{$text[0]}</a>", $repl );
 					}
+
+					// this still relevant? -- xing
+//					// Check is timeout expired?
+//					if (isset($text[1]) && (time() - $modTime ) < intval($text[1])) {
+//						// Append small 'new' image. TODO: possible 'updated' image more suitable...
+//						$repl .= '&nbsp;<img src="img/icons/new.gif" border="0" alt="'.tra("new").'" />';
+//					}
 				} else {
-					$repl = strlen( trim( $text[0] ) ) > 0 ? $text[0] : $pages[1][$i];
-					if( $gBitUser->hasPermission( 'p_wiki_edit_page' ) ) {
-						$uri_ref = WIKI_PKG_URL."edit.php?page=" . urlencode($pages[1][$i]);
-						$repl = ' <a class="create" href="'.$uri_ref.'">'.$repl.'</a>';
+					$repl = BitPage::getDisplayLink( $pages[1][$i], $exists );
+					if( strlen( trim( $text[0] ) ) > 0 ) {
+						$repl = preg_replace( "#{$pages[1][$i]}</a>$#", "{$text[0]}</a>", $repl );
 					}
 				}
 
-				$data = preg_replace($pattern, "$repl", $data);
+				$data = preg_replace( $pattern, "$repl", $data );
 			}
 		}
 
-		// We need to remove ))wWikiWords(( before links get made.
+		// We need to remove ))WikiWords(( before links get made.
 		// users just need to be strict about not inserting spaces between 
 		// words and brackets
 		$data = preg_replace( "!
 			\){2}               # check for ))
-			([\w_\-]+?)         # any letter plus - and _ - placed in $1
+			([\w\d_\-]+?)       # any letter, digit plus - and _ - placed in $1
 			\({2}               # closing ((
 			!x", "$1", $data
 		);
