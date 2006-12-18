@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.77 $
+ * @version  $Revision: 1.78 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -508,6 +508,9 @@ class TikiWikiParser extends BitBase {
 		$data = preg_replace( "/ -- /",     " &mdash; ", $data );
 		$data = preg_replace( "/~lt~/i",    "&lt;",      $data );
 		$data = preg_replace( "/~gt~/i",    "&gt;",      $data );
+
+		// add an easy method to clear floats
+		$data = preg_replace( "/~clear~/i", '<br style="clear:both;" />',    $data );
 
 		// HTML numeric character entities
 		$data = preg_replace( "/~([0-9]+)~/", "&#$1;", $data );
