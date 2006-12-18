@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.78 $
+ * @version  $Revision: 1.79 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -491,7 +491,7 @@ class TikiWikiParser extends BitBase {
 	// that textarea won't leave alone.
 	function parse_htmlchar(&$data) {
 		// cleaning some user input
-		$data = preg_replace("/&(?!([a-z]{1,7};))/", "&amp;", $data);
+		$data = preg_replace( "/&(?!([a-z]{1,7};))/", "&amp;", $data );
 
 		// oft-used characters (case insensitive)
 		$data = preg_replace( "/~bull~/i",  "&bull;",    $data );
@@ -510,7 +510,7 @@ class TikiWikiParser extends BitBase {
 		$data = preg_replace( "/~gt~/i",    "&gt;",      $data );
 
 		// add an easy method to clear floats
-		$data = preg_replace( "/~clear~/i", '<br style="clear:both;" />',    $data );
+		$data = preg_replace( "/(\r|\n)?~clear~/i", '<br style="clear:both;" />', $data );
 
 		// HTML numeric character entities
 		$data = preg_replace( "/~([0-9]+)~/", "&#$1;", $data );
