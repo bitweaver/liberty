@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.76 $
+ * @version  $Revision: 1.77 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -494,22 +494,23 @@ class TikiWikiParser extends BitBase {
 		$data = preg_replace("/&(?!([a-z]{1,7};))/", "&amp;", $data);
 
 		// oft-used characters (case insensitive)
-		$data = preg_replace("/~bull~/i", "&bull;", $data);
-		$data = preg_replace("/~bs~/i", "&#92;", $data);
-		$data = preg_replace("/~hs~/i", "&nbsp;", $data);
-		$data = preg_replace("/~amp~/i", "&amp;", $data);
-		$data = preg_replace("/~ldq~/i", "&ldquo;", $data);
-		$data = preg_replace("/~rdq~/i", "&rdquo;", $data);
-		$data = preg_replace("/~lsq~/i", "&lsquo;", $data);
-		$data = preg_replace("/~rsq~/i", "&rsquo;", $data);
-		$data = preg_replace("/~c~/i", "&copy;", $data);
-		$data = preg_replace("/~--~/", "&mdash;", $data);
-		$data = preg_replace("/ -- /", " &mdash; ", $data);
-		$data = preg_replace("/~lt~/i", "&lt;", $data);
-		$data = preg_replace("/~gt~/i", "&gt;", $data);
+		$data = preg_replace( "/~bull~/i",  "&bull;",    $data );
+		$data = preg_replace( "/~bs~/i",    "&#92;",     $data );
+		$data = preg_replace( "/~hs~/i",    "&nbsp;",    $data );
+		$data = preg_replace( "/~amp~/i",   "&amp;",     $data );
+		$data = preg_replace( "/~ldq~/i",   "&ldquo;",   $data );
+		$data = preg_replace( "/~rdq~/i",   "&rdquo;",   $data );
+		$data = preg_replace( "/~lsq~/i",   "&lsquo;",   $data );
+		$data = preg_replace( "/~rsq~/i",   "&rsquo;",   $data );
+		$data = preg_replace( "/~copy~/i",  "&copy;",    $data );
+		$data = preg_replace( "/~c~/i",     "&copy;",    $data );
+		$data = preg_replace( "/~--~/",     "&mdash;",   $data );
+		$data = preg_replace( "/ -- /",     " &mdash; ", $data );
+		$data = preg_replace( "/~lt~/i",    "&lt;",      $data );
+		$data = preg_replace( "/~gt~/i",    "&gt;",      $data );
 
 		// HTML numeric character entities
-		$data = preg_replace("/~([0-9]+)~/", "&#$1;", $data);
+		$data = preg_replace( "/~([0-9]+)~/", "&#$1;", $data );
 	}
 
 	function parse_smileys( $pData ) {
