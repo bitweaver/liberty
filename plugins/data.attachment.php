@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.11 2006/12/15 20:42:44 squareing Exp $
+// $Id: data.attachment.php,v 1.12 2006/12/18 10:50:27 squareing Exp $
 
 /**
  * definitions
@@ -25,18 +25,20 @@ global $gBitSystem;
 define( 'PLUGIN_GUID_DATAATTACHMENT', 'dataattachment' );
 global $gLibertySystem;
 $pluginParams = array (
-	'tag' => 'ATTACHMENT',
+	'tag'           => 'attachment',
 	'auto_activate' => TRUE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_attachment',
-	'title' => 'Attachment',
-	'help_page' => 'DataPluginAttachment',
-	'description' => tra("Display attachment in content"),
+	'title'         => 'Attachment',
+	'help_page'     => 'DataPluginAttachment',
+	'description'   => tra("Display attachment in content"),
 	'help_function' => 'data_attachment_help',
-	'syntax' => '{ATTACHMENT id= size= align= }',
-	'path' => LIBERTY_PKG_PATH.'plugins/data.attachment.php',
-	'security' => 'registered',
-	'plugin_type' => DATA_PLUGIN
+	'syntax'        => '{attachment id= size= align= }',
+	'path'          => LIBERTY_PKG_PATH.'plugins/data.attachment.php',
+	'security'      => 'registered',
+	'plugin_type'   => DATA_PLUGIN,
+	'biticon'       => '{biticon iclass= "quicktag icon" ipackage=quicktags iname=attachment iexplain="Image"}',
+	'taginsert'     => '{attachment id= align= size= description=}',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAATTACHMENT, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAATTACHMENT );
