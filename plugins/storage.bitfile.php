@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.17 $
+ * @version  $Revision: 1.18 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -32,6 +32,9 @@ function bit_files_verify( &$pStoreRow ) {
 	$pStoreRow['plugin_guid'] = PLUGIN_GUID_BIT_FILES;
 	$pStoreRow['foreign_id'] = NULL;
 	$pStoreRow['dest_base_name'] = substr( $pStoreRow['upload']['name'], 0, strrpos( $pStoreRow['upload']['name'], '.' ) );
+	if( function_exists( 'transliterate' ) ) {
+//		$pStoreRow['dest_base_name'] = transliterate( $pStoreRow['dest_base_name'], array('han_transliterate', 'diacritical_remove'), 'utf-8', 'utf-8' );
+	}
 	$pStoreRow['source_file'] = $pStoreRow['upload']['tmp_name'];
 
 	return( TRUE );

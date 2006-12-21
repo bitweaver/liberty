@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.47 2006/12/03 06:36:53 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.48 2006/12/21 09:44:36 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -967,7 +967,7 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 				MagickProfileImage($magickWand, 'ICC', file_get_contents( UTIL_PKG_PATH.'icc/srgb.icm' ) ); 
 
 				MagickSetImageColorspace( $magickWand, MW_RGBColorspace );
-				if( in_array( 'original', $pFileHash['thumbnail_sizes'] )
+				if( !empty( $pFileHash['thumbnail_sizes'] ) && in_array( 'original', $pFileHash['thumbnail_sizes'] )
 					&& $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' )
 					&& empty( $rgbConverts[$pFileHash['dest_path']] )
 				) {
