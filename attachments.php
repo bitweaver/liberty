@@ -3,7 +3,7 @@
  * attachment_browser
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage functions
  */
@@ -22,12 +22,16 @@ if( !$gBitUser->isRegistered() ) {
 $feedback = array();
 $listHash = &$_REQUEST;
 if( $gBitUser->isAdmin() ) {
-	if( !empty( $listHash['login'] ) ) {
+	if( !empty( $listHash['login'] ) && $listHash['login'] == 'all' ) {
+		$listHash['user_id'] = NULL;
+	} elseif( !empty( $listHash['login'] ) ) {
 		if( $userInfo = $gBitUser->getUserInfo( array( 'login' => $listHash['login'] ) ) ) {
 			$listHash['user_id'] = $userInfo['user_id'];
 		} else {
 			$feedback['error'] = tra( 'That user does not exist.' );
 		}
+	} else {
+		$listHash['user_id'] = $gBitUser->mUserId;
 	}
 } else {
 	$listHash['user_id'] = $gBitUser->mUserId;
