@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.31 2006/12/23 18:55:43 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.32 2006/12/23 19:03:58 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -1278,7 +1278,7 @@ class LibertyStructure extends LibertyBase {
 */
 }
 
-global $structlib;
-$structlib = new LibertyStructure();
+//global $structlib;
+//$structlib = new LibertyStructure();
 
 ?>
