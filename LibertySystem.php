@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.50 2006/12/15 20:42:44 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.51 2006/12/23 18:38:05 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -145,8 +145,7 @@ class LibertySystem extends LibertyBase {
 		$current_default_format_guid = $gBitSystem->getConfig( 'default_format' );
 		foreach( $this->mPlugins as $guid => $plugin ) {
 			if( $plugin['is_active'] == 'y' ) {
-				$plugin_type = $plugin['plugin_type'];
-				if( $plugin_type == FORMAT_PLUGIN ) {
+				if( $plugin['plugin_type'] == FORMAT_PLUGIN ) {
 					$format_plugin_count++;
 				}
 				if( $current_default_format_guid == $guid ) {
@@ -167,8 +166,8 @@ class LibertySystem extends LibertyBase {
 				$guid = PLUGIN_GUID_TIKIWIKI;
 				$config_name = "{$this->mSystem}_plugin_status_" . $guid;
 				$config_value = 'y';
-				$gBitSystem->storeConfig( $config_name, $config_value, LIBERTY_PKG_NAME );
-				$gBitSystem->storeConfig( 'default_format', PLUGIN_GUID_TIKIWIKI, LIBERTY_PKG_NAME );
+				$gBitSystem->storeConfig( $config_name, $config_value, $this->mSystem );
+				$gBitSystem->storeConfig( 'default_format', PLUGIN_GUID_TIKIWIKI, $this->mSystem );
 				//make memory match db
 				$this->loadActivePlugins();
 			}
@@ -180,9 +179,9 @@ class LibertySystem extends LibertyBase {
 			$plugin_guid = preg_replace( "/^{$this->mSystem}_plugin_status_/", '', $key,1 );
 			if( !isset( $this->mPlugins[$plugin_guid] ) ) {
 				$config_name = "{$this->mSystem}_plugin_status_" . $guid;
-				$gBitSystem->storeConfig( $config_name, NULL, LIBERTY_PKG_NAME );
+				$gBitSystem->storeConfig( $config_name, NULL, $this->mSystem );
 				$config_name = "{$this->mSystem}_plugin_file_" . $guid;
-				$gBitSystem->storeConfig( $config_name, NULL, LIBERTY_PKG_NAME );
+				$gBitSystem->storeConfig( $config_name, NULL, $this->mSystem );
 			}
 		}
 	}
@@ -235,7 +234,13 @@ class LibertySystem extends LibertyBase {
 		$this->mPlugins[$pGuid] = array_merge( $this->mPlugins[$pGuid], $pPluginParams );
 	}
 
-	// @parameter pPluginGuids an array of all the plugin guids that are active. Any left out are *inactive*!
+	/**
+	 * setActivePlugins 
+	 * 
+	 * @param array $pPluginGuids an array of all the plugin guids that are active. Any left out are *inactive*!
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function setActivePlugins( $pPluginGuids ) {
 		global $gBitSystem;
 
@@ -261,6 +266,13 @@ class LibertySystem extends LibertyBase {
 		}
 	}
 
+	/**
+	 * getPluginInfo 
+	 * 
+	 * @param array $pGuid 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function getPluginInfo( $pGuid ) {
 		$ret = NULL;
 		if( !empty( $pGuid )
@@ -271,6 +283,14 @@ class LibertySystem extends LibertyBase {
 		return $ret;
 	}
 
+	/**
+	 * getPluginFunction 
+	 * 
+	 * @param array $pGuid 
+	 * @param array $pFunctionName 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function getPluginFunction( $pGuid, $pFunctionName ) {
 		$ret = NULL;
 		if( !empty( $pGuid )
@@ -283,11 +303,42 @@ class LibertySystem extends LibertyBase {
 		return $ret;
 	}
 
+	/**
+	 * This function will purge all plugin settings set in kernel_config. useful when the path to plugins changes 
+	 * or plugins don't seem to be working
+	 * 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function resetAllPluginSettings() {
+		global $gBitSystem;
+		//$this->mPlugins = array();
+		$confs = $gBitSystem->getConfigMatch( "/^{$this->mSystem}_plugin_/i" );
+		foreach( array_keys( $confs ) as $config ) {
+			$gBitSystem->storeConfig( $config, NULL, $this->mSystem );
+		}
+
+		if( $this->mSystem == LIBERTY_PKG_NAME ) {
+			// also remove the default format
+			$gBitSystem->storeConfig( 'default_format', NULL, $this->mSystem );
+		}
+		$this->scanAllPlugins();
+	}
+
+
+
+
+	// ****************************** Content Type Functions
+	/**
+	 * getContentStatus 
+	 * 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function getContentStatus() {
 		return( $this->mDb->getAssoc( "SELECT `content_status_id`,`content_status_name` FROM `".BIT_DB_PREFIX."liberty_content_status`" ) );
 	}
 
-	// ****************************** Content Type Functions
 	/**
 	 * Load all available content types into $this->mContentTypes
 	 *
@@ -337,6 +388,9 @@ class LibertySystem extends LibertyBase {
 		}
 		return $ret;
 	}
+
+
+
 
 	// ****************************** Service Functions
 	/**
@@ -418,6 +472,9 @@ class LibertySystem extends LibertyBase {
 		}
 		return $ret;
 	}
+
+
+
 
 	// ****************************** Miscellaneous Functions
 	/**
