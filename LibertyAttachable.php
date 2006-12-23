@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.49 2006/12/22 11:53:17 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.50 2006/12/23 14:21:08 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -335,7 +335,6 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			$attachments[] = $res;
 		}
 
-		$ret = array();
 		foreach( $attachments as $attachment ) {
 			$loadFunc = $gLibertySystem->getPluginFunction( $attachment['attachment_plugin_guid'], 'load_function' );
 			$ret[] = $loadFunc( $attachment );
