@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -12,9 +12,10 @@ define( 'PLUGIN_GUID_TREASURY_FILE', 'treasury' );
 
 $pluginParams = array (
 	'load_function' => 'treasury_file_load',
-	'description' => 'Allow better us of {attachment} plugin with treasury package.',
+	'description' => 'Allow better us of {attachment} plugin with treasury package. If you do not use Treasury, there is no point in activating this plugin.',
+	'edit_label' => 'Treasury File',
 	'plugin_type' => STORAGE_PLUGIN,
-	'auto_activate' => TRUE,
+	'auto_activate' => $gBitSystem->isPackageActive( 'treasury' ),
 );
 
 global $gLibertySystem;
