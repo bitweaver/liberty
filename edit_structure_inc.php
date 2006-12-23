@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.15 $
+ * @version  $Revision: 1.16 $
  * @package  liberty
  * @subpackage functions
  */
@@ -59,7 +59,7 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 		$gBitSmarty->assign( 'contentSelect', $contentSelect );
 		$gBitSmarty->assign( 'contentTypes', $contentTypes );
 
-		$subpages = $gStructure->s_get_pages($_REQUEST["structure_id"]);
+		$subpages = $gStructure->getStructurePages($_REQUEST["structure_id"]);
 		$max = count($subpages);
 		$gBitSmarty->assign_by_ref('subpages', $subpages);
 		if ($max != 0) {
@@ -70,7 +70,7 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 
 	if( ( isset( $_REQUEST["action"] ) && ( $_REQUEST["action"] == 'remove' ) ) || !empty( $_REQUEST["confirm"] ) ) {
 		if( $_REQUEST["action"] == 'remove' && !empty( $_REQUEST["confirm"] ) ) {
-			if( $gStructure->s_remove_page( $_REQUEST["structure_id"], false ) ) {
+			if( $gStructure->removeStructurePage( $_REQUEST["structure_id"], false ) ) {
 				header( "Location: ".$_SERVER['PHP_SELF'].'?structure_id='.$gStructure->mInfo["parent_id"] );
 				die;
 			} else {
@@ -107,9 +107,9 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 			$feedback['error'] = $gStructure->mErrors;
 		}
 	} elseif (isset($_REQUEST["create"])) {
-		if (isset($_REQUEST["pageAlias"]))	{
-			$gStructure->set_page_alias($_REQUEST["structure_id"], $_REQUEST["pageAlias"]);
-		}
+//		if (isset($_REQUEST["pageAlias"]))	{
+//			$gStructure->set_page_alias($_REQUEST["structure_id"], $_REQUEST["pageAlias"]);
+//		}
 
 		$structureHash['root_structure_id'] = $rootStructure->mStructureId;
 		$structureHash['parent_id'] = $_REQUEST['structure_id'];

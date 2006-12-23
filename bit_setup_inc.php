@@ -3,7 +3,7 @@
  * base package include
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage functions
  */
@@ -27,6 +27,4 @@ if( empty( $current_default_format_guid ) || empty( $plugin_status ) || $plugin_
 }
 
 $gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
-
-
 ?>

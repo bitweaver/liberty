@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.30 2006/09/12 22:31:53 sylvieg Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.31 2006/12/23 18:55:43 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -39,6 +39,14 @@ class LibertyStructure extends LibertyBase {
 		return( $this->mInfo && count( $this->mInfo ) );
 	}
 
+	/**
+	 * get the details to a given node
+	 * 
+	 * @param array $pStructureId Structure ID of the node
+	 * @param array $pContentId Content ID of the node
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function getNode( $pStructureId=NULL, $pContentId=NULL ) {
 		global $gLibertySystem, $gBitSystem;
 		$contentTypes = $gLibertySystem->mContentTypes;
@@ -74,6 +82,12 @@ class LibertyStructure extends LibertyBase {
 		return $ret;
 	}
 
+	/**
+	 * Check if a node is a root node
+	 * 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function isRootNode() {
 		$ret = FALSE;
 		if( @$this->verifyId( $this->mInfo['structure_id'] ) ) {
@@ -82,6 +96,12 @@ class LibertyStructure extends LibertyBase {
 		return $ret;
 	}
 
+	/**
+	 * get the title of the root node
+	 * 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function getRootTitle() {
 		$ret = NULL;
 		if( isset( $this->mInfo['structure_path'][0]['title'] ) ) {
@@ -90,9 +110,13 @@ class LibertyStructure extends LibertyBase {
 		return $ret;
 	}
 
-	// if you only have a structure id and you want to figure out the root structure id, use this
-	// @param $pParamHash['structure_id'] is the structure id from which you want to figure out the root structure id
-	// @return none. updates $pParamHash['root_structure_id'] by reference
+	/**
+	 * if you only have a structure id and you want to figure out the root structure id, use this 
+	 * 
+	 * @param array $pParamHash['structure_id'] is the structure id from which you want to figure out the root structure id
+	 * @access public
+	 * @return none. updates $pParamHash['root_structure_id'] by reference
+	 */
 	function getRootStructureId( &$pParamHash ) {
 		if( @BitBase::verifyId( $pParamHash['root_structure_id'] ) ) {
 			$pParamHash['root_structure_id'] = $pParamHash['root_structure_id'];
@@ -120,19 +144,25 @@ class LibertyStructure extends LibertyBase {
 		return( $this->verifyId( $this->mStructureId ) );
 	}
 
+	/**
+	 * loadNavigation 
+	 * 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function loadNavigation() {
 		if( $this->isValid() ) {
 			$this->mInfo["prev"] = null;
 			// Get structure info for this page
-			if( !$this->isRootNode() && ($prev_structure_id = $this->get_prev_page( $this->mStructureId )) ) {
+			if( !$this->isRootNode() && ($prev_structure_id = $this->getPrevStructurePage( $this->mStructureId )) ) {
 				$this->mInfo["prev"]   = $this->getNode($prev_structure_id);
 			}
-			$next_structure_id = $this->get_next_page( $this->mStructureId );
+			$next_structure_id = $this->getNextStructurePage( $this->mStructureId );
 			$this->mInfo["next"] = null;
 			if (isset($next_structure_id)) {
 				$this->mInfo["next"]   = $this->getNode( $next_structure_id) ;
 			}
-			$this->mInfo["parent"] = $this->s_get_parent_info( $this->mStructureId );
+			$this->mInfo["parent"] = $this->getStructureParentInfo( $this->mStructureId );
 			$this->mInfo["home"]   = $this->getNode( $this->mStructureId );
 		}
 		return TRUE;
@@ -290,6 +320,13 @@ class LibertyStructure extends LibertyBase {
 		return $ret;
 	}
 
+	/**
+	 * getList 
+	 * 
+	 * @param array $pListHash 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function getList( &$pListHash ) {
 		global $gBitSystem, $gBitUser;
 
@@ -499,6 +536,12 @@ class LibertyStructure extends LibertyBase {
 		return $ret;
 	}
 
+	/**
+	 * moveNodeWest 
+	 * 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function moveNodeWest() {
 		if( $this->isValid() ) {
 			//If there is a parent and the parent isnt the structure root node.
@@ -518,6 +561,12 @@ class LibertyStructure extends LibertyBase {
 		}
 	}
 
+	/**
+	 * moveNodeEast 
+	 * 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function moveNodeEast() {
 		if( $this->isValid() ) {
 			$this->mDb->StartTrans();
@@ -542,6 +591,12 @@ class LibertyStructure extends LibertyBase {
 		}
 	}
 
+	/**
+	 * moveNodeSouth 
+	 * 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function moveNodeSouth() {
 		if( $this->isValid() ) {
 			$this->mDb->StartTrans();
@@ -558,6 +613,12 @@ class LibertyStructure extends LibertyBase {
 		}
 	}
 
+	/**
+	 * moveNodeNorth 
+	 * 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function moveNodeNorth() {
 		if( $this->isValid() ) {
 			$this->mDb->StartTrans();
@@ -586,10 +647,363 @@ class LibertyStructure extends LibertyBase {
 
 
 
+	function removeStructurePage( $structure_id, $delete=FALSE ) {
+		// Now recursively remove
+		if( @$this->verifyId( $structure_id ) ) {
+			$query = "SELECT *
+					  FROM `".BIT_DB_PREFIX."liberty_structures`
+					  WHERE `parent_id`=?";
+			$result = $this->mDb->query( $query, array( (int)$structure_id ) );
+			// Iterate down through the child nodes
+			while( $res = $result->fetchRow() ) {
+				$this->removeStructurePage( $res["structure_id"], $delete );
+			}
+
+			// Only delete a page if other structures arent referencing it
+			if( $delete ) {
+				$page_info = $this->getNode( $structure_id );
+				$query = "SELECT COUNT(*) FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `content_id`=?";
+				$count = $this->mDb->getOne( $query, array( (int)$page_info["page_id"] ) );
+				if( $count = 1 ) {
+					$this->remove_all_versions( $page_info["page_id"] );
+				}
+			}
+
+			// If we are removing the root node, remove the entry in liberty_content as well
+			$query = "SELECT `content_id`
+					  FROM `".BIT_DB_PREFIX."liberty_structures`
+					  WHERE `structure_id`=? AND `structure_id`=`root_structure_id`";
+			$content_id = $this->mDb->getOne( $query, array( (int)$structure_id ) );
+			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=?";
+			$result = $this->mDb->query( $query, array( (int)$content_id) );
+
+			// Remove the structure node
+			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `structure_id`=?";
+			$result = $this->mDb->query( $query, array( (int)$structure_id) );
+			return true;
+		}
+	}
+
+	/**
+	 * Returns an array of info about the parent
+	 * 
+	 * @param array $structure_id 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function getStructureParentInfo($structure_id) {
+		$parent_id = $this->mDb->getOne( "SELECT `parent_id` FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `structure_id`=?", array( (int)$structure_id ) );
+
+		if( !@BitBase::verifyId( $parent_id ) ) {
+			return null;
+		}
+
+		return( $this->getNode( $parent_id ) );
+	}
+
+	/**
+	 * getContentIds 
+	 * 
+	 * @param array $pStructureId 
+	 * @param array $pToc 
+	 * @param float $pLevel 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function getContentIds( $pStructureId, &$pToc, $pLevel=0 ) {
+		$ret = array();
+
+		$query = "SELECT * from `".BIT_DB_PREFIX."liberty_structures` where `parent_id`=? ORDER BY pos, page_alias, content_id";
+		$result = $this->mDb->query( $query, array( (int)$pStructureId ) );
+		while ( $row = $result->fetchRow() ) {
+			array_push( $pToc, $row['content_id'] );
+			$this->getContentIds( $row['structure_id'], $pToc, ++$pLevel );
+		}
+	}
+
+	/**
+	 * getContentArray 
+	 * 
+	 * @param array $pStructureId 
+	 * @param array $pToc 
+	 * @param float $pLevel 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function getContentArray( $pStructureId, &$pToc, $pLevel=0 ) {
+		$query = "SELECT * from `".BIT_DB_PREFIX."liberty_structures` where `structure_id`=?";
+		$result = $this->mDb->query( $query, array( (int)$pStructureId ) );
+		while ( $row = $result->fetchRow() ) {
+			array_push( $pToc, $row['content_id'] );
+			$this->getContentIds( $pStructureId, $pToc, $pLevel );
+		}
+	}
+
+	/**
+	 * exportHtml 
+	 * 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function exportHtml() {
+		$ret = array();
+		$toc = array();
+		$this->getContentArray( $this->mStructureId, $toc );
+		if( count( $toc ) ) {
+			foreach( $toc as $conId ) {
+				if( $viewContent = $this->getLibertyObject( $conId ) ) {
+					$ret[] = array(
+						'type'       => $viewContent->mContentTypeGuid,
+						'landscape'  => FALSE,
+						'url'        => $viewContent->getDisplayUrl(),
+						'content_id' => $viewContent->mContentId,
+					);
+				}
+			}
+		}
+		return $ret;
+	}
+
+	/**
+	 * buildSubtreeToc 
+	 * 
+	 * @param array $id 
+	 * @param array $slide 
+	 * @param string $order 
+	 * @param string $tocPrefix can be used to Prefix a subtree as it would start from a given number (e.g. 2.1.3)
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function buildSubtreeToc($id,$slide=false,$order='asc',$tocPrefix='') {
+		global $gLibertySystem, $gBitSystem;
+		$back = array();
+		$cant = $this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."liberty_structures` where `parent_id`=?",array((int)$id));
+		if ($cant) {
+			$query = "SELECT `structure_id`, `page_alias`, lc.`user_id`, lc.`title`, lc.`content_type_guid`, uu.`login`, uu.`real_name`
+					  FROM `".BIT_DB_PREFIX."liberty_structures` ls INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( lc.`content_id`=ls.`content_id` )
+					  LEFT JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = lc.`user_id` )
+					  WHERE `parent_id`=?
+					  ORDER BY ".$this->mDb->convert_sortmode("pos_".$order);
+			$result = $this->mDb->query($query,array((int)$id));
+			$prefix=1;
+			$contentTypes = $gLibertySystem->mContentTypes;
+			while ($res = $result->fetchRow()) {
+				$res['prefix']=($tocPrefix=='')?'':"$tocPrefix.";
+				$res['prefix'].=$prefix;
+				$prefix++;
+				if( !empty( $contentTypes[$res['content_type_guid']] ) ) {
+					// quick alias for code readability
+					$type = &$contentTypes[$res['content_type_guid']];
+					if( empty( $type['content_object'] ) ) {
+						// create *one* object for each object *type* to  call virtual methods.
+						include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
+						$type['content_object'] = new $type['handler_class']();
+					}
+					$res['title'] = $type['content_object']->getTitle( $res );
+					if ($res['structure_id'] != $id) {
+						$sub = $this->buildSubtreeToc($res['structure_id'],$slide,$order,$res['prefix']);
+						if (is_array($sub)) {
+							$res['sub'] = $sub;
+						}
+					}
+				}
+				$back[] = $res;
+			}
+		} else {
+			return false;
+		}
+		return $back;
+	}
+
+	/**
+	 * getToc 
+	 * 
+	 * @param array $pStructureId 
+	 * @param string $order 
+	 * @param array $showdesc 
+	 * @param array $numbering 
+	 * @param string $numberPrefix 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function getToc($pStructureId=NULL,$order='asc',$showdesc=false,$numbering=true,$numberPrefix='') {
+		if( !@$this->verifyId( $pStructureId ) ) {
+			$pStructureId = $this->mStructureId;
+		}
+		$structure_tree = $this->buildSubtreeToc($pStructureId,false,$order,$numberPrefix);
+		return $this->fetchToc($structure_tree,$showdesc,$numbering);
+	}
+
+	/**
+	 * fetchToc 
+	 * 
+	 * @param array $structure_tree 
+	 * @param array $showdesc 
+	 * @param array $numbering 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function fetchToc($structure_tree,$showdesc,$numbering) {
+		global $gBitSmarty;
+		$ret='';
+		if ($structure_tree != '') {
+			$gBitSmarty->verifyCompileDir();
+			$ret.=$gBitSmarty->fetch( "bitpackage:wiki/book_toc_startul.tpl");
+			foreach($structure_tree as $leaf) {
+				//echo "<br />";print_r($leaf);echo "<br />";
+				$gBitSmarty->assign_by_ref('structure_tree',$leaf);
+				$gBitSmarty->assign('showdesc',$showdesc);
+				$gBitSmarty->assign('numbering',$numbering);
+				$ret.=$gBitSmarty->fetch( "bitpackage:wiki/book_toc_leaf.tpl");
+				if(isset($leaf["sub"]) && is_array($leaf["sub"])) {
+					$ret.=$this->fetchToc($leaf["sub"],$showdesc,$numbering);
+				}
+			}
+			$ret.=$gBitSmarty->fetch( "bitpackage:wiki/book_toc_endul.tpl");
+		}
+		return $ret;
+	}
+
+	/**
+	 * getNextStructurePage 
+	 * 
+	 * @param array $structure_id 
+	 * @param array $deep 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function getNextStructurePage($structure_id, $deep = true) {
+		// If we have children then get the first child
+		if ($deep) {
+			$query  = "SELECT `structure_id`
+					   FROM `".BIT_DB_PREFIX."liberty_structures` ls
+					   WHERE `parent_id`=?
+					   ORDER BY ".$this->mDb->convert_sortmode("pos_asc");
+			$result1 = $this->mDb->query($query,array((int)$structure_id));
+
+			if ($result1->numRows()) {
+				$res = $result1->fetchRow();
+				return $res["structure_id"];
+			}
+		}
+
+		// Try to get the next page with the same parent as this
+		$page_info = $this->getNode($structure_id);
+		$parent_id = $page_info["parent_id"];
+		$page_pos = $page_info["pos"];
+
+		if (!$parent_id)
+			return null;
+
+		$query  = "SELECT `structure_id`
+				   FROM `".BIT_DB_PREFIX."liberty_structures` ls
+				   WHERE `parent_id`=? and `pos`>?
+				   ORDER BY ".$this->mDb->convert_sortmode("pos_asc");
+		$result2 = $this->mDb->query($query,array((int)$parent_id, (int)$page_pos));
+
+		if ($result2->numRows()) {
+			$res = $result2->fetchRow();
+			return $res["structure_id"];
+		}
+		else {
+			return $this->getNextStructurePage($parent_id, false);
+		}
+	}
+
+	/**
+	 * getPrevStructurePage 
+	 * 
+	 * @param array $structure_id 
+	 * @param array $deep 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function getPrevStructurePage($structure_id, $deep = false) {
+		//Drill down to last child for this tree node
+		if ($deep) {
+			$query  = "select `structure_id` ";
+			$query .= "from `".BIT_DB_PREFIX."liberty_structures` ls ";
+			$query .= "where `parent_id`=? ";
+			$query .= "order by ".$this->mDb->convert_sortmode("pos_desc");
+			$result = $this->mDb->query($query,array($structure_id));
+
+			if ($result->numRows()) {
+				//There are more children
+				$res = $result->fetchRow();
+				$structure_id = $this->getPrevStructurePage($res["structure_id"], true);
+			}
+			return $structure_id;
+		}
+		// Try to get the previous page with the same parent as this
+		$page_info = $this->getNode($structure_id);
+		$parent_id = $page_info["parent_id"];
+		$pos	   = $page_info["pos"];
+
+		//At the top of the tree
+		if (!isset($parent_id))
+			return null;
+
+		$query  = "select `structure_id` ";
+		$query .= "from `".BIT_DB_PREFIX."liberty_structures` ls ";
+		$query .= "where `parent_id`=? and `pos`<? ";
+		$query .= "order by ".$this->mDb->convert_sortmode("pos_desc");
+		$result =  $this->mDb->query($query,array((int)$parent_id, (int)$pos));
+
+		if ($result->numRows()) {
+			//There is a previous sibling
+			$res = $result->fetchRow();
+			$structure_id = $this->getPrevStructurePage($res["structure_id"], true);
+		}
+		else {
+			//No previous siblings, just the parent
+			$structure_id = $parent_id;
+		}
+		return $structure_id;
+	}
+
+	/**
+	 * Return an array of subpages
+	 * 
+	 * @param array $pParentId 
+	 * @access public
+	 * @return array of child structure pages
+	 */
+	function getStructurePages( $pParentId ) {
+		$ret = array();
+		$query =  "SELECT `pos`, `structure_id`, `parent_id`, ls.`content_id`, lc.`title`, `page_alias`
+			FROM `".BIT_DB_PREFIX."liberty_structures` ls, `".BIT_DB_PREFIX."liberty_content` lc
+			WHERE ls.`content_id` = lc.`content_id` AND `parent_id`=? ";
+		$query .= "order by ".$this->mDb->convert_sortmode("pos_asc");
+		$result = $this->mDb->query($query,array((int)$pParentId));
+		while ($res = $result->fetchRow()) {
+			//$ret[] = $this->populate_page_info($res);
+			$ret[] = $res;
+		}
+		return $ret;
+	}
+
+
+
+	// {{{ the following is just for the transition phase...
+	function s_get_pages()       { deprecated( 'Please use getStructurePages() instead' ); }
+	function get_prev_page()     { deprecated( 'Please use getPrevStructurePage() instead' ); }
+	function get_next_page()     { deprecated( 'Please use getNextStructurePage() instead' ); }
+	function get_toc()           { deprecated( 'Please use getToc() instead' ); }
+	function fetch_toc()         { deprecated( 'Please use fetchToc() instead' ); }
+	function s_get_parent_info() { deprecated( 'Please use getStructureParentInfo() instead' ); }
+	function build_subtree_toc() { deprecated( 'Please use buildSubtreeToc() instead' ); }
+	// }}}
 
 
 
 
+
+// ====================== probably unused functions - will probably be removed (or revived and cleaned up) at some point
+
+
+
+
+/*
 	function s_export_structure($structure_id) {
 		global $exportlib, $bitdomain, $gBitSystem;
 
@@ -642,295 +1056,13 @@ class LibertyStructure extends LibertyBase {
 		}
 	}
 
-	function s_remove_page( $structure_id, $delete=FALSE ) {
-		// Now recursively remove
-		if( @$this->verifyId( $structure_id ) ) {
-			$query = "SELECT *
-					  FROM `".BIT_DB_PREFIX."liberty_structures`
-					  WHERE `parent_id`=?";
-			$result = $this->mDb->query( $query, array( (int)$structure_id ) );
-			// Iterate down through the child nodes
-			while( $res = $result->fetchRow() ) {
-				$this->s_remove_page( $res["structure_id"], $delete );
-			}
-
-			// Only delete a page if other structures arent referencing it
-			if( $delete ) {
-				$page_info = $this->getNode( $structure_id );
-				$query = "SELECT COUNT(*) FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `content_id`=?";
-				$count = $this->mDb->getOne( $query, array( (int)$page_info["page_id"] ) );
-				if( $count = 1 ) {
-					$this->remove_all_versions( $page_info["page_id"] );
-				}
-			}
-
-			// If we are removing the root node, remove the entry in liberty_content as well
-			$query = "SELECT `content_id`
-					  FROM `".BIT_DB_PREFIX."liberty_structures`
-					  WHERE `structure_id`=? AND `structure_id`=`root_structure_id`";
-			$content_id = $this->mDb->getOne( $query, array( (int)$structure_id ) );
-			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=?";
-			$result = $this->mDb->query( $query, array( (int)$content_id) );
-
-			// Remove the structure node
-			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `structure_id`=?";
-			$result = $this->mDb->query( $query, array( (int)$structure_id) );
-			return true;
-		}
-	}
-
-	/*shared*/
-	function remove_from_structure($structure_id) {
-		// Now recursively remove
-		$query  = "select `structure_id` ";
-		$query .= "from `".BIT_DB_PREFIX."liberty_structures` as ls, `".BIT_DB_PREFIX."wiki_pages` as wp ";
-		$query .= "where wp.`content_id`=ls.`content_id` and `parent_id`=?";
-		$result = $this->mDb->query($query, array( $structure_id ) );
-
-		while ($res = $result->fetchRow()) {
-			$this->remove_from_structure($res["structure_id"]);
-		}
-
-		$query = "delete from `".BIT_DB_PREFIX."liberty_structures` where `structure_id`=?";
-		$result = $this->mDb->query($query, array( $structure_id ) );
-		return true;
-	}
-
-/**Returns an array of info about the parent
-	structure_id
-
-	See get_page_info for details of array
-*/
-	function s_get_parent_info($structure_id) {
-		// Try to get the parent of this page
-		$parent_id = $this->mDb->getOne("select `parent_id` from `".BIT_DB_PREFIX."liberty_structures` where `structure_id`=?",array((int)$structure_id));
-
-	if (!$parent_id)
-		return null;
-		return ($this->getNode($parent_id));
-	}
-
-	// gets an array of content_id's in order of the hierarchy.
-	function getContentIds( $pStructureId, &$pToc, $pLevel=0 ) {
-		$ret = array();
-
-		$query = "SELECT * from `".BIT_DB_PREFIX."liberty_structures` where `parent_id`=? ORDER BY pos, page_alias, content_id";
-		$result = $this->mDb->query( $query, array( (int)$pStructureId ) );
-		while ( $row = $result->fetchRow() ) {
-			array_push( $pToc, $row['content_id'] );
-			$this->getContentIds( $row['structure_id'], $pToc, ++$pLevel );
-		}
-	}
-
-	function getContentArray( $pStructureId, &$pToc, $pLevel=0 ) {
-		$query = "SELECT * from `".BIT_DB_PREFIX."liberty_structures` where `structure_id`=?";
-		$result = $this->mDb->query( $query, array( (int)$pStructureId ) );
-		while ( $row = $result->fetchRow() ) {
-			array_push( $pToc, $row['content_id'] );
-			$this->getContentIds( $pStructureId, $pToc, $pLevel );
-		}
-	}
-
-	function exportHtml() {
-		$ret = array();
-		$toc = array();
-		$this->getContentArray( $this->mStructureId, $toc );
-		if( count( $toc ) ) {
-			foreach( $toc as $conId ) {
-				if( $viewContent = $this->getLibertyObject( $conId ) ) {
-					$ret[] = array(	'type' => $viewContent->mContentTypeGuid,
-									'landscape' => FALSE,
-									'url' => $viewContent->getDisplayUrl(),
-									'content_id' => $viewContent->mContentId,
-								);
-				}
-			}
-		}
-		return $ret;
-	}
-
-	// that is intended to replace the get_subtree_toc and get_subtree_toc_slide
-	// it's used only in {toc} thing hardcoded in parse gBitSystem->parse -- (mose)
-	// the $tocPrefix can be used to Prefix a subtree as it would start from a given number (e.g. 2.1.3)
-	function build_subtree_toc($id,$slide=false,$order='asc',$tocPrefix='') {
-		global $gLibertySystem, $gBitSystem;
-		$back = array();
-		$cant = $this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."liberty_structures` where `parent_id`=?",array((int)$id));
-		if ($cant) {
-			$query = "SELECT `structure_id`, `page_alias`, lc.`user_id`, lc.`title`, lc.`content_type_guid`, uu.`login`, uu.`real_name`
-					  FROM `".BIT_DB_PREFIX."liberty_structures` ls INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( lc.`content_id`=ls.`content_id` )
-					  LEFT JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = lc.`user_id` )
-					  WHERE `parent_id`=?
-					  ORDER BY ".$this->mDb->convert_sortmode("pos_".$order);
-			$result = $this->mDb->query($query,array((int)$id));
-			$prefix=1;
-			$contentTypes = $gLibertySystem->mContentTypes;
-			while ($res = $result->fetchRow()) {
-				$res['prefix']=($tocPrefix=='')?'':"$tocPrefix.";
-				$res['prefix'].=$prefix;
-				$prefix++;
-				if( !empty( $contentTypes[$res['content_type_guid']] ) ) {
-					// quick alias for code readability
-					$type = &$contentTypes[$res['content_type_guid']];
-					if( empty( $type['content_object'] ) ) {
-						// create *one* object for each object *type* to  call virtual methods.
-						include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
-						$type['content_object'] = new $type['handler_class']();
-					}
-					$res['title'] = $type['content_object']->getTitle( $res );
-					if ($res['structure_id'] != $id) {
-						$sub = $this->build_subtree_toc($res['structure_id'],$slide,$order,$res['prefix']);
-						if (is_array($sub)) {
-							$res['sub'] = $sub;
-						}
-					}
-				}
-				$back[] = $res;
-			}
-		} else {
-			return false;
-		}
-		return $back;
-	}
-
-	function get_toc($pStructureId=NULL,$order='asc',$showdesc=false,$numbering=true,$numberPrefix='') {
-		if( !@$this->verifyId( $pStructureId ) ) {
-			$pStructureId = $this->mStructureId;
-		}
-		$structure_tree = $this->build_subtree_toc($pStructureId,false,$order,$numberPrefix);
-		return $this->fetch_toc($structure_tree,$showdesc,$numbering);
-	}
-
-	function fetch_toc($structure_tree,$showdesc,$numbering) {
-		global $gBitSmarty;
-		$ret='';
-		if ($structure_tree != '') {
-			$gBitSmarty->verifyCompileDir();
-			$ret.=$gBitSmarty->fetch( "bitpackage:wiki/book_toc_startul.tpl");
-			foreach($structure_tree as $leaf) {
-				//echo "<br />";print_r($leaf);echo "<br />";
-				$gBitSmarty->assign_by_ref('structure_tree',$leaf);
-				$gBitSmarty->assign('showdesc',$showdesc);
-				$gBitSmarty->assign('numbering',$numbering);
-				$ret.=$gBitSmarty->fetch( "bitpackage:wiki/book_toc_leaf.tpl");
-				if(isset($leaf["sub"]) && is_array($leaf["sub"])) {
-					$ret.=$this->fetch_toc($leaf["sub"],$showdesc,$numbering);
-				}
-			}
-			$ret.=$gBitSmarty->fetch( "bitpackage:wiki/book_toc_endul.tpl");
-		}
-		return $ret;
-	}
-	// end of replacement
-
-
-/*
-	//Is this page the head page for a structure?
+  //Is this page the head page for a structure?
 	function get_struct_ref_if_head($title) {
 	$query =  "SELECT `structure_id`
 			   FROM `".BIT_DB_PREFIX."liberty_structures` ls, `".BIT_DB_PREFIX."wiki_pages` wp,`".BIT_DB_PREFIX."liberty_content` lc
 			   WHERE wp.`content_id`=ls.`content_id` AND lc.`content_id` = wp.`content_id` AND (`parent_id` is null or `parent_id`=0) and lc.`title`=?";
 		$structure_id = $this->mDb->getOne($query,array($title));
 		return $structure_id;
-	}
-*/
-	function get_next_page($structure_id, $deep = true) {
-		// If we have children then get the first child
-		if ($deep) {
-			$query  = "SELECT `structure_id`
-					   FROM `".BIT_DB_PREFIX."liberty_structures` ls
-					   WHERE `parent_id`=?
-					   ORDER BY ".$this->mDb->convert_sortmode("pos_asc");
-			$result1 = $this->mDb->query($query,array((int)$structure_id));
-
-			if ($result1->numRows()) {
-				$res = $result1->fetchRow();
-				return $res["structure_id"];
-			}
-		}
-
-		// Try to get the next page with the same parent as this
-		$page_info = $this->getNode($structure_id);
-		$parent_id = $page_info["parent_id"];
-		$page_pos = $page_info["pos"];
-
-		if (!$parent_id)
-			return null;
-
-		$query  = "SELECT `structure_id`
-				   FROM `".BIT_DB_PREFIX."liberty_structures` ls
-				   WHERE `parent_id`=? and `pos`>?
-				   ORDER BY ".$this->mDb->convert_sortmode("pos_asc");
-		$result2 = $this->mDb->query($query,array((int)$parent_id, (int)$page_pos));
-
-		if ($result2->numRows()) {
-			$res = $result2->fetchRow();
-			return $res["structure_id"];
-		}
-		else {
-			return $this->get_next_page($parent_id, false);
-		}
-	}
-
-	function get_prev_page($structure_id, $deep = false) {
-
-	//Drill down to last child for this tree node
-		if ($deep) {
-			$query  = "select `structure_id` ";
-			$query .= "from `".BIT_DB_PREFIX."liberty_structures` ls ";
-			$query .= "where `parent_id`=? ";
-			$query .= "order by ".$this->mDb->convert_sortmode("pos_desc");
-			$result = $this->mDb->query($query,array($structure_id));
-
-			if ($result->numRows()) {
-				//There are more children
-				$res = $result->fetchRow();
-				$structure_id = $this->get_prev_page($res["structure_id"], true);
-			}
-			return $structure_id;
-		}
-		// Try to get the previous page with the same parent as this
-		$page_info = $this->getNode($structure_id);
-		$parent_id = $page_info["parent_id"];
-		$pos	   = $page_info["pos"];
-
-		//At the top of the tree
-		if (!isset($parent_id))
-			return null;
-
-		$query  = "select `structure_id` ";
-		$query .= "from `".BIT_DB_PREFIX."liberty_structures` ls ";
-		$query .= "where `parent_id`=? and `pos`<? ";
-		$query .= "order by ".$this->mDb->convert_sortmode("pos_desc");
-		$result =  $this->mDb->query($query,array((int)$parent_id, (int)$pos));
-
-		if ($result->numRows()) {
-			//There is a previous sibling
-			$res = $result->fetchRow();
-			$structure_id = $this->get_prev_page($res["structure_id"], true);
-		}
-		else {
-			//No previous siblings, just the parent
-			$structure_id = $parent_id;
-		}
-		return $structure_id;
-	}
-
-	/** Return an array of subpages
-	  Used by the 'After Page' select box
-  */
-	function s_get_pages($parent_id) {
-		$ret = array();
-		$query =  "SELECT `pos`, `structure_id`, `parent_id`, ls.`content_id`, lc.`title`, `page_alias`
-			FROM `".BIT_DB_PREFIX."liberty_structures` ls, `".BIT_DB_PREFIX."liberty_content` lc
-			WHERE ls.`content_id` = lc.`content_id` AND `parent_id`=? ";
-		$query .= "order by ".$this->mDb->convert_sortmode("pos_asc");
-		$result = $this->mDb->query($query,array((int)$parent_id));
-		while ($res = $result->fetchRow()) {
-			//$ret[] = $this->populate_page_info($res);
-			$ret[] = $res;
-		}
-		return $ret;
 	}
 
 	function get_max_children($structure_id) {
@@ -944,9 +1076,8 @@ class LibertyStructure extends LibertyBase {
 		return $res;
 	}
 
-	/** Return all the pages belonging to the structure
-  \return An array of page_info arrays
-  */
+//   Return all the pages belonging to the structure
+//return An array of page_info arrays
   function s_get_structure_pages($structure_id) {
 	$ret = array();
 	// Add the structure page as well
@@ -955,9 +1086,8 @@ class LibertyStructure extends LibertyBase {
 		return array_merge($ret, $ret2);
   }
 
-	/** Return a unique list of pages belonging to the structure
-  \return An array of page_info arrays
-  */
+// Return a unique list of pages belonging to the structure
+//return An array of page_info arrays
 	function s_get_structure_pages_unique($structure_id) {
 	$ret = array();
 	// Add the structure page as well
@@ -966,10 +1096,9 @@ class LibertyStructure extends LibertyBase {
 		return array_unique(array_merge($ret, $ret2));
   }
 
-	/** Return all the pages belonging to a structure
-	\scope private
-	\return An array of page_info arrays
-	*/
+//   Return all the pages belonging to a structure
+//  \scope private
+//  \return An array of page_info arrays
 	function _s_get_structure_pages($structure_id) {
 		$ret = array();
 		$query =  "SELECT `pos`, `structure_id`, `parent_id`, ls.`content_id`, lc.`title`, `page_alias`
@@ -999,8 +1128,8 @@ class LibertyStructure extends LibertyBase {
 
 
 
-  //This nifty function creates a static WebHelp version using a TikiStructure as
-  //the base.
+//This nifty function creates a static WebHelp version using a TikiStructure as
+//the base.
   function structure_to_webhelp($structure_id, $dir, $top) {
 	global $style_base;
 
@@ -1146,6 +1275,7 @@ class LibertyStructure extends LibertyBase {
 		}
 		return $pages;
 	}
+*/
 }
 
 global $structlib;

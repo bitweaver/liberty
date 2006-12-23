@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_structure_toc.php,v 1.3 2006/01/14 19:54:56 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_structure_toc.php,v 1.4 2006/12/23 18:55:44 squareing Exp $
 /**
  * Params:
  * @package liberty
@@ -17,6 +17,6 @@ if( is_object( $gContent ) && ( empty( $gStructure ) || !$gStructure->isValid() 
 	$struct = &$gStructure;
 }
 if( is_object( $struct ) && count( $struct->isValid() ) ) {
-	$gBitSmarty->assign( 'modStructureTOC', $struct->get_toc( $struct->mInfo['root_structure_id'] ) );
+	$gBitSmarty->assign( 'modStructureTOC', $struct->getToc( $struct->mInfo['root_structure_id'] ) );
 }
 ?>
