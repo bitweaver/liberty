@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.80 $
+ * @version  $Revision: 1.81 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -1238,7 +1238,7 @@ class TikiWikiParser extends BitBase {
 								$repl .= ' colspan="'.( $maxcols - $k ).'"';
 							}
 
-							$repl .= ">{$cols[$i][$j][$k]}</$thd>";
+							$repl .= ">".( str_replace( "\\n", "<br />", $cols[$i][$j][$k] ) )."</$thd>";
 						}
 
 						$repl .= '</tr>';
