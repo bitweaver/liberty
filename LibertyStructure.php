@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.32 2006/12/23 19:03:58 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.33 2006/12/25 21:44:03 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -154,10 +154,10 @@ class LibertyStructure extends LibertyBase {
 		if( $this->isValid() ) {
 			$this->mInfo["prev"] = null;
 			// Get structure info for this page
-			if( !$this->isRootNode() && ($prev_structure_id = $this->getPrevStructurePage( $this->mStructureId )) ) {
+			if( !$this->isRootNode() && ($prev_structure_id = $this->getPrevStructureNode( $this->mStructureId )) ) {
 				$this->mInfo["prev"]   = $this->getNode($prev_structure_id);
 			}
-			$next_structure_id = $this->getNextStructurePage( $this->mStructureId );
+			$next_structure_id = $this->getNextStructureNode( $this->mStructureId );
 			$this->mInfo["next"] = null;
 			if (isset($next_structure_id)) {
 				$this->mInfo["next"]   = $this->getNode( $next_structure_id) ;
@@ -647,7 +647,7 @@ class LibertyStructure extends LibertyBase {
 
 
 
-	function removeStructurePage( $structure_id, $delete=FALSE ) {
+	function removeStructureNode( $structure_id, $delete=FALSE ) {
 		// Now recursively remove
 		if( @$this->verifyId( $structure_id ) ) {
 			$query = "SELECT *
@@ -656,7 +656,7 @@ class LibertyStructure extends LibertyBase {
 			$result = $this->mDb->query( $query, array( (int)$structure_id ) );
 			// Iterate down through the child nodes
 			while( $res = $result->fetchRow() ) {
-				$this->removeStructurePage( $res["structure_id"], $delete );
+				$this->removeStructureNode( $res["structure_id"], $delete );
 			}
 
 			// Only delete a page if other structures arent referencing it
@@ -865,14 +865,14 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/**
-	 * getNextStructurePage 
+	 * getNextStructureNode 
 	 * 
 	 * @param array $structure_id 
 	 * @param array $deep 
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function getNextStructurePage($structure_id, $deep = true) {
+	function getNextStructureNode($structure_id, $deep = true) {
 		// If we have children then get the first child
 		if ($deep) {
 			$query  = "SELECT `structure_id`
@@ -906,19 +906,19 @@ class LibertyStructure extends LibertyBase {
 			return $res["structure_id"];
 		}
 		else {
-			return $this->getNextStructurePage($parent_id, false);
+			return $this->getNextStructureNode($parent_id, false);
 		}
 	}
 
 	/**
-	 * getPrevStructurePage 
+	 * getPrevStructureNode 
 	 * 
 	 * @param array $structure_id 
 	 * @param array $deep 
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function getPrevStructurePage($structure_id, $deep = false) {
+	function getPrevStructureNode($structure_id, $deep = false) {
 		//Drill down to last child for this tree node
 		if ($deep) {
 			$query  = "select `structure_id` ";
@@ -930,7 +930,7 @@ class LibertyStructure extends LibertyBase {
 			if ($result->numRows()) {
 				//There are more children
 				$res = $result->fetchRow();
-				$structure_id = $this->getPrevStructurePage($res["structure_id"], true);
+				$structure_id = $this->getPrevStructureNode($res["structure_id"], true);
 			}
 			return $structure_id;
 		}
@@ -952,7 +952,7 @@ class LibertyStructure extends LibertyBase {
 		if ($result->numRows()) {
 			//There is a previous sibling
 			$res = $result->fetchRow();
-			$structure_id = $this->getPrevStructurePage($res["structure_id"], true);
+			$structure_id = $this->getPrevStructureNode($res["structure_id"], true);
 		}
 		else {
 			//No previous siblings, just the parent
@@ -968,7 +968,7 @@ class LibertyStructure extends LibertyBase {
 	 * @access public
 	 * @return array of child structure pages
 	 */
-	function getStructurePages( $pParentId ) {
+	function getStructureNodes( $pParentId ) {
 		$ret = array();
 		$query =  "SELECT `pos`, `structure_id`, `parent_id`, ls.`content_id`, lc.`title`, `page_alias`
 			FROM `".BIT_DB_PREFIX."liberty_structures` ls, `".BIT_DB_PREFIX."liberty_content` lc
@@ -985,9 +985,10 @@ class LibertyStructure extends LibertyBase {
 
 
 	// {{{ the following is just for the transition phase...
-	function s_get_pages()       { deprecated( 'Please use getStructurePages() instead' ); }
-	function get_prev_page()     { deprecated( 'Please use getPrevStructurePage() instead' ); }
-	function get_next_page()     { deprecated( 'Please use getNextStructurePage() instead' ); }
+	function s_remove_page()     { deprecated( 'Please use removeStructureNode() instead' ); }
+	function s_get_pages()       { deprecated( 'Please use getStructureNodes() instead' ); }
+	function get_prev_page()     { deprecated( 'Please use getPrevStructureNode() instead' ); }
+	function get_next_page()     { deprecated( 'Please use getNextStructureNode() instead' ); }
 	function get_toc()           { deprecated( 'Please use getToc() instead' ); }
 	function fetch_toc()         { deprecated( 'Please use fetchToc() instead' ); }
 	function s_get_parent_info() { deprecated( 'Please use getStructureParentInfo() instead' ); }

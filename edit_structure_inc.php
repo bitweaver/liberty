@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.16 $
+ * @version  $Revision: 1.17 $
  * @package  liberty
  * @subpackage functions
  */
@@ -59,7 +59,7 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 		$gBitSmarty->assign( 'contentSelect', $contentSelect );
 		$gBitSmarty->assign( 'contentTypes', $contentTypes );
 
-		$subpages = $gStructure->getStructurePages($_REQUEST["structure_id"]);
+		$subpages = $gStructure->getStructureNodes($_REQUEST["structure_id"]);
 		$max = count($subpages);
 		$gBitSmarty->assign_by_ref('subpages', $subpages);
 		if ($max != 0) {
@@ -70,7 +70,7 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 
 	if( ( isset( $_REQUEST["action"] ) && ( $_REQUEST["action"] == 'remove' ) ) || !empty( $_REQUEST["confirm"] ) ) {
 		if( $_REQUEST["action"] == 'remove' && !empty( $_REQUEST["confirm"] ) ) {
-			if( $gStructure->removeStructurePage( $_REQUEST["structure_id"], false ) ) {
+			if( $gStructure->removeStructureNode( $_REQUEST["structure_id"], false ) ) {
 				header( "Location: ".$_SERVER['PHP_SELF'].'?structure_id='.$gStructure->mInfo["parent_id"] );
 				die;
 			} else {
