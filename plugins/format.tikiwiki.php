@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.79 $
+ * @version  $Revision: 1.80 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -1190,41 +1190,55 @@ class TikiWikiParser extends BitBase {
 		} else {
 			// New syntax for tables
 			// REWRITE THIS CODE
-			if (preg_match_all("/\|\|(.*?)\|\|/s", $data, $tables)) {
+			if( preg_match_all( "/\|\|(.*?)\|\|/s", $data, $tables ) ) {
 				$maxcols = 1;
 
 				$cols = array();
 
-				for ($i = 0; $i < count($tables[0]); $i++) {
-					$rows = split("\n|\<br\/\>", $tables[0][$i]);
+				for( $i = 0; $i < count( $tables[0] ); $i++ ) {
+					$rows = split( "\n|\<br\/\>", $tables[0][$i] );
 					$col[$i] = array();
 
-					for ($j = 0; $j < count($rows); $j++) {
-						$rows[$j] = str_replace('||', '', $rows[$j]);
-						$cols[$i][$j] = explode('|', $rows[$j]);
-						if (count($cols[$i][$j]) > $maxcols)
-							$maxcols = count($cols[$i][$j]);
+					for( $j = 0; $j < count( $rows ); $j++ ) {
+						$rows[$j]     = str_replace( '||', '', $rows[$j] );
+						$cols[$i][$j] = explode( '|', $rows[$j] );
+						if( count( $cols[$i][$j] ) > $maxcols ) {
+							$maxcols = count( $cols[$i][$j] );
+						}
 					}
 				}
 
-				for ($i = 0; $i < count($tables[0]); $i++) {
+				for( $i = 0; $i < count( $tables[0] ); $i++ ) {
 					$repl = '<table class="bittable">';
 
-					for ($j = 0; $j < count($cols[$i]); $j++) {
-						$ncols = count($cols[$i][$j]);
+					if( preg_match( "#^~#", $cols[$i][0][0] ) && $cols[$i][0][0] = preg_replace( "#^~#", "", $cols[$i][0][0] ) ) {
+						$th = TRUE;
+					} else {
+						$th = FALSE;
+					}
 
-						if ($ncols == 1 && !$cols[$i][$j][0])
+					for( $j = 0; $j < count( $cols[$i] ); $j++ ) {
+						$ncols = count( $cols[$i][$j] );
+
+						if( $ncols == 1 && !$cols[$i][$j][0] ) {
 							continue;
+						}
 
-						$repl .= '<tr class="'.( ( $j % 2 ) ? 'even' : 'odd' ).'">';
+						if( $j == 0 && $th ) {
+							$repl .= '<tr>';
+						} else {
+							$repl .= '<tr class="'.( ( $j % 2 ) ? 'odd' : 'even' ).'">';
+						}
 
-						for ($k = 0; $k < $ncols; $k++) {
-							$repl .= '<td ';
+						for( $k = 0; $k < $ncols; $k++ ) {
+							$thd = ( ( $j == 0 && $th ) ? 'th' : 'td' );
+							$repl .= "<$thd";
 
-							if ($k == $ncols - 1 && $ncols < $maxcols)
-								$repl .= ' colspan="' . ($maxcols - $k).'"';
+							if( $k == $ncols - 1 && $ncols < $maxcols ) {
+								$repl .= ' colspan="'.( $maxcols - $k ).'"';
+							}
 
-							$repl .= '>' . $cols[$i][$j][$k] . '</td>';
+							$repl .= ">{$cols[$i][$j][$k]}</$thd>";
 						}
 
 						$repl .= '</tr>';
