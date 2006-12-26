@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.51 2006/12/26 05:59:11 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.52 2006/12/26 17:40:12 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -180,7 +180,7 @@ class LibertyAttachable extends LibertyContent {
 			// tiki files upload
 			if( !empty( $_FILES['upload']['size'] ) ) {
 				$pParamHash['upload'] = $_FILES['upload'];
-			} else {
+			} elseif( !empty( $_FILES['upload']['name'] ) ) {
 				$this->mErrors['upload'] = tra( 'Empty file' ).': '.$_FILES['upload']['name'];
 			}
 		}
