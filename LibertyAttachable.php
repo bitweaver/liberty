@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.50 2006/12/23 14:21:08 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.51 2006/12/26 05:59:11 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -70,6 +70,9 @@ class LibertyAttachable extends LibertyContent {
 		return BIT_ROOT_URL.LibertyAttachable::getStorageBranch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pRootDir );
 	}
 
+	function getStorageSubDirName() {
+		return 'images';
+	}
 
 	/**
 	* getStorageBranch - get url to store files for the feature site_upload_dir. It creates a calculable hierarchy of directories
@@ -175,7 +178,11 @@ class LibertyAttachable extends LibertyContent {
 
 		if( !empty( $_FILES['upload'] ) ) {
 			// tiki files upload
-			$pParamHash['upload'] = $_FILES['upload'];
+			if( !empty( $_FILES['upload']['size'] ) ) {
+				$pParamHash['upload'] = $_FILES['upload'];
+			} else {
+				$this->mErrors['upload'] = tra( 'Empty file' ).': '.$_FILES['upload']['name'];
+			}
 		}
 
 		if( !empty( $pParamHash['upload']['size'] ) && !empty( $pParamHash['upload'] ) && is_array( $pParamHash['upload'] ) ) {
@@ -257,7 +264,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 							$ext = substr( $storeRow['upload']['name'], strrpos( $storeRow['upload']['name'], '.' ) + 1 );
 							$storeRow['upload']['type'] = $gBitSystem->lookupMimeType( $ext );
 						}
-						$storeRow['upload']['dest_path'] = $this->getStorageBranch( $storeRow['attachment_id'], $pParamHash['user_id'], 'images' );
+						$storeRow['upload']['dest_path'] = $this->getStorageBranch( $storeRow['attachment_id'], $pParamHash['user_id'], $this->getStorageSubDirName() );
 						if (!empty( $pParamHash['thumbnail_sizes'] ) ) {
 							$storeRow['upload']['thumbnail_sizes'] = $pParamHash['thumbnail_sizes'];
 						}
