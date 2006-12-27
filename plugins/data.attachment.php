@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.12 2006/12/18 10:50:27 squareing Exp $
+// $Id: data.attachment.php,v 1.13 2006/12/27 20:36:52 squareing Exp $
 
 /**
  * definitions
@@ -69,6 +69,17 @@ function data_attachment_help() {
 				.'<td>' . tra( "Allows you to specify a relative or absolute URL the image will link to if clicked. If set to false, no link is inserted.")
 				. tra("(Default = ") . '<strong>'.tra( 'link to source image' ).'</strong>)</td>'
 			.'</tr>'
+			.'<tr class="even">
+				<td>page_id</td>
+				<td>'.tra( 'numeric (optional)' ).'</td>
+				<td>'.tra( "To include any wiki page you can use it's page_id number." ).'</td>
+			</tr>
+			<tr class="odd">
+				<td>content_id</td>
+				<td>'.tra( 'numeric (optional)' ).'</td>
+				<td>'.tra( 'To include any content from bitweaver insert the apprpropriate numeric content id. This can include blog posts, images, wiki texts...<br />
+					Avaliable content can be viewed <a href="'.LIBERTY_PKG_URL.'list_content.php">here</a>' ).'</td>
+			</tr>'
 			.'<tr class="even">'
 				.'<td>'.tra( "styling" ).'</td>'
 				.'<td>'.tra( "string").'<br />'.tra("(optional)").'</td>'
@@ -113,6 +124,25 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 			' />';
 
 		$ret .= ( !empty( $att['file_details'] ) ? '<br />'.$att['file_details'] : '' );
+
+		// link to page by page_id
+		if( @BitBase::verifyId( $pParams['page_id'] ) ) {
+			require_once( WIKI_PKG_PATH.'BitPage.php');
+			$wp = new BitPage( $pParams['page_id'] );
+			if( $wp->load() ) {
+				$pParams['link'] = $wp->getDisplayUrl();
+			}
+		// link to any content by content_id
+		} elseif( isset( $pParams['content_id'] ) && is_numeric( $pParams['content_id'] ) ) {
+			if( $obj = LibertyBase::getLibertyObject( $pParams['content_id'] ) ) {
+				$pParams['link'] = $obj->getDisplayUrl();
+			}
+		// link to page by page_name
+		} elseif( isset( $pParams['page_name'] ) ) {
+			require_once( WIKI_PKG_PATH.'BitPage.php');
+			$wp = new BitPage();
+			$pParams['link'] = $wp->getDisplayUrl( $pParams['page_name'] );
+		}
 
 		// use specified link as href. insert default link to source only when 
 		// source not already displayed
