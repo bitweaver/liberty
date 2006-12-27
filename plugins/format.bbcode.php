@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -54,10 +54,6 @@ function bbcode_parse_data( &$pParseHash, &$pCommonObject ) {
 
 	// eventually we should strip tags, maybe tikilink, or other things.
 	parse_data_plugins( $ret, $foo, $bar, $empty, $pCommonObject );
-	// this function is called manually, since it processes the BBCODE code
-	if( preg_match( "/\{maketoc.*?\}/i", $ret ) && @$gLibertySystem->mPlugins['datamaketoc']['is_active'] == 'y' ) {
-		$ret = data_maketoc( $ret );
-	}
 	if( preg_match( "/\(\(([^\)][^\)]+)\)\)/", $ret ) ) {
 		preg_match_all( "/\(\(([^\)][^\)]+)\)\)/", $ret, $pages );
 		foreach (array_unique($pages[1])as $page_parse) {
@@ -67,6 +63,10 @@ function bbcode_parse_data( &$pParseHash, &$pCommonObject ) {
 			$page_parse_pq = preg_quote($page_parse, "/");
 			$ret = preg_replace("/\(\($page_parse_pq\)\)/", "$repl", $ret);
 		}
+	}
+	// this function is called manually, since it processes the HTML code
+	if( preg_match( "/\{maketoc.*?\}/i", $ret ) && @$gLibertySystem->mPlugins['datamaketoc']['is_active'] == 'y' ) {
+		$ret = data_maketoc( $ret );
 	}
 	return $ret;
 }
