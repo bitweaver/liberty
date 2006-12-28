@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.81 $
+ * @version  $Revision: 1.82 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -10,6 +10,7 @@ global $gLibertySystem;
  */
 define( 'PLUGIN_GUID_TIKIWIKI', 'tikiwiki' );
 define( 'WIKI_WORDS_REGEX', '[A-z0-9]{2}[\w\d_\-]+[A-Z_][\w\d_\-]+[A-z0-9]+' );
+define( 'EMAIL_ADDRESS_REGEX', '\w[-.\w]*\@[-.\w]+\.\w{2,3}' );
 
 /**
  * @package  liberty
@@ -489,7 +490,7 @@ class TikiWikiParser extends BitBase {
 
 	// This function handles wiki codes for those special HTML characters
 	// that textarea won't leave alone.
-	function parse_htmlchar(&$data) {
+	function parse_htmlchar( &$data ) {
 		// cleaning some user input
 		$data = preg_replace( "/&(?!([a-z]{1,7};))/", "&amp;", $data );
 
@@ -514,6 +515,98 @@ class TikiWikiParser extends BitBase {
 
 		// HTML numeric character entities
 		$data = preg_replace( "/~([0-9]+)~/", "&#$1;", $data );
+	}
+
+	// html encode all characters
+	// taken from: http://www.bbsinc.com/iso8859.html
+	function encode_email_addresses( &$pData ) {
+		$trans = array(
+			// Upper case
+			'A' => '&#065;',
+			'B' => '&#066;',
+			'C' => '&#067;',
+			'D' => '&#068;',
+			'E' => '&#069;',
+			'F' => '&#070;',
+			'G' => '&#071;',
+			'H' => '&#072;',
+			'I' => '&#073;',
+			'J' => '&#074;',
+			'K' => '&#075;',
+			'L' => '&#076;',
+			'M' => '&#077;',
+			'N' => '&#078;',
+			'O' => '&#079;',
+			'P' => '&#080;',
+			'Q' => '&#081;',
+			'R' => '&#082;',
+			'S' => '&#083;',
+			'T' => '&#084;',
+			'U' => '&#085;',
+			'V' => '&#086;',
+			'W' => '&#087;',
+			'X' => '&#088;',
+			'Y' => '&#089;',
+			'Z' => '&#090;',
+
+			// lower case
+			'a' => '&#097;',
+			'b' => '&#098;',
+			'c' => '&#099;',
+			'd' => '&#100;',
+			'e' => '&#101;',
+			'f' => '&#102;',
+			'g' => '&#103;',
+			'h' => '&#104;',
+			'i' => '&#105;',
+			'j' => '&#106;',
+			'k' => '&#107;',
+			'l' => '&#108;',
+			'm' => '&#109;',
+			'n' => '&#110;',
+			'o' => '&#111;',
+			'p' => '&#112;',
+			'q' => '&#113;',
+			'r' => '&#114;',
+			's' => '&#115;',
+			't' => '&#116;',
+			'u' => '&#117;',
+			'v' => '&#118;',
+			'w' => '&#119;',
+			'x' => '&#120;',
+			'y' => '&#121;',
+			'z' => '&#122;',
+
+			// digits
+			'0' => '&#048;',
+			'1' => '&#049;',
+			'2' => '&#050;',
+			'3' => '&#051;',
+			'4' => '&#052;',
+			'5' => '&#053;',
+			'6' => '&#054;',
+			'7' => '&#055;',
+			'8' => '&#056;',
+			'9' => '&#057;',
+
+			// special chars
+			'_' => '&#095;',
+			'-' => '&#045;',
+			'.' => '&#046;',
+			'@' => '&#064;',
+
+			//'[' => '&#091;',
+			//']' => '&#093;',
+			//'|' => '&#124;',
+			//'{' => '&#123;',
+			//'}' => '&#125;',
+			//'~' => '&#126;',
+		);
+		preg_match_all( "!\b".EMAIL_ADDRESS_REGEX."\b!", $pData, $addresses );
+		foreach( $addresses[0] as $address ) {
+			$encoded = strtr( $address, $trans );
+			$pData = preg_replace( "/\b".preg_quote( $address )."\b/", $encoded, $pData );
+		}
 	}
 
 	function parse_smileys( $pData ) {
@@ -826,7 +919,7 @@ class TikiWikiParser extends BitBase {
 
 		// Replace special characters
 		//done after url catching because otherwise urls of dyn. sites will be modified
-		$this->parse_htmlchar($data);
+		$this->parse_htmlchar( $data );
 
 		//$data = strip_tags($data);
 		// BiDi markers
@@ -1110,14 +1203,13 @@ class TikiWikiParser extends BitBase {
 			// enter square brackets in their output; things like [[foo]
 			// get rendered as [foo]. -rlpowell
 
+			// prepare link for pattern usage
+			$link2 = str_replace("/", "\/", preg_quote($link));
+
 			if( $gBitSystem->isFeatureActive( 'liberty_cache_pages') && $pCommonObject->isCached( $link ) ) {
 				//use of urlencode for using cached versions of dynamic sites
 				$cosa = "<a class=\"bitcache\" href=\"".KERNEL_PKG_URL."view_cache.php?url=".urlencode($link)."\">(cache)</a>";
 
-				//$link2 = str_replace("/","\/",$link);
-				//$link2 = str_replace("?","\?",$link2);
-				//$link2 = str_replace("&","\&",$link2);
-				$link2 = str_replace("/", "\/", preg_quote($link));
 				$pattern = "/(?<!\[)\[$link2\|([^\]\|]+)\|([^\]]+)\]/";
 				$data = preg_replace($pattern, "<a $class href='$link'>$1</a>", $data);
 				$pattern = "/(?<!\[)\[$link2\|([^\]\|]+)\]/";
@@ -1125,11 +1217,6 @@ class TikiWikiParser extends BitBase {
 				$pattern = "/(?<!\[)\[$link2\]/";
 				$data = preg_replace($pattern, "<a $class href='$link'>$link</a> $cosa", $data);
 			} else {
-				//$link2 = str_replace("/","\/",$link);
-				//$link2 = str_replace("?","\?",$link2);
-				//$link2 = str_replace("&","\&",$link2);
-				$link2 = str_replace("/", "\/", preg_quote($link));
-
 				$pattern = "/(?<!\[)\[$link2\|([^\]\|]+)([^\]])*\]/";
 				$data = preg_replace($pattern, "<a $class href='$link'>$1</a>", $data);
 				$pattern = "/(?<!\[)\[$link2\]/";
@@ -1139,6 +1226,10 @@ class TikiWikiParser extends BitBase {
 
 		// Handle double square brackets.  -rlpowell
 		$data = str_replace( "[[", "[", $data );
+
+		// now that all links have been taken care of, we can replace all email addresses with the encoded form
+		// this will also encode email addressed that have not been linked using []
+		$this->encode_email_addresses( $data );
 
 		if ($gBitSystem->getConfig('wiki_tables') != 'new') {
 			// New syntax for tables
