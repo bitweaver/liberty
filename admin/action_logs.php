@@ -29,6 +29,8 @@ if( !empty( $_REQUEST['apply_settings'] ) ) {
 
 // get list of log entries
 $listHash = $_REQUEST;
+// since this is all just text and we don't want to search through hundreds of pages
+$listHash['max_records'] = $gBitSystem->getConfig( 'max_records', 10 ) * 5;
 $actionLogs = $gContent->getActionLogs( $listHash );
 $gBitSmarty->assign( 'listInfo', $listHash['listInfo'] );
 $gBitSmarty->assign( 'actionLogs', $actionLogs );
