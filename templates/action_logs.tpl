@@ -75,7 +75,7 @@
 					</td>
 					<td>{$log.content_description}</td>
 					<td>{$log.last_modified|bit_short_datetime}</td>
-					<td>{$log.display_name} [{$log.ip}]</td>
+					<td>{displayname hash=$log} [{$log.ip}]</td>
 				</tr>
 			{foreachelse}
 				<tr class="norecords">
