@@ -1,10 +1,10 @@
 <?php
 /**
- * $Id: edit_help_inc.php,v 1.11 2006/11/16 16:47:00 squareing Exp $
+ * $Id: edit_help_inc.php,v 1.12 2006/12/30 08:56:22 squareing Exp $
  * edit_help_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage functions
  */
@@ -32,10 +32,12 @@ foreach( array_keys( $gLibertySystem->mPlugins ) as $pluginGuid ) {
 	}
 }
 
-if( !empty( $dataplugins ) ) {
-	asort( $formatplugins );
+if( !empty( $formatplugins ) ) {
+	usort( $formatplugins, 'usort_by_title' );
 	$gBitSmarty->assign_by_ref( 'formatplugins', $formatplugins );
-	asort( $dataplugins );
+}
+if( !empty( $dataplugins ) ) {
+	usort( $dataplugins, 'usort_by_title' );
 	$gBitSmarty->assign_by_ref( 'dataplugins', $dataplugins );
 }
 ?>
