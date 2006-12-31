@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.52 2006/12/26 04:59:39 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.53 2006/12/31 11:37:01 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -685,7 +685,16 @@ function liberty_plugins_div_style( $pParamHash ) {
 					// styling
 					case 'background-color':
 						$key = 'background';
+					case 'width':
+					case 'height':
+						if( preg_match( "/^\d+(em|px|%|pt)$/", trim( $value ) ) ) {
+							$ret['style'] .= "{$key}:{$value};";
+						} elseif( preg_match( "/^\d+$/", $value ) ) {
+							$ret['style'] .= "{$key}:{$value}px;";
+						}
 					case 'float':
+					case 'width':
+					case 'height':
 					case 'padding':
 					case 'margin':
 					case 'background':
@@ -696,14 +705,14 @@ function liberty_plugins_div_style( $pParamHash ) {
 					case 'font-size':
 					case 'font-weight':
 					case 'font-family':
-						$ret['style'] .= "$key:$value;";
+						$ret['style'] .= "{$key}:{$value};";
 						break;
 					// align and float are special
 					case 'align':
 						if( $value == 'center' || $value == 'middle' ) {
 							$ret['style'] .= 'text-align:center;';
 						} else {
-							$ret['style'] .= "float:$value;";
+							$ret['style'] .= "float:{$value};";
 						}
 						break;
 					// default just gets re-assigned

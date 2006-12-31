@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.12 $
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.12 2006/12/15 20:42:44 squareing Exp $
+ * @version  $Revision: 1.13 $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.13 2006/12/31 11:37:01 squareing Exp $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -58,8 +58,7 @@ function data_img_help() {
 }
 
 function data_img( $pData, $pParams ) {
-	$div = liberty_plugins_div_style( $pParams );
-	$div['img_style'] = '';
+	$img_style = '';
 
 	foreach( $pParams as $key => $value ) {
 		if( !empty( $value ) ) {
@@ -67,15 +66,19 @@ function data_img( $pData, $pParams ) {
 				// rename a couple of parameters
 				case 'width':
 				case 'height':
-					if( preg_match( "/^\d+(em|px|%|pt)$/", $value ) ) {
-						$div['img_style'] .= $key.':'.$value.';';
+					if( preg_match( "/^\d+(em|px|%|pt)$/", trim( $value ) ) ) {
+						$img_style .= $key.':'.$value.';';
 					} elseif( preg_match( "/^\d+$/", $value ) ) {
-						$div['img_style'] .= $key.':'.$value.'px;';
+						$img_style .= $key.':'.$value.'px;';
 					}
+					// remove values from the hash that they don't get used in the div as well
+					$pParams[$key] = NULL;
 					break;
 			}
 		}
 	}
+
+	$div = liberty_plugins_div_style( $pParams );
 
 	// check if we have a source to load an image from
 	if( !empty( $pParams['src'] ) ) {
@@ -85,7 +88,7 @@ function data_img( $pData, $pParams ) {
 				' alt="'.  $alt.'"'.
 				' title="'.$alt.'"'.
 				' src="'  .$pParams['src'].'"'.
-				' style="'.$div['img_style'].'"'.
+				' style="'.$img_style.'"'.
 			' />';
 
 		// if this image is linking to something, wrap the image with the <a>
