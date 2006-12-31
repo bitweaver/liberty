@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.13 $
+ * @version  $Revision: 1.14 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.13 2006/12/27 20:36:52 squareing Exp $
+// $Id: data.attachment.php,v 1.14 2006/12/31 11:39:10 squareing Exp $
 
 /**
  * definitions
@@ -144,6 +144,13 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 			$pParams['link'] = $wp->getDisplayUrl( $pParams['page_name'] );
 		}
 
+		if( !empty( $div['description'] ) && !empty( $pParams['display'] ) && ( $pParams['display'] == 'desc' || $pParams['display'] == 'description' ) ) {
+			$ret = ( !empty( $div['description'] )  ? $div['description'] : '' );
+			$nodiv = TRUE;
+		} else {
+			$ret .= ( !empty( $div['description'] )  ? '<br />'.$div['description']  : '' );
+		}
+
 		// use specified link as href. insert default link to source only when 
 		// source not already displayed
 		if( !empty( $pParams['link'] ) && $pParams['link'] == 'false' ) {
@@ -158,10 +165,11 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 		}
 
 		// finally, wrap the output with a div
-		$ret =
-			'<div class="'.( !empty( $div['class'] ) ? $div['class'] : "att-plugin" ).'" style="'.$div['style'].'">'. $ret.
-			( !empty( $div['description'] )  ? '<br />'.$div['description']  : '' ).
-			'</div>';
+		if( empty( $nodiv ) ) {
+			$ret =
+				'<div class="'.( !empty( $div['class'] ) ? $div['class'] : "att-plugin" ).'" style="'.$div['style'].'">'.
+				$ret.'</div>';
+		}
 	} else {
 		$ret = tra( "The attachment id given is not valid." );
 	}
