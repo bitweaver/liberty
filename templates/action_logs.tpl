@@ -73,7 +73,7 @@
 						{$log.log_message|nl2br}
 						{$log.error_message|nl2br}
 					</td>
-					<td>{$log.content_description}</td>
+					<td>{tr}{$log.content_description}{/tr}</td>
 					<td>{$log.last_modified|bit_short_datetime}</td>
 					<td>{displayname hash=$log} [{$log.ip}]</td>
 				</tr>
