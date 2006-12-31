@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.53 2006/12/31 11:37:01 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.54 2006/12/31 13:01:15 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -354,6 +354,8 @@ class LibertySystem extends LibertyBase {
 	function loadContentTypes( $pCacheTime=BIT_QUERY_CACHE_TIME ) {
 		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."liberty_content_types`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
 			while( $row = $rs->fetchRow() ) {
+				// translate the content description
+				$row['content_description'] = tra( $row['content_description'] );
 				$this->mContentTypes[$row['content_type_guid']] = $row;
 			}
 		}
