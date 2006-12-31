@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.83 $
+ * @version  $Revision: 1.84 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -1470,27 +1470,28 @@ class TikiWikiParser extends BitBase {
 						// $line = strip_tags($line);
 
 						// OK. Parse headers here...
-						$anchor = '';
 						$aclose = '';
+						$edit_link = '';
 						$addremove = 0;
 
 						// Close lower level divs if opened
-						for (;current($divdepth) >= $hdrlevel; array_shift($divdepth))
-						$data .= '</div>';
+						for (;current($divdepth) >= $hdrlevel; array_shift($divdepth)) {
+							$data .= '</div>';
+						}
 
 						// May be spesial signs present after '!'s?
 						$divstate = substr($line, $hdrlevel, 1);
 
 						if ($divstate == '+' || $divstate == '-') {
-						// OK. Must insert flipper after HEADER, and then open new div...
-						$thisid = 'id' . microtime() * 1000000;
+							// OK. Must insert flipper after HEADER, and then open new div...
+							$thisid = 'id' . microtime() * 1000000;
 
-						$aclose = '<a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\')">[' . ($divstate == '-' ? '+' : '-') . ']</a>';
-						$aclose .= '<div id="' . $thisid . '" style="display:' . ($divstate == '+' ? 'block' : 'none') . ';">';
-						array_unshift($divdepth, $hdrlevel);
-						$addremove = 1;
+							$aclose = '<a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\')">[' . ($divstate == '-' ? '+' : '-') . ']</a>';
+							$aclose .= '<div id="' . $thisid . '" style="display:' . ($divstate == '+' ? 'block' : 'none') . ';">';
+							array_unshift($divdepth, $hdrlevel);
+							$addremove = 1;
 						}
-						$edit_link = '';
+
 						if( $gBitSystem->isFeatureActive( 'wiki_section_edit' ) && $gBitUser->hasPermission( 'p_wiki_edit_page' ) ) {
 							if( $hdrlevel == $gBitSystem->getConfig( 'wiki_section_edit' ) ) {
 								$edit_url = WIKI_PKG_URL."edit.php?content_id=".$contentId."&amp;action=edit_sectin&amp;section=".$section_count++;
@@ -1498,21 +1499,20 @@ class TikiWikiParser extends BitBase {
 							}
 						}
 						$line = $edit_link
-						. $anchor
-						. "<h$hdrlevel>"
-						. substr($line, $hdrlevel + $addremove)
-						. "</h$hdrlevel>"
-						. $aclose
+							. "<h$hdrlevel>"
+							. substr($line, $hdrlevel + $addremove)
+							. "</h$hdrlevel>"
+							. $aclose
 						;
 					} elseif (!strcmp($line, "...page...")) {
 						// Close lists and divs currently opened
-						while (count($listbeg))
-						$data .= array_shift($listbeg);
+						while (count($listbeg)) {
+							$data .= array_shift($listbeg);
+						}
 
 						while (count($divdepth)) {
-						$data .= '</div>';
-
-						array_shift ($divdepth);
+							$data .= '</div>';
+							array_shift ($divdepth);
 						}
 
 						// Leave line unchanged... index.php will split wiki here
