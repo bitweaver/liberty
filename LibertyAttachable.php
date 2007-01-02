@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.53 2007/01/02 22:25:05 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.54 2007/01/02 22:26:41 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -26,7 +26,7 @@ require_once( LIBERTY_PKG_PATH.'LibertySystem.php' );
 
 // load the image processor plugin
 if( $gBitSystem->isFeatureActive( 'image_processor' ) ) {
-	require_once( LIBERTY_PKG_PATH."plugins/processor.".$gBitSystem->getConfig( 'image_processor' ).".php" );
+	require_once( LIBERTY_PKG_PATH."plugins/processor.".$gBitSystem->getConfig( 'image_processor','gd' ).".php" );
 }
 
 // maximum size of the 'original' image when converted to jpg
