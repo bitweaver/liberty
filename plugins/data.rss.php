@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1.1.1.2.9 $
+ * @version  $Revision: 1.1.1.1.2.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up) 
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.rss.php,v 1.1.1.1.2.9 2006/06/14 14:48:10 mej Exp $
+// $Id: data.rss.php,v 1.1.1.1.2.10 2007/01/04 22:42:42 mej Exp $
 
 /**
  * definitions
@@ -58,10 +58,10 @@ function rss_parse_data( $data, $params ) {
 
 		$repl = '<ul class="rsslist">';
 
-		for ($j = 1; $j < count($items) && $j < $max; $j++) {
+		for ($j = 0; $j < count($items) && $j < $max; $j++) {
 			$repl .= '<li><a href="' . $items[$j]["link"] . '">' . $items[$j]["title"] . '</a>';
 			if ($items[$j]["pubdate"] <> '') {
-				$repl .= ' <small>('.$items[$j]["pubdate"].')</small>'; 
+				$repl .= ' &nbsp;<small>('.$items[$j]["pubdate"].')</small>'; 
 			}
 			$repl .= '</li>';
 		}
