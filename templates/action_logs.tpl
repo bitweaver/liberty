@@ -68,7 +68,7 @@
 						{/if}
 					</td>
 					<td>{if $log.content_id}<a href="{$smarty.const.BIT_ROOT_URL}index.php?content_id={$log.content_id}">{$log.content_id}{/if}</a></td>
-					<td>{$log.title}</td>
+					<td>{$log.title|escape}</td>
 					<td>
 						{$log.log_message|nl2br}
 						{$log.error_message|nl2br}
