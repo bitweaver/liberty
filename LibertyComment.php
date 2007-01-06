@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.41 2006/09/20 02:09:39 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.42 2007/01/06 09:46:18 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -242,7 +242,7 @@ class LibertyComment extends LibertyContent {
 			$pParamHash['max_records'] = $gBitSystem->getConfig( 'max_records' );
 		}
 		LibertyContent::prepGetList( $pParamHash );
-		$sort_mode = $this->mDb->convert_sortmode($pParamHash['sort_mode']);
+		$sort_mode = $this->mDb->convertSortmode($pParamHash['sort_mode']);
 
 		$joinSql = $whereSql = '';
 		$bindVars = $ret = array();
@@ -397,7 +397,7 @@ class LibertyComment extends LibertyContent {
 			} elseif ($pSortOrder == 'thread_desc') {
 				$mid = 'thread_reverse_sequence  ASC';
 			} else {
-				$mid = $this->mDb->convert_sortmode( $pSortOrder );
+				$mid = $this->mDb->convertSortmode( $pSortOrder );
 			}
 		}
 		$mid = 'order by ' . $mid;

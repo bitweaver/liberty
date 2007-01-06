@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.33 2006/12/25 21:44:03 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.34 2007/01/06 09:46:18 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -353,7 +353,7 @@ class LibertyStructure extends LibertyBase {
 		$query = "SELECT ls.`structure_id`, ls.`parent_id`, ls.`content_id`, `page_alias`, `pos`, lc.`title`, `data`, `last_modified`, lc.`modifier_user_id`, `ip`, lc.`user_id` AS `creator_user_id`, uu.`login` AS `creator_user`, uu.`real_name` , uu.`email`
 				  FROM `".BIT_DB_PREFIX."liberty_structures` ls INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( ls.`content_id` = lc.`content_id` ) INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON ( lc.`user_id` = uu.`user_id` )
 				  WHERE $mid
-				  ORDER BY ".$this->mDb->convert_sortmode($pListHash['sort_mode']);
+				  ORDER BY ".$this->mDb->convertSortmode($pListHash['sort_mode']);
 		$query_cant = "SELECT count(*)
 					   FROM `".BIT_DB_PREFIX."liberty_structures` ls INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( ls.`content_id` = lc.`content_id` )
 					   WHERE $mid";
@@ -783,7 +783,7 @@ class LibertyStructure extends LibertyBase {
 					  FROM `".BIT_DB_PREFIX."liberty_structures` ls INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( lc.`content_id`=ls.`content_id` )
 					  LEFT JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = lc.`user_id` )
 					  WHERE `parent_id`=?
-					  ORDER BY ".$this->mDb->convert_sortmode("pos_".$order);
+					  ORDER BY ".$this->mDb->convertSortmode("pos_".$order);
 			$result = $this->mDb->query($query,array((int)$id));
 			$prefix=1;
 			$contentTypes = $gLibertySystem->mContentTypes;
@@ -878,7 +878,7 @@ class LibertyStructure extends LibertyBase {
 			$query  = "SELECT `structure_id`
 					   FROM `".BIT_DB_PREFIX."liberty_structures` ls
 					   WHERE `parent_id`=?
-					   ORDER BY ".$this->mDb->convert_sortmode("pos_asc");
+					   ORDER BY ".$this->mDb->convertSortmode("pos_asc");
 			$result1 = $this->mDb->query($query,array((int)$structure_id));
 
 			if ($result1->numRows()) {
@@ -898,7 +898,7 @@ class LibertyStructure extends LibertyBase {
 		$query  = "SELECT `structure_id`
 				   FROM `".BIT_DB_PREFIX."liberty_structures` ls
 				   WHERE `parent_id`=? and `pos`>?
-				   ORDER BY ".$this->mDb->convert_sortmode("pos_asc");
+				   ORDER BY ".$this->mDb->convertSortmode("pos_asc");
 		$result2 = $this->mDb->query($query,array((int)$parent_id, (int)$page_pos));
 
 		if ($result2->numRows()) {
@@ -924,7 +924,7 @@ class LibertyStructure extends LibertyBase {
 			$query  = "select `structure_id` ";
 			$query .= "from `".BIT_DB_PREFIX."liberty_structures` ls ";
 			$query .= "where `parent_id`=? ";
-			$query .= "order by ".$this->mDb->convert_sortmode("pos_desc");
+			$query .= "order by ".$this->mDb->convertSortmode("pos_desc");
 			$result = $this->mDb->query($query,array($structure_id));
 
 			if ($result->numRows()) {
@@ -946,7 +946,7 @@ class LibertyStructure extends LibertyBase {
 		$query  = "select `structure_id` ";
 		$query .= "from `".BIT_DB_PREFIX."liberty_structures` ls ";
 		$query .= "where `parent_id`=? and `pos`<? ";
-		$query .= "order by ".$this->mDb->convert_sortmode("pos_desc");
+		$query .= "order by ".$this->mDb->convertSortmode("pos_desc");
 		$result =  $this->mDb->query($query,array((int)$parent_id, (int)$pos));
 
 		if ($result->numRows()) {
@@ -973,7 +973,7 @@ class LibertyStructure extends LibertyBase {
 		$query =  "SELECT `pos`, `structure_id`, `parent_id`, ls.`content_id`, lc.`title`, `page_alias`
 			FROM `".BIT_DB_PREFIX."liberty_structures` ls, `".BIT_DB_PREFIX."liberty_content` lc
 			WHERE ls.`content_id` = lc.`content_id` AND `parent_id`=? ";
-		$query .= "order by ".$this->mDb->convert_sortmode("pos_asc");
+		$query .= "order by ".$this->mDb->convertSortmode("pos_asc");
 		$result = $this->mDb->query($query,array((int)$pParentId));
 		while ($res = $result->fetchRow()) {
 			//$ret[] = $this->populate_page_info($res);
@@ -1105,7 +1105,7 @@ class LibertyStructure extends LibertyBase {
 		$query =  "SELECT `pos`, `structure_id`, `parent_id`, ls.`content_id`, lc.`title`, `page_alias`
 				   FROM `".BIT_DB_PREFIX."liberty_structures` ls, `".BIT_DB_PREFIX."liberty_content` lc
 				   WHERE lc.`content_id` = wp.`content_id` AND wp.`content_id`=ls.`content_id` AND `parent_id`=?
-				   ORDER BY ".$this->mDb->convert_sortmode("pos_asc");
+				   ORDER BY ".$this->mDb->convertSortmode("pos_asc");
 
 		$result = $this->mDb->query($query,array((int)$structure_id));
 		while ($res = $result->fetchRow()) {

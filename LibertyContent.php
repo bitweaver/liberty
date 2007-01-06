@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.166 2006/12/31 11:29:56 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.167 2007/01/06 09:46:18 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -495,7 +495,7 @@ class LibertyContent extends LibertyBase {
 		if( $this->isValid() ) {
 			global $gBitSystem;
 			$this->invalidateCache();
-			$query = "select * from `".BIT_DB_PREFIX."liberty_content_history` where `content_id`=? order by ".$this->mDb->convert_sortmode("last_modified_desc");
+			$query = "select * from `".BIT_DB_PREFIX."liberty_content_history` where `content_id`=? order by ".$this->mDb->convertSortmode("last_modified_desc");
 			$result = $this->mDb->query($query, array( $this->mContentId ) );
 			if ($result->numRows()) {
 				// We have a version
@@ -1631,7 +1631,7 @@ vd( $this->mErrors );
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON( lc.`content_id` =  lch.`content_id`)
 				$joinSql
 				$whereSql
-			ORDER BY ".$orderTable.$this->mDb->convert_sortmode($pListHash['sort_mode']);
+			ORDER BY ".$orderTable.$this->mDb->convertSortmode($pListHash['sort_mode']);
 
 		$query_cant = "
 			SELECT
@@ -1910,7 +1910,7 @@ vd( $this->mErrors );
 		{	global $gBitSystem;
 			$refresh = $gBitSystem->getUTCTime();
 			$query = "insert into `".BIT_DB_PREFIX."liberty_link_cache`(`url`,`data`,`refresh`) values(?,?,?)";
-			$result = $this->mDb->query($query, array($url,BitDb::db_byte_encode($data),$refresh) );
+			$result = $this->mDb->query($query, array($url,BitDb::dbByteEncode($data),$refresh) );
 			return !isset($error);
 		}
 		else return false;
@@ -2205,7 +2205,7 @@ vd( $this->mErrors );
 		}
 
 		if( !empty( $pListHash['sort_mode'] ) ) {
-			$orderSql = " ORDER BY ".$this->mDb->convert_sortmode( $pListHash['sort_mode'] )." ";
+			$orderSql = " ORDER BY ".$this->mDb->convertSortmode( $pListHash['sort_mode'] )." ";
 		}
 
 		$query = "
