@@ -38,8 +38,8 @@
 <table class="data">
 	<caption>{tr}Permissions assigned to this content{/tr}</caption>
 	<tr>
-		<th>{tr}Group{/tr}</th>
-		<th>{tr}Permission{/tr}</th>
+		<th>{smartlink content_id=$gContent->mContentId ititle=Group isort=group_name idefault=1}</th>
+		<th>{smartlink content_id=$gContent->mContentId ititle=Permission isort=perm_name}</th>
 		<th>{tr}Action{/tr}</th>
 	</tr>
 	{foreach from=$assignedPerms item=perm}

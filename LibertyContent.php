@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.167 2007/01/06 09:46:18 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.168 2007/01/07 12:01:09 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -727,9 +727,14 @@ vd( $this->mErrors );
 	 * 
 	 * @access public
 	 */
-	function loadAllObjectPermissions() {
+	function loadAllObjectPermissions( $pParamHash = NULL ) {
 		global $gBitUser;
 		$ret = FALSE;
+		if( empty( $pParamHash['sort_mode'] )) {
+			$pParamHash['sort_mode'] = 'group_name_asc';
+		}
+
+		LibertyContent::prepGetList( $pParamHash );
 		if( $this->isValid() && empty( $this->mPerms ) && $this->mContentTypeGuid ) {
 			$query = "
 				SELECT uop.`perm_name`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
@@ -737,7 +742,8 @@ vd( $this->mErrors );
 					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( uop.`group_id`=ug.`group_id` )
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=uop.`perm_name` )
 				WHERE uop.`object_id` = ?
-					AND uop.`object_type` = ?";
+					AND uop.`object_type` = ?
+				ORDER BY ".$this->mDb->convertSortmode( $pParamHash['sort_mode'] );
 			$bindVars = array( $this->mContentId, $this->mContentTypeGuid );
 			$ret = $this->mDb->getAll( $query, $bindVars );
 		}
