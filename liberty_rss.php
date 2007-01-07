@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_rss.php,v 1.8 2006/05/04 18:43:21 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_rss.php,v 1.9 2007/01/07 10:48:31 squareing Exp $
  * @package wiki
  * @subpackage functions
  */
@@ -24,7 +24,7 @@ if( !$gBitUser->hasPermission( 'p_wiki_view_page' ) ) {
 } else {
 	// check if we want to use the cache file
 	$cacheFile = TEMP_PKG_PATH.RSS_PKG_NAME.'/'.LIBERTY_PKG_NAME.'_'.$rss_version_name.'.xml';
-	$rss->useCached( $rss_version_name, $cacheFile ); // use cached version if age < 1 hour
+	$rss->useCached( $rss_version_name, $cacheFile, $gBitSystem->getConfig( 'rssfeed_cache_time' ));
 
 	$liberty = new LibertyContent();
 	$listHash = array(
