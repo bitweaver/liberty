@@ -31,19 +31,7 @@
 		<div class="row">
 			{formlabel label="Liberty Cache" for="liberty_cache"}
 			{forminput}
-				<select id="liberty_cache" name="liberty_cache">
-					<option value="0"     {if $gBitSystem->getConfig('liberty_cache') eq 0}     selected="selected"{/if}>0  {tr}(no cache){/tr}</option>
-					<option value="60"    {if $gBitSystem->getConfig('liberty_cache') eq 60}    selected="selected"{/if}>1  {tr}minute{/tr}</option>
-					<option value="300"   {if $gBitSystem->getConfig('liberty_cache') eq 300}   selected="selected"{/if}>5  {tr}minutes{/tr}</option>
-					<option value="600"   {if $gBitSystem->getConfig('liberty_cache') eq 600}   selected="selected"{/if}>10 {tr}minutes{/tr}</option>
-					<option value="900"   {if $gBitSystem->getConfig('liberty_cache') eq 900}   selected="selected"{/if}>15 {tr}minutes{/tr}</option>
-					<option value="1800"  {if $gBitSystem->getConfig('liberty_cache') eq 1800}  selected="selected"{/if}>30 {tr}minutes{/tr}</option>
-					<option value="3600"  {if $gBitSystem->getConfig('liberty_cache') eq 3600}  selected="selected"{/if}>1  {tr}hour{/tr}</option>
-					<option value="7200"  {if $gBitSystem->getConfig('liberty_cache') eq 7200}  selected="selected"{/if}>2  {tr}hours{/tr}</option>
-					<option value="14400" {if $gBitSystem->getConfig('liberty_cache') eq 14400} selected="selected"{/if}>4  {tr}hours{/tr}</option>
-					<option value="28800" {if $gBitSystem->getConfig('liberty_cache') eq 28800} selected="selected"{/if}>8  {tr}hours{/tr}</option>
-					<option value="60480" {if $gBitSystem->getConfig('liberty_cache') eq 60480} selected="selected"{/if}>1  {tr}day{/tr}</option>
-				</select>
+				{html_options name=liberty_cache id=liberty_cache values=$cacheTimes options=$cacheTimes selected=$gBitSystem->getConfig('liberty_cache')}
 				{formhelp note='Cache all parsed content. This will dramatically reduce load on the server if pages are called frequently.' page=''}
 			{/forminput}
 		</div>

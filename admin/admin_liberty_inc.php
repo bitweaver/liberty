@@ -31,8 +31,23 @@ if( $gBitSystem->isPackageActive( 'protector' ) ) {
 		'note' => 'Limit the protector system to asign a content item to a single group. The alternative allows content in multiple groups.',
 	);
 }
-
 $gBitSmarty->assign( 'formLibertyFeatures', $formLibertyFeatures );
+
+$cacheTimes = array(
+	0      => tra( "(no cache)" ),
+	60     => "1 ".tra( "minute" ),
+	300    => "5 ".tra( "minutes" ),
+	600    => "10 ".tra( "minutes" ),
+	900    => "15 ".tra( "minutes" ),
+	1800   => "30 ".tra( "minutes" ),
+	3600   => "1 ".tra( "hour" ),
+	7200   => "2 ".tra( "hours" ),
+	14400  => "4 ".tra( "hours" ),
+	28800  => "8 ".tra( "hours" ),
+	60480  => "1 ".tra( "day" ),
+);
+$gBitSmarty->assign( "cacheTimes", $cacheTimes );
+
 
 $formCaptcha = array(
 	"liberty_use_captcha_freecap" => array(
