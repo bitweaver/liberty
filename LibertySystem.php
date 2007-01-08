@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.54 2006/12/31 13:01:15 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.55 2007/01/08 07:58:43 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -107,16 +107,17 @@ class LibertySystem extends LibertyBase {
 		$active_plugins = $gBitSystem->getConfigMatch( "/^{$this->mSystem}_plugin_status_/i", 'y' );
 		foreach( $active_plugins as $key=>$value ) {
 			$pluginGuid = preg_replace( "/^{$this->mSystem}_plugin_status_/", '', $key,1 );
-			$pluginFile = $gBitSystem->getConfig( "{$this->mSystem}_plugin_file_$pluginGuid" );
-			// check for the plugin in the default location - in case bitweaver root path changed.
-			if ( file_exists( $pluginFile ) ) {
-				$this->mPluginFileName = $pluginFile;
-				include_once( $pluginFile );
-			} else {
-				$defaultFile = LIBERTY_PKG_PATH.'plugins/'.basename( $pluginFile );
-				if( file_exists( $defaultFile ) ) {
-					$this->mPluginFileName = $defaultFile;
-					include_once( $defaultFile );
+			if( $pluginFile = $gBitSystem->getConfig( "{$this->mSystem}_plugin_file_$pluginGuid" ) ) {
+				// check for the plugin in the default location - in case bitweaver root path changed.
+				if ( file_exists( $pluginFile ) ) {
+					$this->mPluginFileName = $pluginFile;
+					include_once( $pluginFile );
+				} else {
+					$defaultFile = LIBERTY_PKG_PATH.'plugins/'.basename( $pluginFile );
+					if( file_exists( $defaultFile ) ) {
+						$this->mPluginFileName = $defaultFile;
+						include_once( $defaultFile );
+					}
 				}
 			}
 		}
