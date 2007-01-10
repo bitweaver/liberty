@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.84 $
+ * @version  $Revision: 1.85 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -113,6 +113,7 @@ function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
 
 function tikiwiki_parse_data( &$pParseHash, &$pCommonObject ) {
 	global $gBitSystem;
+	$ret = '';
 
 	// cache data if we are using liberty cache
 	if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && !empty( $pParseHash['content_id'] ) && empty( $pParseHash['no_cache'] ) ) {
