@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.14 2006/12/31 11:39:10 squareing Exp $
+// $Id: data.attachment.php,v 1.15 2007/01/10 12:00:34 squareing Exp $
 
 /**
  * definitions
@@ -79,8 +79,13 @@ function data_attachment_help() {
 				<td>'.tra( 'numeric (optional)' ).'</td>
 				<td>'.tra( 'To include any content from bitweaver insert the apprpropriate numeric content id. This can include blog posts, images, wiki texts...<br />
 					Avaliable content can be viewed <a href="'.LIBERTY_PKG_URL.'list_content.php">here</a>' ).'</td>
+			</tr>
+			<tr class="even">
+				<td>display</td>
+				<td>'.tra( 'keyword (optional)' ).'</td>
+				<td>'.tra( "If you are attaching a file and you only want to display the description and not the image that goes with it, use: display=desc" ).'</td>
 			</tr>'
-			.'<tr class="even">'
+			.'<tr class="odd">'
 				.'<td>'.tra( "styling" ).'</td>'
 				.'<td>'.tra( "string").'<br />'.tra("(optional)").'</td>'
 				.'<td>'.tra( "Multiple styling options available: padding, margin, background, border, text-align, color, font, font-size, font-weight, font-family, align. Please view CSS guidelines on what values these settings take.").'</td>'
