@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.55 2007/01/11 10:08:15 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.56 2007/01/11 15:42:27 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -330,6 +330,12 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			$bindVars[] = $pListHash['user_id'];
 		}
 
+		if( !empty( $pListHash['content_id'] ) ) {
+			$whereSql .= empty( $whereSql ) ? ' WHERE ' : ' AND ';
+			$whereSql .= " la.content_id = ? ";
+			$bindVars[] = $pListHash['content_id'];
+		}
+
 		$query = "
 			SELECT DISTINCT( la.`foreign_id` ) AS `hash_key`, la.*
 			FROM `".BIT_DB_PREFIX."liberty_attachments` la
@@ -387,6 +393,13 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		return LibertyContent::expunge();
 	}
 
+	/**
+	 * expunge attachment from the database
+	 * 
+	 * @param array $pAttachmentId attachment id of the item that should be deleted
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function expungeAttachment( $pAttachmentId ) {
 		global $gLibertySystem;
 		global $gBitUser;
@@ -423,6 +436,13 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		return $ret;
 	}
 
+	/**
+	 * detach attachment from content
+	 * 
+	 * @param array $pAttachmentId Attachment id that needs to be detached from the content loaded
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function detachAttachment( $pAttachmentId ) {
 		if( @$this->verifyId( $pAttachmentId ) ) {
 			$attachmentInfo = $this->getAttachment($pAttachmentId);
@@ -442,23 +462,30 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		return TRUE;
 	}
 
-	// allow an optional content_id to be passed in to ease legacy lib style objects (like blogs, articles, etc.)
+	/**
+	 * fully load content and insert any attachments in $this->mStorage
+	 * allow an optional content_id to be passed in to ease legacy lib style objects (like blogs, articles, etc.)
+	 * 
+	 * @param array $pContentId 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function load( $pContentId=NULL ) {
 		// assume a derived class has joined on the liberty_content table, and loaded it's columns already.
 		global $gLibertySystem;
 		$conId = ( @$this->verifyId( $pContentId ) ? $pContentId : $this->mContentId );
 
 		if( @$this->verifyId( $conId ) ) {
-			LibertyContent::load($pContentId);
+			LibertyContent::load( $conId );
 			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` a
 					  WHERE a.`content_id`=?";
-			if( $result = $this->mDb->query($query,array((int) $conId)) ) {
+			if( $result = $this->mDb->query( $query,array( (int)$conId ))) {
 				$this->mStorage = array();
 				while( $row = $result->fetchRow() ) {
 					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function'  ) ) {
 						$this->mStorage[$row['attachment_id']] = $func( $row );
 					} else {
-						print "NO load_function for ".$row['attachment_plugin_guid']." ".$gLibertySystem->mPlugins[$row['attachment_plugin_guid']];
+						print "No load_function for ".$row['attachment_plugin_guid']." ".$gLibertySystem->mPlugins[$row['attachment_plugin_guid']];
 					}
 				}
 			}
@@ -466,7 +493,14 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		return( TRUE );
 	}
 
-	// allow an optional content_id to be passed in to ease legacy lib style objects (like blogs, articles, etc.)
+	/**
+	 * load details of a given attachment
+	 * allow an optional content_id to be passed in to ease legacy lib style objects (like blogs, articles, etc.)
+	 * 
+	 * @param array $pAttachmentId 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function getAttachment( $pAttachmentId ) {
 		// assume a derived class has joined on the liberty_content table, and loaded it's columns already.
 		global $gLibertySystem;
@@ -487,7 +521,13 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		return $ret;
 	}
 
-	// Get a list of attachments which also reference the foreign_id of the given attachment
+	/**
+	 * Get a list of attachments which also reference the foreign_id of the given attachment 
+	 * 
+	 * @param array $pAttachmentId 
+	 * @access public
+	 * @return array with details of sibling attachments
+	 */
 	function getSiblingAttachments( $pAttachmentId ) {
 		$ret = NULL;
 
@@ -499,6 +539,58 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			$ret = $result->getRows();
 		}
 
+		return $ret;
+	}
+
+	/**
+	 * This function will scan through liberty_content.data and will search for any occurrances of {attachemt id=<id>}
+	 * 
+	 * @param array $pAttachmentId Attachment id of interest
+	 * @access public
+	 * @return array of content using a given attachment
+	 */
+	function scanForAttchmentUse( $pAttachmentId ) {
+		global $gLibertySystem, $gBitSystem;
+		if( @BitBase::verifyId( $pAttachmentId )) {
+			$ret = array();
+			$query = "
+				SELECT
+					uue.`login` AS `modifier_user`, uue.`real_name` AS `modifier_real_name`, uue.`user_id` AS `modifier_user_id`,
+					uuc.`login` AS `creator_user`, uuc.`real_name` AS `creator_real_name`, uuc.`user_id` AS `creator_user_id`,
+					lc.`title`, lc.`data`, lc.`last_modified`, lc.`content_type_guid`, lc.`ip`, lc.`created`, lc.`content_id`
+				FROM `".BIT_DB_PREFIX."liberty_content` lc
+					INNER JOIN `".BIT_DB_PREFIX."users_users` uuc ON (lc.`modifier_user_id`=uuc.`user_id`)
+					INNER JOIN `".BIT_DB_PREFIX."users_users` uue ON (lc.`modifier_user_id`=uue.`user_id`)
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON( lc.`content_id` =  lch.`content_id`)
+				ORDER BY ".$this->mDb->convertSortmode( 'last_modified_desc' );
+
+			$result = $this->mDb->query( $query );
+			$contentTypes = $gLibertySystem->mContentTypes;
+			while( $aux = $result->fetchRow() ) {
+				if( preg_match( "#\{attachment[^\}]*\bid\s*=\s*$pAttachmentId\b[^\}]*\}#", $aux['data'] ) && !empty( $contentTypes[$aux['content_type_guid']] )) {
+					// quick alias for code readability
+					$type                       = &$contentTypes[$aux['content_type_guid']];
+					$aux['content_description'] = tra( $type['content_description'] );
+					$aux['creator']             = ( isset( $aux['creator_real_name'] ) ? $aux['creator_real_name'] : $aux['creator_user'] );
+					$aux['real_name']           = ( isset( $aux['creator_real_name'] ) ? $aux['creator_real_name'] : $aux['creator_user'] );
+					$aux['editor']              = ( isset( $aux['modifier_real_name'] ) ? $aux['modifier_real_name'] : $aux['modifier_user'] );
+					$aux['user']                = $aux['creator_user'];
+					$aux['user_id']             = $aux['creator_user_id'];
+					// create *one* object for each object *type* to  call virtual methods.
+					if( empty( $type['content_object'] )) {
+						include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
+						$type['content_object'] = new $type['handler_class']();
+					}
+
+					if( !empty( $gBitSystem->mPackages[$type['handler_package']] )) {
+						$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
+						$aux['title']        = $type['content_object']->getTitle( $aux );
+						$aux['display_url']  = $type['content_object']->getDisplayUrl( $aux['content_id'], $aux );
+					}
+					$ret[] = $aux;
+				}
+			}
+		}
 		return $ret;
 	}
 }
