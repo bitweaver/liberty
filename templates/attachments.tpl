@@ -23,6 +23,26 @@
 			{/form}
 		{/if}
 
+		{formfeedback warning="Checking for attachment usage in content can take a while depending on the amount of content on this site - if there is a lot of content, it might not be possible at all."}
+
+		{if $smarty.request.attachment_id}
+			<ul class="data" id="usage">
+				<li>{tr}This attachment is used in the following content{/tr}:
+					<ul>
+						{foreach from=$attachmentUsage item=content}
+							<li class="{cycle values="odd,even"} item">
+								{$content.display_link} &bull; {tr}Created by{/tr}: {displayname hash=$content} [{$content.created|bit_short_datetime}]
+							</li>
+						{foreachelse}
+							<li class="norecords">
+								{tr}No records found{/tr}
+							</li>
+						{/foreach}
+					</ul>
+				</li>
+			</ul>
+		{/if}
+
 		<table class="data">
 			<caption>{tr}Liberty Attachments{/tr}</caption>
 			<tr>
@@ -37,6 +57,7 @@
 							<img src="{$attachment.thumbnail_url.small}" alt="{$attachment.filename}" title="{tr}Attachment Thumbnail{/tr}" />
 						</a>
 					</td>
+
 					<td>
 						{tr}Owner{/tr}: {displayname hash=$attachment}
 						<br />
@@ -44,7 +65,9 @@
 						<br />
 						{tr}Wiki plugin link{/tr}: {$attachment.wiki_plugin_link}
 					</td>
-					<td>
+
+					<td class="actionicon">
+						{smartlink ititle="Check Attachment Usage" ibiticon="icons/format-justify-fill" attachment_id=$attachment.attachment_id}
 					</td>
 				</tr>
 			{foreachelse}
