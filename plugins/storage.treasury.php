@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -32,12 +32,20 @@ function treasury_file_load( $pRow ) {
 	global $gBitSystem, $gBitSmarty;
 	$ret = NULL;
 	if( @BitBase::verifyId( $pRow['content_id'] ) ) {
-		require_once( TREASURY_PKG_PATH.'TreasuryItem.php' );
-		require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'kbsize' );
-		$ti = new TreasuryItem( $pRow['content_id'] );
-		$ti->load();
-		$ret = $ti->mInfo;
-		$ret['file_details'] = $ret['title']."<br /><small>(".$ret['mime_type']." ".smarty_modifier_kbsize( $ret['file_size'] ).")</small>";
+		// fetch the correct content_id we can use to load the treasury item
+		$query = "
+			SELECT *
+			FROM `".BIT_DB_PREFIX."liberty_attachments` la
+				INNER JOIN `".BIT_DB_PREFIX."treasury_item` tri ON( tri.`content_id` = la.`content_id` )
+			WHERE la.`foreign_id` = ?";
+		if( $row = $gBitSystem->mDb->getRow( $query, array( $pRow['foreign_id'] ))) {
+			require_once( TREASURY_PKG_PATH.'TreasuryItem.php' );
+			require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'kbsize' );
+			$ti = new TreasuryItem( NULL, $row['content_id'] );
+			$ti->load();
+			$ret = $ti->mInfo;
+			$ret['file_details'] = $ret['title']."<br /><small>(".$ret['mime_type']." ".smarty_modifier_kbsize( $ret['file_size'] ).")</small>";
+		}
 	}
 	return( $ret );
 }
