@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.56 2007/01/11 10:10:04 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.57 2007/01/11 10:30:13 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -201,7 +201,6 @@ class LibertySystem extends LibertyBase {
 	 * @return TRUE if the plugin is active, FALSE if it's not
 	 **/
 	function isPluginActive( $pPluginGuid ) {
-		vd( $this->mPlugins[$pPluginGuid] );
 		return( isset( $this->mPlugins[$pPluginGuid] ) && ( $this->mPlugins[$pPluginGuid]['is_active'] == 'y' ) );
 	}
 
