@@ -61,7 +61,7 @@
 					<td>
 						{tr}Owner{/tr}: {displayname hash=$attachment}
 						<br />
-						{tr}Size{/tr}: {$attachment.file_size|kbsize}
+						{tr}Size{/tr}: {$attachment.file_size|display_bytes}
 						<br />
 						{tr}Wiki plugin link{/tr}: {$attachment.wiki_plugin_link}
 					</td>
