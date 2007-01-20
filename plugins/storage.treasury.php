@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -44,7 +44,9 @@ function treasury_file_load( $pRow ) {
 			$ti = new TreasuryItem( NULL, $row['content_id'] );
 			$ti->load();
 			$ret = $ti->mInfo;
-			$ret['file_details'] = $ret['title']."<br /><small>(".$ret['mime_type']." ".smarty_modifier_display_bytes( $ret['file_size'] ).")</small>";
+			if( !empty( $ret['file_size'] )) {
+				$ret['file_details'] = $ret['title']."<br /><small>(".$ret['mime_type']." ".smarty_modifier_display_bytes( $ret['file_size'] ).")</small>";
+			}
 		}
 	}
 	return( $ret );

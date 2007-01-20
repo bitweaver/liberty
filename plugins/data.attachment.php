@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.16 $
+ * @version  $Revision: 1.17 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.16 2007/01/14 23:30:24 squareing Exp $
+// $Id: data.attachment.php,v 1.17 2007/01/20 10:19:53 squareing Exp $
 
 /**
  * definitions
@@ -113,7 +113,7 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 	// insert source url if we need the original file
 	if( !empty( $pParams['size'] ) && $pParams['size'] == 'original' ) {
 		$thumburl = $att['source_url'];
-	} else {
+	} elseif( !empty( $att['thumbnail_url'] )) {
 		$thumburl = ( !empty( $pParams['size'] ) && !empty( $att['thumbnail_url'][$pParams['size']] ) ? $att['thumbnail_url'][$pParams['size']] : $att['thumbnail_url']['medium'] );
 	}
 
