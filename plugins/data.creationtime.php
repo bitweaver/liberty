@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -20,7 +20,8 @@
  * definitions
  */
 global $gBitSystem;
-if( $gBitSystem->isPackageActive( 'wiki' ) ) { // Do not include this Plugin if the Package is not active
+// this executes before all packages are registered so can't reliably check isPackageActive here!
+if( 1 || $gBitSystem->isPackageActive( 'wiki' ) ) {
 define( 'PLUGIN_GUID_DATA_CREATIONTIME', 'datacreationtime' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'CREATIONTIME',

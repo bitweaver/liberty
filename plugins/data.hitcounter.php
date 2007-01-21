@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -20,7 +20,9 @@
  * definitions
  */
 global $gBitSystem;
-if( $gBitSystem->isPackageActive( 'wiki' ) ) {
+
+// this executes before all packages are registered so can't reliably check isPackageActive here!
+if( 1 || $gBitSystem->isPackageActive( 'wiki' ) ) {
 define( 'PLUGIN_GUID_DATA_HITCOUNTER', 'datahitcounter' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'HITCOUNTER',
@@ -49,7 +51,6 @@ function data_hitcounter_help() {
 
 // The handler for the plugin
 function data_hitcounter($data, $params, &$pCommonObject) {
-
     $pCommonObject->getHits();
 	$display_result = $pCommonObject->mInfo['hits'];    
 
