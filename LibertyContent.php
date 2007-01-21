@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.168 2007/01/07 12:01:09 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.169 2007/01/21 07:16:29 jht001 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -300,7 +300,7 @@ class LibertyContent extends LibertyBase {
 
 			if( !empty( $pParamHash['force_history'] ) || ( empty( $pParamHash['minor'] ) && $this->getField( 'version' ) && $pParamHash['field_changed'] )) {
 				if( empty( $pParamHash['has_no_history'] ) ) {
-					$this->storeHistory();
+					$this->storeHistory( $pParamHash['history_comment'] );
 				}
 				$action = "Created";
 				$mailEvents = 'wiki_page_changes';
@@ -410,11 +410,11 @@ class LibertyContent extends LibertyBase {
 	}
 
 	// *********  History functions for the wiki ********** //
-	function storeHistory() {
+	function storeHistory( $historyComment='' ) {
 		$ret = FALSE;
 		if( $this->isValid() ) {
 			$query = "insert into `".BIT_DB_PREFIX."liberty_content_history`( `content_id`, `version`, `last_modified`, `user_id`, `ip`, `history_comment`, `data`, `description`, `format_guid`) values(?,?,?,?,?,?,?,?,?)";
-			$result = $this->mDb->query( $query, array( $this->mContentId, (int)$this->getField( 'version' ), (int)$this->getField( 'last_modified' ) , $this->getField( 'modifier_user_id' ), $this->getField( 'ip' ), $this->getField( 'history_comment' ), $this->getField( 'data' ), $this->getField( 'description' ), $this->getField( 'format_guid' ) ) );
+			$result = $this->mDb->query( $query, array( $this->mContentId, (int)$this->getField( 'version' ), (int)$this->getField( 'last_modified' ) , $this->getField( 'modifier_user_id' ), $this->getField( 'ip' ), $historyComment, $this->getField( 'data' ), $this->getField( 'description' ), $this->getField( 'format_guid' ) ) );
 			$ret = TRUE;
 		}
 		return( $ret );
@@ -526,9 +526,9 @@ class LibertyContent extends LibertyBase {
 			// JHT - cache invalidation appears to be handled by store function - so don't need to do it here
 			$query = "select *, `user_id` AS modifier_user_id, `data` AS `edit` from `".BIT_DB_PREFIX."liberty_content_history` where `content_id`=? and `version`=?";
 			if( $res = $this->mDb->getRow($query,array( $this->mContentId, $pVersion ) ) ) {
-				$res['comment'] = 'Rollback to version '.$pVersion.' by '.$gBitUser->getDisplayName();
+				$res['history_comment'] = 'Rollback to version '.$pVersion.' by '.$gBitUser->getDisplayName();
 				if (!empty($comment)) {
-					$res['comment'] .=" $comment";
+					$res['history_comment'] .=" $comment";
 				}
 				// JHT 2005-06-19_15:22:18
 				// set ['force_history'] to
