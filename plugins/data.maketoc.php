@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.17 $
+ * @version  $Revision: 1.18 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.17 2006/12/10 22:07:22 squareing Exp $
+// $Id: data.maketoc.php,v 1.18 2007/01/24 08:34:53 squareing Exp $
 
 /**
  * definitions
@@ -119,14 +119,17 @@ function data_maketoc( $data ) {
 		// (<br[ |\/]*>){0,1} removes up to one occurance of <br> | <br > | <br /> | <br/> or similar variants
 		$sections = preg_split( "/\{maketoc.*?\}(<br[ |\/]*>){0,1}/", $data );
 		// first section is before any {maketoc} entry, so we can ignore it
-		$ret = array_shift( $sections );
+		$ret = '';
 
 		foreach( $sections as $k => $section ) {
 			// count headers in each section that we know where to begin and where to stop
 			preg_match_all( "!<h(\d)[^>]*>.*?</h\d>!i", $section, $hs );
-			$tocHash['tocCounts'][] = count( $hs[0] );
-			$tocHash['tocKey'] = $k;
-			$ret .= maketoc_create_list( $tocHash, $params[$k] ).$section;
+			$tocHash['header_count'][] = count( $hs[0] );
+			$ret .= $section;
+			// the last section will create an error if we don't check for available params
+			if( isset( $params[$k] )) {
+				$ret .= maketoc_create_list( $tocHash, $params[$k] );
+			}
 		}
 	}
 
@@ -145,10 +148,11 @@ function maketoc_create_list( $pTocHash, $pParams ) {
 	// maximum header level output uses
 	$maxdepth = !empty( $pParams['maxdepth'] ) ? $pParams['maxdepth'] : 6;
 
+	// work out what to print
 	$ignore = 0;
 	if( !isset( $pParams['include'] ) || $pParams['include'] != 'all' ) {
-		for( $i = 0; $i < $tocKey; $i++ ) {
-			$ignore += $pTocHash['tocCounts'][$i];
+		for( $i = 0; $i < count( $header_count ); $i++ ) {
+			$ignore += $pTocHash['header_count'][$i];
 		}
 	}
 
