@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.57 2007/01/11 10:30:13 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.58 2007/01/30 15:07:18 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -687,6 +687,11 @@ function liberty_plugins_div_style( $pParamHash ) {
 	$ret['style'] = $ret['description'] = '';
 
 	if( !empty( $pParamHash ) && is_array( $pParamHash ) ) {
+		// if align is right and text-align isn't set, we'll align that right as well
+		if( empty( $pParamHash['text-align'] ) && ( !empty( $pParamHash['align'] ) && $pParamHash['align'] == 'right' || !empty( $pParamHash['align'] ) && $pParamHash['align'] == 'right' )) {
+			$pParamHash['text-align'] = 'right';
+		}
+
 		foreach( $pParamHash as $key => $value ) {
 			if( !empty( $value ) ) {
 				switch( $key ) {
