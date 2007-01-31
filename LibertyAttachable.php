@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.56 2007/01/11 15:42:27 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.57 2007/01/31 05:34:23 jht001 Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -244,10 +244,21 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 				if( function_exists( $gLibertySystem->mPlugins[$guid]['verify_function'] )
 					&& $gLibertySystem->mPlugins[$guid]['verify_function']( $storeRow ) ) {
 					if( empty( $pParamHash['attachment_id'] ) ) {
-						$sql = "SELECT `attachment_id` FROM `".BIT_DB_PREFIX."liberty_attachments`
-								WHERE `attachment_plugin_guid` = ? AND `content_id` = ? AND `foreign_id`=?";
-						$rs = $this->mDb->query( $sql, array( $storeRow['plugin_guid'], (int)$storeRow['content_id'], (int)$storeRow['foreign_id'] ) );
-						if( empty( $rs ) || !$rs->NumRows() ) {
+						if ( empty( $pParamHash['foreign_id'] ) || !$pParamHash['foreign_id'] ) {
+							$alreadyAttachedCount = 0;
+						}
+						else {	
+							$sql = "SELECT `attachment_id` FROM `".BIT_DB_PREFIX."liberty_attachments`
+									WHERE `attachment_plugin_guid` = ? AND `content_id` = ? AND `foreign_id`=?";
+							$rs = $this->mDb->query( $sql, array( $storeRow['plugin_guid'], (int)$storeRow['content_id'], (int)$storeRow['foreign_id'] ) );
+							if( empty( $rs ) || !$rs->NumRows() ) {
+								$alreadyAttachedCount = 0;
+							}
+							else {
+								$alreadyAttachedCount = $rs->NumRows();
+							}
+						}	
+						if( !$alreadyAttachedCount ) {
 							$pParamHash['attachment_id'] = $this->mDb->GenID( 'liberty_attachments_id_seq' );
 							$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `attachment_id`, `attachment_plugin_guid`, `content_id`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
 							$rs = $this->mDb->query( $sql, array( $pParamHash['attachment_id'], $storeRow['plugin_guid'], $pParamHash['content_id'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
