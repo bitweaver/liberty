@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.85 $
+ * @version  $Revision: 1.86 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -216,7 +216,7 @@ class TikiWikiParser extends BitBase {
 		}
 
 		$from_content_id = $pParamHash['content_id'];
-		$from_title = $pParamHash['title'];
+		$from_title = isset($pParamHash['title']) ? $pParamHash['title'] : '';
 
 		// we need to remove the cache of any pages pointing to this one
 		$clearCache = $this->mDb->getCol( "SELECT `from_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE (`to_content_id`=? or `to_content_id` is NULL ) and `to_title` = ?", array( 0, $from_title ) );
