@@ -1,15 +1,16 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_format
  */
 global $gLibertySystem;
 
 
-// run 'pear install HTML_BBCodeParser' to install the library,
-// you also need to enable the HTML plugin for now to due to dependency on the purge_html function
-
+/**
+ * run 'pear install HTML_BBCodeParser' to install the library,
+ * you also need to enable the HTML plugin for now to due to dependency on the purge_html function
+ */ 
 if( @include_once( 'HTML/BBCodeParser.php' ) ) {
 
 /**
