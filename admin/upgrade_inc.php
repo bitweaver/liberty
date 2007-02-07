@@ -202,11 +202,10 @@ array( 'PHP' => '
 		)
 	);
 
-	// Removed for now - seems infinite loop - SPIDERR. Needs fix review from jht001
-	if( FALSE && !empty( $allComments ) ) {
+	if(  !empty( $allComments ) ) {
 
 		foreach ($allComments as $comment) {
-			error_log( "x=" . serialize($comment) );
+			//error_log( "x=" . serialize($comment) );
 			# exit;
 			$comment_id = $comment["comment_id"];
 			$parent_content_type = $comment["content_type_guid"];
@@ -231,12 +230,27 @@ array( 'PHP' => '
 			$content_type_guid_of_comment[$content_id] = $content_type_guid;
 			$depth_of_comment[$content_id] =  1;
 			$comment_id_of_comment[$content_id] = $comment_id;
-
-			#  echo "A comment: $comment_id content: $content_id parent: $parent_id root: $root_id title: $title\n";
+			// leave alone comments with bogus data in them
+			if ($parent_id < 1) {
+				error_log("bad parent ID: $content_id for comment id: $comment_id with content id of: $content_id");
+				$comment_status[$content_id] = 0;
+				}
+			if ($parent_id == $content_id) {
+				error_log("bad parent ID(loop): $content_id for comment id: $comment_id with content id of: $content_id");
+				$comment_status[$content_id] = 0;
+				}
+			elseif ($content_id < 1) {
+				error_log("bad content ID for comment id: $comment_id with content id of: $content_id");
+				$comment_status[$content_id] = 0;
+				}
+			else {
+				$comment_status[$content_id] = 1;
+				}	
+			  //echo "A comment: $comment_id content: $content_id parent: $parent_id root: $root_id title: $title\n";
 
 		}
 
-		error_log( serialize($content_type_guid_of_comment) );
+//		error_log( serialize($content_type_guid_of_comment) );
 
 		//calc comment root and depth
 		$loop_done = 0;
@@ -247,7 +261,9 @@ array( 'PHP' => '
 				$comment_id = $comment["comment_id"];
 				$parent_id = $comment["parent_id"];
 				$title = $comment["title"];
-
+				if (!$comment_status[$content_id]) {
+					continue;
+					}
 				$root_id = $root_content_id_of_comment[$content_id];
 				$root_content_type = empty($content_type_guid_of_comment[$root_id]) ? "notcomment" : $content_type_guid_of_comment[$root_id];
 
@@ -266,6 +282,7 @@ array( 'PHP' => '
 		}
 
 
+		error_log("depth set loop done");
 
 		function jc ($a, $b) {
 			global $root_table;
@@ -304,6 +321,9 @@ array( 'PHP' => '
 		foreach ($allComments as $comment) {
 			$content_id = $comment["content_id"];
 			$comment_id = $comment["comment_id"];
+			if (!$comment_status[$content_id]) {
+				continue;
+				}
 			$parent_content_type = $comment["content_type_guid"];
 			$content_title = $comment["content_title"];
 			$parent_id = $comment["parent_id"];
@@ -323,12 +343,12 @@ array( 'PHP' => '
 
 			$root_table_seq3[$content_id] = $root_table_seq[$parent_id . "-" . $depth];  
 
-			#  echo "C comment $comment_id content: $content_id parent: $parent_id root: $root_id depth: $depth title: $title\n";
-			#  echo "update bit_liberty_comments set root_id=$root_id where comment_id=$comment_id;\n";
+			  //echo "C comment $comment_id content: $content_id parent: $parent_id root: $root_id depth: $depth title: $title\n";
+			  //echo "update bit_liberty_comments set root_id=$root_id where comment_id=$comment_id;\n";
 			$sql = "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `root_id` = ? where `comment_id` = ?";
 			echo $sql . "  ($root_id, $comment_id)\n";
 			$result = $gBitSystem->mDb->query($sql, array($root_id, $comment_id));
-			#echo "result=" . serialize($result) . "\n";
+			//echo "result=" . serialize($result) . "\n";
 
 		}
 
@@ -336,6 +356,9 @@ array( 'PHP' => '
 		foreach ($allComments as $comment) {
 			$content_id = $comment["content_id"];
 			$comment_id = $comment["comment_id"];
+			if (!$comment_status[$content_id]) {
+				continue;
+				}
 			$parent_content_type = $comment["content_type_guid"];
 			$content_title = $comment["content_title"];
 			$parent_id = $comment["parent_id"];
@@ -369,12 +392,12 @@ array( 'PHP' => '
 
 			$seq_r = strtr($seq, "0123456789", "9876543210");
 
-			#  echo "D comment $comment_id content: $content_id parent: $parent_id root: $root_id depth: $depth title: $title\n";
-			#  echo "  seq=$seq=\n";
-			#  echo " rseq=$seq_r=\n";
+			  echo "D comment $comment_id content: $content_id parent: $parent_id root: $root_id depth: $depth title: $title\n";
+			  //echo "  seq=$seq=\n";
+			  //echo " rseq=$seq_r=\n";
 
-			#  echo "update bit_liberty_comments set thread_forward_sequence="$seq" where comment_id=$comment_id;\n";
-			#  echo "update bit_liberty_comments set thread_reverse_sequence="$seq_r" where comment_id=$comment_id;\n";
+			  //echo "update bit_liberty_comments set thread_forward_sequence=$seq= where comment_id=$comment_id;\n";
+			  //echo "update bit_liberty_comments set thread_reverse_sequence=$seq_r= where comment_id=$comment_id;\n";
 			$sql = "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `thread_forward_sequence` = ? where `comment_id` = ?";
 			echo $sql . "   ($seq, $comment_id)\n";
 			$result = $gBitSystem->mDb->query($sql, array($seq, $comment_id));
