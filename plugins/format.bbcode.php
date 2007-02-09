@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -8,10 +8,12 @@ global $gLibertySystem;
 
 
 /**
- * run 'pear install HTML_BBCodeParser' to install the library,
+ * run 'pear install Text_Wiki_BBCode-alpha' to install the library,
  * you also need to enable the HTML plugin for now to due to dependency on the purge_html function
  */ 
-if( @include_once( 'HTML/BBCodeParser.php' ) ) {
+require_once('PEAR.php');
+
+if( include_once( 'doc/Text_Wiki_BBCode/doc/BBCodeParser.php' ) ) {
 
 /**
  * definitions
@@ -50,12 +52,29 @@ function bbcode_save_data( &$pParamHash ) {
 
 function bbcode_parse_data( &$pParseHash, &$pCommonObject ) {
 	global $gLibertySystem;
-	$ret = $pParseHash['data'];
+	$data = $pParseHash['data'];
+	$data = preg_replace( '/\[(quote|code):[0-9a-f]+=/', '[\1=', $data );
+	$data = preg_replace( '/:[0-9a-f]+\]/', ']', $data );
 
+/* get options from the ini file 
+// $config = parse_ini_file('BBCodeParser.ini', true);
+$config = parse_ini_file('doc/Text_Wiki_BBCode/doc/BBCodeParser_V2.ini', true);
+$options = &PEAR::getStaticProperty('HTML_BBCodeParser', '_options');
+$options = $config['HTML_BBCodeParser'];
+unset($options);
+*/
+
+$parser = new HTML_BBCodeParser('BBCodeParser_V2.ini');
+$parser->setText( $data );
+$parser->parse();
+$ret = $parser->getParsed();
+
+/*
 	$parser = new HTML_BBCodeParser();
-	$parser->setText( $ret );
+	$parser->setText( $data );
 	$parser->parse();
 	$ret = $parser->getParsed();
+*/
 
 	// eventually we should strip tags, maybe tikilink, or other things.
 	parse_data_plugins( $ret, $foo, $bar, $empty, $pCommonObject );
