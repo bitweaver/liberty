@@ -44,7 +44,7 @@ array( 'DATADICT' => array(
 		'tiki_structures_id_seq'       => 'liberty_structures_id_seq',
 		'tiki_comments'                => 'liberty_comments',
 		'tiki_comments_comment_id_seq' => 'liberty_comment_id_seq',
-		'tiki_content_types'           => 'liberty_content_types',
+//		'tiki_content_types'           => 'liberty_content_types',
 		'tiki_link_cache'              => 'liberty_link_cache',
 		'tiki_history'                 => 'liberty_content_history',
 		'tiki_actionlog'               => 'liberty_action_log',
@@ -528,8 +528,9 @@ array( 'DATADICT' => array(
 			plugin_description C(250),
 			maintainer_url C(250)
 		",
-
-		'tiki_content_types' => "
+// requires in PHP need liberty_content_types table 
+// since we are going from 1.8 to R2, we can get away with this here.
+		'liberty_content_types' => "
 			content_type_guid C(16) PRIMARY,
 			content_description C(250) NOTNULL,
 			maintainer_url C(250),
@@ -622,7 +623,7 @@ array( 'PGSQL' => array(
 	"ALTER TABLE `".BIT_DB_PREFIX."tiki_comments_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."tiki_content`( `content_id` )
 	"ALTER TABLE `".BIT_DB_PREFIX."tiki_comments_parent_ref` FOREIGN KEY (`parent_id`) REFERENCES `".BIT_DB_PREFIX."tiki_content`( `content_id` )'
 	"ALTER TABLE `".BIT_DB_PREFIX."tiki_content` ADD CONSTRAINT `tiki_content_guid_ref`  FOREIGN KEY (`format_guid`) REFERENCES ".BIT_DB_PREFIX."tiki_plugins( `plugin_guid` )"
-	"ALTER TABLE `".BIT_DB_PREFIX."tiki_content` ADD CONSTRAINT `tiki_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."tiki_content_types`( `content_type_guid` )" ),
+	"ALTER TABLE `".BIT_DB_PREFIX."tiki_content` ADD CONSTRAINT `tiki_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )" ),
 )),
 */
 ),
