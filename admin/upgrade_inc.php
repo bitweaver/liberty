@@ -271,8 +271,11 @@ array( 'PHP' => '
 					// its a comment on a comment
 					// need to go back one more level
 					$root_content_id_of_comment[$content_id] = $parent_content_id_of_comment[$root_id];
-					$depth_of_comment[$content_id]++;
-					$c++;
+					// prevent loops resulting from corrupted comment trees
+					if ($depth_of_comment[$content_id] < 20) {
+						$depth_of_comment[$content_id]++;
+						$c++;
+						}
 				}
 			}
 			
