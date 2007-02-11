@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -13,7 +13,7 @@ global $gLibertySystem;
  */ 
 require_once('PEAR.php');
 
-if( include_once( 'doc/Text_Wiki_BBCode/doc/BBCodeParser.php' ) ) {
+if( @include_once( 'doc/Text_Wiki_BBCode/doc/BBCodeParser.php' ) ) {
 
 /**
  * definitions
