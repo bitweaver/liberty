@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.170 2007/01/21 20:19:45 jht001 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.171 2007/02/11 00:23:11 jht001 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -444,6 +444,7 @@ class LibertyContent extends LibertyBase {
 	*/
 	function getHistory( $pVersion=NULL, $pUserId=NULL, $pOffset = 0, $max_records = -1 ) {
 		$ret = NULL;
+		$cant = 0;
 		if( $this->isValid() ) {
 			global $gBitSystem;
 
@@ -484,7 +485,24 @@ class LibertyContent extends LibertyBase {
 				array_push( $ret, $aux );
 				$result->MoveNext();
 			}
+
+
+			$query = "SELECT COUNT(*) AS `hcount`
+				FROM `".BIT_DB_PREFIX."liberty_content_history` th 
+				WHERE $whereSql $versionSql";
+			$query = "SELECT COUNT(*) AS `hcount`
+					FROM `".BIT_DB_PREFIX."liberty_content_history`
+					WHERE `content_id` = ?";
+			$rs = $this->mDb->query($query, array($this->mContentId));
+			$cant = $rs->fields['hcount'];
+			
+
 		}
+		$ret["cant"] = $cant;
+		$ret["max_records"] = $max_records;
+		$ret["offset"] = $pOffset;
+		$ret["find"] = $find;
+		$ret["sort_mode"] = $sort_mode;
 		return $ret;
 	}
 
