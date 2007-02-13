@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.86 $
+ * @version  $Revision: 1.87 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -673,10 +673,10 @@ class TikiWikiParser extends BitBase {
 
 	function cache_links($links, &$pCommonObject ) {
 		global $gBitSystem;
-		if( $gBitSystem->isFeatureActive( 'liberty_cache_pages' ) ) {
+		if( $gBitSystem->isFeatureActive( 'liberty_cache_pages' ) && $pCommonObject ) {
 			foreach ($links as $link) {
 				if( !$pCommonObject->isCached( $link ) ) {
-					$pCommonObject->cacheUrl($link);
+//					$pCommonObject->cacheUrl($link);
 				}
 			}
 		}
