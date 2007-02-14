@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.1 2006/12/22 11:53:17 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.2 2007/02/14 02:59:14 spiderr Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -78,6 +78,12 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 			} elseif( !empty( $pFileHash['max_width'] ) ) {
 				$pFileHash['max_height'] = round( ($iheight / $iwidth) * $pFileHash['max_width'] );
 			}
+
+			// Make sure not to scale up
+			if( $pFileHash['max_width'] > $iwidth && $pFileHash['max_height'] > $iheight) {
+				$pFileHash['max_width'] = $iwidth;
+				$pFileHash['max_height'] = $iheight;
+			} 
 
 			list($type, $mimeExt) = split( '/', strtolower( $itype ) );
 			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || ($mimeExt != 'jpeg')) || !empty( $pFileHash['colorspace_conversion'] ) ) {
