@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.58 2007/02/07 05:19:38 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.59 2007/02/16 14:48:47 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -627,7 +627,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
  */
 function liberty_process_upload( &$pFileHash ) {
 	// Check for evil file extensions that could be execed on the server
-	if( preg_match( '/(.pl|.php|.php3|.php4|.phtml|.cgi|.asp|.sh|.shtml)$/', $pFileHash['upload']['name'] ) ) {
+	if( preg_match( '/(.pl|.php|.php3|.php4|.phtml|.py|.cgi|.asp|.jsp|.sh|.shtml)$/', $pFileHash['upload']['name'] ) ) {
 		$pFileHash['upload']['type'] = 'text/plain';
 		$pFileHash['upload']['name'] = $pFileHash['upload']['name'].'.txt';
 	}
@@ -746,7 +746,12 @@ function liberty_process_generic( &$pFileHash, $pMoveFile=TRUE ) {
 	$destBase = $pFileHash['dest_path'].$pFileHash['name'];
 	$actualPath = BIT_ROOT_PATH.$destBase;
 	if( is_file( $pFileHash['source_file']) ) {
-		if( $pMoveFile && rename( $pFileHash['source_file'], $actualPath ) ) {
+		if( $pMoveFile ) {
+			if( is_uploaded_file( $pFileHash['source_file'] ) ) {
+				move_uploaded_file( $pFileHash['source_file'], $actualPath );
+			} else {
+				rename( $pFileHash['source_file'], $actualPath );
+			}
 			$ret = $destBase;
 		} else {
 			copy( $pFileHash['source_file'], $actualPath );

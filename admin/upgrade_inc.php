@@ -65,6 +65,10 @@ array( 'DATADICT' => array(
 			// don't know how to remove NOTNULL from content_id using upgrader - does this work?
 			'content_id' => array( '`content_id`', 'I4' ),
 		),
+		'liberty_thumbnail_queue' => array( 
+			'processor' => array( '`processor`', 'VARCHAR(250)' ),
+			'processor_parameters' => array( '`processor_parameters`', 'VARCHAR(250)' ),
+		),
 	)),
 )),
 

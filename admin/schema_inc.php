@@ -163,6 +163,16 @@ $tables = array(
 	data X
 ",
 
+'liberty_thumbnail_queue' => "
+	content_id I4 PRIMARY,
+	queue_date I8 NOTNULL,
+	begin_date I8,
+	end_date I8,
+	resize_original integer,
+	processor C(250),
+	processor_parameters C(250)
+"
+
 );
 
 global $gBitInstaller;
