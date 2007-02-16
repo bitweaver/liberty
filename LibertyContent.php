@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.171 2007/02/11 00:23:11 jht001 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.172 2007/02/16 14:43:23 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -501,8 +501,9 @@ class LibertyContent extends LibertyBase {
 		$ret["cant"] = $cant;
 		$ret["max_records"] = $max_records;
 		$ret["offset"] = $pOffset;
-		$ret["find"] = $find;
-		$ret["sort_mode"] = $sort_mode;
+// code needs to be updated with pListHash
+//		$ret["find"] = $find;
+//		$ret["sort_mode"] = $sort_mode;
 		return $ret;
 	}
 
