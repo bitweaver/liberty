@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.59 2007/02/16 14:48:47 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.60 2007/02/16 17:08:59 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -811,6 +811,12 @@ function liberty_clear_thumbnails( &$pFileHash ) {
 		if( file_exists( $fullPath ) ) {
 			unlink( $fullPath );
 		}
+		// Also check for png version.
+		$fullPath =  BIT_ROOT_PATH.$pFileHash['dest_path']."$size.png";
+		if( file_exists( $fullPath ) ) {
+			unlink( $fullPath );
+		}
+
 	}
 }
 
@@ -862,14 +868,21 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$pFileHash['original_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
 	}
 
+	if ($gBitSystem->isFeatureActive('liberty_png_thumbnails')) {
+		$ext = '.png';
+	}
+	else {
+		$ext = '.jpg';
+	}
+
 	foreach( $pFileHash['thumbnail_sizes'] as $thumbSize ) {
 		if( isset( $gThumbSizes[$thumbSize] ) ) {
 			// Icon thumb is 48x48
 			$pFileHash['dest_base_name'] = $thumbSize;
-			$pFileHash['name'] = $thumbSize.'.jpg';
+			$pFileHash['name'] = $thumbSize.$ext;
 			$pFileHash['max_width'] = $gThumbSizes[$thumbSize]['width'];
 			$pFileHash['max_height'] = $gThumbSizes[$thumbSize]['height'];
-			$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
+			$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash, NULL, true);
 		}
 	}
 }

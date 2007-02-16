@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.2 2007/02/14 02:59:14 spiderr Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.3 2007/02/16 17:08:59 nickpalmer Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -15,7 +15,7 @@
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
+function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL, $pThumbnail = false ) {
 	global $gBitSystem;
 	// static var here is crucial
 	static $rgbConverts = array();
@@ -65,7 +65,13 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 			$iheight = round( MagickGetImageHeight( $magickWand ) );
 			$itype = MagickGetImageMimeType( $magickWand );
 
-			MagickSetImageFormat( $magickWand, 'JPG' );
+			if ($pThumbnail && $gBitSystem->isFeatureActive('liberty_png_thumbnails')) {
+				$format = 'PNG';
+			}
+			else {
+				$format = 'JPG';
+			}
+			MagickSetImageFormat( $magickWand, $format );
 
 			if( empty( $pFileHash['max_width'] ) || empty( $pFileHash['max_height'] ) || $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION || $pFileHash['max_height'] == MAX_THUMBNAIL_DIMENSION ) {
 				$pFileHash['max_width'] = $iwidth;
@@ -78,7 +84,6 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 			} elseif( !empty( $pFileHash['max_width'] ) ) {
 				$pFileHash['max_height'] = round( ($iheight / $iwidth) * $pFileHash['max_width'] );
 			}
-
 			// Make sure not to scale up
 			if( $pFileHash['max_width'] > $iwidth && $pFileHash['max_height'] > $iheight) {
 				$pFileHash['max_width'] = $iwidth;
@@ -86,9 +91,15 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL ) {
 			} 
 
 			list($type, $mimeExt) = split( '/', strtolower( $itype ) );
-			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || ($mimeExt != 'jpeg')) || !empty( $pFileHash['colorspace_conversion'] ) ) {
-				// We have to resize. *ALL* resizes are converted to jpeg
+			if ($gBitSystem->isFeatureActive('liberty_png_thumbnails')) {
+				$targetType = 'png';
+				$destExt = '.png';
+			}
+			else {
+				$targetType = 'jpeg';
 				$destExt = '.jpg';
+			}
+			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || ($mimeExt != $targetType)) || !empty( $pFileHash['colorspace_conversion'] ) ) {
 				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
 				$destFile = BIT_ROOT_PATH.'/'.$destUrl;
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;

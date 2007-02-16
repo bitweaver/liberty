@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.1 2006/12/22 11:53:17 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.2 2007/02/16 17:08:59 nickpalmer Exp $
  *
  * Image processor - extension: php-imagick
  * @package  liberty
@@ -15,7 +15,8 @@
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL ) {
+function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL , $pThumbnail = false) {
+  	global $gBitSystem;
 	$pFileHash['error'] = NULL;
 	$ret = NULL;
 	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
@@ -38,9 +39,16 @@ function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL ) {
 			}
 			$itype = imagick_getmimetype( $iImg );
 			list($type, $mimeExt) = split( '/', strtolower( $itype ) );
-			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || ($mimeExt != 'jpeg')) ) {
-				// We have to resize. *ALL* resizes are converted to jpeg
-				$destExt = '.jpg';
+ 			if ($pThumbnail && $gBitSystem->isFeatureActive('liberty_png_thumbnails')) {
+ 				$targetType = 'png';
+ 				$destExt = '.png';
+ 			}
+ 			else {
+ 				$targetType = 'jpeg';
+  				$destExt = '.jpg';
+ 			}
+			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || ($mimeExt != $targetType)) ) {
+				// We have to resize. *ALL* resizes are converted to jpeg or png
 				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
 				$destFile = BIT_ROOT_PATH.'/'.$destUrl;
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.18 $
+ * @version  $Revision: 1.19 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -71,7 +71,12 @@ function bit_files_load( $pRow ) {
 				  WHERE a.`foreign_id` = ? AND a.`content_id` = ?";
 		if( $ret = $gBitSystem->mDb->getRow($query, array( $pRow['foreign_id'], $pRow['content_id'] )) ) {
 			$canThumbFunc = liberty_get_function( 'can_thumbnail' );
-			if ( file_exists( BIT_ROOT_PATH.dirname( $ret['storage_path'] ).'/small.jpg' ) ) {
+			if ( file_exists( BIT_ROOT_PATH.dirname( $ret['storage_path'] ).'/small.png' ) ) {
+				$ret['thumbnail_url']['avatar'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/avatar.png';
+				$ret['thumbnail_url']['small'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/small.png';
+				$ret['thumbnail_url']['medium'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/medium.png';
+				$ret['thumbnail_url']['large'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/large.png';
+			} elseif ( file_exists( BIT_ROOT_PATH.dirname( $ret['storage_path'] ).'/small.jpg' ) ) {
 				$ret['thumbnail_url']['avatar'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/avatar.jpg';
 				$ret['thumbnail_url']['small'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/small.jpg';
 				$ret['thumbnail_url']['medium'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/medium.jpg';

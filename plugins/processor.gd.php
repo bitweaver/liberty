@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.1 2006/12/22 11:53:17 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.2 2007/02/16 17:09:00 nickpalmer Exp $
  *
  * Image processor - extension: php-gd
  * @package  liberty
@@ -15,7 +15,8 @@
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function liberty_gd_resize_image( &$pFileHash, $pFormat = NULL ) {
+function liberty_gd_resize_image( &$pFileHash, $pFormat = NULL, $pThumbnail = false ) {
+  	global $gBitSystem;
 	$ret = NULL;
 	list($iwidth, $iheight, $itype, $iattr) = @getimagesize( $pFileHash['source_file'] );
 	list($type, $ext) = split( '/', strtolower( $pFileHash['type'] ) );
@@ -62,6 +63,8 @@ function liberty_gd_resize_image( &$pFileHash, $pFormat = NULL ) {
 			//     $ImgWhite = imagecolorallocate($t, 255, 255, 255);
 			//     imagefill($t, 0, 0, $ImgWhite);
 			//     imagecolortransparent($t, $ImgWhite);
+			imagesavealpha($t, true);
+			imagealphablending($t, false);
 			imagecopyresampled($t, $img, 0, 0, 0, 0, $tw, $ty, $size_x, $size_y);
 		} else {
 			$t = imagecreate($tw, $ty);
@@ -90,9 +93,17 @@ function liberty_gd_resize_image( &$pFileHash, $pFormat = NULL ) {
 				break;
 			}
 		default:
-			$ext = '.jpg';
-			$destFile = BIT_ROOT_PATH.'/'.$destUrl.$ext;
-			imagejpeg( $t, $destFile );
+			if ($pThumbnail && $gBitSystem->isFeatureActive('liberty_png_thumbnails')) {
+				$ext = '.png';
+				$destFile = BIT_ROOT_PATH.'/'.$destUrl.$ext;
+				imagepng( $t, $destFile );
+			}
+			else {
+				$ext = '.jpg';
+				$destFile = BIT_ROOT_PATH.'/'.$destUrl.$ext;
+				imagejpeg( $t, $destFile );
+			}
+		  
 			if(chmod($destFile, 0644)){
 				// does nothing, but fails elegantly
 			}
