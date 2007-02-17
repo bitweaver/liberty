@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.58 2007/01/30 15:07:18 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.59 2007/02/17 18:25:51 bitweaver Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -110,12 +110,12 @@ class LibertySystem extends LibertyBase {
 			if( $pluginFile = $gBitSystem->getConfig( "{$this->mSystem}_plugin_file_$pluginGuid" ) ) {
 				// check for the plugin in the default location - in case bitweaver root path changed.
 				if ( file_exists( $pluginFile ) ) {
-					$this->mPluginFileName = $pluginFile;
+					$this->mPluginFileName = basename( $pluginFile );
 					include_once( $pluginFile );
 				} else {
 					$defaultFile = LIBERTY_PKG_PATH.'plugins/'.basename( $pluginFile );
 					if( file_exists( $defaultFile ) ) {
-						$this->mPluginFileName = $defaultFile;
+						$this->mPluginFileName = basename( $defaultFile );
 						include_once( $defaultFile );
 					}
 				}
@@ -138,7 +138,7 @@ class LibertySystem extends LibertyBase {
 		if( $pluginDir = opendir( $pPluginsPath ) ) {
 			while( FALSE !== ( $plugin = readdir( $pluginDir ) ) ) {
 				if( preg_match( '/\.php$/', $plugin ) ) {
-					$this->mPluginFileName = $pPluginsPath.$plugin;
+					$this->mPluginFileName = $plugin;
 					include_once( $pPluginsPath.$plugin );
 				}
 			}
