@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.87 $
+ * @version  $Revision: 1.88 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -16,6 +16,7 @@ define( 'WIKI_WORDS_REGEX', '[A-z0-9]{2}[\w\d_\-]+[A-Z_][\w\d_\-]+[A-z0-9]+' );
  * @subpackage plugins_format
  */
 $pluginParams = array (
+	'auto_activate' => TRUE,
 	'store_function' => 'tikiwiki_save_data',
 	'load_function' => 'tikiwiki_parse_data',
 	'verify_function' => 'tikiwiki_verify_data',
