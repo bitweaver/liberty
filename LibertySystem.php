@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.59 2007/02/17 18:25:51 bitweaver Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.60 2007/02/17 18:46:32 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -138,7 +138,7 @@ class LibertySystem extends LibertyBase {
 		if( $pluginDir = opendir( $pPluginsPath ) ) {
 			while( FALSE !== ( $plugin = readdir( $pluginDir ) ) ) {
 				if( preg_match( '/\.php$/', $plugin ) ) {
-					$this->mPluginFileName = $plugin;
+					$this->mPluginFileName = basename( $plugin );
 					include_once( $pPluginsPath.$plugin );
 				}
 			}
