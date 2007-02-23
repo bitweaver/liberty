@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.60 2007/02/17 18:46:32 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.61 2007/02/23 12:21:03 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -79,9 +79,10 @@ class LibertySystem extends LibertyBase {
 	// File name of last plug that registered
 	var $mPluginFileName;
 
-	// Package using LibertySystem
+	// Packages using LibertySystem
 	// this makes it possible to extend LibertySystem by another package
 	var $mSystem = LIBERTY_PKG_NAME;
+	var $mPluginPath;
 
 
 	/**
@@ -89,6 +90,13 @@ class LibertySystem extends LibertyBase {
 	 **/
 	function LibertySystem( $pExtras = TRUE ) {
 		LibertyBase::LibertyBase();
+
+		// if mPluginPath hasn't been set, we set it for liberty plugins
+		if( empty( $this->mPluginPath )) {
+			$this->mPluginPath = LIBERTY_PKG_PATH.'plugins/';
+		}
+
+		// extras - only needed by liberty
 		if( $pExtras ) {
 			$this->mDataTags = array();
 			$this->loadContentTypes();
@@ -113,7 +121,7 @@ class LibertySystem extends LibertyBase {
 					$this->mPluginFileName = basename( $pluginFile );
 					include_once( $pluginFile );
 				} else {
-					$defaultFile = LIBERTY_PKG_PATH.'plugins/'.basename( $pluginFile );
+					$defaultFile = $this->mPluginPath.basename( $pluginFile );
 					if( file_exists( $defaultFile ) ) {
 						$this->mPluginFileName = basename( $defaultFile );
 						include_once( $defaultFile );
@@ -132,7 +140,7 @@ class LibertySystem extends LibertyBase {
 	function scanAllPlugins( $pPluginsPath = NULL ) {
 		global $gBitSystem;
 		if( empty( $pPluginsPath ) ) {
-			$pPluginsPath = LIBERTY_PKG_PATH.'plugins/';
+			$pPluginsPath = $this->mPluginPath;
 		}
 
 		if( $pluginDir = opendir( $pPluginsPath ) ) {
@@ -168,7 +176,7 @@ class LibertySystem extends LibertyBase {
 
 		// only execute the following if this class hasn't been extended
 		if( $this->mSystem == LIBERTY_PKG_NAME ) {
-			$plugin_file = LIBERTY_PKG_PATH.'plugins/format.tikiwiki.php';
+			$plugin_file = $this->mPluginPath.'format.tikiwiki.php';
 			if( $format_plugin_count == 0 || $default_format_found == 0 && is_file( $plugin_file ) ) {
 				require_once( $plugin_file );
 				$guid = PLUGIN_GUID_TIKIWIKI;
