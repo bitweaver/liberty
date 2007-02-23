@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.60 2007/02/16 17:08:59 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.61 2007/02/23 15:16:24 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -848,18 +848,20 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$pFileHash['thumbnail_sizes'] = array( 'icon', 'avatar', 'small', 'medium', 'large' );
 	}
 
-	if( empty( $gThumbSizes ) ) {
-		$gThumbSizes = array( 
-			'icon' => array( 'width'=>48, 'height'=>48 ), 
-			'avatar' => array( 'width'=>100, 'height'=>100 ), 
-			'small' => array( 'width'=>160, 'height'=>120 ), 
-			'medium' => array( 'width'=>400, 'height'=>300 ), 
-			'large' => array( 'width'=>800, 'height'=>600 ), 
+	if( empty( $gThumbSizes )) {
+		$gThumbSizes = array(
+			'icon'   => array( 'width' => 48,  'height' => 48 ),
+			'avatar' => array( 'width' => 100, 'height' => 100 ),
+			'small'  => array( 'width' => 160, 'height' => 120 ),
+			'medium' => array( 'width' => 400, 'height' => 300 ),
+			'large'  => array( 'width' => 800, 'height' => 600 ),
 		);
 	}
 
-	if( (!preg_match( '/image\/(gif|jpg|jpeg|png)/', strtolower( $pFileHash['type'] ) ) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ))
-		|| in_array( 'original', $pFileHash['thumbnail_sizes'] ) ) {
+	if(
+		( !preg_match( '/image\/(gif|jpg|jpeg|png)/', strtolower( $pFileHash['type'] )) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ))
+		|| in_array( 'original', $pFileHash['thumbnail_sizes'] )
+	) {
 		// jpeg version of original
 		$pFileHash['dest_base_name'] = 'original';
 		$pFileHash['name'] = 'original.jpg';
@@ -868,15 +870,14 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$pFileHash['original_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
 	}
 
-	if ($gBitSystem->isFeatureActive('liberty_png_thumbnails')) {
+	if( $gBitSystem->isFeatureActive( 'liberty_png_thumbnails' )) {
 		$ext = '.png';
-	}
-	else {
+	} else {
 		$ext = '.jpg';
 	}
 
 	foreach( $pFileHash['thumbnail_sizes'] as $thumbSize ) {
-		if( isset( $gThumbSizes[$thumbSize] ) ) {
+		if( isset( $gThumbSizes[$thumbSize] )) {
 			// Icon thumb is 48x48
 			$pFileHash['dest_base_name'] = $thumbSize;
 			$pFileHash['name'] = $thumbSize.$ext;
