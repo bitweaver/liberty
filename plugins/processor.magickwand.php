@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.3 2007/02/16 17:08:59 nickpalmer Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.4 2007/02/24 08:51:08 squareing Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -65,10 +65,9 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL, $pThumbn
 			$iheight = round( MagickGetImageHeight( $magickWand ) );
 			$itype = MagickGetImageMimeType( $magickWand );
 
-			if ($pThumbnail && $gBitSystem->isFeatureActive('liberty_png_thumbnails')) {
+			if( $pThumbnail && $gBitSystem->isFeatureActive( 'liberty_png_thumbnails' )) {
 				$format = 'PNG';
-			}
-			else {
+			} else {
 				$format = 'JPG';
 			}
 			MagickSetImageFormat( $magickWand, $format );

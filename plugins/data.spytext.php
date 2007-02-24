@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider starrrider@sourceforge.net
 // +----------------------------------------------------------------------+
-// $Id: data.spytext.php,v 1.11 2006/08/07 22:14:58 squareing Exp $
+// $Id: data.spytext.php,v 1.12 2007/02/24 08:51:08 squareing Exp $
 
 /******************
  * Initialization *
@@ -53,7 +53,7 @@ function data_spytext_help() {
 			.'<tr class="odd">'
 				.'<td>spy</td>'
 				.'<td>' . tra( "UserName(s)") . '<br />' .tra( "(optional)") . '</td>'
-				.'<td>' . tra( "A List of Spy(s) who can see the Message. Each Spy must be seperated with the | character like this:")
+				.'<td>' . tra( "A List of Spy(s) who can see the Message. Each Spy must be separated with the | character like this:")
 					."<br /><strong>spy='Fire|Spider|Lester|Xing'</strong>"
 					.'<br />' .tra( "The Message will <strong>ONLY</strong> be displayed to Spys. <strong>HINT:</strong> The Admin is a Spy!")
 				.'</td>'
@@ -61,7 +61,7 @@ function data_spytext_help() {
 			.'<tr class="even">'
 				.'<td>agency</td>'
 				.'<td>' . tra( "GroupName(s)") . '<br />' .tra( "(optional)") . '</td>'
-				.'<td>' . tra( "A List of Spy Agency(s) (Groups) that will be allowed to see the Messages. Each Agency must be seperated ")
+				.'<td>' . tra( "A List of Spy Agency(s) (Groups) that will be allowed to see the Messages. Each Agency must be separated ")
 					.tra( "with the | character like this:")
 					."<br /><strong>agency='Devellopers|Editors'</strong>"
 					.'<br />' .tra( "The Message will <strong>ONLY</strong> be displayed to Spys. <strong>HINT:</strong> The Admin is a Spy!")
@@ -70,7 +70,7 @@ function data_spytext_help() {
 			.'<tr class="odd">'
 				.'<td>sender</td>'
 				.'<td>' . tra( "UserName") . '<br />' .tra( "(optional)") . '</td>'
-				.'<td>' . tra( "A List of Spy(s) who wrote the Message. Each Author must be seperated with the | character like this:")
+				.'<td>' . tra( "A List of Spy(s) who wrote the Message. Each Author must be separated with the | character like this:")
 					."<br /><strong>sender='StarRider|Wolffy'</strong>"
 				.'</td>'
 			.'</tr>'
@@ -86,7 +86,7 @@ function data_spytext_help() {
 					.'<br />Line 3 for Sender (Users) = <strong>"From Your Source(s):"</strong> '
 					.'<br />'. tra( "The Address Box is <strong>NOT</strong> displayed by Default. Specifing")
 					."<br /><strong>to='TRUE'</strong> ". tra( "will enable the Address Box with the Default Headers. The Address Headers can ")
-					.tra( "be redefined by using the the | character to seperate the headers like this:")
+					.tra( "be redefined by using the the | character to separate the headers like this:")
 					."<br /><strong>to='To My Friends:|To My Colleagues In:|Your Friend:'</strong>" . tra( "The * character can also be used ")
 					.tra( 'to say "Use This Default" but Replace this one. - Like this:')
 					."<br /><strong>to='*|*|From the Sexiest Spy Ever:'</strong>"

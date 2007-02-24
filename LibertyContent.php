@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.172 2007/02/16 14:43:23 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.173 2007/02/24 08:51:08 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1377,7 +1377,7 @@ class LibertyContent extends LibertyBase {
 			if( $prev != 1 ) {
 				// replace the last of the continuous links with a ...
 				$pListHash['listInfo']['block']['prev'][$i + 1] = "&hellip;";
-				// add $skipping links to pages seperated by $step pages
+				// add $skipping links to pages separated by $step pages
 				if( ( $min = $pListHash['listInfo']['current_page'] - $continuous - ( $step * $skipping ) ) < 0 ) {
 					$min = 0;
 				}
@@ -1398,7 +1398,7 @@ class LibertyContent extends LibertyBase {
 			if( $next != $pListHash['listInfo']['total_pages'] ) {
 				// replace the last of the continuous links with a ...
 				$pListHash['listInfo']['block']['next'][$i - 1] = "&hellip;";
-				// add $skipping links to pages seperated by $step pages
+				// add $skipping links to pages separated by $step pages
 				if( ( $max = $pListHash['listInfo']['current_page'] + $continuous + ( $step * $skipping ) ) > $pListHash['listInfo']['total_pages'] ) {
 					$max = $pListHash['listInfo']['total_pages'];
 				}
@@ -1772,7 +1772,7 @@ class LibertyContent extends LibertyBase {
 	* @param string  pMixed['data'] string to be parsed
 	* @param int     pMixed['content_id'] content_id or the item to be parsed - required for caching and optimal parser performance
 	* @param boolean pMixed['no_cache'] disable caching
-	* @param string  pMixed['cache_extension'] cache to a seperate file. useful for truncated displays of parsed content such as article front page
+	* @param string  pMixed['cache_extension'] cache to a separate file. useful for truncated displays of parsed content such as article front page
 	* @param string pFormatGuid processor to use
 	* @return string Formated data string
 	*/

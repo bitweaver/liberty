@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.61 2007/02/23 15:16:24 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.62 2007/02/24 08:51:08 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -301,7 +301,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 		if( @$this->verifyId( $pParamHash['existing_attachment_id'] ) ) {
 			foreach( $pParamHash['existing_attachment_id'] as $existingAttachmentId ) {
-				// allow for multiple values seperated by any non numeric character
+				// allow for multiple values separated by any non numeric character
 				$ids = preg_split( '/\D/', $existingAttachmentId );
 				foreach( $ids as $id ) {
 					$id = ( int )$id;
