@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.62 2007/02/24 08:51:08 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.63 2007/02/25 22:58:17 tekimaki Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -87,9 +87,8 @@ class LibertyAttachable extends LibertyContent {
 	function getStorageBranch( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pRootDir = NULL ) {
 		// *PRIVATE FUNCTION. GO AWAY! DO NOT CALL DIRECTLY!!!
 		global $gBitSystem;
-		$baseUrl = null;
 		$pathParts = array();
-		$pathParts = split( '/', $gBitSystem->getConfig( 'site_upload_dir', 'storage/' ) );
+		$pathParts = split( '/', trim( STORAGE_PKG_PATH, '/\\' ) );
 
 		if( !$pUserId ) {
 			$pathParts[] = 'common';
@@ -108,24 +107,11 @@ class LibertyAttachable extends LibertyContent {
 			$pathParts[] = $subDir;
 		}
 
-		$pRootDir = !empty( $pRootDir ) ? $pRootDir : BIT_ROOT_PATH;
+		$fullPath = implode( $pathParts, '/' ).'/';
 
-		foreach( $pathParts as $p ) {
-			if( !empty( $p ) ) {
-				$baseUrl .= $p.'/';
-				if( !file_exists( $pRootDir.$baseUrl ) ) {
-					$oldu = umask( 0 );
-					if( mkdir( $pRootDir.$baseUrl, $pPermissions ) ) {
-						umask( $oldu );
-					} else {
-						// ACK, something went very wrong.
-						$baseUrl = FALSE;
-						break;
-					}
-				}
-			}
-		}
-		return $baseUrl;
+		mkdir_p( $fullPath );
+		$ret = substr( $fullPath, strlen( dirname( STORAGE_PKG_PATH ) ) );
+		return $ret;
 	}
 
 	/**
