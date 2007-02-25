@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.4 2007/02/24 08:51:08 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.5 2007/02/25 23:30:32 tekimaki Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -180,7 +180,8 @@ function liberty_magickwand_check_error( $pResult, $pWand ) {
 function liberty_magickwand_can_thumbnail_image( $pMimeType ) {
 	$ret = FALSE;
 	if( !empty( $pMimeType ) ) {
-		$ret = preg_match( '/(^image|pdf)/i', $pMimeType );
+		// allow images, pdf, and postscript thumbnailing (eps, ai, etc...)
+		$ret = preg_match( '/(^image|pdf|postcript)/i', $pMimeType );
 	}
 	return $ret;
 }
