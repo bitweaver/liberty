@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.63 2007/02/25 22:58:17 tekimaki Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.64 2007/02/26 21:06:39 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -791,8 +791,8 @@ function liberty_process_image( &$pFileHash ) {
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
 function liberty_clear_thumbnails( &$pFileHash ) {
-	$thumbnail_sizes = array( 'icon', 'avatar', 'small', 'medium', 'large' );
-	foreach( $thumbnail_sizes as $size ) {
+	global $gThumbSizes;
+	foreach( array_keys( $gThumbSizes ) as $size ) {
 		$fullPath =  BIT_ROOT_PATH.$pFileHash['dest_path']."$size.jpg";
 		if( file_exists( $fullPath ) ) {
 			unlink( $fullPath );
@@ -802,7 +802,6 @@ function liberty_clear_thumbnails( &$pFileHash ) {
 		if( file_exists( $fullPath ) ) {
 			unlink( $fullPath );
 		}
-
 	}
 }
 
@@ -834,16 +833,6 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$pFileHash['thumbnail_sizes'] = array( 'icon', 'avatar', 'small', 'medium', 'large' );
 	}
 
-	if( empty( $gThumbSizes )) {
-		$gThumbSizes = array(
-			'icon'   => array( 'width' => 48,  'height' => 48 ),
-			'avatar' => array( 'width' => 100, 'height' => 100 ),
-			'small'  => array( 'width' => 160, 'height' => 120 ),
-			'medium' => array( 'width' => 400, 'height' => 300 ),
-			'large'  => array( 'width' => 800, 'height' => 600 ),
-		);
-	}
-
 	if(
 		( !preg_match( '/image\/(gif|jpg|jpeg|png)/', strtolower( $pFileHash['type'] )) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ))
 		|| in_array( 'original', $pFileHash['thumbnail_sizes'] )
@@ -864,7 +853,6 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 
 	foreach( $pFileHash['thumbnail_sizes'] as $thumbSize ) {
 		if( isset( $gThumbSizes[$thumbSize] )) {
-			// Icon thumb is 48x48
 			$pFileHash['dest_base_name'] = $thumbSize;
 			$pFileHash['name'] = $thumbSize.$ext;
 			$pFileHash['max_width'] = $gThumbSizes[$thumbSize]['width'];
@@ -872,5 +860,39 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 			$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash, NULL, true);
 		}
 	}
+}
+
+/**
+ * fetch all available thumbnails for a given item. if no thumbnails are present, get thumbnailing image or the appropriate mime type icon
+ * 
+ * @param string $pFilePath Relative path to file we want to get thumbnails for (needs to include file name for mime icons)
+ * @param string $pThumbnailerImageUrl URL to background thumbnailer image
+ * @param array $pThumbSizes array of images to search for in the pFilePath
+ * @access public
+ * @return array of available thumbnails or mime icons
+ */
+function liberty_fetch_thumbnails( $pFilePath, $pThumbnailerImageUrl = NULL, $pThumbSizes = NULL ) {
+	global $gBitSystem, $gThumbSizes;
+	$ret = array();
+
+	if( empty( $pThumbSizes )) {
+		$pThumbSizes = array_keys( $gThumbSizes );
+	}
+
+	// since we could have png or jpg thumbs, we need to check for both types
+	// we will check for jpg first as they have been in use by bw for a long time now
+	foreach( $pThumbSizes as $size ) {
+		if( file_exists( BIT_ROOT_PATH.dirname( $pFilePath ).'/'.$size.'.jpg' )) {
+			$ret[$size] = BIT_ROOT_URL.dirname( $pFilePath ).'/'.$size.'.jpg';
+		} elseif( file_exists( BIT_ROOT_PATH.dirname( $pFilePath ).'/'.$size.'.png' )) {
+			$ret[$size] = BIT_ROOT_URL.dirname( $pFilePath ).'/'.$size.'.png';
+		} elseif( $pThumbnailerImageUrl ) {
+			$ret[$size] = $pThumbnailerImageUrl;
+		} else {
+			$ret[$size] = LibertySystem::getMimeThumbnailURL( $gBitSystem->lookupMimeType( $pFilePath ), substr( $pFilePath, strrpos( $pFilePath, '.' ) + 1 ));
+		}
+	}
+
+	return $ret;
 }
 ?>
