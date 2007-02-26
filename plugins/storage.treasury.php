@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -41,9 +41,10 @@ function treasury_file_load( $pRow ) {
 		if( $row = $gBitSystem->mDb->getRow( $query, array( $pRow['foreign_id'] ))) {
 			require_once( TREASURY_PKG_PATH.'TreasuryItem.php' );
 			require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'display_bytes' );
-			$ti = new TreasuryItem( NULL, $row['content_id'] );
-			$ti->load();
-			$ret = $ti->mInfo;
+			$item = new TreasuryItem( NULL, $row['content_id'] );
+			$item->load();
+			$ret = $item->mInfo;
+			$ret['prefs'] = $item->mPrefs;
 			if( !empty( $ret['file_size'] )) {
 				$ret['file_details'] = $ret['title']."<br /><small>(".$ret['mime_type']." ".smarty_modifier_display_bytes( $ret['file_size'] ).")</small>";
 			}

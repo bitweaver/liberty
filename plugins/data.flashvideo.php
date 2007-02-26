@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.flashvideo.php,v 1.3 2007/02/12 16:18:43 squareing Exp $
+// $Id: data.flashvideo.php,v 1.4 2007/02/26 15:36:06 squareing Exp $
 
 /**
  * definitions
@@ -57,6 +57,21 @@ function data_flashvideo_help() {
 				.'<td>' . tra( "Id number of Flashvideo to display inline.") . '</td>'
 			.'</tr>'
 			.'<tr class="even">'
+				.'<td>size</td>'
+				.'<td>' . tra( "key-words") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "You can change the display size of the video here. This will not influence the download size of the video itself. Possible values are:") . ' <strong>small, medium, large, huge</strong></td>'
+			.'</tr>'
+			.'<tr class="odd">'
+				.'<td>width</td>'
+				.'<td>' . tra( "numeric") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "Manually set the width of the video in pixels.").'</td>'
+			.'</tr>'
+			.'<tr class="even">'
+				.'<td>height</td>'
+				.'<td>' . tra( "numeric") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "Manually set the height of the video in pixels. The hight will be calculated automatically if not set.").'</td>'
+			.'</tr>'
+			.'<tr class="even">'
 				.'<td>'.tra( "styling" ).'</td>'
 				.'<td>'.tra( "string").'<br />'.tra("(optional)").'</td>'
 				.'<td>'.tra( "Multiple styling options available: padding, margin, background, border, text-align, color, font, font-size, font-weight, font-family, align. Please view CSS guidelines on what values these settings take.").'</td>'
@@ -84,17 +99,47 @@ function data_flashvideo( $pData, $pParams ) { // NOTE: The original plugin had 
 	if( !empty( $att['flv_url'] )) {
 		$div = liberty_plugins_div_style( $pParams );
 
-		$prefNames = array( 'flv_height', 'flv_width' );
-		foreach( $prefNames as $name ) {
-			$flv_prefs[$name] = $gContent->getPreference( $name, NULL, $att['content_id'] );
+		// mPrefs has been passed to us in $att['prefs']
+		$flvPrefs = $att['prefs'];
+
+		// if we want to display a different size
+		if( $pParams['size'] == 'small' ) {
+			$new_width = 160;
+			$flvPrefs['digits'] = 'false';
+		} elseif( $pParams['size'] == 'medium' ) {
+			$new_width = 320;
+		} elseif( $pParams['size'] == 'large' ) {
+			$new_width = 480;
+		} elseif( $pParams['size'] == 'huge' ) {
+			$new_width = 600;
 		}
 
-		$gBitSmarty->assign( 'flv_prefs', $flv_prefs );
+		// if they set a custom width, we use that
+		if( @BitBase::verifyId( $pParams['width'] )) {
+			$new_width = $pParams['width'];
+		}
+
+		// if they set a custom width, we use that
+		if( @BitBase::verifyId( $pParams['width'] )) {
+			$new_width = $pParams['width'];
+		}
+
+		$flvPrefs['flv_width']  = $new_width;
+
+		// if they set a custom height, we use that
+		if( @BitBase::verifyId( $pParams['height'] )) {
+			$new_width = $pParams['height'];
+		} else {
+			$ratio = $flvPrefs['flv_width'] / $new_width;
+			$flvPrefs['flv_height'] = round( $flvPrefs['flv_height'] / $ratio );
+		}
+
+		$gBitSmarty->assign( 'flvPrefs', $flvPrefs );
 		$gBitSmarty->assign( 'flv', $att );
 		$ret = $gBitSmarty->fetch( 'bitpackage:treasury/flv_player_inc.tpl' );
 
 		// finally, wrap the output with a div
-		$ret = '<div class="'.( !empty( $div['class'] ) ? $div['class'] : "flashvideo-plugin" ).'" style="'.$div['style'].'">'.$ret.( !empty( $div['description'] )  ? '<br />'.$div['description']  : '' ).'</div>';
+		$ret = '<div class="'.( !empty( $div['class'] ) ? $div['class'] : "flashvideo-plugin" ).'" style="'.$div['style'].'">'.$ret.( !empty( $div['description'] ) ? '<br />'.$div['description']  : '' ).'</div>';
 	} else {
 		$ret = tra( "There doesn't seem to be a valid video stream for the id you used" ).": ".$pParams['id'];
 	}
