@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.flashvideo.php,v 1.4 2007/02/26 15:36:06 squareing Exp $
+// $Id: data.flashvideo.php,v 1.5 2007/02/26 15:47:38 squareing Exp $
 
 /**
  * definitions
@@ -119,20 +119,16 @@ function data_flashvideo( $pData, $pParams ) { // NOTE: The original plugin had 
 			$new_width = $pParams['width'];
 		}
 
-		// if they set a custom width, we use that
-		if( @BitBase::verifyId( $pParams['width'] )) {
-			$new_width = $pParams['width'];
-		}
-
-		$flvPrefs['flv_width']  = $new_width;
-
 		// if they set a custom height, we use that
 		if( @BitBase::verifyId( $pParams['height'] )) {
-			$new_width = $pParams['height'];
+			$flvPrefs['flv_height'] = $pParams['height'];
 		} else {
 			$ratio = $flvPrefs['flv_width'] / $new_width;
 			$flvPrefs['flv_height'] = round( $flvPrefs['flv_height'] / $ratio );
 		}
+
+		// now that all calculations are done, we apply the width
+		$flvPrefs['flv_width']  = $new_width;
 
 		$gBitSmarty->assign( 'flvPrefs', $flvPrefs );
 		$gBitSmarty->assign( 'flv', $att );
