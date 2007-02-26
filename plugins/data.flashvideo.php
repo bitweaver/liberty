@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.flashvideo.php,v 1.6 2007/02/26 16:16:34 squareing Exp $
+// $Id: data.flashvideo.php,v 1.7 2007/02/26 18:03:02 squareing Exp $
 
 /**
  * definitions
@@ -62,11 +62,16 @@ function data_flashvideo_help() {
 				.'<td>' . tra( "You can change the display size of the video here. This will not influence the download size of the video itself. Possible values are:") . ' <strong>small, medium, large, huge</strong></td>'
 			.'</tr>'
 			.'<tr class="odd">'
+				.'<td>view</td>'
+				.'<td>' . tra( "key-words") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "If you are including a small version of the video, you can easily link to the large version of this film. Possible values are:") . ' <strong>small, medium, large, huge, original</strong></td>'
+			.'</tr>'
+			.'<tr class="even">'
 				.'<td>width</td>'
 				.'<td>' . tra( "numeric") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "Manually set the width of the video in pixels.").'</td>'
 			.'</tr>'
-			.'<tr class="even">'
+			.'<tr class="odd">'
 				.'<td>height</td>'
 				.'<td>' . tra( "numeric") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "Manually set the height of the video in pixels. The hight will be calculated automatically if not set.").'</td>'
@@ -100,10 +105,15 @@ function data_flashvideo( $pData, $pParams ) { // NOTE: The original plugin had 
 		$div = liberty_plugins_div_style( $pParams );
 
 		// mPrefs has been passed to us in $att['prefs']
-		$flvPrefs = array_merge( $pParams, $att['prefs'] );
-		treasury_flv_calculate_videosize( $flvPrefs );
+		treasury_flv_calculate_videosize( $pParams, $att['prefs'] );
 
-		$gBitSmarty->assign( 'flvPrefs', $flvPrefs );
+		$sizes = array( 'small', 'medium', 'large', 'huge', 'original' );
+		if( !empty( $pParams['view'] ) && in_array( $pParams['view'], $sizes )) {
+			$div['description'] .= ( !empty( $div['description'] ) ? '<br />' : '' );
+			$div['description'] .= '<a href="'.$att['display_url'].'&size='.$pParams['view'].'">'.tra( "View larger version" ).'</a>';
+		}
+
+		$gBitSmarty->assign( 'flvPrefs', $att['prefs'] );
 		$gBitSmarty->assign( 'flv', $att );
 		$ret = $gBitSmarty->fetch( 'bitpackage:treasury/flv_player_inc.tpl' );
 
