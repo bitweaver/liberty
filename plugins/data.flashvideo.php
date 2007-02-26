@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.flashvideo.php,v 1.5 2007/02/26 15:47:38 squareing Exp $
+// $Id: data.flashvideo.php,v 1.6 2007/02/26 16:16:34 squareing Exp $
 
 /**
  * definitions
@@ -100,35 +100,8 @@ function data_flashvideo( $pData, $pParams ) { // NOTE: The original plugin had 
 		$div = liberty_plugins_div_style( $pParams );
 
 		// mPrefs has been passed to us in $att['prefs']
-		$flvPrefs = $att['prefs'];
-
-		// if we want to display a different size
-		if( $pParams['size'] == 'small' ) {
-			$new_width = 160;
-			$flvPrefs['digits'] = 'false';
-		} elseif( $pParams['size'] == 'medium' ) {
-			$new_width = 320;
-		} elseif( $pParams['size'] == 'large' ) {
-			$new_width = 480;
-		} elseif( $pParams['size'] == 'huge' ) {
-			$new_width = 600;
-		}
-
-		// if they set a custom width, we use that
-		if( @BitBase::verifyId( $pParams['width'] )) {
-			$new_width = $pParams['width'];
-		}
-
-		// if they set a custom height, we use that
-		if( @BitBase::verifyId( $pParams['height'] )) {
-			$flvPrefs['flv_height'] = $pParams['height'];
-		} else {
-			$ratio = $flvPrefs['flv_width'] / $new_width;
-			$flvPrefs['flv_height'] = round( $flvPrefs['flv_height'] / $ratio );
-		}
-
-		// now that all calculations are done, we apply the width
-		$flvPrefs['flv_width']  = $new_width;
+		$flvPrefs = array_merge( $pParams, $att['prefs'] );
+		treasury_flv_calculate_videosize( $flvPrefs );
 
 		$gBitSmarty->assign( 'flvPrefs', $flvPrefs );
 		$gBitSmarty->assign( 'flv', $att );
