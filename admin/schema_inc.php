@@ -77,8 +77,8 @@ $tables = array(
 	last_modified I8 NOTNULL,
 	title C(160),
 	ip C(15),
-	log_message C(250),
-	error_message C(250)
+	log_message C(250) NOTNULL DEFAULT '',
+	error_message C(250) NOTNULL DEFAULT ''
 ",
 
 'liberty_copyrights' => "

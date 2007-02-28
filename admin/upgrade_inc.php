@@ -71,34 +71,40 @@ array( 'DATADICT' => array(
 )),
 
 
-// we need to remove the NOTNULL constraint on liberty_action_log.content_id and liberty_action_log.log_message
+// we need to change some column properties in liberty_action_log
 array( 'DATADICT' => array(
 	// rename original column
 	array( 'RENAMECOLUMN' => array(
-		'liberty_action_log' => array(
-			'`log_message`' => '`temp_message` C(255) NOTNULL',
-			'`content_id`' => '`temp_id` I(4)',
+		'liberty_action_log'  => array(
+			'`log_message`'   => "`temp_log` C(255) NOTNULL",                // set log_message NOTNULL DEFAULT ''
+			'`error_message`' => "`temp_error` C(255)",                      // set error_message NOTNULL DEFAULT ''
+			'`content_id`'    => "`temp_id` I(4) NOTNULL",                   // remove NOTNULL from content_id
 		),
 	)),
 	// add new column
 	array( 'ALTER' => array(
 		'liberty_action_log' => array(
-			'log_message' => array( '`log_message`', 'VARCHAR(250)' ),
-			'content_id' => array( '`content_id`', 'I(4)' ),
+			'log_message'    => array( '`log_message`', "VARCHAR(250) NOTNULL DEFAULT ''" ),
+			'error_message'  => array( '`error_message`', "VARCHAR(250) NOTNULL DEFAULT ''" ),
+			'content_id'     => array( '`content_id`', 'I(4)' ),
 		),
 	)),
 )),
 // copy all the data accross
 array( 'QUERY' =>
 	array( 'SQL92' => array(
-		"UPDATE `".BIT_DB_PREFIX."liberty_action_log` SET `log_message` = `temp_message`"
-		"UPDATE `".BIT_DB_PREFIX."liberty_action_log` SET `content_id` = `temp_id`"
+		"UPDATE `".BIT_DB_PREFIX."liberty_action_log` SET `log_message` = `temp_log`",
+		// error messages are probably all set to NULL at this point
+		"UPDATE `".BIT_DB_PREFIX."liberty_action_log` SET `temp_error` = '' WHERE `temp_error` IS NULL",
+		"UPDATE `".BIT_DB_PREFIX."liberty_action_log` SET `error_message` = `temp_error`",
+		"UPDATE `".BIT_DB_PREFIX."liberty_action_log` SET `content_id` = `temp_id`",
 	)),
 ),
 // drop original column
 array( 'DATADICT' => array(
 	array( 'DROPCOLUMN' => array(
-		'liberty_action_log' => array( '`temp_message`' ),
+		'liberty_action_log' => array( '`temp_log`' ),
+		'liberty_action_log' => array( '`temp_error`' ),
 		'liberty_action_log' => array( '`temp_id`' ),
 	)),
 )),
