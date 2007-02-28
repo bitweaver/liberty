@@ -66,6 +66,7 @@ $tables = array(
 ",
 
 // rename log_action to log_message
+// remove NOTNULL from log_message
 // rename action_comment to error_message
 // error_message 200 chars to 250
 // add NOTNULL to last_modified
@@ -76,7 +77,7 @@ $tables = array(
 	last_modified I8 NOTNULL,
 	title C(160),
 	ip C(15),
-	log_message C(250) NOTNULL,
+	log_message C(250),
 	error_message C(250)
 ",
 

@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.173 2007/02/24 08:51:08 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.174 2007/02/28 07:00:15 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2114,10 +2114,14 @@ class LibertyContent extends LibertyBase {
 	 * 
 	 * @param array $pParamHash 
 	 * @access public
-	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 * @return TRUE on success, FALSE on failure
 	 */
 	function verifyActionLog( &$pParamHash ) {
 		global $gBitUser, $gBitSystem;
+
+		// we will set $ret FALSE if there is a problem along the way
+		// we can't populate mErrors since it would defeat the purpose having errors about the logging system
+		$ret = TRUE;
 
 		// content_id isn't strictly needed
 		if( @BitBase::verifyId( $pParamHash['action_log']['content_id'] ) ) {
@@ -2142,7 +2146,7 @@ class LibertyContent extends LibertyBase {
 		} elseif( !empty( $this ) && !empty( $this->mInfo['title'] ) ) {
 			$pParamHash['action_log_store']['title'] = $this->mInfo['title'];
 		} else {
-			return FALSE;
+			$ret = FALSE;
 		}
 
 		// IP of the user
@@ -2156,53 +2160,44 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 		$pParamHash['action_log_store']['ip'] = $pParamHash['action_log']['ip'];
-
-		// Timestamp - don't think we should be able to override this
-/*
-		if( @BitBase::verifyId( $pParamHash['action_log']['last_modified'] ) ) {
-			$pParamHash['action_log_store']['last_modified'] = $pParamHash['action_log']['last_modified'];
-		} elseif( @BitBase::verifyId( $pParamHash['content_store']['last_modifed'] ) ) {
-			$pParamHash['action_log_store']['last_modified'] = $pParamHash['content_store']['last_modified'];
-		} else {
-			$pParamHash['action_log_store']['last_modified'] = $gBitSystem->getUTCTime();
-		}
-*/
 		$pParamHash['action_log_store']['last_modified'] = $gBitSystem->getUTCTime();
 
 		// the log message
-		$log_action = '';
+		$log_message = '';
 		if( empty( $pParamHash['action_log']['log_message'] ) && !empty( $this ) && !empty( $this->mLogs ) ) {
 			foreach( $this->mLogs as $key => $msg ) {
-				$log_action .= "$msg\n";
+				$log_message .= "$msg\n";
 			}
 		} elseif( !empty( $pParamHash['action_log']['log_message'] ) ) {
-			$log_action = $pParamHash['action_log']['log_message'];
+			$log_message = $pParamHash['action_log']['log_message'];
 		}
 
 		// trim down log
-		if( !empty( $log_action ) ) {
-			$pParamHash['action_log_store']['log_message'] = substr( $log_action, 0, 250 );
-		} else {
-			return FALSE;
+		if( !empty( $log_message ) ) {
+			$pParamHash['action_log_store']['log_message'] = substr( $log_message, 0, 250 );
 		}
 
 		// error message - default is to put in any stuff in mErrors
-		$action_error = '';
+		$error_message = '';
 		if( empty( $pParamHash['action_log']['error_message'] ) && !empty( $this ) && !empty( $this->mErrors ) ) {
 			foreach( $this->mErrors as $key => $msg ) {
-				$action_error .= "$msg\n";
+				$error_message .= "$msg\n";
 			}
 		} elseif( !empty( $pParamHash['action_log']['error_message'] ) ) {
-			$action_error = $pParamHash['action_log']['error_message'];
+			$error_message = $pParamHash['action_log']['error_message'];
 		}
 
 		// trim down error message
-		if( !empty( $action_error ) ) {
-			$pParamHash['action_log_store']['error_message'] = substr( $action_error, 0, 250 );
+		if( !empty( $error_message ) ) {
+			$pParamHash['action_log_store']['error_message'] = substr( $error_message, 0, 250 );
+		}
+
+		if( empty( $pParamHash['action_log_store']['error_message'] ) && empty( $pParamHash['action_log_store']['log_message'] )) {
+			$ret = FALSE;
 		}
 
 		// if we get as far as here, we can
-		return TRUE;
+		return $ret;
 	}
 
 	/**

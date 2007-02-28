@@ -57,8 +57,6 @@ array( 'DATADICT' => array(
 			'lang_code' => array( '`lang_code`', 'VARCHAR(32)' ),
 			'content_status_id' => array( '`content_status_id`', 'I4' ),
 		),
-	)),
-	array( 'ALTER' => array(
 		'liberty_action_log' => array(
 			'log_action' => array( '`log_message`', 'VARCHAR(250)' ),
 			'action_comment' => array( '`error_message`', 'VARCHAR(250)' ),
@@ -69,6 +67,39 @@ array( 'DATADICT' => array(
 			'processor' => array( '`processor`', 'VARCHAR(250)' ),
 			'processor_parameters' => array( '`processor_parameters`', 'VARCHAR(250)' ),
 		),
+	)),
+)),
+
+
+// we need to remove the NOTNULL constraint on liberty_action_log.content_id and liberty_action_log.log_message
+array( 'DATADICT' => array(
+	// rename original column
+	array( 'RENAMECOLUMN' => array(
+		'liberty_action_log' => array(
+			'`log_message`' => '`temp_message` C(255) NOTNULL',
+			'`content_id`' => '`temp_id` I(4)',
+		),
+	)),
+	// add new column
+	array( 'ALTER' => array(
+		'liberty_action_log' => array(
+			'log_message' => array( '`log_message`', 'VARCHAR(250)' ),
+			'content_id' => array( '`content_id`', 'I(4)' ),
+		),
+	)),
+)),
+// copy all the data accross
+array( 'QUERY' =>
+	array( 'SQL92' => array(
+		"UPDATE `".BIT_DB_PREFIX."liberty_action_log` SET `log_message` = `temp_message`"
+		"UPDATE `".BIT_DB_PREFIX."liberty_action_log` SET `content_id` = `temp_id`"
+	)),
+),
+// drop original column
+array( 'DATADICT' => array(
+	array( 'DROPCOLUMN' => array(
+		'liberty_action_log' => array( '`temp_message`' ),
+		'liberty_action_log' => array( '`temp_id`' ),
 	)),
 )),
 
