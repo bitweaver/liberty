@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.18 $
+ * @version  $Revision: 1.19 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing <xing@synapse.plus.com>
 // +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.18 2007/01/24 08:34:53 squareing Exp $
+// $Id: data.maketoc.php,v 1.19 2007/03/01 20:37:40 squareing Exp $
 
 /**
  * definitions
@@ -133,7 +133,7 @@ function data_maketoc( $data ) {
 		}
 	}
 
-	return isset( $ret ) ? $ret : $data;
+	return isset( $ret ) ? $ret : preg_replace( "/\{maketoc[^\}]*\}\s*(<br[^>]*>)*/i", "", $data );
 }
 
 function maketoc_create_list( $pTocHash, $pParams ) {
