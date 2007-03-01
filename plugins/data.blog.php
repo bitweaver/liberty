@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.blog.php,v 1.6 2007/02/02 20:48:28 nickpalmer Exp $
+// $Id: data.blog.php,v 1.7 2007/03/01 15:53:20 nickpalmer Exp $
 
 /**
  * definitions
@@ -89,7 +89,9 @@ function data_blog($data, $params) { // No change in the parameters with Clyde
 		
 		$module_params = $params;
 		
-		$gBitSmarty->assign('blog_id', $module_params['id']);
+		if (isset($module_params['id'])) {
+			$gBitSmarty->assign('blog_id', $module_params['id']);
+		}
 		
 		$blogPost = new BitBlogPost();
 		
@@ -98,6 +100,7 @@ function data_blog($data, $params) { // No change in the parameters with Clyde
 							 "last_modified_desc",
 							 "created_asc",
 							 "created_desc",
+							 "random",
 							 );
 		if( !empty( $module_params['sort_mode'] ) && in_array( $module_params['sort_mode'], $sortOptions ) ) {
 			$sort_mode = $module_params['sort_mode'];
