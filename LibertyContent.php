@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.174 2007/02/28 07:00:15 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.175 2007/03/01 09:41:08 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1062,14 +1062,10 @@ class LibertyContent extends LibertyBase {
 	function storePreference( $pPrefName, $pPrefValue = NULL ) {
 		$ret = FALSE;
 		if( LibertyContent::isValid() ) {
-			// validate any preferences
-			if( $pPrefName == 'users_homepage' && !preg_match( '/^http:\/\//', $pPrefValue ) ) {
-				$pPrefValue = 'http://'.$pPrefValue;
-			}
 			$query    = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=? AND `pref_name`=?";
 			$bindvars = array( $this->mContentId, $pPrefName );
 			$result   = $this->mDb->query($query, $bindvars);
-			if( !is_null( $pPrefValue ) ) {
+			if( !is_null( $pPrefValue )) {
 				$query      = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_prefs` (`content_id`,`pref_name`,`pref_value`) VALUES(?, ?, ?)";
 				$bindvars[] = $pPrefValue;
 				$result     = $this->mDb->query( $query, $bindvars );
