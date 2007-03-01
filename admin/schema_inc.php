@@ -203,7 +203,7 @@ $indices = array (
 	'structures_content_idx' => array( 'table' => 'liberty_structures', 'cols' => 'content_id', 'opts' => NULL),
 	'to_content_id_idx' => array( 'table' => 'liberty_content_links', 'cols' => 'to_content_id', 'opts' => NULL),
 	'links_from_content_id_idx' => array( 'table' => 'liberty_content_links', 'cols' => 'from_content_id', 'opts' => NULL),
-	'links_title_content_id_idx' => array( 'table' => 'liberty_content_links', 'cols' => 'to_title', 'opts' => NULL)
+	'links_title_content_id_idx' => array( 'table' => 'liberty_content_links', 'cols' => 'to_title', 'opts' => NULL),
 	'process_id_idx' => array( 'table' => 'liberty_process_queue', 'cols' => 'content_id', 'opts' => NULL ),
 );
 $gBitInstaller->registerSchemaIndexes( LIBERTY_PKG_NAME, $indices );
