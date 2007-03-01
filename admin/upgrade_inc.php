@@ -32,6 +32,19 @@ array( 'DATADICT' => array(
 			content_id INT NOTNULL PRIMARY
 			CONSTRAINTS ', CONSTRAINT liberty_aliases_content_fkey FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`(`content_id`) '
 		",
+		// liberty_thumbnail_queue is being replaces with this
+		'liberty_process_queue' => "
+			process_id I4 NOTNULL AUTO,
+			content_id I4 NOTNULL,
+			queue_date I8 NOTNULL,
+			begin_date I8,
+			end_date I8,
+			process_status C(64),
+			log_message X,
+			processor C(250),
+			processor_parameters X
+			CONSTRAINT ', CONSTRAINT `liberty_process_queue` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
+		",
 	)),
 	array( 'RENAMETABLE' => array(
 		'tiki_content'                 => 'liberty_content',
@@ -70,6 +83,13 @@ array( 'DATADICT' => array(
 	)),
 )),
 
+
+// drop the original thumbnail_queue table - comment for now since there is no real harm in leaving this table around for a bit longer
+//array( 'DATADICT' => array(
+//	array( 'DROPTABLE' => array(
+//		'liberty_thumbnail_queue'
+//	)),
+//)),
 
 // we need to change some column properties in liberty_action_log
 array( 'DATADICT' => array(

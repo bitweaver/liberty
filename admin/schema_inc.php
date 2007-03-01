@@ -65,12 +65,6 @@ $tables = array(
 	CONSTRAINT ', CONSTRAINT `liberty_history_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
 ",
 
-// rename log_action to log_message
-// remove NOTNULL from log_message
-// rename action_comment to error_message
-// error_message 200 chars to 250
-// add NOTNULL to last_modified
-// remove NOTNULL from content_id
 'liberty_action_log' => "
 	content_id I4,
 	user_id I4 NOTNULL,
@@ -137,7 +131,7 @@ $tables = array(
 	error_code I4,
 	caption C(250)
 	CONSTRAINT '
-		, CONSTRAINT `liberty_attachment_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
+		, CONSTRAINT `liberty_attachment_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
 ",
 
 'liberty_files' => "
@@ -164,16 +158,19 @@ $tables = array(
 	data X
 ",
 
-'liberty_thumbnail_queue' => "
-	content_id I4 PRIMARY,
+// liberty_thumbnail_queue is being replaces with this
+'liberty_process_queue' => "
+	process_id I4 NOTNULL AUTO,
+	content_id I4 NOTNULL,
 	queue_date I8 NOTNULL,
 	begin_date I8,
 	end_date I8,
-	resize_original integer,
+	process_status C(64),
+	log_message X,
 	processor C(250),
-	processor_parameters C(250)
+	processor_parameters X
+	CONSTRAINT ', CONSTRAINT `liberty_process_queue` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
 "
-
 );
 
 global $gBitInstaller;
@@ -207,6 +204,7 @@ $indices = array (
 	'to_content_id_idx' => array( 'table' => 'liberty_content_links', 'cols' => 'to_content_id', 'opts' => NULL),
 	'links_from_content_id_idx' => array( 'table' => 'liberty_content_links', 'cols' => 'from_content_id', 'opts' => NULL),
 	'links_title_content_id_idx' => array( 'table' => 'liberty_content_links', 'cols' => 'to_title', 'opts' => NULL)
+	'process_id_idx' => array( 'table' => 'liberty_process_queue', 'cols' => 'content_id', 'opts' => NULL ),
 );
 $gBitInstaller->registerSchemaIndexes( LIBERTY_PKG_NAME, $indices );
 
