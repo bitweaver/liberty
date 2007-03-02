@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.42 2007/01/06 09:46:18 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.43 2007/03/02 11:38:10 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -293,6 +293,30 @@ class LibertyComment extends LibertyContent {
 		return $ret;
 	}
 
+	/**
+	* Fill title with date if available
+	*
+	* This will normally be overwriten by extended classes to provide
+	* an appropriate title title string
+	* @param array mInfo type hash of data to be used to provide base data
+	* @return string Descriptive title for the object
+	*/
+	function getTitle( $pHash=NULL ) {
+		global $gBitSmarty;
+		$ret = NULL;
+		if( empty( $pHash ) ) {
+			$pHash = &$this->mInfo;
+		}
+		if( !empty( $pHash['title'] ) ) {
+			$ret = $pHash['title'];
+		} elseif( !empty( $pHash['created'] ) ) {
+			require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'bit_short_date' );
+			$ret = smarty_modifier_bit_short_date( $pHash['created'] );
+		} elseif( !empty( $pHash['content_description'] ) ) {
+			$ret = $pHash['content_description'];
+		}
+		return $ret;
+	}
 
 
 	function getNumComments($pContentId = NULL) {
