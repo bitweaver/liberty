@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.176 2007/03/02 11:37:35 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.177 2007/03/02 16:10:14 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1265,22 +1265,35 @@ class LibertyContent extends LibertyBase {
 	* @return string Formated html the link to display the page.
 	*/
 	function getDisplayLink( $pLinkText, $pMixed ) {
+		global $gBitSmarty;
 		$ret = '';
-		if( empty( $pLinkText ) && !empty( $this ) ) {
-			$pLinkText = $this->getTitle();
-		} elseif( empty( $pLinkText ) && !empty( $pMixed['title'] ) ) {
-			$pLinkText = $pMixed['title'];
+		if( empty( $pMixed ) && !empty( $this->mInfo )) {
+			$pMixed = &$this->mInfo;
 		}
-		if( empty( $pLinkText ) && !empty( $pMixed['content_description'] ) ) {
-			$pLinkText = "[ ".$pMixed['content_description']." ]";
+
+		if( empty( $pLinkText )) {
+			if( !empty( $pMixed['title'] )) {
+				$pLinkText = $pMixed['title'];
+			} elseif( !empty( $pMixed['content_description'] ) ) {
+				$pLinkText = "[ ".$pMixed['content_description']." ]";
+			}
 		}
-		if( empty( $pLinkText ) ) {
+
+		if( empty( $pLinkText )) {
 			$pLinkText = "[ ".tra( "No Title" )." ]";
 		}
 
+		// we add some more info to the title of the link
+		if( !empty( $pMixed['created'] )) {
+			require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'bit_short_date' );
+			$linkTitle = tra( 'Created' ).': '.smarty_modifier_bit_short_date( $pMixed['created'] );
+		} else {
+			$linkTitle = $pLinkText;
+		}
+
 		// finally we are ready to create the full link
-		if( !empty( $pMixed['content_id'] ) ) {
-			$ret = '<a title="'.htmlspecialchars( $pLinkText ).'" href="'.LibertyContent::getDisplayUrl( $pMixed['content_id'], $pMixed ).'">'.htmlspecialchars( $pLinkText ).'</a>';
+		if( !empty( $pMixed['content_id'] )) {
+			$ret = '<a title="'.htmlspecialchars( $linkTitle ).'" href="'.LibertyContent::getDisplayUrl( $pMixed['content_id'], $pMixed ).'">'.htmlspecialchars( $pLinkText ).'</a>';
 		}
 		return $ret;
 	}
