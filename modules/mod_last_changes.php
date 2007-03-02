@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.php,v 1.9 2006/02/05 10:02:39 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.php,v 1.10 2007/03/02 11:15:10 squareing Exp $
  * @package liberty
  * @subpackage modules
  * Params:
@@ -22,9 +22,7 @@ if( !empty( $gQueryUser->mUserId ) ) {
 if( empty( $module_title ) ) {
 	if( !empty( $module_params['content_type_guid'] ) && !empty( $gLibertySystem->mContentTypes[$module_params['content_type_guid']] ) ) {
 		$title = tra( "Last Changes" ).': '.tra( $gLibertySystem->mContentTypes[$module_params['content_type_guid']]['content_description'] );
-		$gBitSmarty->assign( 'contentType', $module_params['content_type_guid'] );
 	} else {
-		$gBitSmarty->assign( 'contentType', FALSE );
 		$title = tra( "Last Changes" );
 	}
 	$gBitSmarty->assign( 'moduleTitle', $title );
@@ -33,6 +31,8 @@ if( empty( $module_title ) ) {
 if( !empty( $module_params['show_date'] ) ) {
 	$gBitSmarty->assign( 'showDate' , TRUE );
 }
+
+$gBitSmarty->assign( 'contentType', !empty( $module_params['content_type_guid'] ) ? $module_params['content_type_guid'] : NULL );
 
 $listHash = array(
 	'content_type_guid' => !empty( $module_params['content_type_guid'] ) ? $module_params['content_type_guid'] : NULL,
