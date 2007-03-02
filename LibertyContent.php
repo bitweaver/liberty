@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.175 2007/03/01 09:41:08 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.176 2007/03/02 11:37:35 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1686,8 +1686,8 @@ class LibertyContent extends LibertyBase {
 					$type['content_object'] = new $type['handler_class']();
 				}
 				if( !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
-					$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
 					$aux['title']        = $type['content_object']->getTitle( $aux );
+					$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
 					$aux['display_url']  = $type['content_object']->getDisplayUrl( $aux['content_id'], $aux );
 				}
 				$ret[] = $aux;
