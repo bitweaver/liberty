@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.64 2007/02/26 21:06:39 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.65 2007/03/03 16:03:56 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -645,7 +645,7 @@ function liberty_process_archive( &$pFileHash ) {
 	// we'll copy the file. in the case of xuploaded files, the files have been
 	// processed but don't have to be copied
 	if( empty( $pFileHash['preprocessed'] ) && !is_uploaded_file( $pFileHash['tmp_name'] ) && is_file( $pFileHash['tmp_name'] ) ) {
-		$tmpDir = ini_get('upload_tmp_dir');
+		$tmpDir = get_temp_dir();
 		$copyFile = tempnam( !empty( $tmpDir ) ? $tmpDir : '/tmp', $pFileHash['name'] );
 		copy( $pFileHash['tmp_name'], $copyFile );
 		$pFileHash['tmp_name'] = $copyFile;
