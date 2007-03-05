@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.177 2007/03/02 16:10:14 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.178 2007/03/05 02:14:18 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1396,7 +1396,7 @@ class LibertyContent extends LibertyBase {
 				$pListHash['listInfo']['block']['prev'][1] = 1;
 			}
 			// reverse array that links are in the correct order
-			if( !empty( $pListHash['listInfo']['block'] ) ) {
+			if( !empty( $pListHash['listInfo']['block']['prev'] ) ) {
 				$pListHash['listInfo']['block']['prev'] = array_reverse( $pListHash['listInfo']['block']['prev'], TRUE );
 			}
 
