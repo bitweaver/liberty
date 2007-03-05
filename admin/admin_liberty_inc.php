@@ -67,6 +67,11 @@ $formImageFeatures = array(
 		'note' => 'Automatically create JPEG versions of original images named \'original.jpg\' in the attachment directory with other thumbnails.',
 		'page' => '',
 	),
+	"liberty_png_thumbnails" => array(
+		'label' => 'PNG Thumbnails',
+		'note' => 'Automatically generated thumbnails of original images will be saved as PNG images instead of JPEGs. This will preserve transparency in GIF and PNG uploads but such transparency is not well supported in MSIE 6. MSIE 7 mostly works now as do most other browsers.',
+		'page' => '',
+	),
 );
 $gBitSmarty->assign( 'formImageFeatures', $formImageFeatures );
 
