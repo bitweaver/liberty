@@ -160,7 +160,7 @@ $tables = array(
 
 // liberty_thumbnail_queue is being replaces with this
 'liberty_process_queue' => "
-	process_id I4 NOTNULL AUTO,
+	process_id I4 NOTNULL AUTO PRIMARY,
 	content_id I4 NOTNULL,
 	queue_date I8 NOTNULL,
 	begin_date I8,
