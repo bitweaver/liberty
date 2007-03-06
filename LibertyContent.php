@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.178 2007/03/05 02:14:18 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.179 2007/03/06 15:54:14 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1260,11 +1260,13 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	* Pure virtual function that returns link to display a piece of content
-	* @param string Text for the link unless overriden by object title
-	* @param array different possibilities depending on derived class
+	*
+	* @param string $pLinkText Text for the link unless overriden by object title
+	* @param array $pMixed different possibilities depending on derived class
+	* @param string $pAnchor anchor string e.g.: #comment_123
 	* @return string Formated html the link to display the page.
 	*/
-	function getDisplayLink( $pLinkText, $pMixed ) {
+	function getDisplayLink( $pLinkText=NULL, $pMixed=NULL, $pAnchor=NULL ) {
 		global $gBitSmarty;
 		$ret = '';
 		if( empty( $pMixed ) && !empty( $this->mInfo )) {
@@ -1293,7 +1295,7 @@ class LibertyContent extends LibertyBase {
 
 		// finally we are ready to create the full link
 		if( !empty( $pMixed['content_id'] )) {
-			$ret = '<a title="'.htmlspecialchars( $linkTitle ).'" href="'.LibertyContent::getDisplayUrl( $pMixed['content_id'], $pMixed ).'">'.htmlspecialchars( $pLinkText ).'</a>';
+			$ret = '<a title="'.htmlspecialchars( $linkTitle ).'" href="'.LibertyContent::getDisplayUrl( $pMixed['content_id'], $pMixed ).$pAnchor.'">'.htmlspecialchars( $pLinkText ).'</a>';
 		}
 		return $ret;
 	}
