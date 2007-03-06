@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.44 2007/03/06 15:54:14 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.45 2007/03/06 16:16:46 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -236,9 +236,9 @@ class LibertyComment extends LibertyContent {
 	function getDisplayLink( $pLinkText=NULL, $pMixed=NULL ) {
 		$anchor = '';
 		if( @BitBase::verifyId( $pMixed['content_id'] )) {
-			$anchor = "comment_{$pMixed['content_id']}";
+			$anchor = "#comment_{$pMixed['content_id']}";
 		}
-		parent::getDisplayLink( $pLinkText, $pMixed, $anchor );
+		return parent::getDisplayLink( $pLinkText, $pMixed, $anchor );
 	}
 
 	function getList( $pParamHash ) {
