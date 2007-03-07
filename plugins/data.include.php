@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.include.php,v 1.9 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.include.php,v 1.10 2007/03/07 00:39:06 laetzer Exp $
 
 /**
  * definitions
@@ -63,7 +63,7 @@ function data_include_help() {
 			<tr class="odd">
 				<td>content_id</td>
 				<td>'.tra( 'numeric (optional)' ).'</td>
-				<td>'.tra( 'To include any content from bitweaver insert the apprpropriate numeric content id. This can include blog posts, images, wiki texts...<br />
+				<td>'.tra( 'To include any content from bitweaver insert the appropriate numeric content id. This can include blog posts, images, wiki texts...<br />
 					Avaliable content can be viewed <a href="'.LIBERTY_PKG_URL.'list_content.php">here</a>' ).'</td>
 			</tr>
 		</table>
