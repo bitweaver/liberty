@@ -1,10 +1,10 @@
 <?php
 /**
- * $Id: edit_help_inc.php,v 1.12 2006/12/30 08:56:22 squareing Exp $
+ * $Id: edit_help_inc.php,v 1.13 2007/03/09 06:25:22 starrrider Exp $
  * edit_help_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage functions
  */
@@ -26,7 +26,7 @@ foreach( array_keys( $gLibertySystem->mPlugins ) as $pluginGuid ) {
 		if( isset( $gLibertySystem->mPlugins[$pluginGuid]['description'] )) {
 			$pinfo                = $gLibertySystem->mPlugins[$pluginGuid];
 			$pinfo["plugin_guid"] = preg_replace( "/^data/", "", $pluginGuid );
-			$pinfo["exthelp"]     = !empty( $pinfo['help_function'] ) && function_exists( $pinfo['help_function'] ) ? $pinfo['help_function']() : '';
+			$pinfo["exthelp"]     = !empty( $pinfo['help_function'] ) && $gLibertySystem->getPluginFunction( $pluginGuid, 'help_function' ) ? $pinfo['help_function']() : '';
 			$dataplugins[]        = $pinfo;
 		}
 	}

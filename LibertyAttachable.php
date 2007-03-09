@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.65 2007/03/03 16:03:56 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.66 2007/03/09 06:25:22 starrrider Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -227,7 +227,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 				$storeRow['content_id'] = $pParamHash['content_id']; // copy in content_id
 				$storeRow['user_id'] = $pParamHash['user_id']; // copy in the user_id
 				// do we have a verify function for this storage type, and do things verify?
-				if( function_exists( $gLibertySystem->mPlugins[$guid]['verify_function'] )
+				if( $gLibertySystem->getPluginFunction( $guid, 'verify_function' )
 					&& $gLibertySystem->mPlugins[$guid]['verify_function']( $storeRow ) ) {
 					if( empty( $pParamHash['attachment_id'] ) ) {
 						if ( empty( $pParamHash['foreign_id'] ) || !$pParamHash['foreign_id'] ) {
@@ -275,7 +275,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 						}
 					}
 
-					if( $pParamHash['attachment_id'] && function_exists( $gLibertySystem->mPlugins[$storeRow['plugin_guid']]['store_function'] ) ) {
+					if( $pParamHash['attachment_id'] && $gLibertySystem->getPluginFunction( $gLibertySystem->mPlugins[$storeRow['plugin_guid']], 'store_function' ) ) {
 						$storeFunc = $gLibertySystem->mPlugins[$storeRow['plugin_guid']]['store_function'];
 						$this->mStorage = $storeFunc( $storeRow );
 					}
@@ -409,7 +409,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			$user_id = $row['user_id'];
 
 			if( $guid && ($user_id == $gBitUser->mUserId || $gBitUser->isAdmin()) ) {
-				if ( function_exists( $gLibertySystem->mPlugins[$guid]['expunge_function'])) {
+				if ( $gLibertySystem->getPluginFunction( $gLibertySystem->mPlugins[$guid], 'expunge_function' ) ) {
 					$expungeFunc = $gLibertySystem->mPlugins[$guid]['expunge_function'];
 					if( $expungeFunc( $pAttachmentId ) ) {
 						$delDir = dirname( $this->mStorage[$pAttachmentId]['storage_path'] );
