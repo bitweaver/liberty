@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -35,7 +35,11 @@ $gLibertySystem->registerPlugin( PLUGIN_GUID_BBCODE, $pluginParams );
 
 function bbcode_verify_data( &$pParamHash ) {
 	$errorMsg = NULL;
-	$pParamHash['content_store']['data'] = purge_html( $pParamHash['edit'] );
+	if( !function_exists( 'purge_html' ) && include_once( LIBERTY_PKG_PATH.'plugins/format.bithtml.php' ) ) {
+		$pParamHash['content_store']['data'] = purge_html( $pParamHash['edit'] );
+	} else {
+		$pParamHash['content_store']['data'] = $pParamHash['edit'];
+	}
 	return $errorMsg;
 }
 
