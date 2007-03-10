@@ -239,9 +239,9 @@ $gBitInstaller->registerSchemaDefault( LIBERTY_PKG_NAME, array(
 	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-30, 'Password Protected')",
 	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-20, 'Group Protected')",
 	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-10, 'Hidden')",
-	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (10, 'Draft')",
+	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-5, 'Draft')",
+	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-1, 'Pending Approval')",
 	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (50, 'Available')",
-	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (101, 'Pending Approval')",
 	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (102, 'Commercial')",
 	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (200, 'Recommended')",
 	"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (999, 'Copy Protected')",
@@ -262,6 +262,10 @@ $gBitInstaller->registerUserPermissions( LIBERTY_PKG_NAME, array(
 	array('p_liberty_detach_attachment', 'Can detach content attachments', 'registered', LIBERTY_PKG_NAME),
 	array('p_liberty_print', 'Can print content', 'basic', LIBERTY_PKG_NAME),
 	array('p_liberty_enter_html', 'Can enter HTML', 'registered', LIBERTY_PKG_NAME),
+	array('p_liberty_edit_content_status', 'Can edit the status of content', 'registered', LIBERTY_PKG_NAME),
+	array('p_liberty_edit_all_status', 'Can edit the status of content using all status', 'editors', LIBERTY_PKG_NAME),
+	array('p_liberty_view_all_status', 'Can view content with any status', 'editors', LIBERTY_PKG_NAME),
+	array('p_liberty_edit_content_owner', 'Can edit the owner of content', 'editors', LIBERTY_PKG_NAME),
 ) );
 
 ?>

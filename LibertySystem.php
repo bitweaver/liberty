@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.63 2007/03/05 00:59:58 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.64 2007/03/10 16:07:01 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -355,20 +355,6 @@ class LibertySystem extends LibertyBase {
 			$gBitSystem->storeConfig( 'default_format', NULL, $this->mSystem );
 		}
 		$this->scanAllPlugins();
-	}
-
-
-
-
-	// ****************************** Content Type Functions
-	/**
-	 * getContentStatus 
-	 * 
-	 * @access public
-	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
-	 */
-	function getContentStatus() {
-		return( $this->mDb->getAssoc( "SELECT `content_status_id`,`content_status_name` FROM `".BIT_DB_PREFIX."liberty_content_status`" ) );
 	}
 
 	/**
@@ -758,4 +744,36 @@ function liberty_plugins_div_style( $pParamHash ) {
 
 	return $ret;
 }
+function liberty_content_load_sql() {
+	global $gBitSystem, $gBitUser;
+	$ret = array();
+	if ($gBitSystem->isFeatureActive('liberty_display_status') && !$gBitUser->hasPermission('p_liberty_edit_all_status')) {
+		$ret['where_sql'] = " AND lc.`content_status_id` < 100 AND ( (lc.`user_id` = '".$gBitUser->getUserId()."' AND lc.`content_status_id` > -100) OR lc.`content_status_id` > 0 )";
+	}
+	// Make sure owner comes out properly for all content
+	if ($gBitSystem->isFeatureActive('liberty_allow_change_owner') && $gBitUser->hasPermission('p_liberty_edit_content_owner')) {
+		$ret['select_sql'] = " , lc.`user_id` AS owner_id";
+	}
+	return $ret;
+}
+
+function liberty_content_list_sql() {
+	global $gBitSystem, $gBitUser;
+	$ret = array();
+	if ($gBitSystem->isFeatureActive('liberty_display_status') && !$gBitUser->hasPermission('p_liberty_edit_all_status')) {
+		$ret['where_sql'] = " AND lc.`content_status_id` < 100 AND ( (lc.`user_id` = '".$gBitUser->getUserId()."' AND lc.`content_status_id` > -100) OR lc.`content_status_id` > 0 )";
+	}
+	return $ret;
+}
+
+function liberty_content_preview(&$pObject) {
+	global $gBitSystem, $gBitUser;
+	if ($gBitSystem->isFeatureActive('liberty_display_status') && ($gBitUser->hasPermission('p_liberty_edit_content_status') || $gBitUser->hasPermission('p_libert_edit_all_status'))) {
+		$pObject->mInfo['content_status_id'] = $_REQUEST['content_status_id'];
+	}
+	if ($gBitSystem->isFeatureActive('liberty_allow_change_owner') && $gBitUser->hasPermission('p_liberty_edit_content_owner')) {
+		$pObject->mInfo['owner_id'] = $_REQUEST['owner_id'];
+	}
+}
+
 ?>

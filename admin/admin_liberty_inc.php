@@ -4,6 +4,10 @@ $formLibertyFeatures = array(
 		'label' => 'Display content status',
 		'note' => 'Display a status selection menu when editing content (not fully developed, experimental feature).',
 	),
+	"liberty_allow_change_owner" => array(
+		'label' => 'Allow Owner Change',
+		'note' => 'Allow users with the proper permission to change the owner of content.',
+	),
 	"liberty_cache_pages" => array(
 		'label' => 'External page cache',
 		'note' => 'Enabling this will download and cache external pages that are included.',

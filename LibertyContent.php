@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.179 2007/03/06 15:54:14 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.180 2007/03/10 16:07:01 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -153,13 +153,37 @@ class LibertyContent extends LibertyBase {
 			if( !@$this->verifyId( $this->mContentId ) ) {
 				// These should never be updated, only inserted
 				$pParamHash['content_store']['created'] = !empty( $pParamHash['created'] ) ? $pParamHash['created'] : $gBitSystem->getUTCTime();
+				// This may get overridden by owner set
 				$pParamHash['content_store']['user_id'] = $pParamHash['user_id'];
+				// Set a default status when creating
+				// This may get overwritten below
+				$pParamHash['content_store']['content_status_id'] = $gBitSystem->getConfig('liberty_default_status', BIT_CONTENT_DEFAULT_STATUS);
 			} else {
 				$pParamHash['content_id'] = $this->mContentId;
 			}
 		}
+				
+		// Are we allowed to override owner?
+		if ($gBitSystem->isFeatureActive('liberty_allow_change_owner') && $gBitUser->hasPermission('p_liberty_edit_content_owner')) {
+			// If an owner is being set override user_id
+			if (!empty($pParamHash['owner_id']) && !empty($pParamHash['current_owner_id']) && $pParamHash['owner_id'] != $pParamHash['current_owner_id']) {
+				$pParamHash['content_store']['user_id'] = $pParamHash['owner_id'];
+			}
+		}
 
-		$pParamHash['content_store']['content_status_id'] = (@BitBase::verifyId( $pParamHash['content_status_id'] ) ? $pParamHash['content_status_id'] : $gBitSystem->getConfig( 'liberty_default_status', BIT_CONTENT_DEFAULT_STATUS ));
+		// Do we need to change the status
+		if ($gBitSystem->isFeatureActive('liberty_display_status') && ($gBitUser->hasPermission('p_liberty_edit_content_status') || $gBitUser->hasPermission('p_liberty_edit_all_status'))) {
+		  	$allStatus = $this->getContentStatus();
+			if (!empty($pParamHash['content_status_id'])) {
+				if (!in_array($pParamHash['content_status_is'], $allStatus)) {
+					$this->mError['content_status_id'] = "No such status ID or permission denied.";
+				}
+				else {
+					$pParamHash['content_store']['content_status_id'] = $pParamHash['content_status_id'];
+				}
+			}
+		}
+
 		$pParamHash['field_changed'] = empty( $pParamHash['content_id'] )
 					|| (!empty($this->mInfo["data"]) && !empty($pParamHash["edit"]) && (md5($this->mInfo["data"]) != md5($pParamHash["edit"])))
 					|| (!empty($pParamHash["title"]) && !empty($this->mInfo["title"]) && (md5($this->mInfo["title"]) != md5($pParamHash["title"])))
@@ -2283,6 +2307,22 @@ class LibertyContent extends LibertyBase {
 		}
 		$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_action_log` $where", $bindVars );
 		return TRUE;
+	}
+
+	/**
+	 * getContentStatus
+	 * 
+	 * @access public
+	 * @return an array of content_status_id, content_status_names the current user can use on this content. Subclases may easily override with return LibertyContent::getContentStatus(-100, 0) for example to restrict to only hidden content types.
+	 */
+	function getContentStatus($pUserMinimum=-100, $pUserMaximum=100) {
+		global $gBitUser;
+		if ($gBitUser->hasPermission('p_liberty_edit_all_status')) {
+			return( $this->mDb->getAssoc( "SELECT `content_status_id`,`content_status_name` FROM `".BIT_DB_PREFIX."liberty_content_status` ORDER BY `content_status_id`" ) );
+		}
+		else {
+			return( $this->mDb->getAssoc( "SELECT `content_status_id`, `content_status_name` FROM `".BIT_DB_PREFIX."liberty_content_status` WHERE `content_status_id` > ? AND `content_status_id` < ? ORDER BY `content_status_id`", array($pUserMinimum, $pUserMaximum)));
+		}
 	}
 }
 ?>
