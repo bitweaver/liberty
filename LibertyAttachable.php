@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.67 2007/03/10 20:52:12 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.68 2007/03/10 21:39:11 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -409,7 +409,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			$user_id = $row['user_id'];
 
 			if( $guid && ($user_id == $gBitUser->mUserId || $gBitUser->isAdmin()) ) {
-				if ( $gLibertySystem->getPluginFunction( $gLibertySystem->mPlugins[$guid], 'expunge_function' ) ) {
+				if ( $gLibertySystem->getPluginFunction( $guid, 'expunge_function' ) ) {
 					$expungeFunc = $gLibertySystem->mPlugins[$guid]['expunge_function'];
 					if( $expungeFunc( $pAttachmentId ) ) {
 						$delDir = dirname( $this->mStorage[$pAttachmentId]['storage_path'] );
