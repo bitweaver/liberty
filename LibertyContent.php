@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.181 2007/03/10 17:02:22 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.182 2007/03/10 17:42:44 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -175,7 +175,7 @@ class LibertyContent extends LibertyBase {
 		if ($gBitSystem->isFeatureActive('liberty_display_status') && ($gBitUser->hasPermission('p_liberty_edit_content_status') || $gBitUser->hasPermission('p_liberty_edit_all_status'))) {
 		  	$allStatus = $this->getContentStatus();
 			if (!empty($pParamHash['content_status_id'])) {
-				if (!in_array($pParamHash['content_status_id'], $allStatus)) {
+				if (empty($allStatus[$pParamHash['content_status_id']])) {
 					$this->mError['content_status_id'] = "No such status ID or permission denied.";
 				}
 				else {
