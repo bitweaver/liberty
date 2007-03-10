@@ -3,7 +3,7 @@
  * Base class for Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.12 2006/09/06 16:02:55 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.13 2007/03/10 04:07:57 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -62,9 +62,11 @@ class LibertyBase extends BitBase {
 			}
 			if( !empty( $pContentGuid ) && isset( $gLibertySystem->mContentTypes[$pContentGuid] ) ) {
 				$type = $gLibertySystem->mContentTypes[$pContentGuid];
-				require_once( constant( strtoupper( $type['handler_package'] ).'_PKG_PATH' ).$type['handler_file'] );
-				$ret = new $type['handler_class']( NULL, $pContentId );
-				$ret->load();
+				if( defined( strtoupper( $type['handler_package'] ).'_PKG_PATH' ) ) {
+					require_once( constant( strtoupper( $type['handler_package'] ).'_PKG_PATH' ).$type['handler_file'] );
+					$ret = new $type['handler_class']( NULL, $pContentId );
+					$ret->load();
+				}
 			}
 
 		}
