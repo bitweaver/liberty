@@ -3,7 +3,7 @@
  * Base class for Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.14 2007/03/14 07:44:45 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.15 2007/03/14 14:02:45 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -50,7 +50,13 @@ class LibertyBase extends BitBase {
 	 */
 	function prepGetList( &$pListHash ) {
 		global $gBitUser;
-		$pListHash['min_content_status_id'] = $gBitUser->isAdmin() ? -9999 : $gBitUser->hasPermission( 'p_'.$this->mContentTypeGuid.'_admin' ) ? -999 : 1;
+		if( $gBitUser->isAdmin() ) {
+			$pListHash['min_content_status_id'] = -9999;
+		} elseif( !empty( $this->mContentTypeGuid ) && $gBitUser->hasPermission( 'p_'.$this->mContentTypeGuid.'_admin' ) ) {
+			$pListHash['min_content_status_id'] = -999;
+		} else {
+			$pListHash['min_content_status_id'] = 1;
+		}
 		return parent::prepGetList( $pListHash );
 	}
 
