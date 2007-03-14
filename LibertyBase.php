@@ -3,7 +3,7 @@
  * Base class for Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.13 2007/03/10 04:07:57 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.14 2007/03/14 07:44:45 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -40,6 +40,18 @@ class LibertyBase extends BitBase {
 	 */
 	function LibertyBase () {
 		BitBase::BitBase();
+	}
+
+	
+	/**
+	 * Liberty override to stuff content_status_id and prepares parameters with default values for any getList function
+	 * @param pParamHash hash of parameters for any getList() function
+	 * @return the link to display the page.
+	 */
+	function prepGetList( &$pListHash ) {
+		global $gBitUser;
+		$pListHash['min_content_status_id'] = $gBitUser->isAdmin() ? -9999 : $gBitUser->hasPermission( 'p_'.$this->mContentTypeGuid.'_admin' ) ? -999 : 1;
+		return parent::prepGetList( $pListHash );
 	}
 
 	/**
