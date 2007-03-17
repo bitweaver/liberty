@@ -5,6 +5,9 @@
 		{formfeedback error=$errors.format}
 		{formlabel label="Language" for="lang_code"}
 		{forminput}
+			{if $translateFrom}
+				<input type="hidden" name="i18n[from_id]" value="{$translateFrom->mContentId}" />
+			{/if}
 			<select name="i18n[lang_code]" id="lang_code">
 				{foreach from=$translationsList key=langCode item=lang}
 					<option value="{$langCode}" {if $smarty.request.i18n.lang_code==$langCode || $gContent->mInfo.lang_code==$langCode || ( $langCode==$gBitSystem->getConfig('bitlanguage') && !$smarty.request.i18n.lang_code && !$gContent->getField('lang_code') )}selected="selected" {/if}>{$lang.native_name}</option>
