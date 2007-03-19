@@ -64,6 +64,7 @@ array( 'DATADICT' => array(
 		'tiki_copyrights'              => 'liberty_copyrights',
 		'tiki_links'                   => 'liberty_content_links',
 		'tiki_user_preferences'        => 'liberty_content_prefs',
+		'users_object_permissions'     => 'liberty_content_permissions',
 	)),
 	array( 'ALTER' => array(
 		'liberty_content' => array(
@@ -79,6 +80,9 @@ array( 'DATADICT' => array(
 		'liberty_thumbnail_queue' => array( 
 			'processor' => array( '`processor`', 'VARCHAR(250)' ),
 			'processor_parameters' => array( '`processor_parameters`', 'VARCHAR(250)' ),
+		),
+		'liberty_content_permissions' => array( 
+			'object_id' => array( '`content_id`', 'I4' ),
 		),
 	)),
 )),
@@ -126,6 +130,7 @@ array( 'DATADICT' => array(
 		'liberty_action_log' => array( '`temp_log`' ),
 		'liberty_action_log' => array( '`temp_error`' ),
 		'liberty_action_log' => array( '`temp_id`' ),
+		'liberty_content_permissions' => array( '`object_type`' ),
 	)),
 )),
 

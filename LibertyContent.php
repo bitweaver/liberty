@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.182 2007/03/10 17:42:44 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.183 2007/03/19 00:33:44 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -104,6 +104,7 @@ class LibertyContent extends LibertyBase {
 		if( !empty( $this->mInfo['content_type_guid'] ) ) {
 			global $gLibertySystem, $gBitSystem, $gBitUser;
 			$this->loadPreferences();
+			$this->loadPermissions();
 			$this->mInfo['content_type'] = $gLibertySystem->mContentTypes[$this->mInfo['content_type_guid']];
 			$this->invokeServices('content_load_function', $this);
 		}
@@ -401,7 +402,7 @@ class LibertyContent extends LibertyBase {
 			$this->expungeVersion();
 
 			// Remove individual permissions for this object if they exist
-			$query = "delete from `".BIT_DB_PREFIX."users_object_permissions` where `object_id`=? and `object_type`=?";
+			$query = "delete from `".BIT_DB_PREFIX."liberty_content_permissions` where `content_id`=? and `object_type`=?";
 			$result = $this->mDb->query( $query, array( $this->mContentId, $this->mContentTypeGuid ) );
 
 			// Remove structures
@@ -764,6 +765,92 @@ class LibertyContent extends LibertyBase {
 
 	// -------------------------------- Content Permission Funtions
 
+/*
+	function assign_object_permission($pGroupId, $object_id, $object_type, $perm_name) {
+		//$object_id = md5($object_type . $object_id);
+		$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_permissions`
+				  WHERE `group_id` = ? AND `perm_name` = ? AND `content_id` = ?";
+		$result = $this->mDb->query($query, array($pGroupId, $perm_name, $object_id), -1, -1);
+		$query = "insert into `".BIT_DB_PREFIX."liberty_content_permissions`
+				  (`group_id`,`content_id`, `object_type`, `perm_name`)
+				  VALUES ( ?, ?, ?, ? )";
+		$result = $this->mDb->query($query, array($pGroupId, $object_id,$object_type, $perm_name));
+		return true;
+	}
+
+	function object_has_permission( $pUserId = NULL, $object_id, $object_type, $perm_name, $pForceRefresh = FALSE ) {
+		$ret = FALSE;
+		$groups = $this->getGroups($pUserId, $pForceRefresh);
+
+		foreach ( $groups as $groupId => $group_name ) {
+			$query = "SELECT count(*)
+					  FROM `".BIT_DB_PREFIX."liberty_content_permissions`
+					  WHERE `group_id` = ? and `content_id` = ? and `object_type` = ? and `perm_name` = ?";
+					  //pvd($query);pvd($sd="groupid: $groupId | object_id: $object_id | object_type: $object_type | permname: $perm_name");
+			$bindvars = array($groupId, $object_id, $object_type, $perm_name);
+			$result = $this->mDb->getOne( $query, $bindvars );
+			if ($result>0) {
+				$ret = true;
+			}
+		}
+		return $ret;
+	}
+
+
+	function remove_object_permission($pGroupId, $object_id, $object_type, $perm_name) {
+		//$object_id = md5($object_type . $object_id);
+		$query = "delete from `".BIT_DB_PREFIX."liberty_content_permissions`
+			where `group_id` = ? and `content_id` = ?
+			and `object_type` = ? and `perm_name` = ?";
+		$bindvars = array($pGroupId, $object_id, $object_type, $perm_name);
+		$result = $this->mDb->query($query, $bindvars);
+		return true;
+	}
+
+
+	function copy_object_permissions($object_id,$destinationObjectId,$object_type) {
+		//$object_id = md5($object_type.$object_id);
+		$query = "select `perm_name`, `group_name`
+			from `".BIT_DB_PREFIX."liberty_content_permissions`
+			where `content_id` =? and
+			`object_type` = ?";
+		$bindvars = array($object_id, $object_type);
+		$result = $this->mDb->query($query, $bindvars);
+		while($res = $result->fetchRow()) {
+			$this->assign_object_permission($res["group_name"],$destinationObjectId,$object_type,$res["perm_name"]);
+		}
+		return true;
+	}
+
+
+	function get_object_permissions($object_id, $object_type) {
+		//$object_id = md5($object_type . $object_id);
+		$query = "select ug.`group_id`, ug.`group_name`, uop.`perm_name`
+				  FROM `".BIT_DB_PREFIX."liberty_content_permissions` uop
+					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( uop.`group_id`=ug.`group_id` )
+				  WHERE uop.`content_id` = ? AND uop.`object_type` = ?";
+		$bindvars = array($object_id, $object_type);
+		$result = $this->mDb->query($query, $bindvars);
+		$ret = array();
+		while ($res = $result->fetchRow()) {
+			$ret[] = $res;
+		}
+		return $ret;
+	}
+
+
+	function object_has_one_permission( $pContentId ) {
+		$ret = NULL;
+		if( @$this->verifyId( $pContentId )  ) {
+			//$object_id = md5($object_type . $object_id);
+			$query = "select count(*) from `".BIT_DB_PREFIX."liberty_content_permissions` where `content_id`=?";
+			$ret = $this->mDb->getOne($query, array( $pContentId ));
+		}
+		return $ret;
+	}
+*/
+
+
 	/**
 	 * Load all permissions assigned to a given object. This is not for general consumption.
 	 * This funtions sole purpose is for displaying purposes. if you want to get all permissions
@@ -782,13 +869,12 @@ class LibertyContent extends LibertyBase {
 		if( $this->isValid() && empty( $this->mPerms ) && $this->mContentTypeGuid ) {
 			$query = "
 				SELECT uop.`perm_name`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
-				FROM `".BIT_DB_PREFIX."users_object_permissions` uop
+				FROM `".BIT_DB_PREFIX."liberty_content_permissions` uop
 					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( uop.`group_id`=ug.`group_id` )
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=uop.`perm_name` )
-				WHERE uop.`object_id` = ?
-					AND uop.`object_type` = ?
+				WHERE uop.`content_id` = ?
 				ORDER BY ".$this->mDb->convertSortmode( $pParamHash['sort_mode'] );
-			$bindVars = array( $this->mContentId, $this->mContentTypeGuid );
+			$bindVars = array( $this->mContentId );
 			$ret = $this->mDb->getAll( $query, $bindVars );
 		}
 		return( $ret );
@@ -806,12 +892,11 @@ class LibertyContent extends LibertyBase {
 		if( $this->isValid() && empty( $this->mPerms ) && $this->mContentTypeGuid ) {
 			$query = "
 				SELECT uop.`perm_name`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
-				FROM `".BIT_DB_PREFIX."users_object_permissions` uop
+				FROM `".BIT_DB_PREFIX."liberty_content_permissions` uop
 					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( uop.`group_id`=ug.`group_id` )
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=uop.`perm_name` )
-				WHERE uop.`object_id` = ?
-					AND uop.`object_type` = ?";
-			$bindVars = array( $this->mContentId, $this->mContentTypeGuid );
+				WHERE uop.`content_id` = ?";
+			$bindVars = array( $this->mContentId );
 			$perms = $this->mDb->getAll( $query, $bindVars );
 
 			// check what permissions apply to this user
@@ -850,6 +935,14 @@ class LibertyContent extends LibertyBase {
 			$gBitUser->mPerms = array_merge( $setPerms, $this->mPerms );
 
 			$ret = TRUE;
+		}
+		return $ret;
+	}
+
+	function hasAssignedPermissions() {
+		$ret = FALSE;
+		if( $this->isValid() ) {
+			$ret = count( $this->mPerms );
 		}
 		return $ret;
 	}
@@ -930,11 +1023,11 @@ class LibertyContent extends LibertyBase {
 		$ret = array();
 		if( $pUserId ) {
 			$query = "SELECT uop.`perm_name`, ug.`group_id`, ug.`group_name`, ugm.`user_id`
-					FROM `".BIT_DB_PREFIX."users_object_permissions` uop
+					FROM `".BIT_DB_PREFIX."liberty_content_permissions` uop
 						INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( uop.`group_id`=ug.`group_id` )
 						INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON( ugm.`group_id`=ug.`group_id` )
-					WHERE ugm.`user_id`=? AND uop.`object_id` = ? AND uop.`object_type` = ? ";
-			$bindVars = array( $pUserId, $this->mContentId, $this->mContentTypeGuid );
+					WHERE ugm.`user_id`=? AND uop.`content_id` = ?";
+			$bindVars = array( $pUserId, $this->mContentId );
 			$ret = $this->mDb->getAssoc($query, $bindVars);
 		}
 		return $ret;
@@ -954,14 +1047,14 @@ class LibertyContent extends LibertyBase {
 			$pObjectId = $this->mContentId;
 		}
 		$query = "
-			DELETE FROM `".BIT_DB_PREFIX."users_object_permissions`
-			WHERE `group_id` = ? AND `perm_name` = ? AND `object_id` = ?";
+			DELETE FROM `".BIT_DB_PREFIX."liberty_content_permissions`
+			WHERE `group_id` = ? AND `perm_name` = ? AND `content_id` = ?";
 		$result = $this->mDb->query( $query, array( $pGroupId, $pPermName, $pObjectId ), -1, -1 );
 		$query = "
-			INSERT INTO `".BIT_DB_PREFIX."users_object_permissions`
-			( `group_id`,`object_id`, `object_type`, `perm_name` )
+			INSERT INTO `".BIT_DB_PREFIX."liberty_content_permissions`
+			( `group_id`,`content_id`, `perm_name` )
 			VALUES( ?, ?, ?, ? )";
-		$result = $this->mDb->query( $query, array( $pGroupId, $pObjectId, $this->mContentTypeGuid, $pPermName ) );
+		$result = $this->mDb->query( $query, array( $pGroupId, $pObjectId, $pPermName ) );
 		return TRUE;
 	}
 
@@ -979,8 +1072,8 @@ class LibertyContent extends LibertyBase {
 		$groups = $this->get_user_groups( $pUserId );
 		foreach ( $groups as $group_name ) {
 			$query = "SELECT COUNT(*)
-					FROM `".BIT_DB_PREFIX."users_object_permissions`
-					WHERE `group_name` = ? and `object_id` = ? and `object_type` = ? and `perm_name` = ?";
+					FROM `".BIT_DB_PREFIX."liberty_content_permissions`
+					WHERE `group_name` = ? and `content_id` = ? and `perm_name` = ?";
 			$bindVars = array( $group_name, $pObjectId, $pObjectType, $pPermName );
 			$result = $this->mDb->getOne( $query, $bindVars );
 			if( $result > 0 ) {
@@ -991,32 +1084,31 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	* Remove a permission to access the object
+	* Remove a permission to access the content
 	*
 	* @param integer Group Identifier
 	* @param string Name of the permission
 	* @return bool true ( will not currently report a failure )
 	*/
 	function removePermission( $pGroupId, $pPermName ) {
-		$query = "delete from `".BIT_DB_PREFIX."users_object_permissions`
-			where `group_id` = ? and `object_id` = ?
-			and `object_type` = ? and `perm_name` = ?";
-		$bindVars = array( $pGroupId, $this->mContentId, $this->mContentTypeGuid, $pPermName );
+		$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_permissions`
+				  WHERE `group_id` = ? and `content_id` = ? and `perm_name` = ?";
+		$bindVars = array( $pGroupId, $this->mContentId, $pPermName );
 		$result = $this->mDb->query( $query, $bindVars );
 		return true;
 	}
 
 	/**
-	* Copy current permissions to another object
+	* Copy current permissions to another content
 	*
-	* @param integer Content Identifier of the target object
+	* @param integer Content Identifier of the target content
 	* @return bool true ( will not currently report a failure )
 	*/
 	function copyPermissions( $destinationObjectId ) {
 		$query = "SELECT `perm_name`, `group_name`
-			FROM `".BIT_DB_PREFIX."users_object_permissions`
-			WHERE `object_id` =? AND `object_type` = ?";
-		$bindVars = array( $this->mContentId, $this->mContentTypeGuid );
+			FROM `".BIT_DB_PREFIX."liberty_content_permissions`
+			WHERE `content_id` =?";
+		$bindVars = array( $this->mContentId );
 		$result = $this->mDb->query( $query, $bindVars );
 		while( $res = $result->fetchRow() ) {
 			$this->storePermission( $res["group_name"], $this->mContentTypeGuid, $res["perm_name"], $destinationObjectId );
@@ -1101,7 +1193,7 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	* Copy current permissions to another object
+	* Copy current permissions to another content
 	*
 	* @param string Content Type GUID
 	* @param array Array of content type data
@@ -1176,7 +1268,7 @@ class LibertyContent extends LibertyBase {
 	* Determines if a wiki page (row in wiki_pages) exists, and returns a hash of important info. If N pages exists with $pPageName, returned existsHash has a row for each unique pPageName row.
 	* @param pPageName name of the wiki page
 	* @param pCaseSensitive look for case sensitive names
-	* @param pContentId if you insert the content id of the currently viewed object, non-existing links can be created immediately
+	* @param pContentId if you insert the content id of the currently viewed content, non-existing links can be created immediately
 	*/
 	function pageExists( $pPageName, $pCaseSensitive=FALSE, $pContentId=NULL ) {
 		global $gBitSystem;
@@ -1200,7 +1292,7 @@ class LibertyContent extends LibertyBase {
 	* This will normally be overwriten by extended classes to provide
 	* an appropriate title title string
 	* @param array mInfo type hash of data to be used to provide base data
-	* @return string Descriptive title for the object
+	* @return string Descriptive title for the page
 	*/
 	function getTitle( $pHash=NULL ) {
 		$ret = NULL;
@@ -1218,7 +1310,7 @@ class LibertyContent extends LibertyBase {
 	/**
 	* Access a content item type GUID
 	*
-	* @return string content_type_guid for the object
+	* @return string content_type_guid for the content
 	*/
 	function getContentType() {
 		$ret = NULL;
