@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.17 $
+ * @version  $Revision: 1.18 $
  * @package  liberty
  * @subpackage functions
  */
@@ -120,8 +120,6 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 		}
 		if (!(empty($_REQUEST['name']))) {
 			$gStructure->s_create_page($_REQUEST["structure_id"], $after, $_REQUEST["name"], '');
-			$gBitUser->copy_object_permissions($page_info["page_name"], $_REQUEST["name"],'wiki page');
-
 		} elseif(!empty($_REQUEST['content'])) {
 			foreach ($_REQUEST['content'] as $conId ) {
 				$structureHash['content_id'] = $conId;
