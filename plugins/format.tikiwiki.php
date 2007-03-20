@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.88 $
+ * @version  $Revision: 1.89 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -117,7 +117,7 @@ function tikiwiki_parse_data( &$pParseHash, &$pCommonObject ) {
 	$ret = '';
 
 	// cache data if we are using liberty cache
-	if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && !empty( $pParseHash['content_id'] ) && empty( $pParseHash['no_cache'] ) ) {
+	if( $gBitSystem->isFeatureActive( 'liberty_cache_pages' ) && !empty( $pParseHash['content_id'] ) && empty( $pParseHash['no_cache'] ) ) {
 		if( $cacheFile = LibertyContent::getCacheFile( $pParseHash['content_id'], $pParseHash['cache_extension'] ) ) {
 			// write / refresh cache if we are exceeding time limit of cache
 			if( !is_file( $cacheFile ) || ( $gBitSystem->getConfig( 'liberty_cache' ) < ( time() - filemtime( $cacheFile ) ) ) ) {
