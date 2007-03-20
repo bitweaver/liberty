@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.183 2007/03/19 00:33:44 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.184 2007/03/20 17:49:45 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -977,6 +977,31 @@ class LibertyContent extends LibertyBase {
 		return( $ret );
 	}
 
+	/**
+	* Check is a user has permission to access the object
+	*
+	* @param integer User Identifier
+	* @param integer Content Itentifier
+	* @param string Content Type GUID
+	* @param string Name of the permission
+	* @return bool true if access is allowed
+	*/
+	function hasPermission( $pUserId, $pObjectId, $pObjectType, $pPermName ) {
+		$ret = FALSE;
+		$groups = $this->get_user_groups( $pUserId );
+		foreach ( $groups as $group_name ) {
+			$query = "SELECT COUNT(*)
+					FROM `".BIT_DB_PREFIX."liberty_content_permissions`
+					WHERE `group_name` = ? and `content_id` = ? and `perm_name` = ?";
+			$bindVars = array( $group_name, $pObjectId, $pObjectType, $pPermName );
+			$result = $this->mDb->getOne( $query, $bindVars );
+			if( $result > 0 ) {
+				$ret = TRUE;
+			}
+		}
+		return $ret;
+	}
+
 	function isPrivate() {
 		global $gBitSystem;
 		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_private', -40 ) );
@@ -1056,31 +1081,6 @@ class LibertyContent extends LibertyBase {
 			VALUES( ?, ?, ?, ? )";
 		$result = $this->mDb->query( $query, array( $pGroupId, $pObjectId, $pPermName ) );
 		return TRUE;
-	}
-
-	/**
-	* Check is a user has permission to access the object
-	*
-	* @param integer User Identifier
-	* @param integer Content Itentifier
-	* @param string Content Type GUID
-	* @param string Name of the permission
-	* @return bool true if access is allowed
-	*/
-	function hasPermission( $pUserId, $pObjectId, $pObjectType, $pPermName ) {
-		$ret = FALSE;
-		$groups = $this->get_user_groups( $pUserId );
-		foreach ( $groups as $group_name ) {
-			$query = "SELECT COUNT(*)
-					FROM `".BIT_DB_PREFIX."liberty_content_permissions`
-					WHERE `group_name` = ? and `content_id` = ? and `perm_name` = ?";
-			$bindVars = array( $group_name, $pObjectId, $pObjectType, $pPermName );
-			$result = $this->mDb->getOne( $query, $bindVars );
-			if( $result > 0 ) {
-				$ret = TRUE;
-			}
-		}
-		return $ret;
 	}
 
 	/**
