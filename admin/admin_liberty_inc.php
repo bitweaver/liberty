@@ -16,10 +16,6 @@ $formLibertyFeatures = array(
 		'label' => 'External image cache',
 		'note' => 'Enabling this will download and cache external images that are included.',
 	),
-	"liberty_cache_images" => array(
-		'label' => 'External image cache',
-		'note' => 'Enabling this will download and cache external images that are included.',
-	),
 );
 
 if( $gBitSystem->isPackageActive( 'quota' ) ) {
