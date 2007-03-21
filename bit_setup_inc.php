@@ -3,7 +3,7 @@
  * base package include
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.13 $
+ * @version  $Revision: 1.14 $
  * @package  liberty
  * @subpackage functions
  */
@@ -18,15 +18,13 @@ $gBitSystem->registerPackage( $registerHash );
 require_once( LIBERTY_PKG_PATH.'LibertySystem.php' );
 
 $gLibertySystem->registerService( 'liberty', LIBERTY_PKG_NAME, array(
-	'content_edit_mini_tpl' => 'bitpackage:liberty/edit_content_inc.tpl',
-	'content_edit_tab_tpl' => 'bitpackage:liberty/service_content_edit_tab_inc.tpl',
-	'content_load_sql_function' => 'liberty_content_load_sql',
-	'content_list_sql_function' => 'liberty_content_list_sql',
-	//	'content_store_function'  => 'liberty_content_store',
-	//	'content_edit_function' => 'liberty_content_edit',
-	'content_preview_function' => 'liberty_content_preview',
-	//	'content_expunge_function'  => 'liberty_content_expunge',
-) );
+	'content_edit_mini_tpl'      => 'bitpackage:liberty/service_content_edit_mini_inc.tpl',
+	'content_edit_tab_tpl'       => 'bitpackage:liberty/service_content_edit_tab_inc.tpl',
+	'content_icon_tpl'           => 'bitpackage:liberty/service_content_icon_inc.tpl',
+	'content_load_sql_function'  => 'liberty_content_load_sql',
+	'content_list_sql_function'  => 'liberty_content_list_sql',
+	'content_preview_function'   => 'liberty_content_preview',
+));
 
 // load only the active plugins unless this is the first run after an install
 $current_default_format_guid = $gBitSystem->getConfig( 'default_format' );
@@ -36,6 +34,10 @@ if( empty( $current_default_format_guid ) || empty( $plugin_status ) || $plugin_
 } else {
 	$gLibertySystem->loadActivePlugins();
 }
-
 $gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
+
+// delete cache file if requested
+if( @BitBase::verifyId( $_REQUEST['refresh_liberty_cache'] )) {
+	LibertyContent::expungeCacheFile( $_REQUEST['refresh_liberty_cache'] );
+}
 ?>

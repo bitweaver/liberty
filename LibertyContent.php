@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.184 2007/03/20 17:49:45 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.185 2007/03/21 08:58:14 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2023,7 +2023,7 @@ class LibertyContent extends LibertyBase {
 	* @return integer Id of the cached item
 	* @todo LEGACY FUNCTIONS that need to be cleaned / moved / or deprecated & deleted
 	*/
-	function isCached($url) {
+	function isUrlCached($url) {
 		$query = "select `cache_id`  from `".BIT_DB_PREFIX."liberty_link_cache` where `url`=?";
 		// sometimes we can have a cache_id of 0(?!) - seen it with my own eyes, spiderr
 		$ret = $this->mDb->getOne($query, array( $url ) );
@@ -2059,7 +2059,7 @@ class LibertyContent extends LibertyBase {
 
 		// If stuff inside [] is *really* malformatted, $data
 		// will be empty.  -rlpowell
-		if (!$this->isCached( $url ) && $data)
+		if (!$this->isUrlCached( $url ) && $data)
 		{	global $gBitSystem;
 			$refresh = $gBitSystem->getUTCTime();
 			$query = "insert into `".BIT_DB_PREFIX."liberty_link_cache`(`url`,`data`,`refresh`) values(?,?,?)";
@@ -2123,6 +2123,21 @@ class LibertyContent extends LibertyBase {
 	// -------------------- Cache Funtions -------------------- //
 
 	/**
+	 * Check if content has a cache file
+	 * 
+	 * @param array $pContentId Content id of cached item
+	 * @access public
+	 * @return absolute path
+	 */
+	function isCached( $pContentId = NULL ) {
+		if( empty( $pContentId ) && @BitBase::verifyId( $this->mContentId ) ) {
+			$pContentId = $this->mContentId;
+		}
+
+		return( is_file( LibertyContent::getCacheFile( $pContentId )));
+	}
+
+	/**
 	 * Get the path where we store liberty cached content
 	 * 
 	 * @access public
@@ -2135,7 +2150,7 @@ class LibertyContent extends LibertyBase {
 	/**
 	 * Get the path to directory where an individual cache item is stored
 	 * 
-	 * @param array $pContentId 
+	 * @param array $pContentId Content id of cached item
 	 * @access public
 	 * @return path on success, FALSE on failure
 	 */
@@ -2170,7 +2185,7 @@ class LibertyContent extends LibertyBase {
 	/**
 	 * Get the path to file where an individual cache item is stored
 	 * 
-	 * @param array $pContentId 
+	 * @param array $pContentId Content id of cached item
 	 * @access public
 	 * @return filename on success, FALSE on failure
 	 */

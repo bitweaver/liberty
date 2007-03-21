@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.89 $
+ * @version  $Revision: 1.90 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -117,7 +117,7 @@ function tikiwiki_parse_data( &$pParseHash, &$pCommonObject ) {
 	$ret = '';
 
 	// cache data if we are using liberty cache
-	if( $gBitSystem->isFeatureActive( 'liberty_cache_pages' ) && !empty( $pParseHash['content_id'] ) && empty( $pParseHash['no_cache'] ) ) {
+	if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && !empty( $pParseHash['content_id'] ) && empty( $pParseHash['no_cache'] ) ) {
 		if( $cacheFile = LibertyContent::getCacheFile( $pParseHash['content_id'], $pParseHash['cache_extension'] ) ) {
 			// write / refresh cache if we are exceeding time limit of cache
 			if( !is_file( $cacheFile ) || ( $gBitSystem->getConfig( 'liberty_cache' ) < ( time() - filemtime( $cacheFile ) ) ) ) {
@@ -676,7 +676,7 @@ class TikiWikiParser extends BitBase {
 		global $gBitSystem;
 		if( $gBitSystem->isFeatureActive( 'liberty_cache_pages' ) && $pCommonObject ) {
 			foreach ($links as $link) {
-				if( !$pCommonObject->isCached( $link ) ) {
+				if( !$pCommonObject->isUrlCached( $link ) ) {
 //					$pCommonObject->cacheUrl($link);
 				}
 			}
@@ -1115,7 +1115,7 @@ class TikiWikiParser extends BitBase {
 			// prepare link for pattern usage
 			$link2 = str_replace("/", "\/", preg_quote($link));
 
-			if( $gBitSystem->isFeatureActive( 'liberty_cache_pages') && $pCommonObject->isCached( $link ) ) {
+			if( $gBitSystem->isFeatureActive( 'liberty_cache_pages') && $pCommonObject->isUrlCached( $link ) ) {
 				//use of urlencode for using cached versions of dynamic sites
 				$cosa = "<a class=\"bitcache\" href=\"".KERNEL_PKG_URL."view_cache.php?url=".urlencode($link)."\">(cache)</a>";
 
