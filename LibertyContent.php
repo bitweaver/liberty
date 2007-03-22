@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.186 2007/03/21 20:02:12 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.187 2007/03/22 19:57:09 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -764,6 +764,13 @@ class LibertyContent extends LibertyBase {
 	}
 
 	// -------------------------------- Content Permission Funtions
+	
+	
+	function getContentPermissionsSql( $pPermName, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
+ 		$pJoinSql .= "LEFT OUTER JOIN liberty_content_permissions lcp ON (lc.content_id=lcp.content_id) LEFT OUTER JOIN users_groups_map ugm ON (ugm.group_id=lcp.group_id)";
+ 		$pWhereSql .= " OR (lcp.perm_name=? AND (ugm.user_id=uu.user_id OR ugm.user_id=-1)) ";
+ 		$pBindVars[] = $pPermName;
+	}
 
 /*
 	function assign_object_permission($pGroupId, $object_id, $object_type, $perm_name) {
@@ -1078,7 +1085,7 @@ class LibertyContent extends LibertyBase {
 		$query = "
 			INSERT INTO `".BIT_DB_PREFIX."liberty_content_permissions`
 			( `group_id`,`content_id`, `perm_name` )
-			VALUES( ?, ?, ?, ? )";
+			VALUES( ?, ?, ? )";
 		$result = $this->mDb->query( $query, array( $pGroupId, $pObjectId, $pPermName ) );
 		return TRUE;
 	}
