@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.187 2007/03/22 19:57:09 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.188 2007/03/23 21:26:44 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -767,10 +767,63 @@ class LibertyContent extends LibertyBase {
 	
 	
 	function getContentPermissionsSql( $pPermName, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
- 		$pJoinSql .= "LEFT OUTER JOIN liberty_content_permissions lcp ON (lc.content_id=lcp.content_id) LEFT OUTER JOIN users_groups_map ugm ON (ugm.group_id=lcp.group_id)";
- 		$pWhereSql .= " OR (lcp.perm_name=? AND (ugm.user_id=uu.user_id OR ugm.user_id=-1)) ";
+ 		$pJoinSql .= "LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcp ON (lc.`content_id`=lcp.`content_id`) LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON (ugm.`group_id`=lcp.`group_id`)";
+ 		$pWhereSql .= " OR (lcp.perm_name=? AND (ugm.user_id=lc.user_id OR ugm.user_id=-1)) ";
  		$pBindVars[] = $pPermName;
 	}
+
+	/**
+	* Check is a user has permission to access the object
+	*
+	* @param integer User Identifier
+	* @param integer Content Itentifier
+	* @param string Content Type GUID
+	* @param string Name of the permission
+	* @return bool true if access is allowed
+	*/
+	function checkContentPermission( $pParamHash ) {
+		global $gBitUser;
+		
+		$ret = FALSE;
+
+		if( !empty( $this->mAdminContentPerm ) && $gBitUser->hasPermission( $this->mAdminContentPerm ) ) {
+			// content admin shortcut
+			$ret = TRUE;
+		} else {
+			$selectSql = ''; $joinSql = ''; $whereSql = '';
+			$bindVars = array();
+			
+			if( !empty( $pParamHash['content_id'] ) ) {
+				$bindVars[] = $pParamHash['content_id'];
+			} elseif( $this->isValid() ) {
+				$bindVars[] = $this->mContentId;
+			}
+			
+			if( @$this->verifyId( $pParamHash['user_id'] ) ) {
+				$whereSql .= " AND lc.`user_id` = ? ";
+				$bindVars[] = $pParamHash['user_id'];
+			} 
+			
+			if( !empty( $pParamHash['group_id'] ) ) {
+				$whereSql .= " AND lcp.`group_id` = ? ";
+				$bindVars[] = $pParamHash['group_id'];
+			}
+	
+			$permWhereSql = '';
+			$this->getContentPermissionsSql( $pParamHash['perm_name'], $selectSql, $joinSql, $permWhereSql, $bindVars );
+	
+			if( !empty( $whereSql ) ) {
+				$whereSql = preg_replace( '/^[\s]*AND/', '  ', $whereSql );
+			}
+	
+			$query = "SELECT COUNT(*)
+					  FROM liberty_content` lc  $joinSql
+					  WHERE lc.`content_id`=? AND ( $whereSql $permWhereSql ) ";
+			$ret = $this->mDb->getOne( $query, $bindVars );
+		}
+		return( !empty( $ret ) );
+	}
+
 
 /*
 	function assign_object_permission($pGroupId, $object_id, $object_type, $perm_name) {
@@ -954,15 +1007,29 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
+
+	/**
+	* Function that determines if this content specified permission for the current gBitUser, and will throw a fatal error if not.
+	*
+	* @param string Name of the permission to check
+	* @param string Message if permission denigned
+	*/
+	function verifyPermission( $pPermName, $pFatalMessage = NULL ) {
+		$ret = TRUE;
+		if( $this->isValid() && !$this->hasUserPermission( $pPermName ) ) {
+			global $gBitSystem;
+			$gBitSystem->fatalPermission( $pPermName, $pFatalMessage );
+		}
+		return $ret;
+	}
+
 	/**
 	* Function that determines if this content specified permission for the current gBitUser
 	*
 	* @param string Name of the permission to check
-	* @param bool Generate fatal message if permission denigned
-	* @param string Message if permission denigned
 	* @return bool true if user has permission to access file
 	*/
-	function hasUserPermission( $pPermName, $pFatalIfFalse = FALSE, $pFatalMessage = NULL ) {
+	function hasUserPermission( $pPermName ) {
 		global $gBitUser;
 		if( !$gBitUser->isRegistered() || !( $ret = $this->isOwner() ) ) {
 			if( !( $ret = $this->hasAdminPermission() ) ) {
@@ -975,38 +1042,7 @@ class LibertyContent extends LibertyBase {
 				}
 			}
 		}
-
-		if( !$ret && $pFatalIfFalse ) {
-			global $gBitSystem;
-			$gBitSystem->fatalPermission( $pPermName, $pFatalMessage );
-		}
-
 		return( $ret );
-	}
-
-	/**
-	* Check is a user has permission to access the object
-	*
-	* @param integer User Identifier
-	* @param integer Content Itentifier
-	* @param string Content Type GUID
-	* @param string Name of the permission
-	* @return bool true if access is allowed
-	*/
-	function hasPermission( $pUserId, $pObjectId, $pObjectType, $pPermName ) {
-		$ret = FALSE;
-		$groups = $this->get_user_groups( $pUserId );
-		foreach ( $groups as $group_name ) {
-			$query = "SELECT COUNT(*)
-					FROM `".BIT_DB_PREFIX."liberty_content_permissions`
-					WHERE `group_name` = ? and `content_id` = ? and `perm_name` = ?";
-			$bindVars = array( $group_name, $pObjectId, $pObjectType, $pPermName );
-			$result = $this->mDb->getOne( $query, $bindVars );
-			if( $result > 0 ) {
-				$ret = TRUE;
-			}
-		}
-		return $ret;
 	}
 
 	function isPrivate() {
