@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@sourceforge.net>
 // | Reworked from: wikiplugin_wikilist.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikilist.php,v 1.8 2006/08/07 22:14:58 squareing Exp $
+// $Id: data.wikilist.php,v 1.9 2007/03/25 15:56:24 laetzer Exp $
 
 /**
  * definitions
@@ -45,14 +45,41 @@ $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAWIKILIST
 
 // Help Function
 function data_wikilist_help() {
-	$back = tra("^__Parameter Syntax:__ ") . "~np~{WIKILIST" . tra("(key=>value)}~/np~\n");
-	$back.= tra("||__::key::__ | __::value::__ | __::Comments::__\n");
-	$back.= "::num::" . tra(" | ::0 or 1:: |  adds numbering to the list. Default = None (0).\n");
-	$back.= "::alpha::" . tra(" | ::0 or 1:: |  sorts names aplhabetically and groups them by the beginning letter. Default = On (1).\n");
-	$back.= "::lists:: | ::all / userpages / wiki:: |  " . tra("defines the type of pages to be shown. wiki & userpages will only show those type of pages. Default = all.\n");
-	$back.= "::total::" . tra(" | ::0 or 1:: |  shows total number of users in list at the end. Default = On (1).\n");
-	$back.= "::GroupName::" . tra(" | ::Not a Parameter:: |  Given between ~np~{WIKILIST}~np~ blocks. If no GroupName is given then All Users is assumed.\n");
-	return $back;
+		$help = '
+		<table class="plugin help">
+			<tr>
+				<th>'.tra( 'key' ).'</th>
+				<th>'.tra( 'type' ).'</th>
+				<th>'.tra( 'comments' ).'</th>
+			</tr>
+			<tr class="odd">
+				<td>num</td>
+				<td>'.tra( '0 or 1' ).'</td>
+				<td>'.tra( 'Adds numbering to the list. Default = 0 (no numbering).' ).'</td>
+			</tr>
+			<tr class="even">
+				<td>alpha</td>
+				<td>'.tra( '0 or 1' ).'</td>
+				<td>'.tra( 'Sorts names alphabetically and groups them by the beginning letter. Default = 1 (sorting and grouping are active).' ).'</td>
+			</tr>
+			<tr class="odd">
+				<td>list</td>
+				<td>'.tra( 'all / userpages / wiki' ).'</td>
+				<td>'.tra( 'Defines the type of pages to be shown. Wiki and user pages will only show those type of pages. Default = all.' ).'</td>
+			</tr>
+			<tr class="odd">
+				<td>total</td>
+				<td>'.tra( '0 or 1' ).'</td>
+				<td>'.tra( 'Shows total number of users in list at the end. Default = On (1)' ).'</td>
+			</tr>
+			<tr class="odd">
+				<td>GroupName</td>
+				<td>'.tra( 'not a parameter' ).'</td>
+				<td>'.tra( 'Given between {WIKILIST} blocks. If no GroupName is given, All Users is assumed.' ).'</td>
+			</tr>
+		</table>
+		Example: {WIKILIST}';
+	return $help;
 }
 
 // Load Function
