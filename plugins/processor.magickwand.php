@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.5 2007/02/25 23:30:32 tekimaki Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.6 2007/03/26 19:51:57 spiderr Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -182,6 +182,45 @@ function liberty_magickwand_can_thumbnail_image( $pMimeType ) {
 	if( !empty( $pMimeType ) ) {
 		// allow images, pdf, and postscript thumbnailing (eps, ai, etc...)
 		$ret = preg_match( '/(^image|pdf|postcript)/i', $pMimeType );
+	}
+	return $ret;
+}
+
+/**
+ * liberty_magickwand_convert_colorspace
+ * 
+ * @param array $pFileHash
+ * @param string $pColorSpace - target color space, only 'grayscale' is currently supported
+ * @access public
+ * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+ */
+function liberty_magickwand_convert_colorspace_image( &$pFileHash, $pColorSpace, $pThumbnail = false ) {
+	$ret = FALSE;
+    if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
+		$magickWand = NewMagickWand();
+		if( $error = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand ) ) {
+			bit_log_error( "MagickReadImage Failed:$error ( $pFileHash[source_file] )" );
+		}  else {
+			MagickRemoveImageProfile( $magickWand, "ICC" );
+			switch( strtolower( $pColorSpace ) ) {
+				case 'grayscale':
+					if( MagickGetImageColorspace( $magickWand ) == MW_GRAYColorspace ) {
+						$ret = TRUE;
+					} else {
+						MagickSetImageColorspace( $magickWand, MW_GRAYColorspace );
+						if( empty( $pFileHash['dest_file'] ) ) {
+							$pFileHash['dest_file'] = BIT_ROOT_PATH.'/'.$pFileHash['dest_path'].$pFileHash['name'];
+						}
+						if( $error = liberty_magickwand_check_error( MagickWriteImage( $magickWand, $pFileHash['dest_file'] ), $magickWand ) ) {
+							bit_log_error( "MagickWriteImage Failed:$error ( $pFileHash[source_file] )" );
+						} else {
+							$ret = TRUE;
+						}
+					}
+					break;
+			}
+		}
+		DestroyMagickWand( $magickWand );
 	}
 	return $ret;
 }
