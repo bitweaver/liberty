@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage functions
  */
@@ -13,14 +13,14 @@ if( !empty( $verify_permission ) ) {
 // If we haven't got any content loaded yet, load it
 if( empty( $gContent ) ) {
 	// make sure we have a content_id we can work with
-	if( empty( $_REQUEST["content_id"] ) || $_REQUEST["content_id"] < 1 ) {
+	if( empty( $_REQUEST["perm_content_id"] ) || $_REQUEST["perm_content_id"] < 1 ) {
 		$gBitSmarty->assign( 'msg', tra( "No valid content id given." ) );
 		$gBitSystem->display( 'error.tpl' );
 die;
 	}
 
 	$gContent = new LibertyContent();
-	$gContent = $gContent->getLibertyObject( $_REQUEST['content_id'] );
+	$gContent = $gContent->getLibertyObject( $_REQUEST['perm_content_id'] );
 }
 $gBitSmarty->assign_by_ref( 'gContent', $gContent );
 
@@ -32,14 +32,14 @@ if( !empty( $_REQUEST['back'] ) ) {
 }
 
 // Update database if needed
-if( !empty( $_REQUEST["group_id"] ) && !empty( $gContent->mContentId ) && !empty( $_REQUEST["perm"] ) ) {
+if( !empty( $_REQUEST["perm_group_id"] ) && !empty( $gContent->mContentId ) && !empty( $_REQUEST["perm"] ) ) {
 	if( isset( $_REQUEST["assign"] ) ) {
-		$gContent->storePermission( $_REQUEST["group_id"], $_REQUEST["perm"], $gContent->mContentId );
+		$gContent->storePermission( $_REQUEST["perm_group_id"], $_REQUEST["perm"], $gContent->mContentId );
 	}
 
 	if( isset( $_REQUEST["action"] ) ) {
 		if( $_REQUEST["action"] == 'remove' ) {
-			$gContent->removePermission( $_REQUEST["group_id"], $_REQUEST["perm"] );
+			$gContent->removePermission( $_REQUEST["perm_group_id"], $_REQUEST["perm"] );
 		}
 	}
 }

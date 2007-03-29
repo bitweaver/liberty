@@ -1,7 +1,8 @@
 <h2>{tr}Assign permissions to{/tr}: {$gContent->getTitle()}</h2>
 
-{form legend="Content Permissions"}
-	<input type="hidden" name="content_id" value="{$gContent->mContentId}" />
+{* you can't have a form within a form - services are inserted into forms - xing
+form legend="Content Permissions"*}
+	<input type="hidden" name="perm_content_id" value="{$gContent->mContentId}" />
 
 	<div class="row">
 		{formlabel label="Assign this Permission" for="perm"}
@@ -18,7 +19,7 @@
 	<div class="row">
 		{formlabel label="To this Group" for="group_id"}
 		{forminput}
-			<select name="group_id" id="group_id">
+			<select name="perm_group_id" id="group_id">
 				{foreach from=$userGroups item=group}
 					<option value="{$group.group_id}">{$group.group_name}</option>
 				{/foreach}
@@ -31,7 +32,7 @@
 		<input type="submit" name="back" value="{tr}Go back to content{/tr}" />
 		<input type="submit" name="assign" value="{tr}Assign Permission{/tr}" />
 	</div>
-{/form}
+{*/form*}
 
 <br />
 
@@ -51,7 +52,7 @@
 				{$perm.perm_desc}
 			</td>
 			<td align="right">
-				{smartlink ititle="Remove Permission" ibiticon="icons/edit-delete" action=remove content_id=$gContent->mContentId perm=$perm.perm_name group_id=$perm.group_id}
+				{smartlink ititle="Remove Permission" ibiticon="icons/edit-delete" action=remove perm_content_id=$gContent->mContentId perm=$perm.perm_name group_id=$perm.group_id}
 			</td>
 		</tr>
 	{foreachelse}
