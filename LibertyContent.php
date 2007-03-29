@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.188 2007/03/23 21:26:44 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.189 2007/03/29 08:07:09 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -307,13 +307,6 @@ class LibertyContent extends LibertyBase {
 				$this->mInfo['content_type_guid'] = $pParamHash['content_type_guid'];
 				$this->mContentId = $pParamHash['content_store']['content_id'];
 				$result = $this->mDb->associateInsert( $table, $pParamHash['content_store'] );
-
-				// store content preferences
-				if( @is_array( $pParamHash['preferences_store'] ) ) {
-					foreach( $pParamHash['preferences_store'] as $pref => $value ) {
-						$this->storePreference( $pref, $value );
-					}
-				}
 
 				$this->mLogs['content_store'] = "Created";
 			} else {
