@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.blog.php,v 1.7 2007/03/01 15:53:20 nickpalmer Exp $
+// $Id: data.blog.php,v 1.8 2007/03/31 21:47:02 wjames5 Exp $
 
 /**
  * definitions
@@ -37,7 +37,7 @@ $pluginParams = array (
 	'title' => 'Blog',
 	'help_page' => 'DataPluginBlog',
 	'description' => tra( "This plugin will display several posts from a blog." ),
-	'syntax' => "{BLOG id= max= format= }",
+	'syntax' => "{BLOG id= user= max= format= }",
 	'path' => LIBERTY_PKG_PATH.'plugins/data.blog.php',
 	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
@@ -56,15 +56,20 @@ function data_blog_help() {
 			.'</tr>'
 			.'<tr class="even">'
 				.'<td>id</td>'
-				.'<td>' . tra( "topic name") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "numeric") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "Filters for the specified Blog by id") . '</td>'
 			.'</tr>'
 			.'<tr class="odd">'
+				.'<td>user</td>'
+				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "The login name of the user who's posts are to be displayed. (Default = 3)") . '</td>'
+			.'</tr>'
+			.'<tr class="even">'
 				.'<td>max</td>'
 				.'<td>' . tra( "numeric") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "The number of posts to be displayed. (Default = 3)") . '</td>'
 			.'</tr>'
-			.'<tr class="even">'
+			.'<tr class="odd">'
 				.'<td>format</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "Specify format for posts display - options: full, list (default)") . '</td>'
@@ -110,7 +115,9 @@ function data_blog($data, $params) { // No change in the parameters with Clyde
 		
 		$getHash = Array();
 		
-		$getHash['blog_id'] = empty($module_params['id']) ? 1 : $module_params['id'];
+		if ( isset($module_params['user']) ){ $getHash['login'] = $module_params['user']; }
+		if ( isset($module_params['id']) ){ $getHash['blog_id'] = $module_params['id'];}
+		
 		$getHash['sort_mode']   = $sort_mode;
 		$getHash['parse_data'] = TRUE;
 		$getHash['max_records'] = empty($module_params['max']) ? 1 : $module_params['max'];
@@ -129,13 +136,8 @@ function data_blog($data, $params) { // No change in the parameters with Clyde
 				foreach( $blogPosts['data'] as $aPost ) {
 					$gBitSmarty->assign('aPost', $aPost);
 					$display_result .= $gBitSmarty->fetch( 'bitpackage:blogs/blog_list_post.tpl' );
-					/*
-					 $gBitSmarty->assign( 'article', $article );
-					 $display_result .= $gBitSmarty->fetch( 'bitpackage:articles/article_display.tpl' );
-					*/
 				}
-				
-				
+
 				$display_result .= '</div>';
 				$display_result = eregi_replace( "\n", "", $display_result );
 				break;
