@@ -4,7 +4,7 @@
 		{if $ajaxId}
 			<a href="javascript:ajax_updater( '{$ajaxId}', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', '{$pgnName}={$pgnPage-1}{$pgnVars}' );">&laquo;</a>&nbsp;
 		{else}
-			<a href="{$smarty.server.PHP_SELF}?{$pgnName}={$pgnPage-1}{$pgnVars}">&laquo;</a>&nbsp;
+			<a href="{$smarty.server.REQUEST_URI}?{$pgnName}={$pgnPage-1}{$pgnVars}">&laquo;</a>&nbsp;
 		{/if}
 	{else}
 		&nbsp;&nbsp;
@@ -16,7 +16,7 @@
 		{if $ajaxId}
 			<a href="javascript:ajax_updater( '{$ajaxId}', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', '{$pgnName}={$pgnPage+1}{$pgnVars}' );">&raquo;</a>
 		{else}
-			&nbsp;<a href="{$smarty.server.PHP_SELF}?{$pgnName}={$pgnPage+1}{$pgnVars}">&raquo;</a>
+			&nbsp;<a href="{$smarty.server.REQUEST_URI}?{$pgnName}={$pgnPage+1}{$pgnVars}">&raquo;</a>
 		{/if}
 	{else}
 		&nbsp;&nbsp;

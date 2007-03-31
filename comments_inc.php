@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.28 $
+ * @version  $Revision: 1.29 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.28 2006/09/25 22:40:51 sylvieg Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.29 2007/03/31 14:58:47 nickpalmer Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -244,7 +244,7 @@ $commentsPgnHash = array(
 	'page' => $currentPage,
 	'comment_page' => $currentPage,
 	'url' => $comments_return_url,
-	'maxComments' => $maxComments,
+	'comments_maxComments' => $maxComments,
 	'comments_sort_mode' => $comments_sort_mode,
 	'comments_style' => $comments_display_style,
 	'ianchor' => 'editcomments',
