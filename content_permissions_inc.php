@@ -1,14 +1,10 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage functions
  */
-if( !empty( $verify_permission ) ) {
-	$gBitSystem->verifyPermission( $verify_permission );
-} else {
-	$gBitSystem->verifyPermission( 'p_admin' );
-}
+$gBitSystem->verifyPermission( 'p_liberty_assign_content_perms' );
 
 // If we haven't got any content loaded yet, load it
 if( empty( $gContent ) ) {

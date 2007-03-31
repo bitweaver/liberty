@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.65 2007/03/21 18:08:07 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.66 2007/03/31 13:01:08 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -745,6 +745,8 @@ function liberty_plugins_div_style( $pParamHash ) {
 
 	return $ret;
 }
+
+// ================== Liberty Service Functions ==================
 function liberty_content_load_sql() {
 	global $gBitSystem, $gBitUser;
 	$ret = array();
@@ -767,13 +769,32 @@ function liberty_content_list_sql() {
 	return $ret;
 }
 
-function liberty_content_preview(&$pObject) {
+function liberty_content_preview( &$pObject ) {
 	global $gBitSystem, $gBitUser;
 	if ($gBitSystem->isFeatureActive('liberty_display_status') && ($gBitUser->hasPermission('p_liberty_edit_content_status') || $gBitUser->hasPermission('p_libert_edit_all_status'))) {
 		$pObject->mInfo['content_status_id'] = $_REQUEST['content_status_id'];
 	}
 	if ($gBitSystem->isFeatureActive('liberty_allow_change_owner') && $gBitUser->hasPermission('p_liberty_edit_content_owner')) {
 		$pObject->mInfo['owner_id'] = $_REQUEST['owner_id'];
+	}
+}
+
+function liberty_content_load( &$pObject ) {
+	if( $pObject->isValid() ) {
+		// transparently update user permissions for this content object
+		// this might not be the wisest course of action since it distorts permissions on the entire site with respect to the active package - xing
+		$pObject->updateUserPermissions();
+	}
+}
+
+function liberty_content_display( &$pObject, &$pParamHash ) {
+	if( $pObject->isValid() ) {
+		global $gBitUser, $gBitSystem;
+
+		// make sure user has appropriate permissions to view this content
+		if( !empty( $pParamHash['perm_name'] )) {
+			$pObject->verifyPermission( $pParamHash['perm_name'] );
+		}
 	}
 }
 

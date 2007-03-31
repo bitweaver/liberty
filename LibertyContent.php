@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.190 2007/03/31 10:41:11 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.191 2007/03/31 13:01:08 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -73,12 +73,12 @@ class LibertyContent extends LibertyBase {
 	* Permissions hash specific to this LibertyContent object
 	* @public
 	*/
-	var $mPerms;
+	var $mPerms = array();
 	/**
 	* Preferences hash specific to this LibertyContent object - accessed via getPreference/storePreference
 	* @private
 	*/
-	var $mPrefs;
+	var $mPrefs = array();
 	/**
 	* Admin control permission specific to this LibertyContent type
 	* @private
@@ -919,7 +919,7 @@ class LibertyContent extends LibertyBase {
 		}
 
 		LibertyContent::prepGetList( $pParamHash );
-		if( $this->isValid() && empty( $this->mPerms ) && $this->mContentTypeGuid ) {
+		if( $this->isValid() && $this->mContentTypeGuid ) {
 			$query = "
 				SELECT lcperm.`perm_name`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
 				FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
@@ -930,7 +930,7 @@ class LibertyContent extends LibertyBase {
 			$bindVars = array( $this->mContentId );
 			$ret = $this->mDb->getAll( $query, $bindVars );
 		}
-		return( $ret );
+		return $ret;
 	}
 
 	/**
@@ -957,10 +957,11 @@ class LibertyContent extends LibertyBase {
 			foreach( $perms as $perm ) {
 				if( in_array( $perm['group_id'], $userGroups ) ) {
 					$this->mPerms[$perm['perm_name']] = $perm;
+					$this->mPerms[$perm['perm_name']]['package'] = $this->mType['handler_package'];
 				}
 			}
 		}
-		return( count( $perms ) );
+		return( count( $perms ));
 	}
 
 	/**
@@ -972,7 +973,7 @@ class LibertyContent extends LibertyBase {
 	 */
 	function updateUserPermissions( $pPackage = NULL ) {
 		$ret = FALSE;
-		if( $this->isValid() && $this->loadPermissions() ) {
+		if( $this->isValid() && $this->hasAssignedPermissions() ) {
 			global $gBitUser;
 
 			if( empty( $pPackage ) ) {
@@ -992,14 +993,19 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
+	/**
+	 * Check to see if the loaded content has individually assigned permissions
+	 * 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function hasAssignedPermissions() {
 		$ret = FALSE;
 		if( $this->isValid() ) {
-			$ret = count( $this->mPerms );
+			$ret = $this->loadPermissions();
 		}
 		return $ret;
 	}
-
 
 	/**
 	* Function that determines if this content specified permission for the current gBitUser, and will throw a fatal error if not.
@@ -1103,21 +1109,21 @@ class LibertyContent extends LibertyBase {
 	* @param integer Content Itentifier
 	* @return bool true ( will not currently report a failure )
 	*/
-	function storePermission( $pGroupId, $pPermName, $pObjectId=NULL ) {
-		if( !@$this->verifyId( $pObjectId )) {
-			$pObjectId = $this->mContentId;
+	function storePermission( $pGroupId, $pPermName, $pContentId=NULL ) {
+		if( !@$this->verifyId( $pContentId )) {
+			$pContentId = $this->mContentId;
 		}
 
-		if( @BitBase::verifyId( $pGroupId ) && !empty( $pPermName )) {
+		if( @BitBase::verifyId( $pGroupId ) && !empty( $pPermName ) && @BitBase::verifyId( $pContentId )) {
 			$query = "
 				DELETE FROM `".BIT_DB_PREFIX."liberty_content_permissions`
 				WHERE `group_id` = ? AND `perm_name` = ? AND `content_id` = ?";
-			$result = $this->mDb->query( $query, array( $pGroupId, $pPermName, $pObjectId ), -1, -1 );
+			$result = $this->mDb->query( $query, array( $pGroupId, $pPermName, $pContentId ), -1, -1 );
 			$query = "
 				INSERT INTO `".BIT_DB_PREFIX."liberty_content_permissions`
 				( `group_id`,`content_id`, `perm_name` )
 				VALUES( ?, ?, ? )";
-			$result = $this->mDb->query( $query, array( $pGroupId, $pObjectId, $pPermName ));
+			$result = $this->mDb->query( $query, array( $pGroupId, $pContentId, $pPermName ));
 			return TRUE;
 		}
 		return FALSE;
