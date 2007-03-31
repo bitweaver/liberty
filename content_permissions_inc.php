@@ -1,9 +1,12 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage functions
  */
+
+/* i think this file is not in use anymore - xing
+
 $gBitSystem->verifyPermission( 'p_liberty_assign_content_perms' );
 
 // If we haven't got any content loaded yet, load it
@@ -58,4 +61,5 @@ if( empty( $assignPerms ) ) {
 	}
 }
 $gBitSmarty->assign_by_ref( 'assignPerms', $assignPerms );
+ */
 ?>
