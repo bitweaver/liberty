@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.191 2007/03/31 13:01:08 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.192 2007/03/31 17:02:31 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -757,11 +757,12 @@ class LibertyContent extends LibertyBase {
 	}
 
 	// -------------------------------- Content Permission Funtions
-	
-	
+
 	function getContentPermissionsSql( $pPermName, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
- 		$pJoinSql .= "LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcp ON (lc.`content_id`=lcp.`content_id`) LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON (ugm.`group_id`=lcp.`group_id`)";
- 		$pWhereSql .= " OR (lcp.perm_name=? AND (ugm.user_id=lc.user_id OR ugm.user_id=-1)) ";
+		$pJoinSql .= "
+			LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcperm ON (lc.`content_id`=lcperm.`content_id`)
+			LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON (ugm.`group_id`=lcperm.`group_id`) ";
+ 		$pWhereSql .= " OR (lcperm.perm_name=? AND (ugm.user_id=lc.user_id OR ugm.user_id=-1)) ";
  		$pBindVars[] = $pPermName;
 	}
 
@@ -776,7 +777,7 @@ class LibertyContent extends LibertyBase {
 	*/
 	function checkContentPermission( $pParamHash ) {
 		global $gBitUser;
-		
+
 		$ret = FALSE;
 
 		if( !empty( $this->mAdminContentPerm ) && $gBitUser->hasPermission( $this->mAdminContentPerm ) ) {
@@ -785,30 +786,30 @@ class LibertyContent extends LibertyBase {
 		} else {
 			$selectSql = ''; $joinSql = ''; $whereSql = '';
 			$bindVars = array();
-			
+
 			if( !empty( $pParamHash['content_id'] ) ) {
 				$bindVars[] = $pParamHash['content_id'];
 			} elseif( $this->isValid() ) {
 				$bindVars[] = $this->mContentId;
 			}
-			
+
 			if( @$this->verifyId( $pParamHash['user_id'] ) ) {
 				$whereSql .= " AND lc.`user_id` = ? ";
 				$bindVars[] = $pParamHash['user_id'];
-			} 
-			
+			}
+
 			if( !empty( $pParamHash['group_id'] ) ) {
-				$whereSql .= " AND lcp.`group_id` = ? ";
+				$whereSql .= " AND lcperm.`group_id` = ? ";
 				$bindVars[] = $pParamHash['group_id'];
 			}
-	
+
 			$permWhereSql = '';
 			$this->getContentPermissionsSql( $pParamHash['perm_name'], $selectSql, $joinSql, $permWhereSql, $bindVars );
-	
+
 			if( !empty( $whereSql ) ) {
 				$whereSql = preg_replace( '/^[\s]*AND/', '  ', $whereSql );
 			}
-	
+
 			$query = "SELECT COUNT(*)
 					  FROM liberty_content` lc  $joinSql
 					  WHERE lc.`content_id`=? AND ( $whereSql $permWhereSql ) ";
