@@ -12,18 +12,19 @@
 			{formhelp warning="No Individual permissions set. Global Permissions apply."}
 		{/if}
 
-		{if $contentPerms.groups|count > 10}
+		{if count($contentPerms.groups) lt 8}
 
-			{foreach from=$contentPerms.groups item=group}
-				<h3>{tr}Permissions for{/tr}: {$group.group_name}</h3>
-				<table class="data">
-					<tr>
-						<th>{tr}Permission{/tr}</th>
-						<th>{tr}Status{/tr}</th>
-					</tr>
-					{foreach from=$contentPerms.assignable item=perm}
-						<tr>
-							<td>{$perm.perm_desc} <em>({$perm.perm_name})</em></td>
+			<table class="data">
+				<tr>
+					<th>{tr}Permission{/tr}</th>
+					{foreach from=$contentPerms.groups item=group}
+						<th>{$group.group_name}</th>
+					{/foreach}
+				</tr>
+				{foreach from=$contentPerms.assignable item=perm}
+					<tr class="{cycle values="odd,even"}">
+						<td>{$perm.perm_desc}<br /><em>({$perm.perm_name})</em></td>
+						{foreach from=$contentPerms.groups item=group}
 							{assign var=icon value="icons/media-playback-stop"}
 							{assign var=action value="assign"}
 							{foreach from=$contentPerms.assigned item=ass}
@@ -32,12 +33,12 @@
 									{assign var=action value="remove"}
 								{/if}
 							{/foreach}
-							<td style="text-align:center">{smartlink ititle=Allow ibiticon=$icon action=$action content_id=$gContent->mContentId perm=$perm.perm_name group_id=$group.group_id}</td>
-						</tr>
-					{/foreach}
-				</table>
-				<br /><hr /><br />
-			{/foreach}
+							<td style="text-align:center">{smartlink itra=false ititle=$perm.perm_name ibiticon=$icon action=$action content_id=$gContent->mContentId perm=$perm.perm_name group_id=$group.group_id}</td>
+						{/foreach}
+					</tr>
+				{/foreach}
+			</table>
+			<br /><hr /><br />
 
 		{else}
 
