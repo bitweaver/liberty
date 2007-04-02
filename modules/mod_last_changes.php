@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.php,v 1.10 2007/03/02 11:15:10 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.php,v 1.11 2007/04/02 18:55:00 squareing Exp $
  * @package liberty
  * @subpackage modules
  * Params:
@@ -11,8 +11,8 @@
 /**
  * Initialization
  */
-global $gQueryUser, $gBitUser, $module_rows, $module_params, $gLibertySystem, $module_title;
-
+global $gQueryUser, $gBitUser, $gLibertySystem, $moduleParams;
+extract( $moduleParams );
 
 $userId = NULL;
 if( !empty( $gQueryUser->mUserId ) ) {
@@ -25,7 +25,7 @@ if( empty( $module_title ) ) {
 	} else {
 		$title = tra( "Last Changes" );
 	}
-	$gBitSmarty->assign( 'moduleTitle', $title );
+	$moduleParams['title'] = $title;
 }
 
 if( !empty( $module_params['show_date'] ) ) {
