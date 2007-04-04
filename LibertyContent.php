@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.193 2007/03/31 17:04:46 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.194 2007/04/04 17:07:20 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -940,9 +940,10 @@ class LibertyContent extends LibertyBase {
 	 * @access public
 	 * @return TRUE if permissions were inserted into $this->mPerms
 	 */
-	function loadPermissions() {
-		global $gBitUser;
-		$perms = array();
+	function loadPermissions( $pForce = FALSE ) {
+		if( $pForce ) {
+			$this->mPerms = array();
+		}
 		if( $this->isValid() && empty( $this->mPerms ) && $this->mContentTypeGuid ) {
 			$query = "
 				SELECT lcperm.`perm_name`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
@@ -951,18 +952,9 @@ class LibertyContent extends LibertyBase {
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
 				WHERE lcperm.`content_id` = ?";
 			$bindVars = array( $this->mContentId );
-			$perms = $this->mDb->getAll( $query, $bindVars );
-
-			// check what permissions apply to this user
-			$userGroups = array_keys( $gBitUser->mGroups );
-			foreach( $perms as $perm ) {
-				if( in_array( $perm['group_id'], $userGroups ) ) {
-					$this->mPerms[$perm['perm_name']] = $perm;
-					$this->mPerms[$perm['perm_name']]['package'] = $this->mType['handler_package'];
-				}
-			}
+			$this->mPerms = $this->mDb->getAssoc( $query, $bindVars );
 		}
-		return( count( $perms ));
+		return( count( $this->mPerms ));
 	}
 
 	/**
@@ -1024,7 +1016,8 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	* Function that determines if this content specified permission for the current gBitUser
+	 * Function that determines if this content specified permission for the current gBitUser. 
+	 * Assigned content perms override the indvidual global perms, so the result is the union of the global permission set + overridden individual content perms
 	*
 	* @param string Name of the permission to check
 	* @return bool true if user has permission to access file
@@ -1032,11 +1025,33 @@ class LibertyContent extends LibertyBase {
 	function hasUserPermission( $pPermName ) {
 		global $gBitUser;
 		if( !$gBitUser->isRegistered() || !( $ret = $this->isOwner() ) ) {
-			if( !( $ret = $this->hasAdminPermission() ) ) {
+			if( !( $gBitUser->isAdmin() || $gBitUser->hasPermission( $this->mAdminContentPerm ) ) ) {
 				$this->verifyAccessControl();
 				if( $this->loadPermissions() ) {
-					$userPerms = $this->getUserPermissions( $gBitUser->mUserId );
-					$ret = isset( $userPerms[$pPermName]['user_id'] ) && ( $userPerms[$pPermName]['user_id'] == $gBitUser->mUserId );
+					// this content has assigned perms
+					$globalPerms = $gBitUser->mPerms;
+/*
+			// check what permissions apply to this user
+			$userGroups = array_keys( $gBitUser->mGroups );
+			foreach( $perms as $perm ) {
+				if( in_array( $perm['group_id'], $userGroups ) ) {
+					$this->mPerms[$perm['perm_name']] = $perm;
+					$this->mPerms[$perm['perm_name']]['package'] = $this->mType['handler_package'];
+				}
+			}
+ */
+
+					// unset all perms in the default that are custom assigned
+					// they might have been removed for this user...
+					foreach( array_keys( $this->mPerms ) as $permName ) {
+						if( isset( $globalPerms[$permName] ) ) {
+							unset( $globalPerms[$permName] );
+						}
+					}
+
+					// union the global perms plus the assigned perms
+					$checkPerms = array_merge( $globalPerms, $this->getUserPermissions( $gBitUser->mUserId ) );
+					$ret = !empty( $checkPerms[$this->mAdminContentPerm] ) || !empty( $checkPerms[$pPermName] ); // && ( $checkPerms[$pPermName]['user_id'] == $gBitUser->mUserId );
 				} else {
 					$ret = $gBitUser->hasPermission( $pPermName );
 				}
@@ -1068,7 +1083,7 @@ class LibertyContent extends LibertyBase {
 	*/
 	function hasAdminPermission() {
 		global $gBitUser;
-		return( $gBitUser->isAdmin() || $gBitUser->hasPermission( $this->mAdminContentPerm ) );
+		return( $this->hasUserPermission( $this->mAdminContentPerm ) );
 	}
 
 	/**
@@ -1078,7 +1093,7 @@ class LibertyContent extends LibertyBase {
 	*/
 	function hasEditPermission() {
 		global $gBitUser;
-		return( $gBitUser->isAdmin() || $gBitUser->hasPermission( $this->mAdminContentPerm ) || $this->isOwner() );
+		return( $gBitUser->isAdmin() || $this->hasUserPermission( $this->mAdminContentPerm ) || $this->isOwner() );
 	}
 
 	/**
