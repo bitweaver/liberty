@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.194 2007/04/04 17:07:20 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.195 2007/04/04 18:58:19 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1024,7 +1024,7 @@ class LibertyContent extends LibertyBase {
 	*/
 	function hasUserPermission( $pPermName ) {
 		global $gBitUser;
-		if( !$gBitUser->isRegistered() || !( $ret = $this->isOwner() ) ) {
+		if( !$gBitUser->isRegistered() || !($ret = $this->isOwner() || $ret = $gBitUser->isAdmin()) ) {
 			if( !( $gBitUser->isAdmin() || $gBitUser->hasPermission( $this->mAdminContentPerm ) ) ) {
 				$this->verifyAccessControl();
 				if( $this->loadPermissions() ) {
