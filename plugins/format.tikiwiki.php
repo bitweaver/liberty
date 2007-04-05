@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.90 $
+ * @version  $Revision: 1.91 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -1115,7 +1115,7 @@ class TikiWikiParser extends BitBase {
 			// prepare link for pattern usage
 			$link2 = str_replace("/", "\/", preg_quote($link));
 
-			if( $gBitSystem->isFeatureActive( 'liberty_cache_pages') && $pCommonObject->isUrlCached( $link ) ) {
+			if( $gBitSystem->isFeatureActive( 'liberty_cache_pages') && $pCommonObject && $pCommonObject->isUrlCached( $link ) ) {
 				//use of urlencode for using cached versions of dynamic sites
 				$cosa = "<a class=\"bitcache\" href=\"".KERNEL_PKG_URL."view_cache.php?url=".urlencode($link)."\">(cache)</a>";
 
