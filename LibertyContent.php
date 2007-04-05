@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.195 2007/04/04 18:58:19 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.196 2007/04/05 16:02:20 bitweaver Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2086,6 +2086,9 @@ class LibertyContent extends LibertyBase {
 	* @todo LEGACY FUNCTIONS that need to be cleaned / moved / or deprecated & deleted
 	*/
 	function isUrlCached($url) {
+		// return false until this is fixed
+		return FALSE;
+
 		$query = "select `cache_id`  from `".BIT_DB_PREFIX."liberty_link_cache` where `url`=?";
 		// sometimes we can have a cache_id of 0(?!) - seen it with my own eyes, spiderr
 		$ret = $this->mDb->getOne($query, array( $url ) );
@@ -2103,6 +2106,9 @@ class LibertyContent extends LibertyBase {
 	* @todo LEGACY FUNCTIONS that need to be cleaned / moved / or deprecated & deleted
 	*/
 	function cacheUrl($url, $data = '') {
+		// return  TRUE until this is fixed
+		return TRUE;
+
 		// Avoid caching internal references... (only if $data not present)
 		// (cdx) And avoid other protocols than http...
 		// 03-Nov-2003, by zaufi
