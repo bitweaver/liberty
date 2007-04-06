@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.196 2007/04/05 16:02:20 bitweaver Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.197 2007/04/06 14:19:18 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2499,5 +2499,35 @@ class LibertyContent extends LibertyBase {
 			return( $this->mDb->getAssoc( "SELECT `content_status_id`, `content_status_name` FROM `".BIT_DB_PREFIX."liberty_content_status` WHERE `content_status_id` > ? AND `content_status_id` < ? ORDER BY `content_status_id`", array($pUserMinimum, $pUserMaximum)));
 		}
 	}
+
+	/**
+	 * getPreview -- Returns a string with a preview of the content. Default implementation runs getRenderFile() with preview set in the context and gBitSystem set to only render the content.
+	 *
+	 * @access public
+	 * @return the preview string
+	 **/
+	function getPreview() {
+		global $gBitSystem, $gContent, $gBitSmarty;
+		// Tell gBitSystem not to do modules and such
+		$gBitSystem->onlyRenderContent();
+		// Tell the content we are previewing (in case they care)
+		$gBitSmarty->assign('preview', true);
+		// Save current gContent
+		$oldGContent = $gContent;
+		// Make us the content
+		$gContent = $this;
+
+		$ret = get_include_contents($this->getRenderFile());
+
+		// Return gBitSystem to full render mode
+		$gBitSystem->onlyRenderContent(false);
+		// Clear the preview flag
+		$gBitSmarty->assign('preview', false);
+		// Restore gContent
+		$gContent = $oldGContent;
+
+		return $ret;
+	}
+
 }
 ?>
