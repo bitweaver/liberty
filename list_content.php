@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.22 $
+ * @version  $Revision: 1.23 $
  * @package  liberty
  * @subpackage functions
  */
@@ -32,6 +32,7 @@ $gBitSmarty->assign( 'contentTypes', $contentTypes );
 $gBitSmarty->assign( 'contentList', $contentList['data'] );
 $contentList['listInfo']['parameters']['content_type_guid'] = $contentSelect;
 $gBitSmarty->assign( 'listInfo', $contentList['listInfo'] );
+$gBitSmarty->assign( 'content_type_guids', (isset($_REQUEST['content_type_guid'])?$_REQUEST['content_type_guid']:NULL) );
 
 //depricate 'ajax_xml', use 'output'
 //@todo clean out from other packages
