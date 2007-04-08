@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.71 2007/04/08 17:19:54 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.72 2007/04/08 23:48:01 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -145,33 +145,12 @@ class LibertyAttachable extends LibertyContent {
 
 	function verifyAttachment( &$pParamHash, $file ) {
 		global $gBitSystem, $gBitUser;
-		if( !empty( $pParamHash['attachment_id'] ) && !$this->verifyId( $pParamHash['attachment_id'] ) ) {
-			$this->mErrors['file'] = 'System Error: Non-numeric storage_id.';
-		}
-
-		if( empty( $pParamHash['user_id'] ) ) {
-			// storage is always owned by the user that uploaded it!
-			// er... or at least admin if somehow we have a NULL mUserId - anon uploads maybe?
-			$pParamHash['user_id'] = @$this->verifyId( $gBitUser->mUserId ) ? $gBitUser->mUserId : ROOT_USER_ID;
-		}
-		if( empty( $pParamHash['process_storage'] ) ) {
-			$pParamHash['process_storage'] = NULL;
-		}
-
-		if( empty( $pParamHash['subdir'] ) ) {
-			$pParamHash['subdir'] = 'files';
-		}
-
-		if( !empty( $_FILES['upload'] ) ) {
+		if( !empty( $_FILES[$file] ) ) {
 			// tiki files upload
-			if( !empty( $_FILES['upload']['size'] ) ) {
-				$pParamHash['upload'] = $_FILES['upload'];
-			} elseif( !empty( $_FILES['upload']['name'] ) ) {
-				$this->mErrors['upload'] = tra( 'Empty file' ).': '.$_FILES['upload']['name'];
-			}
+			$pParamHash[$file] = $_FILES[$file];
 		}
 
-		if( !empty( $pParamHash['upload']['size'] ) && !empty( $pParamHash['upload'] ) && is_array( $pParamHash['upload'] ) ) {
+		if( !empty( $pParamHash[$file]['size'] ) && !empty( $pParamHash[$file] ) && is_array( $pParamHash[$file] ) ) {
 
 			$save = TRUE;
 /*
@@ -182,21 +161,24 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 				// Prevent people from uploading more than there quota
 				$q = $quota->getUserQuota( $pParamHash['user_id'] );
 				$u = (int)$quota->getUserUsage( $pParamHash['user_id'] );
-				if( $u + $pParamHash['upload']['size'] > $q ) {
+				if( $u + $pParamHash[$file]['size'] > $q ) {
 					$save = FALSE;
-					$this->mErrors['upload'] = $pParamHash['upload']['name'].' '.tra( 'could not be stored because you do not have enough disk quota.' ).' '.round(($u + $pParamHash['upload']['size'] - $q)/1000).'KB Needed' ;
+					$this->mErrors[$file] = $pParamHash[$file]['name'].' '.tra( 'could not be stored because you do not have enough disk quota.' ).' '.round(($u + $pParamHash[$file]['size'] - $q)/1000).'KB Needed' ;
 				}
 			}
 */
 			if( $save ) {
 				// - TODO: get common preferences page with this as an option, but right now files are only option cuz no blobs - SPIDERR
 				$storageGuid = !empty( $pParamHash['storage_guid'] ) ? $pParamHash['storage_guid'] : $gBitSystem->getConfig( 'common_storage_plugin', PLUGIN_GUID_BIT_FILES );
-				if( !empty( $pParamHash['upload']['size'] ) ) {
-					$pParamHash['upload']['dest_base_name'] = substr( $pParamHash['upload']['name'], 0, strrpos( $pParamHash['upload']['name'], '.' )  );
-					$pParamHash['upload']['source_file'] = $pParamHash['upload']['tmp_name'];
+				if( !empty( $pParamHash[$file]['size'] ) ) {
+				$pParamHash[$file]['dest_base_name'] = substr( $pParamHash[$file]['name'], 0, strrpos( $pParamHash[$file]['name'], '.' )  );
+					$pParamHash[$file]['source_file'] = $pParamHash[$file]['tmp_name'];
 					// lowercase all file extensions
-					$pParamHash['upload']['name'] = $pParamHash['upload']['dest_base_name'].strtolower( substr( $pParamHash['upload']['name'], strrpos( $pParamHash['upload']['name'], '.' ) )  );
-					$pParamHash['STORAGE'][$storageGuid] = $pParamHash['upload'];
+					$pParamHash[$file]['name'] = $pParamHash[$file]['dest_base_name'].strtolower( substr( $pParamHash[$file]['name'], strrpos( $pParamHash[$file]['name'], '.' ) )  );
+					if (!isset($pParamHash['STORAGE'][$storageGuid])) {
+						$pParamHash['STORAGE'][$storageGuid] = array();
+					}
+					$pParamHash['STORAGE'][$storageGuid][$file] = array('upload' => &$pParamHash[$file]);
 				}
 			}
 		}
@@ -268,26 +250,30 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 				else {
 					$storeRow['content_id'] = $pParamHash['content_id']; // copy in content_id
 				}
+
+				$storeRow['content_id'] = $pParamHash['content_id']; // copy in content_id
 				$storeRow['user_id'] = $pParamHash['user_id']; // copy in the user_id
 				// do we have a verify function for this storage type, and do things verify?
-				//					vd("Calling verify function.");
-				//					vd($storeRow);
-				
-				if( function_exists( $gLibertySystem->mPlugins[$guid]['verify_function'] )
+				if( $gLibertySystem->getPluginFunction( $guid, 'verify_function' )
 					&& $gLibertySystem->mPlugins[$guid]['verify_function']( $storeRow ) ) {
-					//						vd("Checking current attachment_id");
-					//						vd($storeRow);
 					if( empty( $storeRow['attachment_id'] ) ) {
-						//							vd("Checking for existing id.");
-						$sql = "SELECT `attachment_id` FROM `".BIT_DB_PREFIX."liberty_attachments`
+						if ( empty( $pParamHash['foreign_id'] ) || !$pParamHash['foreign_id'] ) {
+							$alreadyAttachedCount = 0;
+						}
+						else {	
+							$sql = "SELECT `attachment_id` FROM `".BIT_DB_PREFIX."liberty_attachments`
 									WHERE `attachment_plugin_guid` = ? AND `content_id` = ? AND `foreign_id`=?";
-						$rs = $this->mDb->query( $sql, array( $storeRow['plugin_guid'], (int)$storeRow['content_id'], (int)$storeRow['foreign_id'] ) );
-						//							vd($rs);
-						if( empty( $rs ) || !$rs->NumRows() ) {
-							//								vd("Generating new attachment id");
+							$rs = $this->mDb->query( $sql, array( $storeRow['plugin_guid'], (int)$storeRow['content_id'], (int)$storeRow['foreign_id'] ) );
+							if( empty( $rs ) || !$rs->NumRows() ) {
+								$alreadyAttachedCount = 0;
+							}
+							else {
+								$alreadyAttachedCount = $rs->NumRows();
+							}
+						}	
+						if( !$alreadyAttachedCount ) {
 							$storeRow['attachment_id'] = $this->mDb->GenID( 'liberty_attachments_id_seq' );
 							$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'];
-							//								vd("Generated id: " + $storeRow['attachment_id']);
 							$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `attachment_id`, `attachment_plugin_guid`, `content_id`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
 							$rs = $this->mDb->query( $sql, array( $storeRow['attachment_id'], $storeRow['plugin_guid'], $pParamHash['content_id'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
 						} else {
@@ -303,9 +289,9 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 							$ext = substr( $storeRow['upload']['name'], strrpos( $storeRow['upload']['name'], '.' ) + 1 );
 							$storeRow['upload']['type'] = $gBitSystem->lookupMimeType( $ext );
 						}
-						$storeRow['upload']['dest_path'] = $this->getStorageBranch( $storeRow['attachment_id'], $pParamHash['user_id'], 'images' );
-						if (!empty( $pParamHash['thumbsizes'] ) ) {
-							$storeRow['upload']['thumbsizes'] = $pParamHash['thumbsizes'];
+						$storeRow['upload']['dest_path'] = $this->getStorageBranch( $storeRow['attachment_id'], $pParamHash['user_id'], $this->getStorageSubDirName() );
+						if (!empty( $pParamHash['thumbnail_sizes'] ) ) {
+							$storeRow['upload']['thumbnail_sizes'] = $pParamHash['thumbnail_sizes'];
 						}
 						$storagePath = liberty_process_upload( $storeRow );
 						// We're gonna store to local file system & liberty_files table
@@ -318,7 +304,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 						}
 					}
 					
-					if( isset($storeRow['attachment_id']) && function_exists( $gLibertySystem->mPlugins[$storeRow['plugin_guid']]['store_function'] ) ) {
+					if( isset($storeRow['attachment_id']) && $gLibertySystem->getPluginFunction( $storeRow['plugin_guid'], 'store_function' ) ) {
 						$storeFunc = $gLibertySystem->mPlugins[$storeRow['plugin_guid']]['store_function'];
 						$this->mStorage = $storeFunc( $storeRow );
 					}
@@ -850,7 +836,6 @@ function liberty_process_generic( &$pFileHash, $pMoveFile=TRUE ) {
 			} else {
 				rename( $pFileHash['source_file'], $actualPath );
 			}
-			$ret = $destBase;
 		} else {
 			copy( $pFileHash['source_file'], $actualPath );
 		}
@@ -962,7 +947,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 	} else {
 		$ext = '.jpg';
 	}
-
+	
 	foreach( $pFileHash['thumbnail_sizes'] as $thumbSize ) {
 		if( isset( $gThumbSizes[$thumbSize] )) {
 			$pFileHash['dest_base_name'] = $thumbSize;
