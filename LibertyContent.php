@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.197 2007/04/06 14:19:18 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.198 2007/04/08 18:00:34 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1489,11 +1489,34 @@ class LibertyContent extends LibertyBase {
 			$ret = BIT_ROOT_URL.'index.php?content_id='.$pContentId;
 		} elseif( @BitBase::verifyId( $pMixed['content_id'] ) ) {
 			$ret = BIT_ROOT_URL.'index.php?content_id='.$pMixed['content_id'];
+		} elseif( $this->isValid() ) {
+			$ret = BIT_ROOT_URL.'index.php?content_id='.$this->mContentId;
 		} else {
 			$ret = '#';
 		}
 		return $ret;
 	}
+
+
+	/**
+	* Not-so-pure virtual function that returns Request_URI to the preview.
+	* @param string Text for DisplayLink function
+	* @param array different possibilities depending on derived class
+	* @return string Formated URL address to display the page.
+	*/
+	function getPreviewUrl( $pContentId = NULL, $pMixed = NULL ) {
+		if( @BitBase::verifyId( $pContentId ) ) {
+			$ret = LIBERTY_PKG_URL.'preview.php?content_id='.$pContentId;
+		} elseif( @BitBase::verifyId( $pMixed['content_id'] ) ) {
+			$ret = LIBERTY_PKG_URL.'preview.php?content_id='.$pMixed['content_id'];
+		} elseif( $this->isValid() ) {
+			$ret = LIBERTY_PKG_URL.'preview.php?content_id='.$this->mContentId;
+		} else {
+			$ret = '#';
+		}
+		return $ret;
+	}
+
 
 	/**
 	* Not-so-pure virtual function that returns Request_URI to a content's thumbnail representation. It is up to the derived content what exactly this means
