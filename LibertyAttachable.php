@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.70 2007/04/08 15:54:10 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.71 2007/04/08 17:19:54 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -221,7 +221,6 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 						$field = $upload_array."_".$i;
 						if(isset($_FILES[$field]) && 
 							$_FILES[$field]['error'] == 0) {
-						  vd("verify: " . $field);
 							$this->verifyAttachment($pParamHash, $field);
 						}
 					}
