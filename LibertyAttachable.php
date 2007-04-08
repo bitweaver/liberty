@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.69 2007/04/08 15:17:17 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.70 2007/04/08 15:54:10 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -200,6 +200,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 				}
 			}
 		}
+	}
 
 	function verifyAttachments( &$pParamHash ) {
 		global $gBitSystem;
