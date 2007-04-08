@@ -16,6 +16,10 @@ $formLibertyFeatures = array(
 		'label' => 'External image cache',
 		'note' => 'Enabling this will download and cache external images that are included.',
 	),
+	"liberty_multiple_attachments" => array(
+		'label' => 'Allow Multiple Attachments',
+		'note' => 'Allow multiple attachments in a single upload.',
+	),
 );
 
 if( $gBitSystem->isPackageActive( 'quota' ) ) {

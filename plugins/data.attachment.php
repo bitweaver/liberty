@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.17 $
+ * @version  $Revision: 1.18 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.17 2007/01/20 10:19:53 squareing Exp $
+// $Id: data.attachment.php,v 1.18 2007/04/08 15:17:18 nickpalmer Exp $
 
 /**
  * definitions
@@ -178,7 +178,7 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 		// finally, wrap the output with a div
 		if( empty( $nodiv ) ) {
 			$ret =
-				'<div class="'.( !empty( $div['class'] ) ? $div['class'] : "att-plugin" ).'" style="'.$div['style'].'">'.
+				'<div class="'.( isset($div) && !empty( $div['class'] ) ? $div['class'] : "att-plugin" ).'" style="'.(isset($div) ? $div['style'] : '').'">'.
 				$ret.'</div>';
 		}
 	} else {

@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.68 2007/03/10 21:39:11 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.69 2007/04/08 15:17:17 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -143,7 +143,7 @@ class LibertyAttachable extends LibertyContent {
 //		}
 //	}
 
-	function verify( &$pParamHash ) {
+	function verifyAttachment( &$pParamHash, $file ) {
 		global $gBitSystem, $gBitUser;
 		if( !empty( $pParamHash['attachment_id'] ) && !$this->verifyId( $pParamHash['attachment_id'] ) ) {
 			$this->mErrors['file'] = 'System Error: Non-numeric storage_id.';
@@ -201,90 +201,138 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			}
 		}
 
-		if( isset( $pParamHash['STORAGE'] ) && is_array( $pParamHash['STORAGE'] ) ) {
-			foreach( array_keys( $pParamHash['STORAGE'] ) as $guid ) {
-				if( empty( $pParamHash['STORAGE'][$guid] ) ) {
-					unset( $pParamHash['STORAGE'][$guid]  );
-				} else {
-					// reassign uploaded guid value to array element hashed under the guid. we are going to add more stuff to the guid hash
-					$inputValue = $pParamHash['STORAGE'][$guid];
-					$pParamHash['STORAGE'][$guid] = array();
-					$pParamHash['STORAGE'][$guid]['upload'] = $inputValue;
+	function verifyAttachments( &$pParamHash ) {
+		global $gBitSystem;
+		// Support for single bitfile upload
+		$this->verifyAttachment( $pParamHash, 'upload' );
+		if ($gBitSystem->isFeatureActive('liberty_multiple_attachments')) {
+		  $pParamHash['upload_arrays'] .= ',uploads';
+		}
+		// Support for multiple arrays of uploads.
+		if (!empty($pParamHash['upload_arrays'])) {			
+			$other_uploads = split(',',$pParamHash['upload_arrays']);
+			foreach ($other_uploads as $upload_array) {
+				// We need a max to guard against infinite loop.
+				// multifile.js sets this for us.
+				$max_name = $upload_array.'_max';
+				if (isset($pParamHash[$max_name])) {
+					for ($i = 0; $i <= $pParamHash[$max_name]; $i++) {
+						$field = $upload_array."_".$i;
+						if(isset($_FILES[$field]) && 
+							$_FILES[$field]['error'] == 0) {
+						  vd("verify: " . $field);
+							$this->verifyAttachment($pParamHash, $field);
+						}
+					}
 				}
 			}
 		}
+
+		return ( count( $this->mErrors ) == 0 );
+	}
+
+	function verify( &$pParamHash ) {
+		global $gBitSystem, $gBitUser;
+		if( !empty( $pParamHash['attachment_id'] ) && !$this->verifyId( $pParamHash['attachment_id'] ) ) {
+			$this->mErrors['file'] = 'System Error: Non-numeric storage_id.';
+		}
+
+		if( empty( $pParamHash['user_id'] ) ) {
+			// storage is always owned by the user that uploaded it!
+			// er... or at least admin if somehow we have a NULL mUserId - anon uploads maybe?
+			$pParamHash['user_id'] = @$this->verifyId( $gBitUser->mUserId ) ? $gBitUser->mUserId : ROOT_USER_ID;
+		}
+		if( empty( $pParamHash['process_storage'] ) ) {
+			$pParamHash['process_storage'] = NULL;
+		}
+
+		if( empty( $pParamHash['subdir'] ) ) {
+			$pParamHash['subdir'] = 'files';
+		}
+
+		$this->verifyAttachments($pParamHash);
+
 		return( count( $this->mErrors ) == 0 );
 	}
 
-	// Things to be stored should be shoved in the array $pParamHash['STORAGE']
-	function store ( &$pParamHash ) {
-		global $gLibertySystem, $gBitSystem;
-		$this->mDb->StartTrans();
-		if( LibertyAttachable::verify( $pParamHash ) && LibertyContent::store( $pParamHash ) && !empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] ) ) {
-			foreach( array_keys( $pParamHash['STORAGE'] ) as $guid ) {
-				$storeRow = &$pParamHash['STORAGE'][$guid]; // short hand variable assignment
+	function storeNewAttachments(&$pParamHash) {
+		global $gLibertySystem, $gBitSystem, $gBitUser;
+		foreach( array_keys( $pParamHash['STORAGE'] ) as $guid ) {
+			$storeRows = &$pParamHash['STORAGE'][$guid]; // short hand variable assignment
+			foreach($storeRows as $key => $value) {
+				$storeRow = &$pParamHash['STORAGE'][$guid][$key];
 				$storeRow['plugin_guid'] = $guid;
-				$storeRow['content_id'] = $pParamHash['content_id']; // copy in content_id
+				if (empty($pParamHash['content_id'])) {
+					$storeRow['content_id'] = $gBitUser->mContentId;
+				}
+				else {
+					$storeRow['content_id'] = $pParamHash['content_id']; // copy in content_id
+				}
 				$storeRow['user_id'] = $pParamHash['user_id']; // copy in the user_id
 				// do we have a verify function for this storage type, and do things verify?
-				if( $gLibertySystem->getPluginFunction( $guid, 'verify_function' )
+				//					vd("Calling verify function.");
+				//					vd($storeRow);
+				
+				if( function_exists( $gLibertySystem->mPlugins[$guid]['verify_function'] )
 					&& $gLibertySystem->mPlugins[$guid]['verify_function']( $storeRow ) ) {
-					if( empty( $pParamHash['attachment_id'] ) ) {
-						if ( empty( $pParamHash['foreign_id'] ) || !$pParamHash['foreign_id'] ) {
-							$alreadyAttachedCount = 0;
-						}
-						else {	
-							$sql = "SELECT `attachment_id` FROM `".BIT_DB_PREFIX."liberty_attachments`
+					//						vd("Checking current attachment_id");
+					//						vd($storeRow);
+					if( empty( $storeRow['attachment_id'] ) ) {
+						//							vd("Checking for existing id.");
+						$sql = "SELECT `attachment_id` FROM `".BIT_DB_PREFIX."liberty_attachments`
 									WHERE `attachment_plugin_guid` = ? AND `content_id` = ? AND `foreign_id`=?";
-							$rs = $this->mDb->query( $sql, array( $storeRow['plugin_guid'], (int)$storeRow['content_id'], (int)$storeRow['foreign_id'] ) );
-							if( empty( $rs ) || !$rs->NumRows() ) {
-								$alreadyAttachedCount = 0;
-							}
-							else {
-								$alreadyAttachedCount = $rs->NumRows();
-							}
-						}	
-						if( !$alreadyAttachedCount ) {
-							$pParamHash['attachment_id'] = $this->mDb->GenID( 'liberty_attachments_id_seq' );
+						$rs = $this->mDb->query( $sql, array( $storeRow['plugin_guid'], (int)$storeRow['content_id'], (int)$storeRow['foreign_id'] ) );
+						//							vd($rs);
+						if( empty( $rs ) || !$rs->NumRows() ) {
+							//								vd("Generating new attachment id");
+							$storeRow['attachment_id'] = $this->mDb->GenID( 'liberty_attachments_id_seq' );
+							$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'];
+							//								vd("Generated id: " + $storeRow['attachment_id']);
 							$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `attachment_id`, `attachment_plugin_guid`, `content_id`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
-							$rs = $this->mDb->query( $sql, array( $pParamHash['attachment_id'], $storeRow['plugin_guid'], $pParamHash['content_id'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
+							$rs = $this->mDb->query( $sql, array( $storeRow['attachment_id'], $storeRow['plugin_guid'], $pParamHash['content_id'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
 						} else {
 							$this->mErrors['storage'] = $guid.' '.$storeRow['foreign_id'].' has already been added to this content.';
-							$pParamHash['attachment_id'] = NULL;
+							$storeRow['attachment_id'] = NULL;
+							$storeRow['upload']['attachment_id'] = NULL;
 						}
 					}
-					$storeRow['attachment_id'] = $pParamHash['attachment_id'];
-
+					
 					// if we have uploaded a file, we can take care of that generically
 					if( is_array( $storeRow['upload'] ) && !empty( $storeRow['upload']['size'] ) ) {
 						if( empty( $storeRow['upload']['type'] ) ) {
 							$ext = substr( $storeRow['upload']['name'], strrpos( $storeRow['upload']['name'], '.' ) + 1 );
 							$storeRow['upload']['type'] = $gBitSystem->lookupMimeType( $ext );
 						}
-						$storeRow['upload']['dest_path'] = $this->getStorageBranch( $storeRow['attachment_id'], $pParamHash['user_id'], $this->getStorageSubDirName() );
-						if (!empty( $pParamHash['thumbnail_sizes'] ) ) {
-							$storeRow['upload']['thumbnail_sizes'] = $pParamHash['thumbnail_sizes'];
+						$storeRow['upload']['dest_path'] = $this->getStorageBranch( $storeRow['attachment_id'], $pParamHash['user_id'], 'images' );
+						if (!empty( $pParamHash['thumbsizes'] ) ) {
+							$storeRow['upload']['thumbsizes'] = $pParamHash['thumbsizes'];
 						}
 						$storagePath = liberty_process_upload( $storeRow );
 						// We're gonna store to local file system & liberty_files table
 						if( empty( $storagePath ) ) {
 							$this->mErrors['file'] = tra( "Could not store file" ).": ".$storeRow['upload']['name'].'.';
-							$pParamHash['attachment_id'] = NULL;
+							$storeRow['attachment_id'] = NULL;
+							$storeRow['upload']['attachment_id'] = NULL;
 						} else {
 							$storeRow['upload']['dest_file_path'] = $storagePath;
 						}
 					}
-
-					if( $pParamHash['attachment_id'] && $gLibertySystem->getPluginFunction( $storeRow['plugin_guid'], 'store_function' ) ) {
+					
+					if( isset($storeRow['attachment_id']) && function_exists( $gLibertySystem->mPlugins[$storeRow['plugin_guid']]['store_function'] ) ) {
 						$storeFunc = $gLibertySystem->mPlugins[$storeRow['plugin_guid']]['store_function'];
 						$this->mStorage = $storeFunc( $storeRow );
 					}
-				} else {
 				}
 			}
+			// For backwards compatibility with a single upload.
+			if (empty($pParamHash['attachment_id']) && 
+				!empty($storeRows['upload']['attachment_id'])) {
+				$pParamHash['attachment_id'] = $storeRows['upload']['attachment_id'];
+			}
 		}
-		$this->mDb->CompleteTrans();
+	}
 
+	function storeExistingAttachments(&$pParamHash) {
 		if( @$this->verifyId( $pParamHash['existing_attachment_id'] ) ) {
 			foreach( $pParamHash['existing_attachment_id'] as $existingAttachmentId ) {
 				// allow for multiple values separated by any non numeric character
@@ -292,11 +340,38 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 				foreach( $ids as $id ) {
 					$id = ( int )$id;
 					if( @$this->verifyId( $id ) ) {
-						$this->cloneAttachment( $id, $pParamHash['content_id'] );
+						$this->cloneAttachment( $id, $this->mContentId, $pParamHash );
 					}
 				}
 			}
 		}
+	}
+
+	// Things to be stored should be shoved in the array $pParamHash['STORAGE']
+	function store ( &$pParamHash ) {
+		global $gLibertySystem, $gBitSystem;
+		$this->mDb->StartTrans();
+		if( LibertyAttachable::verify( $pParamHash ) && LibertyContent::store( $pParamHash ) && !empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] ) ) {
+			$this->storeNewAttachments($pParamHash);
+		}
+
+		$this->mDb->CompleteTrans();
+
+		$this->storeExistingAttachments($pParamHash);
+
+		return( count( $this->mErrors ) == 0 );
+	}
+
+	// Store attachments only not the LibertyContent bits
+	function storeAttachments( &$pParamHash ) {
+		$this->mDb->StartTrans();
+		if ($this->verifyAttachments( $pParamHash ) && !empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] )) {
+			$this->storeNewAttachments($pParamHash);
+		}
+		$this->mDb->CompleteTrans();
+
+		$this->storeExistingAttachments($pParamHash);
+
 		return( count( $this->mErrors ) == 0 );
 	}
 
@@ -365,7 +440,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 	}
 
 	// Clone an existing attachment but have it reference another content_id
-	function cloneAttachment($pAttachmentId, $pNewContentId) {
+	function cloneAttachment($pAttachmentId, $pNewContentId, &$pParamHash) {
 		global $gLibertySystem;
 		global $gBitUser;
 
@@ -373,10 +448,33 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		$rs = $this->mDb->query($sql, array( $pAttachmentId ));
 		$tmpAttachment = $rs->fetchRow();
 
-		if ( @$this->verifyId($tmpAttachment['attachment_id']) ) {
-			$newAttachmentId = $this->mDb->GenID( 'liberty_attachments_id_seq' );
-			$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `attachment_id`, `attachment_plugin_guid`, `content_id`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
-			$rs = $this->mDb->query( $sql, array( $newAttachmentId, $tmpAttachment['attachment_plugin_guid'], $pNewContentId, $tmpAttachment['foreign_id'], $gBitUser->mUserId ) );
+		if ( !empty($tmpAttachment) && 
+			@$this->verifyId($tmpAttachment['attachment_id']) ) {
+			$newAttachmentId = $pAttachmentId;
+
+			// Check if it is already attached
+			if ($tmpAttachment['content_id'] != $pNewContentId) {
+				// Check if there is already a clone
+				$sql = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_plugin_guid` = ? AND `foreign_id` = ? AND `content_id` = ?";
+				$rs = $this->mDb->query($sql, array($tmpAttachment['attachment_plugin_guid'], $tmpAttachment['foreign_id'], $pNewContentId));
+				$existingAttachment = $rs->fetchRow();
+				if (empty($existingAttachment)) {
+					$newAttachmentId = $this->mDb->GenID( 'liberty_attachments_id_seq' );
+					$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `attachment_id`, `attachment_plugin_guid`, `content_id`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
+					$rs = $this->mDb->query( $sql, array( $newAttachmentId, $tmpAttachment['attachment_plugin_guid'], $pNewContentId, $tmpAttachment['foreign_id'], $gBitUser->mUserId ) );
+				}
+				else {
+					$newAttachmentId = $existingAttachment['attachment_id'];
+				}
+			}
+
+			// So we know what the new cloned ID is upon return
+			if (!empty($pParamHash)) {
+				$pParamHash['cloned_attachment_id'][$pAttachmentId] = $newAttachmentId;
+			}
+		}
+		else {
+			$this->mErrors['attach_existing'] = tra('An attachment with the requested id:') . ' ' .  $pAttachmentId .' '. tra('does not exist.');
 		}
 	}
 
@@ -447,6 +545,20 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 				$attachmentOwner = new BitUser($attachmentInfo['user_id']);
 				$attachmentOwner->load();
 				if ($attachmentOwner->mContentId) {
+					/* 
+					 Check if we made this one as a clone from one of the 
+					 owners already existing attachments. 
+					*/
+					$query = "SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `foreign_id` = ? AND `content_id` != ?";
+					$result = $this->mDb->query($query, array($attachmentInfo['foreign_id'], $pAttachmentId));
+					while ($res = $result->fetchRow()) {
+						if ($res['content_id'] == $attachmentOwner->mContentId) {
+							$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id` = ?";
+							$result = $this->mDb->query($query, array($pAttachmentId));
+							return TRUE;
+						}
+					}
+
 					$query = "UPDATE `".BIT_DB_PREFIX."liberty_attachments` SET `content_id` = ? WHERE `attachment_id` = ?";
 					$result = $this->mDb->query($query, array($attachmentOwner->mContentId, $pAttachmentId));
 				} else {

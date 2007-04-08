@@ -1,10 +1,10 @@
 <?php
 /**
- * @version  $Revision: 1.20 $
+ * @version  $Revision: 1.21 $
  * @package  liberty
  * @subpackage plugins_storage
  */
-global $gLibertySystem;
+global $gLibertySystem, $gBitSystem, $gBitSmarty;
 
 /**
  * definitions
@@ -23,6 +23,22 @@ $pluginParams = array (
 	'edit_field' => '<input type="file" name="upload" size="40" />',
 	'edit_help' => 'This file will be uploaded to your personal storage area.<br />After selecting the file you want to upload, please return to the edit area and click the save button.'
 );
+
+if ($gBitSystem->isFeatureActive("liberty_multiple_attachments")) {
+	$pluginParams['edit_label'] = 'Upload File(s)';
+	$pluginParams['edit_help'] =  'The file(s) will be uploaded to your personal storage area.<br />After selecting the file(s) you want to upload, please return to the edit area and click the save button.';
+	$pluginParams['edit_field'] = '<div id="upload_div"></div><input type="file" name="upload" size="40" id="uploads" />
+<!-- Multiselect javascript. -->
+<script>
+	var upload_files = document.getElementById( \'upload_div\' );
+	var upload_element = document.getElementById( \'uploads\' );
+	var multi_selector = new MultiSelector( upload_files, '.
+	$gBitSystem->getConfig('liberty_max_multiple_attachments', 10).
+	' );
+	multi_selector.addNamedElement( upload_element , \'uploads\');
+</script>';
+	$gBitSmarty->assign( 'loadMultiFile', TRUE );
+}
 
 //$gLibertySystem->registerPlugin( STORAGE_TYPE_BIT_FILES, $pluginParams );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_BIT_FILES, $pluginParams );
