@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.198 2007/04/08 18:00:34 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.199 2007/04/10 03:44:03 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -759,11 +759,14 @@ class LibertyContent extends LibertyBase {
 	// -------------------------------- Content Permission Funtions
 
 	function getContentPermissionsSql( $pPermName, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
+		global $gBitUser;
 		$pJoinSql .= "
 			LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcperm ON (lc.`content_id`=lcperm.`content_id`)
 			LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON (ugm.`group_id`=lcperm.`group_id`) ";
- 		$pWhereSql .= " OR (lcperm.perm_name=? AND (ugm.user_id=lc.user_id OR ugm.user_id=-1)) ";
+ 		$pWhereSql .= " OR (lcperm.perm_name=? AND (ugm.user_id=? OR ugm.user_id=?)) ";
  		$pBindVars[] = $pPermName;
+ 		$pBindVars[] = $gBitUser->mUserId;
+ 		$pBindVars[] = ANONYMOUS_USER_ID;
 	}
 
 	/**
