@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.tpl,v 1.5 2006/02/05 10:02:39 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.tpl,v 1.6 2007/04/11 16:58:11 squareing Exp $ *}
 {strip}
 {if $modLastContent}
 	{bitmodule title="$moduleTitle" name="last_changes"}
@@ -17,7 +17,7 @@
 				<li></li>
 			{/section}
 		</ol>
-		<a href="{$smarty.const.LIBERTY_PKG_URL}list_content.php?user_id={$gQueryUserId}&amp;sort_mode=last_modified_desc{if $contentType}&content_type_guid={$contentType}{/if}">{tr}View more{/tr}&hellip;</a>
+		<a href="{$smarty.const.LIBERTY_PKG_URL}list_content.php?user_id={$gQueryUserId}&amp;sort_mode=last_modified_desc{if $contentType}&amp;content_type_guid={$contentType}{/if}">{tr}View more{/tr}&hellip;</a>
 	{/bitmodule}
 {/if}
 {/strip}
