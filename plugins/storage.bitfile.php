@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.21 $
+ * @version  $Revision: 1.22 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -80,9 +80,9 @@ function bit_files_load( $pRow ) {
 	$ret = NULL;
 	if( !empty( $pRow['foreign_id'] ) && is_numeric( $pRow['foreign_id'] )) {
 		$query = "SELECT *
-				  FROM `".BIT_DB_PREFIX."liberty_attachments` a INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON (lf.`file_id` = a.`foreign_id`)
-				  WHERE a.`foreign_id` = ? AND a.`content_id` = ?";
-		if( $ret = $gBitSystem->mDb->getRow($query, array( $pRow['foreign_id'], $pRow['content_id'] )) ) {
+				  FROM `".BIT_DB_PREFIX."liberty_attachments` a INNER JOIN `".BIT_DB_PREFIX."liberty_attachments_map` am ON (a.`attachment_id` = am.`attachment_id`) INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON (lf.`file_id` = a.`foreign_id`)
+				  WHERE a.`foreign_id` = ? AND attachment_plugin_guid = ?";
+		if( $ret = $gBitSystem->mDb->getRow($query, array( $pRow['foreign_id'], PLUGIN_GUID_BIT_FILES ))) {
 			$canThumbFunc = liberty_get_function( 'can_thumbnail' );
 			if ( file_exists( BIT_ROOT_PATH.dirname( $ret['storage_path'] ).'/small.png' ) ) {
 				$ret['thumbnail_url']['avatar'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/avatar.png';
@@ -134,8 +134,6 @@ function bit_files_expunge( $pStorageId ) {
 					if (file_exists($absolutePath)) {
 						unlink($absolutePath);
 					}
-					$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id` = ?";
-					$gBitSystem->mDb->query($query, array($pStorageId));
 					$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_files` WHERE `file_id` = ?";
 					$gBitSystem->mDb->query($query, array($row['foreign_id']) );
 					$ret = TRUE;

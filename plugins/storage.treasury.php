@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -36,7 +36,8 @@ function treasury_file_load( $pRow ) {
 		$query = "
 			SELECT *
 			FROM `".BIT_DB_PREFIX."liberty_attachments` la
-				INNER JOIN `".BIT_DB_PREFIX."treasury_item` tri ON( tri.`content_id` = la.`content_id` )
+				INNER JOIN `".BIT_DB_PREFIX."liberty_attachments_map` lam ON (la.`attachment_id` = lam.`attachment_id`)
+				INNER JOIN `".BIT_DB_PREFIX."treasury_item` tri ON( tri.`content_id` = lam.`content_id` )
 			WHERE la.`foreign_id` = ?";
 		if( $row = $gBitSystem->mDb->getRow( $query, array( $pRow['foreign_id'] ))) {
 			require_once( TREASURY_PKG_PATH.'TreasuryItem.php' );

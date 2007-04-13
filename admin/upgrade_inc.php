@@ -134,6 +134,31 @@ array( 'DATADICT' => array(
 	)),
 )),
 
+// Create attachments map table
+array( 'DATADICT' => array(
+	array( 'CREATE' => array (
+		'liberty_attachments_map' => "
+			attachment_id I4 NOTNULL,
+			content_id I4 NOTNULL
+			CONSTRAINT '
+				, CONSTRAINT `liberty_attachments_map_unique` UNIQUE (`attachment_id`, `content_id`)
+				, CONSTRAINT `liberty_attachments_map_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
+				, CONSTRAINT `liberty_attachments_map_attachment_ref` FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments`( `attachment_id` ) '
+",
+	)),
+)),
+// Copy data from the old attachments system
+array( 'QUERY' =>
+	array( 'SQL92' => array(
+		"INSERT INTO `".BIT_DB_PREFIX."liberty_attachments_map` (attachment_id, content_id) (SELECT attachment_id, content_id FROM `".BIT_DB_PREFIX."liberty_attachments`)",
+	)),
+),
+// drop original column
+array( 'DATADICT' => array(
+	array( 'DROPCOLUMN' => array(
+		'liberty_attachments' => array( '`content_id`' ),
+	)),
+)),
 
 // move hits and last_hit to a new table
 array( 'QUERY' =>

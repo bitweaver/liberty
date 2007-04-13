@@ -123,15 +123,21 @@ $tables = array(
 'liberty_attachments' => "
 	attachment_id I4 PRIMARY,
 	attachment_plugin_guid C(16) NOTNULL,
-	content_id I4 NOTNULL,
 	foreign_id I4 NOTNULL,
 	user_id I4 NOTNULL,
 	pos I4,
 	hits I4,
 	error_code I4,
 	caption C(250)
-	CONSTRAINT '
-		, CONSTRAINT `liberty_attachment_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
+",
+
+'liberty_attachments_map' => "
+	attachment_id I4 NOTNULL,
+	content_id I4 NOTNULL
+	CONSTRAINT
+		', CONSTRAINT `liberty_attachments_map_unique` UNIQUE (`attachment_id`, `content_id`)
+		, CONSTRAINT `liberty_attachments_map_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
+		, CONSTRAINT `liberty_attachments_map_attachment_ref` FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments`( `attachment_id` ) '
 ",
 
 'liberty_files' => "
