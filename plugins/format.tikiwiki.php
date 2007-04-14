@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.91 $
+ * @version  $Revision: 1.92 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -912,8 +912,8 @@ class TikiWikiParser extends BitBase {
 		}
 		*/
 
-		// Replace boxes
-		$data = preg_replace("/\^([^\^]+)\^/", "<div class=\"bitbox\">$1</div>", $data);
+		// Replace boxes - add a new line that we can have something like: ^!heading^ without the need for a \n after the initial ^ - \n will be removed below
+		$data = preg_replace("/\^([^\^]+)\^/", "<div class=\"bitbox\"><!-- bitremovebr -->\n$1</div>", $data);
 		// Replace colors ~~color:text~~
 		$data = preg_replace("/\~\~([^\:]+):([^\~]+)\~\~/", "<span style=\"color:$1;\">$2</span>", $data);
 		// Replace background colors ++color:text++
@@ -1401,7 +1401,7 @@ class TikiWikiParser extends BitBase {
 						if (($listate == '+' || $listate == '-') && !($litype == '*' && !strstr(current($listbeg), '</ul>') || $litype == '#' && !strstr(current($listbeg), '</ol>'))) {
 						$thisid = 'id' . microtime() * 1000000;
 
-						$data .= '<br/><a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\')">[' . ($listate == '-' ? '+' : '-') . ']</a>';
+						$data .= '<br /><a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\')">[' . ($listate == '-' ? '+' : '-') . ']</a>';
 						$listyle = ' id="' . $thisid . '" style="display:' . ($listate == '+' ? 'block' : 'none') . ';"';
 						$addremove = 1;
 						}
@@ -1422,7 +1422,7 @@ class TikiWikiParser extends BitBase {
 					if (($listate == '+' || $listate == '-')) {
 					$thisid = 'id' . microtime() * 1000000;
 
-					$data .= '<br/><a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\')">[' . ($listate == '-' ? '+' : '-') . ']</a>';
+					$data .= '<br /><a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\')">[' . ($listate == '-' ? '+' : '-') . ']</a>';
 					$listyle = ' id="' . $thisid . '" style="display:' . ($listate == '+' ? 'block' : 'none') . ';"';
 					$addremove = 1;
 					}
@@ -1450,7 +1450,7 @@ class TikiWikiParser extends BitBase {
 
 						$liclose = '<li>';
 						} else
-						$liclose = '<br/>';
+						$liclose = '<br />';
 					} else
 						$liclose = '';
 
@@ -1522,7 +1522,7 @@ class TikiWikiParser extends BitBase {
 					} else {
 						// Usual paragraph.
 						if ($inTable == 0 && !preg_match("/\{maketoc.*?\}/i",$line)) {
-							$line .= '<br/>';
+							$line .= '<br />';
 						}
 					}
 				}
@@ -1559,10 +1559,12 @@ class TikiWikiParser extends BitBase {
 			$data = $handler($data);
 		}
 
+		$data = str_replace( "<!-- bitremovebr --><br />", "", $data );
+
 		global $gLibertySystem;
 		// create a table of contents for this page
 		// this function is called manually, since it processes the HTML code
-		if( preg_match( "/\{maketoc.*?\}/i", $data ) && @$gLibertySystem->mPlugins['datamaketoc']['is_active'] == 'y' ) {
+		if( preg_match( "/\{maketoc.*?\}/i", $data ) && $gLibertySystem->isPluginActive( 'datamaketoc' )) {
 			$data = data_maketoc($data);
 		}
 
