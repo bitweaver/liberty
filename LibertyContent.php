@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.200 2007/04/15 09:53:50 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.201 2007/04/15 10:41:32 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2149,7 +2149,7 @@ class LibertyContent extends LibertyBase {
 			return false;
 		// Request data for URL if nothing given in parameters
 		// (reuse $data var)
-		if ($data == '') $data = http_request($url);
+		if ($data == '') $data = bit_http_request($url);
 
 		// If stuff inside [] is *really* malformatted, $data
 		// will be empty.  -rlpowell
