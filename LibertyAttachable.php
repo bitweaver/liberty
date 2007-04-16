@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.74 2007/04/16 14:03:13 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.75 2007/04/16 16:04:03 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -421,7 +421,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		}
 
 		// count all entries
-		$query = "SELECT COUNT(la.*) 
+		$query = "SELECT COUNT(*) 
 			FROM `".BIT_DB_PREFIX."liberty_attachments` la 
 			INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(la.`user_id` = uu.`user_id`) 
 			$joinSql $whereSql
