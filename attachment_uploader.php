@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.3 2007/04/16 14:03:13 nickpalmer Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.4 2007/04/16 16:16:12 nickpalmer Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -35,7 +35,9 @@ if (!empty($gContent->mContentId)) {
 elseif (!empty($_REQUEST['existing_attachment_id'])) {
 	// Fake it for preflight
 	foreach( $_REQUEST['existing_attachment_id'] as $id) {
-		$gContent->mStorage[$id] = $gContent->getAttachment($id);
+		if (!empty($id)) {
+			$gContent->mStorage[$id] = $gContent->getAttachment($id);
+		}
 	}
 }
 
