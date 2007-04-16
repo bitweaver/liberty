@@ -3,7 +3,7 @@
 {if $gContent->mStorage}
 	<div class="row">
 		<table class="data" summary="List of attached files">
-			<caption>{tr}Items Attached Directly to this Content{/tr}</caption>
+			<caption>{tr}Items {if $libertyUploader && empty($gContent->mContentId)}That Will Be{/if} Attached Directly to this Content{/tr}</caption>
 			<tr>
 				<th scope="col" title="{tr}Thumbnail{/tr}">{tr}Thumbnail{/tr}</th>
 				<th scope="col" title="{tr}File Properties{/tr}">{tr}File Properties{/tr}</th>
@@ -20,9 +20,9 @@
 						Actions: 
 						{if $gBitUser->isAdmin() || $gBitUser->hasPermission( 'p_liberty_detach_attachment' ) || $storage.user_id == $gBitUser->mUserId}
 							{if isset($gContent) }
-								<a href="{$attachmentActionBaseURL}&amp;content_id={$gContent->mContentId}&amp;detachAttachment={$attachmentId}">{biticon ipackage=liberty iname="detach" iexplain="detach"}</a>
+								<a href="{$attachmentActionBaseURL}&amp;content_id={$gContent->mContentId}&amp;detachAttachment={$attachmentId}">{biticon ipackage=icons iname="edit-cut" iexplain="detach"}</a>
 							{else}
-								<a href="{$attachmentActionBaseURL}&amp;detachAttachment={$attachmentId}">{biticon ipackage=liberty iname="detach" iexplain="detach"}</a>
+								<a href="{$attachmentActionBaseURL}&amp;detachAttachment={$attachmentId}">{biticon ipackage=icons iname="edit-cut" iexplain="detach"}</a>
 							{/if}
 						{/if}
 						{if $gBitUser->isAdmin() ||  $storage.user_id == $gBitUser->mUserId}

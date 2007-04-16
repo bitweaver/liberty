@@ -14,7 +14,9 @@
 	{/if}
 {/foreach}
 
+<div id="edit_storage_list_div">
 {include file="bitpackage:liberty/edit_storage_list.tpl"}
+</div>
 
 <h2 class="clear"><a href="javascript:ajax_updater( 'attbrowser', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', 'ajax=true' );">{tr}Attachment Browser{/tr}</a></h2>
 <noscript><div class="warning">{tr}The attachment browser only works with javascript enabled.{/tr}</div></noscript>

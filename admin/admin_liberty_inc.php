@@ -16,10 +16,6 @@ $formLibertyFeatures = array(
 		'label' => 'External image cache',
 		'note' => 'Enabling this will download and cache external images that are included.',
 	),
-	"liberty_multiple_attachments" => array(
-		'label' => 'Allow Multiple Attachments',
-		'note' => 'Allow multiple attachments in a single upload.',
-	),
 );
 
 if( $gBitSystem->isPackageActive( 'quota' ) ) {
@@ -36,6 +32,23 @@ if( $gBitSystem->isPackageActive( 'protector' ) ) {
 	);
 }
 $gBitSmarty->assign( 'formLibertyFeatures', $formLibertyFeatures );
+
+$formLibertyAttachmentStyle = array(				    
+	"standard" => array(
+		'label' => 'Use Standard Attachment System',
+		'note' => 'Allows a single upload when content is saved.',
+	),
+	"multiple" => array(
+		'label' => 'Allow Multiple Attachments',
+		'note' => 'Allow multiple attachments in a single upload.',
+	),
+	"ajax" => array(
+		'label' => 'Allow Ajax Attachments',
+		'note' => 'Allow Ajax attachments where attachment is made before save so attachment id can be used in current edit.',
+	),
+);
+$gBitSmarty->assign( 'formLibertyAttachmentStyle', $formLibertyAttachmentStyle);
+
 
 $cacheTimes = array(
 	0      => tra( "(no cache)" ),
@@ -87,9 +100,9 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 	foreach( $formFeatures as $item => $data ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
-
-	$gBitSystem->storeConfig('liberty_cache', $_REQUEST['liberty_cache'] );
-	$gBitSystem->storeConfig('liberty_auto_display_attachment_thumbs', $_REQUEST['liberty_auto_display_attachment_thumbs'] );
+	simple_set_value('liberty_attachment_style', LIBERTY_PKG_NAME);
+	$gBitSystem->storeConfig('liberty_cache', $_REQUEST['liberty_cache'], LIBERTY_PKG_NAME );
+	$gBitSystem->storeConfig('liberty_auto_display_attachment_thumbs', $_REQUEST['liberty_auto_display_attachment_thumbs'], LIBERTY_PKG_NAME );
 
 	if( $_REQUEST['approved_html_tags'] != DEFAULT_ACCEPTABLE_TAGS ) {
 		$tags = preg_replace( '/\s/', '', $_REQUEST['approved_html_tags'] );

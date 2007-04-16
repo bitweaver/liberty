@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.73 2007/04/13 17:57:39 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.74 2007/04/16 14:03:13 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -188,8 +188,14 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		global $gBitSystem;
 		// Support for single bitfile upload
 		$this->verifyAttachment( $pParamHash, 'upload' );
-		if ($gBitSystem->isFeatureActive('liberty_multiple_attachments')) {
-		  $pParamHash['upload_arrays'] .= ',uploads';
+		// Auto add uploads  for multiple attachment style
+		if ($gBitSystem->getConfig('liberty_attachment_style') == "multiple") {
+			if (empty($pParamHash['upload_arrays'])) {
+				$pParamHash['upload_arrays'] = 'uploads';
+			}
+			else {
+				$pParamHash['upload_arrays'] .= ',uploads';
+			}
 		}
 		// Support for multiple arrays of uploads.
 		if (!empty($pParamHash['upload_arrays'])) {			
@@ -251,8 +257,16 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 					$storeRow['content_id'] = $pParamHash['content_id']; // copy in content_id
 				}
 
-				$storeRow['content_id'] = $pParamHash['content_id']; // copy in content_id
-				$storeRow['user_id'] = $pParamHash['user_id']; // copy in the user_id
+				if (!empty($pParamHash['content_id'])) {
+					$storeRow['content_id'] = $pParamHash['content_id']; // copy in content_id
+				}
+				if (!empty($pParamHash['user_id'])) {
+					$storeRow['user_id'] = $pParamHash['user_id']; // copy in the user_id
+				}
+				else {
+					$storeRow['user_id'] = $gBitUser->mUserId;
+				}
+
 				// do we have a verify function for this storage type, and do things verify?
 				$verifyFunc = $gLibertySystem->getPluginFunction( $guid, 'verify_function' );
 				if( $verifyFunc && $verifyFunc( $storeRow ) ) {
@@ -260,8 +274,10 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 					$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'];
 					$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `attachment_id`, `attachment_plugin_guid`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ? )";
 					$rs = $this->mDb->query( $sql, array( $storeRow['attachment_id'], $storeRow['plugin_guid'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
-					$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments_map` (attachment_id, content_id) VALUES (?, ?)";
-					$rs = $this->mDb->query($sql, array( $storeRow['attachment_id'], $storeRow['content_id']));
+					if (!empty($storeRow['content_id'])) {
+						$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments_map` (attachment_id, content_id) VALUES (?, ?)";
+						$rs = $this->mDb->query($sql, array( $storeRow['attachment_id'], $storeRow['content_id']));
+					}
 
 					// if we have uploaded a file, we can take care of that generically
 					if( is_array( $storeRow['upload'] ) && !empty( $storeRow['upload']['size'] ) ) {
@@ -269,7 +285,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 							$ext = substr( $storeRow['upload']['name'], strrpos( $storeRow['upload']['name'], '.' ) + 1 );
 							$storeRow['upload']['type'] = $gBitSystem->lookupMimeType( $ext );
 						}
-						$storeRow['upload']['dest_path'] = $this->getStorageBranch( $storeRow['attachment_id'], $pParamHash['user_id'], $this->getStorageSubDirName() );
+						$storeRow['upload']['dest_path'] = $this->getStorageBranch( $storeRow['attachment_id'], $storeRow['user_id'], $this->getStorageSubDirName() );
 						if (!empty( $pParamHash['thumbnail_sizes'] ) ) {
 							$storeRow['upload']['thumbnail_sizes'] = $pParamHash['thumbnail_sizes'];
 						}
@@ -343,14 +359,16 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 	}
 
 	// Store attachments only not the LibertyContent bits
-	function storeAttachments( &$pParamHash ) {
+	function storeAttachments( &$pParamHash, $pExisting = TRUE ) {
 		$this->mDb->StartTrans();
 		if ($this->verifyAttachments( $pParamHash ) && !empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] )) {
 			$this->storeNewAttachments($pParamHash);
 		}
 		$this->mDb->CompleteTrans();
 
-		$this->storeExistingAttachments($pParamHash);
+		if ($pExisting) {
+			$this->storeExistingAttachments($pParamHash);
+		}
 
 		return( count( $this->mErrors ) == 0 );
 	}
@@ -369,7 +387,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 		// initialise some variables
 		$attachments = $ret = $bindVars = array();
-		$whereSql = '';
+		$whereSql = $joinSql = $selectSql = '';
 
 		// only admin may view attachments from other users
 		if( !$gBitUser->isAdmin() ) {
@@ -384,12 +402,13 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 		if( !empty( $pListHash['content_id'] ) ) {
 			$whereSql .= empty( $whereSql ) ? ' WHERE ' : ' AND ';
-			$whereSql .= " la.content_id = ? ";
+			$whereSql .= " lam.content_id = ? ";
+			$selectSql .= " , lam.content_id ";
+			$joinSql  .= " INNER JOIN `".BIT_DB_PREFIX."liberty_attachments_map` lam ON (la.`attachment_id` = lam.`attachment_id`) ";
 			$bindVars[] = $pListHash['content_id'];
 		}
 
-		$query = "SELECT la.* FROM `".BIT_DB_PREFIX."liberty_attachments` la INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(la.`user_id` = uu.`user_id`) $whereSql";
-		
+		$query = "SELECT la.* $selectSql FROM `".BIT_DB_PREFIX."liberty_attachments` la INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(la.`user_id` = uu.`user_id`) $joinSql $whereSql";
 		$result = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
 		while( $res = $result->fetchRow() ) {
 			$attachments[] = $res;
@@ -397,7 +416,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 		foreach( $attachments as $attachment ) {
 			if( $loadFunc = $gLibertySystem->getPluginFunction( $attachment['attachment_plugin_guid'], 'load_function' )) {
-				$ret[] = $loadFunc( $attachment );
+				$ret[$attachment['attachment_id']] = $loadFunc( $attachment );
 			}
 		}
 
@@ -405,7 +424,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		$query = "SELECT COUNT(la.*) 
 			FROM `".BIT_DB_PREFIX."liberty_attachments` la 
 			INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(la.`user_id` = uu.`user_id`) 
-			$whereSql
+			$joinSql $whereSql
 		";
 
 		$pListHash['cant'] = $this->mDb->getOne( $query, $bindVars );

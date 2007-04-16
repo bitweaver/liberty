@@ -248,6 +248,7 @@ $gBitInstaller->registerPreferences( LIBERTY_PKG_NAME, array(
 	// enable action logging by default
 	array(LIBERTY_PKG_NAME, 'liberty_action_log', 'y'),
 //	array(LIBERTY_PKG_NAME, 'liberty_attachment_link_format', 'wiki') not needed anymore since we use js in the edit page now (depends on format of content)
+//	array(LIBERTY_PKG_NAME, 'liberty_attachment_style', 'standard'),
 ) );
 
 $gBitInstaller->registerSchemaDefault( LIBERTY_PKG_NAME, array(

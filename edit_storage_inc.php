@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage functions
  *
@@ -13,21 +13,25 @@
  * Calculate a base URL for the attachment deletion/removal icons to use
  */
 global $gBitSmarty, $gContent, $gBitUser, $gBitSystem, $gLibertySystem;
-$attachmentActionBaseURL = $_SERVER['PHP_SELF'].'?';
-$GETArgs = split('&',$_SERVER['QUERY_STRING']);
-$firstArg = TRUE;
 
-foreach( $GETArgs as $arg ) {
-	$parts = split('=',$arg);
-	if( ( $parts[0] != 'deleteAttachment' ) && $parts[0] != 'detachAttachment' ) {
-		if( !$firstArg )
-			$attachmentActionBaseURL .= "&amp;";
-		else
-			$firstArg = FALSE;
-		$attachmentActionBaseURL .= $arg;
+$attachmentActionBaseUrl = $gBitSmarty->get_template_vars('attachmentActionBaseURL');
+if( empty($attachmentActionBaseUrl) ) {
+	$attachmentActionBaseURL = $_SERVER['PHP_SELF'].'?';
+	$GETArgs = split('&',$_SERVER['QUERY_STRING']);
+	$firstArg = TRUE;
+	
+	foreach( $GETArgs as $arg ) {
+		$parts = split('=',$arg);
+		if( ( $parts[0] != 'deleteAttachment' ) && $parts[0] != 'detachAttachment' ) {
+			if( !$firstArg )
+				$attachmentActionBaseURL .= "&amp;";
+			else
+				$firstArg = FALSE;
+			$attachmentActionBaseURL .= $arg;
+		}
 	}
+	$gBitSmarty->assign( 'attachmentActionBaseURL', $attachmentActionBaseURL );
 }
-$gBitSmarty->assign( 'attachmentActionBaseURL', $attachmentActionBaseURL );
 
 if( !empty( $_REQUEST['deleteAttachment'] ) ) {
 	$attachmentId = $_REQUEST['deleteAttachment'];
@@ -55,5 +59,5 @@ $gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
 // seems like there should be a better way to do this -- maybe original assign should have been by reference?
 $gBitSmarty->clear_assign( 'gContent' );
 $gBitSmarty->assign( 'gContent', $gContent );
-
+$gBitSmarty->assign( 'loadAjax', TRUE );
 ?>
