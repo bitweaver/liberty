@@ -3,7 +3,7 @@
  * attachment_browser
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage functions
  */
@@ -19,7 +19,12 @@ $listHash = array(
 	'page' => @BitBase::verifyId( $_REQUEST['pgnPage'] ) ? $_REQUEST['pgnPage'] : NULL
 );
 $userAttachments = $gBitUser->getUserAttachments( $listHash );
-$gBitSmarty->assign( 'userAttachments', $userAttachments );
+// DEPRECATED - Slated for removal -wjames5
+//$gBitSmarty->assign( 'userAttachments', $userAttachments );
+
+// Fake the storage assignment for edit_storage_list.tpl
+$gContent->mStorage = $userAttachments;
+$gBitSmarty->assign('gContent', $gContent);
 
 // pagination
 $offset = @BitBase::verifyId( $_REQUEST['offset'] ) ? $_REQUEST['offset'] : 0;

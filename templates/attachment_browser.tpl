@@ -7,6 +7,9 @@
 	{/forminput}
 </div>
 
+{include file="bitpackage:liberty/edit_storage_list.tpl"}
+
+{* DEPRECATED - Slated for removal - replaced by use of edit_storage_list above. -wjames5
 <div class="row">
 	{formlabel label="Insert Attachment"}
 	{forminput}
@@ -44,6 +47,7 @@
 		<td>&nbsp;</td></tr>
 	{/if}
 </table>
+*}
 
 {libertypagination pgnName="pgnPage" pgnPage=$curPage numPages=$numPages offset=$smarty.request.offset ajaxId=attbrowser}
 {pagination ajaxId=attbrowser}
