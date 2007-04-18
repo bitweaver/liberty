@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.24 $
+ * @version  $Revision: 1.25 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -39,14 +39,14 @@ if ($gBitSystem->getConfig("liberty_attachment_style") == "multiple") {
 </script>';
 	$gBitSmarty->assign( 'loadMultiFile', TRUE );
 }
-elseif ($gBitSystem->getConfig('liberty_attachment_style', "ajax") == "ajax") {
+elseif ($gBitSystem->getConfig('liberty_attachment_style') == "ajax") {
 	$divid = $gBitSmarty->get_template_vars('upload_div_id');
 	if (empty($divid)) {
 		$divid = 0;
 	}
 	$pluginParams['edit_help'] =  'The file(s) will be uploaded to your personal storage area.<br />After selecting the file you want to upload an attachment ID will be displayed for you to use in your content.';
 	$pluginParams['edit_field'] = '
-<input type="file" name="upload" size="40" id="upload" onchange="javascript:liberty_uploader(this, \'{$smarty.const.LIBERTY_PKG_URL}attachment_uploader.php\',\'{tr}Please wait for the current upload to finish.{/tr}\', \'liberty_upload_frame\', \'liberty_upload_action\');" />
+<input type="file" name="upload" size="40" id="upload" onchange="javascript:liberty_uploader(this, \'{$smarty.const.LIBERTY_PKG_URL}attachment_uploader.php\',\'{tr}Please wait for the current upload to finish.{/tr}\', \'liberty_upload_frame\');" />
 {include file="bitpackage:liberty/attachment_uploader_inc.tpl"}
 ';
 	$gBitSmarty->assign( 'loadAjax', TRUE );
@@ -90,7 +90,7 @@ function bit_files_load( $pRow ) {
 	$ret = NULL;
 	if( !empty( $pRow['foreign_id'] ) && is_numeric( $pRow['foreign_id'] )) {
 		$query = "SELECT *
-				  FROM `".BIT_DB_PREFIX."liberty_attachments` a INNER JOIN `".BIT_DB_PREFIX."liberty_attachments_map` am ON (a.`attachment_id` = am.`attachment_id`) INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON (lf.`file_id` = a.`foreign_id`)
+				  FROM `".BIT_DB_PREFIX."liberty_attachments` a INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON (lf.`file_id` = a.`foreign_id`)
 				  WHERE a.`foreign_id` = ? AND attachment_plugin_guid = ?";
 		if( $ret = $gBitSystem->mDb->getRow($query, array( $pRow['foreign_id'], PLUGIN_GUID_BIT_FILES ))) {
 			$canThumbFunc = liberty_get_function( 'can_thumbnail' );

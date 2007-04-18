@@ -15,8 +15,6 @@
 			<div class="row">
 				{formlabel label=`$output.label` for=$item}
 				{forminput}
-					Current: {$gBitSystem->getConfig('liberty_attachment_style', 'standard')}
-					Item: {$item}
 					<input type="radio" name="liberty_attachment_style" value="{$item}" {if $gBitSystem->getConfig('liberty_attachment_style', 'standard') == $item}CHECKED{/if} />
 					{formhelp note=`$output.note` page=`$output.page`}
 				{/forminput}

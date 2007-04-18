@@ -28,15 +28,25 @@
 						Filename: {$storage.filename}
 						<br />
 						Actions: 
-						{if $gBitUser->isAdmin() || $gBitUser->hasPermission( 'p_liberty_detach_attachment' ) || $storage.user_id == $gBitUser->mUserId}
-							{if isset($gContent->mContentId) }
+						{if ($gBitUser->isAdmin() || $gBitUser->hasPermission( 'p_liberty_detach_attachment' ) || $storage.user_id == $gBitUser->mUserId) && !empty($gContent->mContentId)}
+							{if $attachmentBrowser}
+								{if in_array($gContent->mContentId, $storage.attached_to)}
+									<a href="javascript:ajax_updater('attbrowser', '{$attachmentActionBaseURL}', 'content_id={$gContent->mContentId}&amp;detachAttachment={$attachmentId}')">{biticon ipackage=icons iname="edit-cut" iexplain="detach"}</a>
+								{/if}
+							{elseif $libertyUploader or $gBitSystem->getConfig('liberty_attachment_style') == 'ajax'}
+								<a href="javascript:ajax_updater('edit_storage_list_div', '{$attachmentActionBaseURL}', 'content_id={$gContent->mContentId}&amp;detachAttachment={$attachmentId}');">{biticon ipackage=icons iname="edit-cut" iexplain="detach"}</a>
+							{else}
 								<a href="{$attachmentActionBaseURL}&amp;content_id={$gContent->mContentId}&amp;detachAttachment={$attachmentId}">{biticon ipackage=icons iname="edit-cut" iexplain="detach"}</a>
-							{elseif !$libertyUploader}
-								<a href="{$attachmentActionBaseURL}&amp;detachAttachment={$attachmentId}">{biticon ipackage=icons iname="edit-cut" iexplain="detach"}</a>
 							{/if}
 						{/if}
 						{if $gBitUser->isAdmin() ||  $storage.user_id == $gBitUser->mUserId}
-							<a href="{$attachmentActionBaseURL}&amp;deleteAttachment={$attachmentId}">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
+							{if $attachmentBrowser}
+								<a href="javascript:ajax_updater('attbrowser', '{$attachmentActionBaseURL}', 'deleteAttachment={$attachmentId}');">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
+							{elseif $libertyUploader || $gBitSystem->getConfig('liberty_attachment_style') == 'ajax'}
+								<a href="javascript:ajax_updater('edit_storage_list_div', '{$attachmentActionBaseURL}', 'deleteAttachment={$attachmentId}');">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
+							{else}
+								<a href="{$attachmentActionBaseURL}&amp;deleteAttachment={$attachmentId}">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
+							{/if}
 						{/if}
 					</td>
 					<td style="text-align:center; width:30%">

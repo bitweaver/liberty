@@ -3,7 +3,7 @@
  * attachment_browser
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage functions
  */
@@ -14,9 +14,11 @@
 require_once("../bit_setup_inc.php");
 
 global $gBitSmarty, $gContent, $gBitUser, $gBitSystem, $gLibertySystem;
+
 $listHash = $_REQUEST;
 $listHash = array(
-	'page' => @BitBase::verifyId( $_REQUEST['pgnPage'] ) ? $_REQUEST['pgnPage'] : NULL
+	'page' => @BitBase::verifyId( $_REQUEST['pgnPage'] ) ? $_REQUEST['pgnPage'] : NULL,
+	'load_attached_to' => true,
 );
 $userAttachments = $gBitUser->getUserAttachments( $listHash );
 // DEPRECATED - Slated for removal -wjames5
@@ -34,4 +36,5 @@ $offset = ( $pgnPage - 1 ) * $gBitSystem->getConfig( 'max_records' );
 // calculate page number
 $numPages = ceil( $listHash['cant'] / $gBitSystem->getConfig( 'max_records' ) );
 $gBitSmarty->assign( 'numPages', $numPages );
+
 ?>

@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.76 2007/04/18 12:23:01 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.77 2007/04/18 20:52:38 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -408,7 +408,6 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			$joinSql  .= " INNER JOIN `".BIT_DB_PREFIX."liberty_attachments_map` lam ON (la.`attachment_id` = lam.`attachment_id`) ";
 			$bindVars[] = $pListHash['content_id'];
 		}
-
 		$query = "SELECT la.* $selectSql FROM `".BIT_DB_PREFIX."liberty_attachments` la INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(la.`user_id` = uu.`user_id`) $joinSql $whereSql";
 		$result = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
 		while( $res = $result->fetchRow() ) {
@@ -418,6 +417,11 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		foreach( $attachments as $attachment ) {
 			if( $loadFunc = $gLibertySystem->getPluginFunction( $attachment['attachment_plugin_guid'], 'load_function' )) {
 				$ret[$attachment['attachment_id']] = $loadFunc( $attachment );
+			}
+			if( !empty( $pListHash['load_attached_to'] ) ) {
+				$sql = "SELECT lam.`content_id` FROM `".BIT_DB_PREFIX."liberty_attachments_map` lam WHERE lam.`attachment_id` = ?";
+				$attached = $this->mDb->getCol($sql, array($attachment['attachment_id']));
+				$ret[$attachment['attachment_id']]['attached_to'] = $attached;				
 			}
 		}
 
