@@ -29,9 +29,9 @@
 						<br />
 						Actions: 
 						{if $gBitUser->isAdmin() || $gBitUser->hasPermission( 'p_liberty_detach_attachment' ) || $storage.user_id == $gBitUser->mUserId}
-							{if isset($gContent) }
+							{if isset($gContent->mContentId) }
 								<a href="{$attachmentActionBaseURL}&amp;content_id={$gContent->mContentId}&amp;detachAttachment={$attachmentId}">{biticon ipackage=icons iname="edit-cut" iexplain="detach"}</a>
-							{else}
+							{elseif !$libertyUploader}
 								<a href="{$attachmentActionBaseURL}&amp;detachAttachment={$attachmentId}">{biticon ipackage=icons iname="edit-cut" iexplain="detach"}</a>
 							{/if}
 						{/if}

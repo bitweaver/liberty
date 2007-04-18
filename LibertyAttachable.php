@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.75 2007/04/16 16:04:03 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.76 2007/04/18 12:23:01 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -272,12 +272,6 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 				if( $verifyFunc && $verifyFunc( $storeRow ) ) {
 					$storeRow['attachment_id'] = $this->mDb->GenID( 'liberty_attachments_id_seq' );
 					$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'];
-					$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `attachment_id`, `attachment_plugin_guid`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ? )";
-					$rs = $this->mDb->query( $sql, array( $storeRow['attachment_id'], $storeRow['plugin_guid'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
-					if (!empty($storeRow['content_id'])) {
-						$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments_map` (attachment_id, content_id) VALUES (?, ?)";
-						$rs = $this->mDb->query($sql, array( $storeRow['attachment_id'], $storeRow['content_id']));
-					}
 
 					// if we have uploaded a file, we can take care of that generically
 					if( is_array( $storeRow['upload'] ) && !empty( $storeRow['upload']['size'] ) ) {
@@ -303,6 +297,13 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 					if( isset($storeRow['attachment_id']) && $gLibertySystem->getPluginFunction( $storeRow['plugin_guid'], 'store_function' ) ) {
 						$storeFunc = $gLibertySystem->mPlugins[$storeRow['plugin_guid']]['store_function'];
 						$this->mStorage = $storeFunc( $storeRow );
+					}
+
+					$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `attachment_id`, `attachment_plugin_guid`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ? )";
+					$rs = $this->mDb->query( $sql, array( $storeRow['attachment_id'], $storeRow['plugin_guid'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
+					if (!empty($storeRow['content_id'])) {
+						$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments_map` (attachment_id, content_id) VALUES (?, ?)";
+						$rs = $this->mDb->query($sql, array( $storeRow['attachment_id'], $storeRow['content_id']));
 					}
 				}
 			}
@@ -589,7 +590,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		$attachmentInfo = $this->getAttachment( $pAttachmentId );
 
 		if( @$this->verifyId( $attachmentInfo['attachment_id'] ) && @$this->verifyId( $attachmentInfo['foreign_id'] ) && @$this->verifyId( $attachmentInfo['attachment_plugin_guid'] ) ) {
-			$query = "SELECT  * FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `foreign_id` = ? AND `attachment_plugin_guid` = ? AND `attachment_id` <> ?";
+			$query = "SELECT  la.*, lam.`attachment_id` FROM `".BIT_DB_PREFIX."liberty_attachments` la INNER JOIN `".BIT_DB_PREFIX."liberty_attachments_map` lam ON (la.`attachment_id` == lam.`attachment_idWHERE la.`foreign_id` = ? AND la.`attachment_plugin_guid` = ? AND lam.`attachment_id` <> ?";
 			$result = $this->mDb->query( $query, array ($attachmentInfo['foreign_id'], $attachmentInfo['attachment_plugin_guid'], $attachment['attachment_id'] ) );
 			$ret = $result->getRows();
 		}

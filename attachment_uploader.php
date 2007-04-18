@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.4 2007/04/16 16:16:12 nickpalmer Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.5 2007/04/18 12:23:01 nickpalmer Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -45,7 +45,7 @@ elseif (!empty($_REQUEST['existing_attachment_id'])) {
 ksort($gContent->mStorage);
 
 // Make the actions work
-$gBitSmarty->assign('attachmentActionBaseURL', $_REQUEST['liberty_upload_action']);
+$gBitSmarty->assign('attachmentActionBaseURL', $_REQUEST['liberty_upload_action'].'?');
 $gBitSmarty->assign('gContent', $gContent);
 $gBitSmarty->assign('libertyUploader', true);
 echo $gBitSmarty->display('bitpackage:liberty/attachment_uploader.tpl');
