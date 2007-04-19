@@ -32,19 +32,6 @@ array( 'DATADICT' => array(
 			content_id INT NOTNULL PRIMARY
 			CONSTRAINTS ', CONSTRAINT liberty_aliases_content_fkey FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`(`content_id`) '
 		",
-		// liberty_thumbnail_queue is being replaces with this
-		'liberty_process_queue' => "
-			process_id I4 NOTNULL AUTO,
-			content_id I4 NOTNULL,
-			queue_date I8 NOTNULL,
-			begin_date I8,
-			end_date I8,
-			process_status C(64),
-			log_message X,
-			processor C(250),
-			processor_parameters X
-			CONSTRAINT ', CONSTRAINT `liberty_process_queue` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
-		",
 	)),
 	array( 'RENAMETABLE' => array(
 		'tiki_content'                 => 'liberty_content',
@@ -57,7 +44,7 @@ array( 'DATADICT' => array(
 		'tiki_structures_id_seq'       => 'liberty_structures_id_seq',
 		'tiki_comments'                => 'liberty_comments',
 		'tiki_comments_comment_id_seq' => 'liberty_comment_id_seq',
-//		'tiki_content_types'           => 'liberty_content_types',
+		'tiki_content_types'           => 'liberty_content_types',
 		'tiki_link_cache'              => 'liberty_link_cache',
 		'tiki_history'                 => 'liberty_content_history',
 		'tiki_actionlog'               => 'liberty_action_log',
@@ -74,7 +61,6 @@ array( 'DATADICT' => array(
 		'liberty_action_log' => array(
 			'log_action' => array( '`log_message`', 'VARCHAR(250)' ),
 			'action_comment' => array( '`error_message`', 'VARCHAR(250)' ),
-			// don't know how to remove NOTNULL from content_id using upgrader - does this work?
 			'content_id' => array( '`content_id`', 'I4' ),
 		),
 		'liberty_thumbnail_queue' => array( 
@@ -97,20 +83,35 @@ array( 'DATADICT' => array(
 
 // we need to change some column properties in liberty_action_log
 array( 'DATADICT' => array(
+	array( 'CREATE' => array(
+		// liberty_thumbnail_queue is being replaces with this
+		'liberty_process_queue' => "
+			process_id I4 NOTNULL AUTO,
+			content_id I4 NOTNULL,
+			queue_date I8 NOTNULL,
+			begin_date I8,
+			end_date I8,
+			process_status C(64),
+			log_message X,
+			processor C(250),
+			processor_parameters X
+			CONSTRAINT ', CONSTRAINT `liberty_process_queue` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
+		",
+	)),
 	// rename original column
 	array( 'RENAMECOLUMN' => array(
 		'liberty_action_log'  => array(
-			'`log_message`'   => "`temp_log` C(255) NOTNULL",                // set log_message NOTNULL DEFAULT ''
-			'`error_message`' => "`temp_error` C(255)",                      // set error_message NOTNULL DEFAULT ''
-			'`content_id`'    => "`temp_id` I(4) NOTNULL",                   // remove NOTNULL from content_id
+			'`log_message`'   => "`temp_log` VARCHAR(250)",                // set log_message NOTNULL DEFAULT ''
+			'`error_message`' => "`temp_error` VARCHAR(250)",                      // set error_message NOTNULL DEFAULT ''
+			'`content_id`'    => "`temp_id` INT NOTNULL",                   // remove NOTNULL from content_id
 		),
 	)),
 	// add new column
 	array( 'ALTER' => array(
 		'liberty_action_log' => array(
-			'log_message'    => array( '`log_message`', "VARCHAR(250) NOTNULL DEFAULT ''" ),
-			'error_message'  => array( '`error_message`', "VARCHAR(250) NOTNULL DEFAULT ''" ),
-			'content_id'     => array( '`content_id`', 'I(4)' ),
+			'log_message'    => array( '`log_message`', "VARCHAR(250)" ),
+			'error_message'  => array( '`error_message`', "VARCHAR(250)" ),
+			'content_id'     => array( '`content_id`', 'INT' ),
 		),
 	)),
 )),
@@ -164,7 +165,7 @@ array( 'DATADICT' => array(
 array( 'QUERY' =>
 	array( 'SQL92' => array(
 		"INSERT INTO `".BIT_DB_PREFIX."liberty_content_hits` ( content_id, hits, last_hit ) 
-			 SELECT content_id, hits, last_hit from `".BIT_DB_PREFIX."liberty_content` WHERE 1",
+			 SELECT content_id, hits, last_hit from `".BIT_DB_PREFIX."liberty_content`",
 		"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-999, 'Deleted')",
 		"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-998, 'Spam')",
 		"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-201, 'Suspended')",
@@ -187,8 +188,9 @@ array( 'QUERY' =>
 array( 'DATADICT' => array(
 	array( 'DROPCOLUMN' => array(
 		'liberty_content' => array( 
+		    '`last_hit`',
 			'`hits`',
-		    '`last_hit`' ),
+		),
 	)),
 )),
 
@@ -537,11 +539,6 @@ array( 'DATADICT' => array(
 		),
 		'liberty_action_log' => array(
 			'`comment`' => '`action_comment` C(200)'
-		),
-	)),
-	array( 'ALTER' => array(
-		'liberty_action_log' => array(
-			'content_id' => array( 'content_id', 'I4' ),
 		),
 	)),
 )),
