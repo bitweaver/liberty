@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.77 2007/04/18 20:52:38 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.78 2007/04/19 06:27:18 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -698,7 +698,7 @@ function liberty_process_upload( &$pFileHash ) {
  */
 function liberty_process_archive( &$pFileHash ) {
 	// sanity check: make sure tmp_name isn't empty. will scan / if it is
-	if( empty( $pFileHash['tmp_name'] ) || empty( $pFileHash['name'] ) ) {
+	if( !is_array( $pFileHash ) || empty( $pFileHash['tmp_name'] ) || empty( $pFileHash['name'] ) ) {
 		return FALSE;
 	}
 
@@ -779,7 +779,12 @@ function liberty_process_archive( &$pFileHash ) {
 		@unlink( $copyFile );
 	}
 
-	return $destDir;
+	if( preg_match( "!^/+$!", $destDir )) {
+		// obviously something went horribly wrong
+		return FALSE;
+	} else {
+		return $destDir;
+	}
 }
 
 /**
