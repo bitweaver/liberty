@@ -38,25 +38,7 @@
 					</div>
 				{/if}
 
-				{assign var=textarea_id value="commentpost"}
-
-				{include file="bitpackage:liberty/edit_format.tpl" gContent=$gComment}
-
-				{if $gBitSystem->isPackageActive( 'smileys' )}
-					{include file="bitpackage:smileys/smileys_full.tpl"}
-				{/if}
-
-				{if $gBitSystem->isPackageActive( 'quicktags' )}
-					{include file="bitpackage:quicktags/quicktags_full.tpl" formId="commentpost"}
-				{/if}
-
-				<div class="row">
-					{formlabel label="Comment" for="commentpost"}
-					{forminput}
-						<textarea {spellchecker} id="commentpost" name="comment_data" rows="{$gBitSystem->getConfig('comments_default_post_lines', 6)}" cols="50">{$postComment.data|escape}</textarea>
-					{/forminput}
-				</div>
-
+				{textarea id="commentpost" name="comment_data" rows=$gBitSystem->getConfig('comments_default_post_lines', 6)}{$postComment.data|escape}{/textarea}
 				{captcha variant="row"}
 
 				<div class="row submit">
