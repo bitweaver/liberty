@@ -10,11 +10,8 @@
 	{/if}
 
 	<div class="row">
-		{formlabel label="Details"}
 		{forminput}
-			<textarea {spellchecker rows=$smarty.cookies.rows|default:20} id="{$textarea_id}" name="{$textarea_name|default:edit}" rows="{$smarty.cookies.rows|default:20}" cols="50">{$textarea_data|default:$gContent->mInfo.data|escape:html}</textarea>
+			<textarea {$textarea_attributes} {spellchecker width=$cols height=$rows} id="{$textarea_id|default:$smarty.const.LIBERTY_TEXT_AREA}" name="{$textarea_name|default:edit}" {$textarea_style}>{$textarea_data|default:$gContent->mInfo.data|escape:html}</textarea>
 		{/forminput}
 	</div>
-			
-	{include file="bitpackage:liberty/edit_services_inc.tpl serviceFile=content_edit_mini_tpl}
 {/strip}
