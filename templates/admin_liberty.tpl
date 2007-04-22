@@ -21,7 +21,15 @@
 			</div>
 		{/foreach}
 
-
+		{foreach from=$formLibertyTextareaFeatures key=item item=output}
+			<div class="row">
+				{formlabel label=`$output.label` for=$item}
+				{forminput}
+					<input type="text" name="{$item}" value="{$gBitSystem->getConfig($item, $output.default)}" />
+					{formhelp note=`$output.note` page=`$output.page`}
+				{/forminput}
+			</div>
+		{/foreach}
 
 		<div class="row">
 			{formlabel label="Auto-Display Attachment Thumbnails" for="liberty_auto_display_attachment_thumbs"}

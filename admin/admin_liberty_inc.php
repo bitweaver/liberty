@@ -18,6 +18,20 @@ $formLibertyFeatures = array(
 	),
 );
 
+$formLibertyTextareaFeatures = array(
+	"liberty_textarea_height" => array(
+		'label' => 'Default Textarea Height',
+		'note' => 'The default height of textareas.',
+		'default' => '20',
+	),					   
+	"liberty_textarea_width" => array(
+		'label' => 'Default Textarea Width',
+		'note' => 'Enabling this will download and cache external images that are included.',
+		'default' => '35',
+	),
+);
+$gBitSmarty->assign( 'formLibertyTextareaFeatures', $formLibertyTextareaFeatures);
+
 if( $gBitSystem->isPackageActive( 'quota' ) ) {
 	$formLibertyFeatures['liberty_quota'] = array(
 		'label' => 'Quota Usage System',
@@ -99,6 +113,9 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 	$formFeatures = array_merge( $formLibertyFeatures, $formImageFeatures, $formCaptcha );
 	foreach( $formFeatures as $item => $data ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
+	}
+	foreach( $formLibertyTextareaFeatures as $item => $data ) {
+		simple_set_value($item, LIBERTY_PKG_NAME);
 	}
 	simple_set_value('liberty_attachment_style', LIBERTY_PKG_NAME);
 	$gBitSystem->storeConfig('liberty_cache', $_REQUEST['liberty_cache'], LIBERTY_PKG_NAME );
