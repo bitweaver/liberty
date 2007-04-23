@@ -11,15 +11,13 @@
 			</div>
 		{/foreach}
 
-		{foreach from=$formLibertyAttachmentStyle key=item item=output}
-			<div class="row">
-				{formlabel label=`$output.label` for=$item}
-				{forminput}
-					<input type="radio" name="liberty_attachment_style" value="{$item}" {if $gBitSystem->getConfig('liberty_attachment_style', 'standard') == $item}CHECKED{/if} />
-					{formhelp note=`$output.note` page=`$output.page`}
-				{/forminput}
-			</div>
-		{/foreach}
+		<div class="row">
+			{formlabel label="Liberty Attachment Style" for="liberty_attachment_style"}
+			{forminput}
+				{html_radios options=$attachmentStyleOptions values=$attachmentStyleOptions id=liberty_attachment_style name=liberty_attachment_style checked=$gBitSystem->getConfig('liberty_attachment_style') separator="<br />"}
+				{formhelp note=""}
+			{/forminput}
+		</div>
 
 		{foreach from=$formLibertyTextareaFeatures key=item item=output}
 			<div class="row">

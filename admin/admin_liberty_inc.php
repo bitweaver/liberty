@@ -23,10 +23,10 @@ $formLibertyTextareaFeatures = array(
 		'label' => 'Default Textarea Height',
 		'note' => 'The default height of textareas.',
 		'default' => '20',
-	),					   
+	),
 	"liberty_textarea_width" => array(
 		'label' => 'Default Textarea Width',
-		'note' => 'Enabling this will download and cache external images that are included.',
+		'note' => 'The default width of textareas.',
 		'default' => '35',
 	),
 );
@@ -47,35 +47,24 @@ if( $gBitSystem->isPackageActive( 'protector' ) ) {
 }
 $gBitSmarty->assign( 'formLibertyFeatures', $formLibertyFeatures );
 
-$formLibertyAttachmentStyle = array(				    
-	"standard" => array(
-		'label' => 'Use Standard Attachment System',
-		'note' => 'Allows a single upload when content is saved.',
-	),
-	"multiple" => array(
-		'label' => 'Allow Multiple Attachments',
-		'note' => 'Allow multiple attachments in a single upload.',
-	),
-	"ajax" => array(
-		'label' => 'Allow Ajax Attachments',
-		'note' => 'Allow Ajax attachments where attachment is made before save so attachment id can be used in current edit.',
-	),
+$attachmentStyleOptions = array(
+	"standard" => tra( 'Standard attachment system - Allows a single upload when content is saved.' ),
+	"multiple" => tra( 'Multiple attachments - Allow multiple attachments in a single upload.' ),
+	"ajax"     => tra( 'Ajax attachments - Allow Ajax attachments where attachment is made before save so attachment id can be used in current edit.' ),
 );
-$gBitSmarty->assign( 'formLibertyAttachmentStyle', $formLibertyAttachmentStyle);
+$gBitSmarty->assign( 'attachmentStyleOptions', $attachmentStyleOptions );
 
 
 $cacheTimes = array(
 	0      => tra( "(no cache)" ),
-	60     => "1 ".tra( "minute" ),
-	300    => "5 ".tra( "minutes" ),
 	600    => "10 ".tra( "minutes" ),
-	900    => "15 ".tra( "minutes" ),
 	1800   => "30 ".tra( "minutes" ),
 	3600   => "1 ".tra( "hour" ),
 	7200   => "2 ".tra( "hours" ),
 	14400  => "4 ".tra( "hours" ),
 	28800  => "8 ".tra( "hours" ),
-	60480  => "1 ".tra( "day" ),
+	86400  => "1 ".tra( "day" ),
+	604800 => "1 ".tra( "week" ),
 );
 $gBitSmarty->assign( "cacheTimes", $cacheTimes );
 
@@ -115,9 +104,9 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
 	foreach( $formLibertyTextareaFeatures as $item => $data ) {
-		simple_set_value($item, LIBERTY_PKG_NAME);
+		simple_set_value( $item, LIBERTY_PKG_NAME );
 	}
-	simple_set_value('liberty_attachment_style', LIBERTY_PKG_NAME);
+	simple_set_value( 'liberty_attachment_style', LIBERTY_PKG_NAME );
 	$gBitSystem->storeConfig('liberty_cache', $_REQUEST['liberty_cache'], LIBERTY_PKG_NAME );
 	$gBitSystem->storeConfig('liberty_auto_display_attachment_thumbs', $_REQUEST['liberty_auto_display_attachment_thumbs'], LIBERTY_PKG_NAME );
 
