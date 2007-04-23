@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.18 $
+ * @version  $Revision: 1.19 $
  * @package  liberty
  * @subpackage functions
  */
@@ -20,7 +20,7 @@ include_once( LIBERTY_PKG_PATH.'LibertyStructure.php');
 $gBitSmarty->assign_by_ref( 'feedback', $feedback = array() );
 
 if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
-	$gBitSystem->fatalError( "No structure indicated" );
+	$gBitSystem->fatalError( tra( "No structure indicated" ));
 } else {
 	global $gStructure;
 	$gStructure = new LibertyStructure( $_REQUEST["structure_id"] );
@@ -28,7 +28,7 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 
 	// order matters for these conditionals
 	if( empty( $gStructure ) || !$gStructure->isValid() ) {
-		$gBitSystem->fatalError( 'Invalid structure' );
+		$gBitSystem->fatalError( tra( 'Invalid structure' ));
 	}
 
 	if( $gStructure->mInfo['root_structure_id'] == $gStructure->mInfo['structure_id'] ) {

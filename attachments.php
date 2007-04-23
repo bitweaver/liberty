@@ -3,7 +3,7 @@
  * attachment_browser
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage functions
  */
@@ -16,7 +16,7 @@ require_once("../bit_setup_inc.php");
 $gContent = new LibertyAttachable();
 
 if( !$gBitUser->isRegistered() ) {
-	$gBitSystem->fatalError( 'You need to be logged in to view this page.' );
+	$gBitSystem->fatalError( tra( 'You need to be logged in to view this page.' ));
 }
 
 $feedback = array();
