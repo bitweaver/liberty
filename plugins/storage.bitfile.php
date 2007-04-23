@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.25 $
+ * @version  $Revision: 1.26 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -89,36 +89,19 @@ function bit_files_load( $pRow ) {
 	global $gBitSystem, $gLibertySystem;
 	$ret = NULL;
 	if( !empty( $pRow['foreign_id'] ) && is_numeric( $pRow['foreign_id'] )) {
-		$query = "SELECT *
-				  FROM `".BIT_DB_PREFIX."liberty_attachments` a INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON (lf.`file_id` = a.`foreign_id`)
-				  WHERE a.`foreign_id` = ? AND attachment_plugin_guid = ?";
-		if( $ret = $gBitSystem->mDb->getRow($query, array( $pRow['foreign_id'], PLUGIN_GUID_BIT_FILES ))) {
+		$query = "
+			SELECT *
+			FROM `".BIT_DB_PREFIX."liberty_attachments` la
+				INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON (lf.`file_id` = la.`foreign_id`)
+			WHERE la.`foreign_id` = ? AND attachment_plugin_guid = ?";
+		if( $ret = $gBitSystem->mDb->getRow( $query, array( $pRow['foreign_id'], PLUGIN_GUID_BIT_FILES ))) {
 			$canThumbFunc = liberty_get_function( 'can_thumbnail' );
-			if ( file_exists( BIT_ROOT_PATH.dirname( $ret['storage_path'] ).'/small.png' ) ) {
-				$ret['thumbnail_url']['avatar'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/avatar.png';
-				$ret['thumbnail_url']['small'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/small.png';
-				$ret['thumbnail_url']['medium'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/medium.png';
-				$ret['thumbnail_url']['large'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/large.png';
-			} elseif ( file_exists( BIT_ROOT_PATH.dirname( $ret['storage_path'] ).'/small.jpg' ) ) {
-				$ret['thumbnail_url']['avatar'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/avatar.jpg';
-				$ret['thumbnail_url']['small'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/small.jpg';
-				$ret['thumbnail_url']['medium'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/medium.jpg';
-				$ret['thumbnail_url']['large'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/large.jpg';
-			} elseif( $canThumbFunc( $ret['mime_type'] ) ) {
-				$ret['thumbnail_url']['avatar'] = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
-				$ret['thumbnail_url']['small'] = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
-				$ret['thumbnail_url']['medium'] = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
-				$ret['thumbnail_url']['large'] = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
+			if( $canThumbFunc( $ret['mime_type'] )) {
+				$thumbnailerImageUrl = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
 			} else {
-				$mime_thumbnail = $gLibertySystem->getMimeThumbnailURL($ret['mime_type'], substr( $ret['storage_path'], strrpos( $ret['storage_path'], '.' ) + 1 ) );
-				$ret['thumbnail_url']['avatar'] = $mime_thumbnail;
-				$ret['thumbnail_url']['small'] = $mime_thumbnail;
-				$ret['thumbnail_url']['medium'] = $mime_thumbnail;
-				$ret['thumbnail_url']['large'] = $mime_thumbnail;
+				$thumbnailerImageUrl = NULL;
 			}
-//			if ( file_exists( BIT_ROOT_PATH.dirname( $ret['storage_path'] ).'/original.jpg' ) ) {
-//				$ret['thumbnail_url']['original'] = BIT_ROOT_URL.dirname( $ret['storage_path'] ).'/original.jpg';
-//			}
+			$ret['thumbnail_url'] = liberty_fetch_thumbnails( $ret['storage_path'], $thumbnailerImageUrl );
 			$ret['filename'] = substr( $ret['storage_path'], strrpos($ret['storage_path'], '/')+1);
 			$ret['source_url'] = BIT_ROOT_URL.str_replace( '+', '%20', str_replace( '%2F', '/', urlencode( $ret['storage_path'] ) ) );
 			$ret['wiki_plugin_link'] = "{attachment id=".$ret['attachment_id']."}";
