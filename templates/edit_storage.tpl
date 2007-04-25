@@ -1,5 +1,6 @@
-{php} include (LIBERTY_PKG_PATH."edit_storage_inc.php"); {/php}
 {strip}
+{if $gBitUser->hasPermission('p_liberty_attach_attachments') }
+{php} include (LIBERTY_PKG_PATH."edit_storage_inc.php"); {/php}
 <script type="text/javascript">/*<![CDATA[*/ show_spinner('spinner'); /*]]>*/</script>
 {foreach from=$gLibertySystem->mPlugins item=plugin key=guid}
 	{* $no_plugins is set by the including template *}
@@ -21,4 +22,7 @@
 <h2 class="clear"><a href="javascript:ajax_updater( 'attbrowser', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', 'ajax=true&amp;content_id={$gContent->mContentId}' );">{tr}Attachment Browser{/tr}</a></h2>
 <noscript><div class="warning">{tr}The attachment browser only works with javascript enabled.{/tr}</div></noscript>
 <div id="attbrowser" class="attbrowser"><p>{tr}Please click on the Attachement Browser link above to view available attachments.{/tr}</p></div>
+{else}
+<p>{tr}Sorry - you do not have permission to attach files to this content.{/tr}</p>
+{/if}
 {/strip}
