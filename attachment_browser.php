@@ -3,7 +3,7 @@
  * attachment_browser
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.13 $
+ * @version  $Revision: 1.14 $
  * @package  liberty
  * @subpackage functions
  */
@@ -35,6 +35,7 @@ $offset = ( $pgnPage - 1 ) * $gBitSystem->getConfig( 'max_records' );
 
 // calculate page number
 $numPages = ceil( $listHash['cant'] / $gBitSystem->getConfig( 'max_records' ) );
+$gBitSmarty->assign( 'cant', $listHash['cant'] );
 $gBitSmarty->assign( 'numPages', $numPages );
 
 ?>
