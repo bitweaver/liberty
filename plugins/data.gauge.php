@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.gauge.php,v 1.9 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.gauge.php,v 1.10 2007/04/29 18:41:38 laetzer Exp $
 
 /**
  * definitions
@@ -34,7 +34,7 @@ $pluginParams = array (
 	'description' => tra("This plugin displays a graphical GAUGE."),
 	'help_function' => 'data_gauge_help',
 	'syntax' => "{GAUGE color= bgcolor= max= value= size= perc= height= }" . tra("Description") . "{GAUGE}",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.guage.php',
+	'path' => LIBERTY_PKG_PATH.'plugins/data.gauge.php',
 	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
@@ -68,7 +68,7 @@ function data_gauge_help() {
 			.'<tr class="even">'
 				.'<td>value</td>'
 				.'<td>' . tra( "numeric") . '<br />' . tra("(Required)") . '</td>'
-				.'<td>' . tra( "The current value that the Guage will display. There is") . ' <strong>NO</strong> ' . tra("Default value.") . '</td>'
+				.'<td>' . tra( "The current value that the Gauge will display. There is") . ' <strong>NO</strong> ' . tra("Default value.") . '</td>'
 			.'</tr>'
 			.'<tr class="odd">'
 				.'<td>size</td>'
@@ -88,7 +88,7 @@ function data_gauge_help() {
 			.'<tr class="even">'
 				.'<td>Description</td>'
 				.'<td>' . tra( "boolean") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra("<strong>This is NOT a Parameter.</strong> Text can be place between the 2 code blocks ( in this case:") . ' <strong>{GUAGE}</strong> ' . tra(" ). If present the text will be displayed below the Guage.") . '</td>'
+				.'<td>' . tra("<strong>This is NOT a Parameter.</strong> Text can be place between the 2 code blocks ( in this case:") . ' <strong>{GAUGE}</strong> ' . tra(" ). If present the text will be displayed below the Gauge.") . '</td>'
 			.'</tr>'
 		.'</table>'
 		. tra("Example: ") . "{GAUGE color='red' bgcolor='blue' value='25' perc='True' }A Simple Gauge{GAUGE}" . '<br />'
