@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.rss.php,v 1.11 2007/04/05 17:00:56 squareing Exp $
+// $Id: data.rss.php,v 1.12 2007/04/30 05:04:29 laetzer Exp $
 
 /**
  * definitions
@@ -45,7 +45,26 @@ $gLibertySystem->registerPlugin( PLUGIN_GUID_DATARSS, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATARSS );
 
 function rss_extended_help() {
-	return 'NO HELP WRITTEN FOR {RSS}';
+	$help =
+		'<table class="data help">'
+			.'<tr>'
+				.'<th>' . tra( "Key" ) . '</th>'
+				.'<th>' . tra( "Type" ) . '</th>'
+				.'<th>' . tra( "Comments" ) . '</th>'
+			.'</tr>'
+			.'<tr class="odd">'
+				.'<td>id</td>'
+				.'<td>' . tra( "string") . '<br />' . tra("(mandatory)") . '</td>'
+				.'<td>' . tra( "ID of the RSS-feed to process.") . '</td>'
+			.'</tr>'
+			.'<tr class="even">'
+				.'<td>max</td>'
+				.'<td>' . tra( "integer") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "Number of entries to be displayed from given RSS Feed, prefixed with publication date.") . '</td>'
+			.'</tr>'
+		.'</table>'
+	;
+	return $help;
 }
 
 function rss_parse_data( $data, $params ) {
