@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.203 2007/05/01 16:51:57 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.204 2007/05/01 16:53:21 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1030,22 +1030,11 @@ class LibertyContent extends LibertyBase {
 		if( !$gBitUser->isRegistered() || !($ret = $this->isOwner() || $ret = $gBitUser->isAdmin()) ) {
 			if( $gBitUser->isAdmin() || $gBitUser->hasPermission( $this->mAdminContentPerm ) ) {
 				$ret = TRUE;
-//				$ret = $gBitUser->hasPermission( $pPermName );
 			} else {
 				$this->verifyAccessControl();
 				if( $this->loadPermissions() ) {
 					// this content has assigned perms
 					$globalPerms = $gBitUser->mPerms;
-/*
-			// check what permissions apply to this user
-			$userGroups = array_keys( $gBitUser->mGroups );
-			foreach( $perms as $perm ) {
-				if( in_array( $perm['group_id'], $userGroups ) ) {
-					$this->mPerms[$perm['perm_name']] = $perm;
-					$this->mPerms[$perm['perm_name']]['package'] = $this->mType['handler_package'];
-				}
-			}
- */
 
 					// unset all perms in the default that are custom assigned
 					// they might have been removed for this user...
