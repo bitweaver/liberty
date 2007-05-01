@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.201 2007/04/15 10:41:32 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.202 2007/05/01 13:54:37 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1192,15 +1192,16 @@ class LibertyContent extends LibertyBase {
 	* @param int Optional content_id for arbitrary content preference
 	*/
 	function getPreference( $pPrefName, $pPrefDefault=NULL, $pContentId = NULL ) {
-		// drewslater - Added ability to query a preference for any content
+		global $gBitDb;
 		$ret = NULL;
 
-		if ($pContentId && ($pContentId != $this->mContentId) && !empty($pPrefName)) {
+		if ($pContentId && !empty($pPrefName)) {
 			// Get a user preference for an arbitrary user
 			$sql = "SELECT `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=? AND `pref_name`=?";
 
-			$rs = $this->mDb->query($sql, array($pContentId, $pPrefName));
-			$ret = (!empty($rs->fields['pref_value'])) ? $rs->fields['pref_value'] : $pPrefDefault;
+			if( !$ret = $gBitDb->getOne( $sql, array( $pContentId, $pPrefName ) ) ) {
+				$ret = $pPrefDefault;
+			}
 		} else {
 			if( is_null( $this->mPrefs ) ) {
 				$this->loadPreferences();
