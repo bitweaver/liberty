@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.205 2007/05/01 18:28:43 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.206 2007/05/01 18:46:55 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1048,6 +1048,9 @@ class LibertyContent extends LibertyBase {
 					// union the global perms plus the assigned perms
 					$checkPerms = array_merge( $globalPerms, $this->getUserPermissions( $gBitUser->mUserId ));
 					$ret = !empty( $checkPerms[$this->mAdminContentPerm] ) || !empty( $checkPerms[$pPermName] ); // && ( $checkPerms[$pPermName]['user_id'] == $gBitUser->mUserId );
+				} else {
+					// return default user permission setting when no content perms are set
+					$ret = $gBitUser->hasPermission( $pPermName );
 				}
 			}
 		}
