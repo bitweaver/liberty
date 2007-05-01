@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.202 2007/05/01 13:54:37 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.203 2007/05/01 16:51:57 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1028,7 +1028,10 @@ class LibertyContent extends LibertyBase {
 	function hasUserPermission( $pPermName ) {
 		global $gBitUser;
 		if( !$gBitUser->isRegistered() || !($ret = $this->isOwner() || $ret = $gBitUser->isAdmin()) ) {
-			if( !( $gBitUser->isAdmin() || $gBitUser->hasPermission( $this->mAdminContentPerm ) ) ) {
+			if( $gBitUser->isAdmin() || $gBitUser->hasPermission( $this->mAdminContentPerm ) ) {
+				$ret = TRUE;
+//				$ret = $gBitUser->hasPermission( $pPermName );
+			} else {
 				$this->verifyAccessControl();
 				if( $this->loadPermissions() ) {
 					// this content has assigned perms
@@ -1055,8 +1058,6 @@ class LibertyContent extends LibertyBase {
 					// union the global perms plus the assigned perms
 					$checkPerms = array_merge( $globalPerms, $this->getUserPermissions( $gBitUser->mUserId ) );
 					$ret = !empty( $checkPerms[$this->mAdminContentPerm] ) || !empty( $checkPerms[$pPermName] ); // && ( $checkPerms[$pPermName]['user_id'] == $gBitUser->mUserId );
-				} else {
-					$ret = $gBitUser->hasPermission( $pPermName );
 				}
 			}
 		}
