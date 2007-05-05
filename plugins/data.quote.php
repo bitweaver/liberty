@@ -90,10 +90,10 @@ function data_quote($data, $params) {
 
 	if (!empty($params['comment_id'])) {
 		$extra.="In ";
-		if (ACTIVE_PACKAGE == 'bitboards') {
-			$c = new BitBoardPost($params['comment_id']);
+		if (ACTIVE_PACKAGE == 'boards') {
+			$c = new BitBoardPost( preg_replace( '/[^0-9]/', '', $params['comment_id'] ) );
 		} else {
-			$c = new LibertyComment($params['comment_id']);
+			$c = new LibertyComment( preg_replace( '/[^0-9]/', '', $params['comment_id'] ) );
 		}
 		if (empty($c->mInfo['title'])) {
 			$c->mInfo['title']="#".$c->mCommentId;
