@@ -54,7 +54,7 @@
 						&nbsp;&nbsp;
 						{if $gBitUser->hasPermission( 'p_liberty_enter_html' )}
 							<label><input type="checkbox" name="preferences[content_enter_html]" value="y" id="html" {if $gContent->mPrefs.content_enter_html}checked="checked" {/if}/> {tr}Allow HTML{/tr}</label>
-						{elseif $gContent->getPreference( 'content_enter_html' )}
+						{elseif $gContent && $gContent->getPreference( 'content_enter_html' )}
 							[ {tr}HTML will remain as HTML{/tr} ]
 						{else}
 							[ {tr}HTML will be escaped{/tr} ]
