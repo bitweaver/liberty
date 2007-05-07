@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.206 2007/05/01 18:46:55 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.207 2007/05/07 02:29:29 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -36,6 +36,10 @@ define( 'BIT_CONTENT_MAX_FORMAT_GUID_LEN', 16);
 if( !defined( 'BIT_CONTENT_DEFAULT_STATUS' ) ) {
 	define( 'BIT_CONTENT_DEFAULT_STATUS', 50);
 }
+//$gBitSystem->getConfig( 'liberty_status_deleted', -999 ) );
+//$gBitSystem->getConfig( 'liberty_status_threshold_private', -40 ) );
+//$gBitSystem->getConfig( 'liberty_status_threshold_protected', -20 ) );
+//$gBitSystem->getConfig( 'liberty_status_threshold_hidden', -10 ) );
 
 /**
  * required setup
@@ -1056,22 +1060,6 @@ class LibertyContent extends LibertyBase {
 		}
 		return( $ret );
 	}
-
-	function isPrivate() {
-		global $gBitSystem;
-		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_private', -40 ) );
-	}
-
-	function isProtected() {
-		global $gBitSystem;
-		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_protected', -20 ) );
-	}
-
-	function isHidden() {
-		global $gBitSystem;
-		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_hidden', -10 ) );
-	}
-
 
 	/**
 	* Determine if current user has the ability to administer this type of content
@@ -2515,9 +2503,35 @@ class LibertyContent extends LibertyBase {
 		global $gBitUser;
 		if ($gBitUser->hasPermission('p_liberty_edit_all_status')) {
 			return( $this->mDb->getAssoc( "SELECT `content_status_id`,`content_status_name` FROM `".BIT_DB_PREFIX."liberty_content_status` ORDER BY `content_status_id`" ) );
-		}
-		else {
+		} else {
 			return( $this->mDb->getAssoc( "SELECT `content_status_id`, `content_status_name` FROM `".BIT_DB_PREFIX."liberty_content_status` WHERE `content_status_id` > ? AND `content_status_id` < ? ORDER BY `content_status_id`", array($pUserMinimum, $pUserMaximum)));
+		}
+	}
+
+	function isDeleted() {
+		global $gBitSystem;
+		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_deleted', -999 ) );
+	}
+
+	function isPrivate() {
+		global $gBitSystem;
+		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_private', -40 ) );
+	}
+
+	function isProtected() {
+		global $gBitSystem;
+		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_protected', -20 ) );
+	}
+
+	function isHidden() {
+		global $gBitSystem;
+		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_hidden', -10 ) );
+	}
+
+
+	function storeStatus( $pContentStatusId ) {
+		if( $this->isValid() && $pContentStatusId ) {
+			$this->mDb->query( "UPDATE `".BIT_DB_PREFIX."liberty_content` SET `content_status_id`=? WHERE `content_id`=?", array( $pContentStatusId, $this->mContentId ) );
 		}
 	}
 
