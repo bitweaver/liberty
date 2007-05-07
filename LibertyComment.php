@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.45 2007/03/06 16:16:46 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.46 2007/05/07 05:10:51 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -167,14 +167,19 @@ class LibertyComment extends LibertyContent {
 				$comment->deleteComment();
 			}
 
+			if( $gBitSystem->isPackageActive( 'boards' ) ) {
+				// due to foreign key constraints, this has to go in the base class of BitBoardPost
+				$sql = "DELETE FROM `".BIT_DB_PREFIX."boards_posts` WHERE `comment_id` = ?";
+				$rs = $this->mDb->query($sql, array($this->mCommentId ) );
+				$query = "DELETE FROM `".BIT_DB_PREFIX."boards_topics` WHERE `parent_id` = ?";
+				$result = $this->mDb->query( $query, array( $this->getField( 'content_id' ) ) );
+			}
+
 			$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `comment_id` = ?";
 			$rs = $this->mDb->query($sql, array($this->mCommentId));
 
 			if (method_exists($this,'expungeMetaData')) {
 				$this->expungeMetaData();
-			} elseif ($gBitSystem->isPackageActive('bitboards')) {
-				require_once(BITBOARDS_PKG_PATH.'BitBoardPost.php');
-				BitBoardPost::expungeMetaData($this->mContentId);
 			}
 
 			if( LibertyAttachable::expunge() ) {
