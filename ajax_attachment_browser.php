@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/ajax_attachment_browser.php,v 1.6 2007/04/25 12:39:59 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/ajax_attachment_browser.php,v 1.7 2007/05/11 17:10:42 wjames5 Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -10,6 +10,7 @@
  */
 require_once( '../bit_setup_inc.php' );
 global $gContent, $gBitSmarty;
+
 $gContent = new LibertyAttachable();
 if (isset($_REQUEST['content_id'])) {
 	$gContent->mContentId = $_REQUEST['content_id'];
