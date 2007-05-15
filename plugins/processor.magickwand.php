@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.7 2007/05/09 01:17:53 spiderr Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.8 2007/05/15 03:35:08 wjames5 Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -38,8 +38,6 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL, $pThumbn
 				MagickRemoveImageProfile( $magickWand, "ICC" );
 				MagickSetImageProfile( $magickWand, 'ICC', file_get_contents( UTIL_PKG_PATH.'icc/USWebCoatedSWOP.icc' ) );	
 				MagickProfileImage($magickWand, 'ICC', file_get_contents( UTIL_PKG_PATH.'icc/srgb.icm' ) ); 
-vd( 'CMYK' );
-bt();
 				MagickSetImageColorspace( $magickWand, MW_RGBColorspace );
 				$pFileHash['colorspace_conversion'] = TRUE;
 			}
@@ -85,8 +83,6 @@ bt();
 				$targetType = 'jpeg';
 				$destExt = '.jpg';
 			}
-bt();
-vd( $pFileHash );
 			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || ($mimeExt != $targetType)) || !empty( $pFileHash['colorspace_conversion'] ) ) {
 				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
 				$destFile = BIT_ROOT_PATH.'/'.$destUrl;
@@ -100,8 +96,6 @@ vd( $pFileHash );
 				}
 				$pFileHash['size'] = filesize( $destFile );
 			} else {
-bt();
-vd( 'generic death' ); die;
 				$destUrl = liberty_process_generic( $pFileHash, FALSE );
 			}
 		}
