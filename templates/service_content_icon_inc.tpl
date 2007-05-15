@@ -1,5 +1,5 @@
 {strip}
-{if $gBitSystem->isFeatureActive( 'liberty_cache' ) && $gContent->isCached()}
+{if $gBitSystem->isFeatureActive( 'liberty_cache' ) && $gContent && $gContent->isCached()}
 	<a title="{tr}Refresh cache{/tr}" href="{$gContent->getDisplayUrl()}&amp;refresh_liberty_cache={$gContent->mContentId}">{biticon ipackage="icons" iname="view-refresh" iexplain="Refresh cache"}</a>
 {/if}
 {if $gBitUser->hasPermission( 'p_liberty_assign_content_perms' ) and $serviceHash.content_id}
