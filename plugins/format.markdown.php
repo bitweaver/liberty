@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -24,7 +24,8 @@ $pluginParams = array (
 	'description' => 'This parser allows you to use plain text, which is then converted to HTML. For the full syntax, please view <a href="http://daringfireball.net/projects/markdown/syntax">Markdown Syntax</a>',
 	'edit_label' => 'Markdown',
 	'edit_field' => PLUGIN_GUID_MARKDOWN,
-	'plugin_type' => FORMAT_PLUGIN
+	'plugin_type' => FORMAT_PLUGIN,
+	'linebreak' => "\r\n"	
 );
 
 $gLibertySystem->registerPlugin( PLUGIN_GUID_MARKDOWN, $pluginParams );

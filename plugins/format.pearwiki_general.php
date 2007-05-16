@@ -14,7 +14,8 @@ if( @include_once('PEAR/Registry.php') && @include_once( 'Text/Wiki.php' ) ) {
 	$genPluginParams = array (
 		'store_function' => 'pearwiki_general_save_data',
 		'verify_function' => 'pearwiki_general_verify_data',
-		'plugin_type' => FORMAT_PLUGIN
+		'plugin_type' => FORMAT_PLUGIN,
+		'linebreak' => "\r\n"	
 	);
 
 	$reg = new PEAR_Registry;

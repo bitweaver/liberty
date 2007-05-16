@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -28,7 +28,8 @@ $pluginParams = array (
 	'edit_label' => 'BBCode',
 	'edit_field' => PLUGIN_GUID_BBCODE,
 	'help_page' => 'BBCodeSyntax',
-	'plugin_type' => FORMAT_PLUGIN
+	'plugin_type' => FORMAT_PLUGIN,
+	'linebreak' => "\r\n"
 );
 
 $gLibertySystem->registerPlugin( PLUGIN_GUID_BBCODE, $pluginParams );
