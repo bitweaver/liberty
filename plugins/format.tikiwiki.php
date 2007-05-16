@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.92 $
+ * @version  $Revision: 1.93 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -26,7 +26,8 @@ $pluginParams = array (
 	'edit_label' => 'Tiki Wiki Syntax',
 	'edit_field' => PLUGIN_GUID_TIKIWIKI,
 	'help_page' => 'TikiWikiSyntax',
-	'plugin_type' => FORMAT_PLUGIN
+	'plugin_type' => FORMAT_PLUGIN,
+	'linebreak' => "\r\n"
 );
 
 $gLibertySystem->registerPlugin( PLUGIN_GUID_TIKIWIKI, $pluginParams );

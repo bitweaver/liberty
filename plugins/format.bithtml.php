@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -19,7 +19,8 @@ $pluginParams = array (
 	'edit_label' => 'HTML',
 	'edit_field' => PLUGIN_GUID_BITHTML,
 	'help_page' => 'HTMLSyntax',
-	'plugin_type' => FORMAT_PLUGIN
+	'plugin_type' => FORMAT_PLUGIN,
+	'linebreak' => '<br />'
 );
 
 $gLibertySystem->registerPlugin( PLUGIN_GUID_BITHTML, $pluginParams );
