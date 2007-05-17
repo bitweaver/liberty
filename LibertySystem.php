@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.69 2007/05/17 14:14:29 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.70 2007/05/17 18:50:28 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -688,8 +688,13 @@ class LibertySystem extends LibertyBase {
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
 function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser, &$pCommonObject ) {
-	global $gLibertySystem;
+	global $gLibertySystem, $gBitSystem;
 	// Find the plugins
+	if( $gBitSystem->isPackageActive( 'stencil' ) ) {
+		require_once( STENCIL_PKG_PATH.'BitStencil.php' );
+		$data = preg_replace_callback("/\{\{\/?([^|]+)([^\}]*)\}\}/", 'parse_stencil_data', $data );
+	}
+
 	// note: $curlyTags[0] is the complete match, $curlyTags[1] is plugin name, $curlyTags[2] is plugin arguments
 	preg_match_all("/\{\/?([A-Za-z0-9]+)([^\}]*)\}/", $data, $curlyTags);
 

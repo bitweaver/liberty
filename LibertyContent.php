@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.209 2007/05/15 19:45:11 bitweaver Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.210 2007/05/17 18:50:27 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2207,11 +2207,12 @@ class LibertyContent extends LibertyBase {
 	 * @return absolute path
 	 */
 	function isCached( $pContentId = NULL ) {
+		global $gBitSystem;
 		if( empty( $pContentId ) && @BitBase::verifyId( $this->mContentId ) ) {
 			$pContentId = $this->mContentId;
 		}
 
-		return( is_file( LibertyContent::getCacheFile( $pContentId )));
+		return( $gBitSystem->getConfig( 'liberty_cache' ) && is_file( LibertyContent::getCacheFile( $pContentId )));
 	}
 
 	/**
