@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -31,7 +31,7 @@ $gLibertySystem->registerPlugin( PLUGIN_GUID_TREASURY_FILE, $pluginParams );
 function treasury_file_load( $pRow ) {
 	global $gBitSystem, $gBitSmarty;
 	$ret = NULL;
-	if( @BitBase::verifyId( $pRow['content_id'] ) ) {
+	if( @BitBase::verifyId( $pRow['foreign_id'] ) ) {
 		// fetch the correct content_id we can use to load the treasury item
 		$query = "
 			SELECT *
