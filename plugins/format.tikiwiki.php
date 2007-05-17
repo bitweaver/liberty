@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.93 $
+ * @version  $Revision: 1.94 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -759,7 +759,7 @@ class TikiWikiParser extends BitBase {
 	}
 
 	function parse_data( $pParseHash, &$pCommonObject ) {
-		global $gBitSystem, $gBitUser, $page;
+		global $gBitSystem, $gLibertySystem, $gBitUser, $page;
 
 		$data      = $pParseHash['data'];
 		$contentId = $pParseHash['content_id'];
@@ -783,17 +783,7 @@ class TikiWikiParser extends BitBase {
 
 		// disable HTML in wiki page for now - very disruptive. should be changed into a per page setting - xing
 		if( !empty( $contentPrefs['content_enter_html'] ) ) {
-			// this is copied and pasted from format.bithtml.php - xing
-			// Strip all evil tags that remain
-			// this comes out of gBitSystem->getConfig() set in Liberty Admin
-			$acceptableTags = $gBitSystem->getConfig( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
-
-			// Destroy all script code "manually" - strip_tags will leave code inline as plain text
-			if( !preg_match( '/\<script\>/', $acceptableTags ) ) {
-				$data = preg_replace( "/(\<script)(.*?)(script\>)/si", '', $data );
-			}
-
-			$data = strip_tags( $data, $acceptableTags );
+		    $data = $gLibertySystem->purifyHtml($data);
 		} elseif( !$gBitSystem->isFeatureActive( 'content_allow_html' ) ) {
 			// convert HTML to chars
 			$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );

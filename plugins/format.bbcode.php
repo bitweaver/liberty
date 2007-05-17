@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -9,7 +9,6 @@ global $gLibertySystem;
 
 /**
  * run 'pear install Text_Wiki_BBCode-alpha' to install the library,
- * you also need to enable the HTML plugin for now to due to dependency on the purge_html function
  */ 
 require_once('PEAR.php');
 
@@ -35,12 +34,9 @@ $pluginParams = array (
 $gLibertySystem->registerPlugin( PLUGIN_GUID_BBCODE, $pluginParams );
 
 function bbcode_verify_data( &$pParamHash ) {
+    	global $gLibertySystem;
 	$errorMsg = NULL;
-	if( !function_exists( 'purge_html' ) && include_once( LIBERTY_PKG_PATH.'plugins/format.bithtml.php' ) ) {
-		$pParamHash['content_store']['data'] = purge_html( $pParamHash['edit'] );
-	} else {
-		$pParamHash['content_store']['data'] = $pParamHash['edit'];
-	}
+	$pParamHash['content_store']['data'] = $gLibertySystem->purifyHtml( $pParamHash['edit']);
 	return $errorMsg;
 }
 

@@ -249,6 +249,8 @@ $gBitInstaller->registerPreferences( LIBERTY_PKG_NAME, array(
 	array(LIBERTY_PKG_NAME, 'liberty_action_log', 'y'),
 //	array(LIBERTY_PKG_NAME, 'liberty_attachment_link_format', 'wiki') not needed anymore since we use js in the edit page now (depends on format of content)
 //	array(LIBERTY_PKG_NAME, 'liberty_attachment_style', 'standard'),
+	// The default for new installs is htmlpurifier old stays simple
+	array(LIBERTY_PKG_NAME, 'liberty_html_purifier', 'htmlpurifier'),
 ) );
 
 $gBitInstaller->registerSchemaDefault( LIBERTY_PKG_NAME, array(
