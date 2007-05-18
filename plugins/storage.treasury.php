@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -36,18 +36,26 @@ function treasury_file_load( $pRow ) {
 		$query = "
 			SELECT *
 			FROM `".BIT_DB_PREFIX."liberty_attachments` la
+				INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON (lf.`file_id` = la.`foreign_id`)
 				INNER JOIN `".BIT_DB_PREFIX."liberty_attachments_map` lam ON (la.`attachment_id` = lam.`attachment_id`)
 				INNER JOIN `".BIT_DB_PREFIX."treasury_item` tri ON( tri.`content_id` = lam.`content_id` )
-			WHERE la.`foreign_id` = ?";
-		if( $row = $gBitSystem->mDb->getRow( $query, array( $pRow['foreign_id'] ))) {
-			require_once( TREASURY_PKG_PATH.'TreasuryItem.php' );
-			require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'display_bytes' );
-			$item = new TreasuryItem( NULL, $row['content_id'] );
-			$item->load();
-			$ret = $item->mInfo;
-			$ret['prefs'] = $item->mPrefs;
-			if( !empty( $ret['file_size'] )) {
-				$ret['file_details'] = $ret['title']."<br /><small>(".$ret['mime_type']." ".smarty_modifier_display_bytes( $ret['file_size'] ).")</small>";
+			WHERE la.`foreign_id` = ? AND la.`attachment_plugin_guid` = ?";
+		if( $ret = $gBitSystem->mDb->getRow( $query, array( $pRow['foreign_id'], PLUGIN_GUID_TREASURY_FILE ))) {
+			if( $gBitSystem->isPackageActive( 'treasury' )) {
+				require_once( TREASURY_PKG_PATH.'TreasuryItem.php' );
+				require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'display_bytes' );
+				$item = new TreasuryItem( NULL, $ret['content_id'] );
+				$item->load();
+				$ret = $item->mInfo;
+				$ret['prefs'] = $item->mPrefs;
+				if( !empty( $ret['file_size'] )) {
+					$ret['file_details'] = $ret['title']."<br /><small>(".$ret['mime_type']." ".smarty_modifier_display_bytes( $ret['file_size'] ).")</small>";
+				}
+			} else {
+				$ret['thumbnail_url'] = liberty_fetch_thumbnails( $ret['storage_path'] );
+				$ret['filename'] = substr( $ret['storage_path'], strrpos($ret['storage_path'], '/')+1);
+				$ret['source_url'] = BIT_ROOT_URL.str_replace( '+', '%20', str_replace( '%2F', '/', urlencode( $ret['storage_path'] ) ) );
+				$ret['wiki_plugin_link'] = "{attachment id=".$ret['attachment_id']."}";
 			}
 		}
 	}
