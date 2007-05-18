@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.26 $
+ * @version  $Revision: 1.27 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -93,7 +93,7 @@ function bit_files_load( $pRow ) {
 			SELECT *
 			FROM `".BIT_DB_PREFIX."liberty_attachments` la
 				INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON (lf.`file_id` = la.`foreign_id`)
-			WHERE la.`foreign_id` = ? AND attachment_plugin_guid = ?";
+			WHERE la.`foreign_id` = ? AND `attachment_plugin_guid` = ?";
 		if( $ret = $gBitSystem->mDb->getRow( $query, array( $pRow['foreign_id'], PLUGIN_GUID_BIT_FILES ))) {
 			$canThumbFunc = liberty_get_function( 'can_thumbnail' );
 			if( $canThumbFunc( $ret['mime_type'] )) {
