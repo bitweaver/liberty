@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.210 2007/05/17 18:50:27 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.211 2007/05/18 10:00:00 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -45,6 +45,8 @@ if( !defined( 'BIT_CONTENT_DEFAULT_STATUS' ) ) {
  * required setup
  */
 require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
+
+define( 'LIBERTY_SPLIT_REGEX', "/\.{3}split\.{3}\s*/i" );
 
 /**
  * Virtual base class (as much as one can have such things in PHP) for all
@@ -337,12 +339,14 @@ class LibertyContent extends LibertyBase {
 					$ret = $func( $pParamHash );
 				}
 			}
+			LibertyContent::expungeCacheFile( $pParamHash['content_id'] );
 
 			// If we renamed the page, we need to update the backlinks
 			if( !empty( $renamed ) && $func = $gLibertySystem->getPluginFunction( $pParamHash['format_guid'], 'rename_function' ) ) {
 				$ret = $func( $this->mContentId, $this->mInfo['title'], $pParamHash['content_store']['title'], $this );
 				$this->mLogs['rename_page'] = "Renamed from {$this->mInfo['title']} to {$pParamHash['content_store']['title']}.";
 			}
+
 
 			// store content preferences
 			if( @is_array( $pParamHash['preferences_store'] ) ) {
@@ -394,6 +398,8 @@ class LibertyContent extends LibertyBase {
 			if( $func = $gLibertySystem->getPluginFunction( $this->getField( 'format_guid' ), 'expunge_function' ) ) {
 				$func( $this->mContentId );
 			}
+			LibertyContent::expungeCacheFile( $this->mContentId );
+
 
 			// remove entries in the history
 			$this->expungeVersion();
@@ -536,7 +542,7 @@ class LibertyContent extends LibertyBase {
 	function removeLastVersion( $comment = '' ) {
 		if( $this->isValid() ) {
 			global $gBitSystem;
-			$this->invalidateCache();
+			$this->expungeCacheFile($this->mContentId);
 			$query = "select * from `".BIT_DB_PREFIX."liberty_content_history` where `content_id`=? order by ".$this->mDb->convertSortmode("last_modified_desc");
 			$result = $this->mDb->query($query, array( $this->mContentId ) );
 			if ($result->numRows()) {
@@ -1961,6 +1967,59 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
+	
+	/*
+	 * Splits content either at the ...split... or at the
+	 * length specified if no manual split is in the content.
+	 *
+	 * @param pParseHash a hash with 'data' in it and any
+	 *        arguments to the parser as required
+	 * @param pLength the length to split at if no ...split... is present
+	 * @param pForceLength force split at length (default false)
+	 */
+	function parseSplit($pParseHash, $pLength, $pForceLength = false) {
+		global $gLibertySystem, $gBitSystem;
+		$res = NULL;
+		// Force cache extension
+		$pParseHash['cache_extension'] = 'desc';
+		// Strip trailing breaks and fixup tags.
+		$pParseHash['cleanup'] = true;
+
+		$res['data'] = $pParseHash['data'];
+		if( $pForceLength ) {
+			$res['data'] = preg_replace( LIBERTY_SPLIT_REGEX, '', $res['data'] );
+		}
+		if( preg_match( LIBERTY_SPLIT_REGEX, $res['data'] ) ) {
+			$res['man_split'] = TRUE;
+			$parts = preg_split( LIBERTY_SPLIT_REGEX, $res['data'] );
+			if( empty( $parts[1] ) ) {
+				$res['has_more'] = FALSE;
+			}
+			$pParseHash['data'] = $parts[0];
+		} else {
+			// Include length in cache file
+			$pParseHash['cache_extension'] .= '.'.$pLength;
+			$pParseHash['data'] = substr( $res['data'], 0, $pLength );
+		}
+		
+		// description shouldn't contain {maketoc}
+		$pParseHash['data'] = preg_replace( "/\{maketoc[^\}]*\}/i", "", $pParseHash['data'] );
+
+		// Do the actual parsing.
+		$res['parsed'] = $res['parsed_description'] = $this->parseData($pParseHash);
+
+		// Setup the has_more properly and add ... if required.
+		if( preg_replace( "/\{maketoc[^\}]*\}/i", "", $res['data'] ) != $pParseHash['data'] && empty( $res['man_split'] )) {
+			// we append ... when the split was generated automagically
+			$res['parsed_description'] .= '&hellip;';
+			$res['has_more'] = TRUE;
+		} elseif( preg_replace( "/\{maketoc[^\}]*\}/i", "", $res['data'] ) != $pParseHash['data'] ) {
+			$res['has_more'] = TRUE;
+		}
+
+		return $res;
+	}
+
 	/**
 	* Process the raw content blob using the speified content GUID processor
 	*
@@ -1975,6 +2034,8 @@ class LibertyContent extends LibertyBase {
 	* @return string Formated data string
 	*/
 	function parseData( $pMixed=NULL, $pFormatGuid=NULL ) {
+		global $gLibertySystem, $gBitSystem;
+
 		// get the data into place
 		if( empty( $pMixed ) && !empty( $this->mInfo['data'] ) ) {
 			$parseHash = $this->mInfo;
@@ -2003,13 +2064,44 @@ class LibertyContent extends LibertyBase {
 			$formatGuid = $pFormatGuid;
 		}
 
-		$ret = $parseHash['data'];
-		if( !empty( $parseHash['data'] ) && $formatGuid ) {
-			global $gLibertySystem;
-			if( $func = $gLibertySystem->getPluginFunction( $formatGuid, 'load_function' ) ) {
-				$ret = $func( $parseHash, $this );
+		$ret = NULL;
+
+		// Handle caching if it is enabled.
+		if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && !empty( $parseHash['content_id'] ) && empty( $parseHash['no_cache'] ) ) {			
+			if( $cacheFile = LibertyContent::getCacheFile( $parseHash['content_id'], $parseHash['cache_extension'] ) ) {
+				// Attempt to read cache file
+				if (! ($ret = LibertyContent::readCacheFile($cacheFile)) ) {
+					// Read failed. Parse and store.
+					if( !empty( $parseHash['data'] ) && $formatGuid ) {
+						if( $func = $gLibertySystem->getPluginFunction( $formatGuid, 'load_function' ) ) {
+							$ret = $func( $parseHash, $this );
+							if (!empty($ret) && !empty($parseHash['cleanup']) && $parseHash['cleanup'] ) {
+								$ret = preg_replace( '/(<br *\/? *>)*$/i', '', $ret);
+								$ret = $gLibertySystem->purifyHtml($ret, true);
+							}
+						}
+					}
+					LibertyContent::writeCacheFile($cacheFile, $ret);
+				}
+				else {
+					// Note that we read from cache.
+					$pCommonObject->mInfo['is_cached'] = TRUE;
+				}
 			}
 		}
+					
+		if (!$ret) {
+			if( !empty( $parseHash['data'] ) && $formatGuid ) {
+				if( $func = $gLibertySystem->getPluginFunction( $formatGuid, 'load_function' ) ) {
+					$ret = $func( $parseHash, $this );
+					if (!empty($ret) && !empty($parseHash['cleanup']) && $parseHash['cleanup'] ) {
+						$ret = preg_replace( '/(<br *\/? *>)*$/i', '', $ret);
+						$ret = $gLibertySystem->purifyHtml($ret, true);
+					}
+				}
+			}
+		}
+
 		return $ret;
 	}
 
@@ -2239,13 +2331,51 @@ class LibertyContent extends LibertyBase {
 
 		$ret = FALSE;
 		if( @BitBase::verifyId( $pContentId ) ) {
-			$path = LibertyContent::getCacheBasePath().$pContentId;
+			$subdir = $pContentId % 1000;
+			$path = LibertyContent::getCacheBasePath().$subdir.'/'.$pContentId;
 			if( is_dir( $path ) || mkdir_p( $path ) ) {
 				$ret = $path;
 			}
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * Attempts to read from the specified cache file checking if the
+	 * cached data has expired.
+	 *
+	 * @param the name of the cache file from getCacheFile()
+	 * @return the contents of the cache file or NULL
+	 */
+	function readCacheFile($pCacheFile) {
+		global $gBitSystem;
+		$ret = NULL;
+		if (is_file($pCacheFile) && (time() - filemtime( $pCacheFile )) < $gBitSystem->getConfig('liberty_cache') && filesize( $pCacheFile ) > 0 ) {
+			// get contents from cache file
+			$h = fopen( $pCacheFile, 'r' );
+			$ret = fread( $h, filesize( $pCacheFile ) );
+			fclose( $h );
+		}
+		return $ret;
+	}
+
+	/**
+	 * Unconditionally writes data to the cache file.
+	 * Does not check for error assuming if write failed that the
+	 * read will as well.
+	 *
+	 * @param the name of the cache file from getCacheFile() to write
+	 * @param the contents to write to the file
+	 */
+	function writeCacheFile($pCacheFile, $pData) {
+		// Cowardly refuse to write nothing.
+		if (!empty($pData)) {
+			// write parsed contents to cache file
+			$h = fopen( $pCacheFile, 'w' );
+			fwrite( $h, $pData );
+			fclose( $h );
+		}
 	}
 
 	/**
@@ -2264,7 +2394,7 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	 * Delete cache file for a given content item
+	 * Delete cache files for a given content item
 	 * 
 	 * @param array $pContentId 
 	 * @access public

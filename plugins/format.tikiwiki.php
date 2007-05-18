@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.94 $
+ * @version  $Revision: 1.95 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -43,7 +43,6 @@ function tikiwiki_save_data( &$pParamHash ) {
 	if( $pParamHash['edit'] ) {
 		$parser->storeLinks( $pParamHash );
 	}
-	LibertyContent::expungeCacheFile( $pParamHash['content_id'] );
 }
 
 function tikiwiki_verify_data( &$pParamHash ) {
@@ -55,7 +54,6 @@ function tikiwiki_verify_data( &$pParamHash ) {
 function tikiwiki_expunge( $pContentId ) {
 	$parser = new TikiWikiParser();
 	$parser->expungeLinks( $pContentId );
-	LibertyContent::expungeCacheFile( $pContentId );
 }
 
 function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
@@ -117,36 +115,12 @@ function tikiwiki_parse_data( &$pParseHash, &$pCommonObject ) {
 	global $gBitSystem;
 	$ret = '';
 
-	// cache data if we are using liberty cache
-	if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && !empty( $pParseHash['content_id'] ) && empty( $pParseHash['no_cache'] ) ) {
-		if( $cacheFile = LibertyContent::getCacheFile( $pParseHash['content_id'], $pParseHash['cache_extension'] ) ) {
-			// write / refresh cache if we are exceeding time limit of cache
-			if( !is_file( $cacheFile ) || ( $gBitSystem->getConfig( 'liberty_cache' ) < ( time() - filemtime( $cacheFile ) ) ) ) {
-				static $parser;
-				if( empty( $parser ) ) {
-					$parser = new TikiWikiParser();
-				}
-				$ret = $parser->parse_data( $pParseHash, $pCommonObject );
-
-				// write parsed contents to cache file
-				$h = fopen( $cacheFile, 'w' );
-				fwrite( $h, $ret );
-				fclose( $h );
-			} else {
-				// get contents from cache file
-				$h = fopen( $cacheFile, 'r' );
-				$ret = fread( $h, filesize( $cacheFile ) );
-				fclose( $h );
-				$pCommonObject->mInfo['is_cached'] = TRUE;
-			}
-		}
-	} else {
-		static $parser;
-		if( empty( $parser ) ) {
-			$parser = new TikiWikiParser();
-		}
-		$ret = $parser->parse_data( $pParseHash, $pCommonObject );
+	static $parser;
+	if( empty( $parser ) ) {
+	    $parser = new TikiWikiParser();
 	}
+	$ret = $parser->parse_data( $pParseHash, $pCommonObject );
+
 	return $ret;
 }
 

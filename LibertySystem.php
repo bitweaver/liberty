@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.70 2007/05/17 18:50:28 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.71 2007/05/18 10:00:00 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -115,15 +115,21 @@ class LibertySystem extends LibertyBase {
 					 'simple' => "Simple Purifier");
 	}
 	
-	/**                                                                     
-	 * Purify HTML from a string.                                           
-	 *                                                                      
-	 * @param string The string to be cleaned.                              
-	 * @returns string The sanitized string                                 
+	/**
+	 * Purify HTML from a string.
+	 *
+	 * @param string The string to be cleaned.
+	 * @returns string The sanitized string
 	 */
-	function purifyHtml($pString) {
+	function purifyHtml($pString, $pForceHTMLPurifier = false) {
 		global $gBitSystem;
-		switch($gBitSystem->getConfig('liberty_html_purifier', 'simple')) {
+		if ($pForceHTMLPurifier) {
+			$purifier = 'htmlpurifier';
+		}
+		else {
+			$purifier = $gBitSystem->getConfig('liberty_html_purifier', 'simple');
+		}
+		switch ($purifier) {
 		case 'htmlpurifier':
 		    $pString = $this->advancedPurifyHtml($pString);
 		    break;
