@@ -76,8 +76,15 @@ $formLibertyHtmlPurifierFeatures = array(
 	'liberty_html_pure_xhtml' => array(
 		'label'  => 'Force XHTML',
 		'note' => 'Determine if purification forces only XHTML tags or if it allows standard HTML.',
+		'default' => 'y'
+	),
+	// TODO: We should parse the plugins directory to generate these
+	// so that new plugins just have to be dropped in the dir and turned on.
+	'liberty_html_pure_allow_youtube' => array(
+		'label' => 'Allow YouTube',
+		'note' => 'Allow YouTube videos to be passed through.',
 		'default' => 'n'
-	)
+	),
 );
 $gBitSmarty->assign( 'formLibertyHtmlPurifierFeatures', $formLibertyHtmlPurifierFeatures );
 

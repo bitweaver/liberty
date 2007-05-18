@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.71 2007/05/18 10:00:00 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.72 2007/05/18 17:07:13 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -186,7 +186,16 @@ class LibertySystem extends LibertyBase {
 			}
 
 			$gHtmlPurifier = new HTMLPurifier($config);
+
+			// TODO: devise a way to parse plugins dir
+			// and check for the right property here
+			// so new plugins are just drop in place.
+			if ($gBitSystem->isFeatureActive('liberty_html_pure_allow_youtube')) {
+			    require_once UTIL_PKG_PATH.'htmlpurifier/HTMLPurifier/Filter/YouTube.php';
+			    $gHtmlPurifier->addFilter(new HTMLPurifier_Filter_YouTube());
+			}
 		}
+
 		$pString = $gHtmlPurifier->purify($pString);
 
 		/* There isn't an easy way to disable an attribute in HTMLPurifier */
