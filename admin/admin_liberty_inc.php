@@ -1,13 +1,5 @@
 <?php
-$formLibertyFeatures = array(
-	"liberty_display_status" => array(
-		'label' => 'Display content status',
-		'note' => 'Display a status selection menu when editing content (not fully developed, experimental feature).',
-	),
-	"liberty_allow_change_owner" => array(
-		'label' => 'Allow Owner Change',
-		'note' => 'Allow users with the proper permission to change the owner of content.',
-	),
+$formLibertyCache = array(
 	"liberty_cache_pages" => array(
 		'label' => 'External page cache',
 		'note' => 'Enabling this will download and cache external pages that are included.',
@@ -17,6 +9,33 @@ $formLibertyFeatures = array(
 		'note' => 'Enabling this will download and cache external images that are included.',
 	),
 );
+$gBitSmarty->assign( 'formLibertyCache', $formLibertyCache );
+
+$formLibertyFeatures = array(
+	"liberty_display_status" => array(
+		'label' => 'Display content status',
+		'note' => 'Display a status selection menu when editing content (not fully developed, experimental feature).',
+	),
+	"liberty_allow_change_owner" => array(
+		'label' => 'Allow Owner Change',
+		'note' => 'Allow users with the proper permission to change the owner of content.',
+	),
+);
+
+if( $gBitSystem->isPackageActive( 'quota' )) {
+	$formLibertyFeatures['liberty_quota'] = array(
+		'label' => 'Quota Usage System',
+		'note' => 'Limit users\' disk usage.',
+	);
+}
+
+if( $gBitSystem->isPackageActive( 'protector' )) {
+	$formLibertyFeatures['protector_single_group'] = array(
+		'label' => 'Protector System Single group per content item',
+		'note' => 'Limit the protector system to asign a content item to a single group. The alternative allows content in multiple groups.',
+	);
+}
+$gBitSmarty->assign( 'formLibertyFeatures', $formLibertyFeatures );
 
 $formLibertyHtmlPurifierFeatures = array(
 	'liberty_html_pure_escape_bad' => array(
@@ -74,27 +93,12 @@ $formLibertyTextareaFeatures = array(
 		'default' => '35',
 	),
 );
-$gBitSmarty->assign( 'formLibertyTextareaFeatures', $formLibertyTextareaFeatures);
-
-if( $gBitSystem->isPackageActive( 'quota' ) ) {
-	$formLibertyFeatures['liberty_quota'] = array(
-		'label' => 'Quota Usage System',
-		'note' => 'Limit users\' disk usage.',
-	);
-}
-
-if( $gBitSystem->isPackageActive( 'protector' ) ) {
-	$formLibertyFeatures['protector_single_group'] = array(
-		'label' => 'Protector System Single group per content item',
-		'note' => 'Limit the protector system to asign a content item to a single group. The alternative allows content in multiple groups.',
-	);
-}
-$gBitSmarty->assign( 'formLibertyFeatures', $formLibertyFeatures );
+$gBitSmarty->assign( 'formLibertyTextareaFeatures', $formLibertyTextareaFeatures );
 
 $attachmentStyleOptions = array(
-	"standard" => tra( 'Standard attachment system - Allows a single upload when content is saved.' ),
-	"multiple" => tra( 'Multiple attachments - Allow multiple attachments in a single upload.' ),
-	"ajax"     => tra( 'Ajax attachments - Allow Ajax attachments where attachment is made before save so attachment id can be used in current edit.' ),
+	"standard" => tra( 'Standard attachment system<br /><small>Allows a single upload when content is saved.</small>' ),
+	"multiple" => tra( 'Multiple attachments<br /><small>Allow multiple attachments in a single upload.</small>' ),
+	"ajax"     => tra( 'Ajax attachments<br /><small>Allow Ajax attachments where attachment is made before save so attachment id can be used in current edit.</small>' ),
 );
 $gBitSmarty->assign( 'attachmentStyleOptions', $attachmentStyleOptions );
 
@@ -141,9 +145,9 @@ $gBitSmarty->assign( 'formImageFeatures', $formImageFeatures );
 
 $formValues = array( 'image_processor', 'liberty_attachment_link_format', 'comments_per_page', 'comments_default_ordering', 'comments_default_display_mode' );
 
-if( !empty( $_REQUEST['change_prefs'] ) ) {
+if( !empty( $_REQUEST['change_prefs'] )) {
 	$errors = array();
-	$formFeatures = array_merge( $formLibertyFeatures, $formImageFeatures, $formCaptcha, $formLibertyHtmlPurifierFeatures );
+	$formFeatures = array_merge( $formLibertyCache, $formLibertyFeatures, $formImageFeatures, $formCaptcha, $formLibertyHtmlPurifierFeatures );
 	foreach( $formFeatures as $item => $data ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
@@ -155,9 +159,9 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 	$gBitSystem->storeConfig('liberty_cache', $_REQUEST['liberty_cache'], LIBERTY_PKG_NAME );
 	$gBitSystem->storeConfig('liberty_auto_display_attachment_thumbs', $_REQUEST['liberty_auto_display_attachment_thumbs'], LIBERTY_PKG_NAME );
 
-	if( !empty($_REQUEST['blacklisted_html_tags']) ) {
+	if( !empty($_REQUEST['blacklisted_html_tags'] )) {
 	    $tags = preg_replace( '/\s/', '', $_REQUEST['blacklisted_html_tags'] );
-		if (strlen( $tags ) > 250) {
+		if( strlen( $tags ) > 250 ) {
 			$tags = substr( $tags, 0, 250 );
 			$errors['blacklist'] = 'The blacklisted tags list has been shortened. You can only have 250 characters for blacklisted tags.';
 		}
@@ -166,7 +170,7 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 	if( $_REQUEST['approved_html_tags'] != DEFAULT_ACCEPTABLE_TAGS ) {
 		$tags = preg_replace( '/\s/', '', $_REQUEST['approved_html_tags'] );
 		$lastAngle = strrpos( $tags, '>' ) + 1;
-		if( strlen( $tags ) > 250 || ($lastAngle < strlen( $tags ) ) ) {
+		if( strlen( $tags ) > 250 || ($lastAngle < strlen( $tags ))) {
 			$tags = substr( $tags, 0, 250 );
 			$tags = substr( $tags, 0, $lastAngle );
 			$errors['warning'] = 'The approved tags list has been shortened. You can only have 250 characters for approved tags.';
@@ -180,7 +184,11 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 	}
 }
 
-$gBitSmarty->assign( 'thumbSizes', array( '' => 'Off', 'icon'=>tra('Icon'), 'avatar'=>tra('Avatar'), 'small'=>tra('Small'), 'medium'=>tra('Medium'), 'large'=>tra('Large') ) );
+$thumbSizes[''] = tra( 'Off' );
+foreach( array_keys( $gThumbSizes ) as $thumb ) {
+	$thumbSizes[$thumb] = tra( ucfirst( $thumb ));
+}
+$gBitSmarty->assign( 'thumbSizes', $thumbSizes );
 
 $tags = $gBitSystem->getConfig( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
 
