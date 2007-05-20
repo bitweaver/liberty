@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.19 $
+ * @version  $Revision: 1.20 $
  * @package  liberty
  * @subpackage functions
  */
@@ -18,6 +18,8 @@
 require_once( '../bit_setup_inc.php' );
 include_once( LIBERTY_PKG_PATH.'LibertyStructure.php');
 $gBitSmarty->assign_by_ref( 'feedback', $feedback = array() );
+
+$gBitSystem->loadAjax( 'mochikit', array( 'Iter.js', 'DOM.js', 'Format.js', 'Style.js', 'Signal.js', 'Logging.js', 'ThickBox.js', 'Controls.js' ) );
 
 if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 	$gBitSystem->fatalError( tra( "No structure indicated" ));
@@ -123,13 +125,19 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 		} elseif(!empty($_REQUEST['content'])) {
 			foreach ($_REQUEST['content'] as $conId ) {
 				$structureHash['content_id'] = $conId;
-				$new_structure_id = $gStructure->storeNode( $structureHash );
-				$structureHash['after_ref_id'] = $new_structure_id;
+				if( $new_structure_id = $gStructure->storeNode( $structureHash ) ) {
+					$structureHash['after_ref_id'] = $new_structure_id;
+					$feedback['success'] = tra( "Items added." );
+				} else {
+					$feedback['failure'] = $gStructure->mErrors;
+				}
 			}
 		}
 	}
 
-	$gBitSmarty->assign('subtree', $rootTree = $rootStructure->getSubTree( $rootStructure->mStructureId ));
+	$rootTree = $rootStructure->getSubTree( $rootStructure->mStructureId );
+	$gBitSmarty->assign('subtree', $rootTree);
+	$gBitSmarty->assign_by_ref('feedback', $feedback);
 }
 
 ?>
