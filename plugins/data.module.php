@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -16,7 +16,7 @@
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
 // | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.module.php,v 1.11 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.module.php,v 1.12 2007/05/20 19:00:04 nickpalmer Exp $
 
 /**
  * definitions
@@ -73,7 +73,7 @@ function datamodule_help() {
 }
 
 function data_datamodule( $data, $params ) {
-	global $gBitThemes, $gBitSmarty, $gBitThemes;
+	global $gBitThemes, $gBitSmarty;
 
 	$out = '';
 	$ret = ' ';
@@ -81,19 +81,29 @@ function data_datamodule( $data, $params ) {
 	extract( $params , EXTR_SKIP);
 
 	if( !empty( $module ) && !empty( $package ) ) {
-		// not sure if we can use the php file, since it sets everything to NULL when passed in - xing
-		global $module_rows;
-		$module_rows = !empty( $rows ) ? $rows : 10;
-		//$php = constant( strtoupper( $package ).'_PKG_PATH' ).'modules/mod_'.$module.'.php';
-		// TODO: assigning variables to template doesn't work since they are replaced by module paramaters set in the php file - even when it's not in use! - xing
-		if( is_file( constant( strtoupper( $package ).'_PKG_PATH' ).'modules/mod_'.$module.'.tpl' ) ) {
-			$tpl = 'bitpackage:'.$package.'/mod_'.$module.'.tpl';
+		$modules_dir = constant( strtoupper( $package ).'_PKG_PATH' ).'modules/';
+		if( is_file( $modules_dir.'mod_'.$module.'.tpl' ) ) {
+			$tpl = 'bitpackage:'.$package.'/mod_'.$module.'.tpl';			
 		} else {
 			return '<div class="error">'.tra( "The module / package combination you entered is not valid" ).'</div>';
 		}
 	} else {
 		return '<div class="error">'.tra( "Both paramters 'module' and 'package' are required" ).'</div>';
 	}
+
+	// Setup moduleParams the best we can.
+	$moduleParams = array();
+	$moduleParams['module_params'] = $params;
+	if (isset($params['rows'])) {
+	    $moduleParams['module_rows'] = $params['rows'];
+	}
+	else {
+	    $moduleParams['module_rows'] = 10;
+	}
+	if (isset($params['title'])) {
+	    $moduleParams['title'] = $params['title'];
+	}
+	$gBitSmarty->assign('moduleParams', $moduleParams);
 
 	if( !$out = $gBitSmarty->fetch( $tpl ) ) {
 		if( $gBitThemes->isCustomModule( $module ) ) {
