@@ -136,8 +136,8 @@ $tables = array(
 	content_id I4 NOTNULL
 	CONSTRAINT
 		', CONSTRAINT `liberty_attachments_map_unique` UNIQUE (`attachment_id`, `content_id`)
-		, CONSTRAINT `liberty_attachments_map_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
-		, CONSTRAINT `liberty_attachments_map_attachment_ref` FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments`( `attachment_id` ) '
+		, CONSTRAINT `liberty_attachments_map_con_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
+		, CONSTRAINT `liberty_attachments_map_att_ref` FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments`( `attachment_id` ) '
 ",
 
 'liberty_files' => "
@@ -223,7 +223,7 @@ $indices = array (
 	'links_title_content_id_idx' => array( 'table' => 'liberty_content_links', 'cols' => 'to_title', 'opts' => NULL),
 	'liberty_content_perm_group_idx' =>  array( 'table' => 'liberty_content_permissions', 'cols' => 'group_id', 'opts' => NULL ),
 	'liberty_content_perm_perm_idx' => array( 'table' => 'liberty_content_permissions', 'cols' => 'perm_name', 'opts' => NULL ),
-	'liberty_content_perm_content_idx' => array( 'table' => 'liberty_content_permissions', 'cols' => 'content_id', 'opts' => NULL ),
+	'liberty_content_perm_cont_idx' => array( 'table' => 'liberty_content_permissions', 'cols' => 'content_id', 'opts' => NULL ),
 	'process_id_idx' => array( 'table' => 'liberty_process_queue', 'cols' => 'content_id', 'opts' => NULL ),
 );
 $gBitInstaller->registerSchemaIndexes( LIBERTY_PKG_NAME, $indices );
