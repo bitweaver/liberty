@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.72 2007/05/18 17:07:13 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.73 2007/05/20 09:18:10 laetzer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -902,6 +902,13 @@ function liberty_plugins_div_style( $pParamHash ) {
 						break;
 				}
 			}
+		}
+
+		// force display:block to the "div" if not specified otherwise
+		if( empty($pParamHash['display_prop']) || !isset($pParamHash['display_prop']) ){
+			$ret['style'] .= "display:block;";
+		}else{
+			$ret['style'] .= "display:" . $pParamHash['display_prop'] . "";
 		}
 	}
 
