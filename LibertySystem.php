@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.73 2007/05/20 09:18:10 laetzer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.74 2007/05/20 10:09:14 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -844,7 +844,7 @@ $gLibertySystem = new LibertySystem();
  * @access public
  * @return hash full of styling goodies
  */
-function liberty_plugins_div_style( $pParamHash ) {
+function liberty_plugins_wrapper_style( $pParamHash ) {
 	$ret = array();
 	$ret['style'] = $ret['description'] = '';
 
@@ -852,6 +852,11 @@ function liberty_plugins_div_style( $pParamHash ) {
 		// if align is right and text-align isn't set, we'll align that right as well
 		if( empty( $pParamHash['text-align'] ) && ( !empty( $pParamHash['align'] ) && $pParamHash['align'] == 'right' || !empty( $pParamHash['align'] ) && $pParamHash['align'] == 'right' )) {
 			$pParamHash['text-align'] = 'right';
+		}
+
+		// force display:block to the "div" if not specified otherwise
+		if( empty( $pParamHash['display'] )) {
+			$pParamHash['display'] = "block";
 		}
 
 		foreach( $pParamHash as $key => $value ) {
@@ -864,8 +869,6 @@ function liberty_plugins_div_style( $pParamHash ) {
 						$ret[$key] = $value;
 						break;
 					// styling
-					case 'background-color':
-						$key = 'background';
 					case 'width':
 					case 'height':
 						if( preg_match( "/^\d+(em|px|%|pt)$/", trim( $value ) ) ) {
@@ -873,9 +876,10 @@ function liberty_plugins_div_style( $pParamHash ) {
 						} elseif( preg_match( "/^\d+$/", $value ) ) {
 							$ret['style'] .= "{$key}:{$value}px;";
 						}
+						break;
+					case 'background':
+						$key = 'background-color';
 					case 'float':
-					case 'width':
-					case 'height':
 					case 'padding':
 					case 'margin':
 					case 'background':
@@ -886,6 +890,7 @@ function liberty_plugins_div_style( $pParamHash ) {
 					case 'font-size':
 					case 'font-weight':
 					case 'font-family':
+					case 'display':
 						$ret['style'] .= "{$key}:{$value};";
 						break;
 					// align and float are special
@@ -902,13 +907,6 @@ function liberty_plugins_div_style( $pParamHash ) {
 						break;
 				}
 			}
-		}
-
-		// force display:block to the "div" if not specified otherwise
-		if( empty($pParamHash['display_prop']) || !isset($pParamHash['display_prop']) ){
-			$ret['style'] .= "display:block;";
-		}else{
-			$ret['style'] .= "display:" . $pParamHash['display_prop'] . "";
 		}
 	}
 

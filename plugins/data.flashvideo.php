@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.flashvideo.php,v 1.7 2007/02/26 18:03:02 squareing Exp $
+// $Id: data.flashvideo.php,v 1.8 2007/05/20 10:09:14 squareing Exp $
 
 /**
  * definitions
@@ -102,23 +102,23 @@ function data_flashvideo( $pData, $pParams ) { // NOTE: The original plugin had 
 	}
 
 	if( !empty( $att['flv_url'] )) {
-		$div = liberty_plugins_div_style( $pParams );
+		$wrapper = liberty_plugins_wrapper_style( $pParams );
 
 		// mPrefs has been passed to us in $att['prefs']
 		treasury_flv_calculate_videosize( $pParams, $att['prefs'] );
 
 		$sizes = array( 'small', 'medium', 'large', 'huge', 'original' );
 		if( !empty( $pParams['view'] ) && in_array( $pParams['view'], $sizes )) {
-			$div['description'] .= ( !empty( $div['description'] ) ? '<br />' : '' );
-			$div['description'] .= '<a href="'.$att['display_url'].'&size='.$pParams['view'].'">'.tra( "View larger version" ).'</a>';
+			$wrapper['description'] .= ( !empty( $wrapper['description'] ) ? '<br />' : '' );
+			$wrapper['description'] .= '<a href="'.$att['display_url'].'&size='.$pParams['view'].'">'.tra( "View larger version" ).'</a>';
 		}
 
 		$gBitSmarty->assign( 'flvPrefs', $att['prefs'] );
 		$gBitSmarty->assign( 'flv', $att );
 		$ret = $gBitSmarty->fetch( 'bitpackage:treasury/flv_player_inc.tpl' );
 
-		// finally, wrap the output with a div
-		$ret = '<div class="'.( !empty( $div['class'] ) ? $div['class'] : "flashvideo-plugin" ).'" style="'.$div['style'].'">'.$ret.( !empty( $div['description'] ) ? '<br />'.$div['description']  : '' ).'</div>';
+		// finally, wrap the output with a span
+		$ret = '<span class="'.( !empty( $wrapper['class'] ) ? $wrapper['class'] : "flashvideo-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.( !empty( $wrapper['description'] ) ? '<br />'.$wrapper['description']  : '' ).'</span>';
 	} else {
 		$ret = tra( "There doesn't seem to be a valid video stream for the id you used" ).": ".$pParams['id'];
 	}

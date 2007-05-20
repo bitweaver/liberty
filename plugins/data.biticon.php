@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -70,9 +70,9 @@ function data_biticon( $pData, $pParams ) {
 	require_once $gBitSmarty->_get_plugin_filepath( 'function', 'biticon' );
 	$ret = smarty_function_biticon( $biticon, $gBitSmarty );
 
-	$div = liberty_plugins_div_style( $pParams );
-	if( !empty( $div['style'] ) ) {
-		$ret ='<div class="'.( !empty( $div['class'] ) ? $div['class'] : "biticon-plugin" ).'" style="'.$div['style'].'">'.$ret.'</div>';
+	$wrapper = liberty_plugins_wrapper_style( $pParams );
+	if( !empty( $wrapper['style'] ) ) {
+		$ret ='<span class="'.( !empty( $wrapper['class'] ) ? $wrapper['class'] : "biticon-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.'</span>';
 	}
 	return $ret;
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.19 $
+ * @version  $Revision: 1.20 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.19 2007/05/20 01:31:17 laetzer Exp $
+// $Id: data.attachment.php,v 1.20 2007/05/20 10:09:14 squareing Exp $
 
 /**
  * definitions
@@ -81,9 +81,9 @@ function data_attachment_help() {
 					Avaliable content can be viewed <a href="'.LIBERTY_PKG_URL.'list_content.php">here</a>' ).'</td>
 			</tr>
 			<tr class="even">
-				<td>display</td>
+				<td>output</td>
 				<td>'.tra( 'keyword (optional)' ).'</td>
-				<td>'.tra( "If you are attaching a file and you only want to display the description and not the image that goes with it, use: display=desc" ).'</td>
+				<td>'.tra( "If you are attaching a file and you only want to display the description and not the image that goes with it, use: output=desc" ).'</td>
 			</tr>'
 			.'<tr class="odd">'
 				.'<td>'.tra( "styling" ).'</td>'
@@ -119,12 +119,12 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 
 	// check if we have a valid thumbnail
 	if( !empty( $thumburl ) ) {
-		$div = liberty_plugins_div_style( $pParams );
+		$wrapper = liberty_plugins_wrapper_style( $pParams );
 
 		// set up image first
 		$ret = '<img'.
-				' alt="'.  ( !empty( $div['description'] ) ? $div['description'] : tra( 'Image' ) ).'"'.
-				' title="'.( !empty( $div['description'] ) ? $div['description'] : tra( 'Image' ) ).'"'.
+				' alt="'.  ( !empty( $wrapper['description'] ) ? $wrapper['description'] : tra( 'Image' ) ).'"'.
+				' title="'.( !empty( $wrapper['description'] ) ? $wrapper['description'] : tra( 'Image' ) ).'"'.
 				' src="'  .$thumburl.'"'.
 			' />';
 
@@ -149,11 +149,11 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 			$pParams['link'] = $wp->getDisplayUrl( $pParams['page_name'] );
 		}
 
-		if( !empty( $div['description'] ) && !empty( $pParams['display'] ) && ( $pParams['display'] == 'desc' || $pParams['display'] == 'description' ) ) {
-			$ret = ( !empty( $div['description'] )  ? $div['description'] : '' );
-			$nodiv = TRUE;
+		if( !empty( $wrapper['description'] ) && !empty( $pParams['output'] ) && ( $pParams['output'] == 'desc' || $pParams['output'] == 'description' ) ) {
+			$ret = ( !empty( $wrapper['description'] )  ? $wrapper['description'] : '' );
+			$nowrapper = TRUE;
 		} else {
-			$ret .= ( !empty( $div['description'] )  ? '<br />'.$div['description']  : '' );
+			$ret .= ( !empty( $wrapper['description'] )  ? '<br />'.$wrapper['description']  : '' );
 		}
 
 		// use specified link as href. insert default link to source only when 
@@ -175,11 +175,10 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 			}
 		}
 
-		// finally, wrap the output with a span instead of a div to avoid invalid markup if att placed inside paragraph or inline element
-		if( empty( $nodiv ) ) {
+		// finally, wrap the output with a span. this will avoid invalid markup if att placed inside paragraph or inline element
+		if( empty( $nowrapper )) {
 			$ret =
-				'<span class="'.( isset($div) && !empty( $div['class'] ) ? $div['class'] : "att-plugin" ).'" style="'.(isset($div) ? $div['style'] : '').'">'.
-				$ret.'</span>';
+				'<span class="'.( isset( $wrapper ) && !empty( $wrapper['class'] ) ? $wrapper['class'] : "att-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.'</span>';
 		}
 	} else {
 		$ret = tra( "The attachment id given is not valid." );

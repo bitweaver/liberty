@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.13 $
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.13 2006/12/31 11:37:01 squareing Exp $
+ * @version  $Revision: 1.14 $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.14 2007/05/20 10:09:14 squareing Exp $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -78,12 +78,12 @@ function data_img( $pData, $pParams ) {
 		}
 	}
 
-	$div = liberty_plugins_div_style( $pParams );
+	$wrapper = liberty_plugins_wrapper_style( $pParams );
 
 	// check if we have a source to load an image from
 	if( !empty( $pParams['src'] ) ) {
 		// set up image first
-		$alt = ( !empty( $div['description'] ) ? $div['description'] : tra( 'Image' ) );
+		$alt = ( !empty( $wrapper['description'] ) ? $wrapper['description'] : tra( 'Image' ) );
 		$ret = '<img'.
 				' alt="'.  $alt.'"'.
 				' title="'.$alt.'"'.
@@ -92,13 +92,13 @@ function data_img( $pData, $pParams ) {
 			' />';
 
 		// if this image is linking to something, wrap the image with the <a>
-		if( !empty( $div['link'] ) ) {
-			$ret = '<a href="'.trim( $div['link'] ).'">'.$ret.'</a>';
+		if( !empty( $wrapper['link'] ) ) {
+			$ret = '<a href="'.trim( $wrapper['link'] ).'">'.$ret.'</a>';
 		}
 
-		// finally, wrap the image with a div
-		if( !empty( $div['style'] ) || !empty( $class ) || !empty( $div['description'] ) ) {
-			$ret = '<div class="'.( !empty( $div['class'] ) ? $div['class'] : "img-plugin" ).'" style="'.$div['style'].'">'.$ret.'<br />'.( !empty( $div['description'] ) ? $div['description'] : '' ).'</div>';
+		// finally, wrap the image with a span
+		if( !empty( $wrapper['style'] ) || !empty( $class ) || !empty( $wrapper['description'] ) ) {
+			$ret = '<span class="'.( !empty( $wrapper['class'] ) ? $wrapper['class'] : "img-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.'<br />'.( !empty( $wrapper['description'] ) ? $wrapper['description'] : '' ).'</span>';
 		}
 	} else {
 		$ret = '<span class="warning">'.tra( 'When using <strong>{img}</strong> the <strong>src</strong> parameter is required.' ).'</span>';
