@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.18 $
+ * @version  $Revision: 1.19 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.18 2007/04/08 15:17:18 nickpalmer Exp $
+// $Id: data.attachment.php,v 1.19 2007/05/20 01:31:17 laetzer Exp $
 
 /**
  * definitions
@@ -175,11 +175,11 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 			}
 		}
 
-		// finally, wrap the output with a div
+		// finally, wrap the output with a span instead of a div to avoid invalid markup if att placed inside paragraph or inline element
 		if( empty( $nodiv ) ) {
 			$ret =
-				'<div class="'.( isset($div) && !empty( $div['class'] ) ? $div['class'] : "att-plugin" ).'" style="'.(isset($div) ? $div['style'] : '').'">'.
-				$ret.'</div>';
+				'<span class="'.( isset($div) && !empty( $div['class'] ) ? $div['class'] : "att-plugin" ).'" style="'.(isset($div) ? $div['style'] : '').'">'.
+				$ret.'</span>';
 		}
 	} else {
 		$ret = tra( "The attachment id given is not valid." );
