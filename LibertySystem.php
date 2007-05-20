@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.74 2007/05/20 10:09:14 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.75 2007/05/20 10:44:28 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -878,7 +878,7 @@ function liberty_plugins_wrapper_style( $pParamHash ) {
 						}
 						break;
 					case 'background':
-						$key = 'background-color';
+					case 'background-color':
 					case 'float':
 					case 'padding':
 					case 'margin':
