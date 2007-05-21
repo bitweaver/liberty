@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.213 2007/05/21 18:51:51 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.214 2007/05/21 19:14:57 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1887,7 +1887,7 @@ class LibertyContent extends LibertyBase {
 			if( !empty( $contentTypes[$aux['content_type_guid']] ) ) {
 				// quick alias for code readability
 				$type                       = &$contentTypes[$aux['content_type_guid']];
-				$aux['content_description'] = tra( $type['content_description'] );
+				$aux['content_description'] = $type['content_description'];
 				$aux['creator']             = (isset( $aux['creator_real_name'] ) ? $aux['creator_real_name'] : $aux['creator_user'] );
 				$aux['real_name']           = (isset( $aux['creator_real_name'] ) ? $aux['creator_real_name'] : $aux['creator_user'] );
 				$aux['editor']              = (isset( $aux['modifier_real_name'] ) ? $aux['modifier_real_name'] : $aux['modifier_user'] );
