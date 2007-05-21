@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.47 2007/05/21 19:18:32 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.48 2007/05/21 20:44:05 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -259,9 +259,9 @@ class LibertyComment extends LibertyContent {
 
 		$joinSql = $whereSql = '';
 		$bindVars = $ret = array();
-		if ( !empty( $pParamHash['parent_content_type_guid'] ) ) {
-			$whereSql .= " AND ptc.`content_type_guid`=? ";
-			$bindVars[] = $pParamHash['parent_content_type_guid'];
+		if ( !empty( $pParamHash['root_content_type_guid'] ) ) {
+			$whereSql .= " AND rlc.`content_type_guid`=? ";
+			$bindVars[] = $pParamHash['root_content_type_guid'];
 		}
 
 		if ( !empty( $pParamHash['content_type_guid'] ) ) {
@@ -294,14 +294,15 @@ class LibertyComment extends LibertyContent {
 			. " lc.`last_modified` as last_modified, "
 			. " lc.`title` as title,  "
 			. " ptc.content_type_guid as parent_content_type_guid, "
+			. " rlc.content_type_guid as root_content_type_guid, "
 			. " lc.content_type_guid as content_type_guid, "
 			. " uu.`login` AS `creator_user`, "
 			. " uu.`real_name`"
 				  . " FROM `".BIT_DB_PREFIX."liberty_comments` lcm
-				  		INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lcm.`content_id`=lc.`content_id` )
-			      		INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (uu.`user_id`=lc.`user_id`)
-						LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` rlc ON (rlc.`content_id`=lcm.`root_id` )
-						$joinSql ,`".BIT_DB_PREFIX."liberty_content` ptc
+				  		INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcm.`content_id`=lc.`content_id` )
+			      		INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id`=lc.`user_id`)
+						LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` rlc ON( rlc.`content_id`=lcm.`root_id` )
+						$joinSql, `".BIT_DB_PREFIX."liberty_content` ptc
 				  	 WHERE lcm.`parent_id`=ptc.`content_id` $whereSql
 				  	 ORDER BY $sort_mode";
 		if( $result = $this->mDb->query( $query, $bindVars, $pParamHash['max_records'], $pParamHash['offset'] )) {
