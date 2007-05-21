@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.212 2007/05/20 16:56:31 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.213 2007/05/21 18:51:51 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -505,12 +505,13 @@ class LibertyContent extends LibertyBase {
 				WHERE $whereSql $versionSql order by th.`version` desc";
 
 			$result = $this->mDb->query( $query, $bindVars, $max_records, $pOffset );
-			$ret = array();
+			$data = array();
 			while( !$result->EOF ) {
 				$aux = $result->fields;
 				$aux['creator'] = (isset( $aux['creator_real_name'] ) ? $aux['creator_real_name'] : $aux['creator_user'] );
 				$aux['editor'] = (isset( $aux['modifier_real_name'] ) ? $aux['modifier_real_name'] : $aux['modifier_user'] );
-				array_push( $ret, $aux );
+				$data[] = $aux;
+//				array_push( $ret, $aux );
 				$result->MoveNext();
 			}
 
@@ -526,13 +527,17 @@ class LibertyContent extends LibertyBase {
 			
 
 		}
-		$ret["cant"] = $cant;
-		$ret["max_records"] = $max_records;
-		$ret["offset"] = $pOffset;
-// code needs to be updated with pListHash
-//		$ret["find"] = $find;
-//		$ret["sort_mode"] = $sort_mode;
-		return $ret;
+// Temporary patch to get a $pListHash array for the output
+// this needs to be tidied on the input side
+		$pListHash = array();
+		$pListHash["data"] = $data;
+		$pListHash["cant"] = $cant;
+		$pListHash["max_records"] = $max_records;
+		$pListHash["offset"] = $pOffset;
+		$pListHash["find"] = NULL;
+		$pListHash["sort_mode"] = NULL;
+		LibertyContent::postGetList( $pListHash );
+		return $pListHash;
 	}
 
 	/**
