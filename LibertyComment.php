@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.46 2007/05/07 05:10:51 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.47 2007/05/21 19:18:32 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -259,6 +259,11 @@ class LibertyComment extends LibertyContent {
 
 		$joinSql = $whereSql = '';
 		$bindVars = $ret = array();
+		if ( !empty( $pParamHash['parent_content_type_guid'] ) ) {
+			$whereSql .= " AND ptc.`content_type_guid`=? ";
+			$bindVars[] = $pParamHash['parent_content_type_guid'];
+		}
+
 		if ( !empty( $pParamHash['content_type_guid'] ) ) {
 			$whereSql .= " AND rlc.`content_type_guid`=? ";
 			$bindVars[] = $pParamHash['content_type_guid'];
@@ -299,8 +304,11 @@ class LibertyComment extends LibertyContent {
 						$joinSql ,`".BIT_DB_PREFIX."liberty_content` ptc
 				  	 WHERE lcm.`parent_id`=ptc.`content_id` $whereSql
 				  	 ORDER BY $sort_mode";
-		if( $result = $this->mDb->query($query, $bindVars, $pParamHash['max_records'], $pParamHash['offset']) ) {
-			$ret = $result->GetRows();
+		if( $result = $this->mDb->query( $query, $bindVars, $pParamHash['max_records'], $pParamHash['offset'] )) {
+			while( $row = $result->FetchRow() ) {
+				$row['display_link'] = $this->getDisplayLink( $row['content_title'], $row );
+				$ret[] = $row;
+			}
 		}
 
 		return $ret;
