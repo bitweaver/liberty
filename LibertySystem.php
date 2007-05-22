@@ -1,10 +1,9 @@
-
 <?php
 /**
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.76 2007/05/22 22:00:43 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.77 2007/05/22 22:11:46 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
