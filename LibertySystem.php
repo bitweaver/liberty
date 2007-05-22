@@ -1,9 +1,10 @@
+
 <?php
 /**
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.75 2007/05/20 10:44:28 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.76 2007/05/22 22:00:43 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -123,12 +124,14 @@ class LibertySystem extends LibertyBase {
 	 */
 	function purifyHtml($pString, $pForceHTMLPurifier = false) {
 		global $gBitSystem;
+		/* Turn off ability to force until we can resolve some issues.
 		if ($pForceHTMLPurifier) {
 			$purifier = 'htmlpurifier';
 		}
 		else {
-			$purifier = $gBitSystem->getConfig('liberty_html_purifier', 'simple');
-		}
+		*/
+		$purifier = $gBitSystem->getConfig('liberty_html_purifier', 'simple');
+		//		}
 		switch ($purifier) {
 		case 'htmlpurifier':
 		    $pString = $this->advancedPurifyHtml($pString);
