@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.20 $
+ * @version  $Revision: 1.21 $
  * @package  liberty
  * @subpackage functions
  */
@@ -19,7 +19,7 @@ require_once( '../bit_setup_inc.php' );
 include_once( LIBERTY_PKG_PATH.'LibertyStructure.php');
 $gBitSmarty->assign_by_ref( 'feedback', $feedback = array() );
 
-$gBitSystem->loadAjax( 'mochikit', array( 'Iter.js', 'DOM.js', 'Format.js', 'Style.js', 'Signal.js', 'Logging.js', 'ThickBox.js', 'Controls.js' ) );
+$gBitSystem->loadAjax( 'mochikit', array( 'Iter.js', 'DOM.js', 'Format.js', 'Style.js', 'Signal.js', 'Logging.js', 'ThickBox.js', 'Controls.js','Color.js','Position.js','Visual.js' ) );
 
 if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 	$gBitSystem->fatalError( tra( "No structure indicated" ));
@@ -51,24 +51,6 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 	// Store the actively stored structure name
 	$gBitUser->storePreference( 'edit_structure_name', $rootStructure->mInfo['title'] );
 	$gBitUser->storePreference( 'edit_structure_id', $rootStructure->mStructureId );
-
-	if( !$gBitSystem->isFeatureActive( 'wikibook_hide_add_content' ) ) {
-		include_once( LIBERTY_PKG_PATH.'get_content_list_inc.php' );
-		foreach( $contentList['data'] as $cItem ) {
-			$cList[$contentTypes[$cItem['content_type_guid']]][$cItem['content_id']] = $cItem['title'].' [id: '.$cItem['content_id'].']';
-		}
-		$gBitSmarty->assign( 'contentList', $cList );
-		$gBitSmarty->assign( 'contentSelect', $contentSelect );
-		$gBitSmarty->assign( 'contentTypes', $contentTypes );
-
-		$subpages = $gStructure->getStructureNodes($_REQUEST["structure_id"]);
-		$max = count($subpages);
-		$gBitSmarty->assign_by_ref('subpages', $subpages);
-		if ($max != 0) {
-			$last_child = $subpages[$max - 1];
-			$gBitSmarty->assign('insert_after', $last_child["structure_id"]);
-		}
-	}
 
 	if( ( isset( $_REQUEST["action"] ) && ( $_REQUEST["action"] == 'remove' ) ) || !empty( $_REQUEST["confirm"] ) ) {
 		if( $_REQUEST["action"] == 'remove' && !empty( $_REQUEST["confirm"] ) ) {
@@ -127,7 +109,7 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 				$structureHash['content_id'] = $conId;
 				if( $new_structure_id = $gStructure->storeNode( $structureHash ) ) {
 					$structureHash['after_ref_id'] = $new_structure_id;
-					$feedback['success'] = tra( "Items added." );
+					$feedback['success'] = tra( "added to" ).' '.$gContent->getContentTypeDescription();
 				} else {
 					$feedback['failure'] = $gStructure->mErrors;
 				}
@@ -135,7 +117,7 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 		}
 	}
 
-	$rootTree = $rootStructure->getSubTree( $rootStructure->mStructureId );
+	$rootTree = $rootStructure->getSubTree( $rootStructure->mStructureId, NULL, array('thumbnail_size'=>'small') );
 	$gBitSmarty->assign('subtree', $rootTree);
 	$gBitSmarty->assign_by_ref('feedback', $feedback);
 }

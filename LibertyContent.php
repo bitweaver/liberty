@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.214 2007/05/21 19:14:57 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.215 2007/05/30 21:27:28 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1525,6 +1525,7 @@ class LibertyContent extends LibertyBase {
 	* @return string Formated URL address to display the page.
 	*/
 	function getThumbnailUrl( $pSize='small', $pContentId=NULL, $pSecondaryId=NULL ) {
+		return '';
 	}
 
 	/**
@@ -1902,6 +1903,12 @@ class LibertyContent extends LibertyBase {
 					$aux['title']        = $type['content_object']->getTitle( $aux );
 					$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
 					$aux['display_url']  = $type['content_object']->getDisplayUrl( $aux['content_id'], $aux );
+					if( !empty( $pListHash['thumbnail_size'] ) ) {
+						$aux['content_object'] = new $type['handler_class']( NULL, $aux['content_id'] );
+						if( $aux['content_object']->load() ) {
+							$aux['thumbnail_url'] = $aux['content_object']->getThumbnailUrl( $pListHash['thumbnail_size'] );
+						}
+					}
 				}
 				$ret[] = $aux;
 			}
@@ -2658,6 +2665,19 @@ class LibertyContent extends LibertyBase {
 		if( $this->isValid() && $pContentStatusId ) {
 			$this->mDb->query( "UPDATE `".BIT_DB_PREFIX."liberty_content` SET `content_status_id`=? WHERE `content_id`=?", array( $pContentStatusId, $this->mContentId ) );
 		}
+	}
+
+	/**
+	 * getListingPreview -- Returns a string with a preview of the content. 
+	 * @access public
+	 * @return the preview string
+	 **/
+	function getListingPreview( $pMixed ) {
+		global $gBitSystem, $gContent, $gBitSmarty;
+
+
+
+		return $ret;
 	}
 
 	/**

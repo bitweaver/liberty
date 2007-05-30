@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.28 $
+ * @version  $Revision: 1.29 $
  * @package  liberty
  * @subpackage functions
  */
@@ -47,6 +47,8 @@ if( empty( $contentListHash ) ) {
 		'from_date'         => !empty( $_REQUEST["from_date"] ) ? $_REQUEST["from_date"] : NULL,
 		// only display content modified before this (UTC timestamp)
 		'until_date'        => !empty( $_REQUEST["until_date"] ) ? $_REQUEST["until_date"] : NULL,
+		// get a thumbnail - off by default because it is expensive
+		'thumbnail_size'    => !empty( $_REQUEST["thumbnail_size"] ) ? $_REQUEST["thumbnail_size"] : NULL,
 	);
 
 	if( !empty( $_REQUEST['output'] ) && ( $_REQUEST['output'] == 'json' || $_REQUEST['output'] == 'ajax' ) ) {	

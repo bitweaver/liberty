@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.34 2007/01/06 09:46:18 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.35 2007/05/30 21:27:28 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -225,6 +225,12 @@ class LibertyStructure extends LibertyBase {
 						include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
 						$type['content_object'] = new $type['handler_class']();
 					}
+					if( !empty( $pParamHash['thumbnail_size'] ) ) {
+						$aux['content_object'] = new $type['handler_class']( NULL, $aux['content_id'] );
+						if( $aux['content_object']->load() ) {
+							$aux['thumbnail_url'] = $aux['content_object']->getThumbnailUrl( $pParamHash['thumbnail_size'] );
+						}
+					}
 					$aux['title'] = $type['content_object']->getTitle( $aux );
 					$ret[] = $aux;
 				}
@@ -309,13 +315,13 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	// get sub tree of $pStructureId
-	function getSubTree( $pStructureId, $pRootTree = FALSE ) {
+	function getSubTree( $pStructureId, $pRootTree = FALSE, $pListHash=NULL ) {
 		global $gLibertySystem, $gBitSystem;
 		$ret = array();
 		if( @BitBase::verifyId( $pStructureId ) ) {
-			$listHash['structure_id'] = $pStructureId;
-			$structureHash = $this->getStructure( $listHash );
-			$ret = $this->createSubTree( $structureHash, ( ( $pRootTree ) ? $listHash['root_structure_id'] : $pStructureId ) );
+			$pListHash['structure_id'] = $pStructureId;
+			$structureHash = $this->getStructure( $pListHash );
+			$ret = $this->createSubTree( $structureHash, ( ( $pRootTree ) ? $pListHash['root_structure_id'] : $pStructureId ) );
 		}
 		return $ret;
 	}

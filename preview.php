@@ -1,10 +1,12 @@
 <?php
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/preview.php,v 1.1 2007/04/08 18:00:35 nickpalmer Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/preview.php,v 1.2 2007/05/30 21:27:28 spiderr Exp $
 
 // Copyright( c ) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
 // Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
+global $gLightweightScan;
+$gLightwieightScan = TRUE;
 require_once( '../bit_setup_inc.php' );
 
 global $gContent, $gBitSystem, $gBitSmarty;
@@ -21,3 +23,5 @@ if (isset($_REQUEST['closeclick'])) {
 
 header( 'Content-Type: text/html; charset=utf-8' );
 echo $gContent->getPreview();
+
+?>
