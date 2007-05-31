@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.77 2007/05/22 22:11:46 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.78 2007/05/31 22:04:59 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -846,7 +846,7 @@ $gLibertySystem = new LibertySystem();
  * @access public
  * @return hash full of styling goodies
  */
-function liberty_plugins_wrapper_style( $pParamHash ) {
+function liberty_plugins_wrapper_style( $pParamHash, $autoBlock = TRUE ) {
 	$ret = array();
 	$ret['style'] = $ret['description'] = '';
 
@@ -857,7 +857,7 @@ function liberty_plugins_wrapper_style( $pParamHash ) {
 		}
 
 		// force display:block to the "div" if not specified otherwise
-		if( empty( $pParamHash['display'] )) {
+		if( empty( $pParamHash['display'] ) && $autoBlock ) {
 			$pParamHash['display'] = "block";
 		}
 
