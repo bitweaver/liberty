@@ -30,7 +30,7 @@ if (isset($_REQUEST["delete"]) && isset($_REQUEST["hist"])) {
 	$to_version = $gContent->mInfo["version"];
 	$to_lines = explode("\n",$gContent->mInfo["data"]);
 
-	include_once( WIKI_PKG_PATH.'diff.php');
+	include_once( UTIL_PKG_PATH.'diff.php');
 	$diffx = new WikiDiff($from_lines,$to_lines);
 	$fmt = new WikiUnifiedDiffFormatter;
 	$html = $fmt->format($diffx, $from_lines);
