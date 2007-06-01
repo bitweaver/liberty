@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.78 2007/05/31 22:04:59 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.79 2007/06/01 09:02:36 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -846,23 +846,36 @@ $gLibertySystem = new LibertySystem();
  * @access public
  * @return hash full of styling goodies
  */
-function liberty_plugins_wrapper_style( $pParamHash, $autoBlock = TRUE ) {
+function liberty_plugins_wrapper_style( $pParamHash ) {
+	global $gBitSystem;
+
 	$ret = array();
 	$ret['style'] = $ret['description'] = '';
 
-	if( !empty( $pParamHash ) && is_array( $pParamHash ) ) {
+	if( !empty( $pParamHash ) && is_array( $pParamHash )) {
 		// if align is right and text-align isn't set, we'll align that right as well
 		if( empty( $pParamHash['text-align'] ) && ( !empty( $pParamHash['align'] ) && $pParamHash['align'] == 'right' || !empty( $pParamHash['align'] ) && $pParamHash['align'] == 'right' )) {
 			$pParamHash['text-align'] = 'right';
 		}
 
-		// force display:block to the "div" if not specified otherwise
-		if( empty( $pParamHash['display'] ) && $autoBlock ) {
-			$pParamHash['display'] = "block";
+		// this defines what the wrapper should be - div or span
+		// if someone sets this value manually, they know what they are doing
+		if( empty( $pParamHash['wrapper'] )) {
+			$pParamHash['wrapper'] = 'div';
+
+			if( $gBitSystem->isFeatureActive( 'liberty_use_span_wrapper' )) {
+				// set to 'span' if desired
+				$pParamHash['wrapper'] = 'span';
+
+				// force display:block to the "div" if not specified otherwise
+				if( empty( $pParamHash['display'] )) {
+					$pParamHash['display'] = "block";
+				}
+			}
 		}
 
 		foreach( $pParamHash as $key => $value ) {
-			if( !empty( $value ) ) {
+			if( !empty( $value )) {
 				switch( $key ) {
 					// description
 					case 'desc':
@@ -873,9 +886,9 @@ function liberty_plugins_wrapper_style( $pParamHash, $autoBlock = TRUE ) {
 					// styling
 					case 'width':
 					case 'height':
-						if( preg_match( "/^\d+(em|px|%|pt)$/", trim( $value ) ) ) {
+						if( preg_match( "/^\d+(em|px|%|pt)$/", trim( $value ))) {
 							$ret['style'] .= "{$key}:{$value};";
-						} elseif( preg_match( "/^\d+$/", $value ) ) {
+						} elseif( preg_match( "/^\d+$/", $value )) {
 							$ret['style'] .= "{$key}:{$value}px;";
 						}
 						break;

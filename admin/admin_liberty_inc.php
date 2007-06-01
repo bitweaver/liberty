@@ -85,6 +85,12 @@ $formLibertyHtmlPurifierFeatures = array(
 		'note' => 'Allow YouTube videos to be passed through.',
 		'default' => 'n'
 	),
+	// not entirely sure where this should go. liberty plugins? here? some other tab?
+	'liberty_use_span_wrapper' => array(
+		'label'  => 'Use a span wrapper',
+		'note' => 'Some plugins such as the attachment plugin wrap their output with a div. This might not work well when you are using a WYSYWIG such as TinyMCE or FCKeditor in combination with HTML Purifier. There are Pros and Cons to using either wrapper.',
+		'default' => 'n'
+	),
 );
 $gBitSmarty->assign( 'formLibertyHtmlPurifierFeatures', $formLibertyHtmlPurifierFeatures );
 

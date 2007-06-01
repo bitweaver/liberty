@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -72,7 +72,7 @@ function data_biticon( $pData, $pParams ) {
 
 	$wrapper = liberty_plugins_wrapper_style( $pParams, FALSE );
 	if( !empty( $wrapper['style'] ) ) {
-		$ret ='<span class="'.( !empty( $wrapper['class'] ) ? $wrapper['class'] : "biticon-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.'</span>';
+		$ret ='<'.$wrapper['wrapper'].' class="'.( !empty( $wrapper['class'] ) ? $wrapper['class'] : "biticon-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.'</'.$wrapper['wrapper'].'>';
 	}
 	return $ret;
 }

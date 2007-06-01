@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.20 $
+ * @version  $Revision: 1.21 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.20 2007/05/20 10:09:14 squareing Exp $
+// $Id: data.attachment.php,v 1.21 2007/06/01 09:02:37 squareing Exp $
 
 /**
  * definitions
@@ -149,7 +149,7 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 			$pParams['link'] = $wp->getDisplayUrl( $pParams['page_name'] );
 		}
 
-		if( !empty( $wrapper['description'] ) && !empty( $pParams['output'] ) && ( $pParams['output'] == 'desc' || $pParams['output'] == 'description' ) ) {
+		if( !empty( $wrapper['description'] ) && !empty( $pParams['output'] ) && ( $pParams['output'] == 'desc' || $pParams['output'] == 'description' )) {
 			$ret = ( !empty( $wrapper['description'] )  ? $wrapper['description'] : '' );
 			$nowrapper = TRUE;
 		} else {
@@ -175,10 +175,9 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 			}
 		}
 
-		// finally, wrap the output with a span. this will avoid invalid markup if att placed inside paragraph or inline element
+		// finally, wrap the output.
 		if( empty( $nowrapper )) {
-			$ret =
-				'<span class="'.( isset( $wrapper ) && !empty( $wrapper['class'] ) ? $wrapper['class'] : "att-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.'</span>';
+			$ret = '<'.$wrapper['wrapper'].' class="'.( isset( $wrapper ) && !empty( $wrapper['class'] ) ? $wrapper['class'] : "att-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.'</'.$wrapper['wrapper'].'>';
 		}
 	} else {
 		$ret = tra( "The attachment id given is not valid." );

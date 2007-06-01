@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.flashvideo.php,v 1.8 2007/05/20 10:09:14 squareing Exp $
+// $Id: data.flashvideo.php,v 1.9 2007/06/01 09:02:37 squareing Exp $
 
 /**
  * definitions
@@ -117,8 +117,8 @@ function data_flashvideo( $pData, $pParams ) { // NOTE: The original plugin had 
 		$gBitSmarty->assign( 'flv', $att );
 		$ret = $gBitSmarty->fetch( 'bitpackage:treasury/flv_player_inc.tpl' );
 
-		// finally, wrap the output with a span
-		$ret = '<span class="'.( !empty( $wrapper['class'] ) ? $wrapper['class'] : "flashvideo-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.( !empty( $wrapper['description'] ) ? '<br />'.$wrapper['description']  : '' ).'</span>';
+		// finally, wrap the output
+		$ret = '<'.$wrapper['wrapper'].' class="'.( !empty( $wrapper['class'] ) ? $wrapper['class'] : "flashvideo-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.( !empty( $wrapper['description'] ) ? '<br />'.$wrapper['description']  : '' ).'</'.$wrapper['wrapper'].'>';
 	} else {
 		$ret = tra( "There doesn't seem to be a valid video stream for the id you used" ).": ".$pParams['id'];
 	}
