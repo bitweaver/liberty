@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.215 2007/05/30 21:27:28 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.216 2007/06/01 15:13:15 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1274,7 +1274,7 @@ class LibertyContent extends LibertyBase {
 	function addHit() {
 		global $gBitUser,$gBitSystem;
 		if( empty( $_REQUEST['post_comment_submit'] ) && empty( $_REQUEST['post_comment_request'] ) ) {
-			if( $this->mContentId && ( $gBitUser->mUserId != $this->mInfo['user_id'] ) ) {
+			if( @BitBase::verifyId( $this->mContentId ) && !$this->isOwner() ) {
 				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_hits` SET `hits`=`hits`+1, `last_hit`= ? WHERE `content_id` = ?";
 				$result = $this->mDb->query( $query, array( $gBitSystem->getUTCTime(), $this->mContentId ) );
 				$affected_rows = $this->mDb->Affected_Rows();
