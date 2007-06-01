@@ -10,6 +10,7 @@ if( !empty( $gQueryUser->mUserId ) ) {
 
 $listHash = array(
 	'user_id' => $userId,
+	'max_records' => $moduleParams['module_rows'],
 );
 
 if( !empty( $params['root_content_type_guid'] ) && in_array( $params['root_content_type_guid'], array_keys( $gLibertySystem->mContentTypes ))) {
