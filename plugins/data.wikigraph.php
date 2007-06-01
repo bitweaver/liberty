@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wolff_borg <wolff_borg@yahoo.com.au>
 // | Reworked from: wikiplugin_wikigraph.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikigraph.php,v 1.12 2006/08/08 16:06:11 squareing Exp $
+// $Id: data.wikigraph.php,v 1.13 2007/06/01 16:01:33 squareing Exp $
 /**
  * definitions
  */
@@ -110,7 +110,7 @@ include_once( WIKI_PKG_PATH.'BitPage.php');
 include_once( UTIL_PKG_PATH.'GraphViz.php' );
 
 function data_wikigraph( $pData, $pParams ) {
-	global $gContent, $wikilib;
+	global $gContent;
 
 	$add = "";
 	$ret = " ";
@@ -161,6 +161,7 @@ function data_wikigraph( $pData, $pParams ) {
 		$ret = "<div align='center'><img border='0' src=\"".WIKI_PKG_URL."wiki_graph.php?page=".urlencode($pData)."{$add}\" alt='{$title}' usemap='#$mapname' />";
 
 		if( !empty( $pData ) && !empty( $garg ) ) {
+			$wikilib = new WikiLib();
 			$mapdata = $wikilib->get_graph_map( $pData, $level, $garg );
 			$mapdata = preg_replace( "/\n|\r/", '', $mapdata );
 			$ret .= "<map name='$mapname'>$mapdata</map>";
