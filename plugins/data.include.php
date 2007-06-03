@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.include.php,v 1.10 2007/03/07 00:39:06 laetzer Exp $
+// $Id: data.include.php,v 1.11 2007/06/03 18:10:55 squareing Exp $
 
 /**
  * definitions
@@ -67,7 +67,7 @@ function data_include_help() {
 					Avaliable content can be viewed <a href="'.LIBERTY_PKG_URL.'list_content.php">here</a>' ).'</td>
 			</tr>
 		</table>
-		Example: {INCLUDE page_name=15}
+		Example: {INCLUDE page_name=Welcome}
 		Example: {INCLUDE page_id=15}
 		Example: {INCLUDE content_id=15}';
 	return $help;
@@ -91,6 +91,12 @@ function data_include($data, $params) {
 	} elseif( isset( $params['page_name'] ) ) {
 		$ret = "page_name isn't working yet, please use page_id or content_id";
 	}
+
+	// if $ret is empty, we need to make sure there is at least a space that we get rid of the {}
+	if( empty( $ret )) {
+		$ret = ' ';
+	}
+
 	return $ret;
 }
 ?>
