@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.80 2007/05/05 07:27:39 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.81 2007/06/04 05:17:23 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -171,7 +171,8 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 				// - TODO: get common preferences page with this as an option, but right now files are only option cuz no blobs - SPIDERR
 				$storageGuid = !empty( $pParamHash['storage_guid'] ) ? $pParamHash['storage_guid'] : $gBitSystem->getConfig( 'common_storage_plugin', PLUGIN_GUID_BIT_FILES );
 				if( !empty( $pParamHash[$file]['size'] ) ) {
-				$pParamHash[$file]['dest_base_name'] = substr( $pParamHash[$file]['name'], 0, strrpos( $pParamHash[$file]['name'], '.' )  );
+					list( $pParamHash[$file]['name'], $pParamHash[$file]['type'] ) = $gBitSystem->verifyFileExtension( $pParamHash[$file]['tmp_name'], $pParamHash[$file]['name'] );
+					$pParamHash[$file]['dest_base_name'] = substr( $pParamHash[$file]['name'], 0, strrpos( $pParamHash[$file]['name'], '.' )  );
 					$pParamHash[$file]['source_file'] = $pParamHash[$file]['tmp_name'];
 					// lowercase all file extensions
 					$pParamHash[$file]['name'] = $pParamHash[$file]['dest_base_name'].strtolower( substr( $pParamHash[$file]['name'], strrpos( $pParamHash[$file]['name'], '.' ) )  );
