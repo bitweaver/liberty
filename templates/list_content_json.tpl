@@ -11,7 +11,7 @@
 		  "content_description":'{$icontent.content_description}',
 		  "lat":{if $icontent.lat}{$icontent.lat}{else}null{/if},
 		  "lng":{if $icontent.lng}{$icontent.lng}{else}null{/if},
-		  "title":'{$icontent.title}',
+		  "title":'{$icontent.title|addslashes}',
 		  "created":{if $icontent.created}{$icontent.created}{else}null{/if},
 		  "last_modified":{if $icontent.last_modified}{$icontent.last_modified}{else}null{/if},
 		  "modifier_real_name":'{$icontent.modifier_real_name}',
