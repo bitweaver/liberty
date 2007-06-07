@@ -20,6 +20,10 @@ $formLibertyFeatures = array(
 		'label' => 'Allow Owner Change',
 		'note' => 'Allow users with the proper permission to change the owner of content.',
 	),
+	"liberty_inline_diff" => array(
+		'label' => 'Use Inline Diff',
+		'note' => 'Use inline diff tool when diffing revisions instead of the line based unified diff tool. This is particularly useful when using a WYSIWYG editor which tends to put things all on one line. Note that this diff can take advantage of the PECL xdiff package for speed if you have that installed.',
+	),
 );
 
 if( $gBitSystem->isPackageActive( 'quota' )) {

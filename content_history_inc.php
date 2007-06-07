@@ -29,11 +29,20 @@ if (isset($_REQUEST["delete"]) && isset($_REQUEST["hist"])) {
 	$from_lines = explode("\n",$from_page["data"][0]["data"]);
 	$to_version = $gContent->mInfo["version"];
 	$to_lines = explode("\n",$gContent->mInfo["data"]);
-
-	include_once( UTIL_PKG_PATH.'diff.php');
-	$diffx = new WikiDiff($from_lines,$to_lines);
-	$fmt = new WikiUnifiedDiffFormatter;
-	$html = $fmt->format($diffx, $from_lines);
+	
+	if ( $gBitSystem->isFeatureActive('liberty_inline_diff') ) {
+	    include_once( UTIL_PKG_PATH.'pear/Text/Diff/Diff.php' );
+	    include_once( UTIL_PKG_PATH.'pear/Text/Diff/Diff/Renderer/inline.php' );
+	    $diff = &new Text_Diff($from_lines,$to_lines);
+	    $renderer = &new Text_Diff_Renderer_inline();
+	    $html = $renderer->render($diff);
+	}
+	else {
+	    include_once( UTIL_PKG_PATH.'diff.php');
+	    $diffx = new WikiDiff($from_lines,$to_lines);
+	    $fmt = new WikiUnifiedDiffFormatter;
+	    $html = $fmt->format($diffx, $from_lines);
+	}
 	$gBitSmarty->assign('diffdata', $html);
 	$gBitSmarty->assign('diff2', 'y');
 	$gBitSmarty->assign('version_from', $from_version);
