@@ -32,6 +32,7 @@ if (isset($_REQUEST["delete"]) && isset($_REQUEST["hist"])) {
 	
 	if ( $gBitSystem->isFeatureActive('liberty_inline_diff') ) {
 	    include_once( UTIL_PKG_PATH.'pear/Text/Diff/Diff.php' );
+	    include_once( UTIL_PKG_PATH.'pear/Text/Diff/Diff/Renderer.php' );
 	    include_once( UTIL_PKG_PATH.'pear/Text/Diff/Diff/Renderer/inline.php' );
 	    $diff = &new Text_Diff($from_lines,$to_lines);
 	    $renderer = &new Text_Diff_Renderer_inline();
