@@ -22,7 +22,7 @@ $formLibertyFeatures = array(
 	),
 	"liberty_inline_diff" => array(
 		'label' => 'Use Inline Diff',
-		'note' => 'Use inline diff tool when diffing revisions instead of the line based unified diff tool. This is particularly useful when using a WYSIWYG editor which tends to put things all on one line. Note that this diff can take advantage of the PECL xdiff package for speed if you have that installed.',
+		'note' => 'Uses PEAR Text_Wiki, which is installed with the command pear install Text_Wiki, for an inline diff of revisions instead of the line based unified diff tool. This is particularly useful when using a WYSIWYG editor which tends to put things all on one line. Note that this diff can take advantage of the PECL xdiff package for speed if you have that installed.',
 	),
 );
 

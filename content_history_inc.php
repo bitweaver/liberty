@@ -30,13 +30,17 @@ if (isset($_REQUEST["delete"]) && isset($_REQUEST["hist"])) {
 	$to_version = $gContent->mInfo["version"];
 	$to_lines = explode("\n",$gContent->mInfo["data"]);
 	
-	if ( $gBitSystem->isFeatureActive('liberty_inline_diff') ) {
-	    include_once( UTIL_PKG_PATH.'pear/Text/Diff/Diff.php' );
-	    include_once( UTIL_PKG_PATH.'pear/Text/Diff/Diff/Renderer.php' );
-	    include_once( UTIL_PKG_PATH.'pear/Text/Diff/Diff/Renderer/inline.php' );
-	    $diff = &new Text_Diff($from_lines,$to_lines);
-	    $renderer = &new Text_Diff_Renderer_inline();
-	    $html = $renderer->render($diff);
+	/**
+	 * run 'pear install Text_Diff' to install the library,
+	 */ 
+	require_once('PEAR.php');
+	
+	if( $gBitSystem->isFeatureActive('liberty_inline_diff') && 
+		@include_once( 'Text/Diff.php' ) ) {	    
+		include_once( 'Text/Diff/Renderer/inline.php' );
+		$diff = &new Text_Diff($from_lines,$to_lines);
+		$renderer = &new Text_Diff_Renderer_inline();
+		$html = $renderer->render($diff);
 	}
 	else {
 	    include_once( UTIL_PKG_PATH.'diff.php');
