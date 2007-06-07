@@ -52,12 +52,14 @@
 					{if $plugin.plugin_guid == "tikiwiki"}
 						{assign var=format_options value=true}
 						&nbsp;&nbsp;
-						{if $gBitUser->hasPermission( 'p_liberty_enter_html' )}
-							<label><input type="checkbox" name="preferences[content_enter_html]" value="y" id="html" {if $gContent->mPrefs.content_enter_html}checked="checked" {/if}/> {tr}Allow HTML{/tr}</label>
-						{elseif is_object($gContent) && $gContent->getPreference( 'content_enter_html' )}
-							[ {tr}HTML will remain as HTML{/tr} ]
-						{else}
-							[ {tr}HTML will be escaped{/tr} ]
+						{if !$gBitSystem->isFeatureActive('content_force_allow_html')}
+							{if $gBitUser->hasPermission( 'p_liberty_enter_html' )}
+								<label><input type="checkbox" name="preferences[content_enter_html]" value="y" id="html" {if $gContent->mPrefs.content_enter_html}checked="checked" {/if}/> {tr}Allow HTML{/tr}</label>
+							{elseif is_object($gContent) && $gContent->getPreference( 'content_enter_html' )}
+								[ {tr}HTML will remain as HTML{/tr} ]
+							{else}
+								[ {tr}HTML will be escaped{/tr} ]
+							{/if}
 						{/if}
 					{/if}
 					{formhelp note=`$plugin.edit_help`}

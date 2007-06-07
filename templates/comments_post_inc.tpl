@@ -38,7 +38,7 @@
 					</div>
 				{/if}
 
-				{textarea id="commentpost" name="comment_data" rows=$gBitSystem->getConfig('comments_default_post_lines', 6)}{$postComment.data|escape}{/textarea}
+				{textarea id="commentpost" name="comment_data" rows=$gBitSystem->getConfig('comments_default_post_lines', 6)}{$postComment.data}{/textarea}
 				{captcha variant="row"}
 
 				<div class="row submit">
