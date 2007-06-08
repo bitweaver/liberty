@@ -34,8 +34,7 @@ if (isset($_REQUEST["delete"]) && isset($_REQUEST["hist"])) {
 	 * run 'pear install Text_Diff' to install the library,
 	 */ 
 	if( $gBitSystem->isFeatureActive('liberty_inline_diff') ) {
-		require_once('PEAR.php');
-		if( @include_once( 'Text/Diff.php' ) ) {	    
+		if( @include_once( 'PEAR.php') && @@include_once( 'Text/Diff.php' ) ) {	    
 			include_once( 'Text/Diff/Renderer/inline.php' );
 			$diff = &new Text_Diff($from_lines,$to_lines);
 			$renderer = &new Text_Diff_Renderer_inline();
