@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -11,11 +11,12 @@
 define( 'PLUGIN_GUID_TREASURY_FILE', 'treasury' );
 
 $pluginParams = array (
-	'load_function' => 'treasury_file_load',
-	'description' => 'Allow better use of {attachment} plugin with treasury package. If you do not use Treasury, there is no point in activating this plugin.',
-	'edit_label' => 'Treasury File',
-	'plugin_type' => STORAGE_PLUGIN,
-	'auto_activate' => TRUE,
+	'load_function'    => 'treasury_file_load',
+	'expunge_function' => 'treasury_file_expunge',
+	'description'      => 'Allow better use of {attachment} plugin with treasury package. If you do not use Treasury, there is no point in activating this plugin.',
+	'edit_label'       => 'Treasury File',
+	'plugin_type'      => STORAGE_PLUGIN,
+	'auto_activate'    => TRUE,
 );
 
 global $gLibertySystem;
@@ -60,5 +61,21 @@ function treasury_file_load( $pRow ) {
 		}
 	}
 	return( $ret );
+}
+
+function treasury_file_expunge( $pAttachmentId ) {
+	global $gBitSystem;
+	$ret = FALSE;
+
+	if( @BitBase::verifyId( $pAttachmentId )) {
+		$sql = "SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_attachments_map` WHERE `attachment_id` = ?";
+		if( $contentId = $gBitSystem->mDb->getOne( $sql, array( $pAttachmentId ))) {
+			$ti = new TreasuryItem( NULL, $contentId );
+			if( $ti->load() && $ti->expunge() ) {
+				$ret = TRUE;
+			}
+		}
+	}
+	return $ret;
 }
 ?>
