@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.80 2007/06/06 15:14:06 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.81 2007/06/08 16:38:27 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -198,13 +198,60 @@ class LibertySystem extends LibertyBase {
 			}
 		}
 
+		/* Clean up the paragraphs a bit */
+		//		$start = $pString;
+		$pString = $this->cleanupPeeTags($pString);		
+		//		$pee = $pString;
 		$pString = $gHtmlPurifier->purify($pString);
+
+		/*
+		echo "<br/><hr/><br/>".$pString;
+		include_once( 'Text/Diff.php' );    
+		include_once( 'Text/Diff/Renderer/inline.php' );
+		$diff = &new Text_Diff(explode("\n", $start), explode("\n",$pee));
+		$renderer = &new Text_Diff_Renderer_inline();
+		echo "<br/><hr/><br/>". $renderer->render($diff);
+
+		echo "<br/><hr/><br/>".$pString;
+		include_once( 'Text/Diff.php' );    
+		include_once( 'Text/Diff/Renderer/inline.php' );
+		$diff = &new Text_Diff(explode("\n", $pee), explode("\n",$pString));
+		$renderer = &new Text_Diff_Renderer_inline();
+		echo "<br/><hr/><br/>". $renderer->render($diff);
+		die;
+		*/
 
 		/* There isn't an easy way to disable an attribute in HTMLPurifier */
 		$pString = $this->purifyStyle($pString);
 
 		return $pString;
 	}
+
+    function cleanupPeeTags( $pee ) {
+		
+		// Convert us some form feeds for better cross platform support
+		$pee = str_replace(array("\r\n", "\r"), "\n", $pee);
+		
+		// Strip out lots of duplicate newlines now
+		$pee = preg_replace("#\n\n+#", "\n\n", $pee);
+		
+		// Pee in block quotes
+		$pee = preg_replace('#<blockquote(.*?(?:[^>]*))>(.*?)</blockquote>#s', '<blockquote$1><p>$2</p></blockquote>', $pee);
+		
+		// Strip empty pee
+		$pee = preg_replace('#<p>\s*</p>#', '', $pee);
+		
+		// Unpee pre blocks
+		$pee = preg_replace('#(<pre.*?>)(.*?)</pre>#se', 
+							" '$1' . preg_replace('#<br.*?/>#', '"."\n"."', " .
+							"preg_replace('#<p.*?>#', '"."\n"."', " .
+							"preg_replace('#</p>#', '', '$2'))) . '</pre>' ", $pee);
+
+		// Fixup align divs so we can keep them.
+		$pee = preg_replace('#<div(.*?)align="(.*?)"(.*?)>#', '<div$1style="text-align:$2;"$3>', $pee);
+
+		return $pee;
+    }
 
 	/**
 	 * Removes all style both inline and attributes unless the user
