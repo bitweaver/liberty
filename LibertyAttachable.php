@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.81 2007/06/04 05:17:23 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.82 2007/06/08 08:09:35 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -253,31 +253,34 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		global $gLibertySystem, $gBitSystem, $gBitUser;
 		foreach( array_keys( $pParamHash['STORAGE'] ) as $guid ) {
 			$storeRows = &$pParamHash['STORAGE'][$guid]; // short hand variable assignment
-			foreach($storeRows as $key => $value) {
+			foreach( $storeRows as $key => $value ) {
 				$storeRow = &$pParamHash['STORAGE'][$guid][$key];
 				$storeRow['plugin_guid'] = $guid;
 				if (empty($pParamHash['content_id'])) {
 					$storeRow['content_id'] = $gBitUser->mContentId;
-				}
-				else {
+				} else {
 					$storeRow['content_id'] = $pParamHash['content_id']; // copy in content_id
 				}
 
 				if (!empty($pParamHash['content_id'])) {
 					$storeRow['content_id'] = $pParamHash['content_id']; // copy in content_id
 				}
+
 				if (!empty($pParamHash['user_id'])) {
 					$storeRow['user_id'] = $pParamHash['user_id']; // copy in the user_id
-				}
-				else {
+				} else {
 					$storeRow['user_id'] = $gBitUser->mUserId;
 				}
 
 				// do we have a verify function for this storage type, and do things verify?
 				$verifyFunc = $gLibertySystem->getPluginFunction( $guid, 'verify_function' );
 				if( $verifyFunc && $verifyFunc( $storeRow ) ) {
-					$storeRow['attachment_id'] = $this->mDb->GenID( 'liberty_attachments_id_seq' );
-					$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'];
+					// For backwards compatibility with a single upload.
+					if( @BitBase::verifyId( $pParamHash['attachment_id'] )) {
+						$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'] = $pParamHash['attachment_id'];
+					} else {
+						$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'] = $this->mDb->GenID( 'liberty_attachments_id_seq' );
+					}
 
 					// if we have uploaded a file, we can take care of that generically
 					if( is_array( $storeRow['upload'] ) && !empty( $storeRow['upload']['size'] ) ) {
@@ -305,17 +308,19 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 						$this->mStorage = $storeFunc( $storeRow );
 					}
 
-					$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `attachment_id`, `attachment_plugin_guid`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ? )";
-					$rs = $this->mDb->query( $sql, array( $storeRow['attachment_id'], $storeRow['plugin_guid'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
-					if (!empty($storeRow['content_id'])) {
-						$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments_map` (attachment_id, content_id) VALUES (?, ?)";
-						$rs = $this->mDb->query($sql, array( $storeRow['attachment_id'], $storeRow['content_id']));
+					if( !@BitBase::verifyId( $pParamHash['attachment_id'] )) {
+						$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `attachment_id`, `attachment_plugin_guid`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ? )";
+						$rs = $this->mDb->query( $sql, array( $storeRow['attachment_id'], $storeRow['plugin_guid'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
+						if (!empty($storeRow['content_id'])) {
+							$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments_map` (attachment_id, content_id) VALUES (?, ?)";
+							$rs = $this->mDb->query($sql, array( $storeRow['attachment_id'], $storeRow['content_id']));
+						}
 					}
 				}
 			}
+
 			// For backwards compatibility with a single upload.
-			if (empty($pParamHash['attachment_id']) && 
-				!empty($storeRows['upload']['attachment_id'])) {
+			if (empty($pParamHash['attachment_id']) && !empty($storeRows['upload']['attachment_id'])) {
 				$pParamHash['attachment_id'] = $storeRows['upload']['attachment_id'];
 			}
 		}
@@ -338,8 +343,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 								if ($this->mDb->getOne($query, array($id)) == 1) {
 									$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments_map` (attachment_id, content_id) VALUES (?, ?)";
 									$this->mDb->query($query, $bindVars);
-								}
-								else {
+								} else {
 									$this->mErrors[] = tra("No such attachment: ") . $id;
 								}
 							}
