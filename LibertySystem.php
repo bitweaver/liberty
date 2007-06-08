@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.81 2007/06/08 16:38:27 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.82 2007/06/08 20:57:15 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -671,28 +671,6 @@ class LibertySystem extends LibertyBase {
 					}
 					if( !empty( $this->mServices[$service][$package][$pServiceValue] ) ) {
 						$ret[$service] = $this->mServices[$service][$package][$pServiceValue];
-					}
-				}
-			}
-		}
-		return $ret;
-	}
-
-	/**
-	 * Return an associate array of the non empty return values of all the functions with the given arguments
-	 *
-	 * @param $pFunction the liberty name of the function to invoke
-	 * @param $pArgs an array of arguments to the function
-	 * @return array an associate array of the non empty return values
-	 */
-	function invokeServiceFunctionR($pFunction,$pArgs) {
-		$ret = array();
-		if( $funcs = $this->getServiceValues( $pFunction ) ) {
-			foreach( $funcs as $serv => $func ) {
-				if( function_exists( $func ) ) {
-					$v = call_user_func_array($func,$pArgs);
-					if (!empty($v)) {
-						$ret[$serv] =$v;
 					}
 				}
 			}
