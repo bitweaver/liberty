@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.27 $
+ * @version  $Revision: 1.28 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -116,16 +116,19 @@ function bit_files_expunge( $pStorageId ) {
 
 	if (is_numeric($pStorageId)) {
 		$sql = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id` = ?";
-		$row = $gBitSystem->mDb->getRow($sql, array($pStorageId));
-		if ($row) {
+		if( $row = $gBitSystem->mDb->getRow( $sql, array( $pStorageId ))) {
 			$sql = "SELECT * FROM `".BIT_DB_PREFIX."liberty_files` WHERE `file_id` = ?";
-			$fileRow = $gBitSystem->mDb->getRow($sql, array($row['foreign_id']) );
-			if ($fileRow) {
+			if( $fileRow = $gBitSystem->mDb->getRow( $sql, array( $row['foreign_id'] ))) {
 				$absolutePath = BIT_ROOT_PATH.'/'.$fileRow['storage_path'];
 
-				if ($gBitUser->isAdmin() || $gBitUser->mUserId == $row['user_id']) {
-					if (file_exists($absolutePath)) {
-						unlink($absolutePath);
+				if( $gBitUser->isAdmin() || $gBitUser->mUserId == $row['user_id'] ) {
+					if( file_exists( $absolutePath )) {
+						// make sure this is a valid storage directory before removing it
+					   if( preg_match( '!/users/\d+/\d+/\w+/\d+/.+!', $fileRow['storage_path'] )) {
+						   unlink_r( dirname( $absolutePath ));
+					   } else {
+						   unlink( $absolutePath );
+					   }
 					}
 					$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_files` WHERE `file_id` = ?";
 					$gBitSystem->mDb->query($query, array($row['foreign_id']) );
