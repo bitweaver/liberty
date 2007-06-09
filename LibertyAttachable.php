@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.82 2007/06/08 08:09:35 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.83 2007/06/09 00:25:08 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -325,35 +325,39 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			}
 		}
 	}
-
+	
 	function storeExistingAttachments(&$pParamHash) {
 		if( @$this->verifyId( $this->mContentId ) ) {
-			if( @$this->verifyId( $pParamHash['existing_attachment_id'] ) ) {
-				foreach( $pParamHash['existing_attachment_id'] as $existingAttachmentId ) {
-					// allow for multiple values separated by any non numeric character
-					$ids = preg_split( '/\D/', $existingAttachmentId );
-					foreach( $ids as $id ) {
-						$id = ( int )$id;
-						$bindVars = array($id, $this->mContentId);
-						if( @$this->verifyId( $id ) ) {
-							$query = "SELECT COUNT(*) from `".BIT_DB_PREFIX."liberty_attachments_map` WHERE attachment_id = ? AND content_id = ?";
-
-							if($this->mDb->getOne( $query, $bindVars ) == 0) {
-								$query = "SELECT COUNT(*) from `".BIT_DB_PREFIX."liberty_attachments` WHERE attachment_id = ?";
-								if ($this->mDb->getOne($query, array($id)) == 1) {
-									$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments_map` (attachment_id, content_id) VALUES (?, ?)";
-									$this->mDb->query($query, $bindVars);
-								} else {
-									$this->mErrors[] = tra("No such attachment: ") . $id;
-								}
+			// Allow for an array of attachment ids
+		    foreach( $pParamHash['existing_attachment_id'] as $existingAttachmentId ) {
+				// allow for multiple values separated by any non numeric character
+				$ids = preg_split( '/\D/', $existingAttachmentId );
+				foreach( $ids as $id ) {
+					$id = ( int )$id;
+					$bindVars = array($id, $this->mContentId);
+					if( @$this->verifyId( $id ) ) {
+						// Is it already attached?
+						$query = "SELECT COUNT(*) from `".BIT_DB_PREFIX."liberty_attachments_map` WHERE attachment_id = ? AND content_id = ?";
+						if($this->mDb->getOne( $query, $bindVars ) == 0) {
+							// Does the attachment exist?
+							$query = "SELECT COUNT(*) from `".BIT_DB_PREFIX."liberty_attachments` WHERE attachment_id = ?";
+							if ($this->mDb->getOne($query, array($id)) == 1) {
+								// Okay insert it.
+								$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments_map` (attachment_id, content_id) VALUES (?, ?)";
+								$this->mDb->query($query, $bindVars);
+							} else {
+								$this->mErrors[] = tra("No such attachment: ") . $id;
 							}
 						}
+					}
+					else {
+						$this->mErrors[] = tra("Invalid attachment id: ") . $id;
 					}
 				}
 			}
 		}
 	}
-
+	
 	// Things to be stored should be shoved in the array $pParamHash['STORAGE']
 	function store ( &$pParamHash ) {
 		global $gLibertySystem, $gBitSystem;
