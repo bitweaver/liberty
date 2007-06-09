@@ -83,50 +83,6 @@
 			{/legend}
 		{/jstab}
 
-		{jstab title="HTML Cleanup"}
-			{legend legend="Purification System"}
-				<div class="row">
-					{formlabel label="Purification System"}
-					{forminput}
-						{html_options name=liberty_html_purifier options=$gLibertySystem->purifyHtmlMethods() selected=$gBitSystem->getConfig('liberty_html_purifier', 'simple')}
-						{formhelp note="Which system should be used to purify incoming HTML. The simple algorithm is faster but <strong>far less</strong> robust and secure than <a href=http://htmlpurifier.org>HTML Purifier</a> which has a much richer feature set. HTMLPurifier is recommended to protect against the most XSS attacks. The Simple system is known to <strong>fail XSS smoke tests</strong> and is therefore not recommended."}
-					{/forminput}
-				</div>
-			{/legend}
-
-			{legend legend="Simple Purifier Features"}
-				<div class="row">
-					{formlabel label="Acceptable HTML tags" for="approved_html_tags"}
-					{formfeedback warning=$errors.warning}
-					{forminput}
-						<input type="text" id="approved_html_tags" name="approved_html_tags" size="50" maxlength="250" value="{$approved_html_tags|escape}" />
-						{formhelp note="List of allowed HTML tags. All other tags will be stripped when users save content. This will affect all format plugins and all purification systems."}
-					{/forminput}
-				</div>
-			{/legend}
-
-			{legend legend="HTMLPurifier Features"}
-				<div class="row">
-					{formlabel label="Blacklisted HTML tags" for="blacklisted_html_tags"}
-					{formfeedback warning=$errors.blacklist}
-					{forminput}
-						<input type="text" id="blacklisted_html_tags" name="blacklisted_html_tags" size="50" maxlength="250" value="{$gBitSystem->getConfig('blacklisted_html_tags')|escape}" />
-						{formhelp note="A comma seperated list of tags that should NOT be allowed in any content."}
-					{/forminput}
-				</div>
-
-				{foreach from=$formLibertyHtmlPurifierFeatures key=item item=output}
-					<div class="row">
-						{formlabel label=`$output.label` for=$item}
-						{forminput}
-							{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item, $output.default) labels=false id=$item}
-							{formhelp note=`$output.note` page=`$output.page`}
-						{/forminput}
-					</div>
-				{/foreach}
-			{/legend}
-		{/jstab}
-
 		{jstab title="Image Processing System"}
 			{legend legend="Image Processing System"}
 				<input type="hidden" name="page" value="{$page}" />

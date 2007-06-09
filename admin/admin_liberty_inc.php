@@ -24,6 +24,12 @@ $formLibertyFeatures = array(
 		'label' => 'Use Inline Diff',
 		'note' => 'Uses PEAR Text_Wiki, which is installed with the command pear install Text_Wiki, for an inline diff of revisions instead of the line based unified diff tool. This is particularly useful when using a WYSIWYG editor which tends to put things all on one line. Note that this diff can take advantage of the PECL xdiff package for speed if you have that installed.',
 	),
+	// not entirely sure where this should go. liberty plugins? here? some other tab?
+	'liberty_use_span_wrapper' => array(
+		'label'  => 'Use a span wrapper',
+		'note' => 'Some plugins such as the attachment plugin wrap their output with a div. This might not work well when you are using a WYSYWIG such as TinyMCE or FCKeditor in combination with HTML Purifier. There are Pros and Cons to using either wrapper.',
+		'default' => 'n'
+	),
 );
 
 if( $gBitSystem->isPackageActive( 'quota' )) {
@@ -40,63 +46,6 @@ if( $gBitSystem->isPackageActive( 'protector' )) {
 	);
 }
 $gBitSmarty->assign( 'formLibertyFeatures', $formLibertyFeatures );
-
-$formLibertyHtmlPurifierFeatures = array(
-	'liberty_html_pure_escape_bad' => array(
-		'label' => 'Escape invalid HTML',
-		'note' => ' Escapes invlid HTML as text. Otherwise invalid HTML is silently dropped. See <a href="http://htmlpurifier.org/live/configdoc/plain.html#Core.EscapeInvalidTags">this</a> and <a href="http://htmlpurifier.org/live/configdoc/plain.html#Core.EscapeInvalidChildren">this</a> for more information.',
-		'default' => 'y'
-	),
-	'liberty_html_pure_disable_extern' => array(
-		'label' => 'Disable External Links',
-		'note' => 'Disables links to external websites which is effective against spam. See <a href="http://htmlpurifier.org/live/configdoc/plain.html#URI.DisableExternal">this</a> for more information.',
-		'default' => 'n'
-	),
-	'liberty_html_pure_disable_extern_res' => array(
-		'label' => 'Disable External Resounces',
-		'note' => 'Disables the embedding of external resource like images from other hosts. See <a href="http://htmlpurifier.org/live/configdoc/plain.html#URI.DisableExternalResources">this</a> for more information.',
-		'default' => 'y'
-	),
-	'liberty_html_pure_disable_res' => array(
-		'label' => 'Disable All Resources',
-		'note' => 'Disables the embedding of all resources preventing users from including pictures at all. See <a href="http://htmlpurifier.org/live/configdoc/plain.html#URI.DisableResources">this</a> for more information.',
-		'default' => 'n'
-	),
-	'liberty_html_pure_disable_uri' => array(
-		'label' => 'Disable all URIs',
-		'note' => 'Disables all URIs in all forms within submitted content. See <a href="http://htmlpurifier.org/live/configdoc/plain.html#URI.Disable">this</a> for more information.',
-		'default' => 'n'
-	),
-	'liberty_html_pure_use_redirect' => array(
-		'label' => 'Use Redirect',
-		'note' => 'Uses the redirect service in the Redirect URI. This can be handy to track clicks out and prevent leacks of PageRank. See <a href="http://htmlpurifier.org/live/configdoc/plain.html#URI.Munge">this</a> for more information.',
-		'default' => 'n'
-	),
-	'liberty_html_pure_strict_html' => array(
-		'label' => 'Force Strict',
-		'note' => 'Determines if the purification matches the Transitional or Strict rule sets. See <a href="http://htmlpurifier.org/live/configdoc/plain.html#HTML.Strict">this</a> for more information.',
-		'default' => 'y'
-	),
-	'liberty_html_pure_xhtml' => array(
-		'label'  => 'Force XHTML',
-		'note' => 'Determine if purification forces only XHTML tags or if it allows standard HTML.',
-		'default' => 'y'
-	),
-	// TODO: We should parse the plugins directory to generate these
-	// so that new plugins just have to be dropped in the dir and turned on.
-	'liberty_html_pure_allow_youtube' => array(
-		'label' => 'Allow YouTube',
-		'note' => 'Allow YouTube videos to be passed through.',
-		'default' => 'n'
-	),
-	// not entirely sure where this should go. liberty plugins? here? some other tab?
-	'liberty_use_span_wrapper' => array(
-		'label'  => 'Use a span wrapper',
-		'note' => 'Some plugins such as the attachment plugin wrap their output with a div. This might not work well when you are using a WYSYWIG such as TinyMCE or FCKeditor in combination with HTML Purifier. There are Pros and Cons to using either wrapper.',
-		'default' => 'n'
-	),
-);
-$gBitSmarty->assign( 'formLibertyHtmlPurifierFeatures', $formLibertyHtmlPurifierFeatures );
 
 $formLibertyTextareaFeatures = array(
 	"liberty_textarea_height" => array(
@@ -164,26 +113,17 @@ $formValues = array( 'image_processor', 'liberty_attachment_link_format', 'comme
 
 if( !empty( $_REQUEST['change_prefs'] )) {
 	$errors = array();
-	$formFeatures = array_merge( $formLibertyCache, $formLibertyFeatures, $formImageFeatures, $formCaptcha, $formLibertyHtmlPurifierFeatures );
+	$formFeatures = array_merge( $formLibertyCache, $formLibertyFeatures, $formImageFeatures, $formCaptcha );
 	foreach( $formFeatures as $item => $data ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
 	foreach( $formLibertyTextareaFeatures as $item => $data ) {
 		simple_set_value( $item, LIBERTY_PKG_NAME );
 	}
-	simple_set_value('liberty_html_purifier', LIBERTY_PKG_NAME );
 	simple_set_value( 'liberty_attachment_style', LIBERTY_PKG_NAME );
 	$gBitSystem->storeConfig('liberty_cache', $_REQUEST['liberty_cache'], LIBERTY_PKG_NAME );
 	$gBitSystem->storeConfig('liberty_auto_display_attachment_thumbs', $_REQUEST['liberty_auto_display_attachment_thumbs'], LIBERTY_PKG_NAME );
 
-	if( !empty($_REQUEST['blacklisted_html_tags'] )) {
-	    $tags = preg_replace( '/\s/', '', $_REQUEST['blacklisted_html_tags'] );
-		if( strlen( $tags ) > 250 ) {
-			$tags = substr( $tags, 0, 250 );
-			$errors['blacklist'] = 'The blacklisted tags list has been shortened. You can only have 250 characters for blacklisted tags.';
-		}
-		$gBitSystem->storeConfig('blacklisted_html_tags', $tags , LIBERTY_PKG_NAME );
-	}
 	if( $_REQUEST['approved_html_tags'] != DEFAULT_ACCEPTABLE_TAGS ) {
 		$tags = preg_replace( '/\s/', '', $_REQUEST['approved_html_tags'] );
 		$lastAngle = strrpos( $tags, '>' ) + 1;
