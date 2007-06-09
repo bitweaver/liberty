@@ -41,6 +41,9 @@
 													<h3>{$plugin.title|escape}</h3>
 												{/if}
 												{$plugin.description}
+												{if $plugin.plugin_settings_url}
+													<br /><a href="{$plugin.plugin_settings_url}">Plugin Settings</a>
+												{/if}
 											</td>
 											<td>{$guid}</td>
 											{if $plugin_type eq 'format'}

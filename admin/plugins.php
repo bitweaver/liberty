@@ -51,5 +51,5 @@ $gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
 ksort( $types );
 $gBitSmarty->assign_by_ref( 'pluginTypes', $types );
 
-$gBitSystem->display( 'bitpackage:liberty/admin_plugins.tpl');
+$gBitSystem->display( 'bitpackage:liberty/admin_plugins.tpl', tra( 'Liberty Plugins' ));
 ?>
