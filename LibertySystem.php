@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.82 2007/06/08 20:57:15 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.83 2007/06/09 10:47:36 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -26,6 +26,7 @@
 define( 'STORAGE_PLUGIN', 'storage' );
 define( 'FORMAT_PLUGIN', 'format' );
 define( 'DATA_PLUGIN', 'data' );
+define( 'FILTER_PLUGIN', 'filter' );
 
 // Service Definitions
 define( 'LIBERTY_SERVICE_ACCESS_CONTROL', 'access_control' );
@@ -543,6 +544,25 @@ class LibertySystem extends LibertyBase {
 	}
 
 	/**
+	 * getPluginType will fetch all plugins of a given type
+	 * 
+	 * @param string $pPluginType 
+	 * @access public
+	 * @return an array of plugins of a given type
+	 */
+	function getPluginsOfType( $pPluginType ) {
+		$ret = array();
+		if( !empty( $pPluginType )) {
+			foreach( $this->mPlugins as $guid => $plugin ) {
+				if( !empty( $plugin['plugin_type'] ) && $plugin['plugin_type'] == $pPluginType ) {
+					$ret[$guid] = $plugin;
+				}
+			}
+		}
+		return $ret;
+	}
+
+	/**
 	 * This function will purge all plugin settings set in kernel_config. useful when the path to plugins changes 
 	 * or plugins don't seem to be working
 	 * 
@@ -718,6 +738,11 @@ class LibertySystem extends LibertyBase {
 	}
 }
 
+global $gLibertySystem;
+$gLibertySystem = new LibertySystem();
+
+
+
 /**
  * This crazy function will parse all the data plugin stuff found within any 
  * parsed text section
@@ -857,11 +882,6 @@ function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser, &$pComm
 		} // while
 	}
 }
-
-global $gLibertySystem;
-$gLibertySystem = new LibertySystem();
-
-
 
 // generic functions that make the life of a plugin easier
 /**
