@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -88,10 +88,6 @@ $ret = $parser->getParsed();
 			$page_parse_pq = preg_quote($page_parse, "/");
 			$ret = preg_replace("/\(\($page_parse_pq\)\)/", "$repl", $ret);
 		}
-	}
-	// this function is called manually, since it processes the HTML code
-	if( preg_match( "/\{maketoc.*?\}/i", $ret ) && @$gLibertySystem->mPlugins['datamaketoc']['is_active'] == 'y' ) {
-		$ret = data_maketoc( $ret );
 	}
 	return $ret;
 }

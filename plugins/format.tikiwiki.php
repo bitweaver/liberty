@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.96 $
+ * @version  $Revision: 1.97 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -1527,11 +1527,6 @@ class TikiWikiParser extends BitBase {
 		$data = str_replace( "<!-- bitremovebr --><br />", "", $data );
 
 		global $gLibertySystem;
-		// create a table of contents for this page
-		// this function is called manually, since it processes the HTML code
-		if( preg_match( "/\{maketoc.*?\}/i", $data ) && $gLibertySystem->isPluginActive( 'datamaketoc' )) {
-			$data = data_maketoc($data);
-		}
 
 		return $data;
 	}

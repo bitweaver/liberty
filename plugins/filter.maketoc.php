@@ -1,92 +1,44 @@
 <?php
 /**
- * @version  $Revision: 1.19 $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.1 2007/06/09 14:20:39 squareing Exp $
  * @package  liberty
- * @subpackage plugins_data
+ * @subpackage plugins_filter
  */
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2004, bitweaver.org
-// +----------------------------------------------------------------------+
-// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
-// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
-// |
-// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
-// | -> see http://phpdocu.sourceforge.net/
-// +----------------------------------------------------------------------+
-// | Author: xing <xing@synapse.plus.com>
-// +----------------------------------------------------------------------+
-// $Id: data.maketoc.php,v 1.19 2007/03/01 20:37:40 squareing Exp $
 
 /**
- * definitions
+ * definitions ( guid character limit is 16 chars )
  */
-define( 'PLUGIN_GUID_DATAMAKETOC', 'datamaketoc' );
-global $gLibertySystem;
-global $gContent;
-$pluginParams = array (
-	'tag'           => 'maketoc',
-	'auto_activate' => TRUE,
-	'requires_pair' => FALSE,
-	'load_function' => '',
-	'title'         => 'Page Table of Contents',
-	'help_page'     => 'DataPluginMakeTOC',
-	'description'   => tra("Will create a table of contents of the WikiPage based on the headings below."),
-	'help_function' => 'data_maketoc_help',
-	'syntax'        => "{MAKETOC}",
-	'path'          => LIBERTY_PKG_PATH.'plugins/data.maketoc.php',
-	'security'      => 'registered',
-	'plugin_type'   => DATA_PLUGIN,
-	'biticon'       => '{biticon iclass="quicktag icon" ipackage=quicktags iname=maketoc iexplain="Page Table of Contents"}',
-	'taginsert'     => '{maketoc}'
-);
-$gLibertySystem->registerPlugin( PLUGIN_GUID_DATAMAKETOC, $pluginParams );
-$gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAMAKETOC );
+define( 'PLUGIN_GUID_FILTERMAKETOC', 'filtermaketoc' );
 
-// Help Function
-function data_maketoc_help() {
-	$help =
-		'<table class="data help">
-			<tr>
-				<th>'.tra( "Key" ).'</th>
-				<th>'.tra( "Type" ).'</th>
-				<th>'.tra( "Comments" ).'</th>
-			</tr>
-			<tr class="odd">
-				<td>maxdepth</td>
-				<td>'.tra( "numeric").'<br />('.tra("optional").')</td>
-				<td>'.tra( 'If you specify 3 here, MakeTOC will only parse headings to the h3 level.' ).'</td>
-			</tr>
-			<tr class="even">
-				<td>include</td>
-				<td>'.tra( "string").'<br />('.tra("optional").')</td>
-				<td>'.tra( 'If you include <strong>all</strong>, it will print a list of the full list of contents, regardless of where in the page {maketoc} is.' ).'</td>
-			</tr>
-			<tr class="odd">
-				<td>backtotop</td>
-				<td>'.tra( "boolean").'<br />('.tra("optional").')</td>
-				<td>'.tra( 'If you set backtotop <strong>' ).'true'.( '</strong>, it will insert a "back to the top" link.' ).'</td>
-			</tr>
-			<tr class="even">
-				<td>class</td>
-				<td>'.tra( "string").'<br />('.tra("optional").')</td>
-				<td>'.tra( 'Override the class of the maketoc div.' ).'</td>
-			</tr>
-			<tr class="odd">
-				<td>width</td>
-				<td>'.tra( "string").'<br />('.tra("optional").')</td>
-				<td>'.tra( 'Override the width of the maketoc div.' ).'</td>
-			</tr>
-			<tr class="even">
-				<td>type</td>
-				<td>'.tra( "key words").'<br />('.tra("optional").')</td>
-				<td>'.tra( 'Setting this to dropdown will create a dropdown instead of the default nested list of headings.' ).'</td>
-			</tr>
-		</table>'.
-		tra("Example: ").'{MAKETOC maxdepth=3 include=all backtotop=true}';
-	return $help;
+global $gLibertySystem;
+
+$pluginParams = array (
+	'title'                    => 'Table of Contents',
+	'description'              => 'Will create a nested table of contents based on the HTML headings in the page.',
+	'auto_activate'            => TRUE,
+	'path'                     => LIBERTY_PKG_PATH.'plugins/filter.maketoc.php',
+	'plugin_type'              => FILTER_PLUGIN,
+
+	// filter functions
+	'postsplitfilter_function' => 'maketoc_postsplitfilter',
+	'postfilter_function'      => 'maketoc_postfilter',
+
+	// these settings are to get the plugin help working on content edit pages
+	'tag'                      => 'maketoc',
+	'help_page'                => 'Maketoc Filter',
+	'help_function'            => 'data_maketoc_help',
+	'syntax'                   => '{maketoc}',
+	'biticon'                  => '{biticon iclass="quicktag icon" ipackage=quicktags iname=maketoc iexplain="Page Table of Contents"}',
+);
+$gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERMAKETOC, $pluginParams );
+
+function maketoc_postsplitfilter( $pFilterHash ) {
+	// we remove the maketoc stuff when the data is split. this will simplify output and won't mess with the layout on the articles / blogs front page
+	return( preg_replace( "/\{maketoc[^\}]*\}\s*(<br[^>]*>)*/i", "", $pFilterHash['data'] ));
 }
 
-function data_maketoc( $data ) {
+function maketoc_postfilter( $pFilterHash ) {
+	$data = $pFilterHash['data'];
 	preg_match_all( "/\{maketoc(.*?)\}/", $data, $maketocs );
 	// extract the parameters for maketoc
 	foreach( $maketocs[1] as $string ) {
@@ -258,5 +210,49 @@ function maketoc_create_list( $pTocHash, $pParams ) {
 	$list = "<div $class $width><h3>" .( !empty( $pParams['title'] ) ? $pParams['title'] : tra( 'Page Contents' ) ).'</h3>'.$list.$toplink.'</div>';
 
 	return $list;
+}
+
+// Help Function
+function data_maketoc_help() {
+	$help =
+		'<table class="data help">
+			<tr>
+				<th>'.tra( "Key" ).'</th>
+				<th>'.tra( "Type" ).'</th>
+				<th>'.tra( "Comments" ).'</th>
+			</tr>
+			<tr class="odd">
+				<td>maxdepth</td>
+				<td>'.tra( "numeric").'<br />('.tra("optional").')</td>
+				<td>'.tra( 'If you specify 3 here, MakeTOC will only parse headings to the h3 level.' ).'</td>
+			</tr>
+			<tr class="even">
+				<td>include</td>
+				<td>'.tra( "string").'<br />('.tra("optional").')</td>
+				<td>'.tra( 'If you include <strong>all</strong>, it will print a list of the full list of contents, regardless of where in the page {maketoc} is.' ).'</td>
+			</tr>
+			<tr class="odd">
+				<td>backtotop</td>
+				<td>'.tra( "boolean").'<br />('.tra("optional").')</td>
+				<td>'.tra( 'If you set backtotop <strong>' ).'true'.( '</strong>, it will insert a "back to the top" link.' ).'</td>
+			</tr>
+			<tr class="even">
+				<td>class</td>
+				<td>'.tra( "string").'<br />('.tra("optional").')</td>
+				<td>'.tra( 'Override the class of the maketoc div.' ).'</td>
+			</tr>
+			<tr class="odd">
+				<td>width</td>
+				<td>'.tra( "string").'<br />('.tra("optional").')</td>
+				<td>'.tra( 'Override the width of the maketoc div.' ).'</td>
+			</tr>
+			<tr class="even">
+				<td>type</td>
+				<td>'.tra( "key words").'<br />('.tra("optional").')</td>
+				<td>'.tra( 'Setting this to dropdown will create a dropdown instead of the default nested list of headings.' ).'</td>
+			</tr>
+		</table>'.
+		tra("Example: ").'{maketoc maxdepth=3 include=all backtotop=true}';
+	return $help;
 }
 ?>
