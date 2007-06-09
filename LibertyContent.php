@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.220 2007/06/09 11:57:47 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.221 2007/06/09 14:10:03 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2128,7 +2128,7 @@ class LibertyContent extends LibertyBase {
 	 * 
 	 * @param array $pFilterHash array of data that should be filtered
 	 * @param string $pFilterHash[data] is the actual data that needs to be filtered
-	 * @param keyword $pFilterStage specify what filter stage the data is at: pre, post or split
+	 * @param keyword $pFilterStage specify what filter stage the data is at: pre, post, presplit or postsplit
 	 * @access public
 	 * @return filtered data
 	 */
