@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.216 2007/06/01 15:13:15 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.217 2007/06/09 11:19:57 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2082,7 +2082,7 @@ class LibertyContent extends LibertyBase {
 		if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && !empty( $parseHash['content_id'] ) && empty( $parseHash['no_cache'] ) ) {			
 			if( $cacheFile = LibertyContent::getCacheFile( $parseHash['content_id'], $parseHash['cache_extension'] ) ) {
 				// Attempt to read cache file
-				if (! ($ret = LibertyContent::readCacheFile($cacheFile)) ) {
+				if( !( $ret = LibertyContent::readCacheFile( $cacheFile ))) {
 					// Read failed. Parse and store.
 					if( !empty( $parseHash['data'] ) && $formatGuid ) {
 						if( $func = $gLibertySystem->getPluginFunction( $formatGuid, 'load_function' ) ) {
@@ -2094,15 +2094,19 @@ class LibertyContent extends LibertyBase {
 						}
 					}
 					LibertyContent::writeCacheFile($cacheFile, $ret);
-				}
-				else {
+				} else {
 					// Note that we read from cache.
 					$pCommonObject->mInfo['is_cached'] = TRUE;
 				}
 			}
 		}
-					
-		if (!$ret) {
+
+		// ======================== NOTE
+		// this is not complete yet - i just put the filter stuff here to illustrate how i think it should work.
+		// these places look logical to me, but i haven't fiddled with html purifier so i'm not sure...
+		// ======================== NOTE
+		if( empty( $ret )) {
+			$parseHash['data'] = $this->filterData( $parseHash, 'pre' );
 			if( !empty( $parseHash['data'] ) && $formatGuid ) {
 				if( $func = $gLibertySystem->getPluginFunction( $formatGuid, 'load_function' ) ) {
 					$ret = $func( $parseHash, $this );
@@ -2112,11 +2116,33 @@ class LibertyContent extends LibertyBase {
 					}
 				}
 			}
+			$parseHash['data'] = $this->filterData( $parseHash, 'post' );
 		}
 
 		return $ret;
 	}
 
+	/**
+	 * filterData will apply one of the specified filter stages to the input data
+	 * 
+	 * @param array $pFilterHash array of data that should be filtered
+	 * @param string $pFilterHash[data] is the actual data that needs to be filtered
+	 * @param keyword $pFilterStage specify what filter stage the data is at: pre, post or split
+	 * @access public
+	 * @return filtered data
+	 */
+	function filterData( &$pFilterHash, $pFilterStage = 'pre' ) {
+		global $gLibertySystem;
+		$ret = '';
+		if( $filters = $gLibertySystem->getPluginsOfType( FILTER_PLUGIN )) {
+			foreach( $filters as $guid => $filter ) {
+				if( $gLibertySystem->isPluginActive( $guid ) && $func = $gLibertySystem->getPluginFunction( $guid, $pFilterStage.'filter_function' )) {
+					$ret = $func( $pFilterHash );
+				}
+			}
+		}
+		return $ret;
+	}
 
 	/**
 	* Special parsing for multipage articles
