@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.218 2007/06/09 11:32:30 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.219 2007/06/09 11:53:36 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2116,6 +2116,7 @@ class LibertyContent extends LibertyBase {
 					}
 				}
 			}
+			$parseHash['data'] = $ret;
 			$parseHash['data'] = $this->filterData( $parseHash, 'post' );
 		}
 
