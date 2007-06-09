@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -19,7 +19,7 @@
 // | Rewrote data function so plugin can cover more types of objects than just Flash
 // | by: Jasp (Jared Woodbridge) <jaspp@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.object.php,v 1.3 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.object.php,v 1.4 2007/06/09 18:09:39 squareing Exp $
 
 /**
  * definitions
@@ -31,7 +31,7 @@ define( 'PLUGIN_GUID_DATAOBJECT', 'dataobject' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'OBJECT',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_object',
 	'title' => 'Object',

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.copyright.php,v 1.6 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.copyright.php,v 1.7 2007/06/09 18:09:39 squareing Exp $
 
 /**
  * definitions
@@ -29,7 +29,7 @@ define( 'PLUGIN_GUID_DATACOPYRIGHT', 'datacopyright' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'COPYRIGHT',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_copyright',
 	'title' => 'CopyRight',

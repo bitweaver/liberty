@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.countdown.php,v 1.7 2007/04/30 04:52:43 laetzer Exp $
+// $Id: data.countdown.php,v 1.8 2007/06/09 18:09:39 squareing Exp $
 
 /**
  * definitions
@@ -26,7 +26,7 @@ define( 'PLUGIN_GUID_DATACOUNTDOWN', 'datacountdown' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'COUNTDOWN',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_countdown',
 	'title' => 'CountDown',

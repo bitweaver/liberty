@@ -28,7 +28,7 @@ define( 'PLUGIN_GUID_DATAQUOTE', 'dataquote' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'quote',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_quote',
 	'help_function' => 'data_quote_help',

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -24,7 +24,7 @@ global $gLibertySystem;
 define( 'PLUGIN_GUID_DATADROPDOWN', 'datadropdown' );
 $pluginParams = array (
 	'tag' => 'DD',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_dropdown',
 	'title' => 'DropDown',

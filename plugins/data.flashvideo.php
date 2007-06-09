@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.flashvideo.php,v 1.9 2007/06/01 09:02:37 squareing Exp $
+// $Id: data.flashvideo.php,v 1.10 2007/06/09 18:09:39 squareing Exp $
 
 /**
  * definitions
@@ -26,7 +26,7 @@ define( 'PLUGIN_GUID_DATAFLASHVIDEO', 'dataflashvideo' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag'           => 'flashvideo',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_flashvideo',
 	'title'         => 'Flash Video',

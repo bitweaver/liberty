@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.gauge.php,v 1.10 2007/04/29 18:41:38 laetzer Exp $
+// $Id: data.gauge.php,v 1.11 2007/06/09 18:09:39 squareing Exp $
 
 /**
  * definitions
@@ -26,7 +26,7 @@ define( 'PLUGIN_GUID_DATAGAUGE', 'datagauge' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'GAUGE',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_gauge',
 	'title' => 'Gauge',

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.agentinfo.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.agentinfo.php,v 1.8 2007/06/09 18:09:39 squareing Exp $
 
 /**
  * definitions
@@ -26,7 +26,7 @@ define( 'PLUGIN_GUID_DATAAGENTINFO', 'dataagentinfo' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'AGENTINFO',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_agentinfo',
 	'title' => 'AgentInfo',

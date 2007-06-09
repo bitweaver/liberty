@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked & Undoubtedly Screwed-Up for (Bitweaver)
 // | by: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.sf.php,v 1.9 2006/08/05 16:21:57 squareing Exp $
+// $Id: data.sf.php,v 1.10 2007/06/09 18:09:39 squareing Exp $
 
 /**
  * definitions
@@ -28,7 +28,7 @@ define('DEF_TAG','bugs');
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'SF',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_sf',
 	'title' => 'SourceForge',

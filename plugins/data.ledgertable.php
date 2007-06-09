@@ -1,10 +1,10 @@
 <?php
-// $Id: data.ledgertable.php,v 1.4 2006/08/07 22:14:58 squareing Exp $
+// $Id: data.ledgertable.php,v 1.5 2007/06/09 18:09:39 squareing Exp $
 /**
  * assigned_modules
  *
  * @author   KainX <mej@kainx.org>
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -16,7 +16,8 @@
  ******************/
 define( 'PLUGIN_GUID_DATALEDGERTABLE', 'dataledgertable' );
 global $gLibertySystem;
-$pluginParams = array ( 'tag' => 'LEDGERTABLE',
+$pluginParams = array (
+	'tag' => 'LEDGERTABLE',
 	'auto_activate' => FALSE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_ledgertable',

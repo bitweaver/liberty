@@ -1,10 +1,10 @@
 <?php
-// $Id: data.geshidata.php,v 1.2 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.geshidata.php,v 1.3 2007/06/09 18:09:39 squareing Exp $
 /**
  * assigned_modules
  *
  * @author   StarRider <starrrider@sourceforge.net>
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -19,7 +19,7 @@ define( 'PLUGIN_GUID_DATAGESHIDATA','datageshidata' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'GESHIDATA',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_GeshiData',
 	'title' => 'GeshiData',

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.blog.php,v 1.10 2007/05/22 02:18:43 wjames5 Exp $
+// $Id: data.blog.php,v 1.11 2007/06/09 18:09:39 squareing Exp $
 
 /**
  * definitions
@@ -30,7 +30,7 @@ define( 'PLUGIN_GUID_DATABLOG', 'datablog' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'BLOG',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_blog',
 	'help_function' => 'data_blog_help',

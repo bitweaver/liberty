@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.renderer.php,v 1.4 2006/09/09 13:41:32 squareing Exp $
+// $Id: data.renderer.php,v 1.5 2007/06/09 18:09:39 squareing Exp $
 
 /**
  * definitions
@@ -28,7 +28,7 @@ define( 'PLUGIN_GUID_DATARENDERER', 'datarenderer' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'renderer',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_renderer',
 	'help_function' => 'data_renderer_help',

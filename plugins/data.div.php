@@ -3,7 +3,7 @@
  * assigned_modules
  *
  * @author     xing
- * @version    $Revision: 1.10 $
+ * @version    $Revision: 1.11 $
  * @package    liberty
  * @subpackage plugins_data
  * @copyright  Copyright (c) 2004, bitweaver.org
@@ -15,18 +15,18 @@
 define( 'PLUGIN_GUID_DATADIV', 'datadiv' );
 global $gLibertySystem;
 $pluginParams = array (
-	'tag' => 'DIV',
+	'tag'           => 'DIV',
 	'auto_activate' => TRUE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_div',
-	'title' => 'Div',
-	'help_page' => 'DataPluginDiv',
-	'description' => tra( "This plugin allows you to easily create a div with a number of optional CSS parameters." ),
+	'title'         => 'Div',
+	'help_page'     => 'DataPluginDiv',
+	'description'   => tra( "This plugin allows you to easily create a div with a number of optional CSS parameters." ),
 	'help_function' => 'data_div_help',
-	'syntax' => "{div border='3px solid blue'}",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.div.php',
-	'security' => 'registered',
-	'plugin_type' => DATA_PLUGIN
+	'syntax'        => "{div border='3px solid blue'}",
+	'path'          => LIBERTY_PKG_PATH.'plugins/data.div.php',
+	'security'      => 'registered',
+	'plugin_type'   => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATADIV, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATADIV );

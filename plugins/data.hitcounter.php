@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -26,7 +26,7 @@ if( 1 || $gBitSystem->isPackageActive( 'wiki' ) ) {
 define( 'PLUGIN_GUID_DATA_HITCOUNTER', 'datahitcounter' );
 global $gLibertySystem;
 $pluginParams = array ( 'tag' => 'HITCOUNTER',
-						'auto_activate' => TRUE,
+						'auto_activate' => FALSE,
 						'requires_pair' => FALSE,
 						'load_function' => 'data_hitcounter',
 						'title' => 'Hit Counter',                                                                             // and Remove the comment from the start of this line

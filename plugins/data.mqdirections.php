@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mqdirections.php,v 1.7 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.mqdirections.php,v 1.8 2007/06/09 18:09:39 squareing Exp $
 
 /**
  * definitions
@@ -24,7 +24,7 @@ define( 'PLUGIN_GUID_DATAMQDIR', 'datamqdir' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'MQDIR',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_mqdir',
 	'title' => 'MapQuest Directions',

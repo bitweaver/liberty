@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.comment.php,v 1.8 2006/08/07 22:14:57 squareing Exp $
+// $Id: data.comment.php,v 1.9 2007/06/09 18:09:39 squareing Exp $
 
 /******************
  * Initialization *
@@ -25,7 +25,7 @@ define( 'PLUGIN_GUID_DATACOMMENT', 'datacomment' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'COMMENT',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_comment',
 	'title' => 'Comment',

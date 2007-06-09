@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.rss.php,v 1.12 2007/04/30 05:04:29 laetzer Exp $
+// $Id: data.rss.php,v 1.13 2007/06/09 18:09:39 squareing Exp $
 
 /**
  * definitions
@@ -27,7 +27,7 @@ define( 'PLUGIN_GUID_DATARSS', 'datarss' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag'           => 'rss',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'rss_parse_data',
 	'title'         => 'RSS Feed',

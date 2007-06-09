@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_articles.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.articles.php,v 1.10 2007/05/20 22:38:03 nickpalmer Exp $
+// $Id: data.articles.php,v 1.11 2007/06/09 18:09:39 squareing Exp $
 
 /**
  * definitions
@@ -28,7 +28,7 @@ define( 'PLUGIN_GUID_DATAARTICLES', 'dataarticles' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'ARTICLES',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_articles',
 	'help_function' => 'data_articles_help',

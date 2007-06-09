@@ -3,7 +3,7 @@
  * assigned_modules
  *
  * @author     xing
- * @version    $Revision: 1.2 $
+ * @version    $Revision: 1.3 $
  * @package    liberty
  * @subpackage plugins_data
  * @copyright  Copyright (c) 2004, bitweaver.org
@@ -16,7 +16,7 @@ define( 'PLUGIN_GUID_DATAspan', 'dataspan' );
 global $gLibertySystem;
 $pluginParams = array (
 	'tag' => 'span',
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_span',
 	'title' => 'Span',
