@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.83 2007/06/09 00:25:08 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.84 2007/06/09 11:35:21 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -327,7 +327,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 	}
 	
 	function storeExistingAttachments(&$pParamHash) {
-		if( @$this->verifyId( $this->mContentId ) ) {
+		if( @$this->verifyId( $this->mContentId ) && !empty( $pParamHash['existing_attachment_id'] )) {
 			// Allow for an array of attachment ids
 		    foreach( $pParamHash['existing_attachment_id'] as $existingAttachmentId ) {
 				// allow for multiple values separated by any non numeric character
@@ -349,8 +349,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 								$this->mErrors[] = tra("No such attachment: ") . $id;
 							}
 						}
-					}
-					else {
+					} else {
 						$this->mErrors[] = tra("Invalid attachment id: ") . $id;
 					}
 				}
