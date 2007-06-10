@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.223 2007/06/10 14:48:41 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.224 2007/06/10 15:14:40 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2683,6 +2683,14 @@ class LibertyContent extends LibertyBase {
 	function isHidden() {
 		global $gBitSystem;
 		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_hidden', -10 ) );
+	}
+
+	function isCommentable() {
+		if ($this->getPreference('allow_comments') == 'y'){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
 	}
 
 	function storeStatus( $pContentStatusId ) {

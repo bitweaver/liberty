@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.48 2007/05/21 20:44:05 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.49 2007/06/10 15:14:40 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -478,7 +478,7 @@ class LibertyComment extends LibertyContent {
 					$c = new LibertyComment();
 					$c->mInfo=$row;
 					$row['editable'] = $c->userCanEdit();
-					$flat_comments[] = $row;
+					$flat_comments[$row['content_id']] = $row;
 				}
 			}
 

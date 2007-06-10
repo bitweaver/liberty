@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.29 $
+ * @version  $Revision: 1.30 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.29 2007/03/31 14:58:47 nickpalmer Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.30 2007/06/10 15:14:40 wjames5 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -46,6 +46,11 @@ $postComment = array();
 $formfeedback = array();
 $gBitSmarty->assign_by_ref('formfeedback', $formfeedback);
 
+if ( $gBitSystem->isFeatureActive('comments_ajax') && $gContent->isCommentable() ){
+	$gBitSmarty->assign('comments_ajax', TRUE);
+	$gBitSystem->loadAjax( 'mochikit', array( 'Iter.js', 'DOM.js', 'Style.js', 'Color.js', 'Position.js', 'Visual.js' ) );	
+}
+
 if( @BitBase::verifyId($_REQUEST['delete_comment_id']) ) {
 	$deleteComment = new LibertyComment($_REQUEST['delete_comment_id']);
 	if( $deleteComment->isValid() && $gBitUser->hasPermission('p_liberty_admin_comments') ) {
@@ -56,6 +61,10 @@ if( @BitBase::verifyId($_REQUEST['delete_comment_id']) ) {
 if( @BitBase::verifyId($_REQUEST['post_comment_id']) && $gBitUser->hasPermission( 'p_liberty_post_comments' )) {
 	$post_comment_id = $_REQUEST['post_comment_id'];
 	$editComment = new LibertyComment($post_comment_id);
+	//if we are passed a comment id but not going to store it then turn off ajax
+	if (!isset($_REQUEST['post_comment_submit']) && !isset($_REQUEST['post_comment_cancel'])){
+		$gBitSmarty->assign('comments_ajax', FALSE);  //even if ajax is on - we force it off in this case
+	}
 	if ($editComment->mInfo['content_id']) {
 		if (!$editComment->userCanEdit()) {
 			$formfeedback['error'] = "You do not have permission to edit this comment.";
@@ -112,6 +121,7 @@ if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'p_lib
 					}
 				}
 			}
+			$postComment = NULL;
 		} else {
 			$formfeedback['error']=$storeComment->mErrors;
 			$postComment['data'] = $_REQUEST['comment_data'];
@@ -137,6 +147,10 @@ if( !empty( $_REQUEST['post_comment_request'] ) && $_REQUEST['post_comment_reque
 	$gBitSystem->fatalPermission( 'p_liberty_post_comments' );
 }
 $gBitSmarty->assign_by_ref('post_comment_request', $post_comment_request);
+
+if( !empty( $_REQUEST['post_comment_cancel'] ) ) {
+	$postComment = NULL;
+}
 
 // $post_comment_preview is a flag indicating that the user wants to preview their comment prior to saving it
 if( !empty( $_REQUEST['post_comment_preview'] ) ) {
@@ -170,7 +184,10 @@ if (@BitBase::verifyId($_REQUEST['post_comment_reply_id'])) {
 	else {
 		$comment_prefix = tra('Re:') . " ";
 	}
-	$postComment['title'] = $comment_prefix . $tmpComment->mInfo['title'];
+	//this always overrides the title with "Re: Parent Title" -- not sure what it really should do so I put in this conditional for previews
+	if (!isset($_REQUEST['comment_title'])){
+		$postComment['title'] = $comment_prefix . $tmpComment->mInfo['title'];
+	}
 
 	$gBitSmarty->assign('post_comment_reply_id', $post_comment_reply_id);
 }
@@ -233,7 +250,17 @@ if( !@BitBase::verifyId( $commentsParentId ) ) {
 	$numComments = $gComment->getNumComments( $commentsParentId );
 }
 
-$gBitSmarty->assign_by_ref('comments', $comments);
+$commentsTree = array();
+foreach ($comments as $id => $node){
+	if (!empty( $comments[ $node['parent_id'] ])) {
+		$comments[ $node['parent_id'] ]['children'][$id] = &$comments[$id];
+	}
+	if ($node['parent_id'] == $node['root_id']){
+		$commentsTree[$id] = &$comments[$id];
+	}
+}
+
+$gBitSmarty->assign_by_ref('comments', $commentsTree);
 $gBitSmarty->assign('maxComments', $maxComments);
 
 $numCommentPages = ceil( $numComments / $maxComments );

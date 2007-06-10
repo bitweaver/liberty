@@ -9,13 +9,23 @@
 	</div>
 
 	<div class="body">
-		{include file="bitpackage:liberty/comments_post_inc.tpl" post_title="Post Comment"}
+		<div id="editcomments" {if $comments_ajax}style="display:none"{/if}>
+			{include file="bitpackage:liberty/comments_post_inc.tpl" post_title="Post Comment"}
+		</div>
 
 		{include file="bitpackage:liberty/comments_display_option_bar.tpl"}
 
-		{section name=ix loop=$comments}
-			{displaycomment comment="$comments[ix]"}
-		{/section}
+		{if $comments_ajax && $gBitUser->hasPermission( 'p_liberty_post_comments' )}
+			<div class="row">
+				<input type="submit" name="post_comment_request" value="{tr}Add Comment{/tr}" onclick="LibertyComment.attachForm('comment_{$gContent->mContentId}', '{$gContent->mContentId}')"/>
+			</div>
+		{/if}
+		
+		<div id="comment_{$gContent->mContentId}"></div>
+			{foreach name=comments_loop key=key item=item from=$comments}
+				{displaycomment comment="$item"}
+			{/foreach}		
+		<div id="comment_{$gContent->mContentId}_footer"></div>
 
 		{libertypagination ihash=$commentsPgnHash}
 	</div><!-- end .body -->

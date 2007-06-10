@@ -8,17 +8,20 @@
 		</div><!-- end .preview -->
 	{/if}
 
-	{form action="`$comments_return_url`#editcomments"}
+		{form action="`$comments_return_url`#editcomments" name="editcomment-form" id="editcomment-form"}
 		{formfeedback hash=$formfeedback}
+		
+		{* DEPRECATED Slated for Removal - I see no reason for this -wjames5
 		<input type="hidden" name="comments_maxComments" value="{$maxComments}" />
 		<input type="hidden" name="comments_style" value="{$comments_style}" />
 		<input type="hidden" name="comments_sort_mode" value="{$comments_sort_mode}" />
-
-		{if $smarty.request.post_comment_request || $smarty.request.post_comment_preview}
-
-			{legend legend=$post_title}
+		*}
+		
+		{if $smarty.request.post_comment_request || $smarty.request.post_comment_preview || $comments_ajax}
+			{legend legend=$post_title} 
 				<input type="hidden" name="post_comment_reply_id" value="{$post_comment_reply_id}" />
 				<input type="hidden" name="post_comment_id" value="{$post_comment_id}" />
+				<input type="hidden" name="comments_return_url" value="{$comments_return_url}" />
 
 				<div class="row">
 					{formlabel label="Title" for="comments-title"}
@@ -38,13 +41,13 @@
 					</div>
 				{/if}
 
-				{textarea id="commentpost" name="comment_data" rows=$gBitSystem->getConfig('comments_default_post_lines', 6)}{$postComment.data}{/textarea}
+				{textarea id="commentpost" name="comment_data" rows=$gBitSystem->getConfig('comments_default_post_lines', 6)}{$postComment.data|escape}{/textarea}
 				{captcha variant="row"}
 
-				<div class="row submit">
-					<input type="submit" name="post_comment_preview" value="{tr}Preview{/tr}"/>&nbsp;
-					<input type="submit" name="post_comment_submit" value="{tr}Post{/tr}"/>&nbsp;
-					<input type="submit" name="post_comment_cancel" value="{tr}Cancel{/tr}"/>
+				<div class="row submit"> 
+					<input type="submit" name="post_comment_preview" value="{tr}Preview{/tr}" {if $comments_ajax}onclick="LibertyComment.previewComment(); return false;"{/if}/>&nbsp;
+					<input type="submit" name="post_comment_submit" value="{tr}Post{/tr}" {if $comments_ajax}onclick="LibertyComment.postComment(); return false;"{/if}/>&nbsp;
+					<input type="submit" name="post_comment_cancel" value="{tr}Cancel{/tr}" {if $comments_ajax}onclick="LibertyComment.cancelComment(true); return false;"{/if}/>
 				</div>
 			{/legend}
 		{elseif $gBitUser->hasPermission( 'p_liberty_post_comments' )}
