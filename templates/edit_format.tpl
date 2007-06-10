@@ -18,7 +18,6 @@
 	</div>
 {/if}
 
-{counter name=nb print=false assign=nb}
 {capture name=capture_format assign=capture_format}
 	<div class="row">
 		{formfeedback error=$errors.format}
@@ -26,7 +25,7 @@
 		{foreach name=formatPlugins from=$gLibertySystem->mPlugins item=plugin key=guid}
 			{if $plugin.is_active eq 'y' and $plugin.edit_field and $plugin.plugin_type eq 'format'}
 				{forminput}
-					{counter name=nb print=false assign=nb}
+					{counter start=1 name=numformat print=false assign=numformat}
 					<label>
 						<input type="radio" name="{$format_guid_variable|default:"format_guid"}" value="{$plugin.edit_field}"
 						{if $gContent->mInfo.format_guid eq $plugin.plugin_guid}
@@ -72,7 +71,7 @@
 	</div>
 {/capture}
 
-{if $nb > 2 or $format_options}
+{if $numformat > 1 or $format_options}
 	{$capture_format}
 {else}
 	<input type="hidden" name="{$format_guid_variable|default:"format_guid"}" value="{$formatplugins[0].guid}" />
