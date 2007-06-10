@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.221 2007/06/09 14:10:03 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.222 2007/06/10 14:33:19 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1988,45 +1988,54 @@ class LibertyContent extends LibertyBase {
 	 *        arguments to the parser as required
 	 * @param pLength the length to split at if no ...split... is present
 	 * @param pForceLength force split at length (default false)
+	 * @return parsed data cut at LIBERTY_SPLIT_REGEX or at $pLength
 	 */
-	function parseSplit($pParseHash, $pLength, $pForceLength = false) {
+	function parseSplit( $pParseHash, $pLength, $pForceLength = FALSE ) {
 		global $gLibertySystem, $gBitSystem;
-		$res = NULL;
-		// Force cache extension
-		$pParseHash['cache_extension'] = 'desc';
-		// Strip trailing breaks and fixup tags.
-		$pParseHash['cleanup'] = true;
 
-		$res['data'] = $pParseHash['data'];
 		if( $pForceLength ) {
 			$res['data'] = preg_replace( LIBERTY_SPLIT_REGEX, '', $res['data'] );
 		}
+
+		// Indicate that we are parsing split data. This will clean up the HTML better and avoid pre / post filters
+		$pParseHash['split_parse'] = TRUE;
+
+		// copy data that we can compare strings later on
+		$res['data'] = $pParseHash['data'];
+
+		// allways set the cache extension to description if it's not set manually
+		$parseHash['cache_extension'] = !empty( $parseHash['cache_extension'] ) ? $parseHash['cache_extension'] : 'desc';
+
+		// split data according to user specifications
 		if( preg_match( LIBERTY_SPLIT_REGEX, $res['data'] ) ) {
+			// this has been manually split
 			$res['man_split'] = TRUE;
 			$parts = preg_split( LIBERTY_SPLIT_REGEX, $res['data'] );
-			if( empty( $parts[1] ) ) {
-				$res['has_more'] = FALSE;
-			}
 			$pParseHash['data'] = $parts[0];
 		} else {
 			// Include length in cache file
 			$pParseHash['cache_extension'] .= '.'.$pLength;
 			$pParseHash['data'] = substr( $res['data'], 0, $pLength );
 		}
-		
-		// description shouldn't contain {maketoc}
-		$pParseHash['data'] = preg_replace( "/\{maketoc[^\}]*\}/i", "", $pParseHash['data'] );
 
-		// Do the actual parsing.
-		$res['parsed'] = $res['parsed_description'] = $this->parseData($pParseHash);
+		// run data through presplit filter
+		$pParseHash['data'] = $this->filterData( $pParseHash['data'], $pParseHash, 'presplit' );
 
-		// Setup the has_more properly and add ... if required.
-		if( preg_replace( "/\{maketoc[^\}]*\}/i", "", $res['data'] ) != $pParseHash['data'] && empty( $res['man_split'] )) {
-			// we append ... when the split was generated automagically
-			$res['parsed_description'] .= '&hellip;';
+		// parse data and run it through postsplit filter
+		$res['parsed'] = $res['parsed_description'] = $this->filterData( $this->parseData( $pParseHash ), $pParseHash, 'postsplit' );
+
+		// Setup has_more and add '...' if required.
+		if( $res['data'] != $pParseHash['data'] ) {
+			if( empty( $res['man_split'] )) {
+				// we append '...' when the split was generated automagically
+				$res['parsed_description'] .= '&hellip;';
+			}
 			$res['has_more'] = TRUE;
-		} elseif( preg_replace( "/\{maketoc[^\}]*\}/i", "", $res['data'] ) != $pParseHash['data'] ) {
-			$res['has_more'] = TRUE;
+		} else {
+			// since this is the full lenght of the content to be displayed, we don't want a cache extension
+			$pParseHash['cache_extension'] = NULL;
+			// this data does not have more information
+			$res['has_more'] = FALSE;
 		}
 
 		return $res;
@@ -2061,39 +2070,18 @@ class LibertyContent extends LibertyBase {
 		}
 
 		// sanitise parseHash a bit
-		if( empty( $parseHash['content_id'] ) ) {
-			$parseHash['content_id'] = NULL;
-		}
-
-		if( empty( $parseHash['cache_extension'] ) ) {
-			$parseHash['cache_extension'] = NULL;
-		}
-
-		// get the format guid into place
-		if( !empty( $parseHash['format_guid'] ) ) {
-			$formatGuid = $parseHash['format_guid'];
-		} else {
-			$formatGuid = $pFormatGuid;
-		}
+		$parseHash['content_id']      = !empty( $parseHash['content_id'] )      ? $parseHash['content_id']      : NULL;
+		$parseHash['cache_extension'] = !empty( $parseHash['cache_extension'] ) ? $parseHash['cache_extension'] : NULL;
+		$parseHash['format_guid']     = !empty( $parseHash['format_guid'] )     ? $parseHash['format_guid']     : $pFormatGuid;
 
 		$ret = NULL;
-
 		// Handle caching if it is enabled.
 		if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && !empty( $parseHash['content_id'] ) && empty( $parseHash['no_cache'] ) ) {			
 			if( $cacheFile = LibertyContent::getCacheFile( $parseHash['content_id'], $parseHash['cache_extension'] ) ) {
 				// Attempt to read cache file
 				if( !( $ret = LibertyContent::readCacheFile( $cacheFile ))) {
-					// Read failed. Parse and store.
-					if( !empty( $parseHash['data'] ) && $formatGuid ) {
-						if( $func = $gLibertySystem->getPluginFunction( $formatGuid, 'load_function' ) ) {
-							$ret = $func( $parseHash, $this );
-							if (!empty($ret) && !empty($parseHash['cleanup']) && $parseHash['cleanup'] ) {
-								$ret = preg_replace( '/(<br *\/? *>)*$/i', '', $ret);
-								$ret = $gLibertySystem->purifyHtml($ret, true);
-							}
-						}
-					}
-					LibertyContent::writeCacheFile($cacheFile, $ret);
+					// failed to read from cache.
+					$parseAndCache = TRUE;
 				} else {
 					// Note that we read from cache.
 					$pCommonObject->mInfo['is_cached'] = TRUE;
@@ -2101,23 +2089,34 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 
-		// ======================== NOTE
-		// this is not complete yet - i just put the filter stuff here to illustrate how i think it should work.
-		// these places look logical to me, but i haven't fiddled with html purifier so i'm not sure...
-		// ======================== NOTE
-		if( empty( $ret )) {
-			$parseHash['data'] = $this->filterData( $parseHash, 'pre' );
-			if( !empty( $parseHash['data'] ) && $formatGuid ) {
-				if( $func = $gLibertySystem->getPluginFunction( $formatGuid, 'load_function' ) ) {
+		// if $ret is empty, we haven't read anything from cache yet - we need to parse the raw data
+		if( empty( $ret ) || !empty( $parseAndCache )) {
+
+			// we only filter if this is not a split parse
+			if( empty( $parseHash['split_parse'] )) {
+				$parseHash['data'] = $this->filterData( $parseHash['data'], $parseHash, 'pre' );
+			}
+
+			if( !empty( $parseHash['data'] ) && $parseHash['format_guid'] ) {
+				if( $func = $gLibertySystem->getPluginFunction( $parseHash['format_guid'], 'load_function' ) ) {
 					$ret = $func( $parseHash, $this );
-					if (!empty($ret) && !empty($parseHash['cleanup']) && $parseHash['cleanup'] ) {
-						$ret = preg_replace( '/(<br *\/? *>)*$/i', '', $ret);
-						$ret = $gLibertySystem->purifyHtml($ret, true);
+					// split_parse has been passed to us by parseSplit()
+					if( !empty( $ret ) && !empty( $parseHash['split_parse'] ) && $parseHash['split_parse'] ) {
+						// remove trailing junk
+						$ret = preg_replace( '!((<br\s*/?\s*>)*\s*)*$!i', '', $ret );
+						$ret = $gLibertySystem->purifyHtml( $ret, TRUE );
 					}
 				}
 			}
-			$parseHash['data'] = $ret;
-			$ret = $this->filterData( $parseHash, 'post' );
+
+			// we only filter if this is not a split parse
+			if( empty( $parseHash['split_parse'] )) {
+				$ret = $this->filterData( $ret, $parseHash, 'post' );
+			}
+
+			if( !empty( $parseAndCache )) {
+				LibertyContent::writeCacheFile( $cacheFile, $ret );
+			}
 		}
 
 		return $ret;
@@ -2132,17 +2131,16 @@ class LibertyContent extends LibertyBase {
 	 * @access public
 	 * @return filtered data
 	 */
-	function filterData( &$pFilterHash, $pFilterStage = 'pre' ) {
+	function filterData( $pData, $pFilterHash, $pFilterStage = 'pre' ) {
 		global $gLibertySystem;
-		$ret = !empty( $pFilterHash['data'] ) ? $pFilterHash['data'] : '';
 		if( $filters = $gLibertySystem->getPluginsOfType( FILTER_PLUGIN )) {
 			foreach( $filters as $guid => $filter ) {
 				if( $gLibertySystem->isPluginActive( $guid ) && $func = $gLibertySystem->getPluginFunction( $guid, $pFilterStage.'filter_function' )) {
-					$ret = $func( $pFilterHash );
+					$pData = $func( $pData, $pFilterHash );
 				}
 			}
 		}
-		return $ret;
+		return $pData;
 	}
 
 	/**
@@ -2686,7 +2684,6 @@ class LibertyContent extends LibertyBase {
 		global $gBitSystem;
 		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_hidden', -10 ) );
 	}
-
 
 	function storeStatus( $pContentStatusId ) {
 		if( $this->isValid() && $pContentStatusId ) {

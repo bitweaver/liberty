@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.1 2007/06/09 14:20:39 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.2 2007/06/10 14:33:20 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -20,7 +20,7 @@ $pluginParams = array (
 	'plugin_type'              => FILTER_PLUGIN,
 
 	// filter functions
-	'postsplitfilter_function' => 'maketoc_postsplitfilter',
+	'presplitfilter_function'  => 'maketoc_presplitfilter',
 	'postfilter_function'      => 'maketoc_postfilter',
 
 	// these settings are to get the plugin help working on content edit pages
@@ -32,21 +32,21 @@ $pluginParams = array (
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERMAKETOC, $pluginParams );
 
-function maketoc_postsplitfilter( $pFilterHash ) {
+function maketoc_presplitfilter( $pData, $pFilterHash ) {
 	// we remove the maketoc stuff when the data is split. this will simplify output and won't mess with the layout on the articles / blogs front page
-	return( preg_replace( "/\{maketoc[^\}]*\}\s*(<br[^>]*>)*/i", "", $pFilterHash['data'] ));
+	//$pData = ( 'presplitfilter ... '.$pData );
+	return( preg_replace( "/\{maketoc[^\}]*\}\s*\n?/i", "", $pData ));
 }
 
-function maketoc_postfilter( $pFilterHash ) {
-	$data = $pFilterHash['data'];
-	preg_match_all( "/\{maketoc(.*?)\}/", $data, $maketocs );
+function maketoc_postfilter( $pData, $pFilterHash ) {
+	preg_match_all( "/\{maketoc(.*?)\}/", $pData, $maketocs );
 	// extract the parameters for maketoc
 	foreach( $maketocs[1] as $string ) {
 		$params[] = parse_xml_attributes( $string );
 	}
 
 	// get all headers into an array
-	preg_match_all( "/<h(\d)[^>]*>(.*?)<\/h\d>/i", $data, $headers );
+	preg_match_all( "/<h(\d)[^>]*>(.*?)<\/h\d>/i", $pData, $headers );
 
 	// remove any html tags from the output text and generate link ids
 	foreach( $headers[2] as $output ) {
@@ -58,7 +58,7 @@ function maketoc_postfilter( $pFilterHash ) {
 	// insert the <a name> tags in the right places
 	foreach( $headers[0] as $k => $header ) {
 		$reconstructed = "<h{$headers[1][$k]} id=\"{$ids[$k]}\">{$headers[2][$k]}</h{$headers[1][$k]}>";
-		$data = preg_replace( "/".preg_quote( $header, "/" )."/", $reconstructed, $data );
+		$pData = preg_replace( "/".preg_quote( $header, "/" )."/", $reconstructed, $pData );
 	}
 
 	if( !empty( $outputs ) ) {
@@ -69,7 +69,7 @@ function maketoc_postfilter( $pFilterHash ) {
 		);
 
 		// (<br[ |\/]*>){0,1} removes up to one occurance of <br> | <br > | <br /> | <br/> or similar variants
-		$sections = preg_split( "/\{maketoc.*?\}(<br[ |\/]*>){0,1}/", $data );
+		$sections = preg_split( "/\{maketoc.*?\}(<br[ |\/]*>){0,1}/", $pData );
 		// first section is before any {maketoc} entry, so we can ignore it
 		$ret = '';
 
@@ -85,7 +85,7 @@ function maketoc_postfilter( $pFilterHash ) {
 		}
 	}
 
-	return isset( $ret ) ? $ret : preg_replace( "/\{maketoc[^\}]*\}\s*(<br[^>]*>)*/i", "", $data );
+	return isset( $ret ) ? $ret : preg_replace( "/\{maketoc[^\}]*\}\s*(<br[^>]*>)*/i", "", $pData );
 }
 
 function maketoc_create_list( $pTocHash, $pParams ) {

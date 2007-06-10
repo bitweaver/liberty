@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.3 2007/06/09 14:19:46 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.4 2007/06/10 14:33:20 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -40,24 +40,24 @@ $pluginParams = array (
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERHTMLPURIFIER, $pluginParams );
 
-function htmlpure_prefilter( $pFilterHash ) {
-	vd( 'prefilter' );
-	return $pFilterHash['data'];
+function htmlpure_prefilter( $pData, $pFilterHash ) {
+	$pData = '... prefilter ... '.$pData;
+	return $pData;
 }
 
-function htmlpure_postfilter( $pFilterHash ) {
-	vd( 'postfilter' );
-	return $pFilterHash['data'];
+function htmlpure_postfilter( $pData, $pFilterHash ) {
+	$pData = '... postfilter ... '.$pData;
+	return $pData;
 }
 
-function htmlpure_presplitfilter( $pFilterHash ) {
-	vd( 'presplitfilter' );
-	return $pFilterHash['data'];
+function htmlpure_presplitfilter( $pData, $pFilterHash ) {
+	$pData = '... presplitfilter ... '.$pData;
+	return $pData;
 }
 
-function htmlpure_postsplitfilter( $pFilterHash ) {
-	vd( 'postsplitfilter' );
-	return $pFilterHash['data'];
+function htmlpure_postsplitfilter( $pData, $pFilterHash ) {
+	$pData = '... postsplitfilter ... '.$pData;
+	return $pData;
 }
 
 ?>
