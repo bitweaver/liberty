@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.84 2007/06/09 11:35:21 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.85 2007/06/10 02:29:18 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -222,6 +222,9 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 	function verify( &$pParamHash ) {
 		global $gBitSystem, $gBitUser;
+
+		LibertyContent::verify($pParamHash);
+
 		// don't verify p_liberty_attach_attachments on bitpermuser class so registration with avatar upload works
 		if( strtolower( get_class( $this ) ) != 'bitpermuser' ) {
 			$this->verifyPermission( 'p_liberty_attach_attachments' );
@@ -361,7 +364,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 	function store ( &$pParamHash ) {
 		global $gLibertySystem, $gBitSystem;
 		$this->mDb->StartTrans();
-		if( LibertyAttachable::verify( $pParamHash ) && LibertyContent::store( $pParamHash ) && !empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] ) ) {
+		if( LibertyContent::store( $pParamHash ) && !empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] ) ) {
 			$this->storeNewAttachments($pParamHash);
 		}
 
