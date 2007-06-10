@@ -17,7 +17,7 @@
 			{foreach from=$gContent->mStorage item=storage key=attachmentId name=atts}
 				<tr class="{cycle values="odd,even"}">
 					<td style="text-align:center;">
-						{jspopup href=$storage.source_url title=$storage.title notra=1 img=$storage.thumbnail_url.avatar}
+						{jspopup href=$storage.source_url title=$storage.title|default:$storage.filename notra=1 img=$storage.thumbnail_url.avatar}
 						{if $smarty.foreach.atts.first}
 							{formhelp note="click to see large preview"}
 						{/if}
