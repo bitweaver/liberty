@@ -112,7 +112,6 @@ $gBitSmarty->assign( 'formImageFeatures', $formImageFeatures );
 $formValues = array( 'image_processor', 'liberty_attachment_link_format', 'comments_per_page', 'comments_default_ordering', 'comments_default_display_mode' );
 
 if( !empty( $_REQUEST['change_prefs'] )) {
-	$errors = array();
 	$formFeatures = array_merge( $formLibertyCache, $formLibertyFeatures, $formImageFeatures, $formCaptcha );
 	foreach( $formFeatures as $item => $data ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
@@ -124,6 +123,8 @@ if( !empty( $_REQUEST['change_prefs'] )) {
 	$gBitSystem->storeConfig('liberty_cache', $_REQUEST['liberty_cache'], LIBERTY_PKG_NAME );
 	$gBitSystem->storeConfig('liberty_auto_display_attachment_thumbs', $_REQUEST['liberty_auto_display_attachment_thumbs'], LIBERTY_PKG_NAME );
 
+	/* this should go to a filter options page
+	$errors = array();
 	if( $_REQUEST['approved_html_tags'] != DEFAULT_ACCEPTABLE_TAGS ) {
 		$tags = preg_replace( '/\s/', '', $_REQUEST['approved_html_tags'] );
 		$lastAngle = strrpos( $tags, '>' ) + 1;
@@ -135,6 +136,7 @@ if( !empty( $_REQUEST['change_prefs'] )) {
 		$gBitSystem->storeConfig('approved_html_tags', $tags , LIBERTY_PKG_NAME );
 	}
 	$gBitSmarty->assign_by_ref( 'errors', $errors );
+	 */
 
 	foreach( $formValues as $item ) {
 		simple_set_value( $item, LIBERTY_PKG_NAME );
