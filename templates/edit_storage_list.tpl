@@ -13,16 +13,14 @@
 				<th scope="col" title="{tr}File Properties{/tr}">{tr}File Properties{/tr}</th>
 				<th scope="col" title="{tr}Inclusion Code{/tr}">{tr}Inclusion Code{/tr}</th>
 			</tr>
-			<tr>
-				<td style="text-align:center;">{formhelp note="click to see large preview"}</td>
-				<td style="text-align:center;"></td>
-				<td style="text-align:center;">{formhelp note="copy this code into your edit window to embed the image into your text"}</td>
-			</tr>
 
-			{foreach from=$gContent->mStorage item=storage key=attachmentId}
+			{foreach from=$gContent->mStorage item=storage key=attachmentId name=atts}
 				<tr class="{cycle values="odd,even"}">
 					<td style="text-align:center;">
 						{jspopup href=$storage.source_url title=$storage.title notra=1 img=$storage.thumbnail_url.avatar}
+						{if $smarty.foreach.atts.first}
+							{formhelp note="click to see large preview"}
+						{/if}
 					</td>
 					<td>
 						Attachment ID: {$attachmentId} <br />
@@ -50,7 +48,10 @@
 						{/if}
 					</td>
 					<td style="text-align:center; width:30%">
-						{ldelim}attachment id={$attachmentId}{rdelim}
+						{$storage.wiki_plugin_link}
+						{if $smarty.foreach.atts.first}
+							{formhelp note="copy this code into your edit window to embed the file into your text"}
+						{/if}
 					</td>
 				</tr>
 			{/foreach}
