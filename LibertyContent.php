@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.227 2007/06/10 15:44:59 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.228 2007/06/10 16:54:52 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2094,7 +2094,7 @@ class LibertyContent extends LibertyBase {
 
 			// we only filter if this is not a split parse
 			if( empty( $parseHash['split_parse'] )) {
-				$parseHash['data'] = $this->filterData( $parseHash['data'], $parseHash, 'pre' );
+				$parseHash['data'] = LibertyContent::filterData( $parseHash['data'], $parseHash, 'pre' );
 			}
 
 			if( !empty( $parseHash['data'] ) && $parseHash['format_guid'] ) {
@@ -2111,7 +2111,7 @@ class LibertyContent extends LibertyBase {
 
 			// we only filter if this is not a split parse
 			if( empty( $parseHash['split_parse'] )) {
-				$ret = $this->filterData( $ret, $parseHash, 'post' );
+				$ret = LibertyContent::filterData( $ret, $parseHash, 'post' );
 			}
 
 			if( !empty( $parseAndCache )) {
