@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.222 2007/06/10 14:33:19 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.223 2007/06/10 14:48:41 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -46,7 +46,7 @@ if( !defined( 'BIT_CONTENT_DEFAULT_STATUS' ) ) {
  */
 require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
 
-define( 'LIBERTY_SPLIT_REGEX', "/\.{3}split\.{3}\s*/i" );
+define( 'LIBERTY_SPLIT_REGEX', "/\.{3}split\.{3}\s*\n?/i" );
 
 /**
  * Virtual base class (as much as one can have such things in PHP) for all
