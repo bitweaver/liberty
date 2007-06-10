@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.225 2007/06/10 15:25:44 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.226 2007/06/10 15:43:27 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2685,11 +2685,18 @@ class LibertyContent extends LibertyBase {
 		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_hidden', -10 ) );
 	}
 
+	/**
+	 * isCommentable will check allow_comments in mInfo or if it's set as a preference.
+	 * 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure
+	 */
 	function isCommentable() {
-		if ($this->getPreference('allow_comments') == 'y'){
+		if( $this->getPreference( 'allow_comments' ) == 'y' ) {
 			return TRUE;
-		}else{
-			return FALSE;
+		} else {
+			$setting = $this->getField( 'allow_comments' );
+			return( $setting == TRUE || $setting == 'y' );
 		}
 	}
 
