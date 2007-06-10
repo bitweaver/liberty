@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.224 2007/06/10 15:14:40 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.225 2007/06/10 15:25:44 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2004,7 +2004,7 @@ class LibertyContent extends LibertyBase {
 		$res['data'] = $pParseHash['data'];
 
 		// allways set the cache extension to description if it's not set manually
-		$parseHash['cache_extension'] = !empty( $parseHash['cache_extension'] ) ? $parseHash['cache_extension'] : 'desc';
+		$pParseHash['cache_extension'] = !empty( $pParseHash['cache_extension'] ) ? $pParseHash['cache_extension'] : 'desc';
 
 		// split data according to user specifications
 		if( preg_match( LIBERTY_SPLIT_REGEX, $res['data'] ) ) {
