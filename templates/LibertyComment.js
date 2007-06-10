@@ -22,8 +22,13 @@ LibertyComment = {
 		form.post_comment_reply_id.value = reply_id;
 		form.post_comment_id.value = "";
 		MochiKit.DOM.insertSiblingNodesAfter( $(elm), MochiKit.DOM.removeElement(LibertyComment.FORM_DIV_ID) );
-		$(LibertyComment.FORM_DIV_ID).style.display = "block";
-		MochiKit.Visual.ScrollTo( LibertyComment.FORM_DIV_ID );
+		var form_div = $(LibertyComment.FORM_DIV_ID);
+		form_div.style.display = "block";		
+		if ( LibertyComment.BROWSER != "ie" ){
+			MochiKit.Visual.ScrollTo( form_div );
+		}else{
+			self.scrollTo( form_div.offsetLeft, form_div.offsetTop );
+		}
 	},
 	'resetForm': function(){
 		$(LibertyComment.FORM_ID).reset();
@@ -56,7 +61,13 @@ LibertyComment = {
 			MochiKit.Visual.blindUp( LibertyComment.FORM_DIV_ID, {afterFinish: function(){
 				LibertyComment.detachForm();
 				LibertyComment.resetForm();
-				MochiKit.Visual.ScrollTo( $('comment_'+LibertyComment.REPLY_ID) );
+				
+				var reply_div = $('comment_'+LibertyComment.REPLY_ID);
+				if ( LibertyComment.BROWSER != "ie" ){
+					MochiKit.Visual.ScrollTo( reply_div );
+				}else{
+					self.scrollTo( reply_div.offsetLeft, reply_div.offsetTop );
+				}
 			}});
 		}else{
 			LibertyComment.detachForm();
@@ -84,8 +95,12 @@ LibertyComment = {
 		preview.innerHTML = rslt.responseText;
 		preview.style.marginLeft = (LibertyComment.REPLY_ID != null)?"20px":'0';				
 		MochiKit.DOM.insertSiblingNodesBefore( $(LibertyComment.FORM_DIV_ID), preview);
-		MochiKit.Visual.blindDown( preview, {afterFinish: function(){
-			MochiKit.Visual.ScrollTo( preview );
+		MochiKit.Visual.blindDown( preview, {afterFinish: function(){		
+			if ( LibertyComment.BROWSER != "ie" ){
+				MochiKit.Visual.ScrollTo( preview );
+			}else{
+				self.scrollTo( preview.offsetLeft, preview.offsetTop );
+			}
 		}});
 	},
 	'displayComment': function(rslt){
@@ -109,7 +124,11 @@ LibertyComment = {
 			
 //			comment.style.visibility = 'visible';
 			MochiKit.Visual.blindDown( comment, {afterFinish: function(){
-				MochiKit.Visual.ScrollTo( comment );				
+				if ( LibertyComment.BROWSER != "ie" ){
+					MochiKit.Visual.ScrollTo( comment );				
+				}else{
+					self.scrollTo( comment.offsetLeft, comment.offsetTop );
+				}
 			}});
 		}});
 
