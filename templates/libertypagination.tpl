@@ -25,9 +25,11 @@
 	<br />
 
 	{* MSIE dies when we use a form in the pagination when doing ajax stuff *}
+	{counter start=1 print=0 name=pgcount assign=pgcount}	
 	{if $gBitSystem->isFeatureActive( 'site_direct_pagination' ) or $ajaxId}
 		{foreach from=$pgnPages item=link}
-			{$link}&nbsp;
+			{counter print=0 name=pgcount}
+			{$link}&nbsp;{if $pgcount > 20}{counter start=1 print=0 name=pgcount assign=pgcount}<br/>{/if}
 		{/foreach}
 	{else}
 		{form id="fPageSelect"}
