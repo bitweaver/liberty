@@ -9,7 +9,7 @@
 	</div>
 
 	<div class="body">
-		<div id="editcomments" {if $comments_ajax}style="display:none"{/if}>
+		<div id="edit_comments" {if $comments_ajax}style="display:none"{/if}>
 			{include file="bitpackage:liberty/comments_post_inc.tpl" post_title="Post Comment"}
 		</div>
 
