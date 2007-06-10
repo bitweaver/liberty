@@ -21,12 +21,12 @@
 
 			{foreach from=$gContent->mStorage item=storage key=attachmentId}
 				<tr class="{cycle values="odd,even"}">
-					<td style="text-align:center;"><a href="{$storage.source_url}"><img src="{$storage.thumbnail_url.avatar}" alt="{$storage.filename}" /></a></td>
+					<td style="text-align:center;">
+						{jspopup href=$storage.source_url title=$storage.title notra=1 img=$storage.thumbnail_url.avatar}
+					</td>
 					<td>
-						Attachment ID: {$attachmentId}
-						<br />
-						Filename: {$storage.filename}
-						<br />
+						Attachment ID: {$attachmentId} <br />
+						Filename: {$storage.filename} <br />
 						Actions: 
 						{if ($gBitUser->isAdmin() || $gBitUser->hasPermission( 'p_liberty_detach_attachment' ) || $storage.user_id == $gBitUser->mUserId) && !empty($gContent->mContentId)}
 							{if $attachmentBrowser}
