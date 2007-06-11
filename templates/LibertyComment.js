@@ -45,16 +45,28 @@ LibertyComment = {
 		for (n in f[0]){
 			if (f[0][n] == 'post_comment_submit'){ f[1][n] = null; }
 		}
-		var str = bitRootUrl+"liberty/ajax_comments.php?" + queryString(f);
-		MochiKit.Async.doSimpleXMLHttpRequest(str).addCallback(LibertyComment.displayPreview);
+		var url = bitRootUrl+"liberty/ajax_comments.php";
+		var data = queryString(f);		
+		var req = getXMLHttpRequest();
+		req.open('POST', url, true);
+		req.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+		req.setRequestHeader('Content-Length',data.length);
+		var post = sendXMLHttpRequest(req,data);
+		post.addCallbacks(LibertyComment.displayPreview); 
 	},
 	'postComment': function(){
 		var f = MochiKit.DOM.formContents( $(LibertyComment.FORM_ID) );
 		for (n in f[0]){
 			if (f[0][n] == 'post_comment_preview'){ f[1][n] = null; }
 		}
-		var str = bitRootUrl+"liberty/ajax_comments.php?" + queryString(f);
-		MochiKit.Async.doSimpleXMLHttpRequest(str).addCallback(LibertyComment.displayComment);
+		var url = bitRootUrl+"liberty/ajax_comments.php";
+		var data = queryString(f);		
+		var req = getXMLHttpRequest();
+		req.open('POST', url, true);
+		req.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+		req.setRequestHeader('Content-Length',data.length);
+		var post = sendXMLHttpRequest(req,data);
+		post.addCallbacks(LibertyComment.displayComment); 
 	},
 	'cancelComment': function(ani){
 		LibertyComment.cancelPreview(true);
