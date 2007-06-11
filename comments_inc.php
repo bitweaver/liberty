@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.31 $
+ * @version  $Revision: 1.32 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.31 2007/06/11 09:09:38 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.32 2007/06/11 21:22:34 wjames5 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -130,6 +130,7 @@ if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'p_lib
 				$postComment['anon_name'] = $_REQUEST['comment_name'];
 			}
 			$_REQUEST['post_comment_request'] = TRUE;
+			$_REQUEST['post_comment_preview'] = TRUE;
 		}
 	} else {
 		$formfeedback['warning']="The selected Topic is Locked posting is disabled";

@@ -43,7 +43,7 @@ LibertyComment = {
 	'previewComment': function(){
 		var f = MochiKit.DOM.formContents( $(LibertyComment.FORM_ID) );
 		for (n in f[0]){
-			if (f[0][n] == 'post_comment_submit'){ f[1][n] = null; }
+			if (f[0][n] == 'post_comment_submit' || f[0][n] == 'post_comment_cancel'){ f[1][n] = null; }
 		}
 		var url = bitRootUrl+"liberty/ajax_comments.php";
 		var data = queryString(f);		
@@ -57,7 +57,7 @@ LibertyComment = {
 	'postComment': function(){
 		var f = MochiKit.DOM.formContents( $(LibertyComment.FORM_ID) );
 		for (n in f[0]){
-			if (f[0][n] == 'post_comment_preview'){ f[1][n] = null; }
+			if (f[0][n] == 'post_comment_preview' || f[0][n] == 'post_comment_cancel'){ f[1][n] = null; }
 		}
 		var url = bitRootUrl+"liberty/ajax_comments.php";
 		var data = queryString(f);		
@@ -66,7 +66,7 @@ LibertyComment = {
 		req.setRequestHeader('Content-type','application/x-www-form-urlencoded');
 		req.setRequestHeader('Content-Length',data.length);
 		var post = sendXMLHttpRequest(req,data);
-		post.addCallbacks(LibertyComment.displayComment); 
+		post.addCallbacks(LibertyComment.checkRslt); 
 	},
 	'cancelComment': function(ani){
 		LibertyComment.cancelPreview(true);
@@ -105,7 +105,8 @@ LibertyComment = {
 			var preview = LibertyComment.cancelPreview();
 		}
 		preview.style.display = 'none';
-		preview.innerHTML = rslt.responseText;
+		var xml = rslt.responseXML;
+		preview.innerHTML = xml.documentElement.getElementsByTagName('content')[0].firstChild.nodeValue;
 		preview.style.marginLeft = (LibertyComment.REPLY_ID != null)?"20px":'0';				
 		MochiKit.DOM.insertSiblingNodesBefore( $(LibertyComment.FORM_DIV_ID), preview);
 		MochiKit.Visual.blindDown( preview, {afterFinish: function(){		
@@ -116,9 +117,20 @@ LibertyComment = {
 			}
 		}});
 	},
+	'checkRslt': function(rslt){
+		var xml = rslt.responseXML;
+		var status = xml.documentElement.getElementsByTagName('code')[0].firstChild.nodeValue;
+		if (status == '200'){
+			LibertyComment.displayComment(rslt);
+		}else{
+			//if status is 400, 401, or 405 still call preview - allowing someone to save their typed text.
+			LibertyComment.displayPreview(rslt);
+		}
+	},
 	'displayComment': function(rslt){
+		var xml = rslt.responseXML;
 		var comment =  DIV(null, null);
-		comment.innerHTML = rslt.responseText;
+		comment.innerHTML = xml.documentElement.getElementsByTagName('content')[0].firstChild.nodeValue;
 		comment.style.marginLeft = (LibertyComment.REPLY_ID != LibertyComment.ROOT_ID)?"20px":'0';
 		comment.style.display = 'none';
 		if (LibertyComment.SORT_MODE == "commentDate_asc"){
