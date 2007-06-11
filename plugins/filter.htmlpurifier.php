@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.4 2007/06/10 14:33:20 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.5 2007/06/11 01:29:39 wjames5 Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -26,7 +26,7 @@ $pluginParams = array (
 	// type of plugin
 	'plugin_type'              => FILTER_PLUGIN,
 	// url to page with options for this plugin
-	'plugin_settings_url'      => LIBERTY_PKG_URL.'filter_htmlpurifier.php',
+	'plugin_settings_url'      => LIBERTY_PKG_URL.'admin/filter_htmlpurifier.php',
 
 	// various filter functions and when they are called
 	// called before the data is parsed
