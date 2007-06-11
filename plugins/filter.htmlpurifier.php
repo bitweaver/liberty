@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.5 2007/06/11 01:29:39 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.6 2007/06/11 17:48:50 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -41,23 +41,25 @@ $pluginParams = array (
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERHTMLPURIFIER, $pluginParams );
 
 function htmlpure_prefilter( $pData, $pFilterHash ) {
-	$pData = '... prefilter ... '.$pData;
+	//$pData = '... prefilter ... '.$pData;
 	return $pData;
 }
 
 function htmlpure_postfilter( $pData, $pFilterHash ) {
-	$pData = '... postfilter ... '.$pData;
-	return $pData;
+	global $gLibertySystem;
+	//$pData = '... postfilter ... '.$pData;
+	return $gLibertySystem->advancedPurifyHtml( $pData );
 }
 
 function htmlpure_presplitfilter( $pData, $pFilterHash ) {
-	$pData = '... presplitfilter ... '.$pData;
+	//$pData = '... presplitfilter ... '.$pData;
 	return $pData;
 }
 
 function htmlpure_postsplitfilter( $pData, $pFilterHash ) {
-	$pData = '... postsplitfilter ... '.$pData;
-	return $pData;
+	global $gLibertySystem;
+	//$pData = '... postsplitfilter ... '.$pData;
+	return $gLibertySystem->advancedPurifyHtml( $pData );
 }
 
 ?>

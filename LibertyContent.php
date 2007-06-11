@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.228 2007/06/10 16:54:52 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.229 2007/06/11 17:48:50 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -46,7 +46,7 @@ if( !defined( 'BIT_CONTENT_DEFAULT_STATUS' ) ) {
  */
 require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
 
-define( 'LIBERTY_SPLIT_REGEX', "/\.{3}split\.{3}\s*\n?/i" );
+define( 'LIBERTY_SPLIT_REGEX', "!\.{3}split\.{3}[\t ]*\n?!" );
 
 /**
  * Virtual base class (as much as one can have such things in PHP) for all
@@ -2019,22 +2019,28 @@ class LibertyContent extends LibertyBase {
 		}
 
 		// run data through presplit filter
-		$pParseHash['data'] = $this->filterData( $pParseHash['data'], $pParseHash, 'presplit' );
+		if( $pParseHash['data'] = $this->filterData( $pParseHash['data'], $pParseHash, 'presplit' )) {
+			// parse data and run it through postsplit filter
+			if( $parsed = $this->parseData( $pParseHash )) {
+				// set 'has_more'
+				if( !( $res['has_more'] = ( $res['data'] != $pParseHash['data'] ))) {
+					// since this is the full lenght of the content to be displayed, we don't need a cache extension
+					$pParseHash['cache_extension'] = NULL;
+				}
 
-		// parse data and run it through postsplit filter
-		$res['parsed'] = $res['parsed_description'] = $this->filterData( $this->parseData( $pParseHash ), $pParseHash, 'postsplit' );
+				// parsing split content can break stuff so we remove trailing junk
+				$parsed = preg_replace( '!((<br\s*/?\s*>)*\s*)*$!si', '', $parsed );
+				// finally we run it through the filters
+				$res['parsed'] = $res['parsed_description'] = $this->filterData( $parsed, $pParseHash, 'postsplit' );
 
-		// Setup has_more and add '...' if required.
-		if( $res['data'] != $pParseHash['data'] ) {
-			if( empty( $res['man_split'] )) {
 				// we append '...' when the split was generated automagically
-				$res['parsed_description'] .= '&hellip;';
+				if( empty( $res['man_split'] )) {
+					$res['parsed_description'] .= '&hellip;';
+				}
 			}
-			$res['has_more'] = TRUE;
 		} else {
-			// since this is the full lenght of the content to be displayed, we don't want a cache extension
-			$pParseHash['cache_extension'] = NULL;
-			// this data does not have more information
+			// did we parse an empty page?
+			$res['parsed'] = $res['parsed_description'] = '';
 			$res['has_more'] = FALSE;
 		}
 
@@ -2099,23 +2105,18 @@ class LibertyContent extends LibertyBase {
 
 			if( !empty( $parseHash['data'] ) && $parseHash['format_guid'] ) {
 				if( $func = $gLibertySystem->getPluginFunction( $parseHash['format_guid'], 'load_function' ) ) {
-					$ret = $func( $parseHash, $this );
-					// split_parse has been passed to us by parseSplit()
-					if( !empty( $ret ) && !empty( $parseHash['split_parse'] ) && $parseHash['split_parse'] ) {
-						// remove trailing junk
-						$ret = preg_replace( '!((<br\s*/?\s*>)*\s*)*$!i', '', $ret );
-						$ret = $gLibertySystem->purifyHtml( $ret, TRUE );
+					// get the beast parsed
+					if( $ret = $func( $parseHash, $this )) {
+						// we only filter if this is not a split parse
+						if( empty( $parseHash['split_parse'] )) {
+							$ret = LibertyContent::filterData( $ret, $parseHash, 'post' );
+						}
+
+						if( !empty( $parseAndCache )) {
+							LibertyContent::writeCacheFile( $cacheFile, $ret );
+						}
 					}
 				}
-			}
-
-			// we only filter if this is not a split parse
-			if( empty( $parseHash['split_parse'] )) {
-				$ret = LibertyContent::filterData( $ret, $parseHash, 'post' );
-			}
-
-			if( !empty( $parseAndCache )) {
-				LibertyContent::writeCacheFile( $cacheFile, $ret );
 			}
 		}
 
