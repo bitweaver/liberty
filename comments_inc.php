@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.30 $
+ * @version  $Revision: 1.31 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.30 2007/06/10 15:14:40 wjames5 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.31 2007/06/11 09:09:38 squareing Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -46,7 +46,7 @@ $postComment = array();
 $formfeedback = array();
 $gBitSmarty->assign_by_ref('formfeedback', $formfeedback);
 
-if ( $gBitSystem->isFeatureActive('comments_ajax') && $gContent->isCommentable() ){
+if ( $gBitSystem->isFeatureActive('comments_ajax') && !empty( $gContent ) && is_object( $gContent ) && $gContent->isCommentable() ){
 	$gBitSmarty->assign('comments_ajax', TRUE);
 	$gBitSystem->loadAjax( 'mochikit', array( 'Iter.js', 'DOM.js', 'Style.js', 'Color.js', 'Position.js', 'Visual.js' ) );	
 }
