@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.28 $
+ * @version  $Revision: 1.29 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -20,6 +20,7 @@ $pluginParams = array (
 	'plugin_type' => STORAGE_PLUGIN,
 	'auto_activate' => TRUE,
 	'edit_label' => 'Upload File',
+	'primary_edit_field' => '<input type="file" name="primary_attachment" size="40" />',
 	'edit_field' => '<input type="file" name="upload" size="40" />',
 	'edit_help' => 'This file will be uploaded to your personal storage area.<br />After selecting the file you want to upload, please return to the edit area and click the save button.'
 );

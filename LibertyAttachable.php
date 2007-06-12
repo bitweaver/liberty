@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.88 2007/06/12 20:22:50 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.89 2007/06/12 22:55:45 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -198,6 +198,10 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 				$pParamHash['upload_arrays'] .= ',uploads';
 			}
 		}
+
+		// Support for primary attachment
+		$this->verifyAttachment( $pParamHash, 'primary_attachment' );
+
 		// Support for multiple arrays of uploads.
 		if (!empty($pParamHash['upload_arrays'])) {			
 			$other_uploads = split(',',$pParamHash['upload_arrays']);
@@ -245,6 +249,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		}
 
 		$this->verifyAttachments($pParamHash);
+		$this->verifyPrimaryAttachmentId($pParamHash);
 
 		return( count( $this->mErrors ) == 0 );
 	}
@@ -356,18 +361,57 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			}
 		}
 	}
+
+	/**
+	 * Verify that if somebody is setting the primary_attachment[attachment_id] that they are refering to an existing attachment
+	 * @param pParamHash Array with primary_attachment[attachment_id] set.
+	 **/
+	function verifyPrimaryAttachmentId(&$pParamHash) {
+		if (!empty($pParamHash['detach_primary_attachment'])) {
+			$pParamHash['content_store']['primary_attachment_id'] = NULL;
+		}
+		if (!empty($pParamHash['primary_attachment_id'])) {
+			if ($this->verifyId($pParamHash['primary_attachment_id'])) {
+				$sql = "SELECT count(*) FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE attachment_id = ?";
+				
+				$count = $this->mDb->getOne($sql, array($pParamHash['primary_attachment_id']));
+				if (!$count) {
+					$this->mErrors['primary_attachment'] = tra("Could not set the primary attachment because there is no attachment with the given id.");
+				}
+				else {
+					$pParamHash['content_store']['primary_attachment_id'] = $pParamHash['primary_attachment_id'];
+					$pParamHash['existing_attachment_id'][] = $pParamHash['primary_attachment_id'];
+				}
+			}
+			else {
+				$this->mErrors['primary_attachment'] = tra("Invalid primary attachment id.");
+			}
+		}
+	}
+	
+	/**
+	 * Store the primary attachment id if we need to.
+	 **/
+	function storePrimaryAttachmentId($pParamHash) {
+		if (!empty($pParamHash['primary_attachment']['attachment_id'])) {
+			$query = "UPDATE liberty_content SET primary_attachment_id = ? WHERE content_id = ?";
+			$result = $this->mDb->query($query, array($pParamHash['primary_attachment']['attachment_id'], $pParamHash['content_id']));
+		}
+	}
 	
 	// Things to be stored should be shoved in the array $pParamHash['STORAGE']
 	function store ( &$pParamHash ) {
 		global $gLibertySystem, $gBitSystem;
 		$this->mDb->StartTrans();
-		if( LibertyAttachable::verify( $pParamHash ) && LibertyContent::store( $pParamHash ) && !empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] ) ) {
-			$this->storeNewAttachments($pParamHash);
+		if( LibertyAttachable::verify( $pParamHash ) && LibertyContent::store( $pParamHash )) {
+			if(!empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] ) ) {
+				$this->storeNewAttachments($pParamHash);
+				// We have to do this after LibertyContent::store so we can get the content_id and after storeNewAttachments so we can get the attachment id.
+				$this->storePrimaryAttachmentId($pParamHash);
+			}
+			$this->storeExistingAttachments($pParamHash);
 		}
-
 		$this->mDb->CompleteTrans();
-
-		$this->storeExistingAttachments($pParamHash);
 
 		return( count( $this->mErrors ) == 0 );
 	}
@@ -375,14 +419,15 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 	// Store attachments only not the LibertyContent bits
 	function storeAttachments( &$pParamHash, $pExisting = TRUE ) {
 		$this->mDb->StartTrans();
-		if ($this->verifyAttachments( $pParamHash ) && !empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] )) {
-			$this->storeNewAttachments($pParamHash);
+		if ($this->verifyAttachments( $pParamHash )) {
+			if( !empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] )) {
+				$this->storeNewAttachments($pParamHash);
+			}
+			if ($pExisting) {
+				$this->storeExistingAttachments($pParamHash);
+			}
 		}
 		$this->mDb->CompleteTrans();
-
-		if ($pExisting) {
-			$this->storeExistingAttachments($pParamHash);
-		}
 
 		return( count( $this->mErrors ) == 0 );
 	}
@@ -521,7 +566,11 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			}
 			if (@$this->verifyId( $contentId) ) {
 				$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachments_map` WHERE attachment_id = ? AND content_id = ?";
-				$ret = $this->mDb->query($query, array($pAttachmentId, $contentId));
+				$bindVars = array($pAttachmentId, $contentId);
+				$ret = $this->mDb->query($query, $bindVars);
+				// Remove the primary ID if it is this attachment
+				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content` SET primary_attachment_id=NULL WHERE primary_attachment_id = ? AND content_id = ?";
+				$ret = $this->mDb->query($query, $bindVars);
 			} else {
 				$this->mErrors[] = tra("Unable to detach due to an invalid content id: ").$contentId;
 				$ret = FALSE;
