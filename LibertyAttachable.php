@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.87 2007/06/10 15:59:11 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.88 2007/06/12 20:22:50 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -607,7 +607,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		$attachmentInfo = $this->getAttachment( $pAttachmentId );
 
 		if( @$this->verifyId( $attachmentInfo['attachment_id'] ) && @$this->verifyId( $attachmentInfo['foreign_id'] ) && @$this->verifyId( $attachmentInfo['attachment_plugin_guid'] ) ) {
-			$query = "SELECT  la.*, lam.`attachment_id` FROM `".BIT_DB_PREFIX."liberty_attachments` la INNER JOIN `".BIT_DB_PREFIX."liberty_attachments_map` lam ON (la.`attachment_id` == lam.`attachment_idWHERE la.`foreign_id` = ? AND la.`attachment_plugin_guid` = ? AND lam.`attachment_id` <> ?";
+			$query = "SELECT  la.*, lam.`attachment_id` FROM `".BIT_DB_PREFIX."liberty_attachments` la INNER JOIN `".BIT_DB_PREFIX."liberty_attachments_map` lam ON (la.`attachment_id` == lam.`attachment_id` WHERE la.`foreign_id` = ? AND la.`attachment_plugin_guid` = ? AND lam.`attachment_id` <> ?";
 			$result = $this->mDb->query( $query, array ($attachmentInfo['foreign_id'], $attachmentInfo['attachment_plugin_guid'], $attachment['attachment_id'] ) );
 			$ret = $result->getRows();
 		}
