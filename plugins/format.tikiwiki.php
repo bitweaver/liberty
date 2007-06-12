@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.97 $
+ * @version  $Revision: 1.98 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -133,8 +133,6 @@ class TikiWikiParser extends BitBase {
 	var $mWikiWordRegex;
 	var $mUseWikiWords;
 	var $mPageLookup;
-	var $pre_handlers = array();
-	var $pos_handlers = array();
 
 	function TikiWikiParser () {
 		BitBase::BitBase();
@@ -156,18 +154,6 @@ class TikiWikiParser extends BitBase {
 			$this->mWikiWordRegex = '([^|\(\)])([^|](?!\)\)))*?([^|\(\)])';
 		}
 
-	}
-
-	function add_pre_handler($name) {
-		if (!in_array($name, $this->pre_handlers)) {
-			$this->pre_handlers[] = $name;
-		}
-	}
-
-	function add_pos_handler($name) {
-		if (!in_array($name, $this->pos_handlers)) {
-			$this->pos_handlers[] = $name;
-		}
 	}
 
 	function extractWikiWords( &$data ) {
@@ -761,11 +747,6 @@ class TikiWikiParser extends BitBase {
 		} else {
 			// convert HTML to chars
 			$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
-		}
-
-		// Process pre_handlers here
-		foreach ($this->pre_handlers as $handler) {
-			$data = $handler($data);
 		}
 
 		$data = preg_replace( '/(\)\))('.WIKI_WORDS_REGEX.')(\(\()/', "~np~" . "$2" . "~/np~", $data);
@@ -1517,11 +1498,6 @@ class TikiWikiParser extends BitBase {
 
 		foreach ($preparsed as $pp) {
 			$data = str_replace($pp["key"], "<pre>" . $pp["data"] . "</pre>", $data);
-		}
-
-		// Process pos_handlers here
-		foreach ($this->pos_handlers as $handler) {
-			$data = $handler($data);
 		}
 
 		$data = str_replace( "<!-- bitremovebr --><br />", "", $data );
