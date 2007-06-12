@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.6 2007/06/11 17:48:50 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.7 2007/06/12 13:57:58 nickpalmer Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -14,11 +14,11 @@ global $gLibertySystem;
 
 $pluginParams = array (
 	// plugin title
-	'title'                    => 'HTML Purification',
+	'title'                    => 'HTMLPurifier',
 	// help page on bitweaver org that explains this plugin
-	'help_page'                => 'Html Purifier',
+	'help_page'                => 'HTMLPurifier',
 	// brief description of the plugin
-	'description'              => "Will try to sanitise any HTML output to make it HTML compliant.",
+	'description'              => 'Uses <a href="http://htmlpurifier.org">HTMLPurifier</a> to cleanup the HTML submitted to your site and ensure that it is standards compliant and does not contain anything malicious. It is also used to ensure that the various places that input is split for previews does not cause bad markup to break the page. This filter is <strong>highly</strong> recommended if you are allowing HTML but is still good for sites that are not using thse formats for the ability to cleanup markup which has been split for preview properly though this may disable certain plugins that insert non standards compliant code.',
 	// should this plugin be active or not when loaded for the first time
 	'auto_activate'            => FALSE,
 	// absolute path to this plugin
@@ -30,36 +30,117 @@ $pluginParams = array (
 
 	// various filter functions and when they are called
 	// called before the data is parsed
-	'prefilter_function'       => 'htmlpure_prefilter',
+	//	'prefilter_function'       => 'htmlpure_filter',
 	// called after the data has been parsed
-	'postfilter_function'      => 'htmlpure_postfilter',
+	'prefilter_function'      => 'htmlpure_filter',
 	// called before the data is parsed if there is a split
-	'presplitfilter_function'  => 'htmlpure_presplitfilter',
-	// called arter the data has been parsed if there is a split
-	'postsplitfilter_function' => 'htmlpure_postsplitfilter',
+	//	'presplitfilter_function'  => 'htmlpure_filter',
+	// called after the data has been parsed if there is a split
+	'postsplitfilter_function' => 'htmlpure_filter',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERHTMLPURIFIER, $pluginParams );
 
-function htmlpure_prefilter( $pData, $pFilterHash ) {
-	//$pData = '... prefilter ... '.$pData;
-	return $pData;
-}
+function htmlpure_filter( $pData, $pFilterHash ) {
+	global $gHtmlPurifier, $gBitSystem;
+	
+	if (!isset($gHtmlPurifier)) {
+		$blacklistedTags = $gBitSystem->
+			getConfig('blacklisted_html_tags', '');
 
-function htmlpure_postfilter( $pData, $pFilterHash ) {
-	global $gLibertySystem;
-	//$pData = '... postfilter ... '.$pData;
-	return $gLibertySystem->advancedPurifyHtml( $pData );
-}
+		require_once(UTIL_PKG_PATH . 'htmlpurifier/HTMLPurifier.auto.php');
+		$config = HTMLPurifier_Config::createDefault();
+		
+		if ($gBitSystem->getConfig('htmlpure_escape_bad', 'y') == 'y') {
+			$config->set('Core', 'EscapeInvalidTags', true);
+			$config->set('Core', 'EscapeInvalidChildren', true);
+		}
+		if ($gBitSystem->getConfig('htmlpure_disable_extern') == 'y') {
+			$config->set('URI', 'DisableExternal', true);
+		}
+		if ($gBitSystem->getConfig('htmlpure_disable_extern_res', 'y') == 'y') {
+			$config->set('URI', 'DisableExternalResources', true);
+		}
+		if ($gBitSystem->getConfig('htmlpure_disable_res') == 'y') {
+			$config->set('URI', 'DisableResources', true);
+		}
+		if ($gBitSystem->getConfig('htmlpure_disable_uri') == 'y') {
+			$config->set('URI', 'Disable', true);
+		}
+		if ($gBitSystem->getConfig('htmlpure_use_redirect') == 'y') {
+			$config->set('URI', 'Munge', LIBERTY_PKG_URL.'redirect.php?q=%s');
+		}
+		if ($gBitSystem->getConfig('htmlpure_strict_html', 'y') == 'y') {
+			$config->set('HTML', 'Strict', true);
+		}
+		if ($gBitSystem->getConfig('htmlpure_xhtml', 'n') == 'n') {
+			$config->set('Core', 'XHTML', true);
+		}
+		
+		$def =& $config->getHTMLDefinition();
+		// HTMLPurifier doesn't have a blacklist feature. Duh guys!
+		// Note that this has to come last since the other configs
+		// may tweak the def.
+		foreach (explode(',',$blacklistedTags) as $tag) {
+			unset($def->info[$tag]);
+		}
+		
+		$gHtmlPurifier = new HTMLPurifier($config);
+		
+		// TODO: devise a way to parse plugins dir
+		// and check for the right property here
+		// so new plugins are just drop in place.
+		if ($gBitSystem->isFeatureActive('liberty_html_pure_allow_youtube')) {
+			require_once UTIL_PKG_PATH.'htmlpurifier/HTMLPurifier/Filter/YouTube.php';
+			$gHtmlPurifier->addFilter(new HTMLPurifier_Filter_YouTube());
+		}
+	}
+	
+	/* Clean up the paragraphs a bit */
+	//	$start = $pData;
+	$pString = htmlpure_cleanupPeeTags($pData);		
+	//	$pee = $pString;
+	$pString = $gHtmlPurifier->purify($pString);
+	
+	/*
+	echo "<br/><hr/><br/>".$start;
+	include_once( 'Text/Diff.php' );    
+	include_once( 'Text/Diff/Renderer/inline.php' );
+	$diff = &new Text_Diff(explode("\n", $start), explode("\n",$pee));
+	$renderer = &new Text_Diff_Renderer_inline();
+	echo "<br/><hr/><br/>". $renderer->render($diff);
+	
+	echo "<br/><hr/><br/>".$pString;
+	include_once( 'Text/Diff.php' );    
+	include_once( 'Text/Diff/Renderer/inline.php' );
+	$diff = &new Text_Diff(explode("\n", $pee), explode("\n",$pString));
+	$renderer = &new Text_Diff_Renderer_inline();
+	echo "<br/><hr/><br/>". $renderer->render($diff);
+	*/
 
-function htmlpure_presplitfilter( $pData, $pFilterHash ) {
-	//$pData = '... presplitfilter ... '.$pData;
-	return $pData;
-}
+function htmlpure_cleanupPeeTags( $pee ) {
+	
+	// Convert us some form feeds for better cross platform support
+	$pee = str_replace(array("\r\n", "\r"), "\n", $pee);
+	
+	// Strip out lots of duplicate newlines now
+	$pee = preg_replace("#\n\n+#", "\n\n", $pee);
+	
+	// Pee in block quotes
+	$pee = preg_replace('#<blockquote(.*?(?:[^>]*))>(.*?)</blockquote>#s', '<blockquote$1><p>$2</p></blockquote>', $pee);
+	
+	// Strip empty pee
+	$pee = preg_replace('#<p>\s*</p>#', '', $pee);
+		
+	// Unpee pre blocks
+	$pee = preg_replace('#(<pre.*?>)(.*?)</pre>#se', 
+						" '$1' . preg_replace('#<br.*?/>#', '"."\n"."', " .
+						"preg_replace('#<p.*?>#', '"."\n"."', " .
+						"preg_replace('#</p>#', '', '$2'))) . '</pre>' ", $pee);
 
-function htmlpure_postsplitfilter( $pData, $pFilterHash ) {
-	global $gLibertySystem;
-	//$pData = '... postsplitfilter ... '.$pData;
-	return $gLibertySystem->advancedPurifyHtml( $pData );
+	// Fixup align divs so we can keep them.
+	$pee = preg_replace('#<div(.*?)align="(.*?)"(.*?)>#', '<div$1style="text-align:$2;"$3>', $pee);
+	
+	return $pee;
 }
 
 ?>

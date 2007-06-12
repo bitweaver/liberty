@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.15 $
+ * @version  $Revision: 1.16 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -28,7 +28,7 @@ $gLibertySystem->registerPlugin( PLUGIN_GUID_BITHTML, $pluginParams );
 function bithtml_verify_data( &$pParamHash ) {
     	global $gLibertySystem;
 	$errorMsg = NULL;
-	$pParamHash['content_store']['data'] = $gLibertySystem->purifyHtml( $pParamHash['edit'] );
+	$pParamHash['content_store']['data'] =  $pParamHash['edit'];
 	return $errorMsg;
 }
 

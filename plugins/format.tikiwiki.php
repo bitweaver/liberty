@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.98 $
+ * @version  $Revision: 1.99 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -742,10 +742,8 @@ class TikiWikiParser extends BitBase {
 		}
 
 		// disable HTML in wiki page for now - very disruptive. should be changed into a per page setting - xing
-		if( $gBitSystem->isFeatureActive('content_force_allow_html') || ($gBitSystem->isFeatureActive('content_allow_html') && !empty( $contentPrefs['content_enter_html'] ) ) ) {
-		    $data = $gLibertySystem->purifyHtml($data);
-		} else {
-			// convert HTML to chars
+		if( !($gBitSystem->isFeatureActive('content_force_allow_html') || 
+			  ($gBitSystem->isFeatureActive('content_allow_html') && !empty( $contentPrefs['content_enter_html'] ) ) ) ) {
 			$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
 		}
 

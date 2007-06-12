@@ -123,21 +123,6 @@ if( !empty( $_REQUEST['change_prefs'] )) {
 	$gBitSystem->storeConfig('liberty_cache', $_REQUEST['liberty_cache'], LIBERTY_PKG_NAME );
 	$gBitSystem->storeConfig('liberty_auto_display_attachment_thumbs', $_REQUEST['liberty_auto_display_attachment_thumbs'], LIBERTY_PKG_NAME );
 
-	/* this should go to a filter options page
-	$errors = array();
-	if( $_REQUEST['approved_html_tags'] != DEFAULT_ACCEPTABLE_TAGS ) {
-		$tags = preg_replace( '/\s/', '', $_REQUEST['approved_html_tags'] );
-		$lastAngle = strrpos( $tags, '>' ) + 1;
-		if( strlen( $tags ) > 250 || ($lastAngle < strlen( $tags ))) {
-			$tags = substr( $tags, 0, 250 );
-			$tags = substr( $tags, 0, $lastAngle );
-			$errors['warning'] = 'The approved tags list has been shortened. You can only have 250 characters for approved tags.';
-		}
-		$gBitSystem->storeConfig('approved_html_tags', $tags , LIBERTY_PKG_NAME );
-	}
-	$gBitSmarty->assign_by_ref( 'errors', $errors );
-	 */
-
 	foreach( $formValues as $item ) {
 		simple_set_value( $item, LIBERTY_PKG_NAME );
 	}
@@ -149,7 +134,4 @@ foreach( array_keys( $gThumbSizes ) as $thumb ) {
 }
 $gBitSmarty->assign( 'thumbSizes', $thumbSizes );
 
-$tags = $gBitSystem->getConfig( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
-
-$gBitSmarty->assign( 'approved_html_tags', $tags );
 ?>
