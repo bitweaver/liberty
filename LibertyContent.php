@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.229 2007/06/11 17:48:50 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.230 2007/06/12 13:55:55 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2029,7 +2029,7 @@ class LibertyContent extends LibertyBase {
 				}
 
 				// parsing split content can break stuff so we remove trailing junk
-				$parsed = preg_replace( '!((<br\s*/?\s*>)*\s*)*$!si', '', $parsed );
+				$parsed = preg_replace( '!((<br\b[^>]*>)*\s*)*$!si', '', $parsed );
 				// finally we run it through the filters
 				$res['parsed'] = $res['parsed_description'] = $this->filterData( $parsed, $pParseHash, 'postsplit' );
 
