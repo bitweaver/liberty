@@ -27,6 +27,7 @@ $tables = array(
 	format_guid C(16) NOTNULL,
 	content_status_id I4 NOTNULL,
 	event_time I8 NOTNULL DEFAULT 0,
+	primary_attachment_id I4,
 	version I4,
 	lang_code C(32),
 	title C(160),
