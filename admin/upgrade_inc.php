@@ -57,6 +57,7 @@ array( 'DATADICT' => array(
 		'liberty_content' => array(
 			'lang_code' => array( '`lang_code`', 'VARCHAR(32)' ),
 			'content_status_id' => array( '`content_status_id`', 'I4' ),
+			'primary_attachment_id' => array( '`primary_attachment_id`', 'I4' ),
 		),
 		'liberty_action_log' => array(
 			'log_action' => array( '`log_message`', 'VARCHAR(250)' ),
