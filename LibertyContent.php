@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.230 2007/06/12 13:55:55 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.231 2007/06/12 14:45:18 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1990,7 +1990,7 @@ class LibertyContent extends LibertyBase {
 	 * @param pForceLength force split at length (default false)
 	 * @return parsed data cut at LIBERTY_SPLIT_REGEX or at $pLength
 	 */
-	function parseSplit( $pParseHash, $pLength, $pForceLength = FALSE ) {
+	function parseSplit( $pParseHash, $pLength = 500, $pForceLength = FALSE ) {
 		global $gLibertySystem, $gBitSystem;
 
 		if( $pForceLength ) {
