@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.stylepurifier.php,v 1.1 2007/06/12 13:57:58 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.stylepurifier.php,v 1.2 2007/06/13 10:05:15 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -41,7 +41,8 @@ function stylepure_filter( $pData, $pFilterHash ) {
 	if( !$gBitUser->hasPermission( 'p_liberty_edit_html_style' ) ) {
 		$text = preg_replace( "/<style[^>]*>.*<\/style>/siU", '', $text );
 	}
-	$text = stripslashes($text);
+	// no idea what this is for. remove it for now - xing
+	//$text = stripslashes( $text );
 	if( !$gBitUser->hasPermission( 'p_liberty_edit_html_style' ) ) {
 		$text = preg_replace( "/ (style|class)=[\"]?([^\"]*)[\"]?/i", '', $text );
 	}
