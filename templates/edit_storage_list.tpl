@@ -23,9 +23,9 @@
 						{/if}
 					</td>
 					<td>
-						Attachment ID: {$attachmentId} {if $gContent->mInfo.primary_attachment_id eq $attachmentId}(Primary){/if} <br />
-						Filename: {$storage.filename} <br />
-						Actions: 
+						{tr}Attachment ID{/tr}: {$attachmentId} {if $gContent->mInfo.primary_attachment_id eq $attachmentId}({tr}Primary{/tr}){/if} <br />
+						{tr}Filename{/tr}: {$storage.filename} <br />
+						{tr}Actions{/tr}:
 						{if ($gBitUser->isAdmin() || $gBitUser->hasPermission( 'p_liberty_detach_attachment' ) || $storage.user_id == $gBitUser->mUserId) && !empty($gContent->mContentId)}
 							{if $attachmentBrowser}
 								{if in_array($gContent->mContentId, $storage.attached_to)}
@@ -37,7 +37,7 @@
 								<a href="{$attachmentActionBaseURL}&amp;content_id={$gContent->mContentId}&amp;detachAttachment={$attachmentId}">{biticon ipackage=icons iname="edit-cut" iexplain="detach"}</a>
 							{/if}
 						{/if}
-						{if $gBitUser->isAdmin() ||  $storage.user_id == $gBitUser->mUserId}
+						{if ( $gBitUser->isAdmin() || $storage.user_id == $gBitUser->mUserId ) && !isset($storage.content_id) }
 							{if $attachmentBrowser}
 								<a href="javascript:ajax_updater('attbrowser', '{$attachmentActionBaseURL}', 'deleteAttachment={$attachmentId}');">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
 							{elseif $libertyUploader || $gBitSystem->getConfig('liberty_attachment_style') == 'ajax'}
