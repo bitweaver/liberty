@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.232 2007/06/13 17:37:01 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.233 2007/06/13 19:29:58 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -86,10 +86,11 @@ class LibertyContent extends LibertyBase {
 	*/
 	var $mPrefs = array();
 	/**
-	* Admin control permission specific to this LibertyContent type
+	* Control permission specific to this LibertyContent type
 	* @private
 	*/
 	var $mAdminContentPerm;
+	var $mEditContentPerm;
 
 	/**
 	* Construct an empty LibertyBase object with a blank permissions array
