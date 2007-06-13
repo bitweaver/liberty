@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.32 $
+ * @version  $Revision: 1.33 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.32 2007/06/11 21:22:34 wjames5 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.33 2007/06/13 15:19:54 wjames5 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -46,7 +46,7 @@ $postComment = array();
 $formfeedback = array();
 $gBitSmarty->assign_by_ref('formfeedback', $formfeedback);
 
-if ( $gBitSystem->isFeatureActive('comments_ajax') && !empty( $gContent ) && is_object( $gContent ) && $gContent->isCommentable() ){
+if ( $gBitSystem->isFeatureActive('comments_ajax') && !empty( $gContent ) && is_object( $gContent ) && $gContent->isCommentable() && $gBitSystem->isJavascriptEnabled()){
 	$gBitSmarty->assign('comments_ajax', TRUE);
 	$gBitSystem->loadAjax( 'mochikit', array( 'Iter.js', 'DOM.js', 'Style.js', 'Color.js', 'Position.js', 'Visual.js' ) );	
 }
@@ -130,7 +130,7 @@ if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'p_lib
 				$postComment['anon_name'] = $_REQUEST['comment_name'];
 			}
 			$_REQUEST['post_comment_request'] = TRUE;
-			$_REQUEST['post_comment_preview'] = TRUE;
+			$_REQUEST['post_comment_preview'] = TRUE;  //this is critical and triggers other settings if store fails - do not remove without looking at what preview effects
 		}
 	} else {
 		$formfeedback['warning']="The selected Topic is Locked posting is disabled";
@@ -155,6 +155,15 @@ if( !empty( $_REQUEST['post_comment_cancel'] ) ) {
 
 // $post_comment_preview is a flag indicating that the user wants to preview their comment prior to saving it
 if( !empty( $_REQUEST['post_comment_preview'] ) ) {
+	if ( isset($_REQUEST['no_js_preview']) && $_REQUEST['no_js_preview']=="y" ){
+		$no_js_preview = $_REQUEST['no_js_preview'];
+		$gBitSmarty->assign('comments_ajax', FALSE);  //even if ajax is on - we force it off in this case		
+	}else{
+		$no_js_preview = "n";
+	}
+	
+	$gBitSmarty->assign_by_ref('no_js_preview', $no_js_preview);
+
 	$postComment['user_id'] = $gBitUser->mUserId;
 	$postComment['title'] = $_REQUEST['comment_title'];
 	if (!empty($_REQUEST['comment_name'])) {
