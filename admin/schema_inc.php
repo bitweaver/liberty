@@ -35,7 +35,6 @@ $tables = array(
 	data X
 	CONSTRAINT '
 		, CONSTRAINT `liberty_content_status_ref` FOREIGN KEY (`content_status_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content_status`( `content_status_id` )
-		, CONSTRAINT `liberty_content_attachment_ref` FOREIGN KEY (`primary_attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments`( `attachment_id` )
 		, CONSTRAINT `liberty_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )'
 ",
 
@@ -229,6 +228,10 @@ $indices = array (
 	'process_id_idx' => array( 'table' => 'liberty_process_queue', 'cols' => 'content_id', 'opts' => NULL ),
 );
 $gBitInstaller->registerSchemaIndexes( LIBERTY_PKG_NAME, $indices );
+
+// Need to figure out how to add this constraint on liberty_content after the tables are created or the circular reference causes issues.
+//		, CONSTRAINT `liberty_content_attachment_ref` FOREIGN KEY (`primary_attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments`( `attachment_id` )
+
 
 // ### Sequences
 $sequences = array (

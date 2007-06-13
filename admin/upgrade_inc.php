@@ -72,9 +72,11 @@ array( 'DATADICT' => array(
 			'object_id' => array( '`content_id`', 'I4' ),
 		),
 	)),
+	/* The installer can't add constraints after table creation yet so drop this constraint.
 	array( 'SQL' => array(
 			   'ALTER TABLE `'.BIT_DB_PREFIX.'liberty_content` ADD CONSTRAINT liberty_content_attachment_ref FOREIGN KEY (primary_attachment_id) REFERENCES `'.BIT_DB_PREFIX.'liberty_attachments` (attachment_id)'
     )),
+	*/
 )),
 
 
