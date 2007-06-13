@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.231 2007/06/12 14:45:18 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.232 2007/06/13 17:37:01 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2034,7 +2034,7 @@ class LibertyContent extends LibertyBase {
 				$res['parsed'] = $res['parsed_description'] = $this->filterData( $parsed, $pParseHash, 'postsplit' );
 
 				// we append '...' when the split was generated automagically
-				if( empty( $res['man_split'] )) {
+				if( empty( $res['man_split'] ) && !empty( $res['has_more'] )) {
 					$res['parsed_description'] .= '&hellip;';
 				}
 			}
