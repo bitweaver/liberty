@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.35 2007/05/30 21:27:28 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.36 2007/06/13 20:23:01 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -680,8 +680,10 @@ class LibertyStructure extends LibertyBase {
 					  FROM `".BIT_DB_PREFIX."liberty_structures`
 					  WHERE `structure_id`=? AND `structure_id`=`root_structure_id`";
 			$content_id = $this->mDb->getOne( $query, array( (int)$structure_id ) );
-			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=?";
-			$result = $this->mDb->query( $query, array( (int)$content_id) );
+			
+			// Delete the liberty_content stuff
+			$lc = new LibertyContent($content_id);
+			$lc->expunge();
 
 			// Remove the structure node
 			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `structure_id`=?";
