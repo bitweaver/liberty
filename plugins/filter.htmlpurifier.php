@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.7 2007/06/12 13:57:58 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.8 2007/06/13 07:34:45 lsces Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -116,6 +116,7 @@ function htmlpure_filter( $pData, $pFilterHash ) {
 	$renderer = &new Text_Diff_Renderer_inline();
 	echo "<br/><hr/><br/>". $renderer->render($diff);
 	*/
+}
 
 function htmlpure_cleanupPeeTags( $pee ) {
 	
