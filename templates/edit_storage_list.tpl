@@ -23,7 +23,7 @@
 						{/if}
 					</td>
 					<td>
-						Attachment ID: {$attachmentId} <br />
+						Attachment ID: {$attachmentId} {if $gContent->mInfo.primary_attachment_id eq $attachmentId}(Primary){/if} <br />
 						Filename: {$storage.filename} <br />
 						Actions: 
 						{if ($gBitUser->isAdmin() || $gBitUser->hasPermission( 'p_liberty_detach_attachment' ) || $storage.user_id == $gBitUser->mUserId) && !empty($gContent->mContentId)}
