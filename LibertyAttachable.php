@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.89 2007/06/12 22:55:45 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.90 2007/06/13 20:58:06 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -227,12 +227,13 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 	function verify( &$pParamHash ) {
 		global $gBitSystem, $gBitUser;
 		// don't verify p_liberty_attach_attachments on bitpermuser class so registration with avatar upload works
-		if( strtolower( get_class( $this ) ) != 'bitpermuser' ) {
-			$this->verifyPermission( 'p_liberty_attach_attachments' );
+		// only verify if there is an attachment and the user isn't supposed to do it.
+		if( strtolower( get_class( $this ) ) != 'bitpermuser' && !empty($_FILES) && !$gBitUser->hasPermission('p_liberty_attach_attachments') ) {
+			$this->mErrors['attachments'] = tra('You do not have permission to upload attachments.');
 		}
-		
+
 		if( !empty( $pParamHash['attachment_id'] ) && !$this->verifyId( $pParamHash['attachment_id'] ) ) {
-			$this->mErrors['file'] = 'System Error: Non-numeric storage_id.';
+			$this->mErrors['file'] = tra('System Error: Non-numeric storage_id.');
 		}
 
 		if( empty( $pParamHash['user_id'] ) ) {
