@@ -183,7 +183,7 @@ $tables = array(
   group_id I4 PRIMARY,
   perm_name C(30) PRIMARY,
   content_id I4 PRIMARY
-  CONSTRAINT   ', CONSTRAINT `liberty_content_perm_group_ref` FOREIGN KEY (`group_id`) REFERENCES `".BIT_DB_PREFIX."users_groups` (`group_id`)
+  CONSTRAINT   '
                 , CONSTRAINT `liberty_content_perm_perm_ref` FOREIGN KEY (`perm_name`) REFERENCES `".BIT_DB_PREFIX."users_permissions` (`perm_name`)
                 , CONSTRAINT `liberty_content_id_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
 ",
@@ -196,6 +196,16 @@ global $gBitInstaller;
 foreach( array_keys( $tables ) AS $tableName ) {
 	$gBitInstaller->registerSchemaTable( LIBERTY_PKG_NAME, $tableName, $tables[$tableName], TRUE );
 }
+
+// Constraints which must be installed after table creation
+$constraints = array(
+	'liberty_content' => array('liberty_content_attachment_ref' => 'FOREIGN KEY (`primary_attachment_id`) REFERENCES `'.BIT_DB_PREFIX.'liberty_attachments`( `attachment_id` )'),
+	'liberty_content_permissions' => array('liberty_content_perm_group_ref' => 'FOREIGN KEY (`group_id`) REFERENCES `'.BIT_DB_PREFIX.'users_groups` (`group_id`)'),
+);
+foreach( array_keys($constraints) AS $tableName ) {
+	$gBitInstaller->registerSchemaConstraints( LIBERTY_PKG_NAME, $tableName, $constraints[$tableName]);
+}
+
 
 $gBitInstaller->registerPackageInfo( LIBERTY_PKG_NAME, array(
 	'description' => "Liberty is an integral part and manages all content on your site.",
@@ -228,10 +238,6 @@ $indices = array (
 	'process_id_idx' => array( 'table' => 'liberty_process_queue', 'cols' => 'content_id', 'opts' => NULL ),
 );
 $gBitInstaller->registerSchemaIndexes( LIBERTY_PKG_NAME, $indices );
-
-// Need to figure out how to add this constraint on liberty_content after the tables are created or the circular reference causes issues.
-//		, CONSTRAINT `liberty_content_attachment_ref` FOREIGN KEY (`primary_attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments`( `attachment_id` )
-
 
 // ### Sequences
 $sequences = array (
