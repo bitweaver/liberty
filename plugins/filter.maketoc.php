@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.2 2007/06/10 14:33:20 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.3 2007/06/14 23:01:11 nickpalmer Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -40,51 +40,54 @@ function maketoc_presplitfilter( $pData, $pFilterHash ) {
 
 function maketoc_postfilter( $pData, $pFilterHash ) {
 	preg_match_all( "/\{maketoc(.*?)\}/", $pData, $maketocs );
-	// extract the parameters for maketoc
-	foreach( $maketocs[1] as $string ) {
-		$params[] = parse_xml_attributes( $string );
-	}
 
-	// get all headers into an array
-	preg_match_all( "/<h(\d)[^>]*>(.*?)<\/h\d>/i", $pData, $headers );
-
-	// remove any html tags from the output text and generate link ids
-	foreach( $headers[2] as $output ) {
-		$outputs[] = $temp = preg_replace( "/<[^>]*>/", "", $output );
-		$id = substr( preg_replace( "/[^\w|\d]*/", "", $temp ), 0, 40 );
-		$ids[] = !empty( $id ) ? $id : 'id'.microtime() * 1000000;
-	}
-
-	// insert the <a name> tags in the right places
-	foreach( $headers[0] as $k => $header ) {
-		$reconstructed = "<h{$headers[1][$k]} id=\"{$ids[$k]}\">{$headers[2][$k]}</h{$headers[1][$k]}>";
+	if (!empty($maketocs[1])) {
+		// extract the parameters for maketoc
+		foreach( $maketocs[1] as $string ) {
+			$params[] = parse_xml_attributes( $string );
+		}
+		
+		
+		// get all headers into an array
+		preg_match_all( "/<h(\d)[^>]*>(.*?)<\/h\d>/i", $pData, $headers );
+		
+		// remove any html tags from the output text and generate link ids
+		foreach( $headers[2] as $output ) {
+			$outputs[] = $temp = preg_replace( "/<[^>]*>/", "", $output );
+			$id = substr( preg_replace( "/[^\w|\d]*/", "", $temp ), 0, 40 );
+			$ids[] = !empty( $id ) ? $id : 'id'.microtime() * 1000000;
+		}
+		
+		// insert the <a name> tags in the right places
+		foreach( $headers[0] as $k => $header ) {
+			$reconstructed = "<h{$headers[1][$k]} id=\"{$ids[$k]}\">{$headers[2][$k]}</h{$headers[1][$k]}>";
 		$pData = preg_replace( "/".preg_quote( $header, "/" )."/", $reconstructed, $pData );
-	}
-
-	if( !empty( $outputs ) ) {
-		$tocHash = array(
-			'outputs' => $outputs,
-			'ids'     => $ids,
-			'levels'  => $headers[1],
-		);
-
-		// (<br[ |\/]*>){0,1} removes up to one occurance of <br> | <br > | <br /> | <br/> or similar variants
-		$sections = preg_split( "/\{maketoc.*?\}(<br[ |\/]*>){0,1}/", $pData );
-		// first section is before any {maketoc} entry, so we can ignore it
-		$ret = '';
-
-		foreach( $sections as $k => $section ) {
-			// count headers in each section that we know where to begin and where to stop
-			preg_match_all( "!<h(\d)[^>]*>.*?</h\d>!i", $section, $hs );
-			$tocHash['header_count'][] = count( $hs[0] );
-			$ret .= $section;
-			// the last section will create an error if we don't check for available params
-			if( isset( $params[$k] )) {
-				$ret .= maketoc_create_list( $tocHash, $params[$k] );
+		}
+		
+		if( !empty( $outputs ) ) {
+			$tocHash = array(
+				'outputs' => $outputs,
+				'ids'     => $ids,
+				'levels'  => $headers[1],
+				);
+			
+			// (<br[ |\/]*>){0,1} removes up to one occurance of <br> | <br > | <br /> | <br/> or similar variants
+			$sections = preg_split( "/\{maketoc.*?\}(<br[ |\/]*>){0,1}/", $pData );
+			// first section is before any {maketoc} entry, so we can ignore it
+			$ret = '';
+			
+			foreach( $sections as $k => $section ) {
+				// count headers in each section that we know where to begin and where to stop
+				preg_match_all( "!<h(\d)[^>]*>.*?</h\d>!i", $section, $hs );
+				$tocHash['header_count'][] = count( $hs[0] );
+				$ret .= $section;
+				// the last section will create an error if we don't check for available params
+				if( isset( $params[$k] )) {
+					$ret .= maketoc_create_list( $tocHash, $params[$k] );
+				}
 			}
 		}
 	}
-
 	return isset( $ret ) ? $ret : preg_replace( "/\{maketoc[^\}]*\}\s*(<br[^>]*>)*/i", "", $pData );
 }
 
