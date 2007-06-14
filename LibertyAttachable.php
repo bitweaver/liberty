@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.91 2007/06/14 13:24:29 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.92 2007/06/14 15:26:12 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -169,7 +169,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 */
 			if( $save ) {
 				// - TODO: get common preferences page with this as an option, but right now files are only option cuz no blobs - SPIDERR
-				$storageGuid = !empty( $pParamHash['storage_guid'] ) ? $pParamHash['storage_guid'] : $gBitSystem->getConfig( 'common_storage_plugin', PLUGIN_GUID_BIT_FILES );
+				$storageGuid = !empty( $pParamHash['storage_guid'] ) ? $pParamHash['storage_guid'] : $gBitSystem->getConfig( 'common_storage_plugin', 'bitfile' );
 				if( !empty( $pParamHash[$file]['size'] ) ) {
 					if ( !is_windows() ) {
 						list( $pParamHash[$file]['name'], $pParamHash[$file]['type'] ) = $gBitSystem->verifyFileExtension( $pParamHash[$file]['tmp_name'], $pParamHash[$file]['name'] );
