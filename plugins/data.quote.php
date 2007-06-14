@@ -86,7 +86,7 @@ function data_quote($data, $params) {
 	}
 
 	$extra = $cite = '';
-	$user = $params['user'];
+	$user = empty($params['user']) ? null : $params['user'];
 
 	if (!empty($params['comment_id'])) {
 		$extra.="In ";

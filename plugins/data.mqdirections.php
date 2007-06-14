@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.mqdirections.php,v 1.8 2007/06/09 18:09:39 squareing Exp $
+// $Id: data.mqdirections.php,v 1.9 2007/06/14 23:09:45 nickpalmer Exp $
 
 /**
  * definitions
@@ -105,6 +105,7 @@ function data_mqdir( $data, $params ) {
 	$a2z = isset($zip) ? $zip : ' ';
 	$a2y = isset($country) ? $country : 'US';
 
+	$ret = null;
     $icon = isset($icon) ? $icon : "SM"; // Test for the MapQuest Icon
 	switch(strtoupper($icon)) {
 		case 'SM':
@@ -120,8 +121,8 @@ function data_mqdir( $data, $params ) {
    			$ret = ' ';
 			break;
 	}
-
-	$ret =
+	if ($ret != ' ') {
+		$ret =
 		'<form action="http://www.mapquest.com/directions/main.adp" method="get">'
 			.'<div align="center">'
 				.'<input type="hidden" name="go" value="1+">'
@@ -153,6 +154,7 @@ function data_mqdir( $data, $params ) {
 				.'</table>'
 			.'</div>'
 		.'</form>';
+	}
 	return $ret;
 }
 ?>
