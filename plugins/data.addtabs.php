@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.addtabs.php,v 1.8 2007/06/09 18:09:39 squareing Exp $
+// $Id: data.addtabs.php,v 1.9 2007/06/14 23:04:57 nickpalmer Exp $
 
 /**
  * definitions
@@ -66,18 +66,25 @@ function data_addtabs_help() {
 
 function data_addtabs($data, $params) {
 	extract ($params, EXTR_SKIP);
-	$ret = '<div class="tabpane">';
+	$id = 1000000 * microtime();
+	$ret = '<div class="tabpane" id="id_'.$id.'">';
+	$good = false;
 	for ($i = 1; $i <= 99; $i++) {
-		if( isset( ${'tab'.$i} ) && is_numeric( ${'tab'.$i} ) ) {
-			if( $obj = LibertyBase::getLibertyObject( ${'tab'.$i} ) ) {
-				$ret .= '<div class="tabpage"><h4 class="tab">'.$obj->getTitle().'</h4>'.$obj->parseData().'</div>';
-				$good=True;
+		if( isset( ${'tab'.$i} ) ) {
+			if (is_numeric( ${'tab'.$i} ) ) {
+				if( $obj = LibertyBase::getLibertyObject( ${'tab'.$i} ) ) {
+					$ret .= '<div class="tabpage"><h4 id="tab_'.$id.'_'.$i.'" class="tab">'.$obj->getTitle().'</h4>'.$obj->getPreview().'</div>';
+					$good=True;
+				}
+			}
+			else {
+				$good=false;
 			}
 		}
 	}
-	$ret .= "</div><script type=\"text/javascript\">//<![CDATA[\nsetupAllTabs();\n//]]></script>";
+	$ret .= "</div><script type=\"text/javascript\">//<![CDATA[\nsetupAllTabs()\n//]]></script>";
 	if( !$good ) {
-		$ret = "The Plugin AddTabs requires valid parameters. Numeric content id numbers can use the parameter names 'tab1' thru 'tab99'";
+		$ret = tra("The plugin AddTabs requires valid parameters. Numeric content id numbers can use the parameter names 'tab1' thru 'tab99'");
 	}
 	return $ret;
 }
