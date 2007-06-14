@@ -4,7 +4,7 @@
 		<li>
 			{section name=ix loop=$subtree}
 				{if $subtree[ix].pos eq ''}
-					<h3>{$subtree[ix].title|escape} {if $subtree[ix].page_alias}({/if}{$subtree[ix].page_alias}{if $subtree[ix].page_alias}){/if}</h3>
+					<em>{$subtree[ix].title|escape} {if $subtree[ix].page_alias}({/if}{$subtree[ix].page_alias}{if $subtree[ix].page_alias}){/if}</em>
 				{else}
 					{if $subtree[ix].first}<ul>{else}</li>{/if}
 					{if $subtree[ix].last}</ul>{else}
