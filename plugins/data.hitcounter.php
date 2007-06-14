@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -53,7 +53,7 @@ function data_hitcounter_help() {
 function data_hitcounter($data, $params, &$pCommonObject) {
     $pCommonObject->getHits();
 	$display_result = '0';
-	if (!empty($pCommonObject->mInfo['hits']) {
+	if (!empty($pCommonObject->mInfo['hits'])) {
 		$display_result = $pCommonObject->mInfo['hits'];    
 	}
 
