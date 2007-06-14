@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.renderer.php,v 1.5 2007/06/09 18:09:39 squareing Exp $
+// $Id: data.renderer.php,v 1.6 2007/06/14 23:17:17 nickpalmer Exp $
 
 /**
  * definitions
@@ -74,7 +74,7 @@ $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATARENDERER
 	// Executable Routine
 	function data_renderer($data, $params) { // No change in the parameters with Clyde
 		// The next 2 lines allow access to the $pluginParams given above and may be removed when no longer needed
-		global $gLibertySystem, $gBitSmarty;
+		global $gLibertySystem, $gBitSmarty, $gBitSystem;
 
 		$data = trim($data);
 
@@ -84,7 +84,7 @@ $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATARENDERER
 
 		$rendererHash=array();
 		$rendererHash['content_id']=0;
-		$rendererHash['format_guid'] =$params['format_guid'];
+		$rendererHash['format_guid'] = empty($params['format_guid']) ? $gBitSystem->getConfig('default_format') : $params['format_guid'];
 		$rendererHash['data'] =$data;
 
 		$formatGuid=$rendererHash['format_guid'];
