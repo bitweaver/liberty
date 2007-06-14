@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.90 2007/06/13 20:58:06 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.91 2007/06/14 13:24:29 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -171,7 +171,11 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 				// - TODO: get common preferences page with this as an option, but right now files are only option cuz no blobs - SPIDERR
 				$storageGuid = !empty( $pParamHash['storage_guid'] ) ? $pParamHash['storage_guid'] : $gBitSystem->getConfig( 'common_storage_plugin', PLUGIN_GUID_BIT_FILES );
 				if( !empty( $pParamHash[$file]['size'] ) ) {
-					list( $pParamHash[$file]['name'], $pParamHash[$file]['type'] ) = $gBitSystem->verifyFileExtension( $pParamHash[$file]['tmp_name'], $pParamHash[$file]['name'] );
+					if ( !is_windows() ) {
+						list( $pParamHash[$file]['name'], $pParamHash[$file]['type'] ) = $gBitSystem->verifyFileExtension( $pParamHash[$file]['tmp_name'], $pParamHash[$file]['name'] );
+					} else {
+//						$pParamHash[$file]['type'] = $gBitSystem->verifyMimeType( $pParamHash[$file]['tmp_name'] );				
+					}
 					$pParamHash[$file]['dest_base_name'] = substr( $pParamHash[$file]['name'], 0, strrpos( $pParamHash[$file]['name'], '.' )  );
 					$pParamHash[$file]['source_file'] = $pParamHash[$file]['tmp_name'];
 					// lowercase all file extensions
@@ -287,7 +291,6 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 					} else {
 						$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'] = $this->mDb->GenID( 'liberty_attachments_id_seq' );
 					}
-
 					// if we have uploaded a file, we can take care of that generically
 					if( is_array( $storeRow['upload'] ) && !empty( $storeRow['upload']['size'] ) ) {
 						if( empty( $storeRow['upload']['type'] ) ) {
