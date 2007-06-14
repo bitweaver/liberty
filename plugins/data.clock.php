@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: xing
 // +----------------------------------------------------------------------+
-// $Id: data.clock.php,v 1.6 2006/04/06 05:06:11 starrrider Exp $
+// $Id: data.clock.php,v 1.7 2007/06/14 21:49:40 nickpalmer Exp $
 
 /**
  * Setup Code
@@ -71,22 +71,24 @@ function data_clock( $data, $params ) {
 	global $gBitSystem;
 	$save_tz = getenv('TZ');
 
-	if ($params['format']) {
+	if (!empty($params['format'])) {
 		$format = $params['format'];
 	} else {
 		$format = '%c';
 	}
-	if ($params['timestamp']) {
-		$ts = strtotime($params['timestamp']);
+	if (!empty($params['timestamp'])) {
+		// Be quite in case of bad timestamp
+		$ts = @strtotime($params['timestamp']);
 	} else {
 		$ts = time();
 	}
-	if ($params['timezone']) {
+	if (!empty($params['timezone'])) {
 		$_ENV['TZ'] = $params['timezone'];
 		putenv("TZ=$_ENV[TZ]");
     }
 
-	$result = strftime($format, $ts);
+	// Be quite in case of bad data
+	$result = @strftime($format, $ts);
 	$_ENV['TZ'] = $save_tz;
 	putenv("TZ=$save_tz");
 
