@@ -52,7 +52,7 @@
 						{assign var=format_options value=true}
 						&nbsp;&nbsp;
 						{if !$gBitSystem->isFeatureActive('content_force_allow_html')}
-							{if $gBitUser->hasPermission( 'p_liberty_enter_html' )}
+							{if $gBitUser->hasPermission( 'p_liberty_enter_html' ) || $gBitSystem->isFeatureActive('content_allow_html')}
 								<label><input type="checkbox" name="preferences[content_enter_html]" value="y" id="html" {if $gContent->mPrefs.content_enter_html}checked="checked" {/if}/> {tr}Allow HTML{/tr}</label>
 							{elseif is_object($gContent) && $gContent->getPreference( 'content_enter_html' )}
 								[ {tr}HTML will remain as HTML{/tr} ]
