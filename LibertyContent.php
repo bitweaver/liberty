@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.235 2007/06/14 12:42:33 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.236 2007/06/14 13:21:53 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2727,14 +2727,12 @@ class LibertyContent extends LibertyBase {
 	 * @access public
 	 * @return the preview string
 	 **/
-	function getPreview($includeHeader = TRUE, $includeIcons = TRUE) {
+	function getPreview() {
 		global $gBitSystem, $gContent, $gBitSmarty;
 		// Tell gBitSystem not to do modules and such
 		$gBitSystem->onlyRenderContent();
 		// Tell the content we are previewing (in case they care)
 		$gBitSmarty->assign('preview', true);
-		$gBitSmarty->assign('includeIcons', $includeIcons);
-		$gBitSmarty->assign('includeHeader', $includeHeader);
 		// Save current gContent
 		$oldGContent = $gContent;
 		// Make us the content

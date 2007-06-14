@@ -1,13 +1,13 @@
 {strip}
 <div class="display content">
 	{* We want the close click always...*}
-	{if $includeIcons}
+	{if !$preview}
 		<div class="floaticon">
 			{include file="bitpackage:liberty/services_inc.tpl" serviceLocation='icon' serviceHash=$gContent->mInfo}
 		</div><!-- end .floaticon -->
 	{/if}
 {if $gContent->isValid()}
-	{if $includeHeader}
+	{if !$preview}
 		<div class="header">
 			<h1>{$gContent->mInfo.title|default:"No Title"}</h1>
 			{* creator_user not yet forced by liberty so check. *}
