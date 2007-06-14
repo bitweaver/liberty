@@ -262,6 +262,7 @@ $gBitInstaller->registerPreferences( LIBERTY_PKG_NAME, array(
 //	array(LIBERTY_PKG_NAME, 'liberty_attachment_style', 'standard'),
 	// The default for new installs is htmlpurifier old stays simple
 	array(LIBERTY_PKG_NAME, 'liberty_html_purifier', 'htmlpurifier'),
+	array(LIBERTY_PKG_NAME, 'common_storage_plugin', 'bitfile'),
 ) );
 
 $gBitInstaller->registerSchemaDefault( LIBERTY_PKG_NAME, array(
