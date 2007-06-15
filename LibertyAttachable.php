@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.94 2007/06/15 10:30:38 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.95 2007/06/15 20:35:42 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -144,7 +144,7 @@ class LibertyAttachable extends LibertyContent {
 //	}
 
 	function verifyAttachment( &$pParamHash, $file ) {
-		global $gBitSystem, $gBitUser;
+		global $gBitSystem, $gBitUser, $gLibertySystem;
 		if( !empty( $_FILES[$file] ) ) {
 			// tiki files upload
 			$pParamHash[$file] = $_FILES[$file];
@@ -168,8 +168,23 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			}
 */
 			if( $save ) {
-				// - TODO: get common preferences page with this as an option, but right now files are only option cuz no blobs - SPIDERR
-				$storageGuid = !empty( $pParamHash['storage_guid'] ) ? $pParamHash['storage_guid'] : $gBitSystem->getConfig( 'common_storage_plugin', 'bitfile' );
+				// - TODO: get common preferences page with this as an option
+				if ( empty( $pParamHash['storage_guid'] ) ) {
+					$storageGuid = $gBitSystem->getConfig( 'common_storage_plugin', '' );
+					if ( empty( $storageGuid )) {
+						// choose one of the available attachment plugins
+						if( isset( $gLibertySystem->mPlugins['fisheye'] )) {
+							$storageGuid = PLUGIN_GUID_FISHEYE_IMAGE;
+						} else if( isset( $gLibertySystem->mPlugins['bitfile'] ) ) {
+							$storageGuid = PLUGIN_GUID_BIT_FILES;
+						} else {
+							$this->mErrors[] = "There is no storage plugin available to store file";
+						}
+					}
+				} else {
+					$storageGuid = $pParamHash['storage_guid'];
+				}
+				
 				if( !empty( $pParamHash[$file]['size'] ) ) {
 					if ( !is_windows() ) {
 						list( $pParamHash[$file]['name'], $pParamHash[$file]['type'] ) = $gBitSystem->verifyFileExtension( $pParamHash[$file]['tmp_name'], $pParamHash[$file]['name'] );
