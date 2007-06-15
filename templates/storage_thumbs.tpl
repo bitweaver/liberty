@@ -10,7 +10,7 @@
 			{assign var=thumbsize value=small}
 		{/if}
 		{foreach from=$gContent->mStorage item=attachment }
-			{capture name="size"}{$attachment.size|display_bytes}{/capture}
+			{capture name="size"}{$attachment.file_size|display_bytes}{/capture}
 			{capture name="popup"}{include file="bitpackage:kernel/popup_box.tpl" content="`$attachment.filename`<br />{tr}Size{/tr}: `$smarty.capture.size`" noclose=true}{/capture}
 			<div class="item">
 				{if $attachment.thumbnail_url.$thumbsize}
