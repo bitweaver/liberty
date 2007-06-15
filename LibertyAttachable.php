@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.97 2007/06/15 21:53:44 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.98 2007/06/15 22:10:06 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -1034,12 +1034,17 @@ function liberty_fetch_thumbnails( $pFilePath, $pThumbnailerImageUrl = NULL, $pT
 		$pThumbSizes = array_keys( $gThumbSizes );
 	}
 	// since we could have png or jpg thumbs, we need to check for both types
-	// we will check for jpg first as they have been in use by bw for a long time now
+	// we will check for jpg first unless 'liberty_png_thumbnails' is set
+	if( $gBitSystem->isFeatureActive( 'liberty_png_thumbnails' ) ) {
+			$ext1 = '.png'; $ext2 = '.jpg';
+		} else {
+			$ext2 = '.png'; $ext1 = '.jpg';			
+		}
 	foreach( $pThumbSizes as $size ) {
-		if( file_exists( BIT_ROOT_PATH.dirname( $pFilePath ).'/'.$size.'.jpg' )) {
-			$ret[$size] = BIT_ROOT_URL.dirname( $pFilePath ).'/'.$size.'.jpg';
-		} elseif( file_exists( BIT_ROOT_PATH.dirname( $pFilePath ).'/'.$size.'.png' )) {
-			$ret[$size] = BIT_ROOT_URL.dirname( $pFilePath ).'/'.$size.'.png';
+		if( file_exists( BIT_ROOT_PATH.dirname( $pFilePath ).'/'.$size.$ext1 )) {
+			$ret[$size] = BIT_ROOT_URL.dirname( $pFilePath ).'/'.$size.$ext1;
+		} elseif( file_exists( BIT_ROOT_PATH.dirname( $pFilePath ).'/'.$size.$ext2 )) {
+			$ret[$size] = BIT_ROOT_URL.dirname( $pFilePath ).'/'.$size.$ext2;
 		} elseif( $pThumbnailerImageUrl ) {
 			$ret[$size] = $pThumbnailerImageUrl;
 		} else {
