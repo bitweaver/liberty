@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.236 2007/06/14 13:21:53 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.237 2007/06/15 06:27:10 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1793,10 +1793,6 @@ class LibertyContent extends LibertyBase {
 		}
 
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
-			$selectSql .= ' ,ls.`security_id`, ls.`security_description`, ls.`is_private`, ls.`is_hidden`, ls.`access_question`, ls.`access_answer` ';
-			$joinSql .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."gatekeeper_security_map` cg ON (lc.`content_id`=cg.`content_id`) LEFT OUTER JOIN `".BIT_DB_PREFIX."gatekeeper_security` ls ON (ls.`security_id`=cg.`security_id` ) ";
-			$whereSql .= ' AND (cg.`security_id` IS NULL OR lc.`user_id`=?) ';
-			$bindVars[] = $gBitUser->mUserId;
 			if( $gBitSystem->isPackageActive( 'fisheye' ) ) {
 				// This is really ugly to have in here, and really would be better off somewhere else.
 				// However, because of the specific nature of the current implementation of fisheye galleries, I am afraid
