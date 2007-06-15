@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.96 2007/06/15 21:48:28 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.97 2007/06/15 21:53:44 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -1033,7 +1033,6 @@ function liberty_fetch_thumbnails( $pFilePath, $pThumbnailerImageUrl = NULL, $pT
 	if( empty( $pThumbSizes )) {
 		$pThumbSizes = array_keys( $gThumbSizes );
 	}
-vd($pThumbSizes);
 	// since we could have png or jpg thumbs, we need to check for both types
 	// we will check for jpg first as they have been in use by bw for a long time now
 	foreach( $pThumbSizes as $size ) {
