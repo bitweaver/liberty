@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -59,7 +59,7 @@ function bit_image_load( $pRow ) {
 	$ret = NULL;
 	if( !empty( $pRow['foreign_id'] ) && is_numeric( $pRow['foreign_id'] )) {
 		$query = "
-			SELECT la.*, lf.*, img.`content_id`
+			SELECT la.*, lf.*, img.`content_id`, img.`image_id`
 			FROM `".BIT_DB_PREFIX."liberty_attachments` la
 				INNER JOIN `".BIT_DB_PREFIX."liberty_attachments_map` lam ON (la.`attachment_id` = lam.`attachment_id`)
 				INNER JOIN `".BIT_DB_PREFIX."fisheye_image` img ON( img.`content_id` = lam.`content_id` )
@@ -74,6 +74,7 @@ function bit_image_load( $pRow ) {
 			}
 			$ret['thumbnail_url'] = liberty_fetch_thumbnails( $ret['storage_path'], $thumbnailerImageUrl );
 			$ret['filename'] = substr( $ret['storage_path'], strrpos($ret['storage_path'], '/')+1);
+			$ret['display_url'] = FisheyeImage::getDisplayUrl( $ret['image_id'], $ret );
 			$ret['source_url'] = BIT_ROOT_URL.str_replace( '+', '%20', str_replace( '%2F', '/', urlencode( $ret['storage_path'] ) ) );
 			$ret['wiki_plugin_link'] = "{attachment id=".$ret['attachment_id']."}";
 		}
