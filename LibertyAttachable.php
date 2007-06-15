@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.95 2007/06/15 20:35:42 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.96 2007/06/15 21:48:28 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -1033,7 +1033,7 @@ function liberty_fetch_thumbnails( $pFilePath, $pThumbnailerImageUrl = NULL, $pT
 	if( empty( $pThumbSizes )) {
 		$pThumbSizes = array_keys( $gThumbSizes );
 	}
-
+vd($pThumbSizes);
 	// since we could have png or jpg thumbs, we need to check for both types
 	// we will check for jpg first as they have been in use by bw for a long time now
 	foreach( $pThumbSizes as $size ) {
@@ -1049,5 +1049,22 @@ function liberty_fetch_thumbnails( $pFilePath, $pThumbnailerImageUrl = NULL, $pT
 	}
 
 	return $ret;
+}
+/**
+ * fetch a single available thumbnail for a given item. if no thumbnail is present, return NULL
+ *
+ * @param string $pFilePath Relative path to file we want to get thumbnails for (needs to include file name for mime icons)
+ * @param array $pThumbSizes array of images to search for in the pFilePath
+ * @access public
+ * @return string url
+ */
+function liberty_fetch_thumbnail_url( $pFilePath, $pThumbSize ) {
+	if ( !empty($pFilePath) ) {
+		$ret = array();
+		$ret = liberty_fetch_thumbnails( $pFilePath, NULL, array($pThumbSize) );
+		return $ret[$pThumbSize];
+	} else {
+		return NULL;
+	}
 }
 ?>
