@@ -19,7 +19,7 @@
 							{elseif $plugin_type eq 'data'}
 								{formfeedback warning="Disabling plugins will also disable them in content pages, even if they are already in use."}
 							{/if}
-                                                  	
+
 							<table class="panel">
 								<caption>{tr}Plugin Type: {$plugin_type_label}{/tr}</caption>
 								<tr>
@@ -30,7 +30,7 @@
 									{/if}
 									<th style="width:5%;">{tr}Active{/tr}</th>
 								</tr>
-                                                  	
+
 								{foreach from=$gLibertySystem->mPlugins item=plugin key=guid}
 									{if $plugin.plugin_type eq $plugin_type}
 										<tr class="{cycle values="odd,even"}">
@@ -38,12 +38,14 @@
 												{if $plugin.edit_label}
 													<h3>{$plugin.edit_label}</h3>
 												{else}
-													<h3>{$plugin.title|escape}</h3>
+												<h3>
+													{$plugin.title|escape}
+													{if $plugin.plugin_settings_url}
+														&nbsp; <a href="{$plugin.plugin_settings_url}">{biticon iname=accessories-text-editor iexplain="Plugin Settings"}</a>
+													{/if}
+												</h3>
 												{/if}
 												{$plugin.description}
-												{if $plugin.plugin_settings_url}
-													<br /><a href="{$plugin.plugin_settings_url}">Plugin Settings</a>
-												{/if}
 											</td>
 											<td>{$guid}</td>
 											{if $plugin_type eq 'format'}
@@ -60,9 +62,9 @@
 									{/if}
 								{/foreach}
 							</table>
-                                                  	
+
 							<br />
-                                                  	
+
 							{if $plugin_type eq 'format'}
 								{formfeedback warning="{tr}This will change the way any wiki page that contains HTML will be displayed. We recommend turning on HTMLPurifier if either of these is on.{/tr}"}
 								<div class="row">
