@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.21 $
+ * @version  $Revision: 1.22 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.21 2007/06/01 09:02:37 squareing Exp $
+// $Id: data.attachment.php,v 1.22 2007/06/15 09:00:00 squareing Exp $
 
 /**
  * definitions
@@ -167,12 +167,12 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 			}
 
 			$ret = '<a '.$class.' href="'.trim( $pParams['link'] ).'">'.$ret.'</a>';
+		} elseif( !empty( $att['download_url'] ) ) {
+			$ret = '<a href="'.trim( $att['download_url'] ).'">'.$ret.'</a>';
+		} elseif( !empty( $att['display_url'] ) ) {
+			$ret = '<a href="'.trim( $att['display_url'] ).'">'.$ret.'</a>';
 		} elseif( empty( $pParams['size'] ) || $pParams['size'] != 'original' ) {
-			if( !empty( $att['download_url'] ) ) {
-				$ret = '<a href="'.trim( $att['download_url'] ).'">'.$ret.'</a>';
-			} else {
-				$ret = '<a href="'.trim( $att['source_url'] ).'">'.$ret.'</a>';
-			}
+			$ret = '<a href="'.trim( $att['source_url'] ).'">'.$ret.'</a>';
 		}
 
 		// finally, wrap the output.
