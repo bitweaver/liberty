@@ -23,12 +23,13 @@
 							<table class="panel">
 								<caption>{tr}Plugin Type: {$plugin_type_label}{/tr}</caption>
 								<tr>
-									<th style="width:70%;">{tr}Plugin{/tr}</th>
-									<th style="width:20%;">{tr}GUID{/tr}</th>
+									<th style="width:90%;">{tr}Plugin{/tr} <small>[guid]</small></th>
 									{if $plugin_type eq 'format'}
 										<th style="width:5%;">{tr}Default{/tr}</th>
+										<th style="width:5%;">{tr}Active{/tr}</th>
+									{else}
+										<th style="width:10%;">{tr}Active{/tr}</th>
 									{/if}
-									<th style="width:5%;">{tr}Active{/tr}</th>
 								</tr>
 
 								{foreach from=$gLibertySystem->mPlugins item=plugin key=guid}
@@ -36,18 +37,17 @@
 										<tr class="{cycle values="odd,even"}">
 											<td>
 												{if $plugin.edit_label}
-													<h3>{$plugin.edit_label}</h3>
+													<h3><label for="{$guid}">{$plugin.edit_label} <small>[{$guid}]</small></label></h3>
 												{else}
-												<h3>
-													{$plugin.title|escape}
-													{if $plugin.plugin_settings_url}
-														&nbsp; <a href="{$plugin.plugin_settings_url}">{biticon iname=accessories-text-editor iexplain="Plugin Settings"}</a>
-													{/if}
-												</h3>
+													<h3>
+														<label for="{$guid}">{$plugin.title|escape} <small>[{$guid}]</small></label>
+														{if $plugin.plugin_settings_url}
+															&nbsp; <a href="{$plugin.plugin_settings_url}">{biticon iname=accessories-text-editor iexplain="Plugin Settings"}</a>
+														{/if}
+													</h3>
 												{/if}
-												{$plugin.description}
+												<label for="{$guid}">{$plugin.description}</label>
 											</td>
-											<td>{$guid}</td>
 											{if $plugin_type eq 'format'}
 												<td align="center">{if $plugin.is_active == 'y'}{html_radios values=$guid name="default_format" checked=$gBitSystem->getConfig('default_format')}{/if}</td>
 											{/if}
@@ -70,7 +70,7 @@
 								<div class="row">
 									{formlabel label="Allow HTML" for="allow_html"}
 									{forminput}
-										<input type="checkbox" name="content_allow_html" value="y" {if $gBitSystem->isFeatureActive('content_allow_html')}checked="checked"{/if} />
+										<input type="checkbox" name="content_allow_html" id="allow_html" value="y" {if $gBitSystem->isFeatureActive('content_allow_html')}checked="checked"{/if} />
 										This will render HTML in all content pages if it is present. This is a security risk to allow HTML entry by untrusted users, but is usually required for existing installations. For a more controlled environment, assign the <a href="{$smarty.const.USERS_PKG_URL}admin/edit_group.php">p_liberty_enter_html permission</a>.
 										{formhelp note="Allow the use of HTML in tikiwiki format content."}
 									{/forminput}
@@ -78,7 +78,7 @@
 								<div class="row">
 									{formlabel label="Force Allow HTML" for="force_allow_html"}
 									{forminput}
-										<input type="checkbox" name="content_force_allow_html" value="y" {if $gBitSystem->isFeatureActive('content_force_allow_html')}checked="checked"{/if} />
+										<input type="checkbox" name="content_force_allow_html" id="force_allow_html" value="y" {if $gBitSystem->isFeatureActive('content_force_allow_html')}checked="checked"{/if} />
 										This will force HTML to be allowed for all users in tikiwiki format content. We recommend turning this on if you are using either WYSIWYG editor.
 										{formhelp note="This will force the allowance of HTML in tikiwiki format content for all users."}
 									{/forminput}
