@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.13 $
+ * @version  $Revision: 1.14 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,12 +18,15 @@
 // | by: wolff_borg <wolff_borg@yahoo.com.au>
 // | Reworked from: wikiplugin_wikigraph.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikigraph.php,v 1.13 2007/06/01 16:01:33 squareing Exp $
+// $Id: data.wikigraph.php,v 1.14 2007/06/15 11:27:06 squareing Exp $
 /**
  * definitions
  */
 global $gBitSystem, $gLibertySystem;
-if ($gBitSystem->isPackageActive( 'wiki' ) ) { // Do not include this Plugin if the Package is not active
+
+// only include this plugin if wiki is active and we have GraphViz
+if( $gBitSystem->isPackageActive( 'wiki' ) && @include_once( UTIL_PKG_PATH.'GraphViz.php' )) {
+
 define( 'PLUGIN_GUID_DATAWIKIGRAPH', 'datawikigraph' );
 $pluginParams = array (
 	'tag' => 'WIKIGRAPH',
@@ -79,6 +82,7 @@ function data_wikigraph_help() {
 		.tra( "Example: " )."{div preset=centered border='3px solid blue'}";
 	return $help;
 
+	/*
 	// old help - needs to be fulle converted into new format
 	$back = tra("^__Parameter Syntax:__ ") . "~np~{WIKIGRAPH" . tra("(key=>value)}~/np~\n");
 	$back.= tra("Inserts a graph for visual navigation. The graph shows the page and every page that can be reached from that page. Each node in the graph can be clicked to navigate to the selected page. Unless a PageName is included between the  ") . "__~np~{WIKIGRAPH}~/np~__" . tra(" blocks, the graph will be created for the Current Page. __Note:__ This plugin requires the installation of ))GraphViz(( on the server.");
@@ -103,11 +107,10 @@ function data_wikigraph_help() {
 	$back.= tra("^__Note 1:__ Plugin's are __case sensitive__. The Name of the plugin __MUST__ be UPPERCASE. The Key(s) are __always__ lowercase. Some Values are mixed-case but most require lowercase. When in doubt - look at the Example.\n");
 	$back.= tra("__Note 2:__ A listing of ColorNames can be found at ") . "<a class='wiki' target=" . '"_blank"' . " href='http://www.tikipro.org/wiki/index.php?page=Browser+ColorNames/'>" . tra("TikiPro</a>^");
 	$back.= tra("__Note 3:__ One useful place for obtaining HTML colors is ") . "<a class='wiki' target=" . '"_blank"' . " href='http://www.pagetutor.com/pagetutor/makapage/picker/'>" . tra("The Color Picker II</a>^");
-	return $back;
+	 */
 }
 
 include_once( WIKI_PKG_PATH.'BitPage.php');
-include_once( UTIL_PKG_PATH.'GraphViz.php' );
 
 function data_wikigraph( $pData, $pParams ) {
 	global $gContent;
@@ -170,5 +173,6 @@ function data_wikigraph( $pData, $pParams ) {
 	}
 	return $ret;
 }
-}
+
+} // wiki package and graphviz check
 ?>
