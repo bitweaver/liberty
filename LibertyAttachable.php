@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.92 2007/06/14 15:26:12 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.93 2007/06/15 10:05:50 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -394,12 +394,21 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 	}
 	
 	/**
-	 * Store the primary attachment id if we need to.
-	 **/
-	function storePrimaryAttachmentId($pParamHash) {
-		if (!empty($pParamHash['primary_attachment']['attachment_id'])) {
+	 * Store the primary attachment id if we need to. This function can be called statically
+	 * 
+	 * @param array $pParamHash should contain the primary_attachment_id and the content_id the attachment_id should be linked to
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function storePrimaryAttachmentId( $pParamHash ) {
+		global $gBitSystem;
+		if( !empty( $pParamHash['primary_attachment_id'] ) && empty( $pParamHash['primary_attachment']['attachment_id'] )) {
+			$pParamHash['primary_attachment']['attachment_id'] = $pParamHash['primary_attachment_id'];
+		}
+
+		if( !empty( $pParamHash['primary_attachment']['attachment_id'] ) && !empty( $pParamHash['content_id'] )) {
 			$query = "UPDATE liberty_content SET primary_attachment_id = ? WHERE content_id = ?";
-			$result = $this->mDb->query($query, array($pParamHash['primary_attachment']['attachment_id'], $pParamHash['content_id']));
+			$result = $gBitSystem->mDb->query( $query, array( $pParamHash['primary_attachment']['attachment_id'], $pParamHash['content_id'] ));
 		}
 	}
 	
