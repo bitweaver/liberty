@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.1 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -9,7 +9,7 @@ global $gLibertySystem, $gBitSystem, $gBitSmarty;
 /**
  * definitions
  */
-define( 'PLUGIN_GUID_BIT_IMAGE', 'bitimage' );
+define( 'PLUGIN_GUID_FISHEYE_IMAGE', 'fisheye' );
 
 $pluginParams = array (
 	'store_function' => 'bit_image_store',
@@ -24,11 +24,11 @@ $pluginParams = array (
 
 
 global $gLibertySystem;
-$gLibertySystem->registerPlugin( PLUGIN_GUID_BIT_IMAGE, $pluginParams );
+$gLibertySystem->registerPlugin( PLUGIN_GUID_FISHEYE_IMAGE, $pluginParams );
 
 
 function bit_image_verify( &$pStoreRow ) {
-	$pStoreRow['plugin_guid'] = PLUGIN_GUID_BIT_IMAGE;
+	$pStoreRow['plugin_guid'] = PLUGIN_GUID_FISHEYE_IMAGE;
 	$pStoreRow['foreign_id'] = NULL;
 	$pStoreRow['dest_base_name'] = substr( $pStoreRow['upload']['name'], 0, strrpos( $pStoreRow['upload']['name'], '.' ) );
 	if( function_exists( 'transliterate' ) ) {
@@ -65,7 +65,7 @@ function bit_image_load( $pRow ) {
 				INNER JOIN `".BIT_DB_PREFIX."fisheye_image` img ON( img.`content_id` = lam.`content_id` )
 				INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON (lf.`file_id` = la.`foreign_id`)
 			WHERE la.`foreign_id` = ? AND `attachment_plugin_guid` = ?";
-		if( $ret = $gBitSystem->mDb->getRow( $query, array( $pRow['foreign_id'], PLUGIN_GUID_BIT_IMAGE ))) {
+		if( $ret = $gBitSystem->mDb->getRow( $query, array( $pRow['foreign_id'], PLUGIN_GUID_FISHEYE_IMAGE ))) {
 			$canThumbFunc = liberty_get_function( 'can_thumbnail' );
 			if( $canThumbFunc( $ret['mime_type'] )) {
 				$thumbnailerImageUrl = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
