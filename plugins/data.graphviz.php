@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -20,7 +20,6 @@
 /******************
  * Initialization *
  ******************/
-require_once UTIL_PKG_PATH . "GraphViz.php";
 
 define( 'PLUGIN_GUID_DATAGRAPHVIZ', 'graphviz' );
 global $gLibertySystem;
@@ -30,7 +29,7 @@ $pluginParams = array ( 'tag' => 'GRAPHVIZ',
 	'load_function' => 'data_graphviz',
 	'title' => 'GraphViz',
 	'help_page' => 'DataPluginExample',
-	'description' => tra("This plugin renders it's content as a graphviz image (dot or neato)."),
+	'description' => tra("This plugin renders it's content as a graphviz image (dot or neato). It requies the Image_GraphViz pear plugin and graphviz to be installed: pear install Image_GraphViz"),
 	'help_function' => 'data_graphviz_help',
 	'syntax' => "{GRAPHVIZ}digraph  ... {/GRAPHVIZ}",
 	'path' => LIBERTY_PKG_PATH.'plugins/data.graphviz.php',
@@ -73,22 +72,54 @@ function data_graphviz_help() {
 * Load Function *
  ****************/
 function data_graphviz($data, $params) {
+	$data = trim($data);
 	$data = html_entity_decode( $data );
-	$tempurl = TEMP_PKG_URL.'GraphViz/';
+	$storageurl = STORAGE_PKG_URL.'GraphViz/';
+	$storagepath = STORAGE_PKG_PATH.'GraphViz/';
 	$temppath = TEMP_PKG_PATH.'GraphViz/';
-
-	$graph = new Image_GraphViz;
-
+			
+	if( !is_dir( $temppath ) ) {
+		mkdir_p( $temppath );
+	}
+	if( !is_dir( $storagepath ) ) {
+		mkdir_p( $storagepath );
+	}
+	
 	$file = md5( $data );
 	$dotFile = $temppath . $file . '.dot';
-	$pngFile = $temppath . $file . '.png';
-	$pngURL = $tempurl . $file . '.png';
-
-	if( !file_exists( $dotFile ) ) {
-		file_put_contents( $dotFile, $data );
-		$graph->renderDotFile( $dotFile, $pngFile, 'png' );
+	$pngFile = $storagepath . $file . '.png';
+	$pngURL = $storageurl . $file . '.png';
+	
+	if( !file_exists( $pngFile ) ) {
+		if( @include_once('PEAR.php') ) {
+			if(@include_once( 'Image/GraphViz.php' ) ) {
+				$graph = new Image_GraphViz;
+				$error = '<div class=error>'.tra("Unable to write temporary file. Please check your server configuration.").'</div>';	
+				if (!$fp = fopen($dotFile, 'w')) {
+					return $error;
+				}
+				if (fwrite($fp, $data)===false) {
+					return $error;
+				}
+				fclose($fp);
+				$graph->renderDotFile( $dotFile, $pngFile, 'png' );
+				// No need to keep this lying around
+				unlink($dotFile);
+				
+				// If it still isn't there....
+				if (!file_exists($pngFile)) {
+					return '<div class=error>'.tra("Unable to generate graphviz image file. Please check your data.").'</div>';
+				}
+			}
+			else {
+				return "<div class=error>".tra("The Image_Graphviz pear plugin is not installed. Install with `pear install Image_Graphviz`.")."</div>";
+			}
+		}
+		else {		   
+			return "<div class=error>".tra("PEAR and the Image_Graphviz pear plugin are not installed.")."</div>";
+		}
 	}
-
 	return "<img src=\"$pngURL\"/> ";
+
 }
 ?>
