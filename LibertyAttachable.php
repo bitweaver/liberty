@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.93 2007/06/15 10:05:50 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.94 2007/06/15 10:30:38 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -174,7 +174,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 					if ( !is_windows() ) {
 						list( $pParamHash[$file]['name'], $pParamHash[$file]['type'] ) = $gBitSystem->verifyFileExtension( $pParamHash[$file]['tmp_name'], $pParamHash[$file]['name'] );
 					} else {
-//						$pParamHash[$file]['type'] = $gBitSystem->verifyMimeType( $pParamHash[$file]['tmp_name'] );				
+//						$pParamHash[$file]['type'] = $gBitSystem->verifyMimeType( $pParamHash[$file]['tmp_name'] );
 					}
 					$pParamHash[$file]['dest_base_name'] = substr( $pParamHash[$file]['name'], 0, strrpos( $pParamHash[$file]['name'], '.' )  );
 					$pParamHash[$file]['source_file'] = $pParamHash[$file]['tmp_name'];
@@ -207,7 +207,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		$this->verifyAttachment( $pParamHash, 'primary_attachment' );
 
 		// Support for multiple arrays of uploads.
-		if (!empty($pParamHash['upload_arrays'])) {			
+		if (!empty($pParamHash['upload_arrays'])) {
 			$other_uploads = split(',',$pParamHash['upload_arrays']);
 			foreach ($other_uploads as $upload_array) {
 				// We need a max to guard against infinite loop.
@@ -216,7 +216,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 				if (isset($pParamHash[$max_name])) {
 					for ($i = 0; $i <= $pParamHash[$max_name]; $i++) {
 						$field = $upload_array."_".$i;
-						if(isset($_FILES[$field]) && 
+						if(isset($_FILES[$field]) &&
 							$_FILES[$field]['error'] == 0) {
 							$this->verifyAttachment($pParamHash, $field);
 						}
@@ -311,7 +311,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 							$storeRow['upload']['dest_file_path'] = $storagePath;
 						}
 					}
-					
+
 					if( isset($storeRow['attachment_id']) && $gLibertySystem->getPluginFunction( $storeRow['plugin_guid'], 'store_function' ) ) {
 						$storeFunc = $gLibertySystem->mPlugins[$storeRow['plugin_guid']]['store_function'];
 						$this->mStorage = $storeFunc( $storeRow );
@@ -334,7 +334,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			}
 		}
 	}
-	
+
 	function storeExistingAttachments(&$pParamHash) {
 		if( @$this->verifyId( $this->mContentId ) && !empty( $pParamHash['existing_attachment_id'] )) {
 			// Allow for an array of attachment ids
@@ -377,25 +377,23 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		if (!empty($pParamHash['primary_attachment_id'])) {
 			if ($this->verifyId($pParamHash['primary_attachment_id'])) {
 				$sql = "SELECT count(*) FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE attachment_id = ?";
-				
+
 				$count = $this->mDb->getOne($sql, array($pParamHash['primary_attachment_id']));
 				if (!$count) {
 					$this->mErrors['primary_attachment'] = tra("Could not set the primary attachment because there is no attachment with the given id.");
-				}
-				else {
+				} else {
 					$pParamHash['content_store']['primary_attachment_id'] = $pParamHash['primary_attachment_id'];
 					$pParamHash['existing_attachment_id'][] = $pParamHash['primary_attachment_id'];
 				}
-			}
-			else {
+			} else {
 				$this->mErrors['primary_attachment'] = tra("Invalid primary attachment id.");
 			}
 		}
 	}
-	
+
 	/**
 	 * Store the primary attachment id if we need to. This function can be called statically
-	 * 
+	 *
 	 * @param array $pParamHash should contain the primary_attachment_id and the content_id the attachment_id should be linked to
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
@@ -411,7 +409,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			$result = $gBitSystem->mDb->query( $query, array( $pParamHash['primary_attachment']['attachment_id'], $pParamHash['content_id'] ));
 		}
 	}
-	
+
 	// Things to be stored should be shoved in the array $pParamHash['STORAGE']
 	function store ( &$pParamHash ) {
 		global $gLibertySystem, $gBitSystem;
@@ -447,8 +445,8 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 	/**
 	 * Get a list of all available attachments
-	 * 
-	 * @param array $pListHash 
+	 *
+	 * @param array $pListHash
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -492,14 +490,14 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			if( !empty( $pListHash['load_attached_to'] ) ) {
 				$sql = "SELECT lam.`content_id` FROM `".BIT_DB_PREFIX."liberty_attachments_map` lam WHERE lam.`attachment_id` = ?";
 				$attached = $this->mDb->getCol($sql, array($attachment['attachment_id']));
-				$ret[$attachment['attachment_id']]['attached_to'] = $attached;				
+				$ret[$attachment['attachment_id']]['attached_to'] = $attached;
 			}
 		}
 
 		// count all entries
-		$query = "SELECT COUNT(*) 
-			FROM `".BIT_DB_PREFIX."liberty_attachments` la 
-			INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(la.`user_id` = uu.`user_id`) 
+		$query = "SELECT COUNT(*)
+			FROM `".BIT_DB_PREFIX."liberty_attachments` la
+			INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(la.`user_id` = uu.`user_id`)
 			$joinSql $whereSql
 		";
 
@@ -520,7 +518,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 	/**
 	 * expunge attachment from the database
-	 * 
+	 *
 	 * @param array $pAttachmentId attachment id of the item that should be deleted
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
@@ -565,7 +563,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 	/**
 	 * detach attachment from content
-	 * 
+	 *
 	 * @param array $pAttachmentId Attachment id that needs to be detached from the content loaded
 	 * @param array $pContentId Optional content ID that the attachment shoudl be detached from
 	 * @access public
@@ -593,15 +591,15 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			$this->mErrors[] = tra("Unable to detach due to an invalid attachment id: ") . $pAttachmentId;
 			$ret = FALSE;
 		}
-		
+
 		return $ret;
 	}
 
 	/**
 	 * fully load content and insert any attachments in $this->mStorage
 	 * allow an optional content_id to be passed in to ease legacy lib style objects (like blogs, articles, etc.)
-	 * 
-	 * @param array $pContentId 
+	 *
+	 * @param array $pContentId
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -632,8 +630,8 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 	/**
 	 * load details of a given attachment
 	 * allow an optional content_id to be passed in to ease legacy lib style objects (like blogs, articles, etc.)
-	 * 
-	 * @param array $pAttachmentId 
+	 *
+	 * @param array $pAttachmentId
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -654,12 +652,12 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			}
 		}
 		return $ret;
-	}	
+	}
 
 	/**
-	 * Get a list of attachments which also reference the foreign_id of the given attachment 
-	 * 
-	 * @param array $pAttachmentId 
+	 * Get a list of attachments which also reference the foreign_id of the given attachment
+	 *
+	 * @param array $pAttachmentId
 	 * @access public
 	 * @return array with details of sibling attachments
 	 */
@@ -679,7 +677,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 	/**
 	 * This function will scan through liberty_content.data and will search for any occurrances of {attachemt id=<id>}
-	 * 
+	 *
 	 * @param array $pAttachmentId Attachment id of interest
 	 * @access public
 	 * @return array of content using a given attachment
@@ -737,7 +735,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 
 /**
  * Process uploaded files. Will automagically generate thumbnails for images
- * 
+ *
  * @param array $pFileHash Data require to process the files
  * @param array $pFileHash['upload']['name'] (required) Name of the uploaded file
  * @param array $pFileHash['upload']['type'] (required) Mime type of the file uploaded
@@ -765,9 +763,9 @@ function liberty_process_upload( &$pFileHash ) {
 }
 
 /**
- * liberty_process_archive 
- * 
- * @param array $pFileHash 
+ * liberty_process_archive
+ *
+ * @param array $pFileHash
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
@@ -863,10 +861,10 @@ function liberty_process_archive( &$pFileHash ) {
 }
 
 /**
- * liberty_process_generic 
- * 
- * @param array $pFileHash 
- * @param array $pMoveFile 
+ * liberty_process_generic
+ *
+ * @param array $pFileHash
+ * @param array $pMoveFile
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
@@ -893,9 +891,9 @@ function liberty_process_generic( &$pFileHash, $pMoveFile=TRUE ) {
 
 
 /**
- * liberty_process_image 
- * 
- * @param array $pFileHash 
+ * liberty_process_image
+ *
+ * @param array $pFileHash
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
@@ -926,9 +924,9 @@ function liberty_process_image( &$pFileHash ) {
 
 
 /**
- * liberty_clear_thumbnails 
- * 
- * @param array $pFileHash 
+ * liberty_clear_thumbnails
+ *
+ * @param array $pFileHash
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
@@ -948,9 +946,9 @@ function liberty_clear_thumbnails( &$pFileHash ) {
 }
 
 /**
- * liberty_get_function 
- * 
- * @param array $pType 
+ * liberty_get_function
+ *
+ * @param array $pType
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
@@ -960,9 +958,9 @@ function liberty_get_function( $pType ) {
 }
 
 /**
- * liberty_generate_thumbnails 
- * 
- * @param array $pFileHash 
+ * liberty_generate_thumbnails
+ *
+ * @param array $pFileHash
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
@@ -992,7 +990,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 	} else {
 		$ext = '.jpg';
 	}
-	
+
 	foreach( $pFileHash['thumbnail_sizes'] as $thumbSize ) {
 		if( isset( $gThumbSizes[$thumbSize] )) {
 			$pFileHash['dest_base_name'] = $thumbSize;
@@ -1006,7 +1004,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 
 /**
  * fetch all available thumbnails for a given item. if no thumbnails are present, get thumbnailing image or the appropriate mime type icon
- * 
+ *
  * @param string $pFilePath Relative path to file we want to get thumbnails for (needs to include file name for mime icons)
  * @param string $pThumbnailerImageUrl URL to background thumbnailer image
  * @param array $pThumbSizes array of images to search for in the pFilePath
