@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -64,18 +64,14 @@ function treasury_file_load( $pRow ) {
 }
 
 function treasury_file_expunge( $pAttachmentId ) {
-	/* TODO: this plugin needs to get hold of the original content_id of the 
-	 * file. this should be possible with the new primary_attachment_id column 
-	 * in liberty_content but it still has to be written for this to work */
-	return TRUE;
-
 	global $gBitSystem;
 	$ret = FALSE;
 
 	if( @BitBase::verifyId( $pAttachmentId )) {
-		$sql = "SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_attachments_map` WHERE `attachment_id` = ?";
-		if( $contentId = $gBitSystem->mDb->getOne( $sql, array( $pAttachmentId ))) {
-			$ti = new TreasuryItem( NULL, $contentId );
+		$ti = new TreasuryItem();
+
+		// get the content_id, set it, load the object and remove it
+		if( $ti->mContentId = $ti->getContentId( $pAttachmentId )) {
 			if( $ti->load() && $ti->expunge() ) {
 				$ret = TRUE;
 			}
