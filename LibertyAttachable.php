@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.101 2007/06/16 09:57:19 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.102 2007/06/16 11:36:38 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -168,22 +168,13 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 			}
 */
 			if( $save ) {
-				// - TODO: get common preferences page with this as an option
 				if( empty( $pParamHash['storage_guid'] )) {
-					// choose an attachment plugin
-					if( $gLibertySystem->isPluginActive( 'bitfile' )) {
-						// - bitfile is the one that should take care of liberty attachment uploads
-						$storageGuid = PLUGIN_GUID_BIT_FILES;
-					} elseif( $gLibertySystem->isPluginActive( 'fisheye' )) {
-						// - fisheye is a last resort since it is fisheye dependent
-						$storageGuid = PLUGIN_GUID_FISHEYE_IMAGE;
-					} else {
-						$this->mErrors[] = tra( "There is no storage plugin available to store the file" );
-					}
+					// only file format storage available at present 
+					$pParamHash['storage_guid'] = $storageGuid = PLUGIN_GUID_BIT_FILES;
 				} else {
 					$storageGuid = $pParamHash['storage_guid'];
 				}
-
+				
 				if( !empty( $pParamHash[$file]['size'] ) ) {
 					if ( !is_windows() ) {
 						list( $pParamHash[$file]['name'], $pParamHash[$file]['type'] ) = $gBitSystem->verifyFileExtension( $pParamHash[$file]['tmp_name'], $pParamHash[$file]['name'] );
