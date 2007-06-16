@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.100 2007/06/16 07:34:46 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.101 2007/06/16 09:57:19 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -372,7 +372,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 								$this->mErrors[] = tra("No such attachment: ") . $id;
 							}
 						}
-					} else {
+					} elseif( !empty( $id )) {
 						$this->mErrors[] = tra("Invalid attachment id: ") . $id;
 					}
 				}
