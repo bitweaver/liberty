@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.29 $
+ * @version  $Revision: 1.30 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -16,7 +16,7 @@ $pluginParams = array (
 	'verify_function' => 'bit_files_verify',
 	'load_function' => 'bit_files_load',
 	'expunge_function' => 'bit_files_expunge',
-	'description' => 'Upload File To Server',
+	'description' => 'Always load by default, disable to prevent Direct File Upload To Server',
 	'plugin_type' => STORAGE_PLUGIN,
 	'auto_activate' => TRUE,
 	'edit_label' => 'Upload File',
@@ -25,6 +25,8 @@ $pluginParams = array (
 	'edit_help' => 'This file will be uploaded to your personal storage area.<br />After selecting the file you want to upload, please return to the edit area and click the save button.'
 );
 
+// file should only be loaded via LiberySystem which sets $value
+if( $value == 'y' ) {
 if ($gBitSystem->getConfig("liberty_attachment_style") == "multiple") {
 	$pluginParams['edit_label'] = 'Upload File(s)';
 	$pluginParams['edit_help'] =  'The file(s) will be uploaded to your personal storage area.<br />After selecting the file(s) you want to upload, please return to the edit area and click the save button.';
@@ -52,7 +54,7 @@ elseif ($gBitSystem->getConfig('liberty_attachment_style') == "ajax") {
 ';
 	$gBitSmarty->assign( 'loadAjax', TRUE );
 }
-
+}
 //$gLibertySystem->registerPlugin( STORAGE_TYPE_BIT_FILES, $pluginParams );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_BIT_FILES, $pluginParams );
 
