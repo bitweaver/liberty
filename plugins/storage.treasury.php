@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.16 $
+ * @version  $Revision: 1.17 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -41,7 +41,7 @@ function treasury_file_load( $pRow ) {
 				INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON (lf.`file_id` = la.`foreign_id`)
 				INNER JOIN `".BIT_DB_PREFIX."treasury_item` tri ON( tri.`content_id` = lc.`content_id` )
 			WHERE lc.`primary_attachment_id` = ? AND la.`attachment_plugin_guid` = ?";
-		if( $ret = $gBitSystem->mDb->getRow( $query, array( $pRow['foreign_id'], PLUGIN_GUID_TREASURY_FILE ))) {
+		if( $ret = $gBitSystem->mDb->getRow( $query, array( $pRow['attachment_id'], PLUGIN_GUID_TREASURY_FILE ))) {
 			if( $gBitSystem->isPackageActive( 'treasury' )) {
 				require_once( TREASURY_PKG_PATH.'TreasuryItem.php' );
 				require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'display_bytes' );
