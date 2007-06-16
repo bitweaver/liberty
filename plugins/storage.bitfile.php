@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.31 $
+ * @version  $Revision: 1.32 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -74,9 +74,14 @@ function bit_files_verify( &$pStoreRow ) {
 function bit_files_store( &$pStoreRow ) {
 	global $gBitSystem, $gBitUser;
 	$ret = NULL;
-	if( !empty( $pStoreRow['foreign_id'] ) ) {
-		$sql = "UPDATE `".BIT_DB_PREFIX."liberty_files SET `storage_path`=?, `mime_type`=?, `file_size`=? WHERE `file_id` = ?";
-		$gBitSystem->mDb->query( $sql, array( $pStoreRow['dest_file_path'], $pStoreRow['type'], $pStoreRow['size'], $pStoreRow['foreign_id'] ) );
+	// we have been given an attachment_id but no foreign_id. we will make a last attempt to see if this is an update or an insert
+	if( @BitBase::verifyId( $pStoreRow['attachment_id'] ) && !@BitBase::verifyId( $pStoreRow['foreign_id'] )) {
+		$pStoreRow['foreign_id'] = $gBitSystem->mDb->getOne( "SELECT `foreign_id` FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id` = ?", array( $pStoreRow['attachment_id'] ));
+	}
+
+	if( @BitBase::verifyId( $pStoreRow['foreign_id'] ) ) {
+		$sql = "UPDATE `".BIT_DB_PREFIX."liberty_files` SET `storage_path`=?, `mime_type`=?, `file_size`=? WHERE `file_id` = ?";
+		$gBitSystem->mDb->query( $sql, array( $pStoreRow['upload']['dest_path'].$pStoreRow['upload']['name'], $pStoreRow['upload']['type'], $pStoreRow['upload']['size'], $pStoreRow['foreign_id'] ) );
 	} else {
 		$pStoreRow['foreign_id'] = $gBitSystem->mDb->GenID( 'liberty_files_id_seq' );
 		$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_files` ( `storage_path`, `file_id`, `mime_type`, `file_size`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";

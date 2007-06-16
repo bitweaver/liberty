@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.102 2007/06/16 11:36:38 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.103 2007/06/16 16:45:57 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -317,8 +317,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 						}
 					}
 
-					if( isset($storeRow['attachment_id']) && $gLibertySystem->getPluginFunction( $storeRow['plugin_guid'], 'store_function' ) ) {
-						$storeFunc = $gLibertySystem->mPlugins[$storeRow['plugin_guid']]['store_function'];
+					if( @BitBase::verifyId( $storeRow['attachment_id'] ) && $storeFunc = $gLibertySystem->getPluginFunction( $storeRow['plugin_guid'], 'store_function' )) {
 						$this->mStorage = $storeFunc( $storeRow );
 					}
 
