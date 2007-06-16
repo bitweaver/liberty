@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.4 2007/06/15 06:09:33 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.5 2007/06/16 09:02:47 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -29,6 +29,7 @@ $pluginParams = array (
 	'help_function'            => 'data_maketoc_help',
 	'syntax'                   => '{maketoc}',
 	'biticon'                  => '{biticon iclass="quicktag icon" ipackage=quicktags iname=maketoc iexplain="Page Table of Contents"}',
+	'taginsert'                => '{maketoc}',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERMAKETOC, $pluginParams );
 
