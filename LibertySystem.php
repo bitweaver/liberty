@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.84 2007/06/12 13:57:58 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.85 2007/06/16 11:26:23 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -111,6 +111,8 @@ class LibertySystem extends LibertyBase {
 	function loadActivePlugins() {
 		global $gBitSystem;
 		$active_plugins = $gBitSystem->getConfigMatch( "/^{$this->mSystem}_plugin_status_/i", 'y' );
+		// check for default storage plugin and add even if direct use is disabled
+		if ( !in_array( 'liberty_plugin_status_bitfile', $active_plugins ) ) $active_plugins['liberty_plugin_status_bitfile'] = 'n';
 		foreach( $active_plugins as $key=>$value ) {
 			$pluginGuid = preg_replace( "/^{$this->mSystem}_plugin_status_/", '', $key,1 );
 			if( $pluginFile = $gBitSystem->getConfig( "{$this->mSystem}_plugin_file_$pluginGuid" ) ) {
