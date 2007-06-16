@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -50,7 +50,7 @@ function data_file( $pData, $pParams ) {
 			if( !empty( $pParams['size'] ) && $pParams['size'] == 'original' ) {
 				$thumburl = $item->getField( 'source_url' );
 			} elseif( $item->getField( 'thumbnail_url' )) {
-				$thumburl = ( !empty( $pParams['size'] ) && !empty( $att['thumbnail_url'][$pParams['size']] ) ? $att['thumbnail_url'][$pParams['size']] : $item->mInfo['thumbnail_url']['medium'] );
+				$thumburl = ( !empty( $pParams['size'] ) && !empty( $item->mInfo['thumbnail_url'][$pParams['size']] ) ? $item->mInfo['thumbnail_url'][$pParams['size']] : $item->mInfo['thumbnail_url']['medium'] );
 			}
 
 			// check if we have a valid thumbnail
@@ -60,8 +60,8 @@ function data_file( $pData, $pParams ) {
 
 				// set up image first
 				$ret = '<img'.
-					' alt="'.  ( !empty( $wrapper['description'] ) ? $wrapper['description'] : tra( 'Image' ) ).'"'.
-					' title="'.( !empty( $wrapper['description'] ) ? $wrapper['description'] : tra( 'Image' ) ).'"'.
+					' alt="'.  $description.'"'.
+					' title="'.$description.'"'.
 					' src="'  .$thumburl.'"'.
 					' />';
 
@@ -70,7 +70,7 @@ function data_file( $pData, $pParams ) {
 				}
 
 				if( !empty( $wrapper['description'] ) && !empty( $pParams['output'] ) && ( $pParams['output'] == 'desc' || $pParams['output'] == 'description' )) {
-					$ret = ( !empty( $wrapper['description'] )  ? $wrapper['description'] : '' );
+					$ret = $description;
 					$nowrapper = TRUE;
 				} else {
 					$ret .= ( !empty( $wrapper['description'] )  ? '<br />'.$wrapper['description']  : '' );
