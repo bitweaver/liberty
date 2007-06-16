@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -66,7 +66,7 @@ function data_file( $pData, $pParams ) {
 					' />';
 
 				if( $item->getField( 'file_size' )) {
-					$ret .= '<br />'.$item->getField( 'title' )." <small>(".$item->getField( 'mime_type' )." ".smarty_modifier_display_bytes( $item->getField( 'file_size' )).")</small>";
+					$ret .= '<br />'.$item->getField( 'title' )."<br /><small>(".$item->getField( 'mime_type' )." ".smarty_modifier_display_bytes( $item->getField( 'file_size' )).")</small>";
 				}
 
 				if( !empty( $wrapper['description'] ) && !empty( $pParams['output'] ) && ( $pParams['output'] == 'desc' || $pParams['output'] == 'description' )) {
