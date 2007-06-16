@@ -14,11 +14,19 @@
 		</div>
 	{/if}
 {/foreach}
+	<div class="row">
+		{formlabel label="Primary Attachment" for="upload"}
+		{forminput}
+			{include file="bitpackage:liberty/edit_primary_attachment.tpl"}
+		{/forminput}
+	</div>
+{/if}
 
 <div id="edit_storage_list_div">
 {include file="bitpackage:liberty/edit_storage_list.tpl"}
 </div>
 
+{if $gBitUser->hasPermission('p_liberty_attach_attachments') }
 <h2 class="clear"><a href="javascript:ajax_updater( 'attbrowser', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', 'ajax=true&amp;content_id={$gContent->mContentId}' );">{tr}Attachment Browser{/tr}</a></h2>
 <noscript><div class="warning">{tr}The attachment browser only works with javascript enabled.{/tr}</div></noscript>
 <div id="attbrowser" class="attbrowser"><p>{tr}Please click on the Attachement Browser link above to view available attachments.{/tr}</p></div>
