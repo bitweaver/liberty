@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.15 $
+ * @version  $Revision: 1.16 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -32,15 +32,15 @@ $gLibertySystem->registerPlugin( PLUGIN_GUID_TREASURY_FILE, $pluginParams );
 function treasury_file_load( $pRow ) {
 	global $gBitSystem, $gBitSmarty;
 	$ret = NULL;
-	if( @BitBase::verifyId( $pRow['foreign_id'] ) ) {
+	if( @BitBase::verifyId( $pRow['attachment_id'] ) ) {
 		// fetch the correct content_id we can use to load the treasury item
 		$query = "
 			SELECT *
 			FROM `".BIT_DB_PREFIX."liberty_attachments` la
+				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lc.`primary_attachment_id` = la.`attachment_id` )
 				INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON (lf.`file_id` = la.`foreign_id`)
-				INNER JOIN `".BIT_DB_PREFIX."liberty_attachments_map` lam ON (la.`attachment_id` = lam.`attachment_id`)
-				INNER JOIN `".BIT_DB_PREFIX."treasury_item` tri ON( tri.`content_id` = lam.`content_id` )
-			WHERE la.`foreign_id` = ? AND la.`attachment_plugin_guid` = ?";
+				INNER JOIN `".BIT_DB_PREFIX."treasury_item` tri ON( tri.`content_id` = lc.`content_id` )
+			WHERE lc.`primary_attachment_id` = ? AND la.`attachment_plugin_guid` = ?";
 		if( $ret = $gBitSystem->mDb->getRow( $query, array( $pRow['foreign_id'], PLUGIN_GUID_TREASURY_FILE ))) {
 			if( $gBitSystem->isPackageActive( 'treasury' )) {
 				require_once( TREASURY_PKG_PATH.'TreasuryItem.php' );
