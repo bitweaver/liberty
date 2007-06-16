@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.32 $
+ * @version  $Revision: 1.33 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -98,8 +98,9 @@ function bit_files_load( $pRow ) {
 	$ret = NULL;
 	if( !empty( $pRow['foreign_id'] ) && is_numeric( $pRow['foreign_id'] )) {
 		$query = "
-			SELECT *
+			SELECT la.*, lf.*, lam.`content_id`
 			FROM `".BIT_DB_PREFIX."liberty_attachments` la
+				INNER JOIN `".BIT_DB_PREFIX."liberty_attachments_map` lam ON (la.`attachment_id` = lam.`attachment_id`)
 				INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON (lf.`file_id` = la.`foreign_id`)
 			WHERE la.`foreign_id` = ? AND `attachment_plugin_guid` = ?";
 		if( $ret = $gBitSystem->mDb->getRow( $query, array( $pRow['foreign_id'], PLUGIN_GUID_BIT_FILES ))) {
