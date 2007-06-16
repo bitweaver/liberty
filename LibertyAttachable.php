@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.98 2007/06/15 22:10:06 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.99 2007/06/16 00:06:00 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -415,14 +415,18 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 	 */
 	function storePrimaryAttachmentId( $pParamHash ) {
 		global $gBitSystem;
+		$ret = FALSE;
 		if( !empty( $pParamHash['primary_attachment_id'] ) && empty( $pParamHash['primary_attachment']['attachment_id'] )) {
 			$pParamHash['primary_attachment']['attachment_id'] = $pParamHash['primary_attachment_id'];
 		}
 
 		if( !empty( $pParamHash['primary_attachment']['attachment_id'] ) && !empty( $pParamHash['content_id'] )) {
 			$query = "UPDATE liberty_content SET primary_attachment_id = ? WHERE content_id = ?";
-			$result = $gBitSystem->mDb->query( $query, array( $pParamHash['primary_attachment']['attachment_id'], $pParamHash['content_id'] ));
+			if( $gBitSystem->mDb->query( $query, array( $pParamHash['primary_attachment']['attachment_id'], $pParamHash['content_id'] ))) {
+				$ret = TRUE;
+			}
 		}
+		return $ret;
 	}
 
 	// Things to be stored should be shoved in the array $pParamHash['STORAGE']
