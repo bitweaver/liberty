@@ -17,7 +17,8 @@
 	<div class="row">
 		{formlabel label="Primary Attachment" for="upload"}
 		{forminput}
-			{include file="bitpackage:liberty/edit_primary_attachment.tpl"}
+			<input type=text name="primary_attachment_id" id=primary_attachment />
+			{formhelp note="Enter an existing attachment id to use."}
 		{/forminput}
 	</div>
 {/if}
