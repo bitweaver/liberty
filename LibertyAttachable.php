@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.103 2007/06/16 16:45:57 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.104 2007/06/17 07:13:02 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -294,7 +294,12 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 					if( @BitBase::verifyId( $pParamHash['attachment_id'] )) {
 						$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'] = $pParamHash['attachment_id'];
 					} else {
-						$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'] = $this->mDb->GenID( 'liberty_attachments_id_seq' );
+						if ( $gBitSystem->isFeatureActive('liberty_linked_attachments') && @BitBase::verifyId( $pParamHash['content_id'] ) ) {
+							$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'] = $pParamHash['content_id'];
+						} else {
+							$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'] = 
+								$gBitSystem->isFeatureActive('liberty_linked_attachments') ? $this->mDb->GenID( 'liberty_content_id_seq') : $this->mDb->GenID( 'liberty_attachments_id_seq' );
+						}	
 					}
 					// if we have uploaded a file, we can take care of that generically
 					if( is_array( $storeRow['upload'] ) && !empty( $storeRow['upload']['size'] ) ) {
