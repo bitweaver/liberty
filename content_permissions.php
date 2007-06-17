@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage functions
  */
@@ -54,7 +54,7 @@ $contentPerms['groups'] = $userGroups["data"];
 // Get a list of permissions
 if( empty( $assignPerms )) {
 	if( !empty( $gContent->mType['handler_package'] )) {
-		$contentPerms['assignable'] = $gBitUser->getGroupPermissions( NULL, $gContent->mType['handler_package'] );
+		$contentPerms['assignable'] = $gBitUser->getGroupPermissions( array( 'package' => $gContent->mType['handler_package'] ));
 	} else {
 		// this is a last resort and will dump all perms a user has
 		$contentPerms['assignable'] = $gBitUser->mPerms;
