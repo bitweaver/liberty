@@ -259,9 +259,6 @@ $gBitInstaller->registerSchemaSequences( LIBERTY_PKG_NAME, $sequences );
 $gBitInstaller->registerPreferences( LIBERTY_PKG_NAME, array(
 	//array(LIBERTY_PKG_NAME, 'liberty_cache_images','n'),
 	//array(LIBERTY_PKG_NAME, 'liberty_cache_pages','n'),
-	// This needs to be dealt with by the installer, and must not be changed after installation
-	// It is included here so that there is an entry that can be changed in the config table
-	array(LIBERTY_PKG_NAME, 'liberty_linked_attachments','n'),
 	array(LIBERTY_PKG_NAME, 'liberty_auto_display_attachment_thumbs', 'small'),
 	// enable action logging by default
 	array(LIBERTY_PKG_NAME, 'liberty_action_log', 'y'),

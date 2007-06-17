@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.35 $
+ * @version  $Revision: 1.36 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -83,7 +83,7 @@ function bit_files_store( &$pStoreRow ) {
 		$sql = "UPDATE `".BIT_DB_PREFIX."liberty_files` SET `storage_path`=?, `mime_type`=?, `file_size`=? WHERE `file_id` = ?";
 		$gBitSystem->mDb->query( $sql, array( $pStoreRow['upload']['dest_path'].$pStoreRow['upload']['name'], $pStoreRow['upload']['type'], $pStoreRow['upload']['size'], $pStoreRow['foreign_id'] ) );
 	} else {
-		$pStoreRow['foreign_id'] = $gBitSystem->isFeatureActive('liberty_linked_attachments') ? $pStoreRow['content_id'] : $gBitSystem->mDb->GenID( 'liberty_files_id_seq' );
+		$pStoreRow['foreign_id'] = defined( 'LINKED_ATTACHMENTS' ) ? $pStoreRow['content_id'] : $gBitSystem->mDb->GenID( 'liberty_files_id_seq' );
 		$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_files` ( `storage_path`, `file_id`, `mime_type`, `file_size`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
 		$userId = !empty( $pStoreRow['upload']['user_id'] ) ? $pStoreRow['upload']['user_id'] : $gBitUser->mUserId;
 		$gBitSystem->mDb->query($sql, array( $pStoreRow['upload']['dest_path'].$pStoreRow['upload']['name'], $pStoreRow['foreign_id'],  $pStoreRow['upload']['type'],  $pStoreRow['upload']['size'], $userId ) );
