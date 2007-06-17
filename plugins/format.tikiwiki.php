@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.100 $
+ * @version  $Revision: 1.101 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -374,7 +374,7 @@ class TikiWikiParser extends BitBase {
 	function parse_pp_np(&$data, &$preparsed, &$noparsed) {
 		// Find all sections delimited by ~pp~ ... ~/pp~
 		// and replace them in the data stream with a unique key
-		preg_match_all("/\~pp\~((.|\n)*?)\~\/pp\~/", $data, $preparse);
+		preg_match_all("/\~pp\~(.*?)\~\/pp\~/s", $data, $preparse);
 		if( count( $preparse[0] ) ) {
 			foreach (array_unique($preparse[1])as $pp) {
 				$key = md5(BitSystem::genPass());
