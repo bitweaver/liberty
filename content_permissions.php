@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage functions
  */
@@ -48,8 +48,7 @@ $contentPerms['assigned'] = $gContent->loadAllObjectPermissions( $_REQUEST );
 
 // Get a list of groups
 $listHash = array( 'sort_mode' => 'group_name_asc' );
-$userGroups = $gBitUser->getAllGroups( $listHash );
-$contentPerms['groups'] = $userGroups["data"];
+$contentPerms['groups'] = $gBitUser->getAllGroups( $listHash );
 
 // Get a list of permissions
 if( empty( $assignPerms )) {
