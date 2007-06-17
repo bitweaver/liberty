@@ -37,10 +37,18 @@
 										<tr class="{cycle values="odd,even"}">
 											<td>
 												{if $plugin.edit_label}
-													<h3><label for="{$guid}">{$plugin.edit_label} <small>[{$guid}]</small></label></h3>
+													<h3>
+														<label for="{$guid}">{$plugin.edit_label} <small>[{$guid}]</small></label>
+														{if $plugin.help_page}
+															&nbsp; {jspopup href="http://www.bitweaver.org/wiki/`$plugin.help_page`" ibiticon="icons/dialog-information" title=`$plugin.help_page` class="external"}
+														{/if}
+													</h3>
 												{else}
 													<h3>
 														<label for="{$guid}">{$plugin.title|escape} <small>[{$guid}]</small></label>
+														{if $plugin.help_page}
+															&nbsp; {jspopup href="http://www.bitweaver.org/wiki/`$plugin.help_page`" ibiticon="icons/dialog-information" title=`$plugin.help_page` class="external"}
+														{/if}
 														{if $plugin.plugin_settings_url}
 															&nbsp; <a href="{$plugin.plugin_settings_url}">{biticon iname=accessories-text-editor iexplain="Plugin Settings"}</a>
 														{/if}
