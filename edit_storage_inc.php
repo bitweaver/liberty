@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage functions
  *
@@ -35,15 +35,10 @@ if( empty($attachmentActionBaseUrl) ) {
 
 if( !empty( $_REQUEST['deleteAttachment'] ) ) {
 	$attachmentId = $_REQUEST['deleteAttachment'];
-
-	$siblingAttachments = $gContent->getSiblingAttachments( $attachmentId );
 	$attachmentInfo = $gContent->getAttachment( $attachmentId );
 	
-	/* TODO: This logic needs to be fixed I think -- XOXO Nick */
-	if( count( $siblingAttachments ) > 0 || ( !$gBitUser->isAdmin() && $gBitUser->mUserId != $attachmentInfo['user_id'] && $gBitUser->mPerms['p_liberty_detach_attachment'] == 'y' ) ) {
-		// Other liberty_attachment rows reference the same foreign_id so we should just detach
-		$gContent->detachAttachment( $attachmentId );	
-	} else {
+	// TODO: Should we have a permission for deleting attachments?
+	if( $gBitUser->isAdmin() || $attachmentInfo['user_id'] == $gBitUser->mUserId ) {
 		$gContent->expungeAttachment( $attachmentId );
 	}
 } elseif( !empty( $_REQUEST['detachAttachment'] ) ) {

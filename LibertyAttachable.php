@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.105 2007/06/17 08:27:11 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.106 2007/06/18 21:53:55 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -114,35 +114,6 @@ class LibertyAttachable extends LibertyContent {
 		return $ret;
 	}
 
-	/**
-	* verifyStorageFile - verify if a file exists
-	*
-	* @access public
-	* @author Christian Fowler<spider@steelsun.com>
-	* @param $pFileName name of the file that needs to be checked for
-	* @param $pSubDir any desired directory below the StoragePath.
-	* @param $pCommon indicates usage of the 'common' branch, and not the 'users/.../<user_id>' branch
-	* @param $pPackage indicates what package the data is from. defaults to the currently active package
-	* @return on success return full path to file, if it fails to find the file, returns false
-	*/
-	//	------------------------- i think this function is not used - xing
-//	function verifyStorageFile( $pFileName, $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE ) {
-//		// don't worry about double slashes '//' for now. we'll remove them later
-//		$path = $this->getConfig( 'site_upload_dir', 'storage' ).'/';
-//		if( !$pUserId ) {
-//			$path .= 'common/';
-//		} else {
-//			$path .= 'users/'.(int)($pUserId % 1000).'/'.$pUserId.'/';
-//		}
-//		$path .= $pPackage.'/'.$pSubDir.'/'.$pFileName;
-//		$path = BIT_ROOT_PATH.ereg_replace( '//','/',$path );
-//		if( file_exists( $path ) ) {
-//			return $path;
-//		} else {
-//			return FALSE;
-//		}
-//	}
-
 	function verifyAttachment( &$pParamHash, $file ) {
 		global $gBitSystem, $gBitUser, $gLibertySystem;
 		if( !empty( $_FILES[$file] ) ) {
@@ -153,20 +124,6 @@ class LibertyAttachable extends LibertyContent {
 		if( !empty( $pParamHash[$file]['size'] ) && !empty( $pParamHash[$file] ) && is_array( $pParamHash[$file] ) ) {
 
 			$save = TRUE;
-/*
-Disable for now - instead fend off new uploads once quota is exceeded. Need a nice upload mechanism that can cancel uploads once the upload has begun, ala megaupload
-			if( $gBitSystem->isPackageActive( 'quota' ) && !$gBitUser->isAdmin() ) {
-				require_once( QUOTA_PKG_PATH.'LibertyQuota.php' );
-				$quota = new LibertyQuota();
-				// Prevent people from uploading more than there quota
-				$q = $quota->getUserQuota( $pParamHash['user_id'] );
-				$u = (int)$quota->getUserUsage( $pParamHash['user_id'] );
-				if( $u + $pParamHash[$file]['size'] > $q ) {
-					$save = FALSE;
-					$this->mErrors[$file] = $pParamHash[$file]['name'].' '.tra( 'could not be stored because you do not have enough disk quota.' ).' '.round(($u + $pParamHash[$file]['size'] - $q)/1000).'KB Needed' ;
-				}
-			}
-*/
 			if( $save ) {
 				if( empty( $pParamHash['storage_guid'] )) {
 					// only file format storage available at present 
@@ -268,6 +225,10 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		global $gLibertySystem, $gBitSystem, $gBitUser;
 		foreach( array_keys( $pParamHash['STORAGE'] ) as $guid ) {
 			$storeRows = &$pParamHash['STORAGE'][$guid]; // short hand variable assignment
+			// If it is empty then nothing more to do. Avoid error in foreach.
+			if (empty($storeRows)) {
+				continue;
+			}
 			foreach( $storeRows as $key => $value ) {
 				$storeRow = &$pParamHash['STORAGE'][$guid][$key];
 				$storeRow['plugin_guid'] = $guid;
@@ -520,17 +481,28 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		return $ret;
 	}
 
-	function expunge () {
+	/**
+	 * Expunges the content deleting attachments if asked to do so, otherwise just detaching them
+	 */
+	function expunge ($pDeleteAttachments=FALSE) {
 		if( !empty( $this->mStorage ) && count( $this->mStorage ) ) {
 			foreach( array_keys( $this->mStorage ) as $i ) {
-				$this->expungeAttachment(  $this->mStorage[$i]['attachment_id'] );
+				if ($pDeleteAttachments) {
+					$this->expungeAttachment(  $this->mStorage[$i]['attachment_id'] );
+				}
+				else {
+					$this->detachAttachment( $this->mStorage[$i]['attachment_id'] );
+				}
 			}
+		}
+		if( $pDeleteAttachments && !empty( $this->mInfo['primary_attachment_id'] ) ) {
+			$this->expungeAttachment( $this->mStorage[$i]['attachment_id'] );
 		}
 		return LibertyContent::expunge();
 	}
 
 	/**
-	 * expunge attachment from the database
+	 * expunge attachment from the database (and file system via the plugin if required)
 	 *
 	 * @param array $pAttachmentId attachment id of the item that should be deleted
 	 * @access public
@@ -540,25 +512,23 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 		global $gLibertySystem;
 		global $gBitUser;
 		$ret = NULL;
-
 		if( @$this->verifyId( $pAttachmentId ) ) {
 			$sql = "SELECT `attachment_plugin_guid`, `user_id` FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id`=?";
 			$row = $this->mDb->getRow( $sql, array( $pAttachmentId ) );
 			$guid = $row['attachment_plugin_guid'];
 			$user_id = $row['user_id'];
-
 			if( $guid && ($user_id == $gBitUser->mUserId || $gBitUser->isAdmin()) ) {
 				$expungeFunc = $gLibertySystem->getPluginFunction($guid,'expunge_function');
 				if ( $expungeFunc ) {
+					// Todo: inform content we are deleting one of its attachments here.
 					if( $expungeFunc( $pAttachmentId ) ) {
-						$delDir = dirname( $this->mStorage[$pAttachmentId]['storage_path'] );
-						// add a safety precation to verify that images/123 is in the delete directory in case / got
-						// shoved into $this->mStorage[$pAttachmentId]['storage_path'] for some reason, which would nuke the entire storage directory
-						if( preg_match ( '/image\//', $this->mStorage[$pAttachmentId]['mime_type'] ) && preg_match( "/images\/$pAttachmentId/", $delDir ) ) {
-							unlink_r( BIT_ROOT_PATH.dirname( $this->mStorage[$pAttachmentId]['storage_path'] ) );
-						}
+						// Remove the primary ID from any content if it is this attachment
+						$sql = "UPDATE `".BIT_DB_PREFIX."liberty_content` SET `primary_attachment_id`=NULL WHERE `primary_attachment_id` = ?";
+						$this->mDb->query( $sql, array( $pAttachmentId ) );
+						// Delete it from the attachments map
 						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachments_map` WHERE `attachment_id`=?";
 						$this->mDb->query( $sql, array( $pAttachmentId ) );
+						// Delete the attachment record.
 						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id`=?";
 						$this->mDb->query( $sql, array( $pAttachmentId ) );
 
@@ -578,7 +548,7 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 	 * detach attachment from content
 	 *
 	 * @param array $pAttachmentId Attachment id that needs to be detached from the content loaded
-	 * @param array $pContentId Optional content ID that the attachment shoudl be detached from
+	 * @param array $pContentId Optional content ID that the attachment should be detached from
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -664,27 +634,6 @@ Disable for now - instead fend off new uploads once quota is exceeded. Need a ni
 				}
 			}
 		}
-		return $ret;
-	}
-
-	/**
-	 * Get a list of attachments which also reference the foreign_id of the given attachment
-	 *
-	 * @param array $pAttachmentId
-	 * @access public
-	 * @return array with details of sibling attachments
-	 */
-	function getSiblingAttachments( $pAttachmentId ) {
-		$ret = NULL;
-
-		$attachmentInfo = $this->getAttachment( $pAttachmentId );
-
-		if( @$this->verifyId( $attachmentInfo['attachment_id'] ) && @$this->verifyId( $attachmentInfo['foreign_id'] ) && @$this->verifyId( $attachmentInfo['attachment_plugin_guid'] ) ) {
-			$query = "SELECT  la.*, lam.`attachment_id` FROM `".BIT_DB_PREFIX."liberty_attachments` la INNER JOIN `".BIT_DB_PREFIX."liberty_attachments_map` lam ON (la.`attachment_id` == lam.`attachment_id` WHERE la.`foreign_id` = ? AND la.`attachment_plugin_guid` = ? AND lam.`attachment_id` <> ?";
-			$result = $this->mDb->query( $query, array ($attachmentInfo['foreign_id'], $attachmentInfo['attachment_plugin_guid'], $attachment['attachment_id'] ) );
-			$ret = $result->getRows();
-		}
-
 		return $ret;
 	}
 
