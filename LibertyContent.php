@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.237 2007/06/15 06:27:10 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.238 2007/06/18 13:07:02 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -836,93 +836,6 @@ class LibertyContent extends LibertyBase {
 		}
 		return( !empty( $ret ) );
 	}
-
-
-/*
-	function assign_object_permission($pGroupId, $object_id, $object_type, $perm_name) {
-		//$object_id = md5($object_type . $object_id);
-		$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_permissions`
-				  WHERE `group_id` = ? AND `perm_name` = ? AND `content_id` = ?";
-		$result = $this->mDb->query($query, array($pGroupId, $perm_name, $object_id), -1, -1);
-		$query = "insert into `".BIT_DB_PREFIX."liberty_content_permissions`
-				  (`group_id`,`content_id`, `object_type`, `perm_name`)
-				  VALUES ( ?, ?, ?, ? )";
-		$result = $this->mDb->query($query, array($pGroupId, $object_id,$object_type, $perm_name));
-		return true;
-	}
-
-	function object_has_permission( $pUserId = NULL, $object_id, $object_type, $perm_name, $pForceRefresh = FALSE ) {
-		$ret = FALSE;
-		$groups = $this->getGroups($pUserId, $pForceRefresh);
-
-		foreach ( $groups as $groupId => $group_name ) {
-			$query = "SELECT count(*)
-					  FROM `".BIT_DB_PREFIX."liberty_content_permissions`
-					  WHERE `group_id` = ? and `content_id` = ? and `object_type` = ? and `perm_name` = ?";
-					  //pvd($query);pvd($sd="groupid: $groupId | object_id: $object_id | object_type: $object_type | permname: $perm_name");
-			$bindvars = array($groupId, $object_id, $object_type, $perm_name);
-			$result = $this->mDb->getOne( $query, $bindvars );
-			if ($result>0) {
-				$ret = true;
-			}
-		}
-		return $ret;
-	}
-
-
-	function remove_object_permission($pGroupId, $object_id, $object_type, $perm_name) {
-		//$object_id = md5($object_type . $object_id);
-		$query = "delete from `".BIT_DB_PREFIX."liberty_content_permissions`
-			where `group_id` = ? and `content_id` = ?
-			and `object_type` = ? and `perm_name` = ?";
-		$bindvars = array($pGroupId, $object_id, $object_type, $perm_name);
-		$result = $this->mDb->query($query, $bindvars);
-		return true;
-	}
-
-
-	function copy_object_permissions($object_id,$destinationObjectId,$object_type) {
-		//$object_id = md5($object_type.$object_id);
-		$query = "select `perm_name`, `group_name`
-			from `".BIT_DB_PREFIX."liberty_content_permissions`
-			where `content_id` =? and
-			`object_type` = ?";
-		$bindvars = array($object_id, $object_type);
-		$result = $this->mDb->query($query, $bindvars);
-		while($res = $result->fetchRow()) {
-			$this->assign_object_permission($res["group_name"],$destinationObjectId,$object_type,$res["perm_name"]);
-		}
-		return true;
-	}
-
-
-	function get_object_permissions($object_id, $object_type) {
-		//$object_id = md5($object_type . $object_id);
-		$query = "select ug.`group_id`, ug.`group_name`, lcperm.`perm_name`
-				  FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
-					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
-				  WHERE lcperm.`content_id` = ? AND lcperm.`object_type` = ?";
-		$bindvars = array($object_id, $object_type);
-		$result = $this->mDb->query($query, $bindvars);
-		$ret = array();
-		while ($res = $result->fetchRow()) {
-			$ret[] = $res;
-		}
-		return $ret;
-	}
-
-
-	function object_has_one_permission( $pContentId ) {
-		$ret = NULL;
-		if( @$this->verifyId( $pContentId )  ) {
-			//$object_id = md5($object_type . $object_id);
-			$query = "select count(*) from `".BIT_DB_PREFIX."liberty_content_permissions` where `content_id`=?";
-			$ret = $this->mDb->getOne($query, array( $pContentId ));
-		}
-		return $ret;
-	}
-*/
-
 
 	/**
 	 * Load all permissions assigned to a given object. This is not for general consumption.
