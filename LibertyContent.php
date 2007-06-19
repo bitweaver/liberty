@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.238 2007/06/18 13:07:02 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.239 2007/06/19 12:38:37 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2631,7 +2631,7 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	 * getPreview -- Returns a string with a preview of the content. Default implementation runs getRenderFile() with preview set in the context and gBitSystem set to only render the content.
+	 * getPreview -- Returns a string with a preview of the content. Default implementation runs getRenderFile() with $liberty_preview set in the context and gBitSystem set to only render the content.
 	 *
 	 * @access public
 	 * @return the preview string
@@ -2641,7 +2641,7 @@ class LibertyContent extends LibertyBase {
 		// Tell gBitSystem not to do modules and such
 		$gBitSystem->onlyRenderContent();
 		// Tell the content we are previewing (in case they care)
-		$gBitSmarty->assign('preview', true);
+		$gBitSmarty->assign('liberty_preview', true);
 		// Save current gContent
 		$oldGContent = $gContent;
 		// Make us the content
@@ -2652,7 +2652,7 @@ class LibertyContent extends LibertyBase {
 		// Return gBitSystem to full render mode
 		$gBitSystem->onlyRenderContent(false);
 		// Clear the preview flag
-		$gBitSmarty->assign('preview', false);
+		$gBitSmarty->assign('liberty_preview', false);
 		// Restore gContent
 		$gContent = $oldGContent;
 
