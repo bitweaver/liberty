@@ -14,13 +14,6 @@
 		</div>
 	{/if}
 {/foreach}
-	<div class="row">
-		{formlabel label="Primary Attachment" for="upload"}
-		{forminput}
-			<input type=text name="primary_attachment_id" id=primary_attachment />
-			{formhelp note="Enter an existing attachment id to use."}
-		{/forminput}
-	</div>
 {/if}
 
 <div id="edit_storage_list_div">
