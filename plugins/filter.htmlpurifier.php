@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.8 2007/06/13 07:34:45 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.9 2007/06/19 00:46:22 nickpalmer Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -75,7 +75,10 @@ function htmlpure_filter( $pData, $pFilterHash ) {
 		if ($gBitSystem->getConfig('htmlpure_xhtml', 'n') == 'n') {
 			$config->set('Core', 'XHTML', true);
 		}
-		
+
+		// Set that we are using a div to wrap things.
+		$config->set('HTML', 'BlockWrapper', 'div');
+
 		$def =& $config->getHTMLDefinition();
 		// HTMLPurifier doesn't have a blacklist feature. Duh guys!
 		// Note that this has to come last since the other configs
@@ -84,6 +87,7 @@ function htmlpure_filter( $pData, $pFilterHash ) {
 			unset($def->info[$tag]);
 		}
 		
+		// As suggested here:  http://www.bitweaver.org/forums/index.php?t=8554
 		$gHtmlPurifier = new HTMLPurifier($config);
 		
 		// TODO: devise a way to parse plugins dir
@@ -94,13 +98,13 @@ function htmlpure_filter( $pData, $pFilterHash ) {
 			$gHtmlPurifier->addFilter(new HTMLPurifier_Filter_YouTube());
 		}
 	}
-	
+
 	/* Clean up the paragraphs a bit */
-	//	$start = $pData;
-	$pString = htmlpure_cleanupPeeTags($pData);		
-	//	$pee = $pString;
+	//		$start = $pData;
+	$pString = htmlpure_cleanupPeeTags($pData);
+	//		$pee = $pString;
 	$pString = $gHtmlPurifier->purify($pString);
-	
+
 	/*
 	echo "<br/><hr/><br/>".$start;
 	include_once( 'Text/Diff.php' );    
@@ -116,6 +120,8 @@ function htmlpure_filter( $pData, $pFilterHash ) {
 	$renderer = &new Text_Diff_Renderer_inline();
 	echo "<br/><hr/><br/>". $renderer->render($diff);
 	*/
+
+	return $pString;
 }
 
 function htmlpure_cleanupPeeTags( $pee ) {
@@ -126,17 +132,17 @@ function htmlpure_cleanupPeeTags( $pee ) {
 	// Strip out lots of duplicate newlines now
 	$pee = preg_replace("#\n\n+#", "\n\n", $pee);
 	
-	// Pee in block quotes
-	$pee = preg_replace('#<blockquote(.*?(?:[^>]*))>(.*?)</blockquote>#s', '<blockquote$1><p>$2</p></blockquote>', $pee);
+	// Pee in block quotes - Removed as we now have purifier insert a div instead. See above.
+	//	$pee = preg_replace('#<blockquote(.*?(?:[^>]*))>(.*?)</blockquote>#s', '<blockquote$1><p>$2</p></blockquote>', $pee);
 	
 	// Strip empty pee
 	$pee = preg_replace('#<p>\s*</p>#', '', $pee);
 		
 	// Unpee pre blocks
-	$pee = preg_replace('#(<pre.*?>)(.*?)</pre>#se', 
-						" '$1' . preg_replace('#<br.*?/>#', '"."\n"."', " .
-						"preg_replace('#<p.*?>#', '"."\n"."', " .
-						"preg_replace('#</p>#', '', '$2'))) . '</pre>' ", $pee);
+	$pee = preg_replace('#(<pre.*?(?:[^>]*)>)(.*?)</pre>#sie',
+						" '$1' . preg_replace('#<br[\s/]*(?:[^>]*)/>#', '"."\n"."',
+						preg_replace('#<p[\s]*(?:[^>]*)>#', '"."\n"."',
+						preg_replace('#</p[\s]*(?:[^>]*)>#', '', '$2'))). '</pre>'", $pee);
 
 	// Fixup align divs so we can keep them.
 	$pee = preg_replace('#<div(.*?)align="(.*?)"(.*?)>#', '<div$1style="text-align:$2;"$3>', $pee);
