@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.13 $
+ * @version  $Revision: 1.14 $
  * @package  liberty
  * @subpackage functions
  *
@@ -38,7 +38,7 @@ if( !empty( $_REQUEST['deleteAttachment'] ) ) {
 	$attachmentInfo = $gContent->getAttachment( $attachmentId );
 	
 	// TODO: Should we have a permission for deleting attachments?
-	if( $gBitUser->isAdmin() || $attachmentInfo['user_id'] == $gBitUser->mUserId ) {
+	if( $gBitUser->isAdmin() || ($attachmentInfo['user_id'] == $gBitUser->mUserId && $gBitUser->hasPermission('p_liberty_delete_attachment')) ) {
 		$gContent->expungeAttachment( $attachmentId );
 	}
 } elseif( !empty( $_REQUEST['detachAttachment'] ) ) {

@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.106 2007/06/18 21:53:55 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.107 2007/06/20 23:17:01 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -520,8 +520,13 @@ class LibertyAttachable extends LibertyContent {
 			if( $guid && ($user_id == $gBitUser->mUserId || $gBitUser->isAdmin()) ) {
 				$expungeFunc = $gLibertySystem->getPluginFunction($guid,'expunge_function');
 				if ( $expungeFunc ) {
-					// Todo: inform content we are deleting one of its attachments here.
 					if( $expungeFunc( $pAttachmentId ) ) {
+						// Find all the content that will care.
+						$sql = "SELECT lc.`content_type_guid`, lc.`content_id` FROM `".BIT_DB_PREFIX."liberty_content` lc ".
+							"LEFT JOIN `".BIT_DB_PREFIX."liberty_attachments_map` lam on (lc.`content_id`=lam.`content_id`) ".
+							"WHERE lc.`primary_attachment_id`=? OR lam.`attachment_id`=? ORDER BY `content_type_guid`";
+						$ret = $this->mDb->getArray( $sql, array($pAttachmentId, $pAttachmentId), TRUE);
+
 						// Remove the primary ID from any content if it is this attachment
 						$sql = "UPDATE `".BIT_DB_PREFIX."liberty_content` SET `primary_attachment_id`=NULL WHERE `primary_attachment_id` = ?";
 						$this->mDb->query( $sql, array( $pAttachmentId ) );
@@ -533,6 +538,20 @@ class LibertyAttachable extends LibertyContent {
 						$this->mDb->query( $sql, array( $pAttachmentId ) );
 
 						unset($this->mStorage[$pAttachmentId]);
+
+						// Inform all the content that will care.
+						if (!empty($ret)) {
+							// Collect by content_type_guid into a single array to cut down construction costs
+							foreach($ret as $match) {
+								$content_types[$match['content_type_guid']][] = $match['content_id'];
+							}
+							foreach ($content_types as $content_type_guid => $content_ids) {
+								// expungingAttachment is a class oriented method not an object oriented method
+								// in order to save loading objects that may not care.
+								$cls = $this->getLibertyClass($content_type_guid);
+								$cls->expungingAttachment($pAttachmentId, $content_ids);
+							}
+						}
 					}
 				} else {
 					print("Expunge function not found for this content!");
@@ -542,6 +561,18 @@ class LibertyAttachable extends LibertyContent {
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * Called during attachment deletion to notify a content type that an attachment for content of that type is going away so
+     * it can take appropriate action. Note that it is VITAL that content NOT call expunge(TRUE) as part of handling this
+	 * notification or else the universe will implode.
+	 *
+	 * @param the id of the attachment being deleted
+	 * @param an array of content_ids that reference this attachment that are of this type.
+     */
+	function expungingAttachment($pAttachmentId, $pContentIds) {
+		// The default is to ignore this notification.
 	}
 
 	/**

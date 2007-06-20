@@ -3,7 +3,7 @@
  * Base class for Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.15 2007/03/14 14:02:45 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.16 2007/06/20 23:17:01 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -60,14 +60,29 @@ class LibertyBase extends BitBase {
 		return parent::prepGetList( $pListHash );
 	}
 
+
+	/**
+	 * given a content_type_guid this will return an object of the proper type
+	 *
+	 * @param the content type to be loaded
+	 */
+	function getLibertyClass($pContentGuid) {
+		// We can abuse getLibertyObject to do the work
+		$ret = $this->getLibertyObject('1', $pContentGuid, FALSE);
+		// Make sure we don't have a content_id set though.
+		unset($ret->mContentId);
+		return $ret;
+	}
+
 	/**
 	 * Given a content_id, this will return and object of the proper type
 	 *
 	 * @param integer content_id of the object to be returned
 	 * @param string optional content_type_guid of pConId. This will save a select if you happen to have this info. If not, this method will look it up for you.
+	 * @param call load on the content. Defaults to true.
 	 * @returns object of the appropriate content type class
 	 */
-	function getLibertyObject( $pContentId, $pContentGuid=NULL ) {
+	function getLibertyObject( $pContentId, $pContentGuid=NULL, $pLoadContent = TRUE ) {
 		$ret = NULL;
 		global $gLibertySystem, $gBitUser, $gBitSystem;
 
@@ -83,7 +98,9 @@ class LibertyBase extends BitBase {
 				if( defined( strtoupper( $type['handler_package'] ).'_PKG_PATH' ) ) {
 					require_once( constant( strtoupper( $type['handler_package'] ).'_PKG_PATH' ).$type['handler_file'] );
 					$ret = new $type['handler_class']( NULL, $pContentId );
-					$ret->load();
+					if ($pLoadContent) {
+						$ret->load();
+					}
 				}
 			}
 

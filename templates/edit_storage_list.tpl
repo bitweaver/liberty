@@ -37,7 +37,7 @@
 								<a href="{$attachmentActionBaseURL}&amp;content_id={$gContent->mContentId}&amp;detachAttachment={$attachmentId}">{biticon ipackage=icons iname="edit-cut" iexplain="detach"}</a>
 							{/if}
 						{/if}
-						{*if ( $gBitUser->isAdmin() || $storage.user_id == $gBitUser->mUserId ) && !isset($storage.content_id) }
+						{if $gBitUser->isAdmin() || ($storage.user_id == $gBitUser->mUserId && $gBitUser->hasPermission('p_liberty_delete_attachments') ) }
 							{if $attachmentBrowser}
 								<a href="javascript:ajax_updater('attbrowser', '{$attachmentActionBaseURL}', 'deleteAttachment={$attachmentId}');">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
 							{elseif $libertyUploader || $gBitSystem->getConfig('liberty_attachment_style') == 'ajax'}
@@ -45,7 +45,7 @@
 							{else}
 								<a href="{$attachmentActionBaseURL}&amp;deleteAttachment={$attachmentId}">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
 							{/if}
-						{/if*}
+						{/if}
 					</td>
 					<td style="text-align:center; width:30%">
 						{$storage.wiki_plugin_link}
