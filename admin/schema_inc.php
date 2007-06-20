@@ -191,7 +191,7 @@ $tables = array(
 'liberty_content_connection_map' => "
 	from_content_id I4 PRIMARY,
 	to_content_id I4 PRIMARY,
-	item_position I4
+	item_position F
 	CONSTRAINT '
 		, CONSTRAINT `liberty_from_content_id_ref` FOREIGN KEY (`from_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
 		, CONSTRAINT `liberty_to_content_id_ref` FOREIGN KEY (`to_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
