@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.239 2007/06/19 12:38:37 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.240 2007/06/20 10:47:35 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1122,12 +1122,20 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
+	/**
+	 * loadPreferences of the currently loaded object or pass in to get preferences of a specific content_id
+	 * 
+	 * @param numeric $pContentId content_id of the item we want the prefs from (optional)
+	 * @access public
+	 * @return array of preferences if $pContentId is set or pass preferences on to $this->mPrefs
+	 */
 	function loadPreferences( $pContentId = NULL ) {
-		if( @BitBase::verifyId( $pContentId ) ) {
-			return $this->mDb->getAssoc( "SELECT `pref_name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $pContentId ) );
+		global $gBitSystem;
+		if( @BitBase::verifyId( $pContentId )) {
+			return $gBitSystem->mDb->getAssoc( "SELECT `pref_name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $pContentId ));
 		} elseif( $this->isValid() ) {
 			// If no results, getAssoc will return an empty array (ie not a true NULL value) so getPreference can tell we have attempted a load
-			$this->mPrefs = @$this->mDb->getAssoc( "SELECT `pref_name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $this->mContentId ) );
+			$this->mPrefs = @$this->mDb->getAssoc( "SELECT `pref_name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=?", array( $this->mContentId ));
 		}
 	}
 
