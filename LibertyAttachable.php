@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.108 2007/06/21 08:30:19 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.109 2007/06/21 09:44:42 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -504,57 +504,67 @@ class LibertyAttachable extends LibertyContent {
 	/**
 	 * expunge attachment from the database (and file system via the plugin if required)
 	 *
-	 * @param array $pAttachmentId attachment id of the item that should be deleted
+	 * @param numeric $pAttachmentId attachment id of the item that should be deleted
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
 	function expungeAttachment( $pAttachmentId ) {
-		global $gLibertySystem;
-		global $gBitUser;
+		global $gLibertySystem, $gBitUser;
 		$ret = NULL;
 		if( @$this->verifyId( $pAttachmentId ) ) {
 			$sql = "SELECT `attachment_plugin_guid`, `user_id` FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id`=?";
 			$row = $this->mDb->getRow( $sql, array( $pAttachmentId ) );
 			$guid = $row['attachment_plugin_guid'];
 			$user_id = $row['user_id'];
-			if( $guid && ($user_id == $gBitUser->mUserId || $gBitUser->isAdmin()) ) {
-				$expungeFunc = $gLibertySystem->getPluginFunction($guid,'expunge_function');
-				if ( $expungeFunc ) {
-					if( $expungeFunc( $pAttachmentId ) ) {
-						// Find all the content that will care.
-						$sql = "SELECT lc.`content_type_guid`, lc.`content_id` FROM `".BIT_DB_PREFIX."liberty_content` lc ".
-							"LEFT JOIN `".BIT_DB_PREFIX."liberty_attachments_map` lam on (lc.`content_id`=lam.`content_id`) ".
-							"WHERE lc.`primary_attachment_id`=? OR lam.`attachment_id`=? ORDER BY `content_type_guid`";
-						$ret = $this->mDb->getArray( $sql, array($pAttachmentId, $pAttachmentId), TRUE);
+			if( $guid && ( $this->isOwner( $row ) || $gBitUser->isAdmin() )) {
+				// check if we have the means available to remove this attachment
+				if( $expungeFunc = $gLibertySystem->getPluginFunction( $guid,'expunge_function' )) {
 
+					// Find all the content that will care.
+					$sql = "
+						SELECT lc.`content_type_guid`, lc.`content_id`
+						FROM `".BIT_DB_PREFIX."liberty_content` lc
+						LEFT JOIN `".BIT_DB_PREFIX."liberty_attachments_map` lam ON (lc.`content_id`=lam.`content_id`)
+						WHERE lc.`primary_attachment_id`=? OR lam.`attachment_id`=? ORDER BY `content_type_guid`";
+					$ret = $this->mDb->getArray( $sql, array( $pAttachmentId, $pAttachmentId ), TRUE );
+
+					// Delete the entry from the attachments map first due to the contraint set on liberty_content
+					// this is needed for packages such as treasury which handle their attachments and content sepatately from LibertyAttachable
+					// this information is not needed in the table anymore since we are passing content_ids on to the expunge functions
+					$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachments_map` WHERE `attachment_id`=?";
+					$this->mDb->query( $sql, array( $pAttachmentId ));
+
+					// Inform all the content that will care.
+					if( !empty( $ret ) && is_array( $ret )) {
+						// Collect by content_type_guid into a single array to cut down construction costs
+						foreach( $ret as $match ) {
+							$contentTypes[$match['content_type_guid']][] = $match['content_id'];
+						}
+
+						// this can get pretty expensive if an attachment is attached to a ton of content
+						foreach( $contentTypes as $content_type_guid => $contentIds ) {
+							// expungingAttachment is a class oriented method not an object oriented method in order to save loading objects that may not care.
+							$cls = $this->getLibertyClass( $content_type_guid );
+
+							// calling this function should leave all liberty related tables untouched that we can remove these below
+							$cls->expungingAttachment( $pAttachmentId, $contentIds );
+						}
+					}
+
+					// --- Do the final cleanup of liberty related tables ---
+					if( $expungeFunc( $pAttachmentId )) {
 						// Remove the primary ID from any content if it is this attachment
 						$sql = "UPDATE `".BIT_DB_PREFIX."liberty_content` SET `primary_attachment_id`=NULL WHERE `primary_attachment_id` = ?";
-						$this->mDb->query( $sql, array( $pAttachmentId ) );
-						// Delete it from the attachments map
-						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachments_map` WHERE `attachment_id`=?";
 						$this->mDb->query( $sql, array( $pAttachmentId ) );
 						// Delete the attachment record.
 						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id`=?";
 						$this->mDb->query( $sql, array( $pAttachmentId ) );
 
-						unset($this->mStorage[$pAttachmentId]);
-
-						// Inform all the content that will care.
-						if( !empty( $ret ) && is_array( $ret )) {
-							// Collect by content_type_guid into a single array to cut down construction costs
-							foreach( $ret as $match ) {
-								$contentTypes[$match['content_type_guid']][] = $match['content_id'];
-							}
-							foreach( $contentTypes as $content_type_guid => $contentIds ) {
-								// expungingAttachment is a class oriented method not an object oriented method
-								// in order to save loading objects that may not care.
-								$cls = $this->getLibertyClass( $content_type_guid );
-								$cls->expungingAttachment( $pAttachmentId, $contentIds );
-							}
-						}
+						// Remove attachment from memory
+						unset( $this->mStorage[$pAttachmentId] );
 					}
 				} else {
-					print("Expunge function not found for this content!");
+					print( "Expunge function not found for this content!" );
 					$ret = NULL;
 				}
 			}
