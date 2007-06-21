@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.107 2007/06/20 23:17:01 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.108 2007/06/21 08:30:19 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -540,16 +540,16 @@ class LibertyAttachable extends LibertyContent {
 						unset($this->mStorage[$pAttachmentId]);
 
 						// Inform all the content that will care.
-						if (!empty($ret)) {
+						if( !empty( $ret ) && is_array( $ret )) {
 							// Collect by content_type_guid into a single array to cut down construction costs
-							foreach($ret as $match) {
-								$content_types[$match['content_type_guid']][] = $match['content_id'];
+							foreach( $ret as $match ) {
+								$contentTypes[$match['content_type_guid']][] = $match['content_id'];
 							}
-							foreach ($content_types as $content_type_guid => $content_ids) {
+							foreach( $contentTypes as $content_type_guid => $contentIds ) {
 								// expungingAttachment is a class oriented method not an object oriented method
 								// in order to save loading objects that may not care.
-								$cls = $this->getLibertyClass($content_type_guid);
-								$cls->expungingAttachment($pAttachmentId, $content_ids);
+								$cls = $this->getLibertyClass( $content_type_guid );
+								$cls->expungingAttachment( $pAttachmentId, $contentIds );
 							}
 						}
 					}
