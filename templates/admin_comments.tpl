@@ -65,7 +65,6 @@
 						<option value="30" {if $gBitSystem->getConfig('comments_default_post_lines') eq 30}selected="selected"{/if}>30</option>
 					</select>
 					{formhelp note="Default number of lines in the comment post textarea."}
-					
 				{/forminput}
 			</div>
 
@@ -73,6 +72,22 @@
 				<input type="submit" name="change_prefs" value="{tr}Change preferences{/tr}" />
 			</div>
 		{/form}
+
+		{capture name=commentUrls}
+			<ul>
+				{foreach from=$gBitSystem->mAppMenu item=menu}
+					{if $menu.admin_comments_url}
+						<li><a href="{$menu.admin_comments_url}">{$menu.menu_title}</a></li>
+					{/if}
+				{/foreach}
+			</ul>
+		{/capture}
+
+		{if $smarty.capture.commentUrls}
+			<h2>{tr}Comment Admin Links{/tr}</h2>
+			<p class="help">{tr}Here are links to pages where you can fine-tune your comment settings on a package-specific manner.{/tr}</p>
+			{$smarty.capture.commentUrls}
+		{/if}
 	</div><!-- end .body -->
 </div><!-- end .liberty -->
 {/strip}
