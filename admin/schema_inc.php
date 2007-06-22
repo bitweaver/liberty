@@ -203,8 +203,8 @@ $tables = array(
 ",
 
 'liberty_meta_data' => "
+	meta_key C(250) PRIMARY,
 	meta_type_guid C(16),
-	meta_key C(250) NOTNULL,
 	meta_title C(250) NOTNULL,
 	meta_value_short C(250),
 	meta_value_long X
@@ -216,8 +216,8 @@ $tables = array(
 	meta_key C(250) PRIMARY NOTNULL
 	CONSTRAINT '
 		, CONSTRAINT `liberty_meta_map_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
+		, CONSTRAINT `liberty_meta_map_meta_key_ref` FOREIGN KEY (`meta_key`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_data` (`meta_key`)'
 ",
-//		, CONSTRAINT `liberty_meta_map_meta_key_ref` FOREIGN KEY (`meta_key`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_data` (`meta_key`)'
 
 );
 
@@ -267,7 +267,7 @@ $indices = array (
 	'liberty_content_perm_cont_idx' => array( 'table' => 'liberty_content_permissions', 'cols' => 'content_id', 'opts' => NULL ),
 	'process_id_idx' => array( 'table' => 'liberty_process_queue', 'cols' => 'content_id', 'opts' => NULL ),
 	'liberty_meta_map_content_idx' => array( 'table' => 'liberty_meta_content_map', 'cols' => 'content_id', 'opts' => NULL ),
-	'liberty_meta_map_key_idx' => array( 'table' => 'liberty_meta_content_map', 'cols' => 'meta_key', 'opts' => 'UNIQUE' ),
+	'liberty_meta_map_key_idx' => array( 'table' => 'liberty_meta_content_map', 'cols' => 'meta_key', 'opts' => NULL ),
 	'liberty_meta_data_key_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'meta_key', 'opts' => NULL ),
 	'liberty_meta_data_guid_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'meta_key', 'opts' => NULL ),
 	'liberty_meta_data_title_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'meta_key', 'opts' => NULL ),
