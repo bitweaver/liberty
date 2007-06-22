@@ -208,9 +208,7 @@ $tables = array(
 	meta_title C(250) NOTNULL,
 	meta_value_short C(250),
 	meta_value_long X
-	CONSTRAINT '
-		, CONSTRAINT `liberty_meta_guid_ref` FOREIGN KEY (`meta_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_types` (`meta_type_guid`)
-		, CONSTRAINT `liberty_meta_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
+	CONSTRAINT ' , CONSTRAINT `liberty_meta_guid_ref` FOREIGN KEY (`meta_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_types` (`meta_type_guid`) '
 ",
 
 'liberty_meta_content_map' => "
