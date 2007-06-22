@@ -1,10 +1,16 @@
 <?php
+/**
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/preview.php,v 1.3 2007/06/22 09:17:13 lsces Exp $
+ * lookup_content_inc
+ *
+ * @author   spider <spider@steelsun.com>
+ * @package  liberty
+ * @subpackage functions
+ */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/preview.php,v 1.2 2007/05/30 21:27:28 spiderr Exp $
-
-// Copyright( c ) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
-// All Rights Reserved. See copyright.txt for details and a complete list of authors.
-// Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
+/**
+ * Required setup
+ */
 global $gLightweightScan;
 $gLightwieightScan = TRUE;
 require_once( '../bit_setup_inc.php' );

@@ -1,8 +1,12 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/ajax_comments.php,v 1.3 2007/06/11 21:22:34 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/ajax_comments.php,v 1.4 2007/06/22 09:17:13 lsces Exp $
  * @package liberty
  * @subpackage functions
+ */
+
+/**
+ * required setup
  */
 require_once( '../bit_setup_inc.php' );
  

@@ -1,4 +1,10 @@
 <?php
+/**
+ * @version  $Revision: 1.8 $
+ * @package  liberty
+ * @subpackage functions
+ */
+
 
 $gBitSmarty->assign('source', 0);
 // If we have to include a preview please show it

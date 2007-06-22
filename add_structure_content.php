@@ -1,5 +1,16 @@
 <?php
+/**
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/add_structure_content.php,v 1.3 2007/06/22 09:17:13 lsces Exp $
+ *
+ * @author   spider <spider@steelsun.com>
+ * @version  $Revision: 1.3 $
+ * @package  liberty
+ * @subpackage functions
+ */
 
+/**
+ * required setup
+ */
 $gLiteweightScan = TRUE;
 require_once( '../bit_setup_inc.php' );
 
