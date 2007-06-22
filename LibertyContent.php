@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.240 2007/06/20 10:47:35 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.241 2007/06/22 20:11:09 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1756,6 +1756,7 @@ class LibertyContent extends LibertyBase {
 		if (!empty($hashBindVars['where'])) {
 			$bindVars = array_merge($bindVars, $hashBindVars['where']);
 		}
+
 		$whereSql = preg_replace( '/^[\s]*AND\b/i', 'WHERE ', $whereSql );
 
 		// If sort mode is versions then offset is 0, max_records is -1 (again) and sort_mode is nil
@@ -1800,6 +1801,7 @@ class LibertyContent extends LibertyBase {
 			$bindVars = array_merge($hashBindVars['select'], $bindVars);
 		}
 		$result = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
+
 		$ret = array();
 		$contentTypes = $gLibertySystem->mContentTypes;
 		while( $aux = $result->fetchRow() ) {
@@ -1818,9 +1820,18 @@ class LibertyContent extends LibertyBase {
 					$type['content_object'] = new $type['handler_class']();
 				}
 				if( !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
-					$aux['title']        = $type['content_object']->getTitle( $aux );
-					$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
-					$aux['display_url']  = $type['content_object']->getDisplayUrl( $aux['content_id'], $aux );
+					if( $aux['content_type_guid'] == BITUSER_CONTENT_TYPE_GUID ) {
+						// here we provide getDisplay(Link|Url) with user-specific information that we get the correct links to display in pages
+						$userInfo = $gBitUser->getUserInfo( array( 'content_id' => $aux['content_id'] ));
+						$aux['title']        = $type['content_object']->getTitle( $userInfo );
+						$aux['display_link'] = $type['content_object']->getDisplayLink( $userInfo['login'], $userInfo );
+						$aux['display_url']  = $type['content_object']->getDisplayUrl( $userInfo['login'] );
+					} else {
+						$aux['title']        = $type['content_object']->getTitle( $aux );
+						$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
+						$aux['display_url']  = $type['content_object']->getDisplayUrl( $aux['content_id'], $aux );
+					}
+
 					if( !empty( $pListHash['thumbnail_size'] ) ) {
 						$aux['content_object'] = new $type['handler_class']( NULL, $aux['content_id'] );
 						if( $aux['content_object']->load() ) {
