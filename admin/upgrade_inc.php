@@ -32,14 +32,26 @@ array( 'DATADICT' => array(
 			content_id INT NOTNULL PRIMARY
 			CONSTRAINTS ', CONSTRAINT liberty_aliases_content_fkey FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`(`content_id`) '
 		",
+		'liberty_meta_types' => "
+			meta_type_guid C(16) PRIMARY,
+			meta_type_title C(250) NOTNULL
+		",
 		'liberty_meta_data' => "
-			content_id I4 NOTNULL,
+			meta_key C(250) PRIMARY,
 			meta_type_guid C(16),
-			meta_key C(250) NOTNULL,
 			meta_title C(250) NOTNULL,
 			meta_value_short C(250),
 			meta_value_long X
-			CONSTRAINT ', CONSTRAINT `liberty_meta_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
+			CONSTRAINT '
+				, CONSTRAINT `liberty_meta_guid_ref` FOREIGN KEY (`meta_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_types` (`meta_type_guid`)
+				, CONSTRAINT `liberty_meta_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
+		",
+		'liberty_meta_content_map' => "
+			content_id I4 PRIMARY NOTNULL,
+			meta_key C(250) PRIMARY NOTNULL,
+			CONSTRAINT '
+				, CONSTRAINT `liberty_meta_map_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
+				, CONSTRAINT `liberty_meta_map_meta_key_ref` FOREIGN KEY (`meta_key`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_data` (`meta_key`)'
 		",
 		'liberty_content_connection_map' => "
 			from_content_id I4 PRIMARY,
@@ -233,6 +245,13 @@ array( 'DATADICT' => array(
 	)),
 	array( 'CREATEINDEX' => array(
 		'liberty_content_links_title_idx' => array( 'liberty_content_links', '`to_title`', array() ),
+		'process_id_idx' => array( 'liberty_process_queue', 'content_id', array() ),
+		'liberty_meta_map_content_idx' => array( 'liberty_meta_content_map', 'content_id', array() ),
+		'liberty_meta_map_key_idx' => array( 'liberty_meta_content_map', 'meta_key', array() ),
+		'liberty_meta_data_key_idx' => array( 'liberty_meta_data', 'meta_key', array() ),
+		'liberty_meta_data_guid_idx' => array( 'liberty_meta_data', 'meta_key', array() ),
+		'liberty_meta_data_title_idx' => array( 'liberty_meta_data', 'meta_key', array() ),
+		'liberty_meta_data_values_idx' => array( 'liberty_meta_data', 'meta_key', array() ),
 	)),
 )),
 

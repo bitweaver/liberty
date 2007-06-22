@@ -197,15 +197,30 @@ $tables = array(
 		, CONSTRAINT `liberty_to_content_id_ref` FOREIGN KEY (`to_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
 ",
 
+'liberty_meta_types' => "
+	meta_type_guid C(16) PRIMARY,
+	meta_type_title C(250) NOTNULL
+",
+
 'liberty_meta_data' => "
-	content_id I4 NOTNULL,
 	meta_type_guid C(16),
 	meta_key C(250) NOTNULL,
 	meta_title C(250) NOTNULL,
 	meta_value_short C(250),
 	meta_value_long X
-	CONSTRAINT ', CONSTRAINT `liberty_meta_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
+	CONSTRAINT '
+		, CONSTRAINT `liberty_meta_guid_ref` FOREIGN KEY (`meta_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_types` (`meta_type_guid`)
+		, CONSTRAINT `liberty_meta_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
 ",
+
+'liberty_meta_content_map' => "
+	content_id I4 PRIMARY NOTNULL,
+	meta_key C(250) PRIMARY NOTNULL,
+	CONSTRAINT '
+		, CONSTRAINT `liberty_meta_map_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
+		, CONSTRAINT `liberty_meta_map_meta_key_ref` FOREIGN KEY (`meta_key`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_data` (`meta_key`)'
+",
+
 );
 
 global $gBitInstaller;
@@ -253,6 +268,12 @@ $indices = array (
 	'liberty_content_perm_perm_idx' => array( 'table' => 'liberty_content_permissions', 'cols' => 'perm_name', 'opts' => NULL ),
 	'liberty_content_perm_cont_idx' => array( 'table' => 'liberty_content_permissions', 'cols' => 'content_id', 'opts' => NULL ),
 	'process_id_idx' => array( 'table' => 'liberty_process_queue', 'cols' => 'content_id', 'opts' => NULL ),
+	'liberty_meta_map_content_idx' => array( 'table' => 'liberty_meta_content_map', 'cols' => 'content_id', 'opts' => NULL ),
+	'liberty_meta_map_key_idx' => array( 'table' => 'liberty_meta_content_map', 'cols' => 'meta_key', 'opts' => NULL ),
+	'liberty_meta_data_key_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'meta_key', 'opts' => NULL ),
+	'liberty_meta_data_guid_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'meta_key', 'opts' => NULL ),
+	'liberty_meta_data_title_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'meta_key', 'opts' => NULL ),
+	'liberty_meta_data_values_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'meta_key', 'opts' => NULL ),
 );
 $gBitInstaller->registerSchemaIndexes( LIBERTY_PKG_NAME, $indices );
 
