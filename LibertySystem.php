@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.85 2007/06/16 11:26:23 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.86 2007/06/22 14:28:15 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -410,6 +410,22 @@ class LibertySystem extends LibertyBase {
 				$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."liberty_content_types", $pTypeParams, array( 'content_type_guid'=>$pGuid ) );
 			}
 		}
+	}
+
+	/**
+	 * requireHandlerFile will require_once() the handler file if given the hash found in $gLibertySystem->mContentTypes[content_type_guid]
+	 * 
+	 * @param array $pContentTypeHash the hash found in $gLibertySystem->mContentTypes[content_type_guid]
+	 * @access public
+	 * @return TRUE on success, FALSE on failure
+	 */
+	function requireHandlerFile( $pContentTypeHash ) {
+		$ret = FALSE;
+		if( defined( strtoupper( $pContentTypeHash['handler_package'] ).'_PKG_PATH' )) {
+			require_once( constant( strtoupper( $pContentTypeHash['handler_package'] ).'_PKG_PATH' ).$pContentTypeHash['handler_file'] );
+			$ret = TRUE;
+		}
+		return $ret;
 	}
 
 	/**
