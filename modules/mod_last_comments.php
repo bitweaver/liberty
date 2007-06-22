@@ -1,4 +1,13 @@
 <?php
+/**
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_comments.php,v 1.3 2007/06/22 10:16:09 lsces Exp $
+ * @package liberty
+ * @subpackage modules
+ */
+
+/**
+ * Initial Setup
+ */
 require_once( LIBERTY_PKG_PATH.'LibertyComment.php' );
 global $gQueryUser, $gBitUser, $gLibertySystem, $moduleParams;
 $params = $moduleParams['module_params'];
