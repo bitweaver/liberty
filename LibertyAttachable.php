@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.110 2007/06/23 17:29:57 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.111 2007/06/23 18:44:50 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -634,14 +634,18 @@ class LibertyAttachable extends LibertyContent {
 
 		if( @$this->verifyId( $conId ) ) {
 			LibertyContent::load( $conId );
-			$query = "SELECT lam.content_id, la.* FROM `".BIT_DB_PREFIX."liberty_attachments_map` lam
-				INNER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON (lam.attachment_id = la.attachment_id)
-					  WHERE lam.`content_id`=?";
+			$query = "
+				SELECT lam.`content_id`, la.*, lc.`primary_attachment_id`
+				FROM `".BIT_DB_PREFIX."liberty_attachments_map` lam
+					INNER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON( lam.`attachment_id` = la.`attachment_id` )
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lam.`attachment_id` = lc.`primary_attachment_id` AND lc.`content_id` = lam.`content_id` )
+				WHERE lam.`content_id`=?";
 			if( $result = $this->mDb->query( $query,array( (int)$conId ))) {
 				$this->mStorage = array();
 				while( $row = $result->fetchRow() ) {
-					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function'  ) ) {
+					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function' )) {
 						$this->mStorage[$row['attachment_id']] = $func( $row );
+						$this->mStorage[$row['attachment_id']]['is_primary'] = !empty( $row['primary_attachment_id'] );
 					} else {
 						print "No load_function for ".$row['attachment_plugin_guid']." ".$gLibertySystem->mPlugins[$row['attachment_plugin_guid']];
 					}
@@ -1067,7 +1071,7 @@ function liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl = NULL, $pThumbSize
  * @access public
  * @return string url
  */
-function liberty_fetch_thumbnail_url( $pFilePath, $pThumbSize, $pAltImageUrl = NULL ) {
+function liberty_fetch_thumbnail_url( $pFilePath, $pThumbSize = 'small', $pAltImageUrl = NULL ) {
 	if( !empty( $pFilePath )) {
 		$ret = array();
 		$ret = liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl, array( $pThumbSize ));
