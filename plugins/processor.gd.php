@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.2 2007/02/16 17:09:00 nickpalmer Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.3 2007/06/23 17:29:57 squareing Exp $
  *
  * Image processor - extension: php-gd
  * @package  liberty
@@ -11,11 +11,10 @@
  * liberty_gd_resize_image 
  *
  * @param array $pFileHash 
- * @param array $pFormat 
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function liberty_gd_resize_image( &$pFileHash, $pFormat = NULL, $pThumbnail = false ) {
+function liberty_gd_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
   	global $gBitSystem;
 	$ret = NULL;
 	list($iwidth, $iheight, $itype, $iattr) = @getimagesize( $pFileHash['source_file'] );
@@ -70,48 +69,52 @@ function liberty_gd_resize_image( &$pFileHash, $pFormat = NULL, $pThumbnail = fa
 			$t = imagecreate($tw, $ty);
 			$imagegallib->ImageCopyResampleBicubic($t, $img, 0, 0, 0, 0, $tw, $ty, $size_x, $size_y);
 		}
-		switch( $pFormat ) {
-		case 'png':
-			$ext = '.png';
-			$destFile = BIT_ROOT_PATH.'/'.$destUrl.$ext;
-			imagepng( $t, $destFile );
-			// set permissions if possible - necessary for some wonky shared hosting environments
-			if(chmod($pFileHash['source_file'], 0644)){
-				// does nothing, but fails elegantly
-			}
-			break;
-		case 'gif':
-			// This must go immediately before default so default will be hit for PHP's without gif support
-			if( function_exists( 'imagegif' ) ) {
-				$ext = '.gif';
-				$destFile = BIT_ROOT_PATH.'/'.$destUrl.$ext;
-				imagegif( $t, $destFile );
-				// set permissions if possible - necessary for some wonky shared hosting environments
-				if(chmod($pFileHash['source_file'], 0644)){
-					// does nothing, but fails elegantly
-				}
-				break;
-			}
-		default:
-			if ($pThumbnail && $gBitSystem->isFeatureActive('liberty_png_thumbnails')) {
-				$ext = '.png';
-				$destFile = BIT_ROOT_PATH.'/'.$destUrl.$ext;
-				imagepng( $t, $destFile );
-			}
-			else {
-				$ext = '.jpg';
-				$destFile = BIT_ROOT_PATH.'/'.$destUrl.$ext;
-				imagejpeg( $t, $destFile );
-			}
-		  
-			if(chmod($destFile, 0644)){
-				// does nothing, but fails elegantly
-			}
-			break;
+
+
+		// override $mimeExt if we have a custom setting for it
+		if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
+			$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
+		} else {
+			// we need to interpret the value in $itype
+			$mimeExt = image_type_to_extension( $itype, FALSE );
 		}
-		$pFileHash['name'] = $pFileHash['dest_base_name'].$ext;
+
+		if( preg_match( "!(png|gif)!", $mimeExt )) {
+			$targetType = $mimeExt;
+			$destExt = '.'.$mimeExt;
+		} else {
+			$targetType = 'jpeg';
+			$destExt = '.jpg';
+		}
+
+		switch( $targetType ) {
+			case 'png':
+				if( imagetypes() & IMG_PNG ) {
+					$destFile = BIT_ROOT_PATH.'/'.$destUrl.$destExt;
+					imagepng( $t, $destFile );
+					break;
+				}
+			case 'gif':
+				// This must go immediately before default so default will be hit for PHP's without gif support
+				if( imagetypes() & IMG_GIF ) {
+					$destFile = BIT_ROOT_PATH.'/'.$destUrl.$destExt;
+					imagegif( $t, $destFile );
+					break;
+				}
+			default:
+				$destFile = BIT_ROOT_PATH.'/'.$destUrl.$destExt;
+				imagejpeg( $t, $destFile );
+				break;
+		}
+
+		// set permissions if possible - necessary for some wonky shared hosting environments
+		if( chmod( $pFileHash['source_file'], 0644 )){
+			// does nothing, but fails elegantly
+		}
+
+		$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 		$pFileHash['size'] = filesize( $destFile );
-		$ret = $destUrl.$ext;
+		$ret = $destUrl.$destExt;
 	} elseif( $iwidth && $iheight ) {
 		$ret = liberty_process_generic( $pFileHash, FALSE );
 	}

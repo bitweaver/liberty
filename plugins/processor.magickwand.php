@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.8 2007/05/15 03:35:08 wjames5 Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.9 2007/06/23 17:29:57 squareing Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -11,11 +11,10 @@
  * liberty_magickwand_resize_image 
  * 
  * @param array $pFileHash 
- * @param array $pFormat 
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL, $pThumbnail = false ) {
+function liberty_magickwand_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 	global $gBitSystem;
 	// static var here is crucial
 	static $rgbConverts = array();
@@ -48,14 +47,9 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL, $pThumbn
 			MagickSetImageCompressionQuality( $magickWand, 85 );
 			$iwidth = round( MagickGetImageWidth( $magickWand ) );
 			$iheight = round( MagickGetImageHeight( $magickWand ) );
-			$itype = MagickGetImageMimeType( $magickWand );
 
-			if( $pThumbnail && $gBitSystem->isFeatureActive( 'liberty_png_thumbnails' )) {
-				$format = 'PNG';
-			} else {
-				$format = 'JPG';
-			}
-			MagickSetImageFormat( $magickWand, $format );
+			// this does not seem to be needed. magickwand will work out what to do by using the destination file extension
+			//MagickSetImageFormat( $magickWand, $format );
 
 			if( empty( $pFileHash['max_width'] ) || empty( $pFileHash['max_height'] ) || $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION || $pFileHash['max_height'] == MAX_THUMBNAIL_DIMENSION ) {
 				$pFileHash['max_width'] = $iwidth;
@@ -68,22 +62,31 @@ function liberty_magickwand_resize_image( &$pFileHash, $pFormat = NULL, $pThumbn
 			} elseif( !empty( $pFileHash['max_width'] ) ) {
 				$pFileHash['max_height'] = round( ($iheight / $iwidth) * $pFileHash['max_width'] );
 			}
+
 			// Make sure not to scale up
 			if( $pFileHash['max_width'] > $iwidth && $pFileHash['max_height'] > $iheight) {
 				$pFileHash['max_width'] = $iwidth;
 				$pFileHash['max_height'] = $iheight;
-			} 
-
-			list($type, $mimeExt) = split( '/', strtolower( $itype ) );
-			if ($gBitSystem->isFeatureActive('liberty_png_thumbnails')) {
-				$targetType = 'png';
-				$destExt = '.png';
 			}
-			else {
+
+			$itype = MagickGetImageMimeType( $magickWand );
+
+			// override $mimeExt if we have a custom setting for it
+			if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
+				$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
+			} else {
+				list( $type, $mimeExt ) = split( '/', strtolower( $itype ));
+			}
+
+			if( preg_match( "!(png|gif)!", $mimeExt )) {
+				$targetType = $mimeExt;
+				$destExt = '.'.$mimeExt;
+			} else {
 				$targetType = 'jpeg';
 				$destExt = '.jpg';
 			}
-			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || ($mimeExt != $targetType)) || !empty( $pFileHash['colorspace_conversion'] ) ) {
+
+			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || $mimeExt != $targetType ) || !empty( $pFileHash['colorspace_conversion'] ) ) {
 				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
 				$destFile = BIT_ROOT_PATH.'/'.$destUrl;
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;

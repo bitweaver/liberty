@@ -101,13 +101,16 @@ $formImageFeatures = array(
 		'note' => 'Automatically create JPEG versions of original images named \'original.jpg\' in the attachment directory with other thumbnails.',
 		'page' => '',
 	),
-	"liberty_png_thumbnails" => array(
-		'label' => 'PNG Thumbnails',
-		'note' => 'Automatically generated thumbnails of original images will be saved as PNG images instead of JPEGs. This will preserve transparency in GIF and PNG uploads but such transparency is not well supported in MSIE 6. MSIE 7 mostly works now as do most other browsers.',
-		'page' => '',
-	),
 );
 $gBitSmarty->assign( 'formImageFeatures', $formImageFeatures );
+
+$thumbFormats = array(
+	''    => tra( 'Automatically select the best format' ),
+	'jpg' => tra( 'Force JPEG thumbnails' ),
+	'png' => tra( 'Force PNG thumbnails' ),
+	'gif' => tra( 'Force GIF thumbnails' ),
+);
+$gBitSmarty->assign( 'thumbFormats', $thumbFormats );
 
 $formValues = array( 'image_processor', 'liberty_attachment_link_format', 'comments_per_page', 'comments_default_ordering', 'comments_default_display_mode' );
 
@@ -119,9 +122,10 @@ if( !empty( $_REQUEST['change_prefs'] )) {
 	foreach( $formLibertyTextareaFeatures as $item => $data ) {
 		simple_set_value( $item, LIBERTY_PKG_NAME );
 	}
+	simple_set_value( 'liberty_thumbnail_format', LIBERTY_PKG_NAME );
 	simple_set_value( 'liberty_attachment_style', LIBERTY_PKG_NAME );
-	$gBitSystem->storeConfig('liberty_cache', $_REQUEST['liberty_cache'], LIBERTY_PKG_NAME );
-	$gBitSystem->storeConfig('liberty_auto_display_attachment_thumbs', $_REQUEST['liberty_auto_display_attachment_thumbs'], LIBERTY_PKG_NAME );
+	$gBitSystem->storeConfig( 'liberty_cache', $_REQUEST['liberty_cache'], LIBERTY_PKG_NAME );
+	$gBitSystem->storeConfig( 'liberty_auto_display_attachment_thumbs', $_REQUEST['liberty_auto_display_attachment_thumbs'], LIBERTY_PKG_NAME );
 
 	foreach( $formValues as $item ) {
 		simple_set_value( $item, LIBERTY_PKG_NAME );

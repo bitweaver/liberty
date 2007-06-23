@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.109 2007/06/21 09:44:42 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.110 2007/06/23 17:29:57 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -988,19 +988,26 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$pFileHash['original_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
 	}
 
-	if( $gBitSystem->isFeatureActive( 'liberty_png_thumbnails' )) {
-		$ext = '.png';
+	// override $mimeExt if we have a custom setting for it
+	if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
+		$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
 	} else {
-		$ext = '.jpg';
+		list( $type, $mimeExt ) = split( '/', strtolower( $pFileHash['type'] ));
+	}
+
+	if( preg_match( "!(png|gif)!", $mimeExt )) {
+		$destExt = '.'.$mimeExt;
+	} else {
+		$destExt = '.jpg';
 	}
 
 	foreach( $pFileHash['thumbnail_sizes'] as $thumbSize ) {
 		if( isset( $gThumbSizes[$thumbSize] )) {
 			$pFileHash['dest_base_name'] = $thumbSize;
-			$pFileHash['name'] = $thumbSize.$ext;
+			$pFileHash['name'] = $thumbSize.$destExt;
 			$pFileHash['max_width'] = $gThumbSizes[$thumbSize]['width'];
 			$pFileHash['max_height'] = $gThumbSizes[$thumbSize]['height'];
-			$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash, NULL, true);
+			$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash, TRUE );
 		}
 	}
 }
@@ -1009,51 +1016,61 @@ function liberty_generate_thumbnails( &$pFileHash ) {
  * fetch all available thumbnails for a given item. if no thumbnails are present, get thumbnailing image or the appropriate mime type icon
  *
  * @param string $pFilePath Relative path to file we want to get thumbnails for (needs to include file name for mime icons)
- * @param string $pThumbnailerImageUrl URL to background thumbnailer image
+ * @param string $pAltImageUrl URL to an alternative fallback image such as a background thumbnailer image
  * @param array $pThumbSizes array of images to search for in the pFilePath
  * @access public
  * @return array of available thumbnails or mime icons
  */
-function liberty_fetch_thumbnails( $pFilePath, $pThumbnailerImageUrl = NULL, $pThumbSizes = NULL ) {
+function liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl = NULL, $pThumbSizes = NULL ) {
 	global $gBitSystem, $gThumbSizes;
 	$ret = array();
 
 	if( empty( $pThumbSizes )) {
 		$pThumbSizes = array_keys( $gThumbSizes );
 	}
-	// since we could have png or jpg thumbs, we need to check for both types
-	// we will check for jpg first unless 'liberty_png_thumbnails' is set
-	if( $gBitSystem->isFeatureActive( 'liberty_png_thumbnails' ) ) {
-			$ext1 = '.png'; $ext2 = '.jpg';
-		} else {
-			$ext2 = '.png'; $ext1 = '.jpg';			
-		}
+
+	// liberty file processors automatically pick the best format for us. we can force a format though.
+	$exts = array( $gBitSystem->getConfig( 'liberty_thumbnail_format', 'jpg' ), 'jpg', 'png', 'gif' );
+	// using array_unique on the above will give us the best order to look for the thumbnails
+	$exts = array_unique( $exts );
+
+	// $pFilePath might already be the absolute path or it might already contain BIT_ROOT_URL
+	if( !( $pFilePath = preg_replace( "!^".preg_quote( BIT_ROOT_PATH, "!" )."!", "", $pFilePath ))) {
+		$pFilePath = preg_replace( "!^".preg_quote( BIT_ROOT_URL, "!" )."!", "", $pFilePath );
+	}
+
 	foreach( $pThumbSizes as $size ) {
-		if( file_exists( BIT_ROOT_PATH.dirname( $pFilePath ).'/'.$size.$ext1 )) {
-			$ret[$size] = BIT_ROOT_URL.dirname( $pFilePath ).'/'.$size.$ext1;
-		} elseif( file_exists( BIT_ROOT_PATH.dirname( $pFilePath ).'/'.$size.$ext2 )) {
-			$ret[$size] = BIT_ROOT_URL.dirname( $pFilePath ).'/'.$size.$ext2;
-		} elseif( $pThumbnailerImageUrl ) {
-			$ret[$size] = $pThumbnailerImageUrl;
-		} else {
-			$ret[$size] = LibertySystem::getMimeThumbnailURL( $gBitSystem->lookupMimeType( $pFilePath ), substr( $pFilePath, strrpos( $pFilePath, '.' ) + 1 ));
+		foreach( $exts as $ext ) {
+			if( empty( $ret[$size] ) && is_readable( BIT_ROOT_PATH.dirname( $pFilePath ).'/'.$size.'.'.$ext )) {
+				$ret[$size] = BIT_ROOT_URL.dirname( $pFilePath ).'/'.$size.'.'.$ext;
+			}
+		}
+
+		if( empty( $ret[$size] )) {
+			if( $pAltImageUrl ) {
+				$ret[$size] = $pAltImageUrl;
+			} else {
+				$ret[$size] = LibertySystem::getMimeThumbnailURL( $gBitSystem->lookupMimeType( $pFilePath ), substr( $pFilePath, strrpos( $pFilePath, '.' ) + 1 ));
+			}
 		}
 	}
 
 	return $ret;
 }
+
 /**
  * fetch a single available thumbnail for a given item. if no thumbnail is present, return NULL
  *
  * @param string $pFilePath Relative path to file we want to get thumbnails for (needs to include file name for mime icons)
- * @param array $pThumbSizes array of images to search for in the pFilePath
+ * @param string $pThumbSize image size to search for in the pFilePath
+ * @param string $pThumbSize path to alternative image that will be shown if nothing is found
  * @access public
  * @return string url
  */
-function liberty_fetch_thumbnail_url( $pFilePath, $pThumbSize ) {
-	if ( !empty($pFilePath) ) {
+function liberty_fetch_thumbnail_url( $pFilePath, $pThumbSize, $pAltImageUrl = NULL ) {
+	if( !empty( $pFilePath )) {
 		$ret = array();
-		$ret = liberty_fetch_thumbnails( $pFilePath, NULL, array($pThumbSize) );
+		$ret = liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl, array( $pThumbSize ));
 		return $ret[$pThumbSize];
 	} else {
 		return NULL;

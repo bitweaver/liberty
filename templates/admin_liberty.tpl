@@ -152,6 +152,14 @@
 						{/forminput}
 					</div>
 				{/foreach}
+
+				<div class="row">
+					{formlabel label="Thumbnail Format" for="thumbformat"}
+					{forminput}
+						{html_options values=$thumbFormats options=$thumbFormats id=thumbformat name=liberty_thumbnail_format selected=$gBitSystem->getConfig('liberty_thumbnail_format')}
+						{formhelp note="Every image-type has its pros and cons: jpgs are usually small in size but don't support transparency, gif transparency is limited and pngs can be large. If you let bitweaver select what format to use, we will do our best to pick a sensible filetype based on the format uploaded."}
+					{/forminput}
+				</div>
 			{/legend}
 		{/jstab}
 	{/jstabs}

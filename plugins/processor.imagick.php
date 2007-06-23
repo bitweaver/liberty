@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.2 2007/02/16 17:08:59 nickpalmer Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.3 2007/06/23 17:29:57 squareing Exp $
  *
  * Image processor - extension: php-imagick
  * @package  liberty
@@ -11,11 +11,10 @@
  * liberty_imagick_resize_image 
  * 
  * @param array $pFileHash 
- * @param array $pFormat 
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL , $pThumbnail = false) {
+function liberty_imagick_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
   	global $gBitSystem;
 	$pFileHash['error'] = NULL;
 	$ret = NULL;
@@ -37,17 +36,25 @@ function liberty_imagick_resize_image( &$pFileHash, $pFormat = NULL , $pThumbnai
 				$pFileHash['max_height'] = $pFileHash['max_width'];
 				$pFileHash['max_width'] = $temp;
 			}
+
 			$itype = imagick_getmimetype( $iImg );
-			list($type, $mimeExt) = split( '/', strtolower( $itype ) );
- 			if ($pThumbnail && $gBitSystem->isFeatureActive('liberty_png_thumbnails')) {
- 				$targetType = 'png';
- 				$destExt = '.png';
- 			}
- 			else {
- 				$targetType = 'jpeg';
-  				$destExt = '.jpg';
- 			}
-			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || ($mimeExt != $targetType)) ) {
+
+			// override $mimeExt if we have a custom setting for it
+			if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
+				$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
+			} else {
+				list( $type, $mimeExt ) = split( '/', strtolower( $itype ));
+			}
+
+			if( preg_match( "!(png|gif)!", $mimeExt )) {
+				$targetType = $mimeExt;
+				$destExt = '.'.$mimeExt;
+			} else {
+				$targetType = 'jpeg';
+				$destExt = '.jpg';
+			}
+
+			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || $mimeExt != $targetType )) {
 				// We have to resize. *ALL* resizes are converted to jpeg or png
 				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
 				$destFile = BIT_ROOT_PATH.'/'.$destUrl;
