@@ -9,7 +9,7 @@
 			{if $gBitUser->hasPermission( 'p_liberty_post_comments' )}
 				{if $comments_ajax }
 					<a href="javascript:void(0);" onclick="LibertyComment.attachForm('comment_{$comment.content_id}', '{$comment.content_id}')">{biticon ipackage="icons" iname="mail-reply-sender" iexplain="Reply to this comment"}</a>
-				{else}				
+				{else}
 					<a href="{$comments_return_url}&amp;post_comment_reply_id={$comment.content_id}&amp;post_comment_request=1#editcomments" rel="nofollow">{biticon ipackage="icons" iname="mail-reply-sender" iexplain="Reply to this comment"}</a>
 				{/if}
 			{/if}
@@ -21,8 +21,12 @@
 			{/if}
 		</div>
 
-		<h3>{$comment.title|escape}</h3>
-		<div class="date">{tr}by{/tr} {if $comment.user_id < 0}{$comment.anon_name|escape}{else}{displayname hash=$comment}{/if}, {$comment.last_modified|bit_long_datetime}</div>
+		<div class="header">
+			<h3>{$comment.title|escape}</h3>
+			<div class="date">
+				{tr}by{/tr} {if $comment.user_id < 0}{$comment.anon_name|escape}{else}{displayname hash=$comment}{/if}, {$comment.last_modified|bit_long_datetime}
+			</div>
+		</div>
 		<div class="content">
 			{include file="bitpackage:liberty/services_inc.tpl" serviceLocation='body' serviceHash=$comment}
 			{$comment.parsed_data}
