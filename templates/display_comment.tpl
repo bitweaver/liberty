@@ -1,8 +1,8 @@
 {strip}
 {if $comments_style eq 'threaded' && $comment.level}
-	<div style="margin-left: {math equation="level * marginIncrement" level=$comment.level marginIncrement=20}px">
+	<div style="margin-left:20px">
 {else}
-	<div style="margin-left: 0px">
+	<div style="margin-left:0px">
 {/if}
 	<div class="post" id="comment_{$comment.content_id}">
 		<div class="floaticon">
@@ -28,13 +28,14 @@
 			{$comment.parsed_data}
 		</div>
 	</div><!-- end .post -->
-{if $comment.children}
-	<div id="comment_{$comment.content_id}_children">
-	{foreach key=key item=item from=$comment.children}
-		{include file="bitpackage:liberty/display_comment.tpl" comment="$item"}
-	{/foreach}
-	</div>
-{/if}
-<div id="comment_{$comment.content_id}_footer"></div>
+
+	{if $comment.children}
+		<div id="comment_{$comment.content_id}_children">
+			{foreach key=key item=item from=$comment.children}
+				{include file="bitpackage:liberty/display_comment.tpl" comment="$item"}
+			{/foreach}
+		</div>
+	{/if}
+	<div id="comment_{$comment.content_id}_footer"></div>
 </div><!-- end .left margin -->
 {/strip}
