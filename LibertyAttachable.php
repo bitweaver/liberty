@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.111 2007/06/23 18:44:50 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.112 2007/06/24 06:42:31 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -929,27 +929,35 @@ function liberty_process_image( &$pFileHash ) {
 	return $ret;
 }
 
-
 /**
- * liberty_clear_thumbnails
+ * liberty_clear_thumbnails will clear all thummbnails found in a given directory
  *
- * @param array $pFileHash
+ * @param array $pFileHash['dest_path'] should contain the path to the dir where we should remove thumbnails
  * @access public
- * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+ * @return TRUE on success, FALSE on failure
  */
 function liberty_clear_thumbnails( &$pFileHash ) {
-	global $gThumbSizes;
-	foreach( array_keys( $gThumbSizes ) as $size ) {
-		$fullPath =  BIT_ROOT_PATH.$pFileHash['dest_path']."$size.jpg";
-		if( file_exists( $fullPath ) ) {
-			unlink( $fullPath );
-		}
-		// Also check for png version.
-		$fullPath =  BIT_ROOT_PATH.$pFileHash['dest_path']."$size.png";
-		if( file_exists( $fullPath ) ) {
-			unlink( $fullPath );
+	if( !empty( $pFileHash['dest_path'] )) {
+		// get thumbnails we want to remove
+		if( $thumbs = liberty_fetch_thumbnails( $pFileHash['dest_path'], NULL, NULL, FALSE )) {
+			foreach( $thumbs as $thumb ) {
+				$thumb = BIT_ROOT_PATH.$thumb;
+				if( is_writable( $thumb ) ) {
+					unlink( $thumb );
+				}
+			}
+			// just to make sure that we have all thumbnails cleared, we run through another round
+			if( $thumbs = liberty_fetch_thumbnails( $pFileHash['dest_path'], NULL, NULL, FALSE )) {
+				foreach( $thumbs as $thumb ) {
+					$thumb = BIT_ROOT_PATH.$thumb;
+					if( is_writable( $thumb ) ) {
+						unlink( $thumb );
+					}
+				}
+			}
 		}
 	}
+	return TRUE;
 }
 
 /**
@@ -1025,7 +1033,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
  * @access public
  * @return array of available thumbnails or mime icons
  */
-function liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl = NULL, $pThumbSizes = NULL ) {
+function liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl = NULL, $pThumbSizes = NULL, $pAlternatives = TRUE ) {
 	global $gBitSystem, $gThumbSizes;
 	$ret = array();
 
@@ -1043,14 +1051,20 @@ function liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl = NULL, $pThumbSize
 		$pFilePath = preg_replace( "!^".preg_quote( BIT_ROOT_URL, "!" )."!", "", $pFilePath );
 	}
 
+	// if the filepath ends with a traling / we know it's a dir. we just assume that the original file is a jpg
+	// this has no outcome on the following code unless we don't find anythig and we need to get the mime type thumb
+	if( preg_match( "!/$!", $pFilePath )) {
+		$pFilePath .= 'dummy.jpg';
+	}
+
 	foreach( $pThumbSizes as $size ) {
 		foreach( $exts as $ext ) {
 			if( empty( $ret[$size] ) && is_readable( BIT_ROOT_PATH.dirname( $pFilePath ).'/'.$size.'.'.$ext )) {
-				$ret[$size] = BIT_ROOT_URL.dirname( $pFilePath ).'/'.$size.'.'.$ext;
+				$ret[$size] = str_replace( "//", "/", BIT_ROOT_URL.dirname( $pFilePath ).'/'.$size.'.'.$ext );
 			}
 		}
 
-		if( empty( $ret[$size] )) {
+		if( $pAlternatives && empty( $ret[$size] )) {
 			if( $pAltImageUrl ) {
 				$ret[$size] = $pAltImageUrl;
 			} else {
