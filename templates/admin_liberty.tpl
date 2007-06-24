@@ -95,13 +95,13 @@
 					{forminput}
 						<label>
 							<input type="radio" id="gd" name="image_processor" value="gd" {if !$gdInstalled}disabled="disabled"{/if} {if !$gBitSystem->getConfig('image_processor') || $gBitSystem->getConfig('image_processor')=='gd'}checked="checked"{/if} />
-							<br />
 							{if !$gdInstalled}
 								{biticon ipackage=icons iname="large/image-missing" iexplain="Not Installed"} {tr}Library is <strong>not</strong> installed{/tr}
 							{else}
 								{biticon ipackage=icons iname="large/image-x-generic" iexplain="Installed"} {tr}Library is installed{/tr}
 							{/if}
 						</label>
+						{formhelp note="The GD libaries are quite limited and <strong>don't support</strong> a number of image formats including <strong>bmp</strong>. If you are planning on uploading and using a lot of images, we recommend you use one of the other image processors."}
 					{/forminput}
 				</div>
 
@@ -114,13 +114,16 @@
 					{forminput}
 						<label>
 							<input type="radio" id="wand" name="image_processor" value="magickwand" {if !$magickwandInstalled}disabled="disabled"{/if} {if $gBitSystem->getConfig('image_processor')=='magickwand'}checked="checked"{/if}/>
-							<br />
 							{if !$magickwandInstalled}
 								{biticon ipackage=icons iname="large/image-missing" iexplain="Not Installed"} {tr}Library is <strong>not</strong> installed{/tr}
 							{else}
 								{biticon ipackage=icons iname="large/image-x-generic" iexplain="Installed"} {tr}Library is installed{/tr}
 							{/if}
 						</label>
+						{formhelp note="MagickWand is the recommended image processor and supports a multitude of different image and video formats. Using these libraries will allow you to upload most image formats without any difficulties."}
+						{if $magickwandInstalled}
+							{formhelp note=' For installation help, please view our online documentation: <a class="external" href="http://www.bitweaver.org/wiki/ImageMagick">ImageMagick and MagickWand installation instructions</a> or visit the <a class="external" href="http://www.imagemagick.org">ImageMagick</a> homepage.'}
+						{/if}
 					{/forminput}
 				</div>
 
@@ -133,13 +136,16 @@
 					{forminput}
 						<label>
 							<input type="radio" id="magick" name="image_processor" value="imagick" {if !$imagickInstalled}disabled="disabled"{/if} {if $gBitSystem->getConfig('image_processor')=='imagick'}checked="checked"{/if}/>
-							<br />
 							{if !$imagickInstalled}
-								{biticon ipackage=icons iname="large/image-missing" iexplain="Not Installed"} {tr}Library is <strong>not</strong> installed{/tr}
+								{biticon ipackage=icons iname="image-missing" iexplain="Not Installed"} {tr}Library is <strong>not</strong> installed{/tr}
 							{else}
 								{biticon ipackage=icons iname="large/image-x-generic" iexplain="Installed"} {tr}Library is installed{/tr}
 							{/if}
 						</label>
+						{formhelp note="ImageMagick supports a multitude of different image and video formats. Using these libraries will allow you to upload most image formats without any difficulties."}
+						{if !$imagickInstalled}
+							{formhelp note=' For installation help, please view our online documentation: <a class="external" href="http://www.bitweaver.org/wiki/ImageMagick">ImageMagick and MagickWand installation instructions</a> or visit the <a class="external" href="http://www.imagemagick.org">ImageMagick</a> homepage.'}
+						{/if}
 					{/forminput}
 				</div>
 
