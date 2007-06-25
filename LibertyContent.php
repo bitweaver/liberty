@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.241 2007/06/22 20:11:09 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.242 2007/06/25 05:28:32 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -191,6 +191,9 @@ class LibertyContent extends LibertyBase {
 				}
 			}
 		}
+
+		// Invoke save filters
+		$pParamHash['edit'] = $this->filterData($pParamHash['edit'], $pParamHash, 'store');
 
 		$pParamHash['field_changed'] = empty( $pParamHash['content_id'] )
 					|| (!empty($this->mInfo["data"]) && !empty($pParamHash["edit"]) && (md5($this->mInfo["data"]) != md5($pParamHash["edit"])))

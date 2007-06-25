@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.stylepurifier.php,v 1.2 2007/06/13 10:05:15 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.stylepurifier.php,v 1.3 2007/06/25 05:28:32 nickpalmer Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -18,14 +18,15 @@ $pluginParams = array (
 	// help page on bitweaver org that explains this plugin
 	'help_page'                => 'Style Purifier',
 	// brief description of the plugin
-	'description'              => 'Strips out both inline and attribute style for users who don\'t have p_liberty_edit_html_style',
+	'description'              => 'Strips out both inline and attribute style for users who don\'t have p_liberty_edit_html_style.',
 	// should this plugin be active or not when loaded for the first time
 	'auto_activate'            => TRUE,
 	// type of plugin
 	'plugin_type'              => FILTER_PLUGIN,
 
-	'prefilter_function'       => 'stylepure_filter',
-	'presplitfilter_function'  => 'stylepure_filter',
+	'storefilter_function'       => 'stylepure_filter',
+	//	'prefilter_function'       => 'stylepure_filter',
+	//	'presplitfilter_function'  => 'stylepure_filter',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERSTYLEPURIFIER, $pluginParams );
 
