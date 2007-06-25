@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_articles.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.articles.php,v 1.11 2007/06/09 18:09:39 squareing Exp $
+// $Id: data.articles.php,v 1.12 2007/06/25 00:35:53 nickpalmer Exp $
 
 /**
  * definitions
@@ -129,7 +129,7 @@ function data_articles($data, $params) { // No change in the parameters with Cly
 		case 'full':
 			$display_result = '<div class="articles">';
 			$gBitSmarty->assign( 'showDescriptionsOnly', TRUE );
-			foreach( $articles_results['data'] as $article ) {
+			foreach( $articles_results as $article ) {
 				$gBitSmarty->assign( 'article', $article );
 				$display_result .= $gBitSmarty->fetch( 'bitpackage:articles/article_display.tpl' );
 			}
@@ -139,7 +139,7 @@ function data_articles($data, $params) { // No change in the parameters with Cly
 		case 'list':
 		default:
 			$display_result = "<ul>";
-			foreach( $articles_results['data'] as $article ) {
+			foreach( $articles_results as $article ) {
 				$link = $articlesObject->getdisplaylink( $article['title'], $article );
 				$display_result .= "<li>$link</li>\n";
 			}
