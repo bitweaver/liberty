@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.33 $
+ * @version  $Revision: 1.34 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.33 2007/06/13 15:19:54 wjames5 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.34 2007/06/25 00:35:05 nickpalmer Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -36,11 +36,11 @@
  */
 require_once (LIBERTY_PKG_PATH.'LibertyComment.php');
 
+global $commentsLib, $gBitSmarty, $gBitSystem;
+
 if ($gBitSystem->isPackageActive('bitboards')) {
 	require_once(BITBOARDS_PKG_PATH.'BitBoardTopic.php');
 }
-
-global $commentsLib, $gBitSmarty;
 
 $postComment = array();
 $formfeedback = array();
@@ -170,7 +170,7 @@ if( !empty( $_REQUEST['post_comment_preview'] ) ) {
 		$postComment['anon_name'] = $_REQUEST['comment_name'];
 	}
 	$postComment['data'] = $_REQUEST['comment_data'];
-	$postComment['format_guid'] = empty( $_REQUEST['format_guid'])? PLUGIN_GUID_TIKIWIKI: $_REQUEST['format_guid'];
+	$postComment['format_guid'] = empty( $_REQUEST['format_guid'])? $gBitSystem->getConfig( 'default_format' ) : $_REQUEST['format_guid'];
 	$postComment['parsed_data'] = LibertyComment::parseData( $postComment );
 	$postComment['created'] = time();
 	$postComment['last_modified'] = time();
