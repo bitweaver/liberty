@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.countdown.php,v 1.8 2007/06/09 18:09:39 squareing Exp $
+// $Id: data.countdown.php,v 1.9 2007/06/26 17:34:36 laetzer Exp $
 
 /**
  * definitions
@@ -102,7 +102,7 @@ function data_countdown($data,$params) {
 		return $ret;
 	}
 	
-	if (isset($localtime) && $localtime == 'on') {
+	if (isset($localtime) && $localtime == 'on' && isset($_COOKIE['tz_offset'])) {
 		$tz = $_COOKIE['tz_offset'];
 	} else {
 		$tz = 0;
