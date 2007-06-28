@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.242 2007/06/25 05:28:32 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.243 2007/06/28 21:23:29 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2011,6 +2011,15 @@ class LibertyContent extends LibertyBase {
 		$parseHash['content_id']      = !empty( $parseHash['content_id'] )      ? $parseHash['content_id']      : NULL;
 		$parseHash['cache_extension'] = !empty( $parseHash['cache_extension'] ) ? $parseHash['cache_extension'] : NULL;
 		$parseHash['format_guid']     = !empty( $parseHash['format_guid'] )     ? $parseHash['format_guid']     : $pFormatGuid;
+
+		// Ensure we have a format
+		if (empty($parseHash['format_guid'])) {
+			if ( $current_default_format_guid = $gBitSystem->getConfig( 'default_format' ) ) {
+				$parseHash['format_guid'] = $current_default_format_guid;
+			} else {
+				$parseHash['format_guid'] = 'tikiwiki';
+			}
+		}
 
 		$ret = NULL;
 		// Handle caching if it is enabled.
