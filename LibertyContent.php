@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.244 2007/06/29 13:50:03 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.245 2007/06/29 20:28:54 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -242,11 +242,7 @@ class LibertyContent extends LibertyBase {
 		$pParamHash['content_store']['modifier_user_id'] = $pParamHash['modifier_user_id'];
 
 		if( empty( $pParamHash['format_guid'] ) ) {
-			if ( $current_default_format_guid = $gBitSystem->getConfig( 'default_format' ) ) {
-				$pParamHash['format_guid'] = $current_default_format_guid;
-			} else {
-				$pParamHash['format_guid'] = 'tikiwiki';
-			}
+			$parseHash['format_guid'] = $gBitSystem->getConfig( 'default_format', 'tikiwiki' )
 		}
 		$pParamHash['content_store']['format_guid'] = $pParamHash['format_guid'];
 
@@ -456,12 +452,8 @@ class LibertyContent extends LibertyBase {
 				$description = substr($this->getField( 'description' ), 0, 200);
 			}
 			// Ensure that format_guid is defaulted properly
-			if( ($format_guid = $this->getField( 'format_guid' )) == NULL ) {
-				if ( $current_default_format_guid = $gBitSystem->getConfig( 'default_format' ) ) {
-					$format_guid = $current_default_format_guid;
-				} else {
-					$format_guid = 'tikiwiki';
-				}
+			if(( $format_guid = $this->getField( 'format_guid' )) == NULL ) {
+				$format_guid = $gBitSystem->getConfig( 'default_format', 'tikiwiki' )
 			}
 			$query = "insert into `".BIT_DB_PREFIX."liberty_content_history` ( `content_id`, `version`, `last_modified`, `user_id`, `ip`, `history_comment`, `data`, `description`, `format_guid`) values(?,?,?,?,?,?,?,?,?)";
 			$result = $this->mDb->query( $query, array( $this->mContentId, (int)$this->getField( 'version' ), (int)$this->getField( 'last_modified' ) , $this->getField( 'modifier_user_id' ), $this->getField( 'ip' ),  $edit_comment, $this->getField( 'data' ), $description, $format_guid ) );
@@ -2030,17 +2022,13 @@ class LibertyContent extends LibertyBase {
 		$parseHash['format_guid']     = !empty( $parseHash['format_guid'] )     ? $parseHash['format_guid']     : $pFormatGuid;
 
 		// Ensure we have a format
-		if (empty($parseHash['format_guid'])) {
-			if ( $current_default_format_guid = $gBitSystem->getConfig( 'default_format' ) ) {
-				$parseHash['format_guid'] = $current_default_format_guid;
-			} else {
-				$parseHash['format_guid'] = 'tikiwiki';
-			}
+		if( empty( $parseHash['format_guid'] )) {
+			$parseHash['format_guid'] = $gBitSystem->getConfig( 'default_format', 'tikiwiki' )
 		}
 
 		$ret = NULL;
 		// Handle caching if it is enabled.
-		if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && !empty( $parseHash['content_id'] ) && empty( $parseHash['no_cache'] ) ) {			
+		if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && !empty( $parseHash['content_id'] ) && empty( $parseHash['no_cache'] ) ) {
 			if( $cacheFile = LibertyContent::getCacheFile( $parseHash['content_id'], $parseHash['cache_extension'] ) ) {
 				// Attempt to read cache file
 				if( !( $ret = LibertyContent::readCacheFile( $cacheFile ))) {
