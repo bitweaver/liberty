@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.9 2007/06/19 00:46:22 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.10 2007/06/29 00:21:08 nickpalmer Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -43,83 +43,98 @@ $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERHTMLPURIFIER, $pluginParams )
 function htmlpure_filter( $pData, $pFilterHash ) {
 	global $gHtmlPurifier, $gBitSystem;
 	
+	$pString = $pData;
+
 	if (!isset($gHtmlPurifier)) {
 		$blacklistedTags = $gBitSystem->
 			getConfig('blacklisted_html_tags', '');
 
-		require_once(UTIL_PKG_PATH . 'htmlpurifier/HTMLPurifier.auto.php');
-		$config = HTMLPurifier_Config::createDefault();
-		
-		if ($gBitSystem->getConfig('htmlpure_escape_bad', 'y') == 'y') {
-			$config->set('Core', 'EscapeInvalidTags', true);
-			$config->set('Core', 'EscapeInvalidChildren', true);
-		}
-		if ($gBitSystem->getConfig('htmlpure_disable_extern') == 'y') {
-			$config->set('URI', 'DisableExternal', true);
-		}
-		if ($gBitSystem->getConfig('htmlpure_disable_extern_res', 'y') == 'y') {
-			$config->set('URI', 'DisableExternalResources', true);
-		}
-		if ($gBitSystem->getConfig('htmlpure_disable_res') == 'y') {
-			$config->set('URI', 'DisableResources', true);
-		}
-		if ($gBitSystem->getConfig('htmlpure_disable_uri') == 'y') {
-			$config->set('URI', 'Disable', true);
-		}
-		if ($gBitSystem->getConfig('htmlpure_use_redirect') == 'y') {
-			$config->set('URI', 'Munge', LIBERTY_PKG_URL.'redirect.php?q=%s');
-		}
-		if ($gBitSystem->getConfig('htmlpure_strict_html', 'y') == 'y') {
-			$config->set('HTML', 'Strict', true);
-		}
-		if ($gBitSystem->getConfig('htmlpure_xhtml', 'n') == 'n') {
-			$config->set('Core', 'XHTML', true);
-		}
+		$pear_version = false;
+		if (@include_once("PEAR.php")) {
+			if (@include_once("HTMLPurifier.php")) {
 
-		// Set that we are using a div to wrap things.
-		$config->set('HTML', 'BlockWrapper', 'div');
+				$config = HTMLPurifier_Config::createDefault();
 
-		$def =& $config->getHTMLDefinition();
-		// HTMLPurifier doesn't have a blacklist feature. Duh guys!
-		// Note that this has to come last since the other configs
-		// may tweak the def.
-		foreach (explode(',',$blacklistedTags) as $tag) {
-			unset($def->info[$tag]);
-		}
+				// Set the cache path
+				$config->set('Cache', 'SerializerPath', STORAGE_PKG_PATH );
+
+				if ($gBitSystem->getConfig('htmlpure_escape_bad', 'y') == 'y') {
+					$config->set('Core', 'EscapeInvalidTags', true);
+					$config->set('Core', 'EscapeInvalidChildren', true);
+				}
+				if ($gBitSystem->getConfig('htmlpure_disable_extern') == 'y') {
+					$config->set('URI', 'DisableExternal', true);
+				}
+				if ($gBitSystem->getConfig('htmlpure_disable_extern_res', 'y') == 'y') {
+					$config->set('URI', 'DisableExternalResources', true);
+				}
+				if ($gBitSystem->getConfig('htmlpure_disable_res') == 'y') {
+					$config->set('URI', 'DisableResources', true);
+				}
+				if ($gBitSystem->getConfig('htmlpure_disable_uri') == 'y') {
+					$config->set('URI', 'Disable', true);
+				}
+				if ($gBitSystem->getConfig('htmlpure_use_redirect') == 'y') {
+					$config->set('URI', 'Munge', LIBERTY_PKG_URL.'redirect.php?q=%s');
+				}
+				if ($gBitSystem->getConfig('htmlpure_strict_html', 'y') == 'y') {
+					$config->set('HTML', 'Strict', true);
+				}
+				if ($gBitSystem->getConfig('htmlpure_xhtml', 'n') == 'n') {
+					$config->set('Core', 'XHTML', true);
+				}
+
+				// Set that we are using a div to wrap things.
+				$config->set('HTML', 'BlockWrapper', 'div');
+
+				$def =& $config->getHTMLDefinition();
+				// HTMLPurifier doesn't have a blacklist feature. Duh guys!
+				// Note that this has to come last since the other configs
+				// may tweak the def.
+				foreach (explode(',',$blacklistedTags) as $tag) {
+					unset($def->info[$tag]);
+				}
 		
-		// As suggested here:  http://www.bitweaver.org/forums/index.php?t=8554
-		$gHtmlPurifier = new HTMLPurifier($config);
-		
-		// TODO: devise a way to parse plugins dir
-		// and check for the right property here
-		// so new plugins are just drop in place.
-		if ($gBitSystem->isFeatureActive('liberty_html_pure_allow_youtube')) {
-			require_once UTIL_PKG_PATH.'htmlpurifier/HTMLPurifier/Filter/YouTube.php';
-			$gHtmlPurifier->addFilter(new HTMLPurifier_Filter_YouTube());
+				// As suggested here:  http://www.bitweaver.org/forums/index.php?t=8554
+				$gHtmlPurifier = new HTMLPurifier($config);
+
+				// TODO: devise a way to parse plugins dir
+				// and check for the right property here
+				// so new plugins are just drop in place.
+				if ($gBitSystem->isFeatureActive('liberty_html_pure_allow_youtube')) {
+					require_once 'HTMLPurifier/Filter/YouTube.php';
+					$gHtmlPurifier->addFilter(new HTMLPurifier_Filter_YouTube());
+				}
+			}
 		}
 	}
 
-	/* Clean up the paragraphs a bit */
-	//		$start = $pData;
-	$pString = htmlpure_cleanupPeeTags($pData);
-	//		$pee = $pString;
-	$pString = $gHtmlPurifier->purify($pString);
+	// Did we manage to create one?
+	if (isset($gHtmlPurifier)) {
+		/* Clean up the paragraphs a bit */
+		//		$start = $pData;
+		$pString = htmlpure_cleanupPeeTags($pString);
+		//		$pee = $pString;
+		$pString = $gHtmlPurifier->purify($pString);
 
-	/*
-	echo "<br/><hr/><br/>".$start;
-	include_once( 'Text/Diff.php' );    
-	include_once( 'Text/Diff/Renderer/inline.php' );
-	$diff = &new Text_Diff(explode("\n", $start), explode("\n",$pee));
-	$renderer = &new Text_Diff_Renderer_inline();
-	echo "<br/><hr/><br/>". $renderer->render($diff);
+		/*
+		echo "<br/><hr/><br/>".$start;
+		include_once( 'Text/Diff.php' );
+		include_once( 'Text/Diff/Renderer/inline.php' );
+		$diff = &new Text_Diff(explode("\n", $start), explode("\n",$pee));
+		$renderer = &new Text_Diff_Renderer_inline();
+		echo "<br/><hr/><br/>". $renderer->render($diff);
 	
-	echo "<br/><hr/><br/>".$pString;
-	include_once( 'Text/Diff.php' );    
-	include_once( 'Text/Diff/Renderer/inline.php' );
-	$diff = &new Text_Diff(explode("\n", $pee), explode("\n",$pString));
-	$renderer = &new Text_Diff_Renderer_inline();
-	echo "<br/><hr/><br/>". $renderer->render($diff);
-	*/
+		echo "<br/><hr/><br/>".$pString;
+		include_once( 'Text/Diff.php' );
+		include_once( 'Text/Diff/Renderer/inline.php' );
+		$diff = &new Text_Diff(explode("\n", $pee), explode("\n",$pString));
+		$renderer = &new Text_Diff_Renderer_inline();
+		echo "<br/><hr/><br/>". $renderer->render($diff);
+		*/
+	} else {
+		bit_log_error("HTMLPurifier not installed. Install with: pear channel-discover htmlpurifier.org; pear install hp/HTMLPurifier;");
+	}
 
 	return $pString;
 }
