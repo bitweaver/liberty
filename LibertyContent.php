@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.243 2007/06/28 21:23:29 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.244 2007/06/29 13:50:03 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -444,10 +444,27 @@ class LibertyContent extends LibertyBase {
 
 	// *********  History functions for the wiki ********** //
 	function storeHistory() {
+		global $gBitSystem;
+
 		$ret = FALSE;
 		if( $this->isValid() ) {
-			$query = "insert into `".BIT_DB_PREFIX."liberty_content_history`( `content_id`, `version`, `last_modified`, `user_id`, `ip`, `history_comment`, `data`, `description`, `format_guid`) values(?,?,?,?,?,?,?,?,?)";
-			$result = $this->mDb->query( $query, array( $this->mContentId, (int)$this->getField( 'version' ), (int)$this->getField( 'last_modified' ) , $this->getField( 'modifier_user_id' ), $this->getField( 'ip' ), $this->getField( 'edit_comment' ), $this->getField( 'data' ), $this->getField( 'description' ), $this->getField( 'format_guid' ) ) );
+			// Ensure that edit_comment and description don't run over
+			if ( ($edit_comment = $this->getField('edit_comment')) != NULL ) {
+				$edit_comment = substr($this->getField( 'edit_comment' ), 0, 200);
+			}
+			if ( ($description = $this->getField('description')) != NULL ) {
+				$description = substr($this->getField( 'description' ), 0, 200);
+			}
+			// Ensure that format_guid is defaulted properly
+			if( ($format_guid = $this->getField( 'format_guid' )) == NULL ) {
+				if ( $current_default_format_guid = $gBitSystem->getConfig( 'default_format' ) ) {
+					$format_guid = $current_default_format_guid;
+				} else {
+					$format_guid = 'tikiwiki';
+				}
+			}
+			$query = "insert into `".BIT_DB_PREFIX."liberty_content_history` ( `content_id`, `version`, `last_modified`, `user_id`, `ip`, `history_comment`, `data`, `description`, `format_guid`) values(?,?,?,?,?,?,?,?,?)";
+			$result = $this->mDb->query( $query, array( $this->mContentId, (int)$this->getField( 'version' ), (int)$this->getField( 'last_modified' ) , $this->getField( 'modifier_user_id' ), $this->getField( 'ip' ),  $edit_comment, $this->getField( 'data' ), $description, $format_guid ) );
 			$ret = TRUE;
 		}
 		return( $ret );
