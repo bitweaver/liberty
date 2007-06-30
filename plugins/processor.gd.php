@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.5 2007/06/30 13:06:30 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.6 2007/06/30 13:39:17 squareing Exp $
  *
  * Image processor - extension: php-gd
  * @package  liberty
@@ -45,7 +45,6 @@ function liberty_gd_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 	}
 
 	if( !empty( $img ) && $size_x && $size_y ) {
-		$transColor = imagecolortransparent( $img );
 		if( $size_x > $size_y && !empty( $pFileHash['max_width'] ) ) {
 			$tscale = ((int)$size_x / $pFileHash['max_width']);
 		} elseif( !empty( $pFileHash['max_height'] ) ) {
@@ -55,19 +54,11 @@ function liberty_gd_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 		}
 		$tw = ((int)($size_x / $tscale));
 		$ty = ((int)($size_y / $tscale));
-		if (chkgd2()) {
-			$t = imagecreatetruecolor($tw, $ty);
-			// png alpha stuff - needs more testing - spider
-			//     imagecolorallocatealpha ( $t, 0, 0, 0, 127 );
-			//     $ImgWhite = imagecolorallocate($t, 255, 255, 255);
-			//     imagefill($t, 0, 0, $ImgWhite);
-			//     imagecolortransparent($t, $ImgWhite);
-			imagesavealpha($t, true);
-			imagealphablending($t, false);
-			imagecopyresampled($t, $img, 0, 0, 0, 0, $tw, $ty, $size_x, $size_y);
+		if( chkgd2() ) {
+			$t = imagecreatetruecolor( $tw, $ty );
 		} else {
-			$t = imagecreate($tw, $ty);
-			$imagegallib->ImageCopyResampleBicubic($t, $img, 0, 0, 0, 0, $tw, $ty, $size_x, $size_y);
+			$t = imagecreate( $tw, $ty );
+			//$imagegallib->ImageCopyResampleBicubic($t, $img, 0, 0, 0, 0, $tw, $ty, $size_x, $size_y);
 		}
 
 
@@ -91,7 +82,15 @@ function liberty_gd_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 		switch( $targetType ) {
 			case 'png':
 				if( imagetypes() & IMG_PNG ) {
+					// png alpha stuff - needs more testing - spider
+					//     imagecolorallocatealpha ( $t, 0, 0, 0, 127 );
+					//     $ImgWhite = imagecolorallocate($t, 255, 255, 255);
+					//     imagefill($t, 0, 0, $ImgWhite);
+					//     imagecolortransparent($t, $ImgWhite);
 					$destFile = BIT_ROOT_PATH.'/'.$destUrl.$destExt;
+					imagesavealpha( $t, TRUE );
+					imagealphablending( $t, FALSE );
+					imagecopyresampled( $t, $img, 0, 0, 0, 0, $tw, $ty, $size_x, $size_y );
 					imagepng( $t, $destFile );
 					break;
 				}
@@ -99,6 +98,7 @@ function liberty_gd_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 				// This must go immediately before default so default will be hit for PHP's without gif support
 				if( imagetypes() & IMG_GIF ) {
 					$destFile = BIT_ROOT_PATH.'/'.$destUrl.$destExt;
+					imagecolortransparent( $t );
 					imagegif( $t, $destFile );
 					break;
 				}
