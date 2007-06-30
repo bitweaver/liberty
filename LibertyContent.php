@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.247 2007/06/30 02:28:36 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.248 2007/06/30 13:05:36 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -170,7 +170,7 @@ class LibertyContent extends LibertyBase {
 				$pParamHash['content_id'] = $this->mContentId;
 			}
 		}
-				
+
 		// Are we allowed to override owner?
 		if ($gBitSystem->isFeatureActive('liberty_allow_change_owner') && $gBitUser->hasPermission('p_liberty_edit_content_owner')) {
 			// If an owner is being set override user_id
@@ -193,7 +193,11 @@ class LibertyContent extends LibertyBase {
 		}
 
 		// Invoke save filters
-		$pParamHash['edit'] = $this->filterData($pParamHash['edit'], $pParamHash, 'store');
+		if( !empty( $pParamHash['edit'] )) {
+			$pParamHash['edit'] = $this->filterData( $pParamHash['edit'], $pParamHash, 'store' );
+		} else {
+			$pParamHash['edit'] = NULL;
+		}
 
 		$pParamHash['field_changed'] = empty( $pParamHash['content_id'] )
 					|| (!empty($this->mInfo["data"]) && !empty($pParamHash["edit"]) && (md5($this->mInfo["data"]) != md5($pParamHash["edit"])))
