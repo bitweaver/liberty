@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.112 2007/06/24 06:42:31 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.113 2007/06/30 19:25:14 bitweaver Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -1033,7 +1033,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
  * @access public
  * @return array of available thumbnails or mime icons
  */
-function liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl = NULL, $pThumbSizes = NULL, $pAlternatives = TRUE ) {
+function liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl = NULL, $pThumbSizes = NULL, $pMimeImage = TRUE ) {
 	global $gBitSystem, $gThumbSizes;
 	$ret = array();
 
@@ -1064,7 +1064,7 @@ function liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl = NULL, $pThumbSize
 			}
 		}
 
-		if( $pAlternatives && empty( $ret[$size] )) {
+		if( $pMimeImage && empty( $ret[$size] )) {
 			if( $pAltImageUrl ) {
 				$ret[$size] = $pAltImageUrl;
 			} else {
@@ -1085,10 +1085,10 @@ function liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl = NULL, $pThumbSize
  * @access public
  * @return string url
  */
-function liberty_fetch_thumbnail_url( $pFilePath, $pThumbSize = 'small', $pAltImageUrl = NULL ) {
+function liberty_fetch_thumbnail_url( $pFilePath, $pThumbSize = 'small', $pAltImageUrl = NULL, $pMimeImage = FALSE ) {
 	if( !empty( $pFilePath )) {
 		$ret = array();
-		$ret = liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl, array( $pThumbSize ));
+		$ret = liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl, array( $pThumbSize ), $pMimeImage );
 		return $ret[$pThumbSize];
 	} else {
 		return NULL;
