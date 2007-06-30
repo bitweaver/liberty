@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.4 2007/06/28 01:47:17 laetzer Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.5 2007/06/30 13:06:30 squareing Exp $
  *
  * Image processor - extension: php-gd
  * @package  liberty
@@ -75,9 +75,9 @@ function liberty_gd_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 		if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
 			$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
 		} else {
-			// we need to interpret the value in $itype
-			// $mimeExt = image_type_to_extension( $itype, FALSE );
-			list( $type, $mimeExt ) = split( '/', strtolower( $itype ));
+			// make sure we have image_type_to_extension available
+			include_once( UTIL_PKG_PATH.'PHP_Compat/Compat/Function/image_type_to_mime_type.php' );
+			list( $type, $mimeExt ) = split( '/', strtolower( image_type_to_mime_type( $itype )));
 		}
 
 		if( preg_match( "!(png|gif)!", $mimeExt )) {
