@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.248 2007/06/30 13:05:36 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.249 2007/07/01 23:50:17 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1465,6 +1465,27 @@ class LibertyContent extends LibertyBase {
 	function getThumbnailUrl( $pSize='small', $pContentId=NULL, $pSecondaryId=NULL ) {
 		return '';
 	}
+
+
+	/**
+	 * Liberty override to stuff content_status_id and prepares parameters with default values for any getList function
+	 * @param pParamHash hash of parameters for any getList() function
+	 * @return the link to display the page.
+	 */
+	function prepGetList( &$pListHash ) {
+		global $gBitUser;
+		if( $gBitUser->isAdmin() ) {
+			$pListHash['min_content_status_id'] = -9999;
+		} elseif( !empty( $this ) && is_object( $this ) && $this->hasAdminPermission() ) {
+			$pListHash['min_content_status_id'] = -999;
+		} elseif( !empty( $this ) && is_object( $this ) && $this->hasEditPermission() ) {
+			$pListHash['min_content_status_id'] = -99;
+		} else {
+			$pListHash['min_content_status_id'] = 1;
+		}
+		return parent::prepGetList( $pListHash );
+	}
+
 
 	/**
 	* Updates results from any getList function to provide the control set
