@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.7 2007/07/01 14:20:07 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.8 2007/07/01 14:45:07 squareing Exp $
  *
  * Image processor - extension: php-gd
  * @package  liberty
@@ -182,11 +182,15 @@ function liberty_gd_can_thumbnail_image( $pMimeType ) {
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
 function get_gd_version( $pFullVersion = FALSE ) {
-	$gd = gd_info();
+	if( empty( $_SESSION['gd_version'] )) {
+		$gd = gd_info();
+		$_SESSION['gd_version'] = preg_replace( "!\D*([\d|\.]*)!", "$1", $gd['GD Version'] );
+	}
+
 	if( $pFullVersion ) {
-		return( preg_replace( "!\D*([\d|\.]*)!", "$1", $gd['GD Version'] ));
+		return $_SESSION['gd_version'];
 	} else {
-		return( preg_replace( "!^\D*?(\d)*\..*$!", "$1", $gd['GD Version'] ));
+		return preg_replace( "!^(\d)+.*$!", "$1", $_SESSION['gd_version'] );
 	}
 }
 
