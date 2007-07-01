@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -96,7 +96,7 @@ function data_file( $pData, $pParams ) {
 
 				// finally, wrap the output.
 				if( empty( $nowrapper )) {
-					$ret = '<'.$wrapper['wrapper'].' class="'.( isset( $wrapper ) && !empty( $wrapper['class'] ) ? $wrapper['class'] : "att-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.'</'.$wrapper['wrapper'].'>';
+					$ret = '<!-- ~np~ --><'.$wrapper['wrapper'].' class="'.( isset( $wrapper ) && !empty( $wrapper['class'] ) ? $wrapper['class'] : "att-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.'</'.$wrapper['wrapper'].'><!-- ~/np~ -->';
 				}
 			} else {
 				$ret = tra( "There was a problem getting an image for the file." );
