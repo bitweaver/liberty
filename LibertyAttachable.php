@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.113 2007/06/30 19:25:14 bitweaver Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.114 2007/07/01 20:40:48 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -880,7 +880,9 @@ function liberty_process_generic( &$pFileHash, $pMoveFile=TRUE ) {
 	$destBase = $pFileHash['dest_path'].$pFileHash['name'];
 	$actualPath = BIT_ROOT_PATH.$destBase;
 	if( is_file( $pFileHash['source_file']) ) {
-		if( $pMoveFile ) {
+		if( $pFileHash['source_file'] == $actualPath ) {
+			// do nothing if source and dest are the same
+		} elseif( $pMoveFile ) {
 			if( is_uploaded_file( $pFileHash['source_file'] ) ) {
 				move_uploaded_file( $pFileHash['source_file'], $actualPath );
 			} else {
