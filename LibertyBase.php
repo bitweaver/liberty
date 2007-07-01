@@ -3,7 +3,7 @@
  * Base class for Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.18 2007/07/01 16:22:50 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.19 2007/07/01 16:37:53 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -42,7 +42,6 @@ class LibertyBase extends BitBase {
 		BitBase::BitBase();
 	}
 
-	
 	/**
 	 * Liberty override to stuff content_status_id and prepares parameters with default values for any getList function
 	 * @param pParamHash hash of parameters for any getList() function
@@ -52,14 +51,15 @@ class LibertyBase extends BitBase {
 		global $gBitUser;
 		if( $gBitUser->isAdmin() ) {
 			$pListHash['min_content_status_id'] = -9999;
-		} elseif( isset($this) && !empty( $this->mContentTypeGuid ) && $gBitUser->hasPermission( 'p_'.$this->mContentTypeGuid.'_admin' ) ) {
+		} elseif( !empty( $this ) && is_object( $this ) && $this->hasAdminPermission() ) {
 			$pListHash['min_content_status_id'] = -999;
+		} elseif( !empty( $this ) && is_object( $this ) && $this->hasEditPermission() ) {
+			$pListHash['min_content_status_id'] = -99;
 		} else {
 			$pListHash['min_content_status_id'] = 1;
 		}
 		return parent::prepGetList( $pListHash );
 	}
-
 
 	/**
 	 * given a content_type_guid this will return an object of the proper type
