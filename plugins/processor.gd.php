@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.6 2007/06/30 13:39:17 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.7 2007/07/01 14:20:07 squareing Exp $
  *
  * Image processor - extension: php-gd
  * @package  liberty
@@ -8,9 +8,9 @@
  */
 
 /**
- * liberty_gd_resize_image 
+ * liberty_gd_resize_image
  *
- * @param array $pFileHash 
+ * @param array $pFileHash
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
@@ -54,8 +54,11 @@ function liberty_gd_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 		}
 		$tw = ((int)($size_x / $tscale));
 		$ty = ((int)($size_y / $tscale));
-		if( chkgd2() ) {
+		if( get_gd_version() > 1 ) {
 			$t = imagecreatetruecolor( $tw, $ty );
+			imagesavealpha( $t, TRUE );
+			imagealphablending( $t, FALSE );
+			imagecopyresampled( $t, $img, 0, 0, 0, 0, $tw, $ty, $size_x, $size_y );
 		} else {
 			$t = imagecreate( $tw, $ty );
 			//$imagegallib->ImageCopyResampleBicubic($t, $img, 0, 0, 0, 0, $tw, $ty, $size_x, $size_y);
@@ -79,6 +82,8 @@ function liberty_gd_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 			$destExt = '.jpg';
 		}
 
+		$destFile = BIT_ROOT_PATH.'/'.$destUrl.$destExt;
+
 		switch( $targetType ) {
 			case 'png':
 				if( imagetypes() & IMG_PNG ) {
@@ -87,23 +92,17 @@ function liberty_gd_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 					//     $ImgWhite = imagecolorallocate($t, 255, 255, 255);
 					//     imagefill($t, 0, 0, $ImgWhite);
 					//     imagecolortransparent($t, $ImgWhite);
-					$destFile = BIT_ROOT_PATH.'/'.$destUrl.$destExt;
-					imagesavealpha( $t, TRUE );
-					imagealphablending( $t, FALSE );
-					imagecopyresampled( $t, $img, 0, 0, 0, 0, $tw, $ty, $size_x, $size_y );
 					imagepng( $t, $destFile );
 					break;
 				}
 			case 'gif':
 				// This must go immediately before default so default will be hit for PHP's without gif support
 				if( imagetypes() & IMG_GIF ) {
-					$destFile = BIT_ROOT_PATH.'/'.$destUrl.$destExt;
 					imagecolortransparent( $t );
 					imagegif( $t, $destFile );
 					break;
 				}
 			default:
-				$destFile = BIT_ROOT_PATH.'/'.$destUrl.$destExt;
 				imagejpeg( $t, $destFile );
 				break;
 		}
@@ -124,10 +123,10 @@ function liberty_gd_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 }
 
 /**
- * liberty_gd_rotate_image 
- * 
- * @param array $pFileHash 
- * @param array $pFormat 
+ * liberty_gd_rotate_image
+ *
+ * @param array $pFileHash
+ * @param array $pFormat
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
@@ -162,9 +161,9 @@ function liberty_gd_rotate_image( &$pFileHash, $pFormat = NULL ) {
 }
 
 /**
- * liberty_gd_can_thumbnail_image 
- * 
- * @param array $pMimeType 
+ * liberty_gd_can_thumbnail_image
+ *
+ * @param array $pMimeType
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
@@ -174,5 +173,101 @@ function liberty_gd_can_thumbnail_image( $pMimeType ) {
 		$ret = preg_match( '/^image/i', $pMimeType );
 	}
 	return $ret;
+}
+
+/**
+ * get_gd_version 
+ * 
+ * @access public
+ * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+ */
+function get_gd_version( $pFullVersion = FALSE ) {
+	$gd = gd_info();
+	if( $pFullVersion ) {
+		return( preg_replace( "!\D*([\d|\.]*)!", "$1", $gd['GD Version'] ));
+	} else {
+		return( preg_replace( "!^\D*?(\d)*\..*$!", "$1", $gd['GD Version'] ));
+	}
+}
+
+// nicked from http://at2.php.net/manual/en/function.gd-info.php
+if( !function_exists( 'gd_info' )) {
+	function gd_info() {
+		$array = Array(
+			"GD Version"         => "",
+			"FreeType Support"   => 0,
+			"FreeType Support"   => 0,
+			"FreeType Linkage"   => "",
+			"T1Lib Support"      => 0,
+			"GIF Read Support"   => 0,
+			"GIF Create Support" => 0,
+			"JPG Support"        => 0,
+			"PNG Support"        => 0,
+			"WBMP Support"       => 0,
+			"XBM Support"        => 0
+		);
+		$gif_support = 0;
+
+		ob_start();
+		eval("phpinfo();");
+		$info = ob_get_contents();
+		ob_end_clean();
+
+		foreach(explode("\n", $info) as $line) {
+			if(strpos($line, "GD Version")!==false)
+				$array["GD Version"] = trim(str_replace("GD Version", "", strip_tags($line)));
+			if(strpos($line, "FreeType Support")!==false)
+				$array["FreeType Support"] = trim(str_replace("FreeType Support", "", strip_tags($line)));
+			if(strpos($line, "FreeType Linkage")!==false)
+				$array["FreeType Linkage"] = trim(str_replace("FreeType Linkage", "", strip_tags($line)));
+			if(strpos($line, "T1Lib Support")!==false)
+				$array["T1Lib Support"] = trim(str_replace("T1Lib Support", "", strip_tags($line)));
+			if(strpos($line, "GIF Read Support")!==false)
+				$array["GIF Read Support"] = trim(str_replace("GIF Read Support", "", strip_tags($line)));
+			if(strpos($line, "GIF Create Support")!==false)
+				$array["GIF Create Support"] = trim(str_replace("GIF Create Support", "", strip_tags($line)));
+			if(strpos($line, "GIF Support")!==false)
+				$gif_support = trim(str_replace("GIF Support", "", strip_tags($line)));
+			if(strpos($line, "JPG Support")!==false)
+				$array["JPG Support"] = trim(str_replace("JPG Support", "", strip_tags($line)));
+			if(strpos($line, "PNG Support")!==false)
+				$array["PNG Support"] = trim(str_replace("PNG Support", "", strip_tags($line)));
+			if(strpos($line, "WBMP Support")!==false)
+				$array["WBMP Support"] = trim(str_replace("WBMP Support", "", strip_tags($line)));
+			if(strpos($line, "XBM Support")!==false)
+				$array["XBM Support"] = trim(str_replace("XBM Support", "", strip_tags($line)));
+		}
+
+		if($gif_support==="enabled") {
+			$array["GIF Read Support"]   = 1;
+			$array["GIF Create Support"] = 1;
+		}
+
+		if($array["FreeType Support"]==="enabled")
+			$array["FreeType Support"] = 1;
+
+		if($array["T1Lib Support"]==="enabled")
+			$array["T1Lib Support"] = 1;
+
+		if($array["GIF Read Support"]==="enabled")
+			$array["GIF Read Support"] = 1;
+
+		if($array["GIF Create Support"]==="enabled")
+			$array["GIF Create Support"] = 1;
+
+		if($array["JPG Support"]==="enabled")
+			$array["JPG Support"] = 1;
+
+		if($array["PNG Support"]==="enabled")
+			$array["PNG Support"] = 1;
+
+		if($array["WBMP Support"]==="enabled")
+			$array["WBMP Support"] = 1;
+
+		if($array["XBM Support"]==="enabled")
+			$array["XBM Support"] = 1;
+
+		return $array;
+	}
 }
 ?>
