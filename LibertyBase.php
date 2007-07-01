@@ -3,7 +3,7 @@
  * Base class for Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.17 2007/06/22 14:28:37 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.18 2007/07/01 16:22:50 lsces Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -52,7 +52,7 @@ class LibertyBase extends BitBase {
 		global $gBitUser;
 		if( $gBitUser->isAdmin() ) {
 			$pListHash['min_content_status_id'] = -9999;
-		} elseif( !empty( $this->mContentTypeGuid ) && $gBitUser->hasPermission( 'p_'.$this->mContentTypeGuid.'_admin' ) ) {
+		} elseif( isset($this) && !empty( $this->mContentTypeGuid ) && $gBitUser->hasPermission( 'p_'.$this->mContentTypeGuid.'_admin' ) ) {
 			$pListHash['min_content_status_id'] = -999;
 		} else {
 			$pListHash['min_content_status_id'] = 1;
