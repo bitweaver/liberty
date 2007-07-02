@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.249 2007/07/01 23:50:17 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.250 2007/07/02 21:55:55 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -18,10 +18,6 @@
 // +----------------------------------------------------------------------+
 // | Authors: spider <spider@steelsun.com>
 // +----------------------------------------------------------------------+
-
-// define( 'CONTENT_TYPE_WIKI', '1' );
-// define( 'CONTENT_TYPE_COMMENT', '3' );
-// define( 'CONTENT_TYPE_USER', '4' );
 
 /**
  * Maximum lengths for database fields
