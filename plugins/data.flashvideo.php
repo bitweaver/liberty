@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.flashvideo.php,v 1.11 2007/06/11 13:22:19 squareing Exp $
+// $Id: data.flashvideo.php,v 1.12 2007/07/04 18:17:30 squareing Exp $
 
 /**
  * definitions
@@ -87,6 +87,7 @@ function data_flashvideo_help() {
 }
 
 function data_flashvideo( $pData, $pParams ) { // NOTE: The original plugin had several parameters that have been dropped
+	require_once( TREASURY_PKG_PATH.'TreasuryItem.php' );
 	global $gContent, $gBitSmarty;
 
 	// at a minimum, return blank string (not empty) so we still replace the tag
@@ -95,26 +96,22 @@ function data_flashvideo( $pData, $pParams ) { // NOTE: The original plugin had 
 		return $ret;
 	}
 
-	$liba = new LibertyAttachable();
-	if( !$att = $liba->getAttachment( $pParams['id'] )) {
-		$ret = tra( "The flashvideo id given is not valid" ).": ".$pParams['id'];
-		return $ret;
-	}
+	$ti = new TreasuryItem();
+	if( $ti->mContentId = $ti->getContentIdFromAttachmentId( $pParams['id'] )) {
+		$ti->load();
 
-	if( !empty( $att['flv_url'] )) {
+		// get everything set up
+		treasury_flv_calculate_videosize( $pParams, $ti->mPrefs );
 		$wrapper = liberty_plugins_wrapper_style( $pParams );
-
-		// mPrefs has been passed to us in $att['prefs']
-		treasury_flv_calculate_videosize( $pParams, $att['prefs'] );
 
 		$sizes = array( 'small', 'medium', 'large', 'huge', 'original' );
 		if( !empty( $pParams['view'] ) && in_array( $pParams['view'], $sizes )) {
 			$wrapper['description'] .= ( !empty( $wrapper['description'] ) ? '<br />' : '' );
-			$wrapper['description'] .= '<a href="'.$att['display_url'].'&size='.$pParams['view'].'">'.tra( "View larger version" ).'</a>';
+			$wrapper['description'] .= '<a href="'.$ti->mInfo['display_url'].'&size='.$pParams['view'].'">'.tra( "View larger version" ).'</a>';
 		}
 
-		$gBitSmarty->assign( 'flvPrefs', $att['prefs'] );
-		$gBitSmarty->assign( 'flv', $att );
+		$gBitSmarty->assign( 'flvPrefs', $ti->mPrefs );
+		$gBitSmarty->assign( 'flv', $ti->mInfo );
 		$ret = $gBitSmarty->fetch( 'bitpackage:treasury/flv_player_inc.tpl' );
 
 		// finally, wrap the output
