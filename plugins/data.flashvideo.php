@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.13 $
+ * @version  $Revision: 1.14 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.flashvideo.php,v 1.13 2007/07/05 05:34:17 squareing Exp $
+// $Id: data.flashvideo.php,v 1.14 2007/07/05 05:50:42 squareing Exp $
 
 /**
  * definitions
@@ -96,10 +96,8 @@ function data_flashvideo( $pData, $pParams ) { // NOTE: The original plugin had 
 		return $ret;
 	}
 
-	$ti = new TreasuryItem();
-	if( $ti->mContentId = $ti->getContentIdFromAttachmentId( $pParams['id'] )) {
-		$ti->load();
-
+	$ti = new TreasuryItem( NULL, NULL, $pParams['id'] );
+	if( $ti->load() ) {
 		// get everything set up
 		treasury_flv_calculate_videosize( $pParams, $ti->mPrefs );
 		$wrapper = liberty_plugins_wrapper_style( $pParams );
