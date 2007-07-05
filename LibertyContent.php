@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.251 2007/07/03 20:42:50 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.252 2007/07/05 19:20:10 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -966,14 +966,16 @@ class LibertyContent extends LibertyBase {
 	* @param string Name of the permission to check
 	* @return bool true if user has permission to access file
 	*/
-	function hasUserPermission( $pPermName ) {
+	function hasUserPermission( $pPermName, $pVerifyAccessControl=TRUE ) {
 		global $gBitUser;
 		$ret = FALSE;
 		if( !$gBitUser->isRegistered() || !( $ret = $this->isOwner() || $ret = $gBitUser->isAdmin() )) {
 			if( $gBitUser->isAdmin() || $gBitUser->hasPermission( $this->mAdminContentPerm )) {
 				$ret = TRUE;
 			} else {
-				$this->verifyAccessControl();
+				if( $pVerifyAccessControl ) {
+					$this->verifyAccessControl();
+				}
 				if( $this->loadPermissions() ) {
 					// this content has assigned perms
 					$globalPerms = $gBitUser->mPerms;
@@ -1003,9 +1005,9 @@ class LibertyContent extends LibertyBase {
 	*
 	* @return bool True if user has this type of content administration permission
 	*/
-	function hasAdminPermission() {
+	function hasAdminPermission( $pVerifyAccessControl=TRUE ) {
 		global $gBitUser;
-		return( $this->hasUserPermission( $this->mAdminContentPerm ) );
+		return( $this->hasUserPermission( $this->mAdminContentPerm, $pVerifyAccessControl ) );
 	}
 
 	/**
@@ -1013,9 +1015,9 @@ class LibertyContent extends LibertyBase {
 	*
 	* @return bool True if user has this type of content administration permission
 	*/
-	function hasEditPermission() {
+	function hasEditPermission( $pVerifyAccessControl=TRUE ) {
 		global $gBitUser;
-		return( $gBitUser->isAdmin() || $this->hasUserPermission( $this->mAdminContentPerm ) || $this->isOwner() );
+		return( $gBitUser->isAdmin() || $this->hasUserPermission( $this->mAdminContentPerm, $pVerifyAccessControl ) || $this->isOwner() );
 	}
 
 	/**
