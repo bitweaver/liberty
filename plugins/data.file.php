@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -42,10 +42,8 @@ function data_file( $pData, $pParams ) {
 		require_once( TREASURY_PKG_PATH.'TreasuryItem.php' );
 		require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'display_bytes' );
 
-		$item = new TreasuryItem();
-		if( $item->mContentId = $item->getContentIdFromAttachmentId( $pParams['id'] )) {
-			$item->load();
-
+		$item = new TreasuryItem( NULL, NULL, $pParams['id'] );
+		if( $item->load() ) {
 			// insert source url if we need the original file
 			if( !empty( $pParams['size'] ) && $pParams['size'] == 'original' ) {
 				$thumburl = $item->getField( 'source_url' );
