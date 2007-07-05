@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.114 2007/07/01 20:40:48 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.115 2007/07/05 15:50:50 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -1083,17 +1083,15 @@ function liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl = NULL, $pThumbSize
  *
  * @param string $pFilePath Relative path to file we want to get thumbnails for (needs to include file name for mime icons)
  * @param string $pThumbSize image size to search for in the pFilePath
- * @param string $pThumbSize path to alternative image that will be shown if nothing is found
+ * @param string $pAltImageUrl path to alternative image that will be shown if nothing is found
+ * @param boolean $pMimeImage specify if you want to get a mime image if nothing is found
  * @access public
  * @return string url
  */
 function liberty_fetch_thumbnail_url( $pFilePath, $pThumbSize = 'small', $pAltImageUrl = NULL, $pMimeImage = FALSE ) {
 	if( !empty( $pFilePath )) {
-		$ret = array();
 		$ret = liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl, array( $pThumbSize ), $pMimeImage );
-		return $ret[$pThumbSize];
-	} else {
-		return NULL;
 	}
+	return( !empty( $ret[$pThumbSize] ) ? $ret[$pThumbSize] : NULL );
 }
 ?>
