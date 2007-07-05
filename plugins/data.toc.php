@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.12 2006/11/01 08:36:47 squareing Exp $
+// $Id: data.toc.php,v 1.13 2007/07/05 05:34:17 squareing Exp $
 
 /**
  * definitions
@@ -38,7 +38,7 @@ $pluginParams = array (
 	'path'          => LIBERTY_PKG_PATH.'plugins/data.toc.php',
 	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN,
-	'biticon'       => '{biticon iclass="quicktag icon" ipackage=quicktags iname=toc iexplain="Structure Table of Contents"}',
+	'biticon'       => '{biticon ilocation=quicktag ipackage=quicktags iname=toc iexplain="Structure Table of Contents"}',
 	'taginsert'     => '{toc}'
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATATOC, $pluginParams );

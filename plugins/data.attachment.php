@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.22 $
+ * @version  $Revision: 1.23 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.22 2007/06/15 09:00:00 squareing Exp $
+// $Id: data.attachment.php,v 1.23 2007/07/05 05:34:17 squareing Exp $
 
 /**
  * definitions
@@ -37,7 +37,7 @@ $pluginParams = array (
 	'path'          => LIBERTY_PKG_PATH.'plugins/data.attachment.php',
 	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN,
-	'biticon'       => '{biticon iclass= "quicktag icon" ipackage=quicktags iname=attachment iexplain="Image"}',
+	'biticon'       => '{biticon ilocation=quicktag iname=mail-attachment iexplain="Attachment"}',
 	'taginsert'     => '{attachment id= align= size= description=}',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAATTACHMENT, $pluginParams );

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.flashvideo.php,v 1.12 2007/07/04 18:17:30 squareing Exp $
+// $Id: data.flashvideo.php,v 1.13 2007/07/05 05:34:17 squareing Exp $
 
 /**
  * definitions
@@ -37,7 +37,7 @@ $pluginParams = array (
 	'path'          => LIBERTY_PKG_PATH.'plugins/data.flashvideo.php',
 	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN,
-	'biticon'       => '{biticon iclass= "quicktag icon" ipackage=quicktags iname=flashvideo iexplain="Image"}',
+	'biticon'       => '{biticon ilocation=quicktag iname=video-x-generic iexplain="Flashvideo"}',
 	'taginsert'     => '{flashvideo id= align= description=}',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAFLASHVIDEO, $pluginParams );
