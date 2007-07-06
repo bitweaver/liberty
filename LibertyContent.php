@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.253 2007/07/06 15:43:23 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.254 2007/07/06 22:04:37 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -856,24 +856,36 @@ class LibertyContent extends LibertyBase {
 	 * 
 	 * @access public
 	 */
-	function loadAllObjectPermissions( $pParamHash = NULL ) {
+	function getContentPermissionsList() {
 		global $gBitUser;
 		$ret = FALSE;
-		if( empty( $pParamHash['sort_mode'] )) {
-			$pParamHash['sort_mode'] = 'group_name_asc';
-		}
-
-		LibertyContent::prepGetList( $pParamHash );
 		if( $this->isValid() && $this->mContentTypeGuid ) {
 			$query = "
-				SELECT lcperm.`perm_name`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
+				SELECT lcperm.`perm_name`, lcperm.`is_excluded`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
 				FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
 					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
-				WHERE lcperm.`content_id` = ?
-				ORDER BY ".$this->mDb->convertSortmode( $pParamHash['sort_mode'] );
+				WHERE lcperm.`content_id` = ?";
 			$bindVars = array( $this->mContentId );
-			$ret = $this->mDb->getAll( $query, $bindVars );
+			$perms = $this->mDb->getAll( $query, $bindVars );
+			foreach( $perms as $perm ) {
+				$ret[$perm['group_id']][$perm['perm_name']] = $perm;
+			}
+		}
+		return $ret;
+	}
+
+	/**
+	 * Expunge Object Permissions 
+	 * 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function expungeContentPermissions() {
+		$ret = FALSE;
+		if( $this->isValid() ) {
+			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_permissions` WHERE `content_id` = ?";
+			$ret = $this->mDb->query( $query, array( $this->mContentId ));
 		}
 		return $ret;
 	}
@@ -1020,24 +1032,22 @@ class LibertyContent extends LibertyBase {
 	* @param integer Content Itentifier
 	* @return bool true ( will not currently report a failure )
 	*/
-	function storePermission( $pGroupId, $pPermName, $pContentId=NULL ) {
-		if( !@$this->verifyId( $pContentId )) {
-			$pContentId = $this->mContentId;
+	function storePermission( $pGroupId, $pPermName ) {
+		$ret = FALSE;
+		if( @BitBase::verifyId( $pGroupId ) && !empty( $pPermName ) && $this->isValid() ) {
+			$this->removePermission( $pGroupId, $pPermName );
+			$storeHash = array(
+				'group_id' => $pGroupId,
+				'perm_name' => $pPermName,
+				'content_id' => $this->mContentId,
+			);
+			// check to see if this is an exclusion
+			if( $this->isExcludedPermission( $pGroupId, $pPermName )) {
+				$storeHash['is_excluded'] = 'y';
+			}
+			$ret = $this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_permissions", $storeHash );
 		}
-
-		if( @BitBase::verifyId( $pGroupId ) && !empty( $pPermName ) && @BitBase::verifyId( $pContentId )) {
-			$query = "
-				DELETE FROM `".BIT_DB_PREFIX."liberty_content_permissions`
-				WHERE `group_id` = ? AND `perm_name` = ? AND `content_id` = ?";
-			$result = $this->mDb->query( $query, array( $pGroupId, $pPermName, $pContentId ), -1, -1 );
-			$query = "
-				INSERT INTO `".BIT_DB_PREFIX."liberty_content_permissions`
-				( `group_id`,`content_id`, `perm_name` )
-				VALUES( ?, ?, ? )";
-			$result = $this->mDb->query( $query, array( $pGroupId, $pContentId, $pPermName ));
-			return TRUE;
-		}
-		return FALSE;
+		return $ret;
 	}
 
 	/**
@@ -1052,25 +1062,22 @@ class LibertyContent extends LibertyBase {
 				  WHERE `group_id` = ? and `content_id` = ? and `perm_name` = ?";
 		$bindVars = array( $pGroupId, $this->mContentId, $pPermName );
 		$result = $this->mDb->query( $query, $bindVars );
-		return true;
+		return TRUE;
 	}
 
 	/**
-	* Copy current permissions to another content
-	*
-	* @param integer Content Identifier of the target content
-	* @return bool true ( will not currently report a failure )
-	*/
-	function copyPermissions( $destinationObjectId ) {
-		$query = "SELECT `perm_name`, `group_name`
-			FROM `".BIT_DB_PREFIX."liberty_content_permissions`
-			WHERE `content_id` =?";
-		$bindVars = array( $this->mContentId );
-		$result = $this->mDb->query( $query, $bindVars );
-		while( $res = $result->fetchRow() ) {
-			$this->storePermission( $res["group_name"], $this->mContentTypeGuid, $res["perm_name"], $destinationObjectId );
+	 * Check to see if this permission is already in the global permissions table.
+	 * 
+	 * @param array $pGroupId 
+	 * @param array $pPermName 
+	 * @access public
+	 * @return TRUE if present, FALSE if not
+	 */
+	function isExcludedPermission( $pGroupId, $pPermName ) {
+		if( @BitBase::verifyId( $pGroupId ) && !empty( $pPermName )) {
+			$query = "SELECT `perm_name` FROM `".BIT_DB_PREFIX."users_group_permissions` WHERE `group_id` = ? AND `perm_name` = ?";
+			return( $this->mDb->getOne( $query, array( $pGroupId, $pPermName )) == $pPermName );
 		}
-		return TRUE;
 	}
 
 
