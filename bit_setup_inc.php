@@ -3,7 +3,7 @@
  * base package include
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.15 $
+ * @version  $Revision: 1.16 $
  * @package  liberty
  * @subpackage functions
  */
@@ -22,7 +22,7 @@ $gLibertySystem->registerService( 'liberty', LIBERTY_PKG_NAME, array(
 	'content_edit_tab_tpl'       => 'bitpackage:liberty/service_content_edit_tab_inc.tpl',
 	'content_icon_tpl'           => 'bitpackage:liberty/service_content_icon_inc.tpl',
 	'content_display_function'   => 'liberty_content_display',
-	'content_load_function'      => 'liberty_content_load',
+	//'content_load_function'      => 'liberty_content_load',
 	//'content_edit_function'      => 'liberty_content_edit',
 	//'content_store_function'     => 'liberty_content_store',
 	'content_load_sql_function'  => 'liberty_content_load_sql',

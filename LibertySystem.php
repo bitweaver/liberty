@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.86 2007/06/22 14:28:15 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.87 2007/07/06 15:43:23 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -811,14 +811,6 @@ function liberty_content_preview( &$pObject ) {
 	}
 	if ($gBitSystem->isFeatureActive('liberty_allow_change_owner') && $gBitUser->hasPermission('p_liberty_edit_content_owner')) {
 		$pObject->mInfo['owner_id'] = $_REQUEST['owner_id'];
-	}
-}
-
-function liberty_content_load( &$pObject ) {
-	if( $pObject->isValid() ) {
-		// transparently update user permissions for this content object
-		// this might not be the wisest course of action since it distorts permissions on the entire site with respect to the active package - xing
-		$pObject->updateUserPermissions();
 	}
 }
 
