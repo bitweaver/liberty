@@ -97,6 +97,7 @@ array( 'DATADICT' => array(
 		),
 		'liberty_content_permissions' => array( 
 			'object_id' => array( '`content_id`', 'I4' ),
+			'is_excluded' => array( '`is_exluded`', 'VARCHAR(1)' ),
 		),
 	)),
 	/* The installer can't add constraints after table creation yet so drop this constraint.
