@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.101 $
+ * @version  $Revision: 1.102 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -741,10 +741,26 @@ class TikiWikiParser extends BitBase {
 			$contentPrefs = LibertyContent::loadPreferences( $contentId );
 		}
 
-		// disable HTML in wiki page for now - very disruptive. should be changed into a per page setting - xing
-		if( !($gBitSystem->isFeatureActive('content_force_allow_html') || 
-			  ( ($gBitUser->hasPermission('p_liberty_enter_html') || $gBitSystem->isFeatureActive('content_allow_html'))
-			   && !empty( $contentPrefs['content_enter_html'] ) ) ) ) {
+		// we can't check for permissions here on every page load since we need 
+		// to check the permissions of the user who saved the page - not the 
+		// permissions of the user calling the page
+		// only strip out html if needed
+		if( $gBitSystem->isFeatureActive( 'content_allow_html' ) || $gBitSystem->isFeatureActive( 'content_force_allow_html' )) {
+			// we allow html when using this parser
+		} elseif( !empty( $contentPrefs['content_enter_html'] ) && @BitBase::verifyId( $pCommonObject->mInfo['user_id'] )) {
+			// we need to load up the user who wrote this page to check his permissions
+			if( $gBitUser->mUserId != $pCommonObject->mInfo['user_id'] ) {
+				$tmpUser = new BitPermUser( $pCommonObject->mInfo['user_id'] );
+				$tmpUser->loadPermissions();
+			} else {
+				$tmpUser = &$gBitUser;
+			}
+
+			if( !$tmpUser->hasPermission( 'p_liberty_enter_html' )) {
+				$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
+			}
+		} else {
+			// we are fetcing this page and have no need for html
 			$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
 		}
 
