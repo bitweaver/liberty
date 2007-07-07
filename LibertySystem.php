@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.87 2007/07/06 15:43:23 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.88 2007/07/07 17:59:12 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -265,20 +265,25 @@ class LibertySystem extends LibertyBase {
 		global $gBitSystem;
 
 		if( is_array( $pPluginGuids ) ) {
-			# zap list of plugins from DB
+			// zap list of plugins from DB
 			$gBitSystem->setConfigMatch( "/^{$this->mSystem}_plugin_status/i", NULL, 'n', LIBERTY_PKG_NAME );
 			foreach( array_keys( $this->mPlugins ) as $guid ) {
 				$this->mPlugins[$guid]['is_active'] = 'n';
 			}
 
-			#set active those specified
+			// set active those specified
 			foreach( array_keys( $pPluginGuids ) as $guid ) {
 				if( $pPluginGuids[$guid][0] == 'y' ) {
 					$this->setActivePlugin( $guid );
 				}
 			}
-			//load any plugins made active, but not already loaded
+			// load any plugins made active, but not already loaded
 			$this->loadActivePlugins();
+
+			// finally we need to remove all cache files since the content has been changed
+			if( $gBitSystem->isFeatureActive( 'liberty_cache' )) {
+				LibertyContent::expungeCache();
+			}
 		}
 	}
 
