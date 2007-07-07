@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.256 2007/07/07 18:02:44 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.257 2007/07/07 21:30:33 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -73,9 +73,10 @@ class LibertyContent extends LibertyBase {
 	var $mType;
 	/**
 	* Permissions hash specific to this LibertyContent object
+	* initialize to null, loadPermissions will set to empty array if nothing present, and this is used to prevent subsequent SQL statements
 	* @public
 	*/
-	var $mPerms = array();
+	var $mPerms = NULL; 
 	/**
 	* Preferences hash specific to this LibertyContent object - accessed via getPreference/storePreference
 	* @private
@@ -94,7 +95,7 @@ class LibertyContent extends LibertyBase {
 	function LibertyContent () {
 		LibertyBase::LibertyBase();
 		$this->mPrefs = NULL; // init to NULL so getPreference can determine if a load is necessary
-		$this->mPerms = array();
+		$this->mPerms = NULL; // init to NULL so loadPermissions can determine if a sql call is necessary
 		if( empty( $this->mAdminContentPerm ) ) {
 			$this->mAdminContentPerm = 'p_admin_content';
 		}
@@ -898,11 +899,11 @@ class LibertyContent extends LibertyBase {
 	 */
 	function loadPermissions( $pForce = FALSE ) {
 		if( $pForce ) {
-			$this->mPerms = array();
+			$this->mPerms = NULL;
 		}
-		if( $this->isValid() && empty( $this->mPerms ) && $this->mContentTypeGuid ) {
+		if( $this->isValid() && is_null( $this->mPerms ) && $this->mContentTypeGuid ) {
 			$query = "
-				SELECT lcperm.`perm_name`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
+				SELECT lcperm.`perm_name`, lcperm.`is_excluded`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
 				FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
 					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
@@ -961,18 +962,26 @@ class LibertyContent extends LibertyBase {
 				}
 				if( $this->loadPermissions() ) {
 					// this content has assigned perms
-					$globalPerms = $gBitUser->mPerms;
 
-					// unset all perms in the default that are custom assigned
-					// they might have been removed for this user...
-					foreach( array_keys( $this->mPerms ) as $permName ) {
-						if( isset( $globalPerms[$permName] )) {
-							unset( $globalPerms[$permName] );
+					// make a copy of the user's global perms
+					$checkPerms = $gBitUser->mPerms;
+					$specificPerms = $this->getUserPermissions( $gBitUser->mUserId );
+
+					// and then unset all perms in the default that are custom assigned
+					// becuase they might have been removed for this user...
+					// get the exact permissions allowed for this user, and make a union the global perms plus the assigned perms
+					foreach( $specificPerms as $perm ) {
+						if( $gBitUser->isInGroup( $perm['group_id'] ) ) {
+							// there is an assignment for one of our groups
+							if( empty( $perm['is_excluded'] ) ) {
+								// not excluded, add to allowed perms
+								$checkPerms[$perm['perm_name']] = $perm;
+							} elseif( $perm['is_excluded'] == 'y' AND isset( $checkPerms[$perm['perm_name']] ) ) {
+								// excluded, remove from
+								unset( $checkPerms[$perm['perm_name']] );
+							}
 						}
 					}
-
-					// union the global perms plus the assigned perms
-					$checkPerms = array_merge( $globalPerms, $this->getUserPermissions( $gBitUser->mUserId ));
 					$ret = !empty( $checkPerms[$this->mAdminContentPerm] ) || !empty( $checkPerms[$pPermName] ); // && ( $checkPerms[$pPermName]['user_id'] == $gBitUser->mUserId );
 				} else {
 					// return default user permission setting when no content perms are set
@@ -1010,17 +1019,24 @@ class LibertyContent extends LibertyBase {
 	* @return array Array of user permissions
 	*/
 	function getUserPermissions( $pUserId ) {
+		// cache this out to a static hash to reduce query load
+		static $sUserPerms = array();
 		$ret = array();
-		if( $pUserId ) {
-			$query = "SELECT lcperm.`perm_name`, ug.`group_id`, ug.`group_name`, ugm.`user_id`
+		if( !isset( $sUserPerms[$pUserId] ) && BitBase::verifyId( $pUserId ) ) {
+			$query = "SELECT lcperm.`perm_name`, lcperm.`is_excluded`,ug.`group_id`, ug.`group_name`, ugm.`user_id`
 					FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
 						INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
 						INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON( ugm.`group_id`=ug.`group_id` )
-					WHERE ugm.`user_id`=? AND lcperm.`content_id` = ?";
-			$bindVars = array( $pUserId, $this->mContentId );
-			$ret = $this->mDb->getAssoc($query, $bindVars);
+					WHERE (ugm.`user_id`=? OR ugm.`user_id`=?) AND lcperm.`content_id` = ?
+					ORDER BY lcperm.`is_excluded`"; // order by is_excluded so null's come first and last to be checked will be 'y'
+			$bindVars = array( $pUserId, ANONYMOUS_USER_ID, $this->mContentId );
+			if( $rs = $this->mDb->query($query, $bindVars) ) {
+				$sUserPerms[$pUserId] = $rs->getRows();
+			} else {
+				$sUserPerms[$pUserId] = array();
+			}
 		}
-		return $ret;
+		return $sUserPerms[$pUserId];
 	}
 
 	/**
