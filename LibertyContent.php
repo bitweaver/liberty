@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.254 2007/07/06 22:04:37 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.255 2007/07/07 17:57:26 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2308,6 +2308,26 @@ class LibertyContent extends LibertyBase {
 		return TRUE;
 	}
 
+	/**
+	 * Delete liberty cache
+	 * 
+	 * @param array $pContentId 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure
+	 */
+	function expungeCache() {
+		$ret = FALSE;
+		$cacheDir = LibertyContent::getCacheBasePath();
+		// make sure that we're in the temp dir at least
+		if( strstr( $cacheDir, str_replace( '//', '/', TEMP_PKG_PATH ))) {
+			unlink_r( $cacheDir );
+			// make sure we have a usable cache directory to work with
+			$ret = ( is_dir( $cacheDir ) || mkdir_p( $cacheDir ));
+		}
+		return $ret;
+	}
+
+	// i think this function is not being used and will hopefully be removed soon - xing - Saturday Jul 07, 2007   19:54:02 CEST
 	function getFilter( $pContentTypeGuid, &$pSql, &$pBindVars, $pHash = null) {
 		global $gLibertySystem, $gBitSystem;
 		foreach ($gLibertySystem->mContentTypes as $type) {
