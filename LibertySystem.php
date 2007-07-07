@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.88 2007/07/07 17:59:12 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.89 2007/07/07 18:02:44 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -281,9 +281,7 @@ class LibertySystem extends LibertyBase {
 			$this->loadActivePlugins();
 
 			// finally we need to remove all cache files since the content has been changed
-			if( $gBitSystem->isFeatureActive( 'liberty_cache' )) {
-				LibertyContent::expungeCache();
-			}
+			LibertyContent::expungeCache();
 		}
 	}
 

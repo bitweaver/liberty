@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.255 2007/07/07 17:57:26 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.256 2007/07/07 18:02:44 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2241,10 +2241,10 @@ class LibertyContent extends LibertyBase {
 	 * @param the name of the cache file from getCacheFile()
 	 * @return the contents of the cache file or NULL
 	 */
-	function readCacheFile($pCacheFile) {
+	function readCacheFile( $pCacheFile ) {
 		global $gBitSystem;
 		$ret = NULL;
-		if (is_file($pCacheFile) && (time() - filemtime( $pCacheFile )) < $gBitSystem->getConfig('liberty_cache') && filesize( $pCacheFile ) > 0 ) {
+		if( is_file( $pCacheFile ) && ( time() - filemtime( $pCacheFile )) < $gBitSystem->getConfig('liberty_cache') && filesize( $pCacheFile ) > 0 ) {
 			// get contents from cache file
 			$h = fopen( $pCacheFile, 'r' );
 			$ret = fread( $h, filesize( $pCacheFile ) );
@@ -2261,9 +2261,9 @@ class LibertyContent extends LibertyBase {
 	 * @param the name of the cache file from getCacheFile() to write
 	 * @param the contents to write to the file
 	 */
-	function writeCacheFile($pCacheFile, $pData) {
+	function writeCacheFile( $pCacheFile, $pData ) {
 		// Cowardly refuse to write nothing.
-		if (!empty($pData)) {
+		if( !empty( $pData )) {
 			// write parsed contents to cache file
 			$h = fopen( $pCacheFile, 'w' );
 			fwrite( $h, $pData );
@@ -2316,13 +2316,16 @@ class LibertyContent extends LibertyBase {
 	 * @return TRUE on success, FALSE on failure
 	 */
 	function expungeCache() {
+		global $gBitSystem;
 		$ret = FALSE;
-		$cacheDir = LibertyContent::getCacheBasePath();
-		// make sure that we're in the temp dir at least
-		if( strstr( $cacheDir, str_replace( '//', '/', TEMP_PKG_PATH ))) {
-			unlink_r( $cacheDir );
-			// make sure we have a usable cache directory to work with
-			$ret = ( is_dir( $cacheDir ) || mkdir_p( $cacheDir ));
+		if( $gBitSystem->isFeatureActive( 'liberty_cache' )) {
+			$cacheDir = LibertyContent::getCacheBasePath();
+			// make sure that we're in the temp dir at least
+			if( strstr( $cacheDir, str_replace( '//', '/', TEMP_PKG_PATH ))) {
+				unlink_r( $cacheDir );
+				// make sure we have a usable cache directory to work with
+				$ret = ( is_dir( $cacheDir ) || mkdir_p( $cacheDir ));
+			}
 		}
 		return $ret;
 	}
