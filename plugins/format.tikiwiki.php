@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.103 $
+ * @version  $Revision: 1.104 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -479,29 +479,6 @@ class TikiWikiParser extends BitBase {
 		$data = preg_replace( "/~([0-9]+)~/", "&#$1;", $data );
 	}
 
-	function parse_smileys( $pData ) {
-		global $gBitSystem, $gBitSmarty;
-		if( defined( "SMILEYS_PKG_URL" ) && $gBitSystem->isPackageActive( 'smileys' ) ) {
-			preg_match_all( "/\(:([^:]+):\)/", $pData, $smileys );
-			require_once $gBitSmarty->_get_plugin_filepath( 'function', 'biticon' );
-			$smileys[0] = array_unique( $smileys[0] );
-			$smileys[1] = array_unique( $smileys[1] );
-			if( !empty( $smileys[1] ) ) {
-				foreach( $smileys[1] as $key => $smiley ) {
-					$biticon = array(
-						'ipackage' => 'smileys',
-						'iname' => $smiley,
-						'iexplain' => $smiley,
-						'iforce' => 'icon',
-					);
-					$pData = preg_replace( "/".preg_quote( $smileys[0][$key] )."/", smarty_function_biticon( $biticon, $gBitSmarty ), $pData );
-				}
-			}
-		}
-
-		return $pData;
-	}
-
 	function parse_comment_data( $pData ) {
 		// rel=\"nofollow\" is support for Google's Preventing comment spam
 		// http://www.google.com/googleblog/2005/01/preventing-comment-spam.html
@@ -511,7 +488,6 @@ class TikiWikiParser extends BitBase {
 		$pData = preg_replace("/\[([^\]\|]+)\]/", "<a rel=\"nofollow\" href=\"$1\">$1</a>", $pData);
 
 		// Llamar aqui a parse smileys
-		$pData = $this->parse_smileys($pData);
 		$pData = preg_replace("/---/", "<hr/>", $pData);
 
 		// Reemplazar --- por <hr/>
@@ -799,8 +775,6 @@ class TikiWikiParser extends BitBase {
 		$data = preg_replace("/\{r2l\}/", "<div dir='rtl'>", $data);
 		$data = preg_replace("/\{lm\}/", "&lrm;", $data);
 		$data = preg_replace("/\{rm\}/", "&rlm;", $data);
-		// smileys
-		$data = $this->parse_smileys($data);
 
 		// Parse MediaWiki-style pipe syntax tables.
 		if ((strpos($data, "\n{|") !== FALSE) && (strpos($data, "\n|}") !== FALSE)) {
