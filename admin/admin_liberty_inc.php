@@ -1,4 +1,5 @@
 <?php
+/* i don't think this is working - xing
 $formLibertyCache = array(
 	"liberty_cache_pages" => array(
 		'label' => 'External page cache',
@@ -10,6 +11,7 @@ $formLibertyCache = array(
 	),
 );
 $gBitSmarty->assign( 'formLibertyCache', $formLibertyCache );
+ */
 
 $formLibertyFeatures = array(
 	"liberty_display_status" => array(
@@ -70,15 +72,14 @@ $gBitSmarty->assign( 'attachmentStyleOptions', $attachmentStyleOptions );
 
 
 $cacheTimes = array(
-	0      => tra( "(no cache)" ),
-	600    => "10 ".tra( "minutes" ),
-	1800   => "30 ".tra( "minutes" ),
-	3600   => "1 ".tra( "hour" ),
-	7200   => "2 ".tra( "hours" ),
-	14400  => "4 ".tra( "hours" ),
-	28800  => "8 ".tra( "hours" ),
-	86400  => "1 ".tra( "day" ),
-	604800 => "1 ".tra( "week" ),
+	0       => tra( "(no cache)" ),
+	3600    => "1 ".tra( "hour" ),
+	14400   => "4 ".tra( "hours" ),
+	28800   => "8 ".tra( "hours" ),
+	86400   => "1 ".tra( "day" ),
+	604800  => "1 ".tra( "week" ),
+	1209600 => "2 ".tra( "weeks" ),
+	2419200 => "1 ".tra( "month" ),
 );
 $gBitSmarty->assign( "cacheTimes", $cacheTimes );
 
@@ -115,7 +116,7 @@ $gBitSmarty->assign( 'thumbFormats', $thumbFormats );
 $formValues = array( 'image_processor', 'liberty_attachment_link_format', 'comments_per_page', 'comments_default_ordering', 'comments_default_display_mode' );
 
 if( !empty( $_REQUEST['change_prefs'] )) {
-	$formFeatures = array_merge( $formLibertyCache, $formLibertyFeatures, $formImageFeatures, $formCaptcha );
+	$formFeatures = array_merge( $formLibertyFeatures, $formImageFeatures, $formCaptcha );
 	foreach( $formFeatures as $item => $data ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}

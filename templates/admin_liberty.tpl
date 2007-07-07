@@ -2,6 +2,16 @@
 {form}	
 	{jstabs}
 		{jstab title="General Settings"}
+			{legend legend="Liberty Cache"}
+				<div class="row">
+					{formlabel label="Liberty Cache" for="liberty_cache"}
+					{forminput}
+						{html_options name=liberty_cache id=liberty_cache values=$cacheTimes options=$cacheTimes selected=$gBitSystem->getConfig('liberty_cache')}
+						{formhelp note='Cache all parsed content. This will dramatically reduce load on the server if pages are called frequently.' page=''}
+					{/forminput}
+				</div>
+			{/legend}
+
 			{legend legend="Attachments"}
 				<div class="row">
 					{formlabel label="Auto-Display Attachment Thumbnails" for="liberty_auto_display_attachment_thumbs"}
@@ -14,7 +24,7 @@
 				<div class="row">
 					{formlabel label="Liberty Attachment Style" for="liberty_attachment_style"}
 					{forminput}
-						{html_radios options=$attachmentStyleOptions values=$attachmentStyleOptions id=liberty_attachment_style name=liberty_attachment_style checked=$gBitSystem->getConfig('liberty_attachment_style') separator="<br />"}
+						{html_radios options=$attachmentStyleOptions values=$attachmentStyleOptions id=liberty_attachment_style name=liberty_attachment_style checked=$gBitSystem->getConfig('liberty_attachment_style', 'standard') separator="<br />"}
 						{formhelp note=""}
 					{/forminput}
 				</div>
@@ -58,28 +68,6 @@
 				{/foreach}
 				<p class="help">{tr}To set additional parameters and options please view and edit the freecap captcha file itself:{/tr} <code>{$smarty.const.UTIL_PKG_PATH}freecap/freecap.php</code></p>
 				<p class="warning">{tr}If you can access the following file, please view the freecap.php file for details on how to secure your site against spammers{/tr}: <a href="{$smarty.const.UTIL_PKG_URL}freecap/.ht_freecap_words">{tr}Dictionary{/tr}</a></p>
-			{/legend}
-		{/jstab}
-
-		{jstab title="Liberty Cache"}
-			{legend legend="Liberty Cache"}
-				<div class="row">
-					{formlabel label="Liberty Cache" for="liberty_cache"}
-					{forminput}
-						{html_options name=liberty_cache id=liberty_cache values=$cacheTimes options=$cacheTimes selected=$gBitSystem->getConfig('liberty_cache')}
-						{formhelp note='Cache all parsed content. This will dramatically reduce load on the server if pages are called frequently.' page=''}
-					{/forminput}
-				</div>
-
-				{foreach from=$formLibertyCache key=item item=output}
-					<div class="row">
-						{formlabel label=`$output.label` for=$item}
-						{forminput}
-							{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
-							{formhelp note=`$output.note` page=`$output.page`}
-						{/forminput}
-					</div>
-				{/foreach}
 			{/legend}
 		{/jstab}
 
