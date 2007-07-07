@@ -12,15 +12,7 @@ if( !empty( $_REQUEST['reset_all_plugins'] ) ) {
 
 	// this scanAllPlugins is required. who knows why this stuff is so resilient
 	$gLibertySystem->scanAllPlugins();
-	header( "Location: ".LIBERTY_PKG_URL."admin/plugins.php?another_reload=1" );
-}
-
-// this stuff is pretty insane. calling scanAllPlugins() multiple times
-// won't do the trick. we actually need to reload the page twice!
-// (perhaps someone else can find the reason for this and come up with a 
-// cleaner solution)
-if( !empty( $_REQUEST['another_reload'] ) ) {
-	header( "Location: ".LIBERTY_PKG_URL."admin/plugins.php" );
+	bit_redirect( LIBERTY_PKG_URL."admin/plugins.php" );
 }
 
 // Since the normal startup only loads the plugins marked active
