@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.257 2007/07/07 21:30:33 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.258 2007/07/08 09:31:17 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -867,11 +867,33 @@ class LibertyContent extends LibertyBase {
 					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
 				WHERE lcperm.`content_id` = ?";
-			$bindVars = array( $this->mContentId );
-			$perms = $this->mDb->getAll( $query, $bindVars );
+			$perms = $this->mDb->getAll( $query, array( $this->mContentId ));
 			foreach( $perms as $perm ) {
 				$ret[$perm['group_id']][$perm['perm_name']] = $perm;
 			}
+		}
+		return $ret;
+	}
+
+	/**
+	 * Get a list of content with permissions
+	 * 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function getContentWithPermissionsList() {
+		global $gBitSystem;
+		$ret = array();
+		$query = "
+			SELECT lcperm.`perm_name`, lc.`title`, lc.`content_id`, lc.`content_type_guid`, lcperm.`is_excluded`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
+			FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
+				INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
+				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcperm.`content_id`=lc.`content_id` )
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
+			ORDER BY ".$gBitSystem->mDb->convertSortmode( 'content_type_guid_asc' ).", ".$gBitSystem->mDb->convertSortmode( 'title_asc' );
+		$perms = $gBitSystem->mDb->getAll( $query );
+		foreach( $perms as $perm ) {
+			$ret[$perm['content_type_guid']][$perm['content_id']][] = $perm;
 		}
 		return $ret;
 	}
