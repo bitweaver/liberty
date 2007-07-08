@@ -32,7 +32,8 @@
 	{foreach from=$gLibertySystem->mPlugins item=plugin key=guid}
 		{if $plugin.is_active eq 'y' and $plugin.primary_edit_field and $plugin.plugin_type eq 'storage'}
 			<div class="row">
-				{formlabel label="Upload new Attachment" for=""}
+				{assign var=label value="Upload $label"}
+				{formlabel label=$label|default:"Upload new Attachment" for=""}
 				{forminput}
 					{$plugin.primary_edit_field}
 					{formhelp note=`$plugin.edit_help`}
