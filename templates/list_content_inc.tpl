@@ -36,7 +36,9 @@
 		<th>{smartlink ititle="Author" isort=$isort_author list_page=$listInfo.current_page user_id=$user_id content_type_guid=$content_type_guids find=$listInfo.find}</th>
 		<th>{smartlink ititle="Most recent editor" isort=$isort_editor list_page=$listInfo.current_page user_id=$user_id content_type_guid=$content_type_guids find=$listInfo.find}</th>
 		<th>{smartlink ititle="Last Modified" isort=last_modified list_page=$listInfo.current_page user_id=$user_id content_type_guid=$content_type_guids find=$listInfo.find}</th>
-		<th>{smartlink ititle="IP" isort=ip list_page=$listInfo.current_page user_id=$user_id content_type_guid=$content_type_guids find=$listInfo.find}</th>
+		{if $gBitUser->hasPermission('p_liberty_view_all_status')}
+			<th>{smartlink ititle="IP" isort=ip list_page=$listInfo.current_page user_id=$user_id content_type_guid=$content_type_guids find=$listInfo.find}</th>
+		{/if}
 	</tr>
 	{foreach from=$contentList item=item}
 		<tr class="{cycle values='odd,even'}">
@@ -46,7 +48,9 @@
 			<td>{displayname real_name=$item.creator_real_name user=$item.creator_user}</td>
 			<td style="text-align:right;">{displayname real_name=$item.modifier_real_name user=$item.modifier_user}</td>
 			<td style="text-align:right;">{$item.last_modified|bit_short_date}</td>
-			<td>{$item.ip}</td>
+			{if $gBitUser->hasPermission('p_liberty_view_all_status')}
+				<td>{$item.ip}</td>
+			{/if}
 		</tr>
 	{/foreach}
 </table>
