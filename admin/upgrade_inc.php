@@ -16,6 +16,26 @@ array( 'QUERY' =>
 ),
 
 array( 'DATADICT' => array(
+	array( 'RENAMETABLE' => array(
+		'tiki_content'                 => 'liberty_content',
+		'tiki_content_id_seq'          => 'liberty_content_id_seq',
+		'tiki_attachments'             => 'liberty_attachments',
+		'tiki_attachments_id_seq'      => 'liberty_attachments_id_seq',
+		'tiki_files'                   => 'liberty_files',
+		'tiki_files_file_id_seq'       => 'liberty_files_id_seq',
+		'tiki_structures'              => 'liberty_structures',
+		'tiki_structures_id_seq'       => 'liberty_structures_id_seq',
+		'tiki_comments'                => 'liberty_comments',
+		'tiki_comments_comment_id_seq' => 'liberty_comment_id_seq',
+		'tiki_content_types'           => 'liberty_content_types',
+		'tiki_link_cache'              => 'liberty_link_cache',
+		'tiki_history'                 => 'liberty_content_history',
+		'tiki_actionlog'               => 'liberty_action_log',
+		'tiki_copyrights'              => 'liberty_copyrights',
+		'tiki_links'                   => 'liberty_content_links',
+		'tiki_user_preferences'        => 'liberty_content_prefs',
+		'users_object_permissions'     => 'liberty_content_permissions',
+	)),
 	array( 'CREATE' => array (
 		'liberty_content_hits' => "
 			content_id I4 PRIMARY,
@@ -59,26 +79,6 @@ array( 'DATADICT' => array(
 				, CONSTRAINT `liberty_from_content_id_ref` FOREIGN KEY (`from_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
 				, CONSTRAINT `liberty_to_content_id_ref` FOREIGN KEY (`to_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
 		",
-	)),
-	array( 'RENAMETABLE' => array(
-		'tiki_content'                 => 'liberty_content',
-		'tiki_content_id_seq'          => 'liberty_content_id_seq',
-		'tiki_attachments'             => 'liberty_attachments',
-		'tiki_attachments_id_seq'      => 'liberty_attachments_id_seq',
-		'tiki_files'                   => 'liberty_files',
-		'tiki_files_file_id_seq'            => 'liberty_files_id_seq',
-		'tiki_structures'              => 'liberty_structures',
-		'tiki_structures_id_seq'       => 'liberty_structures_id_seq',
-		'tiki_comments'                => 'liberty_comments',
-		'tiki_comments_comment_id_seq' => 'liberty_comment_id_seq',
-		'tiki_content_types'           => 'liberty_content_types',
-		'tiki_link_cache'              => 'liberty_link_cache',
-		'tiki_history'                 => 'liberty_content_history',
-		'tiki_actionlog'               => 'liberty_action_log',
-		'tiki_copyrights'              => 'liberty_copyrights',
-		'tiki_links'                   => 'liberty_content_links',
-		'tiki_user_preferences'        => 'liberty_content_prefs',
-		'users_object_permissions'     => 'liberty_content_permissions',
 	)),
 	array( 'ALTER' => array(
 		'liberty_content' => array(
@@ -198,8 +198,7 @@ array( 'DATADICT' => array(
 // move hits and last_hit to a new table
 array( 'QUERY' =>
 	array( 'SQL92' => array(
-		"INSERT INTO `".BIT_DB_PREFIX."liberty_content_hits` ( content_id, hits, last_hit ) 
-			 SELECT content_id, hits, last_hit from `".BIT_DB_PREFIX."liberty_content`",
+		"INSERT INTO `".BIT_DB_PREFIX."liberty_content_hits` ( content_id, hits, last_hit ) SELECT content_id, hits, last_hit from `".BIT_DB_PREFIX."liberty_content`",
 		"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-999, 'Deleted')",
 		"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-998, 'Spam')",
 		"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (-201, 'Suspended')",
@@ -214,7 +213,6 @@ array( 'QUERY' =>
 		"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (102, 'Commercial')",
 		"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (200, 'Recommended')",
 		"INSERT INTO `".BIT_DB_PREFIX."liberty_content_status` (`content_status_id`,`content_status_name`) VALUES (999, 'Copy Protected')",
-	 
 	)),
 ),
 
@@ -222,7 +220,7 @@ array( 'QUERY' =>
 array( 'DATADICT' => array(
 	array( 'DROPCOLUMN' => array(
 		'liberty_content' => array( 
-		    '`last_hit`',
+			'`last_hit`',
 			'`hits`',
 		),
 	)),
