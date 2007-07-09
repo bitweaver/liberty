@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.258 2007/07/08 09:31:17 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.259 2007/07/09 17:21:28 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1040,11 +1040,12 @@ class LibertyContent extends LibertyBase {
 	* @param integer Id of user for whom permissions are to be loaded
 	* @return array Array of user permissions
 	*/
-	function getUserPermissions( $pUserId ) {
+	function getUserPermissions( $pUserId = NULL ) {
 		// cache this out to a static hash to reduce query load
 		static $sUserPerms = array();
 		$ret = array();
-		if( !isset( $sUserPerms[$pUserId] ) && BitBase::verifyId( $pUserId ) ) {
+
+		if( @BitBase::verifyId( $pUserId ) && !isset( $sUserPerms[$pUserId][$this->mContentId] )) {
 			$query = "SELECT lcperm.`perm_name`, lcperm.`is_excluded`,ug.`group_id`, ug.`group_name`, ugm.`user_id`
 					FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
 						INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
@@ -1052,13 +1053,10 @@ class LibertyContent extends LibertyBase {
 					WHERE (ugm.`user_id`=? OR ugm.`user_id`=?) AND lcperm.`content_id` = ?
 					ORDER BY lcperm.`is_excluded`"; // order by is_excluded so null's come first and last to be checked will be 'y'
 			$bindVars = array( $pUserId, ANONYMOUS_USER_ID, $this->mContentId );
-			if( $rs = $this->mDb->query($query, $bindVars) ) {
-				$sUserPerms[$pUserId] = $rs->getRows();
-			} else {
-				$sUserPerms[$pUserId] = array();
-			}
+			$sUserPerms[$pUserId][$this->mContentId] = $this->mDb->getAll( $query, $bindVars );
 		}
-		return $sUserPerms[$pUserId];
+
+		return $sUserPerms[$pUserId][$this->mContentId];
 	}
 
 	/**
