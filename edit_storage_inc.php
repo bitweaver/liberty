@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage functions
  *
@@ -55,5 +55,5 @@ $gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
 // seems like there should be a better way to do this -- maybe original assign should have been by reference?
 $gBitSmarty->clear_assign( 'gContent' );
 $gBitSmarty->assign( 'gContent', $gContent );
-$gBitSmarty->assign( 'loadAjax', TRUE );
+$gBitSystem->loadAjax( 'prototype' );
 ?>
