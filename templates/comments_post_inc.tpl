@@ -25,7 +25,7 @@
 				
 				{* This is a little extra value for the funky case when bw learns browser has js at the same time a preview is asked for
 				   This will keep comment in non-js mode until previewing is done. Things get messy without this *}
-				{if !$gBitSystem->isJavascriptEnabled() || $no_js_preview == "y"}
+				{if !$gBitThemes->isJavascriptEnabled() || $no_js_preview == "y"}
 					<input type="hidden" name="no_js_preview" value="y" />
 				{/if}
 

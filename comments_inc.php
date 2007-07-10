@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.36 $
+ * @version  $Revision: 1.37 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.36 2007/07/10 16:58:21 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.37 2007/07/10 19:00:37 squareing Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -53,7 +53,7 @@ if( !BitThemes::isJavascriptEnabled() ) {
 
 if( $gBitSystem->isFeatureActive( 'comments_ajax' ) && !empty( $gContent ) && is_object( $gContent ) && $gContent->isCommentable() ) {
 	$gBitSmarty->assign( 'comments_ajax', TRUE );
-	$gBitSystem->loadAjax( 'mochikit', array( 'Iter.js', 'DOM.js', 'Style.js', 'Color.js', 'Position.js', 'Visual.js' ));
+	$gBitThemes->loadAjax( 'mochikit', array( 'Iter.js', 'DOM.js', 'Style.js', 'Color.js', 'Position.js', 'Visual.js' ));
 }
 
 if( @BitBase::verifyId($_REQUEST['delete_comment_id']) ) {

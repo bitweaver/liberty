@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.21 $
+ * @version  $Revision: 1.22 $
  * @package  liberty
  * @subpackage functions
  */
@@ -19,7 +19,7 @@ require_once( '../bit_setup_inc.php' );
 include_once( LIBERTY_PKG_PATH.'LibertyStructure.php');
 $gBitSmarty->assign_by_ref( 'feedback', $feedback = array() );
 
-$gBitSystem->loadAjax( 'mochikit', array( 'Iter.js', 'DOM.js', 'Format.js', 'Style.js', 'Signal.js', 'Logging.js', 'ThickBox.js', 'Controls.js','Color.js','Position.js','Visual.js' ) );
+$gBitThemes->loadAjax( 'mochikit', array( 'Iter.js', 'DOM.js', 'Format.js', 'Style.js', 'Signal.js', 'Logging.js', 'ThickBox.js', 'Controls.js','Color.js','Position.js','Visual.js' ) );
 
 if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 	$gBitSystem->fatalError( tra( "No structure indicated" ));

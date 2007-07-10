@@ -1,9 +1,9 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/add_structure_content.php,v 1.4 2007/07/10 16:58:21 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/add_structure_content.php,v 1.5 2007/07/10 19:00:36 squareing Exp $
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage functions
  */
@@ -58,7 +58,7 @@ if( $gBitThemes->isAjaxRequest() ) {
 	if( !empty( $_REQUEST['done'] ) ) {
 		bit_redirect( $_SESSION['structure_referer'] );
 	}
-	if( !$gBitSystem->loadAjax( 'mochikit', array( 'Iter.js', 'DOM.js', 'Format.js', 'Style.js', 'Signal.js', 'Logging.js', 'ThickBox.js' ) ) ) {
+	if( !$gBitThemes->loadAjax( 'mochikit', array( 'Iter.js', 'DOM.js', 'Format.js', 'Style.js', 'Signal.js', 'Logging.js', 'ThickBox.js' ) ) ) {
 		// do something....
 	}
 	$gBitSystem->display( 'bitpackage:liberty/add_structure_content.tpl', "Add Content" );
