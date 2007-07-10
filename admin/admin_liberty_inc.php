@@ -1,18 +1,4 @@
 <?php
-/* i don't think this is working - xing
-$formLibertyCache = array(
-	"liberty_cache_pages" => array(
-		'label' => 'External page cache',
-		'note' => 'Enabling this will download and cache external pages that are included.',
-	),
-	"liberty_cache_images" => array(
-		'label' => 'External image cache',
-		'note' => 'Enabling this will download and cache external images that are included.',
-	),
-);
-$gBitSmarty->assign( 'formLibertyCache', $formLibertyCache );
- */
-
 $formLibertyFeatures = array(
 	"liberty_display_status" => array(
 		'label' => 'Display content status',
