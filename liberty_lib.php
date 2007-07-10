@@ -1,4 +1,10 @@
 <?php
+/**
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.2 2007/07/10 20:47:43 squareing Exp $
+ * @package liberty
+ * @subpackage functions
+ */
+
 // ================== Liberty Plugin Parsing ==================
 /**
  * This crazy function will parse all the data plugin stuff found within any 
