@@ -3,7 +3,7 @@
  * Base class for Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.20 2007/07/01 23:50:17 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.21 2007/07/10 20:01:09 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -21,6 +21,7 @@
 /**
  * required setup
  */
+require_once( LIBERTY_PKG_PATH.'liberty_lib.php' );
 require_once( KERNEL_PKG_PATH.'BitBase.php' );
 
 /**
