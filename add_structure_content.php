@@ -1,9 +1,9 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/add_structure_content.php,v 1.3 2007/06/22 09:17:13 lsces Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/add_structure_content.php,v 1.4 2007/07/10 16:58:21 squareing Exp $
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage functions
  */
@@ -31,7 +31,7 @@ if( !empty( $_SERVER['HTTP_REFERER'] ) ) {
 	}
 }
 
-if( $gBitSystem->isAjaxRequest() ) {
+if( $gBitThemes->isAjaxRequest() ) {
 	header( 'Content-Type: text/html; charset=utf-8' );
 	print $gBitSmarty->fetch( "bitpackage:liberty/add_structure_feedback_inc.tpl" ); 
 	exit;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.104 $
+ * @version  $Revision: 1.105 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -609,18 +609,6 @@ class TikiWikiParser extends BitBase {
 		return $links;
 	}
 
-	function cache_links($links, &$pCommonObject ) {
-		global $gBitSystem;
-		if( $gBitSystem->isFeatureActive( 'liberty_cache_pages' ) && $pCommonObject ) {
-			foreach ($links as $link) {
-				if( !$pCommonObject->isUrlCached( $link ) ) {
-//					$pCommonObject->cacheUrl($link);
-				}
-			}
-		}
-	}
-
-
 	function how_many_at_start($str, $car) {
 		$cant = 0;
 		$i = 0;
@@ -1018,27 +1006,20 @@ class TikiWikiParser extends BitBase {
 
 		// TODO: I think this is 1. just wrong and 2. not needed here? remove it?
 		// Replace ))Words((
-		$data = preg_replace("/\(\(([^\)]+)\)\)/", "$1", $data);
-
-		$links = $this->get_links($data);
-
-		$notcachedlinks = $this->get_links_nocache($data);
-
-		$cachedlinks = array_diff($links, $notcachedlinks);
-
-		$this->cache_links($cachedlinks,$pCommonObject);
+		$data = preg_replace( "/\(\(([^\)]+)\)\)/", "$1", $data );
+		$links = $this->get_links( $data );
 
 		// Note that there're links that are replaced
-		foreach ($links as $link) {
-			if ((strstr($link, $_SERVER["SERVER_NAME"])) || (!strstr($link, '//'))) {
-				$class = '';
+		foreach( $links as $link ) {
+			if(( strstr( $link, $_SERVER["SERVER_NAME"] )) || ( !strstr( $link, '//' ))) {
+				$attributes = '';
 			} else {
-				$class = 'class="external"';
+				$attributes = 'class="external"';
 			}
 
 			// comments and anonymously created pages get nofollow
-			if( $pCommonObject && (get_class( $pCommonObject ) == 'comments' || ( isset( $pCommonObject->mInfo['user_id'] ) &&  $pCommonObject->mInfo['user_id'] == ANONYMOUS_USER_ID ) ) ) {
-				$class .= ' rel="nofollow" ';
+			if( $pCommonObject && ( get_class( $pCommonObject ) == 'comments' || ( isset( $pCommonObject->mInfo['user_id'] ) &&  $pCommonObject->mInfo['user_id'] == ANONYMOUS_USER_ID ))) {
+				$attributes .= ' rel="nofollow" ';
 			}
 
 			// The (?<!\[) stuff below is to give users an easy way to
@@ -1046,24 +1027,11 @@ class TikiWikiParser extends BitBase {
 			// get rendered as [foo]. -rlpowell
 
 			// prepare link for pattern usage
-			$link2 = str_replace("/", "\/", preg_quote($link));
-
-			if( $gBitSystem->isFeatureActive( 'liberty_cache_pages') && $pCommonObject && $pCommonObject->isUrlCached( $link ) ) {
-				//use of urlencode for using cached versions of dynamic sites
-				$cosa = "<a class=\"bitcache\" href=\"".KERNEL_PKG_URL."view_cache.php?url=".urlencode($link)."\">(cache)</a>";
-
-				$pattern = "/(?<!\[)\[$link2\|([^\]\|]+)\|([^\]]+)\]/";
-				$data = preg_replace($pattern, "<a $class href='$link'>$1</a>", $data);
-				$pattern = "/(?<!\[)\[$link2\|([^\]\|]+)\]/";
-				$data = preg_replace($pattern, "<a $class href='$link'>$1</a> $cosa", $data);
-				$pattern = "/(?<!\[)\[$link2\]/";
-				$data = preg_replace($pattern, "<a $class href='$link'>$link</a> $cosa", $data);
-			} else {
-				$pattern = "/(?<!\[)\[$link2\|([^\]\|]+)([^\]])*\]/";
-				$data = preg_replace($pattern, "<a $class href='$link'>$1</a>", $data);
-				$pattern = "/(?<!\[)\[$link2\]/";
-				$data = preg_replace($pattern, "<a $class href='$link'>$link</a>", $data);
-			}
+			$link2 = str_replace( "/", "\/", preg_quote( $link ));
+			$pattern = "/(?<!\[)\[$link2\|([^\]\|]+)([^\]])*\]/";
+			$data = preg_replace( $pattern, "<a $attributes href='$link'>$1</a>", $data );
+			$pattern = "/(?<!\[)\[$link2\]/";
+			$data = preg_replace( $pattern, "<a $attributes href='$link'>$link</a>", $data );
 		}
 
 		// Handle double square brackets.  -rlpowell

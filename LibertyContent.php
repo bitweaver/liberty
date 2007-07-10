@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.259 2007/07/09 17:21:28 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.260 2007/07/10 16:58:21 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2105,66 +2105,6 @@ class LibertyContent extends LibertyBase {
 			$ret = str_replace($pp["key"], "<pre>" . $pp["data"] . "</pre>", $ret);
 
 		return $ret;
-	}
-
-
-	/**
-	* Check if given url is currently cached locally
-	*
-	* @param string URL to check
-	* @return integer Id of the cached item
-	* @todo LEGACY FUNCTIONS that need to be cleaned / moved / or deprecated & deleted
-	*/
-	function isUrlCached($url) {
-		// return false until this is fixed
-		return FALSE;
-
-		$query = "select `cache_id`  from `".BIT_DB_PREFIX."liberty_link_cache` where `url`=?";
-		// sometimes we can have a cache_id of 0(?!) - seen it with my own eyes, spiderr
-		$ret = $this->mDb->getOne($query, array( $url ) );
-		return $ret;
-	}
-
-	/**
-	* Cache given url
-	* If \c $data present (passed) it is just associated \c $url and \c $data.
-	* Else it will request data for given URL and store it in DB.
-	* Actualy (currently) data may be proviced by TIkiIntegrator only.
-	* @param string URL to cache
-	* @param string Data to be cached
-	* @return bool True if item was successfully cached
-	* @todo LEGACY FUNCTIONS that need to be cleaned / moved / or deprecated & deleted
-	*/
-	function cacheUrl($url, $data = '') {
-		// return  TRUE until this is fixed
-		return TRUE;
-
-		// Avoid caching internal references... (only if $data not present)
-		// (cdx) And avoid other protocols than http...
-		// 03-Nov-2003, by zaufi
-		// preg_match("_^(mailto:|ftp:|gopher:|file:|smb:|news:|telnet:|javascript:|nntp:|nfs:)_",$url)
-		// was removed (replaced to explicit http[s]:// detection) bcouse
-		// I now (and actualy use in my production Tiki) another bunch of protocols
-		// available in my konqueror... (like ldap://, ldaps://, nfs://, fish://...)
-		// ... seems like it is better to enum that allowed explicitly than all
-		// noncacheable protocols.
-		if (((strstr($url, 'tiki-') || strstr($url, 'messages-')) && $data == '')
-		|| (substr($url, 0, 7) != 'http://' && substr($url, 0, 8) != 'https://'))
-			return false;
-		// Request data for URL if nothing given in parameters
-		// (reuse $data var)
-		if ($data == '') $data = bit_http_request($url);
-
-		// If stuff inside [] is *really* malformatted, $data
-		// will be empty.  -rlpowell
-		if (!$this->isUrlCached( $url ) && $data)
-		{	global $gBitSystem;
-			$refresh = $gBitSystem->getUTCTime();
-			$query = "insert into `".BIT_DB_PREFIX."liberty_link_cache`(`url`,`data`,`refresh`) values(?,?,?)";
-			$result = $this->mDb->query($query, array($url,BitDb::dbByteEncode($data),$refresh) );
-			return !isset($error);
-		}
-		else return false;
 	}
 
 	/**

@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.35 $
+ * @version  $Revision: 1.36 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.35 2007/07/02 02:45:32 spiderr Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.36 2007/07/10 16:58:21 squareing Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -46,9 +46,14 @@ $postComment = array();
 $formfeedback = array();
 $gBitSmarty->assign_by_ref('formfeedback', $formfeedback);
 
-if ( $gBitSystem->isFeatureActive('comments_ajax') && !empty( $gContent ) && is_object( $gContent ) && $gContent->isCommentable() && $gBitSystem->isJavascriptEnabled()){
-	$gBitSmarty->assign('comments_ajax', TRUE);
-	$gBitSystem->loadAjax( 'mochikit', array( 'Iter.js', 'DOM.js', 'Style.js', 'Color.js', 'Position.js', 'Visual.js' ) );	
+// make sure that we don't feed ajax comments if we don't have javascript enabled
+if( !BitThemes::isJavascriptEnabled() ) {
+	$gBitSystem->setConfig( 'comments_ajax', 'n' );
+}
+
+if( $gBitSystem->isFeatureActive( 'comments_ajax' ) && !empty( $gContent ) && is_object( $gContent ) && $gContent->isCommentable() ) {
+	$gBitSmarty->assign( 'comments_ajax', TRUE );
+	$gBitSystem->loadAjax( 'mochikit', array( 'Iter.js', 'DOM.js', 'Style.js', 'Color.js', 'Position.js', 'Visual.js' ));
 }
 
 if( @BitBase::verifyId($_REQUEST['delete_comment_id']) ) {
