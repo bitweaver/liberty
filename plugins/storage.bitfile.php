@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.38 $
+ * @version  $Revision: 1.39 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -25,7 +25,6 @@ $pluginParams = array (
 	'edit_help' => 'This file will be uploaded to your personal storage area.<br />After selecting the file you want to upload, please return to the edit area and click the save button.'
 );
 
-// file should only be loaded via LiberySystem which sets $value
 if( isset( $gBitSystem ) ) {
 	if ($gBitSystem->getConfig("liberty_attachment_style") == "multiple") {
 		$pluginParams['edit_label'] = 'Upload File(s)';
