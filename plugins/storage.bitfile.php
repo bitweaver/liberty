@@ -1,10 +1,10 @@
 <?php
 /**
- * @version  $Revision: 1.40 $
+ * @version  $Revision: 1.41 $
  * @package  liberty
  * @subpackage plugins_storage
  */
-global $gLibertySystem, $gBitSystem, $gBitSmarty;
+global $gLibertySystem, $gBitSystem, $gBitSmarty, $gBitThemes;
 
 /**
  * definitions
