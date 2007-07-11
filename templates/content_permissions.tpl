@@ -36,8 +36,8 @@
 									{assign var=icon value="icons/list-add"}                   {* custon permission icon *}
 									{assign var=action value="remove"}                         {* remove permission if we have a custom one *}
 								{/if}
-								{if $contentPerms.assigned.$groupId.$perm.is_excluded}
-									{assign var=icon value="icons/list-remove"}                {* is_excluded icon *}
+								{if $contentPerms.assigned.$groupId.$perm.is_revoked}
+									{assign var=icon value="icons/list-remove"}                {* is_revoked icon *}
 								{/if}
 							{/if}
 							<td style="text-align:center">{smartlink itra=false ititle=$perm ibiticon=$icon action=$action content_id=$gContent->mContentId perm=$perm group_id=$groupId}</td>
@@ -97,7 +97,7 @@
 									<td rowspan="{$smarty.foreach.fgroup.total}">{$permInfo.group_name}</td>
 								{/if}
 								<td>
-									{if $contentPerms.assigned.$groupId.$perm.is_excluded}
+									{if $contentPerms.assigned.$groupId.$perm.is_revoked}
 										{biticon iname=list-remove iexplain="Removed Permission"}
 									{else}
 										{biticon iname=list-add iexplain="Added Permission"}

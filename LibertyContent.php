@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.260 2007/07/10 16:58:21 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.261 2007/07/11 17:42:28 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -862,7 +862,7 @@ class LibertyContent extends LibertyBase {
 		$ret = FALSE;
 		if( $this->isValid() && $this->mContentTypeGuid ) {
 			$query = "
-				SELECT lcperm.`perm_name`, lcperm.`is_excluded`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
+				SELECT lcperm.`perm_name`, lcperm.`is_revoked`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
 				FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
 					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
@@ -885,7 +885,7 @@ class LibertyContent extends LibertyBase {
 		global $gBitSystem;
 		$ret = array();
 		$query = "
-			SELECT lcperm.`perm_name`, lc.`title`, lc.`content_id`, lc.`content_type_guid`, lcperm.`is_excluded`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
+			SELECT lcperm.`perm_name`, lc.`title`, lc.`content_id`, lc.`content_type_guid`, lcperm.`is_revoked`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
 			FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
 				INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
 				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcperm.`content_id`=lc.`content_id` )
@@ -925,7 +925,7 @@ class LibertyContent extends LibertyBase {
 		}
 		if( $this->isValid() && is_null( $this->mPerms ) && $this->mContentTypeGuid ) {
 			$query = "
-				SELECT lcperm.`perm_name`, lcperm.`is_excluded`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
+				SELECT lcperm.`perm_name`, lcperm.`is_revoked`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
 				FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
 					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
@@ -995,10 +995,10 @@ class LibertyContent extends LibertyBase {
 					foreach( $specificPerms as $perm ) {
 						if( $gBitUser->isInGroup( $perm['group_id'] ) ) {
 							// there is an assignment for one of our groups
-							if( empty( $perm['is_excluded'] ) ) {
+							if( empty( $perm['is_revoked'] ) ) {
 								// not excluded, add to allowed perms
 								$checkPerms[$perm['perm_name']] = $perm;
-							} elseif( $perm['is_excluded'] == 'y' AND isset( $checkPerms[$perm['perm_name']] ) ) {
+							} elseif( $perm['is_revoked'] == 'y' AND isset( $checkPerms[$perm['perm_name']] ) ) {
 								// excluded, remove from
 								unset( $checkPerms[$perm['perm_name']] );
 							}
@@ -1038,7 +1038,7 @@ class LibertyContent extends LibertyBase {
 	* Get specific permissions for the specified user for this content
 	*
 	* @param integer Id of user for whom permissions are to be loaded
-	* @return array Array of user permissions
+	* @return array Array of all permissions for the current user joined with perms for the current content. This should handle cases where non-default permissions is assigned, default permission is removed, and duplicate default permissions where one group's perm is revoked, but another is still permitted. If the permission is revoked, is_revoked will be set to 'y'
 	*/
 	function getUserPermissions( $pUserId = NULL ) {
 		// cache this out to a static hash to reduce query load
@@ -1046,14 +1046,16 @@ class LibertyContent extends LibertyBase {
 		$ret = array();
 
 		if( @BitBase::verifyId( $pUserId ) && !isset( $sUserPerms[$pUserId][$this->mContentId] )) {
-			$query = "SELECT lcperm.`perm_name`, lcperm.`is_excluded`,ug.`group_id`, ug.`group_name`, ugm.`user_id`
-					FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
-						INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
-						INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON( ugm.`group_id`=ug.`group_id` )
-					WHERE (ugm.`user_id`=? OR ugm.`user_id`=?) AND lcperm.`content_id` = ?
-					ORDER BY lcperm.`is_excluded`"; // order by is_excluded so null's come first and last to be checked will be 'y'
-			$bindVars = array( $pUserId, ANONYMOUS_USER_ID, $this->mContentId );
-			$sUserPerms[$pUserId][$this->mContentId] = $this->mDb->getAll( $query, $bindVars );
+			$query = "SELECT up.`perm_name` AS `hash_key`, up.`perm_name`, up.`perm_desc`, up.`perm_level`, up.`package`,  lcperm.`perm_name`, lcperm.`is_revoked`,ug.`group_id`, ug.`group_name`, ugm.`user_id`
+					  FROM `".BIT_DB_PREFIX."users_permissions` up
+						INNER JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON ( ugp.`perm_name`=up.`perm_name` )
+						INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON ( ug.`group_id`=ugp.`group_id` )
+					    LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON ( ugm.`group_id`=ugp.`group_id` )
+					    LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcperm ON ( lcperm.`group_id`=ug.`group_id`  AND lcperm.`content_id` = ?)
+					  WHERE (ugm.`user_id`=? OR ugm.`user_id`=?)
+					  ORDER BY lcperm.`is_revoked` DESC"; // order by is_revoked so null's come first and last to be checked will be 'y'
+			$bindVars = array( $this->mContentId, $pUserId, ANONYMOUS_USER_ID );
+			$sUserPerms[$pUserId][$this->mContentId] = $this->mDb->getAssoc( $query, $bindVars );
 		}
 
 		return $sUserPerms[$pUserId][$this->mContentId];
@@ -1079,7 +1081,7 @@ class LibertyContent extends LibertyBase {
 			);
 			// check to see if this is an exclusion
 			if( $this->isExcludedPermission( $pGroupId, $pPermName )) {
-				$storeHash['is_excluded'] = 'y';
+				$storeHash['is_revoked'] = 'y';
 			}
 			$ret = $this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_permissions", $storeHash );
 		}
