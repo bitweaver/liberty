@@ -1,18 +1,16 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_format
  */
 global $gLibertySystem;
 
-
 /**
  * run 'pear install Text_Wiki_BBCode-alpha' to install the library,
  */ 
-require_once('PEAR.php');
-
-if( @include_once( 'doc/Text_Wiki_BBCode/doc/BBCodeParser.php' ) ) {
+if( @include_once( 'PEAR.php' )) {
+	if( @include_once( 'Text/Wiki/BBCode.php' )) {
 
 /**
  * definitions
@@ -92,6 +90,7 @@ $ret = $parser->getParsed();
 	return $ret;
 }
 
+	}
 }
 
 ?>
