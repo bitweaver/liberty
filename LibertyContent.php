@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.261 2007/07/11 17:42:28 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.262 2007/07/11 18:23:45 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -986,24 +986,7 @@ class LibertyContent extends LibertyBase {
 					// this content has assigned perms
 
 					// make a copy of the user's global perms
-					$checkPerms = $gBitUser->mPerms;
-					$specificPerms = $this->getUserPermissions( $gBitUser->mUserId );
-
-					// and then unset all perms in the default that are custom assigned
-					// becuase they might have been removed for this user...
-					// get the exact permissions allowed for this user, and make a union the global perms plus the assigned perms
-					foreach( $specificPerms as $perm ) {
-						if( $gBitUser->isInGroup( $perm['group_id'] ) ) {
-							// there is an assignment for one of our groups
-							if( empty( $perm['is_revoked'] ) ) {
-								// not excluded, add to allowed perms
-								$checkPerms[$perm['perm_name']] = $perm;
-							} elseif( $perm['is_revoked'] == 'y' AND isset( $checkPerms[$perm['perm_name']] ) ) {
-								// excluded, remove from
-								unset( $checkPerms[$perm['perm_name']] );
-							}
-						}
-					}
+					$checkPerms = $this->getUserPermissions( $gBitUser->mUserId );
 					$ret = !empty( $checkPerms[$this->mAdminContentPerm] ) || !empty( $checkPerms[$pPermName] ); // && ( $checkPerms[$pPermName]['user_id'] == $gBitUser->mUserId );
 				} else {
 					// return default user permission setting when no content perms are set
@@ -1052,7 +1035,7 @@ class LibertyContent extends LibertyBase {
 						INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON ( ug.`group_id`=ugp.`group_id` )
 					    LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON ( ugm.`group_id`=ugp.`group_id` )
 					    LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcperm ON ( lcperm.`group_id`=ug.`group_id`  AND lcperm.`content_id` = ?)
-					  WHERE (ugm.`user_id`=? OR ugm.`user_id`=?)
+					  WHERE (ugm.`user_id`=? OR ugm.`user_id`=?) AND (lcperm.`is_revoked` IS NULL OR lcperm.`is_revoked` != 'y')
 					  ORDER BY lcperm.`is_revoked` DESC"; // order by is_revoked so null's come first and last to be checked will be 'y'
 			$bindVars = array( $this->mContentId, $pUserId, ANONYMOUS_USER_ID );
 			$sUserPerms[$pUserId][$this->mContentId] = $this->mDb->getAssoc( $query, $bindVars );
