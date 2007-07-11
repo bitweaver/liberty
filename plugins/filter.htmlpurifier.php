@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.10 2007/06/29 00:21:08 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.11 2007/07/11 18:24:16 nickpalmer Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -101,8 +101,8 @@ function htmlpure_filter( $pData, $pFilterHash ) {
 				// TODO: devise a way to parse plugins dir
 				// and check for the right property here
 				// so new plugins are just drop in place.
-				if ($gBitSystem->isFeatureActive('liberty_html_pure_allow_youtube')) {
-					require_once 'HTMLPurifier/Filter/YouTube.php';
+				if ($gBitSystem->isFeatureActive('htmlpure_allow_youtube')) {
+					require_once('HTMLPurifier/Filter/YouTube.php');
 					$gHtmlPurifier->addFilter(new HTMLPurifier_Filter_YouTube());
 				}
 			}
