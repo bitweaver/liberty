@@ -87,7 +87,7 @@
 									{formlabel label="Force Allow HTML" for="force_allow_html"}
 									{forminput}
 										<input type="checkbox" name="content_force_allow_html" id="force_allow_html" value="y" {if $gBitSystem->isFeatureActive('content_force_allow_html')}checked="checked"{/if} />
-										This will force HTML to be allowed for all users in tikiwiki format content. We recommend turning this on if you are using either WYSIWYG editor.
+										This will force HTML to be allowed for all users in tikiwiki format content. We require this on if you are using FCKEditor and recommended it with any other WYSIWYG editor.
 										{formhelp note="This will force the allowance of HTML in tikiwiki format content for all users."}
 									{/forminput}
 								</div>
