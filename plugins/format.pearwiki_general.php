@@ -21,18 +21,30 @@ $genPluginParams = array (
 
 $reg = new PEAR_Registry();
 
-foreach ($reg->listPackages() as $package) {
-	if (substr($package,0,strlen("text_wiki"))=="text_wiki") {
-		$inf = $reg->packageInfo($package);
-		$package = $inf['package'];
-		$p = substr($package,strlen("text_wiki"));
-		if (empty($p)) {
+foreach( $reg->listPackages() as $package ) {
+	if( preg_match( '!^text_wiki!', $package )) {
+		// get package information
+		$inf = $reg->packageInfo( $package );
+
+		// package information is all over the place. this should clean it up a bit
+		if( !empty( $inf['name'] )) {
+			$package = $inf['name'];
+		} elseif( !empty( $inf['name'] )) {
+			$package = $inf['package'];
+		} else {
+			continue;
+		}
+
+		// fetch parser name
+		$p = substr( $package, strlen( "text_wiki" ));
+		if( empty( $p )) {
 			$parser = "Text_Wiki";
 			$parser_class = "Default";
 		} else {
-			$parser = substr($p,1);
+			$parser = substr( $p,1 );
 			$parser_class = $parser;
 		}
+
 		$f = create_function('&$pParseHash, &$pCommonObject','return pearwiki_general_parse_data("'.$parser_class.'",$pParseHash, $pCommonObject);');
 		$guid = "pearwiki_$parser";
 		if (strlen($guid)>16) {
