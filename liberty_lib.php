@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.3 2007/07/12 08:15:31 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.4 2007/07/12 14:40:13 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -666,5 +666,24 @@ function liberty_fetch_thumbnail_url( $pFilePath, $pThumbSize = 'small', $pAltIm
 		$ret = liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl, array( $pThumbSize ), $pMimeImage );
 	}
 	return( !empty( $ret[$pThumbSize] ) ? $ret[$pThumbSize] : NULL );
+}
+
+/**
+ * get a set of image size options based on $gThumbSizes
+ * 
+ * @param string $pEmptyOption string to use as empty option - if set to FALSE no empty string is eincluded - Note that string is tra()'d
+ * @access public
+ * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+ */
+function get_image_size_options( $pEmptyOption = 'Disable this feature' ) {
+	global $gThumbSizes;
+	$ret = array();
+	if( !empty( $pEmptyOption )) {
+		$ret[''] = tra( $pEmptyOption );
+	}
+	foreach( $gThumbSizes as $key => $size ) {
+		$ret[$key] = tra( ucfirst( $key ))." ( {$size['width']} x {$size['height']} ".tra( 'pixels' )." )";
+	}
+	return $ret;
 }
 ?>
