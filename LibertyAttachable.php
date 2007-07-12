@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.116 2007/07/10 20:01:09 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.117 2007/07/12 09:11:02 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -192,10 +192,23 @@ class LibertyAttachable extends LibertyContent {
 
 	function verify( &$pParamHash ) {
 		global $gBitSystem, $gBitUser;
-		// don't verify p_liberty_attach_attachments on bitpermuser class so registration with avatar upload works
-		// only verify if there is an attachment and the user isn't supposed to do it.
-		if( strtolower( get_class( $this ) ) != 'bitpermuser' && !empty($_FILES) && !$gBitUser->hasPermission('p_liberty_attach_attachments') ) {
-			$this->mErrors['attachments'] = tra('You do not have permission to upload attachments.');
+		// we need to make sure we have valid file in $_FILES
+		foreach( $_FILES as $key => $file ) {
+			if( !empty( $file['name'] )) {
+				$uploads[$key] = $file;
+			}
+		}
+
+		// don't check for p_liberty_attach_attachments permission on bitpermuser class so registration with avatar upload works
+		if( strtolower( get_class( $this )) == 'bitpermuser' ) {
+			$pParamHash['no_perm_check'] = TRUE;
+		}
+
+		// check for the required permissions to upload a file to the liberty attachments area
+		if( !empty( $uploads ) && empty( $pParamHash['no_perm_check'] )) {
+			if( !$gBitUser->hasPermission( 'p_liberty_attach_attachments' )) {
+				$this->mErrors['permission'] = tra( 'You do not have permission to upload attachments.' );
+			}
 		}
 
 		if( !empty( $pParamHash['attachment_id'] ) && !$this->verifyId( $pParamHash['attachment_id'] ) ) {
@@ -215,8 +228,8 @@ class LibertyAttachable extends LibertyContent {
 			$pParamHash['subdir'] = 'files';
 		}
 
-		$this->verifyAttachments($pParamHash);
-		$this->verifyPrimaryAttachmentId($pParamHash);
+		$this->verifyAttachments( $pParamHash );
+		$this->verifyPrimaryAttachmentId( $pParamHash );
 
 		return( count( $this->mErrors ) == 0 );
 	}
