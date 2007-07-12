@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.2 2007/07/10 20:47:43 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.3 2007/07/12 08:15:31 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -604,6 +604,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
  * @param string $pFilePath Relative path to file we want to get thumbnails for (needs to include file name for mime icons)
  * @param string $pAltImageUrl URL to an alternative fallback image such as a background thumbnailer image
  * @param array $pThumbSizes array of images to search for in the pFilePath
+ * @param boolean $pMimeImage specify if you want to fetch an alternative image or not (default TRUE)
  * @access public
  * @return array of available thumbnails or mime icons
  */
