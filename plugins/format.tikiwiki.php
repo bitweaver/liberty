@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.106 $
+ * @version  $Revision: 1.107 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -523,7 +523,7 @@ class TikiWikiParser extends BitBase {
 	function parse_mediawiki_tables( $data ) {
 		//DEBUG: $data = "\n<!-- parse_mediawiki_tables() called. -->\n" . $data;
 		/* Find all matches to {|...|} with no {| inside. */
-		while (preg_match('/\n\{\|(.*?)\n\|\}/sm', $data, $matches)) {
+		while( preg_match( '/\n?\{\|(.*?)\n\|\}/sm', $data, $matches )) {
 			//DEBUG: vd($matches);
 			$table_data = str_replace("\r", "", $matches[1]);
 			$table_data = str_replace('||', "\n|", $table_data);
@@ -661,7 +661,7 @@ class TikiWikiParser extends BitBase {
 		$data = preg_replace("/\{rm\}/", "&rlm;", $data);
 
 		// Parse MediaWiki-style pipe syntax tables.
-		if ((strpos($data, "\n{|") !== FALSE) && (strpos($data, "\n|}") !== FALSE)) {
+		if(( strpos( $data, "{|" ) === 0 || strpos( $data, "\n{|" ) !== FALSE ) && strpos( $data, "\n|}" ) !== FALSE ) {
 			$data = $this->parse_mediawiki_tables($data);
 		}
 
