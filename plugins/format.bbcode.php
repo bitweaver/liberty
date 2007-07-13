@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -55,28 +55,26 @@ function bbcode_parse_data( &$pParseHash, &$pCommonObject ) {
 	$data = preg_replace( '/\[(quote|code):[0-9a-f]+=/', '[\1=', $data );
 	$data = preg_replace( '/:[0-9a-f]+\]/', ']', $data );
 
-/* get options from the ini file 
-// $config = parse_ini_file('BBCodeParser.ini', true);
-$config = parse_ini_file('doc/Text_Wiki_BBCode/doc/BBCodeParser_V2.ini', true);
-$options = &PEAR::getStaticProperty('HTML_BBCodeParser', '_options');
-$options = $config['HTML_BBCodeParser'];
-unset($options);
-*/
+	/* get options from the ini file 
+	// $config = parse_ini_file('BBCodeParser.ini', true);
+	$config = parse_ini_file('doc/Text_Wiki_BBCode/doc/BBCodeParser_V2.ini', true);
+	$options = &PEAR::getStaticProperty('HTML_BBCodeParser', '_options');
+	$options = $config['HTML_BBCodeParser'];
+	unset($options);
+	 */
 
-$parser = new HTML_BBCodeParser('BBCodeParser_V2.ini');
-$parser->setText( $data );
-$parser->parse();
-$ret = $parser->getParsed();
+	$parser = new HTML_BBCodeParser('BBCodeParser_V2.ini');
+	$parser->setText( $data );
+	$parser->parse();
+	$ret = $parser->getParsed();
 
-/*
+	/*
 	$parser = new HTML_BBCodeParser();
 	$parser->setText( $data );
 	$parser->parse();
 	$ret = $parser->getParsed();
-*/
+	 */
 
-	// eventually we should strip tags, maybe tikilink, or other things.
-	parse_data_plugins( $ret, $foo, $bar, $empty, $pCommonObject );
 	if( preg_match( "/\(\(([^\)][^\)]+)\)\)/", $ret ) ) {
 		preg_match_all( "/\(\(([^\)][^\)]+)\)\)/", $ret, $pages );
 		foreach (array_unique($pages[1])as $page_parse) {
@@ -91,6 +89,6 @@ $ret = $parser->getParsed();
 }
 
 	}
-}
+} // PEAR check
 
 ?>

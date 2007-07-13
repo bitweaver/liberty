@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.262 2007/07/11 18:23:45 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.263 2007/07/13 17:28:34 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1973,19 +1973,31 @@ class LibertyContent extends LibertyBase {
 
 		// if $ret is empty, we haven't read anything from cache yet - we need to parse the raw data
 		if( empty( $ret ) || !empty( $parseAndCache )) {
-
-			// we only filter if this is not a split parse
-			if( empty( $parseHash['split_parse'] )) {
-				$parseHash['data'] = LibertyContent::filterData( $parseHash['data'], $parseHash, 'pre' );
-			}
-
 			if( !empty( $parseHash['data'] ) && $parseHash['format_guid'] ) {
+				// we only filter if this is not a split parse - if it's a split parse, it will fetch its own filters
+				if( empty( $parseHash['split_parse'] )) {
+					$parseHash['data'] = LibertyContent::filterData( $parseHash['data'], $parseHash, 'pre' );
+				}
+
+				$replace = array();
+				// extract and protect ~pp~...~/pp~ and ~np~...~/np~ sections
+				parse_protect( $parseHash['data'], $replace );
+
+				// this will handle all liberty data plugins like {code} and {attachment} usage in all formats
+				parse_data_plugins( $parseHash['data'], $replace, $this );
+
 				if( $func = $gLibertySystem->getPluginFunction( $parseHash['format_guid'], 'load_function' ) ) {
 					// get the beast parsed
 					if( $ret = $func( $parseHash, $this )) {
 						// we only filter if this is not a split parse
 						if( empty( $parseHash['split_parse'] )) {
 							$ret = LibertyContent::filterData( $ret, $parseHash, 'post' );
+						}
+
+						// before we cache we insert the protected sections back - currently this is even after the filters.
+						// this might not be ideal but it allows stuff like ~pp~{maketoc}~/pp~
+						foreach( $replace as $rep ) {
+							$ret = str_replace( $rep["key"], $rep["data"], $ret );
 						}
 
 						if( !empty( $parseAndCache )) {

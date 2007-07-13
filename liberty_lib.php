@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.4 2007/07/12 14:40:13 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.5 2007/07/13 17:28:34 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -10,36 +10,32 @@
  * This crazy function will parse all the data plugin stuff found within any 
  * parsed text section
  * 
- * @param array $data Data to be parsed
- * @param array $preparsed 
- * @param array $noparsed 
- * @param array $pParser 
+ * @param array $pData Data to be parsed
  * @access public
- * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+ * @return void
  */
-function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser, &$pCommonObject ) {
+function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject ) {
 	global $gLibertySystem, $gBitSystem;
-	// Find the plugins
-	if( $gBitSystem->isPackageActive( 'stencil' ) ) {
+
+	// this should go to a filter
+	if( $gBitSystem->isPackageActive( 'stencil' )) {
 		require_once( STENCIL_PKG_PATH.'BitStencil.php' );
-		$data = preg_replace_callback("/\{\{\/?([^|]+)([^\}]*)\}\}/", 'parse_stencil_data', $data );
+		$pData = preg_replace_callback( "/\{\{\/?([^|]+)([^\}]*)\}\}/", 'parse_stencil_data', $pData );
 	}
 
 	// note: $curlyTags[0] is the complete match, $curlyTags[1] is plugin name, $curlyTags[2] is plugin arguments
-	preg_match_all("/\{\/?([A-Za-z0-9]+)([^\}]*)\}/", $data, $curlyTags);
+	preg_match_all( "/\{\/?([A-Za-z0-9]+)([^\}]*)\}/", $pData, $curlyTags );
 
 	if( count( $curlyTags[0] ) ) {
-		// if true, replace only CODE plugin, if false, replace all other plugins
-		$code_first = true;
+		// if TRUE, replace only CODE plugin, if false, replace all other plugins
+		$code_first = TRUE;
 
-		// Process plugins in reverse order, so that nested plugins are handled
-		// from the inside out.
+		// Process plugins in reverse order, so that nested plugins are handled from the inside out.
 		$i = count( $curlyTags[0] ) - 1;
-		$paired_tag_seen = array();
 		while( $i >= 0 ) {
 			$plugin_start = $curlyTags[0][$i];
 			$plugin = $curlyTags[1][$i];
-			$pos = strpos( $data, $plugin_start ); // where plugin starts
+			$pos = strpos( $pData, $plugin_start ); // where plugin starts
 			$dataTag = strtolower( $plugin );
 			// hush up the return of this in case someone uses curly braces to enclose text
 			$pluginInfo = $gLibertySystem->getPluginInfo( @$gLibertySystem->mDataTags[$dataTag] ) ;
@@ -51,12 +47,12 @@ function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser, &$pComm
 				$paired_close_tag_seen[$dataTag] = 0;
 			}
 
-			$is_opening_tag = 0;
+			$is_opening_tag = FALSE;
 			if( ( empty( $pluginInfo['requires_pair'] ) && (strtolower($plugin_start) != '{/'. $dataTag . '}' ) )
 				|| (strpos( $plugin_start, ' ' ) > 0)
 				|| (strtolower($plugin_start) == '{'.$dataTag.'}' && !$paired_close_tag_seen[$dataTag] )
 			) {
-				$is_opening_tag = 1;
+				$is_opening_tag = TRUE;
 			}
 
 			if(
@@ -65,20 +61,19 @@ function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser, &$pComm
 					// when NOT in CODE parsing mode, replace all other plugins
 					|| ( !$code_first && ( $dataTag <> 'code' ) )
 				)
-				&& isset( $gLibertySystem->mDataTags[$dataTag] )
-				&& ( $pluginInfo )
-				&& ( $gLibertySystem->getPluginFunction( $gLibertySystem->mDataTags[$dataTag], 'load_function' ) )
+				&& !empty( $gLibertySystem->mDataTags[$dataTag] )
+				&& !empty( $pluginInfo )
 				&& ( $loadFunc = $gLibertySystem->getPluginFunction( $gLibertySystem->mDataTags[$dataTag], 'load_function' ) )
 				&& ( $is_opening_tag )
 			) {
 
 				if( $pluginInfo['requires_pair'] ) {
 					$plugin_end = '{/'.$plugin.'}';
-					$pos_end = strpos( strtolower( $data ), strtolower( $plugin_end ), $pos ); // where plugin data ends
+					$pos_end = strpos( strtolower( $pData ), strtolower( $plugin_end ), $pos ); // where plugin data ends
 					$plugin_end2 = '{'.$plugin.'}';
-					$pos_end2 = strpos( strtolower( $data ), strtolower( $plugin_end2 ), $pos+1 ); // where plugin data ends
+					$pos_end2 = strpos( strtolower( $pData ), strtolower( $plugin_end2 ), $pos+1 ); // where plugin data ends
 
-					if( ( $pos_end2 > 0 && $pos_end2 > 0 && $pos_end2 < $pos_end ) || $pos_end === false ) {
+					if( ( $pos_end2 > 0 && $pos_end2 > 0 && $pos_end2 < $pos_end ) || $pos_end === FALSE ) {
 						$pos_end = $pos_end2;
 						$plugin_end = $plugin_end2;
 					}
@@ -87,13 +82,13 @@ function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser, &$pComm
 					$plugin_end = '';
 				}
 
-//print "			if ( ((($code_first) && ($plugin == 'CODE')) || ((!$code_first) && ($plugin <> 'CODE'))) && ($pos_end > $pos)) { <br/>";
+				//print "if ( ((($code_first) && ($plugin == 'CODE')) || ((!$code_first) && ($plugin <> 'CODE'))) && ($pos_end > $pos)) { <br/>";
 
 				// Extract the plugin data
 				$plugin_data_len = $pos_end - $pos - strlen( $curlyTags[0][$i] );
 
-				$plugin_data = substr( $data, $pos + strlen( $plugin_start ), $plugin_data_len );
-//print "		$plugin_data_len = $pos_end - $pos - strlen(".$curlyTags[0][$i].")		substr( $pos + strlen($plugin_start), $plugin_data_len);";
+				$plugin_data = substr( $pData, $pos + strlen( $plugin_start ), $plugin_data_len );
+				//print "$plugin_data_len = $pos_end - $pos - strlen(".$curlyTags[0][$i].") substr( $pos + strlen($plugin_start), $plugin_data_len);";
 
 				$arguments = array();
 				// Construct argument list array
@@ -120,30 +115,116 @@ function parse_data_plugins( &$data, &$preparsed, &$noparsed, &$pParser, &$pComm
 				}
 
 				if( $ret = $loadFunc( $plugin_data, $arguments, $pCommonObject ) ) {
-					// temporarily replace end of lines so tables and other things render properly
-//					$ret = preg_replace( "/\n/", '#EOL', $ret );
-
-					// Handle pre- & no-parse sections and plugins inserted by this plugin
-					if( is_object( $pParser ) ) {
-						// we were passed in a parser object, assume tikiwiki that has parse_first method
-						$pParser->parse_pp_np( $ret, $preparsed, $noparsed );
-					} else {
-						// just nuke all np/pp for now in non tikiwiki formats
-						$ret = preg_replace( "/\~(\/?)[np]p\~/", '', $ret );
-
-					}
-					// Replace plugin section with its output in data
-					$data = substr_replace($data, $ret, $pos, $pos_end - $pos + strlen($plugin_end));
+					$key = md5( mt_rand() );
+					$pReplace[] = array(
+						'key'  => $key,
+						'data' => $ret,
+					);
+					$pData = substr_replace( $pData, $key, $pos, $pos_end - $pos + strlen( $plugin_end ));
 				}
 			}
 			$i--;
 			// if we are in CODE parsing mode and list is done, switch to 'parse other plugins' mode and start all over
 			if( ( $code_first ) && ( $i < 0 ) ) {
 				$i = count( $curlyTags[0] ) - 1;
-				$code_first = false;
+				$code_first = FALSE;
 			}
 		} // while
 	}
+}
+
+/**
+ * This function replaces pre- and no-parsed sections with unique keys and 
+ * saves the section contents for later reinsertion. It is needed by 
+ * parse_data_plugins() to extract sections that don't require parsing
+ * 
+ * @param array $pData data that might contain ~np~ or ~pp~ strings
+ * @param array $preparsed array that is updated by refrerence with key and data that needs to be substituted later
+ * @param array $noparsed array that is updated by refrerence with key and data that needs to be substituted later
+ * @access public
+ * @return void
+ */
+function parse_protect( &$pData, &$pReplace ) {
+	// Find all sections delimited by ~pp~ ... ~/pp~
+	preg_match_all( "/\~pp\~(.*?)\~\/pp\~/s", $pData, $preparse );
+	if( count( $preparse[0] )) {
+		foreach( array_unique( $preparse[1] ) as $pp ) {
+			$aux["key"]  = md5( mt_rand() );
+			$aux["data"] = "<pre><code>".htmlspecialchars( $pp )."</code></pre>";
+			$pReplace[]  = $aux;
+			$pData       = str_replace( "~pp~$pp~/pp~", $aux['key'], $pData );
+		}
+	}
+
+	// now remove <pre>...<pre> sections
+	preg_match_all( "!(<pre[^>]*>)(.*?)(</pre[^>]*>)!si", $pData, $preparse );
+	if( count( $preparse[0] )) {
+		foreach( $preparse[2] as $key => $pre ) {
+			$aux["key"]  = md5( mt_rand() );
+			$aux["data"] = $preparse[1][$key].htmlspecialchars( $pre ).$preparse[3][$key];
+			$pReplace[]  = $aux;
+			$pData       = str_replace( $preparse[1][$key].$pre.$preparse[3][$key], $aux['key'], $pData );
+		}
+	}
+
+	// and now ~np~...~/np~ sections
+	preg_match_all( "/\~np\~(.*?)\~\/np\~/s", $pData, $noparse );
+	if( count( $noparse[0] )) {
+		foreach( array_unique( $noparse[1] ) as $np ) {
+			$aux["key"]  = md5( mt_rand() );
+			$aux["data"] = htmlspecialchars( $np );
+			$pReplace[]  = $aux;
+			$pData       = str_replace( "~np~$np~/np~", $aux['key'], $pData );
+		}
+	}
+
+	/* don't quite understand why this has to be so complicated - i've replaced the code below with the short section above
+	// Find all sections delimited by ~np~ ... ~/np~
+	if( preg_match( "!\~np\~(.*?)\~/np\~!s", $pData, $nparse )) {
+		$new_data = '';
+		$nopa     = '';
+		$state    = TRUE;
+		$skip     = FALSE;
+		$dlength  = strlen( $pData );
+
+		for( $i = 0; $i < $dlength; $i++ ) {
+			$tag5 = substr( $pData, $i, 5 );
+			$tag4 = substr( $tag5, 0, 4 );
+			$tag1 = substr( $tag4, 0, 1 );
+
+			// Beginning of a noparse section found
+			if( $state && $tag4 == '~np~' ) {
+				$i    += 3;
+				$state = FALSE;
+				$skip  = TRUE;
+			}
+
+			// Termination of a noparse section found
+			if( !$state && $tag5 == '~/np~' ) {
+				$state       = TRUE;
+				$i          += 4;
+				$skip        = TRUE;
+				$key         = md5( mt_rand() );
+				$new_data   .= $key;
+				$aux["key"]  = $key;
+				$aux["data"] = htmlspecialchars( $nopa );
+				$pReplace[]  = $aux;
+				$nopa        = '';
+			}
+
+			if( !$skip ) {              // This character is not part of a noparse tag
+				if( $state ) {          // This character is not within a noparse section
+					$new_data .= $tag1;
+				} else {                // This character is within a noparse section
+					$nopa     .= $tag1;
+				}
+			} else {                    // Tag is now skipped over
+				$skip = FALSE;
+			}
+		}
+		$pData = $new_data;
+	}
+	 */
 }
 
 

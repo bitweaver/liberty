@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -43,8 +43,6 @@ function markdown_save_data( &$pParamHash ) {
 function markdown_parse_data( &$pParseHash, &$pCommonObject ) {
 	global $gLibertySystem;
 	$ret = Markdown( $pParseHash['data'] );
-	// eventually we should strip tags, maybe tikilink, or other things.
-	parse_data_plugins( $ret, $foo, $bar, $empty, $pCommonObject );
 	return $ret;
 }
 

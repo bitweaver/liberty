@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.16 $
+ * @version  $Revision: 1.17 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -46,8 +46,6 @@ function bithtml_save_data( &$pParamHash ) {
 function bithtml_parse_data( &$pParseHash, &$pCommonObject ) {
 	global $gLibertySystem;
 	$ret = $pParseHash['data'];
-	// eventually we should strip tags, maybe tikilink, or other things.
-	parse_data_plugins( $ret, $foo, $bar, $empty, $pCommonObject );
 	if( preg_match( "/\(\(([^\)][^\)]+)\)\)/", $ret ) ) {
 		preg_match_all( "/\(\(([^\)][^\)]+)\)\)/", $ret, $pages );
 		foreach (array_unique($pages[1])as $page_parse) {

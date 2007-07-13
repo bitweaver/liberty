@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.105 $
+ * @version  $Revision: 1.106 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -119,7 +119,7 @@ function tikiwiki_parse_data( &$pParseHash, &$pCommonObject ) {
 	if( empty( $parser ) ) {
 	    $parser = new TikiWikiParser();
 	}
-	$ret = $parser->parse_data( $pParseHash, $pCommonObject );
+	$ret = $parser->parseData( $pParseHash, $pCommonObject );
 
 	return $ret;
 }
@@ -350,105 +350,6 @@ class TikiWikiParser extends BitBase {
 		}
 		return $ret;
 	}
-
-	function parse_data_raw($data) {
-		$data = $this->parseData($data);
-
-		$data = str_replace( WIKI_PKG_URL."index", WIKI_PKG_URL."index_raw", $data );
-		return $data;
-	}
-
-
-	// This recursive function handles pre- and no-parse sections and plugins
-	function parse_first(&$data, &$preparsed, &$noparsed, &$pCommonObject) {
-		global $gLibertySystem;
-		$this->parse_pp_np($data, $preparsed, $noparsed);
-		// Handle pre- and no-parse sections
-		parse_data_plugins( $data, $preparsed, $noparsed, $this, $pCommonObject );
-	}
-
-
-	// AWC ADDITION
-	// This function replaces pre- and no-parsed sections with unique keys
-	// and saves the section contents for later reinsertion.
-	function parse_pp_np(&$data, &$preparsed, &$noparsed) {
-		// Find all sections delimited by ~pp~ ... ~/pp~
-		// and replace them in the data stream with a unique key
-		preg_match_all("/\~pp\~(.*?)\~\/pp\~/s", $data, $preparse);
-		if( count( $preparse[0] ) ) {
-			foreach (array_unique($preparse[1])as $pp) {
-				$key = md5(BitSystem::genPass());
-
-				$aux["key"] = $key;
-				$aux["data"] = $pp;
-				$preparsed[] = $aux;
-				$data = str_replace("~pp~$pp~/pp~", $key, $data);
-			}
-
-			// Temporary remove <pre> tags too
-			// TODO: Is this a problem if user insert <PRE> but after parsing
-			//	   will get <pre> (lowercase)?? :)
-			preg_match_all("/(<[Pp][Rr][Ee]>)((.|\n)*?)(<\/[Pp][Rr][Ee]>)/", $data, $preparse);
-			$idx = 0;
-
-			foreach (array_unique($preparse[2])as $pp) {
-				$key = md5(BitSystem::genPass());
-
-				$aux["key"] = $key;
-				$aux["data"] = $pp;
-				$preparsed[] = $aux;
-				$data = str_replace($preparse[1][$idx] . $pp . $preparse[4][$idx], $key, $data);
-				$idx = $idx + 1;
-			}
-		}
-
-		if( preg_match("!\~np\~(.*?)\~/np\~!s", $data, $preparse) ) {
-			// Find all sections delimited by ~np~ ... ~/np~
-			$new_data = '';
-			$nopa = '';
-			$state = true;
-			$skip = false;
-
-			$dlength=strlen($data);
-			for ($i = 0; $i < $dlength; $i++) {
-				$tag5 = substr($data, $i, 5);
-				$tag4 = substr($tag5, 0, 4);
-				$tag1 = substr($tag4, 0, 1);
-
-				// Beginning of a noparse section found
-				if ($state && $tag4 == '~np~') {
-					$i += 3;
-					$state = false;
-					$skip = true;
-				}
-
-				// Termination of a noparse section found
-				if (!$state && ($tag5 == '~/np~')) {
-					$state = true;
-					$i += 4;
-					$skip = true;
-					$key = md5(BitSystem::genPass());
-					$new_data .= $key;
-					$aux["key"] = $key;
-					$aux["data"] = $nopa;
-					$noparsed[] = $aux;
-					$nopa = '';
-				}
-
-				if (!$skip) { // This character is not part of a noparse tag
-					if ($state) { // This character is not within a noparse section
-					$new_data .= $tag1;
-					} else { // This character is within a noparse section
-					$nopa .= $tag1;
-					}
-				} else { // Tag is now skipped over
-					$skip = false;
-				}
-			}
-			$data = $new_data;
-		}
-	}
-
 
 	// This function handles wiki codes for those special HTML characters
 	// that textarea won't leave alone.
@@ -682,7 +583,7 @@ class TikiWikiParser extends BitBase {
 		return $data;
 	}
 
-	function parse_data( $pParseHash, &$pCommonObject ) {
+	function parseData( $pParseHash, &$pCommonObject ) {
 		global $gBitSystem, $gLibertySystem, $gBitUser, $page;
 
 		$data      = $pParseHash['data'];
@@ -727,11 +628,6 @@ class TikiWikiParser extends BitBase {
 		}
 
 		$data = preg_replace( '/(\)\))('.WIKI_WORDS_REGEX.')(\(\()/', "~np~" . "$2" . "~/np~", $data);
-
-		// Handle pre- and no-parse sections and plugins
-		$preparsed = array();
-		$noparsed = array();
-		$this->parse_first($data, $preparsed, $noparsed, $pCommonObject);
 
 		// Extract [link] sections (to be re-inserted later)
 		$noparsedlinks = array();
@@ -889,13 +785,6 @@ class TikiWikiParser extends BitBase {
 					if( strlen( trim( $text[0] ) ) > 0 ) {
 						$repl = preg_replace( "#{$pages[1][$i]}</a>$#", "{$text[0]}</a>", $repl );
 					}
-
-					// this still relevant? -- xing
-//					// Check is timeout expired?
-//					if (isset($text[1]) && (time() - $modTime ) < intval($text[1])) {
-//						// Append small 'new' image. TODO: possible 'updated' image more suitable...
-//						$repl .= '&nbsp;<img src="img/icons/new.gif" border="0" alt="'.tra("new").'" />';
-//					}
 				} else {
 					$repl = BitPage::getDisplayLink( $pages[1][$i], $exists );
 					if( strlen( trim( $text[0] ) ) > 0 ) {
@@ -947,6 +836,7 @@ class TikiWikiParser extends BitBase {
 			}
 		}
 
+		// the hotwords stuff should go in a filter
 		if ($gBitSystem->isPackageActive( 'hotwords' ) ) {
 			if( empty( $hotwordlib ) ) {
 				include_once(HOTWORDS_PKG_PATH."hotword_lib.php");
@@ -1444,15 +1334,7 @@ class TikiWikiParser extends BitBase {
 
 		// Close BiDi DIVs if any
 		for ($i = 0; $i < $bidiCount; $i++) {
-		$data .= "</div>";
-		}
-
-		foreach ($noparsed as $np) {
-			$data = str_replace($np["key"], $np["data"], $data);
-		}
-
-		foreach ($preparsed as $pp) {
-			$data = str_replace($pp["key"], "<pre>" . $pp["data"] . "</pre>", $data);
+			$data .= "</div>";
 		}
 
 		$data = str_replace( "<!-- bitremovebr --><br />", "", $data );
