@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.108 $
+ * @version  $Revision: 1.109 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -527,14 +527,20 @@ class TikiWikiParser extends BitBase {
 			//vd($matches);
 			$table_data = str_replace("\r", "", $matches[1]);
 			$table_data = str_replace('||', "\n|", $table_data);
+
+			// get all instances where put in info like: background=blue and convert it to background="blue"
+			$xhtmlfix['pattern'] = "!=([^'\"][^\s]*)!";
+			$xhtmlfix['replace'] = '="$1"';
+
 			while (preg_match('/^![^!]+!!/m', $table_data)) {
 				/* Replace !! with \n! but ONLY in !-defined header rows. */
 				$table_data = preg_replace('/^!([^!]+)!!/m', "!$1\n!", $table_data);
 			}
-			if (substr($table_data, 0, 1) != "\n") {
+
+			if( substr( $table_data, 0, 1 ) != "\n" ) {
 				/* We have table parameters. */
-				list($table_params, $table_data) = explode("\n", $table_data, 2);
-				$table_params = trim($table_params);
+				list( $table_params, $table_data ) = explode( "\n", $table_data, 2 );
+				$table_params = preg_replace( $xhtmlfix['pattern'], $xhtmlfix['replace'], trim( $table_params ));
 				/* FIXME:  This attempt to support foo:bar table params needs help!
 				if (strlen($table_params)) {
 					$table_params = preg_replace("/\b(\w+):/", '$1=', $table_params);
@@ -557,12 +563,21 @@ class TikiWikiParser extends BitBase {
 						} else {
 							$row = 1;
 						}
-						$content .= '<tr' . ((isset($row_matches[1])) ? (' '.$row_matches[1]) : (""))
-						            . '>';
+
+						if( !empty( $row_matches[1] )) {
+							$row_matches[1] = preg_replace( $xhtmlfix['pattern'], $xhtmlfix['replace'], trim( $row_matches[1] ));
+							$content .= "<tr {$row_matches[1]}>";
+						} else {
+							$content .= '<tr>';
+						}
 					} else if (preg_match('/^([\|!])\s*([^\|]+\s*\|)?\s*(.*)$/', $line, $row_matches)) {
 						if (! $row) {
 							$content .= '<tr>';
 							$row = 1;
+						}
+
+						if( !empty( $row_matches[2] )) {
+							$row_matches[2] = preg_replace( $xhtmlfix['pattern'], $xhtmlfix['replace'], trim( $row_matches[2] ));
 						}
 						$content .= '<t' . (($row_matches[1] == '!') ? ('h') : ('d'))
 						            . ((strlen($row_matches[2])) ? (' ' . trim(substr($row_matches[2], 0, -1))) : (''))
