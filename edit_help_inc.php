@@ -1,10 +1,10 @@
 <?php
 /**
- * $Id: edit_help_inc.php,v 1.14 2007/06/09 12:18:51 squareing Exp $
+ * $Id: edit_help_inc.php,v 1.15 2007/07/14 08:04:02 squareing Exp $
  * edit_help_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage functions
  */
@@ -17,10 +17,12 @@ $formatplugins = $gLibertySystem->getPluginsOfType( FORMAT_PLUGIN );
 
 // refine data plugins and add help where available
 foreach( $dataplugins as $guid => $plugin ) {
-	if( isset( $plugin['description'] )) {
+	if( !empty( $plugin['description'] ) && !empty( $plugin['syntax'] )) {
 		$plugin["plugin_guid"] = preg_replace( "/^(data|filter)/", "", $guid );
 		$plugin["exthelp"]     = !empty( $plugin['help_function'] ) && $gLibertySystem->getPluginFunction( $guid, 'help_function' ) ? $plugin['help_function']() : '';
 		$dataplugins[$guid]    = $plugin;
+	} else {
+		unset( $dataplugins[$guid] );
 	}
 }
 
