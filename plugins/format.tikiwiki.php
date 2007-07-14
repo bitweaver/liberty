@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.109 $
+ * @version  $Revision: 1.110 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -340,7 +340,7 @@ class TikiWikiParser extends BitBase {
 			}
 		}
 		// final attempt to get page details
-		if( empty( $ret ) ) {
+		if( empty( $ret ) && !empty( $pCommonObject )) {
 			if( $ret = $pCommonObject->pageExists( $pTitle, FALSE, $pContentId ) ) {
 				if( count( $ret ) > 1 ) {
 					$ret[0]['description'] = tra( 'Multiple pages with this name' );
