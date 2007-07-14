@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.107 $
+ * @version  $Revision: 1.108 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -521,10 +521,10 @@ class TikiWikiParser extends BitBase {
 	}
 
 	function parse_mediawiki_tables( $data ) {
-		//DEBUG: $data = "\n<!-- parse_mediawiki_tables() called. -->\n" . $data;
+		//$data = "\n<!-- parse_mediawiki_tables() called. -->\n" . $data;
 		/* Find all matches to {|...|} with no {| inside. */
 		while( preg_match( '/\n?\{\|(.*?)\n\|\}/sm', $data, $matches )) {
-			//DEBUG: vd($matches);
+			//vd($matches);
 			$table_data = str_replace("\r", "", $matches[1]);
 			$table_data = str_replace('||', "\n|", $table_data);
 			while (preg_match('/^![^!]+!!/m', $table_data)) {
@@ -557,7 +557,7 @@ class TikiWikiParser extends BitBase {
 						} else {
 							$row = 1;
 						}
-						$content .= '<tr' . ((isset($row_matches[1])) ? ($row_matches[1]) : (""))
+						$content .= '<tr' . ((isset($row_matches[1])) ? (' '.$row_matches[1]) : (""))
 						            . '>';
 					} else if (preg_match('/^([\|!])\s*([^\|]+\s*\|)?\s*(.*)$/', $line, $row_matches)) {
 						if (! $row) {
@@ -576,10 +576,10 @@ class TikiWikiParser extends BitBase {
 					$content .= "<!-- ERROR:  Ignoring invalid line \"$line\" -->";
 				}
 			}
-			$content .= '</table>';
+			$content .= '</tr></table>';
 			$data = str_replace($matches[0], $content, $data);
 		}
-		//DEBUG: $data .= "\n<!-- parse_mediawiki_tables() done. -->\n";
+		//$data .= "\n<!-- parse_mediawiki_tables() done. -->\n";
 		return $data;
 	}
 
