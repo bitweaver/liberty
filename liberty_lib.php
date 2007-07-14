@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.5 2007/07/13 17:28:34 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.6 2007/07/14 14:51:37 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -389,6 +389,18 @@ function liberty_content_display( &$pObject, &$pParamHash ) {
 			$pObject->verifyPermission( $pParamHash['perm_name'] );
 		}
 	}
+}
+
+/**
+ * liberty_content_edit 
+ * 
+ * @param array $pObject 
+ * @param array $pParamHash 
+ * @access public
+ * @return void
+ */
+function liberty_content_edit( &$pObject ) {
+	include_once( LIBERTY_PKG_PATH.'edit_help_inc.php' );
 }
 
 

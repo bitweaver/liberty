@@ -1,15 +1,17 @@
 <?php
 /**
- * $Id: edit_help_inc.php,v 1.15 2007/07/14 08:04:02 squareing Exp $
+ * $Id: edit_help_inc.php,v 1.16 2007/07/14 14:51:37 squareing Exp $
  * edit_help_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.15 $
+ * @version  $Revision: 1.16 $
  * @package  liberty
  * @subpackage functions
  */
 
 global $gLibertySystem;
+require_once( '../bit_setup_inc.php' );
+
 $inEditor = TRUE; // Required by PluginHelp to Determin Executed in an Editor
 
 $dataplugins = array_merge( $gLibertySystem->getPluginsOfType( DATA_PLUGIN ), $gLibertySystem->getPluginsOfType( FILTER_PLUGIN ));
@@ -23,6 +25,16 @@ foreach( $dataplugins as $guid => $plugin ) {
 		$dataplugins[$guid]    = $plugin;
 	} else {
 		unset( $dataplugins[$guid] );
+	}
+}
+
+foreach( array_keys( $formatplugins ) as $guid ) {
+	// check to see if we have some format syntax help
+	if( is_file( LIBERTY_PKG_PATH."help_format_{$guid}_inc.php" )) {
+		include_once( LIBERTY_PKG_PATH."help_format_{$guid}_inc.php" );
+	}
+	if( is_file( LIBERTY_PKG_PATH."templates/help_format_{$guid}_inc.tpl" )) {
+		$formatplugins[$guid]['format_help'] = "bitpackage:liberty/help_format_{$guid}_inc.tpl";
 	}
 }
 

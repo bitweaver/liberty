@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.37 $
+ * @version  $Revision: 1.38 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.37 2007/07/10 19:00:37 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.38 2007/07/14 14:51:37 squareing Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -180,10 +180,6 @@ if( !empty( $_REQUEST['post_comment_preview'] ) ) {
 	$postComment['created'] = time();
 	$postComment['last_modified'] = time();
 	$gBitSmarty->assign('post_comment_preview', TRUE);
-}
-
-if( !empty( $_REQUEST['post_comment_preview'] ) || $post_comment_request ) {
-	include_once( LIBERTY_PKG_PATH.'edit_help_inc.php'); // to set up the format_guid list
 }
 
 // $post_comment_reply_id is the content_id which a post is replying to

@@ -1,5 +1,5 @@
-{*if $gBitUser->hasPermission( 'p_liberty_assign_content_perms' )}
-	{jstab title="Permissions"}
-		{include file="bitpackage:liberty/content_permissions_inc.tpl"}
+{if $gBitSystem->isFeatureActive( 'site_edit_help' ) && $display_help_tab == 1} {* $display_help_tab is set in {textarea} plugin *}
+	{jstab title="Wiki Help"}
+		{include file="bitpackage:liberty/edit_help_inc.tpl"}
 	{/jstab}
-{/if*}
+{/if}
