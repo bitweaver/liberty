@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.264 2007/07/15 11:22:43 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.265 2007/07/15 11:40:42 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1030,6 +1030,27 @@ class LibertyContent extends LibertyBase {
 		$ret = array();
 
 		if( !isset( $sUserPerms[$gBitUser->mUserId][$this->mContentId] )) {
+			/*
+			 * this has to work in the following conditions - result in () as viewed by registered user:
+			 *        - no global p_wiki_page_view and we assign it to anon (TRUE), registered (TRUE) or editors (FALSE)
+			 *        - anon have p_wiki_page_view and we re-assign it to registered (TRUE)
+			 *        - anon have p_wiki_page_view and we re-assign it to editors (FALSE)
+			 *        - registered have p_wiki_page_view and we re-assign it to editors (FALSE)
+			 *        - registered have p_wiki_page_view and we re-assign it to anon (TRUE)
+			 *        - editors have p_wiki_page_view and we (re-)assing it to anon (TRUE) or registered (TRUE)
+			 *        - anon and registed have p_wiki_page_view and we unassign from anon (TRUE), registered (TRUE) and both (FALSE)
+			 */
+			/* previous query did not provide above functionality
+			$query = "SELECT lcperm.`perm_name`, lcperm.`is_revoked`,ug.`group_id`, ug.`group_name`, ugm.`user_id`
+                    FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
+                        INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
+                        INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON( ugm.`group_id`=ug.`group_id` )
+                    WHERE (ugm.`user_id`=? OR ugm.`user_id`=?) AND lcperm.`content_id` = ?
+                    ORDER BY lcperm.`is_revoked`"; // order by is_revoked so null's come first and last to be checked will be 'y'
+            $bindVars = array( $this->mContentId, $pUserId, ANONYMOUS_USER_ID );
+            $sUserPerms[$pUserId][$this->mContentId] = $this->mDb->getAssoc( $query, $bindVars );
+			 */
+
 			$query = "SELECT up.`perm_name`, up.`perm_desc`, up.`perm_level`, up.`package`, ugp.`group_id`
 					  FROM `".BIT_DB_PREFIX."users_permissions` up
 						INNER JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON ( ugp.`perm_name`=up.`perm_name` )
