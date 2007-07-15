@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.263 2007/07/13 17:28:34 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.264 2007/07/15 11:22:43 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -931,7 +931,7 @@ class LibertyContent extends LibertyBase {
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
 				WHERE lcperm.`content_id` = ?";
 			$bindVars = array( $this->mContentId );
-			$this->mPerms = $this->mDb->getAssoc( $query, $bindVars );
+			$this->mPerms = $this->mDb->getAll( $query, $bindVars );
 		}
 		return( count( $this->mPerms ));
 	}
@@ -986,7 +986,7 @@ class LibertyContent extends LibertyBase {
 					// this content has assigned perms
 
 					// make a copy of the user's global perms
-					$checkPerms = $this->getUserPermissions( $gBitUser->mUserId );
+					$checkPerms = $this->getUserPermissions();
 					$ret = !empty( $checkPerms[$this->mAdminContentPerm] ) || !empty( $checkPerms[$pPermName] ); // && ( $checkPerms[$pPermName]['user_id'] == $gBitUser->mUserId );
 				} else {
 					// return default user permission setting when no content perms are set
@@ -1023,25 +1023,45 @@ class LibertyContent extends LibertyBase {
 	* @param integer Id of user for whom permissions are to be loaded
 	* @return array Array of all permissions for the current user joined with perms for the current content. This should handle cases where non-default permissions is assigned, default permission is removed, and duplicate default permissions where one group's perm is revoked, but another is still permitted. If the permission is revoked, is_revoked will be set to 'y'
 	*/
-	function getUserPermissions( $pUserId = NULL ) {
+	function getUserPermissions() {
 		// cache this out to a static hash to reduce query load
+		global $gBitUser;
 		static $sUserPerms = array();
 		$ret = array();
 
-		if( @BitBase::verifyId( $pUserId ) && !isset( $sUserPerms[$pUserId][$this->mContentId] )) {
-			$query = "SELECT up.`perm_name` AS `hash_key`, up.`perm_name`, up.`perm_desc`, up.`perm_level`, up.`package`,  lcperm.`perm_name`, lcperm.`is_revoked`,ug.`group_id`, ug.`group_name`, ugm.`user_id`
+		if( !isset( $sUserPerms[$gBitUser->mUserId][$this->mContentId] )) {
+			$query = "SELECT up.`perm_name`, up.`perm_desc`, up.`perm_level`, up.`package`, ugp.`group_id`
 					  FROM `".BIT_DB_PREFIX."users_permissions` up
 						INNER JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON ( ugp.`perm_name`=up.`perm_name` )
 						INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON ( ug.`group_id`=ugp.`group_id` )
-					    LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON ( ugm.`group_id`=ugp.`group_id` )
-					    LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcperm ON ( lcperm.`group_id`=ug.`group_id`  AND lcperm.`content_id` = ?)
-					  WHERE (ugm.`user_id`=? OR ugm.`user_id`=?) AND (lcperm.`is_revoked` IS NULL OR lcperm.`is_revoked` != 'y')
-					  ORDER BY lcperm.`is_revoked` DESC"; // order by is_revoked so null's come first and last to be checked will be 'y'
-			$bindVars = array( $this->mContentId, $pUserId, ANONYMOUS_USER_ID );
-			$sUserPerms[$pUserId][$this->mContentId] = $this->mDb->getAssoc( $query, $bindVars );
+					    LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON ( ugm.`group_id`=ugp.`group_id` AND ugm.`user_id` = ? )
+					  WHERE ug.`group_id`= ".ANONYMOUS_GROUP_ID." OR ugm.`group_id`=ug.`group_id`";
+			$userPerms = $this->mDb->getAll( $query, array( $gBitUser->mUserId ) );
+
+			// remove revoked permissions
+			foreach( $this->mPerms as $perm ) {
+				if( $perm['is_revoked'] == 'y' ) {
+					foreach( $userPerms as $uk => $up ) {
+						if( $up['perm_name'] == $perm['perm_name'] && $up['group_id'] == $perm['group_id'] ) {
+							unset( $userPerms[$uk] );
+						}
+					}
+				} else {
+					$userPerms[] = $perm;
+				}
+			}
+
+			// merge data that it looks like an updated version of user permissions
+			foreach( $userPerms as $perm ) {
+				if( in_array( $perm['group_id'], array_keys( $gBitUser->mGroups ))) {
+					$ret[$perm['perm_name']] = $perm;
+				}
+			}
+
+			$sUserPerms[$gBitUser->mUserId][$this->mContentId] = $ret;
 		}
 
-		return $sUserPerms[$pUserId][$this->mContentId];
+		return $sUserPerms[$gBitUser->mUserId][$this->mContentId];
 	}
 
 	/**
