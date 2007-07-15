@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage functions
  */
@@ -70,7 +70,51 @@ if( $contentPerms['assigned'] = $gContent->getContentPermissionsList() ) {
 		}
 	}
 }
-
 $gBitSmarty->assign( 'contentPerms', $contentPerms );
+
+// if we've called this page as part of an ajax update, we output the appropriate data
+if( $gBitThemes->isAjaxRequest() ) {
+	if( count( $contentPerms['groups'] <= 10 )) {
+		$size = 'large/';
+	} else {
+		$size = 'small/';
+	}
+
+	$gid = $_REQUEST['group_id'];
+	$perm = $_REQUEST['perm'];
+
+	// we're applying the same logic as in the template. if you fix / change anything here, please update the template as well.
+	$biticon = array(
+		'ipackage' => 'icons',
+		'iname'    => $size.'media-playback-stop',
+		'iexplain' => '',
+		'iforce'   => 'icon',
+	);
+	$action = 'assign';
+	if( !empty( $contentPerms['groups'][$gid]['perms'][$perm] )) {
+		$biticon['iname'] = $size.'dialog-ok';
+		if( !empty( $contentPerms['assigned'][$gid][$perm] )) {
+			$assigned = $contentPerms['assigned'][$gid][$perm];
+			$biticon['iname'] = $size.'list-add';
+			$action = 'remove';
+		}
+		if( !empty( $assigned['is_revoked'] )) {
+			$biticon['iname'] = $size.'list-remove';
+		}
+	}
+
+	require_once $gBitSmarty->_get_plugin_filepath( 'function', 'biticon' );
+	$ret = '<a title="'.$contentPerms['groups'][$gid]['group_name']." :: ".$perm.'" '.
+			'href="javascript:ajax_updater('.
+			"'{$perm}{$gid}', ".
+			"'".LIBERTY_PKG_URL."content_permissions.php', ".
+			"'action={$action}&amp;content_id={$gContent->mContentId}&amp;perm={$perm}&amp;group_id={$gid}'".
+		')">'.smarty_function_biticon( $biticon, $gBitSmarty ).'</a>';
+	echo $ret;
+	die;
+}
+
+// enable ajaxed permission updating
+$gBitThemes->loadAjax( 'prototype' );
 $gBitSystem->display( 'bitpackage:liberty/content_permissions.tpl', tra( 'Content Permissions' ));
 ?>
