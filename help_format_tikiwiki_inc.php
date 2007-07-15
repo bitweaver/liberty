@@ -122,7 +122,7 @@ if( $cache->isCached( $cacheFile, filemtime( __FILE__ ))) {
 '{| border=3
 |+A Simple Table
 |-
-! Col 1 !! Col 1 !! Col 3
+! Col 1 !! Col 2 !! Col 3
 |-
 | Row1-Col1 || Row1-Col2 || Row1-Col3
 |-
