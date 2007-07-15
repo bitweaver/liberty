@@ -13,7 +13,7 @@ if( $cache->isCached( $cacheFile, filemtime( __FILE__ ))) {
 	$tikiwiki = array(
 		'Emphasis' => array(
 			'Headings' => array(
-				'data' => "! apples 1\n!! heading 2\n!!! heading 3",
+				'data' => "! heading 1\n!! heading 2\n!!! heading 3",
 				'note' => "Number of ! correponds to heading level.",
 			),
 			'Italics' => array(
