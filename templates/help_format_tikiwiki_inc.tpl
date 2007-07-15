@@ -1,6 +1,4 @@
 {strip}
-<h1>Tikiwiki Markup Syntax</h1>
-
 {foreach from=$examples.tikiwiki key=title item=tikiwiki name=tw}
 	{if !$smarty.foreach.tw.first}<br /><hr /><br />{/if}
 	<h2>{tr}{$title}{/tr}</h2>

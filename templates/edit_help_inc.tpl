@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.24 2007/07/14 14:51:38 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.25 2007/07/15 18:09:41 squareing Exp $ *}
 
 {strip}
 {if $dataplugins}
@@ -16,10 +16,10 @@
 		<script type="text/javascript">/*<![CDATA[*/ document.write( '<div id="{$p.plugin_guid}1" style="display:none;">' ); /*]]>*/</script>
 		<h2>{tr}Plugin{/tr}: {$p.title|escape|default:"{tr}No Title{/tr}"}</h2>
 			<ul>
+				<li class="{cycle}"><strong>{tr}Description{/tr}:</strong> {$p.description}</li>
 				<li class="{cycle values="odd,even"}"><strong>{tr}Syntax{/tr}:</strong>
 					&nbsp;<a href="#" title="{tr}Click to insert syntax into editor{/tr}" onclick="javascript:insertAt('{$textarea_id}','{$p.syntax|@addslashes}');">{$p.syntax}</a>
 				</li>
-				<li class="{cycle}"><strong>{tr}Description{/tr}:</strong> {$p.description}</li>
 				<li class="{cycle}"><strong>{tr}Online Help{/tr}:</strong> {jspopup href="http://www.bitweaver.org/wiki/`$p.help_page`" title=`$p.help_page` class="external"}</li>
 			</ul>
 			<br /><br />
@@ -32,10 +32,16 @@
 	/*]]>*/</script>
 {/if}
 
+<br /><br /><hr /><br />
 <h2>{tr}Syntax Help{/tr}</h2>
-{foreach from=$formatplugins key=guid item=p}
-	<h3>{$p.edit_label} Help</h3>
+{foreach from=$formatplugins item=p}
+	<h3>{if $p.format_help}<a href="#{$p.plugin_guid}">{/if}{$p.edit_label} Help{if $p.format_help}</a>{/if}</h3>
 	{$p.description} {if $p.help_page}{tr}To view syntax help, please visit {jspopup href="http://www.bitweaver.org/wiki/index.php?page=`$p.help_page`" title=$p.help_page class=external}.{/tr}{/if}
+{/foreach}
+
+{foreach from=$formatplugins item=p}
+	<a name="{$p.plugin_guid}"></a>
+	<h1>{$p.edit_label} Help</h1>
 	{include file=$p.format_help}
 {/foreach}
 {/strip}
