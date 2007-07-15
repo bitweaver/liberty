@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.265 2007/07/15 11:40:42 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.266 2007/07/15 21:38:38 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -931,7 +931,7 @@ class LibertyContent extends LibertyBase {
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
 				WHERE lcperm.`content_id` = ?";
 			$bindVars = array( $this->mContentId );
-			$this->mPerms = $this->mDb->getAll( $query, $bindVars );
+			$this->mPerms = $this->mDb->getAssoc( $query, $bindVars );
 		}
 		return( count( $this->mPerms ));
 	}
@@ -986,7 +986,7 @@ class LibertyContent extends LibertyBase {
 					// this content has assigned perms
 
 					// make a copy of the user's global perms
-					$checkPerms = $this->getUserPermissions();
+					$checkPerms = $this->getUserPermissions( $gBitUser->mUserId );
 					$ret = !empty( $checkPerms[$this->mAdminContentPerm] ) || !empty( $checkPerms[$pPermName] ); // && ( $checkPerms[$pPermName]['user_id'] == $gBitUser->mUserId );
 				} else {
 					// return default user permission setting when no content perms are set
@@ -1023,13 +1023,33 @@ class LibertyContent extends LibertyBase {
 	* @param integer Id of user for whom permissions are to be loaded
 	* @return array Array of all permissions for the current user joined with perms for the current content. This should handle cases where non-default permissions is assigned, default permission is removed, and duplicate default permissions where one group's perm is revoked, but another is still permitted. If the permission is revoked, is_revoked will be set to 'y'
 	*/
-	function getUserPermissions() {
+	function getUserPermissions( $pUserId ) {
 		// cache this out to a static hash to reduce query load
 		global $gBitUser;
 		static $sUserPerms = array();
 		$ret = array();
 
 		if( !isset( $sUserPerms[$gBitUser->mUserId][$this->mContentId] )) {
+//$startTime = microtime(); 
+
+			// get the default permissions for specified user
+			$query = "SELECT ugp.`perm_name` as `hash_key`, ugp.* 
+					  FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcp 
+						INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON(lcp.`group_id`=ugm.`group_id`) 
+						LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.`group_id`=ugp.`group_id` AND ugp.`perm_name`!=lcp.`perm_name`) 
+					  WHERE lcp.`content_id`=? AND (ugm.`user_id`=? OR ugm.`user_id`=?)";
+			$defaultPerms = $this->mDb->getAssoc( $query, array( $this->mContentId, $pUserId, ANONYMOUS_USER_ID ) );
+
+			$query = "SELECT lcp.`perm_name` AS `hash_key`, lcp.* 
+					  FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcp 
+						INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON(lcp.group_id=ugm.group_id) 
+						LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.group_id=ugp.group_id AND ugp.group_id!=lcp.group_id AND ugp.perm_name=lcp.perm_name) 
+					  WHERE lcp.content_id=? AND (ugm.user_id=? OR ugm.user_id=?) AND lcp.is_revoked IS NULL";
+			$nonDefaultPerms = $this->mDb->getAssoc( $query, array( $this->mContentId, $pUserId, ANONYMOUS_USER_ID ) );
+
+			$ret = array_merge( $defaultPerms, $nonDefaultPerms );
+//vd ( "exec time ".(microtime() - $startTime) );
+
 			/*
 			 * this has to work in the following conditions - result in () as viewed by registered user:
 			 *        - no global p_wiki_page_view and we assign it to anon (TRUE), registered (TRUE) or editors (FALSE)
@@ -1050,7 +1070,8 @@ class LibertyContent extends LibertyBase {
             $bindVars = array( $this->mContentId, $pUserId, ANONYMOUS_USER_ID );
             $sUserPerms[$pUserId][$this->mContentId] = $this->mDb->getAssoc( $query, $bindVars );
 			 */
-
+/*
+$startTime = microtime(); 
 			$query = "SELECT up.`perm_name`, up.`perm_desc`, up.`perm_level`, up.`package`, ugp.`group_id`
 					  FROM `".BIT_DB_PREFIX."users_permissions` up
 						INNER JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON ( ugp.`perm_name`=up.`perm_name` )
@@ -1078,7 +1099,9 @@ class LibertyContent extends LibertyBase {
 					$ret[$perm['perm_name']] = $perm;
 				}
 			}
-
+vd ( "exec time ".(microtime() - $startTime) );
+vd( $ret );
+*/
 			$sUserPerms[$gBitUser->mUserId][$this->mContentId] = $ret;
 		}
 
