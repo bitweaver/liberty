@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.25 2007/07/15 18:09:41 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.26 2007/07/15 19:21:31 squareing Exp $ *}
 
 {strip}
 {if $dataplugins}
@@ -40,8 +40,10 @@
 {/foreach}
 
 {foreach from=$formatplugins item=p}
-	<a name="{$p.plugin_guid}"></a>
-	<h1>{$p.edit_label} Help</h1>
-	{include file=$p.format_help}
+	{if $p.format_help}
+		<a name="{$p.plugin_guid}"></a>
+		<h1>{$p.edit_label} Help</h1>
+		{include file=$p.format_help}
+	{/if}
 {/foreach}
 {/strip}
