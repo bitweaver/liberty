@@ -24,14 +24,19 @@
 				<tr>
 					<th>{tr}Permission{/tr}</th>
 					{foreach from=$contentPerms.groups item=group}
-						<th><abbr title="{$group.group_name}">{if count($contentPerms.groups) gt 10}{$group.group_name|truncate:4:false}{else}{$group.group_name}{/if}</abbr></th>
+					<th onmouseover="showById('f{$group.group_id}');hideById('a{$group.group_id}')">
+						<abbr id="a{$group.group_id}" title="{$group.group_name}">{if count($contentPerms.groups) gt 10}{$group.group_name|truncate:4:false}{else}{$group.group_name}{/if}</abbr>
+						<span id="f{$group.group_id}" style="display:none">{$group.group_name}</span>
+					</th>
 					{/foreach}
 				</tr>
 			{/capture}
 			{$th}
 
 			{foreach from=$contentPerms.assignable key=perm item=permInfo name=perms}
+			{*
 				{if ($smarty.foreach.perms.iteration % 10) eq 0 and ($smarty.foreach.perms.total - $smarty.foreach.perms.iteration) gt 5}{$th}{/if}
+				*}
 				<tr class="{cycle values="odd,even"}">
 					<td>{$permInfo.perm_desc}<br /><em>({$permInfo.perm_name})</em></td>
 					{foreach from=$contentPerms.groups key=groupId item=groupInfo}
@@ -47,7 +52,9 @@
 								{assign var=icon value="list-remove"}                      {* is_revoked icon *}
 							{/if}
 						{/if}
-						<td style="text-align:center">{smartlink itra=false ititle="`$contentPerms.groups.$groupId.group_name` :: $perm" ibiticon=icons/$size$icon action=$action content_id=$gContent->mContentId perm=$perm group_id=$groupId}</td>
+						<td style="text-align:center">
+							{smartlink itra=false ititle="`$contentPerms.groups.$groupId.group_name` :: $perm" ibiticon=icons/$size$icon action=$action content_id=$gContent->mContentId perm=$perm group_id=$groupId}
+						</td>
 					{/foreach}
 				</tr>
 			{/foreach}
@@ -57,7 +64,7 @@
 			<h2>{tr}Legend{/tr}</h2>
 			<dl>
 				{foreach from=$contentPerms.groups item=group}
-					<dt>{$group.group_name|truncate:4:false}</dt>
+					<dt>{$group.group_id}</dt>
 					<dd>{$group.group_name}: {$group.group_desc}</dd>
 				{/foreach}
 			</dl>
