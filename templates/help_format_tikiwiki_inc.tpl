@@ -1,16 +1,16 @@
 {strip}
 <h1>Tikiwiki Markup Syntax</h1>
 
-{foreach from=$exampleHash key=section item=examples name=sections}
-	{if !$smarty.foreach.sections.first}<br /><hr /><br />{/if}
-	<h2>{tr}{$section}{/tr}</h2>
+{foreach from=$examples.tikiwiki key=title item=tikiwiki name=tw}
+	{if !$smarty.foreach.tw.first}<br /><hr /><br />{/if}
+	<h2>{tr}{$title}{/tr}</h2>
 	<table class="bittable">
 		<tr>
 			<th style="width:25%">Description</th>
-			<th style="width:30%">Example</th>
-			<th style="width:45%">Result</th>
+			<th style="width:40%">Example</th>
+			<th style="width:35%">Result</th>
 		</tr>
-		{foreach from=$examples key=desc item=example}
+		{foreach from=$tikiwiki key=desc item=example}
 			<tr>
 				<td>
 					{tr}{$desc}{/tr}
@@ -72,7 +72,7 @@
 <br /> <br />
 <table class="bittable">
 	<caption>{tr}Applied Examples{/tr}</caption>
-	{foreach from=$mediawiki key=title item=example}
+	{foreach from=$examples.mediawiki key=title item=example}
 		<tr>
 			<th style="width:60%">{$title}</th>
 			<th style="width:40%">Result</th>
