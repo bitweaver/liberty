@@ -52,7 +52,7 @@
 							{if $gBitThemes->isJavascriptEnabled()}
 								<span id="{$perm}{$groupId}">
 									<a title="{$contentPerms.groups.$groupId.group_name} :: {$perm}" href="javascript:ajax_updater('{$perm}{$groupId}', '{$smarty.const.LIBERTY_PKG_URL}content_permissions.php', 'action={$action}&amp;content_id={$gContent->mContentId}&amp;perm={$perm}&amp;group_id={$groupId}')">
-										{biticon iname=$size$icon iexplain=""}
+										{biticon iname=$size$icon iexplain="" iforce="icon"}
 									</a>
 								</span>
 							{else}
