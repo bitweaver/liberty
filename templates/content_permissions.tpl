@@ -64,7 +64,7 @@
 			<h2>{tr}Legend{/tr}</h2>
 			<dl>
 				{foreach from=$contentPerms.groups item=group}
-					<dt>{$group.group_id}</dt>
+					<dt>{$group.group_name|truncate:4:false}</dt>
 					<dd>{$group.group_name}: {$group.group_desc}</dd>
 				{/foreach}
 			</dl>
