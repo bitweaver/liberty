@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.266 2007/07/15 21:38:38 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.267 2007/07/15 22:12:34 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1034,10 +1034,10 @@ class LibertyContent extends LibertyBase {
 
 			// get the default permissions for specified user
 			$query = "SELECT ugp.`perm_name` as `hash_key`, ugp.* 
-					  FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcp 
-						INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON(lcp.`group_id`=ugm.`group_id`) 
-						LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.`group_id`=ugp.`group_id` AND ugp.`perm_name`!=lcp.`perm_name`) 
-					  WHERE lcp.`content_id`=? AND (ugm.`user_id`=? OR ugm.`user_id`=?)";
+					  FROM `".BIT_DB_PREFIX."users_groups_map` ugm
+						LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.`group_id`=ugp.`group_id`) 
+						LEFT JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcp ON(lcp.`group_id`=ugm.`group_id` AND lcp.`content_id`=?) 
+					  WHERE (ugm.`user_id`=? OR ugm.`user_id`=?) AND lcp.perm_name IS NULL";
 			$defaultPerms = $this->mDb->getAssoc( $query, array( $this->mContentId, $pUserId, ANONYMOUS_USER_ID ) );
 
 			$query = "SELECT lcp.`perm_name` AS `hash_key`, lcp.* 
