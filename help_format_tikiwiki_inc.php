@@ -158,6 +158,24 @@ if( $cache->isCached( $cacheFile, filemtime( __FILE__ ))) {
 		),
 		'Example 3' => array(
 			'data' =>
+'{|
+|+ Table with alternating rows
+|- class=odd
+| one
+| two
+|- class=even
+| class=highlight | three
+| four
+|- class=odd
+| five
+| six
+|- class=even
+| seven
+| eight
+|}'
+		),
+		'Example 4' => array(
+			'data' =>
 '{| style="background:yellow; color:green"
 |+ Table with many colours
 |-
