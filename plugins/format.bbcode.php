@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -9,8 +9,7 @@ global $gLibertySystem;
 /**
  * run 'pear install Text_Wiki_BBCode-alpha' to install the library,
  */ 
-if( @include_once( 'PEAR.php' )) {
-	if( @include_once( 'Text/Wiki/BBCode.php' )) {
+if( @include_once( 'doc/Text_Wiki_BBCode/doc/BBCodeParser.php' ) ) {
 
 /**
  * definitions
@@ -88,7 +87,6 @@ function bbcode_parse_data( &$pParseHash, &$pCommonObject ) {
 	return $ret;
 }
 
-	}
 } // PEAR check
 
 ?>
