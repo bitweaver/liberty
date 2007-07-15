@@ -1,10 +1,10 @@
 <?php
 /**
- * $Id: edit_help_inc.php,v 1.16 2007/07/14 14:51:37 squareing Exp $
+ * $Id: edit_help_inc.php,v 1.17 2007/07/15 16:19:47 squareing Exp $
  * edit_help_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.16 $
+ * @version  $Revision: 1.17 $
  * @package  liberty
  * @subpackage functions
  */
@@ -30,11 +30,11 @@ foreach( $dataplugins as $guid => $plugin ) {
 
 foreach( array_keys( $formatplugins ) as $guid ) {
 	// check to see if we have some format syntax help
-	if( is_file( LIBERTY_PKG_PATH."help_format_{$guid}_inc.php" )) {
-		include_once( LIBERTY_PKG_PATH."help_format_{$guid}_inc.php" );
-	}
 	if( is_file( LIBERTY_PKG_PATH."templates/help_format_{$guid}_inc.tpl" )) {
 		$formatplugins[$guid]['format_help'] = "bitpackage:liberty/help_format_{$guid}_inc.tpl";
+		if( is_file( LIBERTY_PKG_PATH."help_format_{$guid}_inc.php" )) {
+			include_once( LIBERTY_PKG_PATH."help_format_{$guid}_inc.php" );
+		}
 	}
 }
 
