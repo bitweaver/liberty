@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.37 2007/07/10 20:01:10 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.38 2007/07/16 18:14:07 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -49,20 +49,28 @@ class LibertyStructure extends LibertyBase {
 	 */
 	function getNode( $pStructureId=NULL, $pContentId=NULL ) {
 		global $gLibertySystem, $gBitSystem;
+		static $gStructureNodeCache;
 		$contentTypes = $gLibertySystem->mContentTypes;
+
+		if( @$this->verifyId( $pStructureId ) ) {
+			if (!empty($gStructureNodeCache['structure_id'][$pStructureId])) {
+				return $gStructureNodeCache['structure_id'][$pStructureId];
+			}
+			$where = ' WHERE ls.`structure_id`=?';
+			$bindVars = array( $pStructureId );
+		} elseif( @$this->verifyId( $pContentId ) ) {
+			if (!empty($gStructureNodeCache['content_id'][$pContentId])) {
+				return $gStructureNodeCache['content_id'][$pContentId];
+			}
+			$where = ' WHERE ls.`content_id`=?';
+			$bindVars = array( $pContentId );
+		}
+
 		$ret = NULL;
 		$query = 'SELECT ls.*, lc.`user_id`, lc.`title`, lc.`content_type_guid`, uu.`login`, uu.`real_name`
 				  FROM `'.BIT_DB_PREFIX.'liberty_structures` ls
 				  INNER JOIN `'.BIT_DB_PREFIX.'liberty_content` lc ON (ls.`content_id`=lc.`content_id`)
-				  LEFT JOIN `'.BIT_DB_PREFIX.'users_users` uu ON ( uu.`user_id` = lc.`user_id` )';
-
-		if( @$this->verifyId( $pStructureId ) ) {
-			$query .= ' WHERE ls.`structure_id`=?';
-			$bindVars = array( $pStructureId );
-		} elseif( @$this->verifyId( $pContentId ) ) {
-			$query .= ' WHERE ls.`content_id`=?';
-			$bindVars = array( $pContentId );
-		}
+				  LEFT JOIN `'.BIT_DB_PREFIX.'users_users` uu ON ( uu.`user_id` = lc.`user_id` )' . $where;
 
 		if( $result = $this->mDb->query( $query, $bindVars ) ) {
 			$ret = $result->fetchRow();
@@ -78,6 +86,9 @@ class LibertyStructure extends LibertyBase {
 			}
 			$ret['title'] = $type['content_object']->getTitle( $ret );
 		}
+
+		$gStructureNodeCache['structure_id'][$ret['structure_id']] = $ret;
+		$gStructureNodeCache['content_id'][$ret['content_id']] = $ret;
 
 		return $ret;
 	}
@@ -269,7 +280,7 @@ class LibertyStructure extends LibertyBase {
 		$row_max = count( $children );
 
 		// we need to insert the root structure item first
-		if (!$pLevel) {
+		if (!$pLevel && !empty($pStructureHash)) {
 			foreach( $pStructureHash as $node ) {
 			  if( ( $pParentId == 0 && $node['structure_id'] == $node['root_structure_id'] ) || $node['structure_id'] == $pParentId) {
 					$aux		  = $node;
