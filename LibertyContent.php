@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.267 2007/07/15 22:12:34 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.268 2007/07/16 06:27:22 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1025,11 +1025,10 @@ class LibertyContent extends LibertyBase {
 	*/
 	function getUserPermissions( $pUserId ) {
 		// cache this out to a static hash to reduce query load
-		global $gBitUser;
 		static $sUserPerms = array();
 		$ret = array();
 
-		if( !isset( $sUserPerms[$gBitUser->mUserId][$this->mContentId] )) {
+		if( !isset( $sUserPerms[$pUserId][$this->mContentId] )) {
 //$startTime = microtime(); 
 
 			// get the default permissions for specified user
@@ -1102,10 +1101,10 @@ $startTime = microtime();
 vd ( "exec time ".(microtime() - $startTime) );
 vd( $ret );
 */
-			$sUserPerms[$gBitUser->mUserId][$this->mContentId] = $ret;
+			$sUserPerms[$pUserId][$this->mContentId] = $ret;
 		}
 
-		return $sUserPerms[$gBitUser->mUserId][$this->mContentId];
+		return $sUserPerms[$pUserId][$this->mContentId];
 	}
 
 	/**
