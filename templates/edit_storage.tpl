@@ -1,7 +1,6 @@
 {strip}
 {if $gBitUser->hasPermission('p_liberty_attach_attachments') }
 	{php} include (LIBERTY_PKG_PATH."edit_storage_inc.php"); {/php}
-	<script type="text/javascript">/*<![CDATA[*/ show_spinner('spinner'); /*]]>*/</script>
 	{foreach from=$gLibertySystem->mPlugins item=plugin key=guid}
 		{* $no_plugins is set by the including template *}
 		{if $plugin.is_active eq 'y' and $plugin.edit_field and $plugin.plugin_type eq 'storage' and !$no_plugins}

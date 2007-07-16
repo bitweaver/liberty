@@ -1,4 +1,3 @@
-<script type="text/javascript">/*<![CDATA[*/ show_spinner('spinner'); /*]]>*/</script>
 <div class="admin liberty">
 	<div class="header">
 		<h1>{tr}Assign permissions{/tr}</h1>
