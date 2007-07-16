@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.38 2007/07/16 18:14:07 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.39 2007/07/16 18:35:02 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -49,18 +49,18 @@ class LibertyStructure extends LibertyBase {
 	 */
 	function getNode( $pStructureId=NULL, $pContentId=NULL ) {
 		global $gLibertySystem, $gBitSystem;
-		static $gStructureNodeCache;
+		static $sStructureNodeCache;
 		$contentTypes = $gLibertySystem->mContentTypes;
 
 		if( @$this->verifyId( $pStructureId ) ) {
-			if (!empty($gStructureNodeCache['structure_id'][$pStructureId])) {
-				return $gStructureNodeCache['structure_id'][$pStructureId];
+			if (!empty($sStructureNodeCache['structure_id'][$pStructureId])) {
+				return $sStructureNodeCache['structure_id'][$pStructureId];
 			}
 			$where = ' WHERE ls.`structure_id`=?';
 			$bindVars = array( $pStructureId );
 		} elseif( @$this->verifyId( $pContentId ) ) {
-			if (!empty($gStructureNodeCache['content_id'][$pContentId])) {
-				return $gStructureNodeCache['content_id'][$pContentId];
+			if (!empty($sStructureNodeCache['content_id'][$pContentId])) {
+				return $sStructureNodeCache['content_id'][$pContentId];
 			}
 			$where = ' WHERE ls.`content_id`=?';
 			$bindVars = array( $pContentId );
@@ -87,8 +87,8 @@ class LibertyStructure extends LibertyBase {
 			$ret['title'] = $type['content_object']->getTitle( $ret );
 		}
 
-		$gStructureNodeCache['structure_id'][$ret['structure_id']] = $ret;
-		$gStructureNodeCache['content_id'][$ret['content_id']] = $ret;
+		$sStructureNodeCache['structure_id'][$ret['structure_id']] = $ret;
+		$sStructureNodeCache['content_id'][$ret['content_id']] = $ret;
 
 		return $ret;
 	}
