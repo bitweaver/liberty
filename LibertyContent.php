@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.268 2007/07/16 06:27:22 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.269 2007/07/16 15:27:20 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -76,18 +76,19 @@ class LibertyContent extends LibertyBase {
 	* initialize to null, loadPermissions will set to empty array if nothing present, and this is used to prevent subsequent SQL statements
 	* @public
 	*/
-	var $mPerms = NULL; 
+	var $mPerms = NULL;
 	/**
 	* Preferences hash specific to this LibertyContent object - accessed via getPreference/storePreference
 	* @private
 	*/
-	var $mPrefs = array();
+	var $mPrefs = NULL;
 	/**
 	* Control permission specific to this LibertyContent type
 	* @private
 	*/
-	var $mAdminContentPerm;
+	var $mViewContentPerm;
 	var $mEditContentPerm;
+	var $mAdminContentPerm;
 
 	/**
 	* Construct an empty LibertyBase object with a blank permissions array
@@ -96,7 +97,13 @@ class LibertyContent extends LibertyBase {
 		LibertyBase::LibertyBase();
 		$this->mPrefs = NULL; // init to NULL so getPreference can determine if a load is necessary
 		$this->mPerms = NULL; // init to NULL so loadPermissions can determine if a sql call is necessary
-		if( empty( $this->mAdminContentPerm ) ) {
+
+		// NOTE: we are not assigning anything to mViewContentPerm. if this is empty, we will return TRUE in hasViewPermission()
+		if( empty( $this->mEditContentPerm )) {
+			$this->mEditContentPerm = 'p_admin_content';
+		}
+
+		if( empty( $this->mAdminContentPerm )) {
 			$this->mAdminContentPerm = 'p_admin_content';
 		}
 	}
@@ -1003,7 +1010,6 @@ class LibertyContent extends LibertyBase {
 	* @return bool True if user has this type of content administration permission
 	*/
 	function hasAdminPermission( $pVerifyAccessControl=TRUE ) {
-		global $gBitUser;
 		return( $this->hasUserPermission( $this->mAdminContentPerm, $pVerifyAccessControl ) );
 	}
 
@@ -1013,8 +1019,17 @@ class LibertyContent extends LibertyBase {
 	* @return bool True if user has this type of content administration permission
 	*/
 	function hasEditPermission( $pVerifyAccessControl=TRUE ) {
-		global $gBitUser;
-		return( $gBitUser->isAdmin() || $this->hasUserPermission( $this->mAdminContentPerm, $pVerifyAccessControl ) || $this->isOwner() );
+		return( $this->hasAdminPermission( $pVerifyAccessControl ) || $this->hasUserPermission( $this->mEditContentPerm, $pVerifyAccessControl ) || $this->isOwner() );
+	}
+
+	/**
+	* Determine if current user has the ability to view this type of content
+	* Note that this will always return TRUE if you haven't set the mViewContentPerm in your class
+	*
+	* @return bool True if user has this type of content administration permission
+	*/
+	function hasViewPermission( $pVerifyAccessControl=TRUE ) {
+		return( $this->hasEditPermission( $pVerifyAccessControl ) || empty( $this->mViewContentPerm ) || $this->hasUserPermission( $this->mViewContentPerm, $pVerifyAccessControl ));
 	}
 
 	/**
