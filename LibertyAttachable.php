@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.117 2007/07/12 09:11:02 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.118 2007/07/17 01:29:05 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -138,10 +138,12 @@ class LibertyAttachable extends LibertyContent {
 					} else {
 //						$pParamHash[$file]['type'] = $gBitSystem->verifyMimeType( $pParamHash[$file]['tmp_name'] );
 					}
-					$pParamHash[$file]['dest_base_name'] = substr( $pParamHash[$file]['name'], 0, strrpos( $pParamHash[$file]['name'], '.' )  );
+					// clean out crap that can make life difficult in server maintenance
+					$cleanedBaseName = preg_replace( '/[&\%:\/\\\]/', '', substr( $pParamHash[$file]['name'], 0, strrpos( $pParamHash[$file]['name'], '.' ) ) );
+					$pParamHash[$file]['dest_base_name'] = $cleanedBaseName;
 					$pParamHash[$file]['source_file'] = $pParamHash[$file]['tmp_name'];
 					// lowercase all file extensions
-					$pParamHash[$file]['name'] = $pParamHash[$file]['dest_base_name'].strtolower( substr( $pParamHash[$file]['name'], strrpos( $pParamHash[$file]['name'], '.' ) )  );
+					$pParamHash[$file]['name'] = $cleanedBaseName.strtolower( substr( $pParamHash[$file]['name'], strrpos( $pParamHash[$file]['name'], '.' ) ) );
 					if (!isset($pParamHash['STORAGE'][$storageGuid])) {
 						$pParamHash['STORAGE'][$storageGuid] = array();
 					}
