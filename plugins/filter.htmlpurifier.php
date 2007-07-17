@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.11 2007/07/11 18:24:16 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.12 2007/07/17 15:53:17 nickpalmer Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -102,7 +102,7 @@ function htmlpure_filter( $pData, $pFilterHash ) {
 				// and check for the right property here
 				// so new plugins are just drop in place.
 				if ($gBitSystem->isFeatureActive('htmlpure_allow_youtube')) {
-					require_once('HTMLPurifier/Filter/YouTube.php');
+					require_once(UTIL_PKG_PATH.'htmlpure/Filter/YouTube.php');
 					$gHtmlPurifier->addFilter(new HTMLPurifier_Filter_YouTube());
 				}
 			}
