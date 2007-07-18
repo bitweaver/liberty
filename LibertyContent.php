@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.269 2007/07/16 15:27:20 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.270 2007/07/18 19:40:38 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2074,6 +2074,7 @@ vd( $ret );
 
 						// before we cache we insert the protected sections back - currently this is even after the filters.
 						// this might not be ideal but it allows stuff like ~pp~{maketoc}~/pp~
+						$replace = array_reverse( $replace );
 						foreach( $replace as $rep ) {
 							$ret = str_replace( $rep["key"], $rep["data"], $ret );
 						}
