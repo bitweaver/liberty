@@ -3,7 +3,7 @@
  * assigned_modules
  *
  * @author     xing
- * @version    $Revision: 1.3 $
+ * @version    $Revision: 1.4 $
  * @package    liberty
  * @subpackage plugins_data
  * @copyright  Copyright (c) 2004, bitweaver.org
@@ -54,9 +54,9 @@ function data_span_help() {
 	return $help;
 }
 
-function data_span( $data, $params ) {
+function data_span( $pData, $pParams, $pCommonObject ) {
 	$style = '';
-	foreach( $params as $key => $value ) {
+	foreach( $pParams as $key => $value ) {
 		if( !empty( $value ) ) {
 			switch( $key ) {
 				case 'preset':
@@ -90,6 +90,10 @@ function data_span( $data, $params ) {
 			}
 		}
 	}
-	return( '<span '.( !empty( $class ) ? 'class="'.$class.'" ' : '' ).'style="'.$style.'">'.$data.'</span>' );
+	// we need to parse the data. we shouldn't cache this to avoid problems with the regular cache file
+	$parseHash = $pCommonObject->mInfo;
+	$parseHash['no_cache'] = TRUE;
+	$parseHash['data'] = $pData;
+	return( '<span '.( !empty( $class ) ? 'class="'.$class.'" ' : '' ).'style="'.$style.'">'.$pCommonObject->parseData( $parseHash ).'</span>' );
 }
 ?>
