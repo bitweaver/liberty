@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.6 2007/07/14 14:51:37 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.7 2007/07/18 21:55:25 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -82,13 +82,13 @@ function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject ) {
 					$plugin_end = '';
 				}
 
-				//print "if ( ((($code_first) && ($plugin == 'CODE')) || ((!$code_first) && ($plugin <> 'CODE'))) && ($pos_end > $pos)) { <br/>";
+				// vd( "if ( ((($code_first) && ($plugin == 'CODE')) || ((!$code_first) && ($plugin <> 'CODE'))) && ($pos_end > $pos)) { <br/>" );
 
 				// Extract the plugin data
 				$plugin_data_len = $pos_end - $pos - strlen( $curlyTags[0][$i] );
-
 				$plugin_data = substr( $pData, $pos + strlen( $plugin_start ), $plugin_data_len );
-				//print "$plugin_data_len = $pos_end - $pos - strlen(".$curlyTags[0][$i].") substr( $pos + strlen($plugin_start), $plugin_data_len);";
+
+				// vd( "$plugin_data_len = $pos_end - $pos - strlen(".$curlyTags[0][$i].") substr( $pos + strlen($plugin_start), $plugin_data_len);" );
 
 				$arguments = array();
 				// Construct argument list array
@@ -120,7 +120,11 @@ function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject ) {
 						'key'  => $key,
 						'data' => $ret,
 					);
-					$pData = substr_replace( $pData, $key, $pos, $pos_end - $pos + strlen( $plugin_end ));
+
+					// don't modify data if $pos is FALSE
+					if( $pos !== FALSE ) {
+						$pData = substr_replace( $pData, $key, $pos, $pos_end - $pos + strlen( $plugin_end ));
+					}
 				}
 			}
 			$i--;
