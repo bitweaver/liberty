@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.15 $
+ * @version  $Revision: 1.16 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wolff_borg <wolff_borg@yahoo.com.au>
 // | Reworked from: wikiplugin_wikigraph.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.wikigraph.php,v 1.15 2007/07/18 19:55:31 squareing Exp $
+// $Id: data.wikigraph.php,v 1.16 2007/07/19 12:32:40 wjames5 Exp $
 /**
  * definitions
  */
@@ -37,7 +37,7 @@ $pluginParams = array (
 	'help_page' => 'DataPluginWikiGraph',
 	'description' => tra("Inserts a graph for visual navigation. The graph shows the page and every page that can be reached from that page."),
 	'help_function' => 'data_wikigraph_help',
-	'syntax' => "{WIKIGRAPH level= title= nodesep= rankdir= bgcolor= size= fontsize= fontname= shap= nodestyle= nodecolor= nodefillcolor= nodewidth= nodeheight= edgecolor= edgestyle= }".tra("Wiki page name")."{WIKIGRAPH}"
+	'syntax' => "{WIKIGRAPH level= title= nodesep= rankdir= bgcolor= size= fontsize= fontname= shap= nodestyle= nodecolor= nodefillcolor= nodewidth= nodeheight= edgecolor= edgestyle= }".tra("Wiki page name")."{WIKIGRAPH}",
 	'path' => LIBERTY_PKG_PATH.'plugins/data.wikigraph.php',
 	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
