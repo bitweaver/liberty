@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.stylepurifier.php,v 1.3 2007/06/25 05:28:32 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.stylepurifier.php,v 1.4 2007/07/22 17:21:17 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -23,32 +23,30 @@ $pluginParams = array (
 	'auto_activate'            => TRUE,
 	// type of plugin
 	'plugin_type'              => FILTER_PLUGIN,
-
-	'storefilter_function'       => 'stylepure_filter',
-	//	'prefilter_function'       => 'stylepure_filter',
-	//	'presplitfilter_function'  => 'stylepure_filter',
+	// filter hooks
+	'storefilter_function'     => 'stylepure_filter',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERSTYLEPURIFIER, $pluginParams );
 
+/*
+ * Removes all style both inline and attributes unless the user
+ * has permission to edit styles.
+ */
 function stylepure_filter( $pData, $pFilterHash ) {
 	global $gBitUser;
-	/*
-	 * Removes all style both inline and attributes unless the user
-	 * has permission to edit styles.
-	 */
 
 	// strip_tags has doesn't recognize that css within the style tags are not document text. To fix this do something similar to the following:
-	$text = $pData;
-	if( !$gBitUser->hasPermission( 'p_liberty_edit_html_style' ) ) {
-		$text = preg_replace( "/<style[^>]*>.*<\/style>/siU", '', $text );
-	}
-	// no idea what this is for. remove it for now - xing
-	//$text = stripslashes( $text );
-	if( !$gBitUser->hasPermission( 'p_liberty_edit_html_style' ) ) {
-		$text = preg_replace( "/ (style|class)=[\"]?([^\"]*)[\"]?/i", '', $text );
+	if( !$gBitUser->hasPermission( 'p_liberty_edit_html_style' )) {
+		$pattern = array(
+            "!<style[^>]*>.*</style>!siU",             // <style>...</style>
+            '![\s\n]*(style|class)\s*=\s*"[^">]*"?!i', // style="..." | class="..."
+            "![\s\n]*(style|class)\s*=\s*'[^'>]*'?!i", // style='...' | class='...'
+            "![\s\n]*(style|class)\s*=\s*[^\s>]*!i",   // style=...   | class=...
+		);
+		$pData = preg_replace( $pattern, '', $pData );
 	}
 
-	return $text;
+	return $pData;
 }
 
 ?>
