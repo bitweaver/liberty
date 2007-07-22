@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.270 2007/07/18 19:40:38 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.271 2007/07/22 13:29:28 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2099,12 +2099,12 @@ vd( $ret );
 	 * @access public
 	 * @return filtered data
 	 */
-	function filterData( $pData, $pFilterHash, $pFilterStage = 'pre' ) {
+	function filterData( $pData, &$pFilterHash, $pFilterStage = 'pre' ) {
 		global $gLibertySystem;
 		if( $filters = $gLibertySystem->getPluginsOfType( FILTER_PLUGIN )) {
 			foreach( $filters as $guid => $filter ) {
 				if( $gLibertySystem->isPluginActive( $guid ) && $func = $gLibertySystem->getPluginFunction( $guid, $pFilterStage.'filter_function' )) {
-					$pData = $func( $pData, $pFilterHash );
+					$pData = $func( $pData, $pFilterHash, $this );
 				}
 			}
 		}
