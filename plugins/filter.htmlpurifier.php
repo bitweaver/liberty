@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.12 2007/07/17 15:53:17 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.13 2007/07/23 20:17:34 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -30,21 +30,19 @@ $pluginParams = array (
 
 	// various filter functions and when they are called
 	// called before the data is parsed
-	//	'prefilter_function'       => 'htmlpure_filter',
+	//	'pre_function'       => 'htmlpure_filter',
 	// called after the data has been parsed
-	'prefilter_function'      => 'htmlpure_filter',
+	'preparse_function'  => 'htmlpure_filter',
 	// called before the data is parsed if there is a split
-	//	'presplitfilter_function'  => 'htmlpure_filter',
+	//	'presplit_function'  => 'htmlpure_filter',
 	// called after the data has been parsed if there is a split
-	'postsplitfilter_function' => 'htmlpure_filter',
+	'postsplit_function' => 'htmlpure_filter',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERHTMLPURIFIER, $pluginParams );
 
-function htmlpure_filter( $pData, $pFilterHash ) {
+function htmlpure_filter( &$pString, &$pFilterHash ) {
 	global $gHtmlPurifier, $gBitSystem;
 	
-	$pString = $pData;
-
 	if (!isset($gHtmlPurifier)) {
 		$blacklistedTags = $gBitSystem->
 			getConfig('blacklisted_html_tags', '');

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/filter.smileys.php,v 1.1 2007/07/07 17:42:26 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/filter.smileys.php,v 1.2 2007/07/23 20:17:34 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -10,22 +10,22 @@
  */
 define( 'PLUGIN_GUID_FILTERSMILEYS', 'filtersmileys' );
 
-global $gLibertySystem;
+global $gLibertySystem, $gBitSystem;
 
-$pluginParams = array (
-	'title'                    => 'Smileys',
-	'description'              => 'If you are using the smileys package, you need to enable this filter to insert smileys where needed.',
-	'auto_activate'            => TRUE,
-	'path'                     => LIBERTY_PKG_PATH.'plugins/filter.smileys.php',
-	'plugin_type'              => FILTER_PLUGIN,
+$pluginParams = array(
+	'title'              => 'Smileys',
+	'description'        => 'If you are using the smileys package, you need to enable this filter to insert smileys where needed.',
+	'auto_activate'      => TRUE,
+	'path'               => LIBERTY_PKG_PATH.'plugins/filter.smileys.php',
+	'plugin_type'        => FILTER_PLUGIN,
 
 	// filter functions
-	'presplitfilter_function'  => 'smileys_filter',
-	'postfilter_function'      => 'smileys_filter',
+	'presplit_function'  => 'smileys_filter',
+	'postparse_function' => 'smileys_filter',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERSMILEYS, $pluginParams );
 
-function smileys_filter( $pData, $pFilterHash = NULL ) {
+function smileys_filter( &$pData, &$pFilterHash ) {
 	global $gBitSystem, $gBitSmarty;
 	if( $gBitSystem->isPackageActive( 'smileys' ) ) {
 		preg_match_all( "/\(:([^:]+):\)/", $pData, $smileys );
@@ -45,7 +45,5 @@ function smileys_filter( $pData, $pFilterHash = NULL ) {
 			}
 		}
 	}
-
-	return $pData;
 }
 ?>

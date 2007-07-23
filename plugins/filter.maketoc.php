@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.5 2007/06/16 09:02:47 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.6 2007/07/23 20:17:34 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -13,32 +13,32 @@ define( 'PLUGIN_GUID_FILTERMAKETOC', 'filtermaketoc' );
 global $gLibertySystem;
 
 $pluginParams = array (
-	'title'                    => 'Table of Contents',
-	'description'              => 'When you insert {maketoc} into a wiki page, it will create a nested table of contents based on the headings in that page.',
-	'auto_activate'            => TRUE,
-	'path'                     => LIBERTY_PKG_PATH.'plugins/filter.maketoc.php',
-	'plugin_type'              => FILTER_PLUGIN,
+	'title'              => 'Table of Contents',
+	'description'        => 'When you insert {maketoc} into a wiki page, it will create a nested table of contents based on the headings in that page.',
+	'auto_activate'      => TRUE,
+	'path'               => LIBERTY_PKG_PATH.'plugins/filter.maketoc.php',
+	'plugin_type'        => FILTER_PLUGIN,
 
 	// filter functions
-	'presplitfilter_function'  => 'maketoc_presplitfilter',
-	'postfilter_function'      => 'maketoc_postfilter',
+	'presplit_function'  => 'maketoc_presplitfilter',
+	'postparse_function' => 'maketoc_postparsefilter',
 
 	// these settings are to get the plugin help working on content edit pages
-	'tag'                      => 'maketoc',
-	'help_page'                => 'Maketoc Filter',
-	'help_function'            => 'data_maketoc_help',
-	'syntax'                   => '{maketoc}',
-	'biticon'                  => '{biticon iclass="quicktag icon" ipackage=quicktags iname=maketoc iexplain="Page Table of Contents"}',
-	'taginsert'                => '{maketoc}',
+	'tag'                => 'maketoc',
+	'help_page'          => 'Maketoc Filter',
+	'help_function'      => 'data_maketoc_help',
+	'syntax'             => '{maketoc}',
+	'biticon'            => '{biticon iclass="quicktag icon" ipackage=quicktags iname=maketoc iexplain="Page Table of Contents"}',
+	'taginsert'          => '{maketoc}',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERMAKETOC, $pluginParams );
 
-function maketoc_presplitfilter( $pData, $pFilterHash ) {
+function maketoc_presplitfilter( &$pData, &$pFilterHash ) {
 	// we remove the maketoc stuff when the data is split. this will simplify output and won't mess with the layout on the articles / blogs front page
-	return( preg_replace( "/\{maketoc[^\}]*\}\s*\n?/i", "", $pData ));
+	$pData = preg_replace( "/\{maketoc[^\}]*\}\s*\n?/i", "", $pData );
 }
 
-function maketoc_postfilter( $pData, $pFilterHash ) {
+function maketoc_postparsefilter( &$pData, &$pFilterHash ) {
 	preg_match_all( "/\{maketoc(.*?)\}/", $pData, $maketocs );
 
 	if( !empty( $maketocs[1] )) {
@@ -60,7 +60,7 @@ function maketoc_postfilter( $pData, $pFilterHash ) {
 		// insert the <a name> tags in the right places
 		foreach( $headers[0] as $k => $header ) {
 			$reconstructed = "<h{$headers[1][$k]} id=\"{$ids[$k]}\">{$headers[2][$k]}</h{$headers[1][$k]}>";
-		$pData = preg_replace( "/".preg_quote( $header, "/" )."/", $reconstructed, $pData );
+			$pData = preg_replace( "/".preg_quote( $header, "/" )."/", $reconstructed, $pData );
 		}
 
 		if( !empty( $outputs ) ) {
@@ -68,7 +68,7 @@ function maketoc_postfilter( $pData, $pFilterHash ) {
 				'outputs' => $outputs,
 				'ids'     => $ids,
 				'levels'  => $headers[1],
-				);
+			);
 
 			// (<br[ |\/]*>){0,1} removes up to one occurance of <br> | <br > | <br /> | <br/> or similar variants
 			$sections = preg_split( "/\{maketoc.*?\}(<br[ |\/]*>){0,1}/", $pData );
@@ -87,7 +87,8 @@ function maketoc_postfilter( $pData, $pFilterHash ) {
 			}
 		}
 	}
-	return isset( $ret ) ? $ret : preg_replace( "/\{maketoc[^\}]*\}\s*(<br[^>]*>)*/i", "", $pData );
+
+	$pData = isset( $ret ) ? $ret : preg_replace( "/\{maketoc[^\}]*\}\s*(<br[^>]*>)*/i", "", $pData );
 }
 
 function maketoc_create_list( $pTocHash, $pParams ) {

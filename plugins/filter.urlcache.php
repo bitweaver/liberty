@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.urlcache.php,v 1.1 2007/07/10 16:58:21 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.urlcache.php,v 1.2 2007/07/23 20:17:34 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -34,15 +34,15 @@ define( 'PLUGIN_GUID_FILTERURLCACHE', 'filterurlcache' );
 global $gLibertySystem;
 
 $pluginParams = array (
-	'title'                    => 'External Links Cache',
-	'description'              => 'If you insert a link to an external page, this filter will proceede to cache that page to ensure that you can view the page, even if it moves or gets removed from the original location.',
-	'auto_activate'            => FALSE,
-	'path'                     => LIBERTY_PKG_PATH.'plugins/filter.urlcache.php',
-	'plugin_type'              => FILTER_PLUGIN,
+	'title'              => 'External Links Cache',
+	'description'        => 'If you insert a link to an external page, this filter will proceede to cache that page to ensure that you can view the page, even if it moves or gets removed from the original location.',
+	'auto_activate'      => FALSE,
+	'path'               => LIBERTY_PKG_PATH.'plugins/filter.urlcache.php',
+	'plugin_type'        => FILTER_PLUGIN,
 
 	// filter functions
-	'presplitfilter_function'  => 'urlcache_postfilter',
-	'postfilter_function'      => 'urlcache_postfilter',
+	'presplit_function'  => 'urlcache_postparsefilter',
+	'postparse_function' => 'urlcache_postparsefilter',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERURLCACHE, $pluginParams );
  * /
@@ -117,7 +117,7 @@ function urlcache_store($url, $data = '') {
 	}
 }
 
-function urlcache_postfilter( $pData, $pFilterHash ) {
+function urlcache_postparsefilter( $pData, $pFilterHash ) {
 	$notcachedlinks = $this->get_links_nocache($data);
 
 	$cachedlinks = array_diff($links, $notcachedlinks);

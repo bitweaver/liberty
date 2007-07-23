@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.271 2007/07/22 13:29:28 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.272 2007/07/23 20:17:33 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -175,6 +175,10 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 
+		if( @BitBase::verifyId( $pParamHash['content_id'] )) {
+			$pParamHash['content_store']['content_id'] = $pParamHash['content_id'];
+		}
+
 		// Are we allowed to override owner?
 		if ($gBitSystem->isFeatureActive('liberty_allow_change_owner') && $gBitUser->hasPermission('p_liberty_edit_content_owner')) {
 			// If an owner is being set override user_id
@@ -194,13 +198,6 @@ class LibertyContent extends LibertyBase {
 					$pParamHash['content_store']['content_status_id'] = $pParamHash['content_status_id'];
 				}
 			}
-		}
-
-		// Invoke save filters
-		if( !empty( $pParamHash['edit'] )) {
-			$pParamHash['edit'] = $this->filterData( $pParamHash['edit'], $pParamHash, 'store' );
-		} else {
-			$pParamHash['edit'] = NULL;
 		}
 
 		$pParamHash['field_changed'] = empty( $pParamHash['content_id'] )
@@ -266,7 +263,9 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 
-		if( empty( $pParamHash['edit'] ) ) {
+		if( !empty( $pParamHash['content_store']['data'] )) {
+			$this->filterData( $pParamHash['content_store']['data'], $pParamHash['content_store'], 'prestore' );
+		} else {
 			// someone has deleted the data entirely - common for fisheye
 			$pParamHash['content_store']['data'] = NULL;
 		}
@@ -315,17 +314,14 @@ class LibertyContent extends LibertyBase {
 			$this->mDb->StartTrans();
 			$table = BIT_DB_PREFIX."liberty_content";
 			if( !@$this->verifyId( $pParamHash['content_id'] ) ) {
-				$pParamHash['content_store']['content_id'] = $this->mDb->GenID( 'liberty_content_id_seq' );
-				$pParamHash['content_id'] = $pParamHash['content_store']['content_id'];
 				// make sure some variables are stuff in case services need getObjectType, mContentId, etc...
-				$this->mInfo['content_type_guid'] = $pParamHash['content_type_guid'];
-				$this->mContentId = $pParamHash['content_store']['content_id'];
+				$this->mContentId = $pParamHash['content_id'] = $pParamHash['content_store']['content_id'] = $this->mDb->GenID( 'liberty_content_id_seq' );
+				$this->mContentTypeGuid = $this->mInfo['content_type_guid'] = $pParamHash['content_type_guid'];
 				$result = $this->mDb->associateInsert( $table, $pParamHash['content_store'] );
-
 				$this->mLogs['content_store'] = "Created";
 			} else {
-				if( !empty( $pParamHash['content_store']['title'] ) && !empty( $this->mInfo['title'] ) ) {
-					$renamed = $pParamHash['content_store']['title'] != $this->mInfo['title'];
+				if( !empty( $pParamHash['content_store']['title'] ) && !empty( $this->mInfo['title'] ) && $pParamHash['content_store']['title'] != $this->mInfo['title'] ) {
+					$this->mLogs['rename_page'] = "Renamed from {$this->mInfo['title']} to {$pParamHash['content_store']['title']}.";
 				}
 				$result = $this->mDb->associateUpdate( $table, $pParamHash['content_store'], array("content_id" => $pParamHash['content_id'] ) );
 				$this->mLogs['content_store'] = "Updated";
@@ -342,19 +338,15 @@ class LibertyContent extends LibertyBase {
 			$this->invokeServices( 'content_store_function', $pParamHash );
 
 			// Call the formatter's save
-			if( !empty( $pParamHash['edit'] ) ) {
+			if( !empty( $pParamHash['content_store']['data'] )) {
 				if( $func = $gLibertySystem->getPluginFunction( $pParamHash['format_guid'], 'store_function' ) ) {
 					$ret = $func( $pParamHash );
 				}
+
+				// post store filter - this is needed to deal with filters that need the content_id on the first save
+				$this->filterData( $pParamHash['content_store']['data'], $pParamHash['content_store'], 'poststore' );
 			}
 			LibertyContent::expungeCacheFile( $pParamHash['content_id'] );
-
-			// If we renamed the page, we need to update the backlinks
-			if( !empty( $renamed ) && $func = $gLibertySystem->getPluginFunction( $pParamHash['format_guid'], 'rename_function' ) ) {
-				$ret = $func( $this->mContentId, $this->mInfo['title'], $pParamHash['content_store']['title'], $this );
-				$this->mLogs['rename_page'] = "Renamed from {$this->mInfo['title']} to {$pParamHash['content_store']['title']}.";
-			}
-
 
 			// store content preferences
 			if( @is_array( $pParamHash['preferences_store'] ) ) {
@@ -402,10 +394,12 @@ class LibertyContent extends LibertyBase {
 			$this->mDb->StartTrans();
 			$this->expungeComments();
 
+			// services, filters and cache
 			$this->invokeServices( 'content_expunge_function', $this );
 			if( $func = $gLibertySystem->getPluginFunction( $this->getField( 'format_guid' ), 'expunge_function' ) ) {
 				$func( $this->mContentId );
 			}
+			$this->filterData( $this->mInfo['data'], $this->mInfo, 'expunge' );
 			LibertyContent::expungeCacheFile( $this->mContentId );
 
 
@@ -1967,8 +1961,10 @@ vd( $ret );
 			$pParseHash['data'] = substr( $res['data'], 0, $pLength );
 		}
 
-		// run data through presplit filter
-		if( $pParseHash['data'] = $this->filterData( $pParseHash['data'], $pParseHash, 'presplit' )) {
+		if( !empty( $pParseHash['data'] )) {
+			// run data through presplit filter
+			$this->filterData( $pParseHash['data'], $pParseHash, 'presplit' );
+
 			// parse data and run it through postsplit filter
 			if( $parsed = $this->parseData( $pParseHash )) {
 				// set 'has_more'
@@ -1980,7 +1976,8 @@ vd( $ret );
 				// parsing split content can break stuff so we remove trailing junk
 				$parsed = preg_replace( '!((<br\b[^>]*>)*\s*)*$!si', '', $parsed );
 				// finally we run it through the filters
-				$res['parsed'] = $res['parsed_description'] = $this->filterData( $parsed, $pParseHash, 'postsplit' );
+				$this->filterData( $parsed, $pParseHash, 'postsplit' );
+				$res['parsed'] = $res['parsed_description'] = $parsed;
 
 				// we append '...' when the split was generated automagically
 				if( empty( $res['man_split'] ) && !empty( $res['has_more'] )) {
@@ -2054,7 +2051,7 @@ vd( $ret );
 			if( !empty( $parseHash['data'] ) && $parseHash['format_guid'] ) {
 				// we only filter if this is not a split parse - if it's a split parse, it will fetch its own filters
 				if( empty( $parseHash['split_parse'] )) {
-					$parseHash['data'] = LibertyContent::filterData( $parseHash['data'], $parseHash, 'pre' );
+					LibertyContent::filterData( $parseHash['data'], $parseHash, 'preparse' );
 				}
 
 				$replace = array();
@@ -2069,7 +2066,7 @@ vd( $ret );
 					if( $ret = $func( $parseHash, $this )) {
 						// we only filter if this is not a split parse
 						if( empty( $parseHash['split_parse'] )) {
-							$ret = LibertyContent::filterData( $ret, $parseHash, 'post' );
+							LibertyContent::filterData( $ret, $parseHash, 'postparse' );
 						}
 
 						// before we cache we insert the protected sections back - currently this is even after the filters.
@@ -2099,16 +2096,15 @@ vd( $ret );
 	 * @access public
 	 * @return filtered data
 	 */
-	function filterData( $pData, &$pFilterHash, $pFilterStage = 'pre' ) {
+	function filterData( &$pData, &$pFilterHash, $pFilterStage = 'preparse' ) {
 		global $gLibertySystem;
-		if( $filters = $gLibertySystem->getPluginsOfType( FILTER_PLUGIN )) {
+		if( !empty( $pData ) && $filters = $gLibertySystem->getPluginsOfType( FILTER_PLUGIN )) {
 			foreach( $filters as $guid => $filter ) {
-				if( $gLibertySystem->isPluginActive( $guid ) && $func = $gLibertySystem->getPluginFunction( $guid, $pFilterStage.'filter_function' )) {
-					$pData = $func( $pData, $pFilterHash, $this );
+				if( $gLibertySystem->isPluginActive( $guid ) && $func = $gLibertySystem->getPluginFunction( $guid, $pFilterStage.'_function' )) {
+					$func( $pData, $pFilterHash, ( !empty( $this ) ? $this : NULL ));
 				}
 			}
 		}
-		return $pData;
 	}
 
 	/**
