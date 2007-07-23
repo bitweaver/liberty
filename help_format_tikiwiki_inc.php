@@ -80,12 +80,18 @@ if( $cache->isCached( $cacheFile, filemtime( __FILE__ ))) {
 				'data' => "^text\nmore text^",
 			),
 			'As is Text' => array(
-				'data' => "~np~~~yellow:yellow~~ and __bold__ text~/np~",
+				'data' => "~np~~~yellow:yellow~~\nand\n__bold__ text~/np~",
 				'note' => "This text will not be parsed",
 			),
 			'Pre Parsed' => array(
 				'data' => "~pp~~~yellow:yellow~~\nand\n__bold__ text~/pp~",
 				'note' => "This text will be treated like code and will not be altered and will be displayed using a monospace font. The same can be achieved by using &lt;pre&gt;text&lt;/pre&gt;.",
+			),
+			'Monospaced Text' => array(
+				'data' => "-+text+-",
+			),
+			'Right to Left' => array(
+				'data' => "{r2l}this text is from\nright to left\n{l2r}and back to\nleft to right.",
 			),
 		),
 		'Simple Tables' => array(
