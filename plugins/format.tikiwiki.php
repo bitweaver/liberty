@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.110 $
+ * @version  $Revision: 1.111 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -9,25 +9,22 @@ global $gLibertySystem;
  * definitions
  */
 define( 'PLUGIN_GUID_TIKIWIKI', 'tikiwiki' );
-define( 'WIKI_WORDS_REGEX', '[A-z0-9]{2}[\w\d_\-]+[A-Z_][\w\d_\-]+[A-z0-9]+' );
 
 /**
  * @package  liberty
  * @subpackage plugins_format
  */
 $pluginParams = array (
-	'auto_activate' => TRUE,
-	'store_function' => 'tikiwiki_save_data',
-	'load_function' => 'tikiwiki_parse_data',
-	'verify_function' => 'tikiwiki_verify_data',
-	'rename_function' => 'tikiwiki_rename',
-	'expunge_function' => 'tikiwiki_expunge',
-	'description' => 'TikiWiki Syntax Format Parser',
-	'edit_label' => 'Tiki Wiki Syntax',
-	'edit_field' => PLUGIN_GUID_TIKIWIKI,
-	'help_page' => 'TikiWikiSyntax',
-	'plugin_type' => FORMAT_PLUGIN,
-	'linebreak' => "\r\n"
+	'auto_activate'    => TRUE,
+	'store_function'   => 'tikiwiki_save_data',
+	'load_function'    => 'tikiwiki_parse_data',
+	'verify_function'  => 'tikiwiki_verify_data',
+	'description'      => 'TikiWiki Syntax Format Parser',
+	'edit_label'       => 'Tiki Wiki Syntax',
+	'edit_field'       => PLUGIN_GUID_TIKIWIKI,
+	'help_page'        => 'TikiWikiSyntax',
+	'plugin_type'      => FORMAT_PLUGIN,
+	'linebreak'        => "\r\n"
 );
 
 $gLibertySystem->registerPlugin( PLUGIN_GUID_TIKIWIKI, $pluginParams );
@@ -40,75 +37,12 @@ function tikiwiki_save_data( &$pParamHash ) {
 	if( empty( $parser ) ) {
 		$parser = new TikiWikiParser();
 	}
-	if( $pParamHash['edit'] ) {
-		$parser->storeLinks( $pParamHash );
-	}
 }
 
 function tikiwiki_verify_data( &$pParamHash ) {
 	$errorMsg = NULL;
 	$pParamHash['content_store']['data'] = $pParamHash['edit'];
 	return( $errorMsg );
-}
-
-function tikiwiki_expunge( $pContentId ) {
-	$parser = new TikiWikiParser();
-	$parser->expungeLinks( $pContentId );
-}
-
-function tikiwiki_rename( $pContentId, $pOldName, $pNewName, &$pCommonObject ) {
-	$query = "
-		SELECT `from_content_id`, `data`
-		FROM `".BIT_DB_PREFIX."liberty_content_links` lcl
-			INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcl.`from_content_id`=lc.`content_id` )
-		WHERE `to_content_id` = ?";
-
-	if( $result = $pCommonObject->mDb->query( $query, array( $pContentId ) ) ) {
-		while( $row = $result->fetchRow() ) {
-			// check if there are occasions of the old name with alternate display link name
-			// --- ((WikiLink|Description))
-			// \({2}              # check for ((
-			// \b$pOldName\b      # make sure the old name is on it's own
-			// \|                 # the seperating deliminator
-			// ([^\)]*)           # get as many characters as possible up to the next ) - put this in $1
-			// \){2}              # closing brackets ))
-			$pattern[] = "!\({2}\b$pOldName\b\|([^\)]*)\){2}!";
-
-			// - replace with new name leaving description in tact
-			$replace[] = "(($pNewName|$1))";
-
-
-			// --- ((WikiLink)) or WikiLink
-			// (\({2})?           # check for (( - optional - put this in $1
-			// \b$pOldName\b      # make sure the old name is on it's own
-			// (\){2})?           # closing brackets )) - optional - put this in $2
-			$pattern[] = "!(\({2})?\b$pOldName\b(\){2})?!";
-
-			// - the replacement depends on the new name
-			if( preg_match( "! !", $pNewName ) ) {
-				// since we have a space in the final name, we need to have (( 
-				// and )) to make the link work
-				$replace[] = "(($pNewName))";
-			} else {
-				// no spaces in the new name either, so we only insert the (( 
-				// and )) if the author used them to start off with
-				$replace[] = "$1$pNewName$2";
-			}
-
-			$data = preg_replace( $pattern, $replace, $row['data'] );
-			if( md5( $data ) != md5( $row['data'] ) ) {
-				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content` SET `data`=? WHERE `content_id`=?";
-				$pCommonObject->mDb->query( $query, array( $data, $row['from_content_id'] ) );
-
-				// remove any chached files pointing here
-				LibertyContent::expungeCacheFile( $row['from_content_id'] );
-			}
-		}
-	}
-
-	# Fix up titles in the link table
-	$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET `to_title`=? WHERE `to_content_id`=?";
-	$pCommonObject->mDb->query( $query, array( $pNewName, $pContentId ) );
 }
 
 function tikiwiki_parse_data( &$pParseHash, &$pCommonObject ) {
@@ -134,226 +68,13 @@ class TikiWikiParser extends BitBase {
 	var $mUseWikiWords;
 	var $mPageLookup;
 
-	function TikiWikiParser () {
+	function TikiWikiParser() {
 		BitBase::BitBase();
-
-		global $gBitSystem;
-		$this->mUseWikiWords = $gBitSystem->isFeatureActive( 'wiki_words' );
-
-		// Setup the WikiWord regex
-		$wiki_page_regex = $gBitSystem->getConfig( 'wiki_page_regex', 'strict' );
-		// Please DO NOT modify any of the brackets in the regex(s).
-		// It may seem redundent but, really, they are ALL REQUIRED.
-		if ($wiki_page_regex == 'strict') {
-			$this->mWikiWordRegex = '([A-Za-z0-9_])([\.: A-Za-z0-9_\-])*([A-Za-z0-9_])';
-		} elseif ($wiki_page_regex == 'full') {
-			$this->mWikiWordRegex = '([A-Za-z0-9_]|[\x80-\xFF])([\.: A-Za-z0-9_\-]|[\x80-\xFF])*([A-Za-z0-9_]|[\x80-\xFF])';
-		} else {
-			// This is just evil. The middle section means "anything, as long
-			// as it's not a | and isn't followed by ))". -rlpowell
-			$this->mWikiWordRegex = '([^|\(\)])([^|](?!\)\)))*?([^|\(\)])';
-		}
-
-	}
-
-	function extractWikiWords( &$data ) {
-		if( $this->mUseWikiWords ) {
-			preg_match_all("/\(\(($this->mWikiWordRegex)\)\)/", $data, $words2);
-			preg_match_all("/\(\(($this->mWikiWordRegex)\|(.+?)\)\)/", $data, $words3);
-			preg_match_all( '/\b('.WIKI_WORDS_REGEX.')\b/', $data, $words );
-			$words = array_unique(array_merge($words[1], $words2[1], $words3[1]));
-		} else {
-			preg_match_all("/\(\(($this->mWikiWordRegex)\)\)/", $data, $words);
-			preg_match_all("/\(\(($this->mWikiWordRegex)\|(.+?)\)\)/", $data, $words2);
-			$words = array_unique(array_merge($words[1], $words2[1]));
-		}
-		return $words;
-	}
-
-	function storeLinks( &$pParamHash ) {
-		global $gBitSystem;
-
-		if( empty( $pParamHash['content_id'] ) ) {
-			return;
-		}
-
-		$from_content_id = $pParamHash['content_id'];
-		$from_title = isset($pParamHash['title']) ? $pParamHash['title'] : '';
-
-		// we need to remove the cache of any pages pointing to this one
-		$clearCache = $this->mDb->getCol( "SELECT `from_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE (`to_content_id`=? or `to_content_id` is NULL ) and `to_title` = ?", array( 0, $from_title ) );
-		foreach( $clearCache as $content_id ) {
-			LibertyContent::expungeCacheFile( $content_id );
-		}
-
-		#if this is a new page, fix up any links that may already point to it
-		$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET `to_content_id`=? WHERE (`to_content_id`=? or `to_content_id` is NULL ) and `to_title` = ?";
-		$this->mDb->query( $query, array( $from_content_id, 0, $from_title ) );
-
-		#get all the current links from this page
-		$old_links_in_db = array();
-		$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=?";
-		if( $result = $this->mDb->query( $query, array( $from_content_id ) ) ) {
-			while( $row = $result->fetchRow() ) {
-				$old_links_in_db[$row['to_title']] = $row['to_content_id'];
-			}
-		}
-
-		#get list of all wiki links on this page
-		$wiki_links_in_content = $this->extractWikiWords( $pParamHash['edit'] );
-		if( !is_array( $wiki_links_in_content ) ) {
-			$wiki_links_in_content = array();
-		}
-
-		#create list of unique new wiki links on this page
-		$unique_new_wiki_links = array();
-		foreach( $wiki_links_in_content as $to_title ) {
-			if( empty( $to_title ) ) {
-				continue;
-			}
-			if( isset( $old_links_in_db[$to_title] ) ) {
-				# link already in DB - skip rest of processing
-				continue;
-			}
-			$unique_new_wiki_links[$to_title] = $to_title;
-		}
-
-
-		#get list of all new links that point to existing content
-		$new_link_pointing_to_existing_content = array();
-		$title_list_count = count($unique_new_wiki_links);
-		if( $title_list_count > 0 ) {
-			$title_list = '?' . str_repeat(',?',$title_list_count - 1);
-			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_content` WHERE `title` IN($title_list)";
-			if( $result = $this->mDb->query($query, array_keys($unique_new_wiki_links) ) ) {
-				while( $row = $result->fetchRow() ) {
-					$new_link_pointing_to_existing_content[$row['title']] = $row['content_id'];
-				}
-			}
-
-			if( count($new_link_pointing_to_existing_content) > 0 ) {
-				#insert all new links pointing to existing content
-				$query_var = array_keys($new_link_pointing_to_existing_content);
-				$query_var_list = '?' . str_repeat(',?', count($new_link_pointing_to_existing_content) - 1);
-				$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_links`
-					(`from_content_id`,`to_content_id`,`to_title`)
-					SELECT ?,`content_id`,`title` FROM `".BIT_DB_PREFIX."liberty_content`
-					WHERE `title` IN ( $query_var_list )";
-				array_unshift($query_var,$from_content_id);
-				$result = $this->mDb->query($query, $query_var);
-			}
-		}
-
-		#insert all new links pointing to non-existing content
-		foreach ($unique_new_wiki_links as $to_title) {
-			if( isset($new_link_pointing_to_existing_content[$to_title]) ) {
-				continue;
-			}
-			$query = "insert into `".BIT_DB_PREFIX."liberty_content_links` (`from_content_id`,`to_title`) values(?, ?)";
-			$result = $this->mDb->query($query, array( $from_content_id, $to_title ) );
-		}
-
-		# now delete any links no longer on page
-		foreach( $wiki_links_in_content as $to_title) {
-			$wiki_links_in_content_table[$to_title] = 1;
-		}
-
-		foreach( array_keys($old_links_in_db) as $to_title ) {
-			if( !isset($wiki_links_in_content_table[$to_title]) ) {
-				$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=? and `to_title` = ?";
-				$result = $this->mDb->query( $query, array( $from_content_id, $to_title ) );
-			}
-		}
-	}
-
-	function expungeLinks( $pContentId ) {
-		if( !empty( $pContentId ) ) {
-			// remove any cached file pointing to this page
-			$links = $this->mDb->getCol( "SELECT `from_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE to_content_id=?", array( $pContentId ) );
-			foreach( $links as $content_id ) {
-				LibertyContent::expungeCacheFile( $content_id );
-			}
-			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE from_content_id=? OR to_content_id=?", array( $pContentId, $pContentId ) );
-		}
-	}
-
-	/* old database intensive pageExists check
-	// Use liberty_content_links to get all the existing links in a single query
-	function pageExists( $pTitle, $pContentId, $pCommonObject ) {
-		$pTitle = strtolower( $pTitle );
-		if( !empty( $pContentId ) ) {
-			if( empty( $this->mPageLookup ) ) {
-				$query = "SELECT LOWER( lc.`title` ) AS `hash_key`, `page_id`, lc.`content_id`, `description`, lc.`last_modified`, lc.`title`
-						  FROM `".BIT_DB_PREFIX."liberty_content_links` lcl
-						  	INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcl.`to_content_id`=lc.`content_id` )
-						  	INNER JOIN `".BIT_DB_PREFIX."wiki_pages` wp ON( wp.`content_id`=lc.`content_id` )
-						  WHERE lcl.`from_content_id`=? ORDER BY lc.`title`";
-				if( $result = $this->mDb->query( $query, array( $pContentId ) ) ) {
-					$lastTitle = '';
-					while( $row = $result->fetchRow() ) {
-						if( $row['title'] == $lastTitle ) {
-// TODO - need to check ensure that liberty_content_links duplicate are properly inserted - spiderr
-						}
-						$this->mPageLookup[$row['hash_key']][] = $row;
-						$lastTitle = $row['title'];
-					}
-				}
-			}
-		}
-		if( !isset( $this->mPageLookup[$pTitle] ) ) {
-			$this->mPageLookup[$pTitle] = $pCommonObject->pageExists( $pTitle );
-			if( !empty( $this->mPageLookup[$pTitle] ) && ( count( $this->mPageLookup[$pTitle] ) == 1 ) ) {
-//				$this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."liberty_content_links` ( `from_content_id`, `to_content_id` ) VALUES ( ?, ? )" , array( $pContentId, $this->mPageLookup[$pTitle][0]['content_id'] ) );
-			}
-		}
-		return( !empty( $this->mPageLookup[$pTitle] ) ? $this->mPageLookup[$pTitle] : NULL );
-	}
-	*/
-
-	function getAllPages( $pContentId ) {
-		global $gBitSystem;
-		$ret = array();
-		if( $gBitSystem->isPackageActive( 'wiki' ) && @BitBase::verifyId( $pContentId ) ) {
-			$query = "SELECT `page_id`, lc.`content_id`, `description`, lc.`last_modified`, lc.`title`
-				FROM `".BIT_DB_PREFIX."liberty_content_links` lcl
-				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcl.`to_content_id`=lc.`content_id` )
-				INNER JOIN `".BIT_DB_PREFIX."wiki_pages` wp ON( wp.`content_id`=lc.`content_id` )
-				WHERE lcl.`from_content_id`=? ORDER BY lc.`title`";
-			if( $result = $this->mDb->query( $query, array( $pContentId ) ) ) {
-				$lastTitle = '';
-				while( $row = $result->fetchRow() ) {
-					if( array_key_exists( strtolower( $row['title'] ), $ret ) ) {
-						$row['description'] = tra( 'Multiple pages with this name' );
-					}
-					$ret[strtolower( $row['title'] )] = $row;
-				}
-			}
-		}
-		return $ret;
-	}
-
-	function pageExists( $pTitle, $pPageList, $pCommonObject, $pContentId ) {
-		$ret = FALSE;
-		if( !empty( $pTitle ) && !empty( $pPageList ) ) {
-			if( array_key_exists( strtolower( $pTitle ), $pPageList ) ) {
-				$ret = $pPageList[strtolower( $pTitle )];
-			}
-		}
-		// final attempt to get page details
-		if( empty( $ret ) && !empty( $pCommonObject )) {
-			if( $ret = $pCommonObject->pageExists( $pTitle, FALSE, $pContentId ) ) {
-				if( count( $ret ) > 1 ) {
-					$ret[0]['description'] = tra( 'Multiple pages with this name' );
-				}
-				$ret = $ret[0];
-			}
-		}
-		return $ret;
 	}
 
 	// This function handles wiki codes for those special HTML characters
 	// that textarea won't leave alone.
-	function parse_htmlchar( &$data ) {
+	function parseHtmlchar( &$data ) {
 		// cleaning some user input
 		$data = preg_replace( "/&(?!([a-z]{1,7};))/", "&amp;", $data );
 
@@ -380,137 +101,20 @@ class TikiWikiParser extends BitBase {
 		$data = preg_replace( "/~([0-9]+)~/", "&#$1;", $data );
 	}
 
-	function parse_comment_data( $pData ) {
-		// rel=\"nofollow\" is support for Google's Preventing comment spam
-		// http://www.google.com/googleblog/2005/01/preventing-comment-spam.html
-		$pData = preg_replace("/\[([^\|\]]+)\|([^\]]+)\]/", "<a rel=\"nofollow\" href=\"$1\">$2</a>", $pData);
-
-		// Segundo intento reemplazar los [link] comunes
-		$pData = preg_replace("/\[([^\]\|]+)\]/", "<a rel=\"nofollow\" href=\"$1\">$1</a>", $pData);
-
-		// Llamar aqui a parse smileys
-		$pData = preg_replace("/---/", "<hr/>", $pData);
-
-		// Reemplazar --- por <hr/>
-		return $pData;
-	}
-
-	function get_language($user = false) {
-		static $bitLanguage = false;
-		global $gBitUser, $gBitSystem;
-
-		if( empty( $bitLanguage ) ) {
-			if( $gBitUser->isValid() ) {
-				$bitLanguage = $gBitUser->getPreference('bitLanguage', 'en');
-			} else {
-				$bitLanguage = $this->getPreference('bitLanguage', 'en');
-			}
-		}
-
-		return $bitLanguage;
-	}
-
-	function get_locale($user = false) {
-	# TODO move to admin preferences screen
-		static $locales = array(
-			'cs' => 'cs_CZ',
-			'de' => 'de_DE',
-			'dk' => 'da_DK',
-			'en' => 'en_US',
-			'fr' => 'fr_FR',
-			'he' => 'he_IL', # hebrew
-			'it' => 'it_IT', # italian
-			'pl' => 'pl_PL', # polish
-			'po' => 'po',
-			'ru' => 'ru_RU',
-			'es' => 'es_ES',
-			'sw' => 'sw_SW', # swahili
-			'tw' => 'tw_TW',
-			);
-
-	 if (!isset($locale) or !$locale) {
-	  $locale = '';
-		if (isset($locales[$this->get_language($user)]))
-			$locale = $locales[$this->get_language($user)];
-	#print "<pre>get_locale(): locale=$locale\n</pre>";
-	 }
-
-		return $locale;
-	}
-
-	function get_links($data) {
+	function getLinks( $data ) {
 		$links = array();
 
 		// Match things like [...], but ignore things like [[foo].
 		// -Robin
-		if (preg_match_all("/(?<!\[)\[([^\[\|\]]+)(\||\])/", $data, $r1)) {
+		if( preg_match_all( "/(?<!\[)\[([^\[\|\]]+)(\||\])/", $data, $r1 )) {
 			$res = $r1[1];
-			$links = array_unique($res);
+			$links = array_unique( $res );
 		}
 
 		return $links;
 	}
 
-	function get_links_nocache($data) {
-		$links = array();
-
-		if (preg_match_all("/\[([^\]]+)/", $data, $r1)) {
-		$res = array();
-
-		foreach ($r1[1] as $alink) {
-			$parts = explode('|', $alink);
-
-			if (isset($parts[1]) && $parts[1] == 'nocache') {
-			$res[] = $parts[0];
-			} else {
-			if (isset($parts[2]) && $parts[2] == 'nocache') {
-				$res[] = $parts[0];
-			}
-			}
-			// avoid caching URLs with common binary file extensions
-			$extension = substr($parts[0], -4);
-			$binary = array(
-				'.arj',
-				'.asf',
-				'.avi',
-				'.bz2',
-				'.dat',
-				'.doc',
-				'.exe',
-				'.hqx',
-				'.mov',
-				'.mp3',
-				'.mpg',
-				'.ogg',
-				'.pdf',
-				'.ram',
-				'.rar',
-				'.rpm',
-				'.rtf',
-				'.sea',
-				'.sit',
-				'.tar',
-				'.tgz',
-				'.wav',
-				'.wmv',
-				'.xls',
-				'.zip',
-				'ar.Z', // .tar.Z
-				'r.gz'  // .tar.gz
-				);
-				if (in_array($extension, $binary)) {
-				$res[] = $parts[0];
-				}
-
-		}
-
-		$links = array_unique($res);
-		}
-
-		return $links;
-	}
-
-	function how_many_at_start($str, $car) {
+	function howManyAtStart($str, $car) {
 		$cant = 0;
 		$i = 0;
 		while (($i < strlen($str)) && (isset($str{$i})) && ($str{$i}== $car)) {
@@ -520,8 +124,8 @@ class TikiWikiParser extends BitBase {
 		return $cant;
 	}
 
-	function parse_mediawiki_tables( $data ) {
-		//$data = "\n<!-- parse_mediawiki_tables() called. -->\n" . $data;
+	function parseMediawikiTables( $data ) {
+		//$data = "\n<!-- parseMediawikiTables() called. -->\n" . $data;
 		/* Find all matches to {|...|} with no {| inside. */
 		while( preg_match( '/\n?\{\|(.*?)\n\|\}/sm', $data, $matches )) {
 			//vd($matches);
@@ -594,7 +198,7 @@ class TikiWikiParser extends BitBase {
 			$content .= '</tr></table>';
 			$data = str_replace($matches[0], $content, $data);
 		}
-		//$data .= "\n<!-- parse_mediawiki_tables() done. -->\n";
+		//$data .= "\n<!-- parseMediawikiTables() done. -->\n";
 		return $data;
 	}
 
@@ -610,9 +214,6 @@ class TikiWikiParser extends BitBase {
 		if( $gBitSystem->isPackageActive( 'wiki' ) ) {
 			require_once( WIKI_PKG_PATH.'BitPage.php' );
 		}
-
-		// get a list of pages this page links to
-		$pageList = $this->getAllPages( $contentId );
 
 		// if the object isn't loaded, we'll try and get the content prefs manually
 		if( !empty( $pCommonObject->mPrefs ) ) {
@@ -642,8 +243,6 @@ class TikiWikiParser extends BitBase {
 			$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
 		}
 
-		$data = preg_replace( '/(\)\))('.WIKI_WORDS_REGEX.')(\(\()/', "~np~" . "$2" . "~/np~", $data);
-
 		// Extract [link] sections (to be re-inserted later)
 		$noparsedlinks = array();
 
@@ -662,7 +261,7 @@ class TikiWikiParser extends BitBase {
 
 		// Replace special characters
 		//done after url catching because otherwise urls of dyn. sites will be modified
-		$this->parse_htmlchar( $data );
+		$this->parseHtmlchar( $data );
 
 		//$data = strip_tags($data);
 		// BiDi markers
@@ -677,7 +276,7 @@ class TikiWikiParser extends BitBase {
 
 		// Parse MediaWiki-style pipe syntax tables.
 		if(( strpos( $data, "{|" ) === 0 || strpos( $data, "\n{|" ) !== FALSE ) && strpos( $data, "\n|}" ) !== FALSE ) {
-			$data = $this->parse_mediawiki_tables($data);
+			$data = $this->parseMediawikiTables($data);
 		}
 
 		// ============================================= this should go - xing
@@ -724,26 +323,6 @@ class TikiWikiParser extends BitBase {
 			$data='<form method="post" name="dyn_vars">'.$data.'<div style="display:none;"><input type="submit" name="_dyn_update" value="'.tra('Update variables').'"/></div></form>';
 		}
 
-		/* ============================================= obsolete - this looks as though it should be a liberty plugin - xing
-		// Replace dynamic content occurrences
-		if (preg_match_all("/\{content +id=([0-9]+)\}/", $data, $dcs)) {
-			for ($i = 0; $i < count($dcs[0]); $i++) {
-				$repl = $this->get_actual_content($dcs[1][$i]);
-
-				$data = str_replace($dcs[0][$i], $repl, $data);
-			}
-		}
-
-		// Replace Dynamic content with random selection
-		if (preg_match_all("/\{rcontent +id=([0-9]+)\}/", $data, $dcs)) {
-			for ($i = 0; $i < count($dcs[0]); $i++) {
-				$repl = $this->get_random_content($dcs[1][$i]);
-
-				$data = str_replace($dcs[0][$i], $repl, $data);
-			}
-		}
-		*/
-
 		// Replace boxes - add a new line that we can have something like: ^!heading^ without the need for a \n after the initial ^ - \n will be removed below
 		$data = preg_replace("/\^([^\^]+)\^/", "<div class=\"bitbox\"><!-- bitremovebr -->\n$1</div>", $data);
 		// Replace colors ~~color:text~~
@@ -757,100 +336,6 @@ class TikiWikiParser extends BitBase {
 		// Line breaks
 		$data = preg_replace('/%%%/', '<br />', $data);
 
-		// New syntax for wiki pages ((name|desc)) Where desc can be anything
-		preg_match_all("/\(\(({$this->mWikiWordRegex})\|(.+?)\)\)/", $data, $pages);
-
-		for ($i = 0; $i < count($pages[1]); $i++) {
-			$pattern = $pages[0][$i];
-
-			$pattern = preg_quote($pattern, "/");
-
-			$pattern = "/" . $pattern . "/";
-
-			// Replace links to external wikis
-			$repl2 = true;
-
-			if (strstr($pages[1][$i], ':')) {
-				$wexs = explode(':', $pages[1][$i]);
-
-				if (count($wexs) == 2) {
-					$wkname = $wexs[0];
-
-					if ($this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."wiki_ext` where `name`=?",array($wkname)) == 1) {
-						$wkurl = $this->mDb->getOne("select `extwiki`  from `".BIT_DB_PREFIX."wiki_ext` where `name`=?",array($wkname));
-						$wkurl = '<a href="' . str_replace('$page', urlencode($wexs[1]), $wkurl). '">' . $wexs[1] . '</a>';
-						$data = preg_replace($pattern, "$wkurl", $data);
-						$repl2 = false;
-					}
-				}
-			}
-
-			if( $repl2 ) {
-				// 24-Jun-2003, by zaufi
-				// TODO: future optimize: get page description and modification time at once.
-
-				// text[0] = link description (previous format)
-				// text[1] = timeout in seconds (new field)
-				// text[2..N] = drop
-				$text = explode("|", $pages[5][$i]);
-
-				if( $exists = $this->pageExists( $pages[1][$i], $pageList, $pCommonObject, $contentId ) ) {
-					$modTime = count( $exists ) == 1 ? (isset( $exists['last_modified'] ) ? (int)$exists['last_modified'] : 0 ) : 0;
-					$repl = BitPage::getDisplayLink( $pages[1][$i], $exists );
-					if( strlen( trim( $text[0] ) ) > 0 ) {
-						$repl = preg_replace( "#{$pages[1][$i]}</a>$#", "{$text[0]}</a>", $repl );
-					}
-				} else {
-					$repl = BitPage::getDisplayLink( $pages[1][$i], $exists );
-					if( strlen( trim( $text[0] ) ) > 0 ) {
-						$repl = preg_replace( "#{$pages[1][$i]}</a>$#", "{$text[0]}</a>", $repl );
-					}
-				}
-
-				$data = preg_replace( $pattern, "$repl", $data );
-			}
-		}
-
-		// We need to remove ))WikiWords(( before links get made.
-		// users just need to be strict about not inserting spaces between 
-		// words and brackets
-		$data = preg_replace( "!
-			\){2}               # check for ))
-			([\w\d_\-]+?)       # any letter, digit plus - and _ - placed in $1
-			\({2}               # closing ((
-			!x", "$1", $data
-		);
-
-		// New syntax for wiki pages ((name)) Where name can be anything
-		preg_match_all("/\({2}(.+?)\){2}/", $data, $pages);
-		foreach (array_unique($pages[1])as $page_parse) {
-			$repl2 = true;
-
-			if (strstr($page_parse, ':')) {
-				$wexs = explode(':', $page_parse);
-
-				if (count($wexs) == 2) {
-					$wkname = $wexs[0];
-
-					if ($this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."wiki_ext` where `name`=?",array($wkname)) == 1) {
-						$wkurl = $this->mDb->getOne("select `extwiki`  from `".BIT_DB_PREFIX."wiki_ext` where `name`=?",array($wkname));
-
-						$wkurl = '<a href="' . str_replace('$page', urlencode($wexs[1]), $wkurl). '">' . $wexs[1] . '</a>';
-						$data = preg_replace("/\(\($page_parse\)\)/", "$wkurl", $data);
-						$repl2 = false;
-					}
-				}
-			}
-
-			if ($repl2) {
-				// This is a hack for now. page_exists_desc should not be needed here sicne blogs and articles use this function
-				$exists = $this->pageExists( $page_parse, $pageList, $pCommonObject, $contentId );
-				$repl = BitPage::getDisplayLink( $page_parse, $exists );
-				$page_parse_pq = preg_quote($page_parse, "/");
-				$data = preg_replace("/\(\($page_parse_pq\)\)/", "$repl", $data);
-			}
-		}
-
 		// the hotwords stuff should go in a filter
 		if ($gBitSystem->isPackageActive( 'hotwords' ) ) {
 			if( empty( $hotwordlib ) ) {
@@ -860,59 +345,12 @@ class TikiWikiParser extends BitBase {
 			}
 		}
 
-		// Links to internal pages
-		// If they are parenthesized then don't treat as links
-		// Prevent ))PageName(( from being expanded	\"\'
-		//[A-Z][a-z0-9_\-]+[A-Z][a-z0-9_\-]+[A-Za-z0-9\-_]*
-
-		if( $gBitSystem->isPackageActive( 'wiki' ) && $gBitSystem->isFeatureActive( 'wiki_words' ) ) {
-			// The first part is now mandatory to prevent [Foo|MyPage] from being converted!
-			// the {2} is curious but seems to prevent things like "__Administration / Modules__" getting linked - spiderr
-			$pages = $this->extractWikiWords( $data );
-			foreach( $pages as $page_parse) {
-				if( empty( $words ) || !array_key_exists( $page_parse, $words ) ) {
-					if( $exists = $this->pageExists( $page_parse, $pageList, $pCommonObject, $contentId ) ) {
-						$repl = BitPage::getDisplayLink( $page_parse, $exists );
-					} elseif( $gBitSystem->isFeatureActive( 'wiki_plurals') && $this->get_locale() == 'en_US' ) {
-						// Link plural topic names to singular topic names if the plural
-						// doesn't exist, and the language is english
-						$plural_tmp = $page_parse;
-						// Plurals like policy / policies
-						$plural_tmp = preg_replace("/ies$/", "y", $plural_tmp);
-						// Plurals like address / addresses
-						$plural_tmp = preg_replace("/sses$/", "ss", $plural_tmp);
-						// Plurals like box / boxes
-						$plural_tmp = preg_replace("/([Xx])es$/", "$1", $plural_tmp);
-						// Others, excluding ending ss like address(es)
-						$plural_tmp = preg_replace("/([A-Za-rt-z])s$/", "$1", $plural_tmp);
-						// prevent redundant pageExists calls if plurals are on, and plural is same as original word
-						if( $page_parse != $plural_tmp ) {
-							$exists = $this->pageExists( $plural_tmp, $pageList, $pCommonObject, $contentId );
-						}
-						$repl = BitPage::getDisplayLink( $plural_tmp, $exists );
-					} else {
-						$repl = BitPage::getDisplayLink( $page_parse, $exists );
-					}
-					// use preg_quote instead
-					// This original breaks numeric 'create page' links in tables for unregistered users
-					$slashed = preg_replace( "/([\/\[\]\(\)])/", "\\\\$1", $page_parse );
-					//$data = preg_replace("/([ \n\t\r\,\;]|^)".$slashed."($|[ \n\t\r\,\;\.])/", "$1"."$repl"."$2", $data);
-					$data = preg_replace( "#([\s\,\;])\b$slashed\b([\s\,\;\.])#", "$1 ".$repl."$2", $data);
-					//$data = preg_replace( "/".preg_quote( $page_parse, "/" )."/", $repl, $data);
-					//$data = str_replace($page_parse,$repl,$data);
-				}
-			}
-		}
-
 		// reinsert hash-replaced links into page
 		foreach ($noparsedlinks as $np) {
 			$data = str_replace($np["key"], $np["data"], $data);
 		}
 
-		// TODO: I think this is 1. just wrong and 2. not needed here? remove it?
-		// Replace ))Words((
-		$data = preg_replace( "/\(\(([^\)]+)\)\)/", "$1", $data );
-		$links = $this->get_links( $data );
+		$links = $this->getLinks( $data );
 
 		// Note that there're links that are replaced
 		foreach( $links as $link ) {
@@ -1056,9 +494,6 @@ class TikiWikiParser extends BitBase {
 			}
 		}
 
-		// change back any end of lines that were temporarily removed in parse_data_plugins
-		$data = preg_replace( "/#EOL/", "\n", $data );
-
 		// 08-Jul-2003, by zaufi
 		// HotWords will be replace only in ordinal text
 		// It looks __realy__ goofy in Headers or Titles
@@ -1086,54 +521,6 @@ class TikiWikiParser extends BitBase {
 			if (!$gBitSystem->isFeatureActive('wiki_preserve_leading_blanks')) {
 				$line = trim( $line );
 			}
-			// Check for titlebars...
-			// NOTE: that title bar should be start from begining of line and
-			//	   be alone on that line to be autoaligned... else it is old styled
-			//	   styled title bar...
-			if (substr(ltrim($line), 0, 2) == '-=' && substr(rtrim($line), -2, 2) == '=-') {
-				// This is not list item -- must close lists currently opened
-				while (count($listbeg))
-				$data .= array_shift($listbeg);
-
-				//
-				$align_len = strlen($line) - strlen(ltrim($line));
-
-				// My textarea size is about 120 space chars.
-				//define('TEXTAREA_SZ', 120);
-
-				// NOTE: That strict math formula (split into 3 areas) gives
-				//	   bad visual effects...
-				// $align = ($align_len < (TEXTAREA_SZ / 3)) ? "left"
-				//		: (($align_len > (2 * TEXTAREA_SZ / 3)) ? "right" : "center");
-				//
-				// Going to introduce some heuristic here :)
-				// Visualy (remember that space char is thin) center starts at 25 pos
-				// and 'right' from 60 (HALF of full width!) -- thats all :)
-				//
-				// NOTE: Guess align only if more than 10 spaces before -=title=-
-				if ($align_len > 10) {
-					$align = ($align_len < 25) ? "left" : (($align_len > 60) ? "right" : "center");
-					$align = ' style="text-align: ' . $align . ';"';
-				} else {
-					$align = '';
-				}
-				//
-				$line = trim($line);
-				$line = '<div class="bitbar"' . $align . '>' . substr($line, 2, strlen($line) - 4). '</div>';
-				$data .= $line;
-				// TODO: Case is handled ...  no need to check other conditions
-				//	   (it is apriory known all they false, moreover sometimes
-				//	   check procedure need > O(0) of compexity)
-				//	   -- continue to next line...
-				//	   MUST replace all remaining parse blocks to the same logic...
-				continue;
-			}
-
-			// Replace old styled titlebars
-			if (strlen($line) != strlen($line = preg_replace("/-=(.+?)=-/", "<div class='bitbar'>$1</div>", $line))) {
-				$data .= $line;
-				continue;
-			}
 
 			// check if we are inside a table, if so, ignore monospaced and do
 			// not insert <br/>
@@ -1157,21 +544,16 @@ class TikiWikiParser extends BitBase {
 				$line = $hotwordlib->replace_hotwords($line, $words);
 			}
 
-			// Replace monospaced text
-			$line = preg_replace("/-\+(.*?)\+-/", "<code>$1</code>", $line);
-			// Replace bold text
-			$line = preg_replace("/__(.*?)__/", "<strong>$1</strong>", $line);
-			$line = preg_replace("/\'\'(.*?)\'\'/", "<em>$1</em>", $line);
-			// Replace definition lists
-			$line = preg_replace("/^;([^:]+):([^\n]+)/", "<dl><dt>$1</dt><dd>$2</dd></dl>", $line);
-
-			if (0) {
-				$line = preg_replace("/\[([^\|]+)\|([^\]]+)\]/", "<a $class href='$1'>$2</a>", $line);
-
-				// Segundo intento reemplazar los [link] comunes
-				$line = preg_replace("/\[([^\]]+)\]/", "<a $class href='$1'>$1</a>", $line);
-				$line = preg_replace("/\-\=([^=]+)\=\-/", "<div class='bitbar'>$1</div>", $line);
-			}
+			// Title bars
+			$line = preg_replace( "/\-\=([^=]+)\=\-/", "<div class='bitbar'>$1</div>", $line );
+			// Monospaced text
+			$line = preg_replace( "/-\+(.*?)\+-/", "<code>$1</code>", $line );
+			// Bold text
+			$line = preg_replace( "/__(.*?)__/", "<strong>$1</strong>", $line );
+			// Italics
+			$line = preg_replace( "/''(.*?)''/", "<em>$1</em>", $line );
+			// Definition lists
+			$line = preg_replace( "/^;([^:]+):([^\n]+)/", "<dl><dt>$1</dt><dd>$2</dd></dl>", $line );
 
 			// This line is parseable then we have to see what we have
 			if (substr($line, 0, 3) == '---') {
@@ -1184,7 +566,7 @@ class TikiWikiParser extends BitBase {
 				$litype = substr($line, 0, 1);
 
 				if ($litype == '*' || $litype == '#') {
-				$listlevel = $this->how_many_at_start($line, $litype);
+				$listlevel = $this->howManyAtStart($line, $litype);
 
 				$liclose = '</li>';
 				$addremove = 0;
@@ -1244,7 +626,7 @@ class TikiWikiParser extends BitBase {
 					array_unshift($listbeg, '</li>' . array_shift($listbeg));
 				} elseif ($litype == '+') {
 				// Must append paragraph for list item of given depth...
-				$listlevel = $this->how_many_at_start($line, $litype);
+				$listlevel = $this->howManyAtStart($line, $litype);
 
 				// Close lists down to requested level
 				while ($listlevel < count($listbeg))
@@ -1267,7 +649,7 @@ class TikiWikiParser extends BitBase {
 						$data .= array_shift($listbeg);
 
 					// Get count of (possible) header signs at start
-					$hdrlevel = $this->how_many_at_start($line, '!');
+					$hdrlevel = $this->howManyAtStart($line, '!');
 
 					// If 1st char on line is '!' and its count less than 6 (max in HTML)
 					if ($litype == '!' && $hdrlevel > 0 && $hdrlevel <= 6) {
@@ -1302,7 +684,7 @@ class TikiWikiParser extends BitBase {
 
 						if( $gBitSystem->isFeatureActive( 'wiki_section_edit' ) && $gBitUser->hasPermission( 'p_wiki_edit_page' ) ) {
 							if( $hdrlevel == $gBitSystem->getConfig( 'wiki_section_edit' ) ) {
-								$edit_url = WIKI_PKG_URL."edit.php?content_id=".$contentId."&amp;action=edit_sectin&amp;section=".$section_count++;
+								$edit_url = WIKI_PKG_URL."edit.php?content_id=".$contentId."&amp;section=".$section_count++;
 								$edit_link = '<span class="editsection" style="float:right;margin-left:5px;">[<a href="'.$edit_url.'">'.tra( "edit" ).'</a>]</span>';
 							}
 						}
@@ -1354,10 +736,87 @@ class TikiWikiParser extends BitBase {
 
 		$data = str_replace( "<!-- bitremovebr --><br />", "", $data );
 
-		global $gLibertySystem;
-
 		return $data;
 	}
+
+
+	/* the following doesn't seem to be in use anywhere -- will be removed at some point - xing - Monday Jul 23, 2007   07:27:05 CEST
+
+	function parse_comment_data( $pData ) {
+		// rel=\"nofollow\" is support for Google's Preventing comment spam
+		// http://www.google.com/googleblog/2005/01/preventing-comment-spam.html
+		$pData = preg_replace("/\[([^\|\]]+)\|([^\]]+)\]/", "<a rel=\"nofollow\" href=\"$1\">$2</a>", $pData);
+
+		// Segundo intento reemplazar los [link] comunes
+		$pData = preg_replace("/\[([^\]\|]+)\]/", "<a rel=\"nofollow\" href=\"$1\">$1</a>", $pData);
+
+		// Llamar aqui a parse smileys
+		$pData = preg_replace("/---/", "<hr/>", $pData);
+
+		// Reemplazar --- por <hr/>
+		return $pData;
+	}
+
+	function get_links_nocache($data) {
+		$links = array();
+
+		if (preg_match_all("/\[([^\]]+)/", $data, $r1)) {
+		$res = array();
+
+		foreach ($r1[1] as $alink) {
+			$parts = explode('|', $alink);
+
+			if (isset($parts[1]) && $parts[1] == 'nocache') {
+			$res[] = $parts[0];
+			} else {
+			if (isset($parts[2]) && $parts[2] == 'nocache') {
+				$res[] = $parts[0];
+			}
+			}
+			// avoid caching URLs with common binary file extensions
+			$extension = substr($parts[0], -4);
+			$binary = array(
+				'.arj',
+				'.asf',
+				'.avi',
+				'.bz2',
+				'.dat',
+				'.doc',
+				'.exe',
+				'.hqx',
+				'.mov',
+				'.mp3',
+				'.mpg',
+				'.ogg',
+				'.pdf',
+				'.ram',
+				'.rar',
+				'.rpm',
+				'.rtf',
+				'.sea',
+				'.sit',
+				'.tar',
+				'.tgz',
+				'.wav',
+				'.wmv',
+				'.xls',
+				'.zip',
+				'ar.Z', // .tar.Z
+				'r.gz'  // .tar.gz
+				);
+				if (in_array($extension, $binary)) {
+				$res[] = $parts[0];
+				}
+
+		}
+
+		$links = array_unique($res);
+		}
+
+		return $links;
+	}
+	 */
+
 }
 
 ?>
