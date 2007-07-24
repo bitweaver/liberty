@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.1 2007/07/23 20:15:28 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.2 2007/07/24 10:22:15 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -274,7 +274,7 @@ class BitLinks extends BitBase {
 		foreach( array_unique( $pages[1] ) as $page ) {
 			$exists = $this->pageExists( $page, $pObject, $pParamHash['content_id'] );
 			$repl = BitPage::getDisplayLink( $page, $exists );
-			$pData = preg_replace( "/\({2}".preg_quote( $page )."\){2}/", $repl, $pData );
+			$pData = preg_replace( "/\({2}".preg_quote( $page, '/' )."\){2}/", $repl, $pData );
 		}
 
 		// Finally we deal with WikiWord links
@@ -311,7 +311,7 @@ class BitLinks extends BitBase {
 				// new code
 				// i never understood with the simple stuff never worked but it
 				// seems to work now - xing - Sunday Jul 22, 2007   17:37:17 CEST
-				$pData = preg_replace( "/\b".preg_quote( $page )."\b/", $repl, $pData );
+				$pData = preg_replace( "/\b".preg_quote( $page, "/" )."\b/", $repl, $pData );
 			}
 		}
 
