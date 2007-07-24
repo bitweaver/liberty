@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.2 2007/07/24 10:22:15 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.3 2007/07/24 11:24:46 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -20,6 +20,8 @@ $pluginParams = array (
 	'plugin_type'        => FILTER_PLUGIN,
 
 	// filter functions
+	'presplit_function'  => 'bitlinks_prefilter',
+	'preparse_function'  => 'bitlinks_prefilter',
 	'postsplit_function' => 'bitlinks_postfilter',
 	'postparse_function' => 'bitlinks_postfilter',
 	'poststore_function' => 'bitlinks_storefilter',
@@ -28,6 +30,26 @@ $pluginParams = array (
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERWIKILINKS, $pluginParams );
 
 define( 'WIKI_WORDS_REGEX', '[A-z0-9]{2}[\w\d_\-]+[A-Z_][\w\d_\-]+[A-z0-9]+' );
+
+function bitlinks_prefilter( &$pData, &$pFilterHash, $pObject ) {
+	static $sBitLinks;
+	if( empty( $sBitLinks )) {
+		$sBitLinks = new BitLinks();
+	}
+
+	// extract ((Page|Description)) type links that they don't enter the parser.
+	// these can cause problems in various places such as tiki tables due to the |
+	preg_match_all( "/\({2}({$sBitLinks->mWikiWordRegex})\|(.+?)\){2}/", $pData, $protected );
+
+	$pFilterHash['bitlinks']['replacements'] = array();
+	if( !empty( $protected )) {
+		foreach( $protected[0] as $i => $prot ) {
+			$key = md5( mt_rand() );
+			$pFilterHash['bitlinks']['replacements'][$key] = $protected[0][$i];;
+			$pData = str_replace( $prot, $key, $pData );
+		}
+	}
+}
 
 /**
  * convert wiki links to html links e.g.: ((Wiki Page)) --> <a href="/wiki/Wiki+Page">Wiki Page</a>
@@ -39,38 +61,17 @@ define( 'WIKI_WORDS_REGEX', '[A-z0-9]{2}[\w\d_\-]+[A-Z_][\w\d_\-]+[A-z0-9]+' );
  * @return updated data string
  */
 function bitlinks_postfilter( &$pData, &$pFilterHash, $pObject ) {
-	// We need to remove ))WikiWords(( before links get made.
-	// users just need to be strict about not inserting spaces between 
-	// words and brackets
-	preg_match_all( "!
-		\){2}                  # check for ))
-		(".WIKI_WORDS_REGEX.") # wiki word regex in $1
-		\({2}                  # closing ((
-		!x", $pData, $protected
-	);
-
-	$replacements = array();
-	if( !empty( $protected )) {
-		foreach( $protected[0] as $i => $prot ) {
-			$replace = array(
-				'key'  => md5( mt_rand() ),
-				'word' => $protected[1][$i],
-			);
-			$replacements[] = $replace;
-			$pData = str_replace( $prot, $replace['key'], $pData );
-		}
-	}
-
 	static $sBitLinks;
 	if( empty( $sBitLinks )) {
 		$sBitLinks = new BitLinks();
 	}
-	$pData = $sBitLinks->parseLinks( $pData, $pFilterHash, $pObject );
 
-	// replace protection keys with original words
-	foreach( $replacements as $replace ) {
-		$pData = str_replace( $replace['key'], $replace['word'], $pData );
+	// first we need to put the ((Page|Description)) type links back in that we can parse them below
+	foreach( $pFilterHash['bitlinks']['replacements'] as $key => $replace ) {
+		$pData = str_replace( $key, $replace, $pData );
 	}
+
+	$pData = $sBitLinks->parseLinks( $pData, $pFilterHash, $pObject );
 }
 
 /**
@@ -255,6 +256,19 @@ class BitLinks extends BitBase {
 	function parseLinks( $pData, $pParamHash, $pObject ) {
 		global $gBitSystem;
 
+		// We need to remove ))WikiWords(( before links get made.
+		// users just need to be strict about not inserting spaces between 
+		// words and brackets
+		preg_match_all( "!\){2}(".WIKI_WORDS_REGEX.")\({2}!", $pData, $protected );
+		$replacements = array();
+		if( !empty( $protected )) {
+			foreach( $protected[0] as $i => $prot ) {
+				$key = md5( mt_rand() );
+				$replacements[$key] = $protected[1][$i];;
+				$pData = str_replace( $prot, $key, $pData );
+			}
+		}
+
 		// Process ((Wiki Page|Wiki Page Description)) type links first. Here we 
 		// don't handle plurals and the like since the user should know what 
 		// he's linking to when using these links
@@ -313,6 +327,11 @@ class BitLinks extends BitBase {
 				// seems to work now - xing - Sunday Jul 22, 2007   17:37:17 CEST
 				$pData = preg_replace( "/\b".preg_quote( $page, "/" )."\b/", $repl, $pData );
 			}
+		}
+
+		// replace protection keys with original words
+		foreach( $replacements as $key => $replace ) {
+			$pData = str_replace( $key, $replace, $pData );
 		}
 
 		return $pData;
