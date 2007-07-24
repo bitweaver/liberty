@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/ajax_comments.php,v 1.4 2007/06/22 09:17:13 lsces Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/ajax_comments.php,v 1.5 2007/07/24 14:26:47 wjames5 Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -20,6 +20,12 @@ if( !$gBitUser->hasPermission( 'p_liberty_post_comments' )) {
 } elseif( $gContent->isCommentable() ) {
 	$commentsParentId = $_REQUEST['parent_id'];
 	$comments_return_url = $_REQUEST['comments_return_url'];
+	/* If we are receiving ajax comments request make sure our results also know 
+	   we are using ajax comments. This is an insurance measure that if the originating content 
+	   forced on ajax comments (even if off system wide) that the return results 
+	   continue to use ajax comments. Don't take this out under penalty of death.
+	*/
+	$gBitSystem->setConfig( 'comments_ajax', 'y' );
 	include_once( LIBERTY_PKG_PATH.'comments_inc.php' );
 	if( isset( $_REQUEST['post_comment_submit'] )) {
 		if ($storeComment->loadComment()){
