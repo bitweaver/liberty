@@ -1,15 +1,15 @@
 <?php
 /**
- * $Id: edit_help_inc.php,v 1.17 2007/07/15 16:19:47 squareing Exp $
+ * $Id: edit_help_inc.php,v 1.18 2007/07/24 08:12:21 lsces Exp $
  * edit_help_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.17 $
+ * @version  $Revision: 1.18 $
  * @package  liberty
  * @subpackage functions
  */
 
-global $gLibertySystem;
+global $gLibertySystem, $gBitSmarty;
 require_once( '../bit_setup_inc.php' );
 
 $inEditor = TRUE; // Required by PluginHelp to Determin Executed in an Editor
