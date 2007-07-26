@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.273 2007/07/26 09:37:46 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.274 2007/07/26 10:38:10 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1950,7 +1950,7 @@ vd( $ret );
 		$pParseHash['cache_extension'] = !empty( $pParseHash['cache_extension'] ) ? $pParseHash['cache_extension'] : 'desc';
 
 		// split data according to user specifications
-		if( preg_match( LIBERTY_SPLIT_REGEX, $res['data'] ) ) {
+		if( preg_match( LIBERTY_SPLIT_REGEX, $res['data'] )) {
 			// this has been manually split
 			$res['man_split'] = TRUE;
 			$parts = preg_split( LIBERTY_SPLIT_REGEX, $res['data'] );
@@ -1961,23 +1961,16 @@ vd( $ret );
 			$pParseHash['data'] = substr( $res['data'], 0, $pLength );
 		}
 
-		if( !empty( $pParseHash['data'] )) {
-			// run data through presplit filter
-			$this->filterData( $pParseHash['data'], $pParseHash, 'presplit' );
+		// set 'has_more' and remove cache_extension if we don't need it
+		if( !( $res['has_more'] = ( $res['data'] != $pParseHash['data'] ))) {
+			$pParseHash['cache_extension'] = NULL;
+		}
 
+		if( !empty( $pParseHash['data'] )) {
 			// parse data and run it through postsplit filter
 			if( $parsed = $this->parseData( $pParseHash )) {
-				// set 'has_more'
-				if( !( $res['has_more'] = ( $res['data'] != $pParseHash['data'] ))) {
-					// since this is the full lenght of the content to be displayed, we don't need a cache extension
-					$pParseHash['cache_extension'] = NULL;
-				}
-
 				// parsing split content can break stuff so we remove trailing junk
-				$parsed = preg_replace( '!((<br\b[^>]*>)*\s*)*$!si', '', $parsed );
-				// finally we run it through the filters
-				$this->filterData( $parsed, $pParseHash, 'postsplit' );
-				$res['parsed'] = $res['parsed_description'] = $parsed;
+				$res['parsed'] = $res['parsed_description'] = preg_replace( '!((<br\b[^>]*>)*\s*)*$!si', '', $parsed );
 
 				// we append '...' when the split was generated automagically
 				if( empty( $res['man_split'] ) && !empty( $res['has_more'] )) {
@@ -2056,18 +2049,15 @@ vd( $ret );
 				// this will handle all liberty data plugins like {code} and {attachment} usage in all formats
 				parse_data_plugins( $parseHash['data'], $replace, $this );
 
-				// we only filter if this is not a split parse - if it's a split parse, it will fetch its own filters
-				if( empty( $parseHash['split_parse'] )) {
-					LibertyContent::filterData( $parseHash['data'], $parseHash, 'preparse' );
-				}
+				// pre parse filter according to what we're parsing - split or full body
+				$filter = empty( $parseHash['split_parse'] ) ? 'parse' : 'split';
+				LibertyContent::filterData( $parseHash['data'], $parseHash, 'pre'.$filter );
 
 				if( $func = $gLibertySystem->getPluginFunction( $parseHash['format_guid'], 'load_function' ) ) {
 					// get the beast parsed
 					if( $ret = $func( $parseHash, $this )) {
-						// we only filter if this is not a split parse
-						if( empty( $parseHash['split_parse'] )) {
-							LibertyContent::filterData( $ret, $parseHash, 'postparse' );
-						}
+						// post parse filter
+						LibertyContent::filterData( $ret, $parseHash, 'post'.$filter );
 
 						// before we cache we insert the protected sections back - currently this is even after the filters.
 						// this might not be ideal but it allows stuff like ~pp~{maketoc}~/pp~
