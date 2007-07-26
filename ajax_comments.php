@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/ajax_comments.php,v 1.5 2007/07/24 14:26:47 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/ajax_comments.php,v 1.6 2007/07/26 20:17:47 wjames5 Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -11,7 +11,7 @@
 require_once( '../bit_setup_inc.php' );
  
 $staticContent = new LibertyContent();
-$gContent = $staticContent->getLibertyObject( $_REQUEST['parent_id'], $_REQUEST['parent_guid'] );
+$gContent = $staticContent->getLibertyObject( $_REQUEST['parent_id'], (!empty($_REQUEST['parent_guid'])?$_REQUEST['parent_guid']:NULL) );
 $XMLContent = "";
 
 if( !$gBitUser->hasPermission( 'p_liberty_post_comments' )) {

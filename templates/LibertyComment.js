@@ -5,7 +5,7 @@ LibertyComment = {
 	'REPLY_ID':null,
 	
 	// functions
-	'attachForm': function(elm, reply_id){
+	'attachForm': function(elm, reply_id, root_id){
 		LibertyComment.REPLY_ID = reply_id;
 		LibertyComment.cancelComment();
 		var form_div = MochiKit.DOM.removeElement( LibertyComment.FORM_DIV_ID );
@@ -13,15 +13,10 @@ LibertyComment = {
 
 		var form = $(LibertyComment.FORM_ID);
 		if (form.parent_id === undefined){
-			var idInput = MochiKit.DOM.INPUT({'type':'hidden', 'name':'parent_id', 'value':LibertyComment.ROOT_ID});
+			var idInput = MochiKit.DOM.INPUT({'type':'hidden', 'name':'parent_id', 'value':root_id});
 			form.appendChild( idInput );
 		}
-		if (form.parent_guid === undefined){
-			var guidInput = MochiKit.DOM.INPUT({'type':'hidden', 'name':'parent_guid', 'value':LibertyComment.ROOT_GUID});
-			form.appendChild( guidInput );
-		}
-		form.parent_id.value = LibertyComment.ROOT_ID;
-		form.parent_guid.value = LibertyComment.ROOT_GUID;
+		form.parent_id.value = LibertyComment.ROOT_ID = root_id;
 		form.post_comment_reply_id.value = reply_id;
 		form.post_comment_id.value = "";
 		
@@ -107,7 +102,7 @@ LibertyComment = {
 		preview.style.display = 'none';
 		var xml = rslt.responseXML;
 		preview.innerHTML = xml.documentElement.getElementsByTagName('content')[0].firstChild.nodeValue;
-		preview.style.marginLeft = (LibertyComment.REPLY_ID != null)?"20px":'0';				
+		preview.style.marginLeft = (LibertyComment.REPLY_ID != LibertyComment.ROOT_ID)?"20px":'0';				
 		MochiKit.DOM.insertSiblingNodesBefore( $(LibertyComment.FORM_DIV_ID), preview);
 		MochiKit.Visual.blindDown( preview, {afterFinish: function(){		
 			if ( LibertyComment.BROWSER != "ie" ){
