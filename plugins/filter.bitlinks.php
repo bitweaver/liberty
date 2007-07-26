@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.3 2007/07/24 11:24:46 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.4 2007/07/26 08:06:54 bitweaver Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -256,6 +256,14 @@ class BitLinks extends BitBase {
 	function parseLinks( $pData, $pParamHash, $pObject ) {
 		global $gBitSystem;
 
+		// if wiki isn't active, there isn't much we can do here
+		if( !$gBitSystem->isPackageActive( 'wiki' )) {
+			return $pData;
+		}
+
+		// fetch BitPage in case it hasn't been loaded yet
+		require_once( WIKI_PKG_PATH.'BitPage.php' );
+
 		// We need to remove ))WikiWords(( before links get made.
 		// users just need to be strict about not inserting spaces between 
 		// words and brackets
@@ -292,7 +300,7 @@ class BitLinks extends BitBase {
 		}
 
 		// Finally we deal with WikiWord links
-		if( $gBitSystem->isPackageActive( 'wiki' ) && $gBitSystem->isFeatureActive( 'wiki_words' )) {
+		if( $gBitSystem->isFeatureActive( 'wiki_words' )) {
 			$pages = $this->extractWikiWords( $pData );
 			foreach( $pages as $page) {
 				if( $exists = $this->pageExists( $page, $pObject, $pParamHash['content_id'] )) {
