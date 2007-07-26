@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.272 2007/07/23 20:17:33 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.273 2007/07/26 09:37:46 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2041,7 +2041,7 @@ vd( $ret );
 					$parseAndCache = TRUE;
 				} else {
 					// Note that we read from cache.
-					$pCommonObject->mInfo['is_cached'] = TRUE;
+					$this->mInfo['is_cached'] = TRUE;
 				}
 			}
 		}
@@ -2049,17 +2049,17 @@ vd( $ret );
 		// if $ret is empty, we haven't read anything from cache yet - we need to parse the raw data
 		if( empty( $ret ) || !empty( $parseAndCache )) {
 			if( !empty( $parseHash['data'] ) && $parseHash['format_guid'] ) {
-				// we only filter if this is not a split parse - if it's a split parse, it will fetch its own filters
-				if( empty( $parseHash['split_parse'] )) {
-					LibertyContent::filterData( $parseHash['data'], $parseHash, 'preparse' );
-				}
-
 				$replace = array();
 				// extract and protect ~pp~...~/pp~ and ~np~...~/np~ sections
 				parse_protect( $parseHash['data'], $replace );
 
 				// this will handle all liberty data plugins like {code} and {attachment} usage in all formats
 				parse_data_plugins( $parseHash['data'], $replace, $this );
+
+				// we only filter if this is not a split parse - if it's a split parse, it will fetch its own filters
+				if( empty( $parseHash['split_parse'] )) {
+					LibertyContent::filterData( $parseHash['data'], $parseHash, 'preparse' );
+				}
 
 				if( $func = $gLibertySystem->getPluginFunction( $parseHash['format_guid'], 'load_function' ) ) {
 					// get the beast parsed
