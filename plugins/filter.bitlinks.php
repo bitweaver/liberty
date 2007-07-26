@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.4 2007/07/26 08:06:54 bitweaver Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.5 2007/07/26 09:09:16 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -268,7 +268,10 @@ class BitLinks extends BitBase {
 		// users just need to be strict about not inserting spaces between 
 		// words and brackets
 		preg_match_all( "!\){2}(".WIKI_WORDS_REGEX.")\({2}!", $pData, $protected );
+
+		// this array is used to fill the text with temporary placeholders that get replaced back in further down
 		$replacements = array();
+
 		if( !empty( $protected )) {
 			foreach( $protected[0] as $i => $prot ) {
 				$key = md5( mt_rand() );
@@ -285,18 +288,21 @@ class BitLinks extends BitBase {
 			$exists = $this->pageExists( $pages[1][$i], $pObject, $pParamHash['content_id'] );
 			$repl = BitPage::getDisplayLink( $pages[1][$i], $exists );
 			if( strlen( trim( $pages[5][$i] )) > 0 ) {
-				$repl = preg_replace( "#".preg_quote( $pages[1][$i], "#" )."</a>$#", "{$pages[5][$i]}</a>", $repl );
+				$repl = str_replace( $pages[1][$i]."</a>", "{$pages[5][$i]}</a>", $repl );
 			}
 
-			$pData = preg_replace( "/".preg_quote( $pages[0][$i] )."/", $repl, $pData );
+			$key = md5( mt_rand() );
+			$replacements[$key] = $repl;
+			$pData = str_replace( $pages[0][$i], $key, $pData );
 		}
 
 		// Process the simpler ((Wiki Page)) type links without the description
 		preg_match_all( "/\({2}(.+?)\){2}/", $pData, $pages );
 		foreach( array_unique( $pages[1] ) as $page ) {
+			$key = md5( mt_rand() );
 			$exists = $this->pageExists( $page, $pObject, $pParamHash['content_id'] );
-			$repl = BitPage::getDisplayLink( $page, $exists );
-			$pData = preg_replace( "/\({2}".preg_quote( $page, '/' )."\){2}/", $repl, $pData );
+			$replacements[$key] = BitPage::getDisplayLink( $page, $exists );
+			$pData = str_replace( "(($page))", $key, $pData );
 		}
 
 		// Finally we deal with WikiWord links
