@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.5 2007/07/26 09:09:16 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.6 2007/07/26 09:26:55 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -231,17 +231,20 @@ class BitLinks extends BitBase {
 	 */
 	function extractWikiWords( $pData ) {
 		global $gBitSystem;
+		// we need to remove text that might contain unexpected wiki words
+		$protect = array(
+            "!<a\b[^>]*>.*?</a>!si", // links
+            "!<[^>]*>!",             // any html tags
+		);
+		$tmpData = preg_replace( $protect, "", $pData );
+
+		$words1[1] = $words2[1] = $words3[1] = array();
+		preg_match_all( "/\({2}($this->mWikiWordRegex)\){2}/", $tmpData, $words2 );
+		preg_match_all( "/\({2}($this->mWikiWordRegex)\|(.+?)\){2}/", $tmpData, $words3 );
 		if( $gBitSystem->isFeatureActive( 'wiki_words' )) {
-			preg_match_all( "/\({2}($this->mWikiWordRegex)\){2}/", $pData, $words2 );
-			preg_match_all( "/\({2}($this->mWikiWordRegex)\|(.+?)\){2}/", $pData, $words3 );
-			preg_match_all( '/\b('.WIKI_WORDS_REGEX.')\b/', $pData, $words );
-			$words = array_unique( array_merge( $words[1], $words2[1], $words3[1] ));
-		} else {
-			preg_match_all( "/\({2}($this->mWikiWordRegex)\){2}/", $pData, $words );
-			preg_match_all( "/\({2}($this->mWikiWordRegex)\|(.+?)\){2}/", $pData, $words2 );
-			$words = array_unique( array_merge( $words[1], $words2[1] ));
+			preg_match_all( '/\b('.WIKI_WORDS_REGEX.')\b/', $tmpData, $words1 );
 		}
-		return $words;
+		return array_unique( array_merge( $words1[1], $words2[1], $words3[1] ));
 	}
 
 	/**
