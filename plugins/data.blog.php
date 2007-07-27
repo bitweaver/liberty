@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.blog.php,v 1.11 2007/06/09 18:09:39 squareing Exp $
+// $Id: data.blog.php,v 1.12 2007/07/27 08:16:21 wjames5 Exp $
 
 /**
  * definitions
@@ -101,6 +101,8 @@ function data_blog($data, $params) { // No change in the parameters with Clyde
 		$blogPost = new BitBlogPost();
 		
 		$sortOptions = array(
+							 "publish_date_desc",
+							 "publish_date_asc",
 							 "last_modified_asc",
 							 "last_modified_desc",
 							 "created_asc",
@@ -110,7 +112,7 @@ function data_blog($data, $params) { // No change in the parameters with Clyde
 		if( !empty( $module_params['sort_mode'] ) && in_array( $module_params['sort_mode'], $sortOptions ) ) {
 			$sort_mode = $module_params['sort_mode'];
 		} else {
-			$sort_mode = 'last_modified_desc';
+			$sort_mode = 'publish_date_desc';
 		}
 		
 		$getHash = Array();
