@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.91 2007/07/16 21:46:13 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.92 2007/07/27 07:48:52 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -460,7 +460,7 @@ class LibertySystem extends LibertyBase {
 	 **/
 	function getService( $pPackageName ) {
 		global $gBitSystem;
-		return( !empty( $gBitSystem->mPackages[$pPackageName]['service'] ) ? $gBitSystem->mPackages[$pPackageName]['service'] : NULl );
+		return( !empty( $gBitSystem->mPackages[$pPackageName]['service'] ) ? $gBitSystem->mPackages[$pPackageName]['service'] : NULL );
 	}
 
 	/**
