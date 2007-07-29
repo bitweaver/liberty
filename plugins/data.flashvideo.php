@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.flashvideo.php,v 1.14 2007/07/05 05:50:42 squareing Exp $
+// $Id: data.flashvideo.php,v 1.15 2007/07/29 05:26:22 squareing Exp $
 
 /**
  * definitions
@@ -104,8 +104,8 @@ function data_flashvideo( $pData, $pParams ) { // NOTE: The original plugin had 
 
 		$sizes = array( 'small', 'medium', 'large', 'huge', 'original' );
 		if( !empty( $pParams['view'] ) && in_array( $pParams['view'], $sizes )) {
-			$wrapper['description'] .= ( !empty( $wrapper['description'] ) ? '<br />' : '' );
-			$wrapper['description'] .= '<a href="'.$ti->mInfo['display_url'].'&size='.$pParams['view'].'">'.tra( "View larger version" ).'</a>';
+			$wrapper['description'] .= ( !empty( $wrapper['description'] ) ? '' : '' );
+			$wrapper['description'] .= '<a href="'.$ti->mInfo['display_url'].'&amp;size='.$pParams['view'].'">'.tra( "View larger version" ).'</a>';
 		}
 
 		$gBitSmarty->assign( 'flvPrefs', $ti->mPrefs );
@@ -113,7 +113,7 @@ function data_flashvideo( $pData, $pParams ) { // NOTE: The original plugin had 
 		$ret = $gBitSmarty->fetch( 'bitpackage:treasury/flv_player_inc.tpl' );
 
 		// finally, wrap the output
-		$ret = '<'.$wrapper['wrapper'].' class="'.( !empty( $wrapper['class'] ) ? $wrapper['class'] : "flashvideo-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.( !empty( $wrapper['description'] ) ? '<br />'.$wrapper['description']  : '' ).'</'.$wrapper['wrapper'].'>';
+		$ret = '<'.$wrapper['wrapper'].' class="'.( !empty( $wrapper['class'] ) ? $wrapper['class'] : "flashvideo-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.$wrapper['description'].'</'.$wrapper['wrapper'].'>';
 	} else {
 		$ret = tra( "There doesn't seem to be a valid video stream for the id you used" ).": ".$pParams['id'];
 	}
