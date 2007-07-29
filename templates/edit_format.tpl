@@ -28,12 +28,12 @@
 					{counter start=1 name=numformat print=false assign=numformat}
 					<label>
 						<input type="radio" name="{$format_guid_variable|default:"format_guid"}" value="{$plugin.edit_field}"
-						{if $gContent->mInfo.format_guid eq $plugin.plugin_guid}
-							checked="checked"
-						{elseif !$gContent->mInfo.format_guid and $plugin.plugin_guid eq $gBitSystem->getConfig('default_format')}
-							checked="checked"
-						{/if}
-						onclick="
+						{if $gContent->mInfo.format_guid eq $plugin.plugin_guid
+							} checked="checked"{
+						elseif !$gContent->mInfo.format_guid and $plugin.plugin_guid eq $gBitSystem->getConfig('default_format')
+							} checked="checked"{
+						/if
+						} onclick="
 							{if $gBitSystem->isPackageActive('quicktags')}
 								{foreach from=$gLibertySystem->mPlugins item=tag key=guid}
 									{if $tag.is_active eq 'y' and $tag.edit_field and $tag.plugin_type eq 'format'}
