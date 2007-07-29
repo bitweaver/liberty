@@ -36,7 +36,7 @@ if( $cache->isCached( $cacheFile, filemtime( __FILE__ ))) {
 				'data' => "::text::",
 			),
 			'Combined' => array(
-				'data' => "__::~~red:++yellow:text++~~::__",
+				'data' => "::__~~red:++yellow:text++~~__::",
 				'note' => "When you combine options make sure you open and close in the opposite order analogous to: {[(text)]}",
 			),
 		),
