@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.26 2007/07/15 19:21:31 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.27 2007/07/29 05:52:50 squareing Exp $ *}
 
 {strip}
 {if $dataplugins}
@@ -16,8 +16,8 @@
 		<script type="text/javascript">/*<![CDATA[*/ document.write( '<div id="{$p.plugin_guid}1" style="display:none;">' ); /*]]>*/</script>
 		<h2>{tr}Plugin{/tr}: {$p.title|escape|default:"{tr}No Title{/tr}"}</h2>
 			<ul>
-				<li class="{cycle}"><strong>{tr}Description{/tr}:</strong> {$p.description}</li>
-				<li class="{cycle values="odd,even"}"><strong>{tr}Syntax{/tr}:</strong>
+				<li class="{cycle values="odd,even"}"><strong>{tr}Description{/tr}:</strong> {$p.description}</li>
+				<li class="{cycle}"><strong>{tr}Syntax{/tr}:</strong>
 					&nbsp;<a href="#" title="{tr}Click to insert syntax into editor{/tr}" onclick="javascript:insertAt('{$textarea_id}','{$p.syntax|@addslashes}');">{$p.syntax}</a>
 				</li>
 				<li class="{cycle}"><strong>{tr}Online Help{/tr}:</strong> {jspopup href="http://www.bitweaver.org/wiki/`$p.help_page`" title=`$p.help_page` class="external"}</li>
