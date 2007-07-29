@@ -8,7 +8,7 @@
 		</div><!-- end .preview -->
 	{/if}
 
-		{form action="`$comments_return_url`#editcomments" name="editcomment-form" id="editcomment-form"}
+		{form action="`$comments_return_url`#editcomments" id="editcomment-form"}
 		{formfeedback hash=$formfeedback}
 		
 		{* DEPRECATED Slated for Removal - I see no reason for this -wjames5
