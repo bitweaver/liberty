@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.7 2007/07/18 21:55:25 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.8 2007/07/29 14:23:25 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -430,7 +430,8 @@ function liberty_process_upload( &$pFileHash ) {
 		$pFileHash['upload']['name'] = $pFileHash['upload']['name'].'.txt';
 	}
 	// Thumbs.db is a windows My Photos/ folder file, and seems to really piss off imagick
-	if( (preg_match( '/^image\/*/', $pFileHash['upload']['type'] ) || preg_match( '/pdf/i', $pFileHash['upload']['type'] ) ) && $pFileHash['upload']['name'] != 'Thumbs.db' ) {
+	$canThumbFunc = liberty_get_function( 'can_thumbnail' );
+	if( !empty( $canThumbFunc ) && $canThumbFunc( $pFileHash['upload']['type'] ) && $pFileHash['upload']['name'] != 'Thumbs.db' ) {
 		$ret = liberty_process_image( $pFileHash['upload'] );
 	} else {
 		$ret = liberty_process_generic( $pFileHash['upload'] );
@@ -640,7 +641,8 @@ function liberty_clear_thumbnails( &$pFileHash ) {
  */
 function liberty_get_function( $pType ) {
 	global $gBitSystem;
-	return 'liberty_'.$gBitSystem->getConfig( 'image_processor', 'gd' ).'_'.$pType.'_image';
+	$ret = 'liberty_'.$gBitSystem->getConfig( 'image_processor', 'gd' ).'_'.$pType.'_image';
+	return( function_exists( $ret ) ? $ret : FALSE );
 }
 
 /**

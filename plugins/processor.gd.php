@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.8 2007/07/01 14:45:07 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.9 2007/07/29 14:23:25 squareing Exp $
  *
  * Image processor - extension: php-gd
  * @package  liberty
@@ -169,7 +169,7 @@ function liberty_gd_rotate_image( &$pFileHash, $pFormat = NULL ) {
  */
 function liberty_gd_can_thumbnail_image( $pMimeType ) {
 	$ret = FALSE;
-	if( !empty( $pMimeType ) ) {
+	if( !empty( $pMimeType )) {
 		$ret = preg_match( '/^image/i', $pMimeType );
 	}
 	return $ret;
