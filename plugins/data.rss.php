@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.rss.php,v 1.14 2007/07/05 05:34:17 squareing Exp $
+// $Id: data.rss.php,v 1.15 2007/08/01 12:01:51 wjames5 Exp $
 
 /**
  * definitions
@@ -55,7 +55,7 @@ function rss_extended_help() {
 			.'<tr class="odd">'
 				.'<td>id</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(mandatory)") . '</td>'
-				.'<td>' . tra( "ID of the RSS-feed to process.") . '</td>'
+				.'<td>' . tra( "IDs of the RSS-feeds to process. Separate multiple ids with \",\"") . '</td>'
 			.'</tr>'
 			.'<tr class="even">'
 				.'<td>max</td>'
@@ -69,21 +69,26 @@ function rss_extended_help() {
 
 function rss_parse_data( $data, $params ) {
 	$repl = '';
-	if( @BitBase::verifyId( $params['id'] ) ) {
+	if( !empty( $params['id'] ) ) {
 		global $rsslib;
 		require_once( RSS_PKG_PATH.'rss_lib.php' );
 
 		$max = !empty( $params['max'] ) ? $params['max'] : 99;
-
-		$rssdata = $rsslib->get_rss_module_content( $params['id'] );
-		$items = $rsslib->parse_rss_data( $rssdata, $params['id'] );
-
+		
+		if ( $items = $rsslib->parse_feeds( $params ) ){
+			//if we want short descriptions get them
+			$shortdescs = Array();	
+			if ( !empty($module_params['desc_length']) && is_numeric($module_params['desc_length']) && !empty($items)){
+				$shortdescs = $rsslib->get_short_descs( $items, $module_params['desc_length'] );
+			}
+		}		
+		
 		$repl = '<ul class="rsslist">';
 
 		for ($j = 0; $j < count($items) && $j < $max; $j++) {
-			$repl .= '<li><a href="' . $items[$j]["link"] . '">' . $items[$j]["title"] . '</a>';
-			if ($items[$j]["pubdate"] <> '') {
-				$repl .= ' <small>('.$items[$j]["pubdate"].')</small>';
+			$repl .= '<li><a href="' . $items[$j]->get_permalink() . '">' . $items[$j]->get_title() . '</a>';
+			if ($items[$j]->get_date('j M Y | g:i a T') <> '') {
+				$repl .= ' <small>('.$items[$j]->get_date('j M Y | g:i a T').')</small>';
 			}
 			$repl .= '</li>';
 		}
