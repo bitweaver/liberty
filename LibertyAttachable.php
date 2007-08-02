@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.119 2007/08/02 20:54:20 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.120 2007/08/02 23:37:59 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -122,11 +122,11 @@ class LibertyAttachable extends LibertyContent {
 			$exifHash = exif_read_data( $pParamHash['upload']['tmp_name'], 0, true);
 //vd( $exifHash );
 
-			include UTIL_PKG_PATH.'jpeg_metadata_tk/JPEG.php';                     // Change: Allow this example file to be easily relocatable - as of version 1.11
-			include UTIL_PKG_PATH.'jpeg_metadata_tk/JFIF.php';
-			include UTIL_PKG_PATH.'jpeg_metadata_tk/PictureInfo.php';
-			include UTIL_PKG_PATH.'jpeg_metadata_tk/XMP.php';
-			include UTIL_PKG_PATH.'jpeg_metadata_tk/EXIF.php';
+			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/JPEG.php';                     // Change: Allow this example file to be easily relocatable - as of version 1.11
+			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/JFIF.php';
+			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/PictureInfo.php';
+			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/XMP.php';
+			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/EXIF.php';
 
 			// Retrieve the header information from the JPEG file
 			$jpeg_header_data = get_jpeg_header_data( $pParamHash['upload']['tmp_name'] );
