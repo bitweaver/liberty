@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.118 2007/07/17 01:29:05 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.119 2007/08/02 20:54:20 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -114,6 +114,68 @@ class LibertyAttachable extends LibertyContent {
 		return $ret;
 	}
 
+	// Private Method used during verify to extract 
+	function extractMetaData( &$pParamHash ) {
+
+		// Process a JPEG
+		if( function_exists( 'exif_read_data' ) && !empty( $pParamHash['upload']['tmp_name'] ) && stripos( $pParamHash['upload']['type'], 'jpeg' ) !== FALSE ) {
+			$exifHash = exif_read_data( $pParamHash['upload']['tmp_name'], 0, true);
+//vd( $exifHash );
+
+			include UTIL_PKG_PATH.'jpeg_metadata_tk/JPEG.php';                     // Change: Allow this example file to be easily relocatable - as of version 1.11
+			include UTIL_PKG_PATH.'jpeg_metadata_tk/JFIF.php';
+			include UTIL_PKG_PATH.'jpeg_metadata_tk/PictureInfo.php';
+			include UTIL_PKG_PATH.'jpeg_metadata_tk/XMP.php';
+			include UTIL_PKG_PATH.'jpeg_metadata_tk/EXIF.php';
+
+			// Retrieve the header information from the JPEG file
+			$jpeg_header_data = get_jpeg_header_data( $pParamHash['upload']['tmp_name'] );
+
+			// Retrieve EXIF information from the JPEG file
+			$Exif_array = get_EXIF_JPEG( $pParamHash['upload']['tmp_name'] );
+
+			// Retrieve XMP information from the JPEG file
+			$XMP_array = read_XMP_array_from_text( get_XMP_text( $jpeg_header_data ) );
+
+			// Retrieve Photoshop IRB information from the JPEG file
+			$IRB_array = get_Photoshop_IRB( $jpeg_header_data );
+			if( !empty( $exifHash['IFD0']['Software'] ) && preg_match( '/photoshop/i', $exifHash['IFD0']['Software'] ) ) {
+				include UTIL_PKG_PATH.'jpeg_metadata_tk/Photoshop_File_Info.php';
+				// Retrieve Photoshop File Info from the three previous arrays
+				$psFileInfo = get_photoshop_file_info( $Exif_array, $XMP_array, $IRB_array );
+
+				if( !empty( $psFileInfo['headline'] ) ) {
+					if( empty( $pParamHash['title'] ) ) {
+						$pParamHash['title'] = $psFileInfo['headline'];
+					} elseif( empty( $pParamHash['edit'] ) && !$this->getField( 'data' ) && $pParamHash['title'] != $psFileInfo['headline'] ) {
+						$pParamHash['edit'] = $psFileInfo['headline'];
+					}
+				}
+				if( !empty( $psFileInfo['caption'] ) ) {
+					if( empty( $pParamHash['title'] ) ) {
+						$pParamHash['title'] = $psFileInfo['caption'];
+					} elseif( empty( $pParamHash['edit'] ) && !$this->getField( 'data' ) && $pParamHash['title'] != $psFileInfo['caption'] ) {
+						$pParamHash['edit'] = $psFileInfo['caption'];
+					}
+				}
+			}
+
+			if( !empty( $exifHash['EXIF']['DateTimeOriginal'] ) ) {
+				$pParamHash['event_time'] = strtotime( $exifHash['EXIF']['DateTimeOriginal'] );
+			}
+
+			if( !empty( $exifHash['IFD0']['ImageDescription'] ) ) {
+				if( empty( $pParamHash['title'] ) ) {
+					$pParamHash['title'] = $exifHash['IFD0']['ImageDescription'];
+				} elseif( empty( $pParamHash['edit'] ) && !$this->getField( 'data' ) && $pParamHash['title'] != $exifHash['IFD0']['ImageDescription'] ) {
+					$pParamHash['edit'] = $exifHash['IFD0']['ImageDescription'];
+				}
+			}
+		}
+
+
+	}
+
 	function verifyAttachment( &$pParamHash, $file ) {
 		global $gBitSystem, $gBitUser, $gLibertySystem;
 		if( !empty( $_FILES[$file] ) ) {
@@ -133,6 +195,28 @@ class LibertyAttachable extends LibertyContent {
 				}
 				
 				if( !empty( $pParamHash[$file]['size'] ) ) {
+					$this->extractMetaData( $pParamHash );
+					// meta data may be stupid and have stuffed title with all spaces
+					if( !empty( $pParamHash['title'] ) ) {
+						$pParamHash['title'] = trim( $pParamHash['title'] );
+					}
+
+					// let's add a default title
+					if( empty( $pParamHash['title'] ) && !empty( $pParamHash['upload']['name'] ) ) {
+						if( preg_match( '/^[A-Z]:\\\/', $pParamHash['upload']['name'] ) ) {
+							// MSIE shit file names if passthrough via gigaupload, etc.
+							// basename will not work - see http://us3.php.net/manual/en/function.basename.php
+							$tmp = preg_split("[\\\]",$pParamHash['upload']['name']);
+							$defaultName = $tmp[count($tmp) - 1];
+						} elseif( strpos( '.', $pParamHash['upload']['name'] ) ) {
+							list( $defaultName, $ext ) = explode( '.', $pParamHash['upload']['name'] );
+						} else {
+							$defaultName = $pParamHash['upload']['name'];
+						}
+						$pParamHash['title'] = str_replace( '_', ' ', substr( $defaultName, 0, strrpos( $defaultName, '.' ) ) );
+					}
+
+
 					if ( !is_windows() ) {
 						list( $pParamHash[$file]['name'], $pParamHash[$file]['type'] ) = $gBitSystem->verifyFileExtension( $pParamHash[$file]['tmp_name'], $pParamHash[$file]['name'] );
 					} else {
