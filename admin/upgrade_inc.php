@@ -97,7 +97,6 @@ array( 'DATADICT' => array(
 		),
 		'liberty_content_permissions' => array( 
 			'object_id' => array( '`content_id`', 'I4' ),
-			'is_revoked' => array( '`is_exluded`', 'VARCHAR(1)' ),
 		),
 	)),
 	/* The installer can't add constraints after table creation yet so drop this constraint.
@@ -558,7 +557,8 @@ array( 'PHP' => '
 			// generate links for each content item
 			while( $row = $result->fetchRow() ) {
 				$content_id = $row["content_id"];
-				$tp = new TikiWikiParser();
+#				$tp = new TikiWikiParser();
+				$tp = new BitLinks();
 				$tp->storeLinks($row);
 				$ci++;
 			}
