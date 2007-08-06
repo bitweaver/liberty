@@ -3,7 +3,7 @@
  * base package include
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.17 $
+ * @version  $Revision: 1.18 $
  * @package  liberty
  * @subpackage functions
  */
@@ -42,6 +42,7 @@ $gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
 
 // delete cache file if requested
 if( @BitBase::verifyId( $_REQUEST['refresh_liberty_cache'] )) {
+	require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
 	LibertyContent::expungeCacheFile( $_REQUEST['refresh_liberty_cache'] );
 }
 ?>
