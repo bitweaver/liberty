@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.275 2007/08/02 20:54:20 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.276 2007/08/09 18:25:37 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1482,6 +1482,16 @@ vd( $ret );
 			$ret = '<a title="'.htmlspecialchars( $linkTitle ).'" href="'.LibertyContent::getDisplayUrl( $pMixed['content_id'], $pMixed ).$pAnchor.'">'.htmlspecialchars( $pLinkText ).'</a>';
 		}
 		return $ret;
+	}
+
+	/**
+	* Not-so-pure virtual function that returns fully qualified URI to a piece of content
+	* @param string Text for DisplayLink function
+	* @param array different possibilities depending on derived class
+	* @return string Formated URL address to display the page.
+	*/
+	function getDisplayUri( $pProductsId=NULL, $pCatPath=NULL ) {
+		return BIT_ROOT_URI.substr( $this->getDisplayUrl( $pProductsId, $pCatPath ), 1 );
 	}
 
 	/**
