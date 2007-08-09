@@ -1,5 +1,5 @@
 {if $gContent}
-	{biticon ipackage="icons" iname="digg" iexplain="digg this!" iforce="icon"}<a href="http://digg.com/submit?phase=2&amp;url={$gContent->getDisplayUri()|escape:'url'}&amp;title={$gContent->getTitle()|escape:'url'}&amp;bodytext={$parsed_data|escape:'url'|truncate:350}">{tr}digg this!{/tr}
+	{biticon ipackage="liberty" iname="digg" iexplain="digg this!" iforce="icon"}<a href="http://digg.com/submit?phase=2&amp;url={$gContent->getDisplayUri()|escape:'url'}&amp;title={$gContent->getTitle()|escape:'url'}&amp;bodytext={$parsed_data|escape:'url'|truncate:350}">{tr}digg this!{/tr}
 
 {* iframe style that shows counts, perhaps good for inside content block
 	<script type="text/javascript"> digg_url = '{$gContent->getDisplayUri()|escape:"quotes"}'; </script>
