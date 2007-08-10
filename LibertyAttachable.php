@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.120 2007/08/02 23:37:59 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.121 2007/08/10 18:52:53 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -119,7 +119,7 @@ class LibertyAttachable extends LibertyContent {
 
 		// Process a JPEG
 		if( function_exists( 'exif_read_data' ) && !empty( $pParamHash['upload']['tmp_name'] ) && stripos( $pParamHash['upload']['type'], 'jpeg' ) !== FALSE ) {
-			$exifHash = exif_read_data( $pParamHash['upload']['tmp_name'], 0, true);
+			$exifHash = @exif_read_data( $pParamHash['upload']['tmp_name'], 0, true);
 //vd( $exifHash );
 
 			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/JPEG.php';                     // Change: Allow this example file to be easily relocatable - as of version 1.11

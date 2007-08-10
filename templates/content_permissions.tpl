@@ -55,7 +55,7 @@
 									</a>
 								</span>
 							{else}
-								{smartlink itra=false ititle="`$contentPerms.groups.$groupId.group_name` :: $perm" ibiticon=icons/$size$icon action=$action content_id=$gContent->mContentId perm=$perm group_id=$groupId}
+								{smartlink itra=false ititle="`$contentPerms.groups.$groupId.group_name` :: $perm" ibiticon=icons/$size$icon iforce="icon" action=$action content_id=$gContent->mContentId perm=$perm group_id=$groupId}
 							{/if}
 						</td>
 					{/foreach}

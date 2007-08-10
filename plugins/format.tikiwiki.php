@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.111 $
+ * @version  $Revision: 1.112 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -240,7 +240,7 @@ class TikiWikiParser extends BitBase {
 			}
 		} else {
 			// we are parsing this page and we either have no way of checking permissions or we have no need for html
-			$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
+//			$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
 		}
 
 		// Extract [link] sections (to be re-inserted later)
