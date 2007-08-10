@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.113 $
+ * @version  $Revision: 1.114 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -64,51 +64,52 @@ function tikiwiki_parse_data( &$pParseHash, &$pCommonObject ) {
  * @package kernel
  */
 class TikiWikiParser extends BitBase {
-	var $mWikiWordRegex;
-	var $mUseWikiWords;
-	var $mPageLookup;
-
 	function TikiWikiParser() {
 		BitBase::BitBase();
 	}
 
 	// This function handles wiki codes for those special HTML characters
 	// that textarea won't leave alone.
-	function parseHtmlchar( &$data ) {
+	function parseHtmlchar( &$pData ) {
 		// cleaning some user input
-		$data = preg_replace( "/&(?!([a-z]{1,7};))/", "&amp;", $data );
+		$pData = preg_replace( "/&(?!([a-z]{1,7};))/", "&amp;", $pData );
 
 		// oft-used characters (case insensitive)
-		$data = preg_replace( "/~bull~/i",  "&bull;",    $data );
-		$data = preg_replace( "/~bs~/i",    "&#92;",     $data );
-		$data = preg_replace( "/~hs~/i",    "&nbsp;",    $data );
-		$data = preg_replace( "/~amp~/i",   "&amp;",     $data );
-		$data = preg_replace( "/~ldq~/i",   "&ldquo;",   $data );
-		$data = preg_replace( "/~rdq~/i",   "&rdquo;",   $data );
-		$data = preg_replace( "/~lsq~/i",   "&lsquo;",   $data );
-		$data = preg_replace( "/~rsq~/i",   "&rsquo;",   $data );
-		$data = preg_replace( "/~copy~/i",  "&copy;",    $data );
-		$data = preg_replace( "/~c~/i",     "&copy;",    $data );
-		$data = preg_replace( "/~--~/",     "&mdash;",   $data );
-		$data = preg_replace( "/ -- /",     " &mdash; ", $data );
-		$data = preg_replace( "/~lt~/i",    "&lt;",      $data );
-		$data = preg_replace( "/~gt~/i",    "&gt;",      $data );
+		$patterns = array(
+			"~bull~" => "&bull;",
+			"~bs~"   => "&#92;",
+			"~hs~"   => "&nbsp;",
+			"~amp~"  => "&amp;",
+			"~ldq~"  => "&ldquo;",
+			"~rdq~"  => "&rdquo;",
+			"~lsq~"  => "&lsquo;",
+			"~rsq~"  => "&rsquo;",
+			"~copy~" => "&copy;",
+			"~c~"    => "&copy;",
+			"~--~"   => "&mdash;",
+			" -- "   => " &mdash; ",
+			"~lt~"   => "&lt;",
+			"~gt~"   => "&gt;",
+		);
+
+		foreach( $patterns as $pattern => $replace ) {
+			$pData = str_ireplace( $pattern, $replace, $pData );
+		}
 
 		// add an easy method to clear floats
-		$data = preg_replace( "/(\r|\n)?~clear~/i", '<br style="clear:both;" />', $data );
+		$pData = preg_replace( "/(\r|\n)?~clear~/i", '<br style="clear:both;" />', $pData );
 
 		// HTML numeric character entities
-		$data = preg_replace( "/~([0-9]+)~/", "&#$1;", $data );
+		$pData = preg_replace( "/~([0-9]+)~/", "&#$1;", $pData );
 	}
 
-	function getLinks( $data ) {
+	function getLinks( $pData ) {
 		$links = array();
 
 		// Match things like [...], but ignore things like [[foo].
 		// -Robin
-		if( preg_match_all( "/(?<!\[)\[([^\[\|\]]+)(\||\])/", $data, $r1 )) {
-			$res = $r1[1];
-			$links = array_unique( $res );
+		if( preg_match_all( "/(?<!\[)\[([^\[\|\]]+)(\||\])/", $pData, $r1 )) {
+			$links = array_unique( $r1[1] );
 		}
 
 		return $links;
