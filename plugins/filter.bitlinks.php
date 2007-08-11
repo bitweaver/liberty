@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.6 2007/07/26 09:26:55 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.7 2007/08/11 03:01:09 jht001 Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -443,7 +443,7 @@ class BitLinks extends BitBase {
 		$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id` = ?";
 		if( $result = $gBitSystem->mDb->query( $query, array( $from_content_id ))) {
 			while( $row = $result->fetchRow() ) {
-				$old_links_in_db[$row['to_title']] = $row['to_content_id'];
+				$old_links_in_db[strtolower($row['to_title'])] = $row['to_content_id'];
 			}
 		}
 
@@ -456,7 +456,7 @@ class BitLinks extends BitBase {
 			if( empty( $to_title )) {
 				continue;
 			}
-			if( isset( $old_links_in_db[$to_title] )) {
+			if( isset( $old_links_in_db[strtolower($to_title)] )) {
 				// link already in DB - skip rest of processing
 				continue;
 			}
@@ -474,7 +474,7 @@ class BitLinks extends BitBase {
 			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_content` WHERE `title` IN( $inSql ) AND `content_type_guid` = ?";
 			if( $result = $gBitSystem->mDb->query( $query, $bindVars )) {
 				while( $row = $result->fetchRow() ) {
-					$new_link_pointing_to_existing_content[$row['title']] = $row['content_id'];
+					$new_link_pointing_to_existing_content[strtolower($row['title'])] = $row['content_id'];
 				}
 			}
 
@@ -495,7 +495,7 @@ class BitLinks extends BitBase {
 
 		// insert all new links pointing to non-existing content and that are not in the db yet
 		foreach( $unique_new_wiki_links as $to_title ) {
-			if( isset( $new_link_pointing_to_existing_content[$to_title] ) || in_array( $to_title, array_keys( $old_links_in_db ))) {
+			if( isset( $new_link_pointing_to_existing_content[strtolower($to_title)] ) || in_array( strtolower($to_title), array_keys( $old_links_in_db ))) {
 				continue;
 			}
 			$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_links` (`from_content_id`,`to_title`) VALUES(?, ?)";
@@ -504,7 +504,7 @@ class BitLinks extends BitBase {
 
 		// now delete any links no longer on page
 		foreach( $wiki_links_in_content as $to_title ) {
-			$wiki_links_in_content_table[$to_title] = 1;
+			$wiki_links_in_content_table[strtolower($to_title)] = 1;
 		}
 
 		foreach( array_keys( $old_links_in_db ) as $to_title ) {
