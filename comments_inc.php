@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.38 $
+ * @version  $Revision: 1.39 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.38 2007/07/14 14:51:37 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.39 2007/08/19 07:26:40 jht001 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -261,13 +261,18 @@ if( !@BitBase::verifyId( $commentsParentId ) ) {
 	$numComments = $gComment->getNumComments( $commentsParentId );
 }
 
-$commentsTree = array();
-foreach ($comments as $id => $node){
-	if (!empty( $comments[ $node['parent_id'] ])) {
-		$comments[ $node['parent_id'] ]['children'][$id] = &$comments[$id];
-	}
-	if ($node['parent_id'] == $node['root_id']){
-		$commentsTree[$id] = &$comments[$id];
+if ($comments_display_style == 'flat') {
+	$commentsTree = $comments;
+}
+else {	
+	$commentsTree = array();
+	foreach ($comments as $id => $node){
+		if (!empty( $comments[ $node['parent_id'] ])) {
+			$comments[ $node['parent_id'] ]['children'][$id] = &$comments[$id];
+		}
+		if ($node['parent_id'] == $node['root_id']){
+			$commentsTree[$id] = &$comments[$id];
+		}
 	}
 }
 
