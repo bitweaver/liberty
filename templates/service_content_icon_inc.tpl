@@ -1,6 +1,15 @@
 {strip}
+
+{if !$gBitSystem->isFeatureActive( 'pretty_urls' ) and !$gBitSystem->isFeatureActive( 'pretty_urls_extended' )}
+	{assign var="amp" value="&amp;"}
+{else}
+	{assign var="amp" value="?"}
+{/if}
+
 {if $gBitSystem->isFeatureActive( 'liberty_cache' ) && $gContent && $gContent->isCached( $serviceHash.content_id ) && $gBitUser->hasPermission( 'p_users_view_icons_and_tools' )}
-	<a title="{tr}Refresh cache{/tr}" href="{$gContent->getDisplayUrl()|default:$serviceHash.display_url}&amp;refresh_liberty_cache={$serviceHash.content_id}">{biticon ipackage="icons" iname="view-refresh" iexplain="Refresh cache"}</a>
+	<a title="{tr}Refresh cache{/tr}" href="{$gContent->getDisplayUrl()|default:$serviceHash.display_url}{$amp}refresh_liberty_cache={$serviceHash.content_id}">
+		{biticon ipackage="icons" iname="view-refresh" iexplain="Refresh cache"}
+	</a>
 {/if}
 {if $gBitUser->hasPermission( 'p_liberty_assign_content_perms' ) and $serviceHash.content_id}
 	{if $gContent->mPerms} {* don't think there is a serviceHash way of working out if there are individual permissions set *}
