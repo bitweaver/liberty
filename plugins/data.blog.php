@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.13 $
+ * @version  $Revision: 1.14 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.blog.php,v 1.13 2007/08/22 15:09:18 wjames5 Exp $
+// $Id: data.blog.php,v 1.14 2007/08/22 22:43:38 wjames5 Exp $
 
 /**
  * definitions
@@ -140,7 +140,12 @@ function data_blog($data, $params) { // No change in the parameters with Clyde
 						$rssUser->load(false, $module_params['user']);
 						$rssUserId = $rssUser->getField('user_id');
 					}
-					$rssPath = BLOGS_PKG_URL.'blogs_rss.php?'.( isset($module_params['id']) ? 'blog_id='.$module_params['id'] : "" ).( (isset($module_params['id']) && isset($rssUserId))? "&": "").( isset($rssUserId) ? 'user_id='.$rssUserId : "" );
+					$rssPath = BLOGS_PKG_URL.'blogs_rss.php?'
+						.( isset($module_params['id']) ? 'blog_id='.$module_params['id'] : "" )
+						.( (isset($module_params['id']) && isset($rssUserId))? "&": "")
+						.( isset($rssUserId) ? 'user_id='.$rssUserId : "" )
+						.( (isset($rssUserId) && isset($module_params['group_id']))? "&": "")
+						.( isset($module_params['group_id']) ? 'group_id='.$module_params['group_id'] : "" );
 					// something like this would be better, calling smarty directly so translation can also be called -wjames5
 					// $rssIcon = smarty_function_biticon( array('ipackage'=>"rss", 'iname'="rss-16x16", 'iexplain'=>"RSS feed"), &$gBitSmarty );
 					$display_result .= '<div class="floaticon"><a title="RSS feed" href="'.$rssPath.'"><img src="'.BIT_ROOT_URL.'rss/icons/rss-16x16.png" alt="RSS feed" title="RSS feed" class="icon" /></a></div>';
