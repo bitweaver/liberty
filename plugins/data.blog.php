@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.blog.php,v 1.12 2007/07/27 08:16:21 wjames5 Exp $
+// $Id: data.blog.php,v 1.13 2007/08/22 15:09:18 wjames5 Exp $
 
 /**
  * definitions
@@ -119,6 +119,7 @@ function data_blog($data, $params) { // No change in the parameters with Clyde
 		
 		if ( isset($module_params['user']) ){ $getHash['user'] = $module_params['user']; }
 		if ( isset($module_params['id']) ){ $getHash['blog_id'] = $module_params['id'];}
+		if ( isset($module_params['group_id']) ){ $getHash['group_id'] = $module_params['group_id'];}
 		
 		$getHash['sort_mode']   = $sort_mode;
 		$getHash['parse_data'] = TRUE;
