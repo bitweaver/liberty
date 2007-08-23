@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/filter.stencil.php,v 1.1 2007/08/23 15:18:50 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/filter.stencil.php,v 1.2 2007/08/23 20:25:11 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -20,8 +20,7 @@ $pluginParams = array(
 	'plugin_type'        => FILTER_PLUGIN,
 
 	// filter functions
-	'presplit_function'  => 'stencil_filter',
-	'preparse_function'  => 'stencil_filter',
+	'preplugin_function' => 'stencil_filter',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERSTENCIL, $pluginParams );
 
@@ -36,9 +35,8 @@ function stencil_filter( &$pData, &$pFilterHash ) {
 function stencil_parse_data( $matches ) {
 	static $sStencilObjects = array();
 	$output = $matches[0];
-	if( !empty( $matches[2] ) ) {
+	if( !empty( $matches[2] )) {
 		$output = '';
-		$templateVars = array();
 		$templateName = $matches[1];
 		if( empty( $sStencilObjects[$templateName] ) ) {
 			if( $stencilContentId = BitStencil::findByTitle( $templateName, NULL, BITSTENCIL_CONTENT_TYPE_GUID ) ) {
@@ -49,16 +47,25 @@ function stencil_parse_data( $matches ) {
 			}
 		}
 
-		if( $lines = explode( '|', $matches[2] ) ) {
+		if( $lines = explode( '|', $matches[2] )) {
 			foreach( $lines as $line ) {
 				if( strpos( $line, '=' ) ) {
 					list( $name, $value ) = split( '=', trim( $line ) );
-					$templateVars[$name] = $value;
-					$output = preg_replace( '/\{\{\{'.$name.'\}\}\}/', $value, $output );
+					// if the value is empty, we remove all the conditional stuff surrounding it
+					if( empty( $value ) && !is_numeric( $value )) {
+						$output = preg_replace( "!\{{3}$name>.*?<$name\}{3}!s", "", $output );
+					} else {
+						$pattern = array(
+							"!\{{3}$name\}{3}!",
+							"!\{{3}$name>!",
+							"!<$name\}{3}!",
+						);
+						$replace = array( $value, "", "" );
+						$output = preg_replace( $pattern, $replace, $output );
+					}
 				}
 			}
 		}
-		// now need to do the substitution
 	}
 	return( $output );
 }
