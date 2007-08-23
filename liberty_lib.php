@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.8 2007/07/29 14:23:25 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.9 2007/08/23 15:18:50 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -16,12 +16,6 @@
  */
 function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject ) {
 	global $gLibertySystem, $gBitSystem;
-
-	// this should go to a filter
-	if( $gBitSystem->isPackageActive( 'stencil' )) {
-		require_once( STENCIL_PKG_PATH.'BitStencil.php' );
-		$pData = preg_replace_callback( "/\{\{\/?([^|]+)([^\}]*)\}\}/", 'parse_stencil_data', $pData );
-	}
 
 	// note: $curlyTags[0] is the complete match, $curlyTags[1] is plugin name, $curlyTags[2] is plugin arguments
 	preg_match_all( "/\{\/?([A-Za-z0-9]+)([^\}]*)\}/", $pData, $curlyTags );
