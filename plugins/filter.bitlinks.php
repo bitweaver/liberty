@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.7 2007/08/11 03:01:09 jht001 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.8 2007/08/23 20:57:32 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -41,7 +41,6 @@ function bitlinks_prefilter( &$pData, &$pFilterHash, $pObject ) {
 	// these can cause problems in various places such as tiki tables due to the |
 	preg_match_all( "/\({2}({$sBitLinks->mWikiWordRegex})\|(.+?)\){2}/", $pData, $protected );
 
-	$pFilterHash['bitlinks']['replacements'] = array();
 	if( !empty( $protected )) {
 		foreach( $protected[0] as $i => $prot ) {
 			$key = md5( mt_rand() );
@@ -67,8 +66,10 @@ function bitlinks_postfilter( &$pData, &$pFilterHash, $pObject ) {
 	}
 
 	// first we need to put the ((Page|Description)) type links back in that we can parse them below
-	foreach( $pFilterHash['bitlinks']['replacements'] as $key => $replace ) {
-		$pData = str_replace( $key, $replace, $pData );
+	if( !empty( $pFilterHash['bitlinks']['replacements'] )) {
+		foreach( $pFilterHash['bitlinks']['replacements'] as $key => $replace ) {
+			$pData = str_replace( $key, $replace, $pData );
+		}
 	}
 
 	$pData = $sBitLinks->parseLinks( $pData, $pFilterHash, $pObject );
