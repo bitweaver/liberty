@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.278 2007/08/10 18:52:53 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.279 2007/08/23 20:12:44 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2057,6 +2057,9 @@ vd( $ret );
 				$replace = array();
 				// extract and protect ~pp~...~/pp~ and ~np~...~/np~ sections
 				parse_protect( $parseHash['data'], $replace );
+
+				// some few filters such as stencils need to be before the data plugins
+				LibertyContent::filterData( $parseHash['data'], $parseHash, 'preplugin' );
 
 				// this will handle all liberty data plugins like {code} and {attachment} usage in all formats
 				parse_data_plugins( $parseHash['data'], $replace, $this );
