@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.114 $
+ * @version  $Revision: 1.115 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -90,6 +90,7 @@ class TikiWikiParser extends BitBase {
 			" -- "   => " &mdash; ",
 			"~lt~"   => "&lt;",
 			"~gt~"   => "&gt;",
+			"~euro~" => "&euro;",
 		);
 
 		foreach( $patterns as $pattern => $replace ) {
