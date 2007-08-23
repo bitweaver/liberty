@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -23,7 +23,7 @@ $pluginParams = array (
 	'plugin_type'   => DATA_PLUGIN,
 
 	// display icon in quicktags bar
-	'biticon'       => '{biticon ilocation=quicktag iname=application-x-executable iexplain="Image"}',
+	'biticon'       => '{biticon ilocation=quicktag iname=image-x-generic iexplain="Image"}',
 	'taginsert'     => '{image id= align= size= description=}',
 
 	// functions
