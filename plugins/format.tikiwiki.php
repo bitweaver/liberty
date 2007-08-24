@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.116 $
+ * @version  $Revision: 1.117 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -547,7 +547,7 @@ class TikiWikiParser extends BitBase {
 			}
 
 			// Title bars
-			$line = preg_replace( "/\-\=([^=]+)\=\-/", "<div class='bitbar'>$1</div>", $line );
+			$line = preg_replace( "/\-\=([^=]+)\=\-/", "<div class='bitbar'>$1</div><!-- bitremovebr -->", $line );
 			// Monospaced text
 			$line = preg_replace( "/-\+(.*?)\+-/", "<code>$1</code>", $line );
 			// Bold text
@@ -555,7 +555,7 @@ class TikiWikiParser extends BitBase {
 			// Italics
 			$line = preg_replace( "/''(.*?)''/", "<em>$1</em>", $line );
 			// Definition lists
-			$line = preg_replace( "/^;([^:]+):([^\n]+)/", "<dl><dt>$1</dt><dd>$2</dd></dl>", $line );
+			$line = preg_replace( "/^;([^:]+):(.+)/", "<dl><dt>$1</dt><dd>$2</dd></dl><!-- bitremovebr -->", $line );
 
 			// This line is parseable then we have to see what we have
 			if (substr($line, 0, 3) == '---') {
@@ -711,7 +711,7 @@ class TikiWikiParser extends BitBase {
 						$line = "...page...";
 					} else {
 						// Usual paragraph.
-						if ($inTable == 0 && !preg_match("/\{maketoc.*?\}/i",$line)) {
+						if ($inTable == 0) {
 							$line .= '<br />';
 						}
 					}
