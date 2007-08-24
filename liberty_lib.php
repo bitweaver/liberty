@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.9 2007/08/23 15:18:50 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.10 2007/08/24 21:55:50 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -14,7 +14,7 @@
  * @access public
  * @return void
  */
-function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject ) {
+function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject, $pParseHash ) {
 	global $gLibertySystem, $gBitSystem;
 
 	// note: $curlyTags[0] is the complete match, $curlyTags[1] is plugin name, $curlyTags[2] is plugin arguments
@@ -42,9 +42,9 @@ function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject ) {
 			}
 
 			$is_opening_tag = FALSE;
-			if( ( empty( $pluginInfo['requires_pair'] ) && (strtolower($plugin_start) != '{/'. $dataTag . '}' ) )
-				|| (strpos( $plugin_start, ' ' ) > 0)
-				|| (strtolower($plugin_start) == '{'.$dataTag.'}' && !$paired_close_tag_seen[$dataTag] )
+			if(( empty( $pluginInfo['requires_pair'] ) && ( strtolower( $plugin_start ) != '{/'. $dataTag . '}' ))
+				|| ( strpos( $plugin_start, ' ' ) > 0 )
+				|| ( strtolower( $plugin_start ) == '{'.$dataTag.'}' && !$paired_close_tag_seen[$dataTag] )
 			) {
 				$is_opening_tag = TRUE;
 			}
@@ -108,7 +108,7 @@ function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject ) {
 					$arguments = parse_xml_attributes( $paramString );
 				}
 
-				if( $ret = $loadFunc( $plugin_data, $arguments, $pCommonObject ) ) {
+				if( $ret = $loadFunc( $plugin_data, $arguments, $pCommonObject, $pParseHash )) {
 					$key = md5( mt_rand() );
 					$pReplace[] = array(
 						'key'  => $key,

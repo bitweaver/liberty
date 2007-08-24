@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.279 2007/08/23 20:12:44 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.280 2007/08/24 21:55:49 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2062,7 +2062,7 @@ vd( $ret );
 				LibertyContent::filterData( $parseHash['data'], $parseHash, 'preplugin' );
 
 				// this will handle all liberty data plugins like {code} and {attachment} usage in all formats
-				parse_data_plugins( $parseHash['data'], $replace, $this );
+				parse_data_plugins( $parseHash['data'], $replace, $this, $parseHash );
 
 				// pre parse filter according to what we're parsing - split or full body
 				$filter = empty( $parseHash['split_parse'] ) ? 'parse' : 'split';
