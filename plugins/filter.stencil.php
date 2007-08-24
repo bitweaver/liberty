@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/filter.stencil.php,v 1.2 2007/08/23 20:25:11 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/filter.stencil.php,v 1.3 2007/08/24 20:29:58 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -45,6 +45,8 @@ function stencil_parse_data( $matches ) {
 					$output = $sStencilObjects[$templateName]->getField( 'data' );
 				}
 			}
+		} else {
+			$output = $sStencilObjects[$templateName]->getField( 'data' );
 		}
 
 		if( $lines = explode( '|', $matches[2] )) {
