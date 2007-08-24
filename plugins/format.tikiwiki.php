@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.115 $
+ * @version  $Revision: 1.116 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -147,7 +147,7 @@ class TikiWikiParser extends BitBase {
 				/* We have table parameters. */
 				list( $table_params, $table_data ) = explode( "\n", $table_data, 2 );
 				$table_params = preg_replace( $xhtmlfix['pattern'], $xhtmlfix['replace'], trim( $table_params ));
-				/* FIXME:  This attempt to support foo:bar table params needs help!
+				/* TODO: This attempt to support foo:bar table params needs help!
 				if (strlen($table_params)) {
 					$table_params = preg_replace("/\b(\w+):/", '$1=', $table_params);
 				}
@@ -561,91 +561,91 @@ class TikiWikiParser extends BitBase {
 			if (substr($line, 0, 3) == '---') {
 				// This is not list item -- must close lists currently opened
 				while (count($listbeg))
-				$data .= array_shift($listbeg);
+					$data .= array_shift($listbeg);
 
 				$line = '<hr/>';
 			} else {
 				$litype = substr($line, 0, 1);
 
 				if ($litype == '*' || $litype == '#') {
-				$listlevel = $this->howManyAtStart($line, $litype);
+					$listlevel = $this->howManyAtStart($line, $litype);
 
-				$liclose = '</li>';
-				$addremove = 0;
+					$liclose = '</li>';
+					$addremove = 0;
 
-				if ($listlevel < count($listbeg)) {
-					while ($listlevel != count($listbeg))
-					$data .= array_shift($listbeg);
+					if ($listlevel < count($listbeg)) {
+						while ($listlevel != count($listbeg))
+							$data .= array_shift($listbeg);
 
-					if (substr(current($listbeg), 0, 5) != '</li>')
-					$liclose = '';
-				} elseif ($listlevel > count($listbeg)) {
-					$listyle = '';
+						if (substr(current($listbeg), 0, 5) != '</li>')
+							$liclose = '';
+					} elseif ($listlevel > count($listbeg)) {
+						$listyle = '';
 
-					while ($listlevel != count($listbeg)) {
-					array_unshift($listbeg, ($litype == '*' ? '</ul>' : '</ol>'));
+						while ($listlevel != count($listbeg)) {
+							array_unshift($listbeg, ($litype == '*' ? '</ul>' : '</ol>'));
 
-					if ($listlevel == count($listbeg)) {
+							if ($listlevel == count($listbeg)) {
+								$listate = substr($line, $listlevel, 1);
+
+								if (($listate == '+' || $listate == '-') && !($litype == '*' && !strstr(current($listbeg), '</ul>') || $litype == '#' && !strstr(current($listbeg), '</ol>'))) {
+									$thisid = 'id' . microtime() * 1000000;
+
+									$data .= '<br /><a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\')">[' . ($listate == '-' ? '+' : '-') . ']</a>';
+									$listyle = ' id="' . $thisid . '" style="display:' . ($listate == '+' ? 'block' : 'none') . ';"';
+									$addremove = 1;
+								}
+							}
+
+							$data .= ($litype == '*' ? "<ul$listyle>" : "<ol$listyle>");
+						}
+
+						$liclose = '';
+					}
+
+					if ($litype == '*' && !strstr(current($listbeg), '</ul>') || $litype == '#' && !strstr(current($listbeg), '</ol>')) {
+						$data .= array_shift($listbeg);
+
+						$listyle = '';
 						$listate = substr($line, $listlevel, 1);
 
-						if (($listate == '+' || $listate == '-') && !($litype == '*' && !strstr(current($listbeg), '</ul>') || $litype == '#' && !strstr(current($listbeg), '</ol>'))) {
-						$thisid = 'id' . microtime() * 1000000;
+						if (($listate == '+' || $listate == '-')) {
+							$thisid = 'id' . microtime() * 1000000;
 
-						$data .= '<br /><a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\')">[' . ($listate == '-' ? '+' : '-') . ']</a>';
-						$listyle = ' id="' . $thisid . '" style="display:' . ($listate == '+' ? 'block' : 'none') . ';"';
-						$addremove = 1;
+							$data .= '<br /><a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\')">[' . ($listate == '-' ? '+' : '-') . ']</a>';
+							$listyle = ' id="' . $thisid . '" style="display:' . ($listate == '+' ? 'block' : 'none') . ';"';
+							$addremove = 1;
 						}
+
+						$data .= ($litype == '*' ? "<ul$listyle>" : "<ol$listyle>");
+						$liclose = '';
+						array_unshift($listbeg, ($litype == '*' ? '</li></ul>' : '</li></ol>'));
 					}
 
-					$data .= ($litype == '*' ? "<ul$listyle>" : "<ol$listyle>");
-					}
+					$line = $liclose . '<li>' . substr($line, $listlevel + $addremove);
 
-					$liclose = '';
-				}
-
-				if ($litype == '*' && !strstr(current($listbeg), '</ul>') || $litype == '#' && !strstr(current($listbeg), '</ol>')) {
-					$data .= array_shift($listbeg);
-
-					$listyle = '';
-					$listate = substr($line, $listlevel, 1);
-
-					if (($listate == '+' || $listate == '-')) {
-					$thisid = 'id' . microtime() * 1000000;
-
-					$data .= '<br /><a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\')">[' . ($listate == '-' ? '+' : '-') . ']</a>';
-					$listyle = ' id="' . $thisid . '" style="display:' . ($listate == '+' ? 'block' : 'none') . ';"';
-					$addremove = 1;
-					}
-
-					$data .= ($litype == '*' ? "<ul$listyle>" : "<ol$listyle>");
-					$liclose = '';
-					array_unshift($listbeg, ($litype == '*' ? '</li></ul>' : '</li></ol>'));
-				}
-
-				$line = $liclose . '<li>' . substr($line, $listlevel + $addremove);
-
-				if (substr(current($listbeg), 0, 5) != '</li>')
-					array_unshift($listbeg, '</li>' . array_shift($listbeg));
+					if (substr(current($listbeg), 0, 5) != '</li>')
+						array_unshift($listbeg, '</li>' . array_shift($listbeg));
 				} elseif ($litype == '+') {
-				// Must append paragraph for list item of given depth...
-				$listlevel = $this->howManyAtStart($line, $litype);
+					// Must append paragraph for list item of given depth...
+					$listlevel = $this->howManyAtStart($line, $litype);
 
-				// Close lists down to requested level
-				while ($listlevel < count($listbeg))
-					$data .= array_shift($listbeg);
+					// Close lists down to requested level
+					while ($listlevel < count($listbeg))
+						$data .= array_shift($listbeg);
 
 					if (count($listbeg)) {
 						if (substr(current($listbeg), 0, 5) != '</li>') {
-						array_unshift($listbeg, '</li>' . array_shift($listbeg));
+							array_unshift($listbeg, '</li>' . array_shift($listbeg));
 
-						$liclose = '<li>';
+							$liclose = '<li>';
 						} else
-						$liclose = '<br />';
+							$liclose = '<br />';
 					} else
 						$liclose = '';
 
 					$line = $liclose . substr($line, count($listbeg));
-					} else {
+				} else {
 					// This is not list item -- must close lists currently opened
 					while (count($listbeg))
 						$data .= array_shift($listbeg);
@@ -695,7 +695,7 @@ class TikiWikiParser extends BitBase {
 							. substr($line, $hdrlevel + $addremove)
 							. "</h$hdrlevel>"
 							. $aclose
-						;
+							;
 					} elseif (!strcmp($line, "...page...")) {
 						// Close lists and divs currently opened
 						while (count($listbeg)) {
