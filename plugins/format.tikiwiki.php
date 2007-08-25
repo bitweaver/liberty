@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.117 $
+ * @version  $Revision: 1.118 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -138,9 +138,9 @@ class TikiWikiParser extends BitBase {
 			$xhtmlfix['pattern'] = "!=([^'\"][^\s]*)!";
 			$xhtmlfix['replace'] = '="$1"';
 
-			while (preg_match('/^![^!]+!!/m', $table_data)) {
+			while( preg_match('/^![^!]+!!/m', $table_data )) {
 				/* Replace !! with \n! but ONLY in !-defined header rows. */
-				$table_data = preg_replace('/^!([^!]+)!!/m', "!$1\n!", $table_data);
+				$table_data = preg_replace( '/^!([^!]+)!!/m', "!$1\n!", $table_data );
 			}
 
 			if( substr( $table_data, 0, 1 ) != "\n" ) {
@@ -155,8 +155,14 @@ class TikiWikiParser extends BitBase {
 			} else {
 				$table_params = '';
 			}
-			$content = "<table class=\"bittable\" $table_params>";
-			$lines = explode("\n", $table_data);
+
+			// apply default class if no other class has been set
+			if( strpos( 'class=', $table_params ) !== FALSE ) {
+				$table_params .= ' class="bittable"';
+			}
+			$content = "<table $table_params>";
+
+			$lines = explode( "\n", $table_data );
 			$row = 0;
 			foreach ($lines as $line) {
 				if ((substr($line, 0, 1) == '|') || (substr($line, 0, 1) == '!')) {
