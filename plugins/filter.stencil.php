@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/filter.stencil.php,v 1.3 2007/08/24 20:29:58 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/filter.stencil.php,v 1.4 2007/08/29 09:47:50 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -67,6 +67,12 @@ function stencil_parse_data( $matches ) {
 					}
 				}
 			}
+			// any remaining {{{vars}}} will be removed
+			$pattern = array(
+				"!\{{3}\w+?>.*?<\w+\}{3}!s",
+				"!\{{3}\w+?\}{3}!",
+			);
+			$output = preg_replace( $pattern, "", $output );
 		}
 	}
 	return( $output );
