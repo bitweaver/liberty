@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.8 2007/08/23 20:57:32 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.9 2007/08/31 09:34:17 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -431,8 +431,10 @@ class BitLinks extends BitBase {
 		// we need to remove the cache of any pages pointing to this one
 		$query = "SELECT `from_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE (`to_content_id`=? or `to_content_id` IS NULL ) AND `to_title` = ?";
 		$clearCache = $gBitSystem->mDb->getCol( $query, array( 0, $from_title ));
-		foreach( $clearCache as $content_id ) {
-			LibertyContent::expungeCacheFile( $content_id );
+		if( is_array( $clearCache )) {
+			foreach( $clearCache as $content_id ) {
+				LibertyContent::expungeCacheFile( $content_id );
+			}
 		}
 
 		// if this is a new page, fix up any links that may already point to it
