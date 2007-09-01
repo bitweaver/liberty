@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Southpaw <southpawz@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.freemind.php,v 1.10 2007/06/09 18:09:39 squareing Exp $
+// $Id: data.freemind.php,v 1.11 2007/09/01 14:23:32 laetzer Exp $
 
 /**
  * definitions
@@ -81,7 +81,7 @@ function data_freemind( $data, $params ) {
 			$repl = tra("Error - the file") . '<strong> freemind.jar </strong>' . tra("does not exist in the site's <strong>drivers</strong> directory.");
 		} else {
 			$repl =
-				 '<script language="JavaScript">'.
+				 '<script type="text/javascript">'.
 				 '        if(!navigator.javaEnabled()) {'.
 				 '                document.write(\'Please install a <a href="http://www.java.com/">Java Runtime Environment</a> on your computer.\');'.
 				 '        }'.
