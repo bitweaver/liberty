@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.280 2007/08/24 21:55:49 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.281 2007/09/04 16:28:38 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1564,6 +1564,13 @@ vd( $ret );
 		} else {
 			$pListHash['min_content_status_id'] = 1;
 		}
+
+		// if sort_mode is not set then use last_modified_desc
+		if( !empty( $pListHash['sort_mode'] ) && strpos( $pListHash['sort_mode'], 'hits' ) === 0 ) {
+			// if sort mode is hits_*, then assume liberty content
+			$pListHash['sort_mode'] = 'lch.'.$pListHash['sort_mode'];
+		}
+
 		return parent::prepGetList( $pListHash );
 	}
 
