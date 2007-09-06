@@ -1,9 +1,9 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.27 2007/07/29 05:52:50 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.28 2007/09/06 23:13:38 wjames5 Exp $ *}
 
 {strip}
 {if $dataplugins}
 	<h2>{tr}Data Plugin Help{/tr}</h2>
-	<div id="hidefromnonjsbrowsers" style="display:none;">
+	<div {if !$gBitThemes->isJavascriptEnabled()}style="display:none;"{/if}>
 		{tr}Click on the plugin you need help for{/tr}:<br />
 		<select size="5" onchange="javascript:flipMulti(this.options[this.selectedIndex].value,1,1);">
 			{foreach from=$dataplugins item=p}
@@ -13,7 +13,7 @@
 	</div>
 
 	{foreach from=$dataplugins item=p}
-		<script type="text/javascript">/*<![CDATA[*/ document.write( '<div id="{$p.plugin_guid}1" style="display:none;">' ); /*]]>*/</script>
+		{if $gBitThemes->isJavascriptEnabled()}<div id="{$p.plugin_guid}1" style="display:none;">{/if}
 		<h2>{tr}Plugin{/tr}: {$p.title|escape|default:"{tr}No Title{/tr}"}</h2>
 			<ul>
 				<li class="{cycle values="odd,even"}"><strong>{tr}Description{/tr}:</strong> {$p.description}</li>
@@ -24,12 +24,8 @@
 			</ul>
 			<br /><br />
 			{$p.exthelp}
-		<script type="text/javascript">/*<![CDATA[*/ document.write( '</div>' ); /*]]>*/</script>
+		{if $gBitThemes->isJavascriptEnabled()}</div>{/if}
 	{/foreach}
-
-	<script type="text/javascript">/*<![CDATA[*/
-		showById('hidefromnonjsbrowsers');
-	/*]]>*/</script>
 {/if}
 
 <br /><br /><hr /><br />
