@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.284 2007/09/10 15:17:25 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.285 2007/09/10 16:29:14 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -975,7 +975,7 @@ class LibertyContent extends LibertyBase {
 	* @param string Name of the permission to check
 	* @return bool true if user has permission to access file
 	*/
-	function hasUserPermission( $pPermName, $pVerifyAccessControl=TRUE ) {
+	function hasUserPermission( $pPermName, $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
 		global $gBitUser;
 		$ret = FALSE;
 		if( !$gBitUser->isRegistered() || !( $ret = $this->isOwner() || $ret = $gBitUser->isAdmin() )) {
@@ -991,7 +991,7 @@ class LibertyContent extends LibertyBase {
 					// make a copy of the user's global perms
 					$checkPerms = $this->getUserPermissions( $gBitUser->mUserId );
 					$ret = !empty( $checkPerms[$this->mAdminContentPerm] ) || !empty( $checkPerms[$pPermName] ); // && ( $checkPerms[$pPermName]['user_id'] == $gBitUser->mUserId );
-				} else {
+				} elseif( $pCheckGlobalPerm ) {
 					// return default user permission setting when no content perms are set
 					$ret = $gBitUser->hasPermission( $pPermName );
 				}
@@ -1015,7 +1015,7 @@ class LibertyContent extends LibertyBase {
 	* @return bool True if user has this type of content administration permission
 	*/
 	function hasEditPermission( $pVerifyAccessControl=TRUE ) {
-		return( $this->hasAdminPermission( $pVerifyAccessControl ) || $this->hasUserPermission( $this->mEditContentPerm, $pVerifyAccessControl ) || $this->isOwner() );
+		return( $this->hasAdminPermission( $pVerifyAccessControl ) || $this->hasUserPermission( $this->mEditContentPerm, $pVerifyAccessControl, FALSE ) || $this->isOwner() );
 	}
 
 	/**
