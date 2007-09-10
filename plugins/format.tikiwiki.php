@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.119 $
+ * @version  $Revision: 1.120 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -158,7 +158,7 @@ class TikiWikiParser extends BitBase {
 			}
 
 			// apply default class if no other class has been set
-			if( strpos( 'class=', $table_params ) !== FALSE ) {
+			if( !empty( $table_params ) && strpos( 'class=', $table_params ) !== FALSE ) {
 				$table_params .= ' class="bittable"';
 			}
 			$content = "<table $table_params>";
