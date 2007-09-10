@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.22 $
+ * @version  $Revision: 1.23 $
  * @package  liberty
  * @subpackage functions
  */
@@ -19,7 +19,24 @@ require_once( '../bit_setup_inc.php' );
 include_once( LIBERTY_PKG_PATH.'LibertyStructure.php');
 $gBitSmarty->assign_by_ref( 'feedback', $feedback = array() );
 
-$gBitThemes->loadAjax( 'mochikit', array( 'Iter.js', 'DOM.js', 'Format.js', 'Style.js', 'Signal.js', 'Logging.js', 'ThickBox.js', 'Controls.js','Color.js','Position.js','Visual.js' ) );
+// mochikit can interfere sometimes, so we need a way to disable it.
+if( empty( $noAjaxContent )) {
+	$gBitThemes->loadAjax(
+		'mochikit', array(
+			'Iter.js',
+			'DOM.js',
+			'Format.js',
+			'Style.js',
+			'Signal.js',
+			'Logging.js',
+			'ThickBox.js',
+			'Controls.js',
+			'Color.js',
+			'Position.js',
+			'Visual.js'
+		)
+	);
+}
 
 if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 	$gBitSystem->fatalError( tra( "No structure indicated" ));
