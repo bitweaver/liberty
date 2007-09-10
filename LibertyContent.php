@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.283 2007/09/10 06:25:25 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.284 2007/09/10 15:17:25 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1508,7 +1508,7 @@ vd( $ret );
 		} elseif( $this->isValid() ) {
 			$ret = BIT_ROOT_URL.'index.php?content_id='.$this->mContentId;
 		} else {
-			$ret = '#';
+			$ret = NULL;
 		}
 		return $ret;
 	}
