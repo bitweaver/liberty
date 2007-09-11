@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.285 2007/09/10 16:29:14 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.286 2007/09/11 22:49:59 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -863,7 +863,7 @@ class LibertyContent extends LibertyBase {
 	function getContentPermissionsList() {
 		global $gBitUser;
 		$ret = FALSE;
-		if( $this->isValid() && $this->mContentTypeGuid ) {
+		if( $this->isValid() ) {
 			$query = "
 				SELECT lcperm.`perm_name`, lcperm.`is_revoked`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
 				FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
@@ -926,7 +926,7 @@ class LibertyContent extends LibertyBase {
 		if( $pForce ) {
 			$this->mPerms = NULL;
 		}
-		if( $this->isValid() && is_null( $this->mPerms ) && $this->mContentTypeGuid ) {
+		if( $this->isValid() && is_null( $this->mPerms ) ) {
 			$query = "
 				SELECT lcperm.`perm_name`, lcperm.`is_revoked`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
 				FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
@@ -1127,7 +1127,7 @@ vd( $ret );
 	* @param integer Content Itentifier
 	* @return bool true ( will not currently report a failure )
 	*/
-	function storePermission( $pGroupId, $pPermName ) {
+	function storePermission( $pGroupId, $pPermName, $pIsRevoked=FALSE ) {
 		$ret = FALSE;
 		if( @BitBase::verifyId( $pGroupId ) && !empty( $pPermName ) && $this->isValid() ) {
 			$this->removePermission( $pGroupId, $pPermName );
@@ -1137,7 +1137,7 @@ vd( $ret );
 				'content_id' => $this->mContentId,
 			);
 			// check to see if this is an exclusion
-			if( $this->isExcludedPermission( $pGroupId, $pPermName )) {
+			if( $pIsRevoked ) {
 				$storeHash['is_revoked'] = 'y';
 			}
 			$ret = $this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_permissions", $storeHash );

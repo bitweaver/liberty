@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage functions
  */
@@ -12,17 +12,7 @@ require_once( '../bit_setup_inc.php' );
 
 $gBitSystem->verifyPermission( 'p_liberty_assign_content_perms' );
 
-// If we haven't got any content loaded yet, load it
-if( empty( $gContent )) {
-	// make sure we have a content_id we can work with
-	if( empty( $_REQUEST["content_id"] ) || $_REQUEST["content_id"] < 1 ) {
-		$gBitSystem->fatalError( tra( "No valid content id given." ));
-	}
-
-	$gContent = new LibertyContent();
-	$gContent = $gContent->getLibertyObject( $_REQUEST['content_id'] );
-}
-$gBitSmarty->assign_by_ref( 'gContent', $gContent );
+require_once( LIBERTY_PKG_PATH.'lookup_content_inc.php' );
 
 // Process the form
 // send the user to the content page if he wants to
@@ -44,6 +34,8 @@ if( !empty( $_REQUEST['action'] ) && @BitBase::verifyId( $gContent->mContentId )
 		$gBitUser->verifyTicket( TRUE );
 		if( $_REQUEST["action"] == 'assign' ) {
 			$gContent->storePermission( $_REQUEST["group_id"], $_REQUEST["perm"] );
+		} elseif( $_REQUEST["action"] == 'negate' ) {
+			$gContent->storePermission( $_REQUEST["group_id"], $_REQUEST["perm"], TRUE );
 		} elseif( $_REQUEST["action"] == 'remove' ) {
 			$gContent->removePermission( $_REQUEST["group_id"], $_REQUEST["perm"] );
 		}
@@ -96,10 +88,11 @@ if( $gBitThemes->isAjaxRequest() ) {
 		if( !empty( $contentPerms['assigned'][$gid][$perm] )) {
 			$assigned = $contentPerms['assigned'][$gid][$perm];
 			$biticon['iname'] = $size.'list-add';
-			$action = 'remove';
+			$action = 'negate';
 		}
 		if( !empty( $assigned['is_revoked'] )) {
 			$biticon['iname'] = $size.'list-remove';
+			$action = 'remove';
 		}
 	}
 

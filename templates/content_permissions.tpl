@@ -38,12 +38,12 @@
 						{assign var=action value="assign"}                                 {* default action *}
 						{if $groupInfo.perms.$perm}                                        {* global active permissions *}
 							{assign var=icon value="dialog-ok"}                            {* default active permission icon *}
-							{if $contentPerms.assigned.$groupId.$perm}
-								{assign var=icon value="list-add"}                         {* custon permission icon *}
-								{assign var=action value="remove"}                         {* remove permission if we have a custom one *}
-							{/if}
 							{if $contentPerms.assigned.$groupId.$perm.is_revoked}
 								{assign var=icon value="list-remove"}                      {* is_revoked icon *}
+								{assign var=action value="remove"}                         {* remove permission if we have a custom one *}
+							{elseif $contentPerms.assigned.$groupId.$perm}
+								{assign var=icon value="list-add"}                         {* custon permission icon *}
+								{assign var=action value="negate"}                         {* remove permission if we have a custom one *}
 							{/if}
 						{/if}
 
@@ -63,14 +63,13 @@
 			{/foreach}
 		</table>
 
-		{if count($contentPerms.groups) gt 10}
-			<h2>{tr}Legend{/tr}</h2>
-			<dl>
-				{foreach from=$contentPerms.groups item=group}
-					<dt>{$group.group_name|truncate:4:false}</dt>
-					<dd>{$group.group_name}: {$group.group_desc}</dd>
-				{/foreach}
-			</dl>
-		{/if}
+		<h2>{tr}Legend{/tr}</h2>
+		
+		<dl>
+			<dt>{biticon iname="list-add" iexplain=""} Custom Permission: Always Allow</dt>
+			<dt>{biticon iname="list-remove" iexplain=""} Custom Permission: Always Deny</dt>
+			<dt>{biticon iname="dialog-ok" iexplain=""} Global Permission: Allow</dt>
+			<dt>{biticon iname="media-playback-stop" iexplain=""} Global Permission: Deny</dt>
+		</dl>
 	</div><!-- end .body -->
 </div><!-- end .liberty -->
