@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.286 2007/09/11 22:49:59 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.287 2007/09/13 15:26:31 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1009,6 +1009,23 @@ class LibertyContent extends LibertyBase {
 		return( $this->hasUserPermission( $this->mAdminContentPerm, $pVerifyAccessControl ) );
 	}
 
+	// === verifyAdminPermission
+	/**
+	* This code was duplicated _EVERYWHERE_ so here is an easy template to cut that down.
+	* It will verify if a given user has a given $permission and if not, it will display the error template and die()
+	* @param $pVerifyAccessControl check access control service if available
+	* @return TRUE if permitted, method will fatal out if not
+	* @access public
+	*/
+	function verifyAdminPermission( $pVerifyAccessControl=TRUE ) {
+		global $gBitSystem;
+		if( $this->hasAdminPermission( $pVerifyAccessControl ) ) {
+			return TRUE;
+		} else {
+			$gBitSystem->fatalPermission( $this->mAdminContentPerm );
+		}
+	}
+
 	/**
 	* Determine if current user has the ability to edit this type of content
 	*
@@ -1016,6 +1033,23 @@ class LibertyContent extends LibertyBase {
 	*/
 	function hasEditPermission( $pVerifyAccessControl=TRUE ) {
 		return( $this->hasAdminPermission( $pVerifyAccessControl ) || $this->hasUserPermission( $this->mEditContentPerm, $pVerifyAccessControl, FALSE ) || $this->isOwner() );
+	}
+
+	// === verifyEditPermission
+	/**
+	* This code was duplicated _EVERYWHERE_ so here is an easy template to cut that down.
+	* It will verify if a given user has a given $permission and if not, it will display the error template and die()
+	* @param $pVerifyAccessControl check access control service if available
+	* @return TRUE if permitted, method will fatal out if not
+	* @access public
+	*/
+	function verifyEditPermission( $pVerifyAccessControl=TRUE ) {
+		global $gBitSystem;
+		if( $this->hasEditPermission( $pVerifyAccessControl ) ) {
+			return TRUE;
+		} else {
+			$gBitSystem->fatalPermission( $this->mEditContentPerm );
+		}
 	}
 
 	/**
@@ -1027,6 +1061,24 @@ class LibertyContent extends LibertyBase {
 	function hasViewPermission( $pVerifyAccessControl=TRUE ) {
 		return( $this->hasEditPermission( $pVerifyAccessControl ) || empty( $this->mViewContentPerm ) || $this->hasUserPermission( $this->mViewContentPerm, $pVerifyAccessControl ));
 	}
+
+	// === verifyViewPermission
+	/**
+	* This code was duplicated _EVERYWHERE_ so here is an easy template to cut that down.
+	* It will verify if a given user has a given $permission and if not, it will display the error template and die()
+	* @param $pVerifyAccessControl check access control service if available
+	* @return TRUE if permitted, method will fatal out if not
+	* @access public
+	*/
+	function verifyViewPermission( $pVerifyAccessControl=TRUE ) {
+		global $gBitSystem;
+		if( $this->hasViewPermission( $pVerifyAccessControl ) ) {
+			return TRUE;
+		} else {
+			$gBitSystem->fatalPermission( $this->mViewContentPerm );
+		}
+	}
+
 
 	/**
 	* Get specific permissions for the specified user for this content
