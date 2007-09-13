@@ -186,8 +186,7 @@ if( $cache->isCached( $cacheFile, filemtime( __FILE__ ))) {
 |+ Table with many colours
 |-
 | abc
-| def
-| ghi
+| colspan="2" style="text-align:center; background:lightblue;" | defghi
 |- style="background:red; color:white"
 | jkl
 | mno
