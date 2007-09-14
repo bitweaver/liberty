@@ -633,6 +633,14 @@ array( 'QUERY' =>
 
 // here we deal with the liberty_attachments upgrade
 /* so far untested and basically serve as notes for what has to be done
+ *
+ * NOTE: First we need to create new attachments of the duplicates we have that 
+ * we have in the liberty_attachments_map to ensure that every attachment only 
+ * has one content_id associated with it
+ *
+ *
+ *
+ * Now we can start cleaning up the db
 array( 'DATADICT' => array(
 	array( 'ALTER' => array(
 		'liberty_attachments' => array(
@@ -645,6 +653,10 @@ array( 'QUERY' =>
 	array( 'SQL92' => array(
 		// the easy stuff first... - if the primary_attachment_id is set in liberty_content we use that to populate the new controlling_content_id column
 		"UPDATE `".BIT_DB_PREFIX."liberty_attachments` la SET `controlling_content_id` = ( SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `primary_attachment_id` = la.`attachment_id` )",
+
+		// set is_primary where it applies
+		"UPDATE `".BIT_DB_PREFIX."liberty_attachments` la INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lc.`primary_attachment_id` = la.`attachment_id` ) SET `is_primary` = 'y'",
+
 		// now we do the generic update
 		"UPDATE `".BIT_DB_PREFIX."liberty_attachments` la SET `controlling_content_id` = ( SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_attachments_map` WHERE `attachment_id` = la.`attachment_id` LIMIT 1 ) WHERE la.`controlling_content_id` <> NULL;",
 	)),
