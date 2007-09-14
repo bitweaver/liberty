@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.289 2007/09/14 07:02:51 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.290 2007/09/14 16:36:20 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -973,12 +973,17 @@ class LibertyContent extends LibertyBase {
 	 * Assigned content perms override the indvidual global perms, so the result is the union of the global permission set + overridden individual content perms
 	*
 	* @param string Name of the permission to check
+	* @param string Check access control service if available
+	* @param string return default user permission setting when no content perms are set
 	* @return bool true if user has permission to access file
 	*/
-	function hasUserPermission( $pPermName, $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
+	function hasUserPermission( $pPermName, $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
 		global $gBitUser;
 		$ret = FALSE;
-		if( !$gBitUser->isRegistered() || !( $ret = $this->isOwner() || $ret = $gBitUser->isAdmin() )) {
+		if( !$this->isValid() ) {
+			// return default user permission setting when no content is loaded
+			$ret = $gBitUser->hasPermission( $pPermName );
+		} elseif( !$gBitUser->isRegistered() || !( $ret = $this->isOwner() || $ret = $gBitUser->isAdmin() )) {
 			if( $gBitUser->isAdmin() || $gBitUser->hasPermission( $this->mAdminContentPerm )) {
 				$ret = TRUE;
 			} else {
@@ -1005,8 +1010,8 @@ class LibertyContent extends LibertyBase {
 	*
 	* @return bool True if user has this type of content administration permission
 	*/
-	function hasAdminPermission( $pVerifyAccessControl=TRUE ) {
-		return( $this->hasUserPermission( $this->mAdminContentPerm, $pVerifyAccessControl ) );
+	function hasAdminPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
+		return( $this->hasUserPermission( $this->mAdminContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ) );
 	}
 
 	// === verifyAdminPermission
@@ -1017,9 +1022,9 @@ class LibertyContent extends LibertyBase {
 	* @return TRUE if permitted, method will fatal out if not
 	* @access public
 	*/
-	function verifyAdminPermission( $pVerifyAccessControl=TRUE ) {
+	function verifyAdminPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
 		global $gBitSystem;
-		if( $this->hasAdminPermission( $pVerifyAccessControl ) ) {
+		if( $this->hasAdminPermission( $pVerifyAccessControl, $pCheckGlobalPerm ) ) {
 			return TRUE;
 		} else {
 			$gBitSystem->fatalPermission( $this->mAdminContentPerm );
@@ -1031,8 +1036,8 @@ class LibertyContent extends LibertyBase {
 	*
 	* @return bool True if user has this type of content administration permission
 	*/
-	function hasEditPermission( $pVerifyAccessControl=TRUE ) {
-		return( $this->hasAdminPermission( $pVerifyAccessControl ) || $this->hasUserPermission( $this->mEditContentPerm, $pVerifyAccessControl, FALSE ) || $this->isOwner() );
+	function hasEditPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
+		return( $this->hasUserPermission( $this->mEditContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ) );
 	}
 
 	// === verifyEditPermission
@@ -1043,9 +1048,9 @@ class LibertyContent extends LibertyBase {
 	* @return TRUE if permitted, method will fatal out if not
 	* @access public
 	*/
-	function verifyEditPermission( $pVerifyAccessControl=TRUE ) {
+	function verifyEditPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
 		global $gBitSystem;
-		if( $this->hasEditPermission( $pVerifyAccessControl ) ) {
+		if( $this->hasEditPermission( $pVerifyAccessControl, $pCheckGlobalPerm ) ) {
 			return TRUE;
 		} else {
 			$gBitSystem->fatalPermission( $this->mEditContentPerm );
@@ -1058,8 +1063,8 @@ class LibertyContent extends LibertyBase {
 	*
 	* @return bool True if user has this type of content administration permission
 	*/
-	function hasViewPermission( $pVerifyAccessControl=TRUE ) {
-		return( $this->hasEditPermission( $pVerifyAccessControl ) || empty( $this->mViewContentPerm ) || $this->hasUserPermission( $this->mViewContentPerm, $pVerifyAccessControl ));
+	function hasViewPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
+		return( $this->hasEditPermission( $pVerifyAccessControl ) || empty( $this->mViewContentPerm ) || $this->hasUserPermission( $this->mViewContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ));
 	}
 
 	// === verifyViewPermission
@@ -1070,9 +1075,9 @@ class LibertyContent extends LibertyBase {
 	* @return TRUE if permitted, method will fatal out if not
 	* @access public
 	*/
-	function verifyViewPermission( $pVerifyAccessControl=TRUE ) {
+	function verifyViewPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
 		global $gBitSystem;
-		if( $this->hasViewPermission( $pVerifyAccessControl ) ) {
+		if( $this->hasViewPermission( $pVerifyAccessControl, $pCheckGlobalPerm ) ) {
 			return TRUE;
 		} else {
 			$gBitSystem->fatalPermission( $this->mViewContentPerm );
