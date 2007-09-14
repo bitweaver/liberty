@@ -84,6 +84,7 @@ array( 'DATADICT' => array(
 		'liberty_content' => array(
 			'lang_code' => array( '`lang_code`', 'VARCHAR(32)' ),
 			'content_status_id' => array( '`content_status_id`', 'I4' ),
+			// remove before release - this column is going away!
 			'primary_attachment_id' => array( '`primary_attachment_id`', 'I4' ),
 		),
 		'liberty_action_log' => array(
@@ -629,7 +630,39 @@ array( 'QUERY' =>
 	)),
 ),
 
-		)
+
+// here we deal with the liberty_attachments upgrade
+/* so far untested and basically serve as notes for what has to be done
+array( 'DATADICT' => array(
+	array( 'ALTER' => array(
+		'liberty_attachments' => array(
+			'controlling_content_id' => array( '`controlling_content_id`', 'I4' ),
+		),
+	)),
+)),
+
+array( 'QUERY' =>
+	array( 'SQL92' => array(
+		// the easy stuff first... - if the primary_attachment_id is set in liberty_content we use that to populate the new controlling_content_id column
+		"UPDATE `".BIT_DB_PREFIX."liberty_attachments` la SET `controlling_content_id` = ( SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `primary_attachment_id` = la.`attachment_id` )",
+		// now we do the generic update
+		"UPDATE `".BIT_DB_PREFIX."liberty_attachments` la SET `controlling_content_id` = ( SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_attachments_map` WHERE `attachment_id` = la.`attachment_id` LIMIT 1 ) WHERE la.`controlling_content_id` <> NULL;",
+	)),
+),
+
+array( 'DATADICT' => array(
+	array( 'DROPTABLE' => array(
+		'liberty_attachments_map'
+	)),
+	array( 'DROPCOLUMN' => array(
+		'liberty_content' => array( 'primary_attachment_id' ),
+	)),
+)),
+ */
+
+	)),
+),
+		),
 	),
 
 'BONNIE' => array(
