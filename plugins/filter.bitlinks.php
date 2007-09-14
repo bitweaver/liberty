@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.9 2007/08/31 09:34:17 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.10 2007/09/14 22:03:35 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -158,6 +158,9 @@ class BitLinks extends BitBase {
 			// as it's not a | and isn't followed by ))". -rlpowell
 			$this->mWikiWordRegex = '([^|\(\)])([^|](?!\)\)))*?([^|\(\)])';
 		}
+
+		// append anchor to regex
+		$this->mWikiWordRegex .= "(#\w+)?";
 	}
 
 	/**
@@ -284,15 +287,24 @@ class BitLinks extends BitBase {
 			}
 		}
 
-		// Process ((Wiki Page|Wiki Page Description)) type links first. Here we 
-		// don't handle plurals and the like since the user should know what 
+		// Process ((Wiki Page|Wiki Page Description)) type links first. Here 
+		// we don't handle plurals and the like since the user should know what 
 		// he's linking to when using these links
 		preg_match_all( "/\({2}({$this->mWikiWordRegex})\|(.+?)\){2}/", $pData, $pages );
 		for( $i = 0; $i < count( $pages[1] ); $i++ ) {
-			$exists = $this->pageExists( $pages[1][$i], $pObject, $pParamHash['content_id'] );
-			$repl = BitPage::getDisplayLink( $pages[1][$i], $exists );
-			if( strlen( trim( $pages[5][$i] )) > 0 ) {
-				$repl = str_replace( $pages[1][$i]."</a>", "{$pages[5][$i]}</a>", $repl );
+			$page = str_replace( $pages[5][$i], "", $pages[1][$i] );
+			$exists = $this->pageExists( $page, $pObject, $pParamHash['content_id'] );
+
+			// anchor
+			if( !empty( $pages[5][$i] )) {
+				$repl = preg_replace( '!href="([^"]*)"!', "href=\"$1{$pages[5][$i]}\"", BitPage::getDisplayLink( $page, $exists ));
+			} else {
+				$repl = BitPage::getDisplayLink( $page, $exists );
+			}
+
+			// alternate title
+			if( strlen( trim( $pages[6][$i] )) > 0 ) {
+				$repl = str_replace( $page."</a>", "{$pages[6][$i]}</a>", $repl );
 			}
 
 			$key = md5( mt_rand() );
@@ -301,12 +313,20 @@ class BitLinks extends BitBase {
 		}
 
 		// Process the simpler ((Wiki Page)) type links without the description
-		preg_match_all( "/\({2}(.+?)\){2}/", $pData, $pages );
-		foreach( array_unique( $pages[1] ) as $page ) {
-			$key = md5( mt_rand() );
+		preg_match_all( "/\({2}({$this->mWikiWordRegex})\){2}/", $pData, $pages );
+		foreach( array_unique( $pages[1] ) as $i => $page ) {
+			$page = str_replace( $pages[5][$i], "", $pages[1][$i] );
 			$exists = $this->pageExists( $page, $pObject, $pParamHash['content_id'] );
-			$replacements[$key] = BitPage::getDisplayLink( $page, $exists );
-			$pData = str_replace( "(($page))", $key, $pData );
+
+			if( !empty( $pages[5][$i] )) {
+				$repl = preg_replace( '!href="([^"]*)"!', "href=\"$1{$pages[5][$i]}\"", BitPage::getDisplayLink( $page, $exists ));
+			} else {
+				$repl = BitPage::getDisplayLink( $page, $exists );
+			}
+
+			$key = md5( mt_rand() );
+			$replacements[$key] = $repl;
+			$pData = str_replace( "(({$pages[1][$i]}))", $key, $pData );
 		}
 
 		// Finally we deal with WikiWord links
