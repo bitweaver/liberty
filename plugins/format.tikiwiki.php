@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.120 $
+ * @version  $Revision: 1.121 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -165,12 +165,12 @@ class TikiWikiParser extends BitBase {
 
 			$lines = explode( "\n", $table_data );
 			$row = 0;
-			foreach ($lines as $line) {
-				if ((substr($line, 0, 1) == '|') || (substr($line, 0, 1) == '!')) {
-					if (preg_match('/^\|\+\s*(.+)$/', $line, $row_matches)) {
+			foreach( $lines as $line ) {
+				if(( substr( $line, 0, 1 ) == '|' ) || ( substr( $line, 0, 1 ) == '!' )) {
+					if( preg_match( '/^\|\+\s*(.+)$/', $line, $row_matches )) {
 						$content .= "<caption>$row_matches[1]</caption>";
-					} else if (preg_match('/^\|-\s*(.+)?$/', $line, $row_matches)) {
-						if ($row) {
+					} elseif( preg_match( '/^\|-\s*(.+)?$/', $line, $row_matches )) {
+						if( $row ) {
 							$content .= '</tr>';
 							$row++;
 						} else {
@@ -183,7 +183,7 @@ class TikiWikiParser extends BitBase {
 						} else {
 							$content .= '<tr>';
 						}
-					} else if (preg_match('/^([\|!])\s*([^\|]+\s*\|)?\s*(.*)$/', $line, $row_matches)) {
+					} elseif( preg_match( '/^([\|!])\s*([^\|]+\s*\|)?\s*(.*)$/', $line, $row_matches )) {
 						if (! $row) {
 							$content .= '<tr>';
 							$row = 1;
@@ -192,11 +192,9 @@ class TikiWikiParser extends BitBase {
 						if( !empty( $row_matches[2] )) {
 							$row_matches[2] = preg_replace( $xhtmlfix['pattern'], $xhtmlfix['replace'], trim( $row_matches[2] ));
 						}
-						$content .= '<t' . (($row_matches[1] == '!') ? ('h') : ('d'))
-						            . ((strlen($row_matches[2])) ? (' ' . trim(substr($row_matches[2], 0, -1))) : (''))
-									. '>' . $row_matches[3] . '</t'
-						            . (($row_matches[1] == '!') ? ('h') : ('d'))
-									. '>';
+
+						$td       = 't'.(( $row_matches[1] == '!' ) ? 'h' : 'd' );
+						$content .= "<$td".(( !empty( $row_matches[2] )) ? ' '.trim( substr( $row_matches[2], 0, -1 )) : '' ).'>'.$row_matches[3]."</$td>";
 					} else {
 						$content .= "<!-- ERROR:  Ignoring invalid line \"$line\" -->";
 					}
