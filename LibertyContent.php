@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.288 2007/09/13 16:04:37 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.289 2007/09/14 07:02:51 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1618,9 +1618,17 @@ vd( $ret );
 		}
 
 		// if sort_mode is not set then use last_modified_desc
-		if( !empty( $pListHash['sort_mode'] ) && is_string( $pListHash['sort_mode'] ) && strpos( $pListHash['sort_mode'], 'hits' ) === 0 ) {
-			// if sort mode is hits_*, then assume liberty content
-			$pListHash['sort_mode'] = 'lch.'.$pListHash['sort_mode'];
+		if( !empty( $pListHash['sort_mode'] )) {
+			if( is_string( $pListHash['sort_mode'] ) && strpos( $pListHash['sort_mode'], 'hits_' ) === 0 ) {
+				// if sort mode is hits_*, then assume liberty content
+				$pListHash['sort_mode'] = 'lch.'.$pListHash['sort_mode'];
+			} elseif( is_array( $pListHash['sort_mode'] )) {
+				foreach( $pListHash['sort_mode'] as $key => $mode ) {
+					if( strpos( $mode, 'hits_' ) === 0 ) {
+						$pListHash['sort_mode'][$key] = 'lch.'.$mode;
+					}
+				}
+			}
 		}
 
 		return parent::prepGetList( $pListHash );
