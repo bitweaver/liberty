@@ -127,7 +127,7 @@ $tables = array(
 	attachment_plugin_guid C(16) NOTNULL,
 	foreign_id I4 NOTNULL,
 	user_id I4 NOTNULL,
-	is_primary I4,
+	is_primary C(1),
 	pos I4,
 	hits I4,
 	error_code I4,
