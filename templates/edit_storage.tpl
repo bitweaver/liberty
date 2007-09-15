@@ -16,14 +16,18 @@
 {/if}
 
 <div id="edit_storage_list_div">
-	{include file="bitpackage:liberty/edit_storage_list.tpl"}
+	{include file="bitpackage:liberty/edit_storage_list.tpl" uploadTab=TRUE}
 </div>
 
-{if $gBitUser->hasPermission('p_liberty_attach_attachments') }
+{* The new attachment browser is supposd to only provide an easy means of
+viewing existing content that can be inserted into the contnet using
+{attachment} or {content} or similar. there is no means to attach and detach
+content anymore *}
+{*if $gBitUser->hasPermission('p_liberty_attach_attachments') }
 	<h2 class="clear"><a href="javascript:ajax_updater( 'attbrowser', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', 'ajax=true&amp;content_id={$gContent->mContentId}' );">{tr}Attachment Browser{/tr}</a></h2>
 	<noscript><div class="warning">{tr}The attachment browser only works with javascript enabled.{/tr}</div></noscript>
 	<div id="attbrowser" class="attbrowser"><p>{tr}Please click on the Attachement Browser link above to view available attachments.{/tr}</p></div>
 {else}
 	<p>{tr}Sorry - you do not have permission to attach files to this content.{/tr}</p>
-{/if}
+{/if*}
 {/strip}

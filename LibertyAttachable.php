@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.124 2007/09/15 08:08:54 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.125 2007/09/15 11:34:32 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -120,9 +120,10 @@ class LibertyAttachable extends LibertyContent {
 		// Process a JPEG
 		if( function_exists( 'exif_read_data' ) && !empty( $pParamHash['upload']['tmp_name'] ) && stripos( $pParamHash['upload']['type'], 'jpeg' ) !== FALSE ) {
 			$exifHash = @exif_read_data( $pParamHash['upload']['tmp_name'], 0, true);
-//vd( $exifHash );
+			//vd( $exifHash );
 
-			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/JPEG.php';                     // Change: Allow this example file to be easily relocatable - as of version 1.11
+			// Change: Allow this example file to be easily relocatable - as of version 1.11
+			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/JPEG.php';
 			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/JFIF.php';
 			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/PictureInfo.php';
 			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/XMP.php';
@@ -186,7 +187,7 @@ class LibertyAttachable extends LibertyContent {
 			} else {
 				$storageGuid = $pParamHash['storage_guid'];
 			}
-			
+
 			if( !empty( $pFile['size'] ) ) {
 				$this->extractMetaData( $pParamHash );
 				// meta data may be stupid and have stuffed title with all spaces
@@ -268,8 +269,6 @@ class LibertyAttachable extends LibertyContent {
 		}
 
 		// Support for single bitfile upload
-
-		
 		if( !empty( $_FILES ) ) {
 			foreach( array_keys( $_FILES ) as $f ) {
 				$this->verifyAttachment( $pParamHash, $_FILES[$f] );
@@ -280,7 +279,7 @@ class LibertyAttachable extends LibertyContent {
 	}
 
 	// Things to be stored should be shoved in the array $pParamHash['STORAGE']
-	function store ( &$pParamHash ) {
+	function store( &$pParamHash ) {
 		global $gLibertySystem, $gBitSystem;
 		$this->mDb->StartTrans();
 		if( LibertyAttachable::verify( $pParamHash ) && LibertyContent::store( $pParamHash )) {
@@ -358,6 +357,10 @@ class LibertyAttachable extends LibertyContent {
 					}
 				}
 			}
+
+			if( @BitBase::verifyId( $pParamHash['liberty_attachments']['primary'] )) {
+				$this->setPrimaryAttachment( $pParamHash['liberty_attachments']['primary'] );
+			}
 		}
 		$this->mDb->CompleteTrans();
 
@@ -424,6 +427,7 @@ class LibertyAttachable extends LibertyContent {
 
 	/**
 	 * Expunges the content deleting attachments if asked to do so, otherwise just detaching them
+	 * TODO: this hasn't been updated yet since the liberty_attachments update
 	 */
 	function expunge ($pDeleteAttachments=FALSE) {
 		if( !empty( $this->mStorage ) && count( $this->mStorage ) ) {
@@ -497,7 +501,7 @@ class LibertyAttachable extends LibertyContent {
 			$query = "
 				SELECT *
 				FROM `".BIT_DB_PREFIX."liberty_attachments` la 
-				WHERE la.`content_id`=?";
+				WHERE la.`content_id`=? ORDER BY la.`attachment_id` ASC";
 			if( $result = $this->mDb->query( $query,array( (int)$conId ))) {
 				$this->mStorage = array();
 				while( $row = $result->fetchRow() ) {
@@ -528,7 +532,7 @@ class LibertyAttachable extends LibertyContent {
 		if( @$this->verifyId( $pAttachmentId ) ) {
 			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` a
 					  WHERE a.`attachment_id`=?";
-			if( $result = $this->mDb->query($query,array((int) $pAttachmentId)) ) {
+			if( $result = $this->mDb->query( $query, array( (int)$pAttachmentId ))) {
 				$ret = array();
 				if( $row = $result->fetchRow() ) {
 					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function'  ) ) {
@@ -540,5 +544,38 @@ class LibertyAttachable extends LibertyContent {
 		return $ret;
 	}
 
+	/**
+	 * setPrimary will set is_primary 'y' for the specified attachment and will ensure that all others are set to 'n'
+	 * 
+	 * @param numeric $pAttachmentId attachment id of the item we want to set primary
+	 * @access public
+	 * @return TRUE on success, FALSE on failure
+	 */
+	function setPrimaryAttachment( $pAttachmentId = NULL ) {
+		$ret = FALSE;
+
+		// we have been given an attachment_id. we'll use this to set the primary attachment_id
+		if( @BitBase::verifyId( $pAttachmentId )) {
+
+			// get attachment we want to set primary
+			$attachment = $this->getAttachment( $pAttachmentId );
+
+			// set is_primary as 'n' first - there can only be one
+			$query = "
+				UPDATE `".BIT_DB_PREFIX."liberty_attachments`
+				SET `is_primary` = ? WHERE `content_id` = ?";
+			$this->mDb->query( $query, array( NULL, $attachment['content_id'] ));
+
+			// now update the attachment to is_primary
+			$query = "
+				UPDATE `".BIT_DB_PREFIX."liberty_attachments`
+				SET `is_primary` = ? WHERE `attachment_id` = ?";
+			$this->mDb->query( $query, array( 'y', $pAttachmentId ));
+
+			$ret = TRUE;
+		}
+
+		return $ret;
+	}
 }
 ?>
