@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.291 2007/09/15 01:58:34 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.292 2007/09/15 01:59:38 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -980,7 +980,6 @@ class LibertyContent extends LibertyBase {
 	function hasUserPermission( $pPermName, $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
 		global $gBitUser;
 		$ret = FALSE;
-bt();
 		if( !$this->isValid() ) {
 			// return default user permission setting when no content is loaded
 			$ret = $gBitUser->hasPermission( $pPermName );
@@ -1003,7 +1002,6 @@ bt();
 				}
 			}
 		}
-vd( $ret );
 		return( $ret );
 	}
 
