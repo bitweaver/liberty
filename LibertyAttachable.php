@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.122 2007/09/15 06:18:05 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.123 2007/09/15 06:42:19 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -461,9 +461,7 @@ class LibertyAttachable extends LibertyContent {
 				// check if we have the means available to remove this attachment
 				if( $expungeFunc = $gLibertySystem->getPluginFunction( $guid,'expunge_function' )) {
 					// --- Do the final cleanup of liberty related tables ---
-vd( "$expungeFunc( $pAttachmentId )" );
 					if( $expungeFunc( $pAttachmentId )) {
-bt();
 						// Delete the attachment record.
 						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id`=?";
 						$this->mDb->query( $sql, array( $pAttachmentId ) );
