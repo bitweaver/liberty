@@ -18,13 +18,6 @@
 		{/forminput}
 	</div>
 
-	<div class="row">
-		{formlabel label="Detach Attachment" for=""}
-		{forminput}
-			<input type="checkbox" name="detach_primary_attachment">{biticon ipackage=icons iname="edit-cut" iexplain="Detach"}
-			{formhelp note="Remove the association with this attachment."}
-		{/forminput}
-	</div>
 {/if}
 
 {* $no_plugins is set by the including template *}

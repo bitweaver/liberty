@@ -26,17 +26,6 @@
 						{tr}Attachment ID{/tr}: {$attachmentId} {if $gContent->mInfo.primary_attachment_id eq $attachmentId}({tr}Primary{/tr}){/if} <br />
 						{tr}Filename{/tr}: {$storage.filename} <br />
 						{tr}Actions{/tr}:
-						{if ($gBitUser->isAdmin() || $gBitUser->hasPermission( 'p_liberty_detach_attachment' ) || $storage.user_id == $gBitUser->mUserId) && !empty($gContent->mContentId)}
-							{if $attachmentBrowser}
-								{if in_array($gContent->mContentId, $storage.attached_to)}
-									<a href="javascript:ajax_updater('attbrowser', '{$attachmentActionBaseURL}', 'content_id={$gContent->mContentId}&amp;detachAttachment={$attachmentId}')">{biticon ipackage=icons iname="edit-cut" iexplain="detach"}</a>
-								{/if}
-							{elseif $libertyUploader or $gBitSystem->getConfig('liberty_attachment_style') == 'ajax'}
-								<a href="javascript:ajax_updater('edit_storage_list_div', '{$attachmentActionBaseURL}', 'content_id={$gContent->mContentId}&amp;detachAttachment={$attachmentId}');">{biticon ipackage=icons iname="edit-cut" iexplain="detach"}</a>
-							{else}
-								<a href="{$attachmentActionBaseURL}&amp;content_id={$gContent->mContentId}&amp;detachAttachment={$attachmentId}">{biticon ipackage=icons iname="edit-cut" iexplain="detach"}</a>
-							{/if}
-						{/if}
 						{if $gBitUser->isAdmin() || ($storage.user_id == $gBitUser->mUserId && $gBitUser->hasPermission('p_liberty_delete_attachments') ) }
 							{if $attachmentBrowser}
 								<a href="javascript:ajax_updater('attbrowser', '{$attachmentActionBaseURL}', 'deleteAttachment={$attachmentId}');">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>

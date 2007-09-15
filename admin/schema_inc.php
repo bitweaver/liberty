@@ -27,7 +27,6 @@ $tables = array(
 	format_guid C(16) NOTNULL,
 	content_status_id I4 NOTNULL,
 	event_time I8 NOTNULL DEFAULT 0,
-	primary_attachment_id I4,
 	version I4,
 	lang_code C(32),
 	title C(160),
@@ -89,7 +88,8 @@ $tables = array(
 'liberty_content_links' => "
 	from_content_id I4,
 	to_content_id I4,
-	to_title C(160)
+	to_title C(160),
+	pos F
 	CONSTRAINT ', CONSTRAINT `lib_content_links_from_ref` FOREIGN KEY (`from_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
 				, CONSTRAINT `lib_content_links_to_ref` FOREIGN KEY (`to_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
 ",
@@ -123,22 +123,18 @@ $tables = array(
 
 'liberty_attachments' => "
 	attachment_id I4 PRIMARY,
+	content_id I4 NOTNULL,
 	attachment_plugin_guid C(16) NOTNULL,
 	foreign_id I4 NOTNULL,
 	user_id I4 NOTNULL,
+	is_primary I4,
 	pos I4,
 	hits I4,
 	error_code I4,
 	caption C(250)
-",
-
-'liberty_attachments_map' => "
-	attachment_id I4 PRIMARY,
-	content_id I4 PRIMARY,
-	item_position I4
-	CONSTRAINT
-		', CONSTRAINT `liberty_attachments_map_con_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
-		, CONSTRAINT `liberty_attachments_map_att_ref` FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments`( `attachment_id` ) '
+	CONSTRAINT '
+			, CONSTRAINT `liberty_attachments_con_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
+		'
 ",
 
 'liberty_files' => "
@@ -191,15 +187,6 @@ $tables = array(
                 , CONSTRAINT `liberty_content_perm_perm_ref` FOREIGN KEY (`perm_name`) REFERENCES `".BIT_DB_PREFIX."users_permissions` (`perm_name`)
 */
 
-'liberty_content_connection_map' => "
-	from_content_id I4 PRIMARY,
-	to_content_id I4 PRIMARY,
-	item_position F
-	CONSTRAINT '
-		, CONSTRAINT `liberty_from_content_id_ref` FOREIGN KEY (`from_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
-		, CONSTRAINT `liberty_to_content_id_ref` FOREIGN KEY (`to_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
-",
-
 'liberty_meta_types' => "
 	meta_type_guid C(16) PRIMARY,
 	meta_type_title C(250) NOTNULL
@@ -232,7 +219,6 @@ foreach( array_keys( $tables ) AS $tableName ) {
 
 // Constraints which must be installed after table creation
 $constraints = array(
-	'liberty_content' => array('liberty_content_attachment_ref' => 'FOREIGN KEY (`primary_attachment_id`) REFERENCES `'.BIT_DB_PREFIX.'liberty_attachments`( `attachment_id` )'),
 	'liberty_content_permissions' => array('liberty_content_perm_group_ref' => 'FOREIGN KEY (`group_id`) REFERENCES `'.BIT_DB_PREFIX.'users_groups` (`group_id`)'),
 );
 foreach( array_keys($constraints) AS $tableName ) {
@@ -257,7 +243,6 @@ $indices = array (
 	'comments_parent_idx' => array( 'table' => 'liberty_comments', 'cols' => 'parent_id', 'opts' => NULL ),
 	'attachments_hits_idx' => array( 'table' => 'liberty_attachments', 'cols' => 'hits', 'opts' => NULL ),
 	'attachments_user_id_idx' => array( 'table' => 'liberty_attachments', 'cols' => 'user_id', 'opts' => NULL ),
-	'attachments_content_id_idx' => array( 'table' => 'liberty_attachments_map', 'cols' => 'content_id', 'opts' => NULL ),
 	'st_co_foreign_guid_idx' => array( 'table' => 'liberty_attachments', 'cols' => 'foreign_id, attachment_plugin_guid', 'opts' => array( 'UNIQUE' ) ),
 	'structures_root_idx' => array( 'table' => 'liberty_structures', 'cols' => 'root_structure_id', 'opts' => NULL),
 	'structures_parent_idx' => array( 'table' => 'liberty_structures', 'cols' => 'parent_id', 'opts' => NULL),
