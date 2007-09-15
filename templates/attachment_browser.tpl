@@ -9,46 +9,6 @@
 
 {include file="bitpackage:liberty/edit_storage_list.tpl"}
 
-{* DEPRECATED - Slated for removal - replaced by use of edit_storage_list above. -wjames5
-<div class="row">
-	{formlabel label="Insert Attachment"}
-	{forminput}
-		<input type="text" name="dummy" id="copy" size="30" class="success" />
-		<input type="button" value="{tr}Clear{/tr}" onclick="document.getElementById( 'copy' ).value = '';" />
-		{formhelp note="Clicking on any of the attachments below, will display the correct attachment syntax in the textbox above. Insert this text into the textarea where needed."}
-	{/forminput}
-</div>
-
-<table class="data">
-	<caption>{tr}Available Attachements{/tr} <span class="total">[ {$userAttachments.cant} ]</span></caption>
-	{counter start=-1 name="cells" print=false}
-	{foreach from=$userAttachments item=attachment key=foo}
-		{counter name="cells" assign="cells" print=false}
-		{if $cells % 2 eq 0}
-			<tr class="{cycle values="odd,even"}">
-		{/if}
-
-		<td>
-			<a title="{tr}Attachment id: {$attachment.attachment_id}{/tr}" href="javascript:insertAt( 'copy', '{ldelim}attachment id={$attachment.attachment_id}{rdelim}' );">
-				<img src="{$attachment.thumbnail_url.small}" alt="{$attachment.filename}" /><br />
-				{$attachment.filename}<br />
-				Attachment ID: {$attachment.attachment_id}
-			</a>
-		</td>
-
-		{if $cells % 2 ne 0}
-			</tr>
-		{/if}
-	{foreachelse}
-		<tr class="norecords"><td>{tr}No Records Found{/tr}</td></tr>
-	{/foreach}
-
-	{if $cells % 2 eq 0}
-		<td>&nbsp;</td></tr>
-	{/if}
-</table>
-*}
-
 {libertypagination pgnName="pgnPage" pgnPage=$curPage numPages=$numPages offset=$smarty.request.offset ajaxId=attbrowser}
 {pagination ajaxId=attbrowser}
 {/strip}
