@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.10 2007/08/24 21:55:50 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.11 2007/09/15 01:58:34 spiderr Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -384,7 +384,7 @@ function liberty_content_display( &$pObject, &$pParamHash ) {
 
 		// make sure user has appropriate permissions to view this content
 		if( !empty( $pParamHash['perm_name'] )) {
-			$pObject->verifyPermission( $pParamHash['perm_name'] );
+			$pObject->verifyViewPermission();
 		}
 	}
 }

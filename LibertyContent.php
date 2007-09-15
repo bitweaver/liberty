@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.290 2007/09/14 16:36:20 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.291 2007/09/15 01:58:34 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -980,6 +980,7 @@ class LibertyContent extends LibertyBase {
 	function hasUserPermission( $pPermName, $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
 		global $gBitUser;
 		$ret = FALSE;
+bt();
 		if( !$this->isValid() ) {
 			// return default user permission setting when no content is loaded
 			$ret = $gBitUser->hasPermission( $pPermName );
@@ -1002,6 +1003,7 @@ class LibertyContent extends LibertyBase {
 				}
 			}
 		}
+vd( $ret );
 		return( $ret );
 	}
 
@@ -1063,7 +1065,7 @@ class LibertyContent extends LibertyBase {
 	*
 	* @return bool True if user has this type of content administration permission
 	*/
-	function hasViewPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
+	function hasViewPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
 		return( $this->hasEditPermission( $pVerifyAccessControl ) || empty( $this->mViewContentPerm ) || $this->hasUserPermission( $this->mViewContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ));
 	}
 
@@ -1075,7 +1077,7 @@ class LibertyContent extends LibertyBase {
 	* @return TRUE if permitted, method will fatal out if not
 	* @access public
 	*/
-	function verifyViewPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
+	function verifyViewPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
 		global $gBitSystem;
 		if( $this->hasViewPermission( $pVerifyAccessControl, $pCheckGlobalPerm ) ) {
 			return TRUE;
