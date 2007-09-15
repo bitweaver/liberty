@@ -84,8 +84,8 @@ array( 'DATADICT' => array(
 		'liberty_content' => array(
 			'lang_code' => array( '`lang_code`', 'VARCHAR(32)' ),
 			'content_status_id' => array( '`content_status_id`', 'I4' ),
-			// remove before release - this column is going away!
-			'primary_attachment_id' => array( '`primary_attachment_id`', 'I4' ),
+			// this has moved to liberty_attachments.is_primary
+			//'primary_attachment_id' => array( '`primary_attachment_id`', 'I4' ),
 		),
 		'liberty_action_log' => array(
 			'log_action' => array( '`log_message`', 'VARCHAR(250)' ),
@@ -169,6 +169,7 @@ array( 'DATADICT' => array(
 	)),
 )),
 
+/* this table has been dropped again
 // Create attachments map table
 array( 'DATADICT' => array(
 	array( 'CREATE' => array (
@@ -188,6 +189,7 @@ array( 'QUERY' =>
 		"INSERT INTO `".BIT_DB_PREFIX."liberty_attachments_map` (attachment_id, content_id) (SELECT attachment_id, content_id FROM `".BIT_DB_PREFIX."liberty_attachments`)",
 	)),
 ),
+ */
 // drop original column
 array( 'DATADICT' => array(
 	array( 'DROPCOLUMN' => array(
@@ -644,21 +646,22 @@ array( 'QUERY' =>
 array( 'DATADICT' => array(
 	array( 'ALTER' => array(
 		'liberty_attachments' => array(
-			'controlling_content_id' => array( '`controlling_content_id`', 'I4' ),
+			'content_id' => array( '`content_id`', 'I4' ),
+			'is_primary' => array( '`is_primary`', 'C(1)' ),
 		),
 	)),
 )),
 
 array( 'QUERY' =>
 	array( 'SQL92' => array(
-		// the easy stuff first... - if the primary_attachment_id is set in liberty_content we use that to populate the new controlling_content_id column
-		"UPDATE `".BIT_DB_PREFIX."liberty_attachments` la SET `controlling_content_id` = ( SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `primary_attachment_id` = la.`attachment_id` )",
+		// the easy stuff first... - if the primary_attachment_id is set in liberty_content we use that to populate the new content_id column
+		"UPDATE `".BIT_DB_PREFIX."liberty_attachments` la SET `content_id` = ( SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `primary_attachment_id` = la.`attachment_id` )",
 
 		// set is_primary where it applies
 		"UPDATE `".BIT_DB_PREFIX."liberty_attachments` la INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lc.`primary_attachment_id` = la.`attachment_id` ) SET `is_primary` = 'y'",
 
 		// now we do the generic update
-		"UPDATE `".BIT_DB_PREFIX."liberty_attachments` la SET `controlling_content_id` = ( SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_attachments_map` WHERE `attachment_id` = la.`attachment_id` LIMIT 1 ) WHERE la.`controlling_content_id` <> NULL;",
+		"UPDATE `".BIT_DB_PREFIX."liberty_attachments` la SET `content_id` = ( SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_attachments_map` WHERE `attachment_id` = la.`attachment_id` LIMIT 1 ) WHERE la.`content_id` <> NULL;",
 	)),
 ),
 
