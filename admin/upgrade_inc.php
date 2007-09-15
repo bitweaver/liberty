@@ -675,8 +675,6 @@ array( 'DATADICT' => array(
 )),
  */
 
-	)),
-),
 		),
 	),
 
