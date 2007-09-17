@@ -92,12 +92,13 @@ array( 'DATADICT' => array(
 			'action_comment' => array( '`error_message`', 'VARCHAR(250)' ),
 			'content_id' => array( '`content_id`', 'I4' ),
 		),
-		'liberty_thumbnail_queue' => array( 
+		'liberty_thumbnail_queue' => array(
 			'processor' => array( '`processor`', 'VARCHAR(250)' ),
 			'processor_parameters' => array( '`processor_parameters`', 'VARCHAR(250)' ),
 		),
-		'liberty_content_permissions' => array( 
+		'liberty_content_permissions' => array(
 			'object_id' => array( '`content_id`', 'I4' ),
+			'is_revoked' => array( '`is_revoked`', 'VARCHAR(1)' ),
 		),
 	)),
 	/* The installer can't add constraints after table creation yet so drop this constraint.
