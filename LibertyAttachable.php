@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.126 2007/09/17 07:17:23 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.127 2007/09/17 07:30:28 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -504,8 +504,8 @@ class LibertyAttachable extends LibertyContent {
 			LibertyContent::load( $conId );
 			$query = "
 				SELECT *
-				FROM `".BIT_DB_PREFIX."liberty_attachments` la 
-				WHERE la.`content_id`=? ORDER BY la.`attachment_id` ASC";
+				FROM `".BIT_DB_PREFIX."liberty_attachments` la
+				WHERE la.`content_id`=? ORDER BY la.`pos` ASC, la.`attachment_id` ASC";
 			if( $result = $this->mDb->query( $query,array( (int)$conId ))) {
 				$this->mStorage = array();
 				while( $row = $result->fetchRow() ) {
