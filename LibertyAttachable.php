@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.125 2007/09/15 11:34:32 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.126 2007/09/17 07:17:23 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -275,6 +275,11 @@ class LibertyAttachable extends LibertyContent {
 			}
 		}
 
+		// primary attachment
+		if( !@BitBase::verifyId( $pParamHash['liberty_attachments']['primary'] )) {
+			$pParamHash['liberty_attachments']['primary'] = NULL;
+		}
+
 		return ( count( $this->mErrors ) == 0 );
 	}
 
@@ -358,9 +363,8 @@ class LibertyAttachable extends LibertyContent {
 				}
 			}
 
-			if( @BitBase::verifyId( $pParamHash['liberty_attachments']['primary'] )) {
-				$this->setPrimaryAttachment( $pParamHash['liberty_attachments']['primary'] );
-			}
+			// set the primary attachment id
+			$this->setPrimaryAttachment( $pParamHash['liberty_attachments']['primary'], ( @BitBase::verifyId( $storeRow['content_id'] ) ? $storeRow['content_id'] : NULL ));
 		}
 		$this->mDb->CompleteTrans();
 
@@ -548,19 +552,30 @@ class LibertyAttachable extends LibertyContent {
 	 * setPrimary will set is_primary 'y' for the specified attachment and will ensure that all others are set to 'n'
 	 * 
 	 * @param numeric $pAttachmentId attachment id of the item we want to set primary
+	 * @param numeric $pContentId content id the attachment belongs to
+	 *                this is only needed when we don't have an attachment id 
+	 *                which only happens when the first attachment is uploaded
 	 * @access public
 	 * @return TRUE on success, FALSE on failure
 	 */
-	function setPrimaryAttachment( $pAttachmentId = NULL ) {
+	function setPrimaryAttachment( $pAttachmentId = NULL, $pContentId = NULL ) {
 		$ret = FALSE;
+		// if no attachment id has been given, we'll check to see if we already have a primary attachment set
+		if( !@BitBase::verifyId( $pAttachmentId ) && @BitBase::verifyId( $pContentId )) {
+			$query = "
+				SELECT `attachment_id`
+				FROM `".BIT_DB_PREFIX."liberty_content` lc
+				INNER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON( lc.`content_id` = la.`content_id` )
+				WHERE lc.`content_id` = ?";
+			$pAttachmentId = $this->mDb->getOne( $query, array( $pContentId ));
+		}
 
 		// we have been given an attachment_id. we'll use this to set the primary attachment_id
 		if( @BitBase::verifyId( $pAttachmentId )) {
-
 			// get attachment we want to set primary
 			$attachment = $this->getAttachment( $pAttachmentId );
 
-			// set is_primary as 'n' first - there can only be one
+			// set is_primary as NULL first - there can only be one
 			$query = "
 				UPDATE `".BIT_DB_PREFIX."liberty_attachments`
 				SET `is_primary` = ? WHERE `content_id` = ?";
