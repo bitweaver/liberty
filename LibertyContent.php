@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.292 2007/09/15 01:59:38 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.293 2007/09/18 05:39:11 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1089,87 +1089,34 @@ class LibertyContent extends LibertyBase {
 	* Get specific permissions for the specified user for this content
 	*
 	* @param integer Id of user for whom permissions are to be loaded
-	* @return array Array of all permissions for the current user joined with perms for the current content. This should handle cases where non-default permissions is assigned, default permission is removed, and duplicate default permissions where one group's perm is revoked, but another is still permitted. If the permission is revoked, is_revoked will be set to 'y'
+	* @return Array of all permissions for the current user joined with perms 
+	*         for the current content. This should handle cases where 
+	*         non-default permissions is assigned, default permission is 
+	*         removed, and duplicate default permissions where one group's perm 
+	*         is revoked, but another is still permitted. If the permission is 
+	*         revoked, is_revoked will be set to 'y'
 	*/
 	function getUserPermissions( $pUserId ) {
 		// cache this out to a static hash to reduce query load
 		static $sUserPerms = array();
-		$ret = array();
 
 		if( !isset( $sUserPerms[$pUserId][$this->mContentId] )) {
-//$startTime = microtime(); 
-
 			// get the default permissions for specified user
-			$query = "SELECT ugp.`perm_name` as `hash_key`, ugp.* 
+			$query = "SELECT ugp.`perm_name` as `hash_key`, ugp.*
 					  FROM `".BIT_DB_PREFIX."users_groups_map` ugm
-						LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.`group_id`=ugp.`group_id`) 
-						LEFT JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcp ON(lcp.`group_id`=ugm.`group_id` AND lcp.`content_id`=?) 
+						  LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.`group_id`=ugp.`group_id`)
+						  LEFT JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcp ON(lcp.`group_id`=ugm.`group_id` AND lcp.`content_id`=?)
 					  WHERE (ugm.`user_id`=? OR ugm.`user_id`=?) AND lcp.perm_name IS NULL";
 			$defaultPerms = $this->mDb->getAssoc( $query, array( $this->mContentId, $pUserId, ANONYMOUS_USER_ID ) );
 
-			$query = "SELECT lcp.`perm_name` AS `hash_key`, lcp.* 
-					  FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcp 
-						INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON(lcp.group_id=ugm.group_id) 
-						LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.group_id=ugp.group_id AND ugp.group_id!=lcp.group_id AND ugp.perm_name=lcp.perm_name) 
+			$query = "SELECT lcp.`perm_name` AS `hash_key`, lcp.*
+					  FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcp
+						  INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON(lcp.group_id=ugm.group_id)
+						  LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.group_id=ugp.group_id AND ugp.group_id!=lcp.group_id AND ugp.perm_name=lcp.perm_name)
 					  WHERE lcp.content_id=? AND (ugm.user_id=? OR ugm.user_id=?) AND lcp.is_revoked IS NULL";
 			$nonDefaultPerms = $this->mDb->getAssoc( $query, array( $this->mContentId, $pUserId, ANONYMOUS_USER_ID ) );
 
-			$ret = array_merge( $defaultPerms, $nonDefaultPerms );
-//vd ( "exec time ".(microtime() - $startTime) );
-
-			/*
-			 * this has to work in the following conditions - result in () as viewed by registered user:
-			 *        - no global p_wiki_page_view and we assign it to anon (TRUE), registered (TRUE) or editors (FALSE)
-			 *        - anon have p_wiki_page_view and we re-assign it to registered (TRUE)
-			 *        - anon have p_wiki_page_view and we re-assign it to editors (FALSE)
-			 *        - registered have p_wiki_page_view and we re-assign it to editors (FALSE)
-			 *        - registered have p_wiki_page_view and we re-assign it to anon (TRUE)
-			 *        - editors have p_wiki_page_view and we (re-)assing it to anon (TRUE) or registered (TRUE)
-			 *        - anon and registed have p_wiki_page_view and we unassign from anon (TRUE), registered (TRUE) and both (FALSE)
-			 */
-			/* previous query did not provide above functionality
-			$query = "SELECT lcperm.`perm_name`, lcperm.`is_revoked`,ug.`group_id`, ug.`group_name`, ugm.`user_id`
-                    FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
-                        INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
-                        INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON( ugm.`group_id`=ug.`group_id` )
-                    WHERE (ugm.`user_id`=? OR ugm.`user_id`=?) AND lcperm.`content_id` = ?
-                    ORDER BY lcperm.`is_revoked`"; // order by is_revoked so null's come first and last to be checked will be 'y'
-            $bindVars = array( $this->mContentId, $pUserId, ANONYMOUS_USER_ID );
-            $sUserPerms[$pUserId][$this->mContentId] = $this->mDb->getAssoc( $query, $bindVars );
-			 */
-/*
-$startTime = microtime(); 
-			$query = "SELECT up.`perm_name`, up.`perm_desc`, up.`perm_level`, up.`package`, ugp.`group_id`
-					  FROM `".BIT_DB_PREFIX."users_permissions` up
-						INNER JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON ( ugp.`perm_name`=up.`perm_name` )
-						INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON ( ug.`group_id`=ugp.`group_id` )
-					    LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON ( ugm.`group_id`=ugp.`group_id` AND ugm.`user_id` = ? )
-					  WHERE ug.`group_id`= ".ANONYMOUS_GROUP_ID." OR ugm.`group_id`=ug.`group_id`";
-			$userPerms = $this->mDb->getAll( $query, array( $gBitUser->mUserId ) );
-
-			// remove revoked permissions
-			foreach( $this->mPerms as $perm ) {
-				if( $perm['is_revoked'] == 'y' ) {
-					foreach( $userPerms as $uk => $up ) {
-						if( $up['perm_name'] == $perm['perm_name'] && $up['group_id'] == $perm['group_id'] ) {
-							unset( $userPerms[$uk] );
-						}
-					}
-				} else {
-					$userPerms[] = $perm;
-				}
-			}
-
-			// merge data that it looks like an updated version of user permissions
-			foreach( $userPerms as $perm ) {
-				if( in_array( $perm['group_id'], array_keys( $gBitUser->mGroups ))) {
-					$ret[$perm['perm_name']] = $perm;
-				}
-			}
-vd ( "exec time ".(microtime() - $startTime) );
-vd( $ret );
-*/
-			$sUserPerms[$pUserId][$this->mContentId] = $ret;
+			$sUserPerms[$pUserId][$this->mContentId] = array_merge( $defaultPerms, $nonDefaultPerms );
 		}
 
 		return $sUserPerms[$pUserId][$this->mContentId];
