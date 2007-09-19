@@ -648,7 +648,7 @@ array( 'DATADICT' => array(
 	array( 'ALTER' => array(
 		'liberty_attachments' => array(
 			'content_id' => array( '`content_id`', 'I4' ),
-			'is_primary' => array( '`is_primary`', 'C(1)' ),
+			'is_primary' => array( '`is_primary`', 'CHAR(1)' ),
 		),
 	)),
 )),
