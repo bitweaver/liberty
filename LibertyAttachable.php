@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.128 2007/09/19 10:10:02 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.129 2007/09/19 16:10:51 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -177,7 +177,7 @@ class LibertyAttachable extends LibertyContent {
 
 	}
 
-	function verifyAttachment( &$pParamHash, $pFile ) {
+	function verifyAttachment( &$pParamHash, $pFile, $pKey ) {
 		global $gBitSystem, $gBitUser, $gLibertySystem;
 
 		if( !empty( $pFile['size'] ) && !empty( $pFile ) ) {
@@ -225,7 +225,7 @@ class LibertyAttachable extends LibertyContent {
 				if (!isset($pParamHash['STORAGE'][$storageGuid])) {
 					$pParamHash['STORAGE'][$storageGuid] = array();
 				}
-				$pParamHash['STORAGE'][$storageGuid][] = array('upload' => &$pFile);
+				$pParamHash['STORAGE'][$storageGuid][$pKey] = array('upload' => &$pFile);
 			}
 		}
 	}
@@ -271,7 +271,7 @@ class LibertyAttachable extends LibertyContent {
 		// Support for single bitfile upload
 		if( !empty( $_FILES ) ) {
 			foreach( array_keys( $_FILES ) as $f ) {
-				$this->verifyAttachment( $pParamHash, $_FILES[$f] );
+				$this->verifyAttachment( $pParamHash, $_FILES[$f], $f );
 			}
 		}
 
