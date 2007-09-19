@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.17 $
+ * @version  $Revision: 1.18 $
  * @package  liberty
  * @subpackage functions
  *
@@ -14,15 +14,15 @@
  */
 global $gBitSmarty, $gContent, $gBitUser, $gBitSystem, $gLibertySystem, $gBitThemes;
 
-$attachmentActionBaseUrl = $gBitSmarty->get_template_vars('attachmentActionBaseURL');
-if( empty($attachmentActionBaseUrl) ) {
+$attachmentActionBaseUrl = $gBitSmarty->get_template_vars( 'attachmentActionBaseURL' );
+if( empty( $attachmentActionBaseUrl )) {
 	$attachmentActionBaseURL = $_SERVER['PHP_SELF'].'?';
-	$GETArgs = split('&',$_SERVER['QUERY_STRING']);
+	$GETArgs = split( '&',$_SERVER['QUERY_STRING'] );
 	$firstArg = TRUE;
 
 	foreach( $GETArgs as $arg ) {
-		$parts = split('=',$arg);
-		if( ( $parts[0] != 'deleteAttachment' ) && $parts[0] != 'detachAttachment' ) {
+		$parts = split( '=',$arg );
+		if( $parts[0] != 'deleteAttachment' ) {
 			if( !$firstArg )
 				$attachmentActionBaseURL .= "&amp;";
 			else
@@ -33,20 +33,13 @@ if( empty($attachmentActionBaseUrl) ) {
 	$gBitSmarty->assign( 'attachmentActionBaseURL', $attachmentActionBaseURL );
 }
 
-if( !empty( $_REQUEST['deleteAttachment'] ) ) {
+if( !empty( $_REQUEST['deleteAttachment'] )) {
 	$attachmentId = $_REQUEST['deleteAttachment'];
 	$attachmentInfo = $gContent->getAttachment( $attachmentId );
 
 	// TODO: Should we have a permission for deleting attachments?
-	if( $gBitUser->isAdmin() || ($attachmentInfo['user_id'] == $gBitUser->mUserId && $gBitUser->hasPermission('p_liberty_delete_attachment')) ) {
+	if( $gBitUser->isAdmin() || ( $attachmentInfo['user_id'] == $gBitUser->mUserId && $gBitUser->hasPermission( 'p_liberty_delete_attachment' ))) {
 		$gContent->expungeAttachment( $attachmentId );
-	}
-} elseif( !empty( $_REQUEST['detachAttachment'] ) ) {
-	$attachmentId = $_REQUEST['detachAttachment'];
-	$attachmentInfo = $gContent->getAttachment( $attachmentId );
-
-	if( $gBitUser->isAdmin() || $gBitUser->mPerms['p_liberty_detach_attachment'] == 'y' || $attachmentInfo['user_id'] == $gBitUser->mUserId ) {
-		$gContent->detachAttachment( $attachmentId );
 	}
 }
 $gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );

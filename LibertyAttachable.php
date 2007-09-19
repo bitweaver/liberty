@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.127 2007/09/17 07:30:28 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.128 2007/09/19 10:10:02 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -433,19 +433,11 @@ class LibertyAttachable extends LibertyContent {
 	 * Expunges the content deleting attachments if asked to do so, otherwise just detaching them
 	 * TODO: this hasn't been updated yet since the liberty_attachments update
 	 */
-	function expunge ($pDeleteAttachments=FALSE) {
-		if( !empty( $this->mStorage ) && count( $this->mStorage ) ) {
+	function expunge() {
+		if( !empty( $this->mStorage ) && count( $this->mStorage )) {
 			foreach( array_keys( $this->mStorage ) as $i ) {
-				if ($pDeleteAttachments) {
-					$this->expungeAttachment(  $this->mStorage[$i]['attachment_id'] );
-				}
-				else {
-					$this->detachAttachment( $this->mStorage[$i]['attachment_id'] );
-				}
+				$this->expungeAttachment(  $this->mStorage[$i]['attachment_id'] );
 			}
-		}
-		if( $pDeleteAttachments && !empty( $this->mInfo['primary_attachment_id'] ) ) {
-			$this->expungeAttachment( $this->mStorage[$i]['attachment_id'] );
 		}
 		return LibertyContent::expunge();
 	}
@@ -464,7 +456,6 @@ class LibertyAttachable extends LibertyContent {
 			$sql = "SELECT `attachment_plugin_guid`, `user_id` FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id`=?";
 			$row = $this->mDb->getRow( $sql, array( $pAttachmentId ) );
 			$guid = $row['attachment_plugin_guid'];
-			$user_id = $row['user_id'];
 			if( $guid && ( $this->isOwner( $row ) || $gBitUser->isAdmin() )) {
 				// check if we have the means available to remove this attachment
 				if( $expungeFunc = $gLibertySystem->getPluginFunction( $guid,'expunge_function' )) {
