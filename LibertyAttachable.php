@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.130 2007/09/20 06:47:03 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.131 2007/09/20 21:52:24 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -242,7 +242,7 @@ class LibertyAttachable extends LibertyContent {
 	function verify( &$pParamHash ) {
 		global $gBitSystem, $gBitUser;
 		// check to see if we have any files to upload
-		if( !empty( $pParamHash['_files_override'] ) ) {
+		if( isset( $pParamHash['_files_override'] ) ) {
 			// we have been passed in a manually stuffed files attachment, such as a custom uploader would have done.
 			// process this, and skip over $_FILES
 			$uploads = $pParamHash['_files_override'];
