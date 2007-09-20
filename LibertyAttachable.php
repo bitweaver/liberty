@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.129 2007/09/19 16:10:51 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.130 2007/09/20 06:47:03 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -180,7 +180,7 @@ class LibertyAttachable extends LibertyContent {
 	function verifyAttachment( &$pParamHash, $pFile, $pKey ) {
 		global $gBitSystem, $gBitUser, $gLibertySystem;
 
-		if( !empty( $pFile['size'] ) && !empty( $pFile ) ) {
+		if( !empty( $pFile ) && !empty( $pFile['size'] ) ) {
 			if( empty( $pParamHash['storage_guid'] )) {
 				// only file format storage available at present 
 				$pParamHash['storage_guid'] = $storageGuid = PLUGIN_GUID_BIT_FILES;
@@ -230,12 +230,29 @@ class LibertyAttachable extends LibertyContent {
 		}
 	}
 
+	
+	/**
+	* verify - standard API method, with a twist. It will gobble up anything in $_FILES if available, unless an array of arrays is passed in to  $pParamHash['_files_override']
+	*
+	* @access private
+	* @author Christian Fowler<spider@steelsun.com>
+	* @param $pParamHash
+	* @return FALSE if errors were present, TRUE meaning object is ready to store
+	*/
 	function verify( &$pParamHash ) {
 		global $gBitSystem, $gBitUser;
-		// we need to make sure we have valid file in $_FILES
-		foreach( $_FILES as $key => $file ) {
-			if( !empty( $file['name'] )) {
-				$uploads[$key] = $file;
+		// check to see if we have any files to upload
+		if( !empty( $pParamHash['_files_override'] ) ) {
+			// we have been passed in a manually stuffed files attachment, such as a custom uploader would have done.
+			// process this, and skip over $_FILES
+			$uploads = $pParamHash['_files_override'];
+		} elseif( !empty( $_FILES ) ) {
+			// we have some _FILES hanging around we will gobble up. This is inherently dagnerous chewing up a _FILES like this as 
+			// it can cause premature storing of a _FILE if you are trying to store multiple pieces of content at once.
+			foreach( $_FILES as $key => $file ) {
+				if( !empty( $file['name'] )) {
+					$uploads[$key] = $file;
+				}
 			}
 		}
 
@@ -268,10 +285,9 @@ class LibertyAttachable extends LibertyContent {
 			$pParamHash['subdir'] = 'files';
 		}
 
-		// Support for single bitfile upload
-		if( !empty( $_FILES ) ) {
-			foreach( array_keys( $_FILES ) as $f ) {
-				$this->verifyAttachment( $pParamHash, $_FILES[$f], $f );
+		if( !empty( $uploads ) ) {
+			foreach( array_keys( $uploads ) as $f ) {
+				$this->verifyAttachment( $pParamHash, $uploads[$f], $f );
 			}
 		}
 
