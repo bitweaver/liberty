@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.131 2007/09/20 21:52:24 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.132 2007/09/21 03:51:52 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -305,7 +305,6 @@ class LibertyAttachable extends LibertyContent {
 		$this->mDb->StartTrans();
 		if( LibertyAttachable::verify( $pParamHash ) && LibertyContent::store( $pParamHash )) {
 			if(!empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] ) ) {
-
 				foreach( array_keys( $pParamHash['STORAGE'] ) as $guid ) {
 					$storeRows = &$pParamHash['STORAGE'][$guid]; // short hand variable assignment
 					// If it is empty then nothing more to do. Avoid error in foreach.
@@ -345,6 +344,7 @@ class LibertyAttachable extends LibertyContent {
 										defined( 'LINKED_ATTACHMENTS' ) ? $this->mDb->GenID( 'liberty_content_id_seq') : $this->mDb->GenID( 'liberty_attachments_id_seq' );
 								}	
 							}
+
 							// if we have uploaded a file, we can take care of that generically
 							if( is_array( $storeRow['upload'] ) && !empty( $storeRow['upload']['size'] ) ) {
 								if( empty( $storeRow['upload']['type'] ) ) {
@@ -370,7 +370,11 @@ class LibertyAttachable extends LibertyContent {
 								$this->mStorage = $storeFunc( $storeRow );
 							}
 
-							if( !@BitBase::verifyId( $pParamHash['attachment_id'] ) ) {
+							if( @BitBase::verifyId( $pParamHash['attachment_id'] ) ) {
+								// we were passed in an attachment, assume an update to an existing row
+								$sql = "UPDATE `".BIT_DB_PREFIX."liberty_attachments` SET `content_id`=?, `attachment_plugin_guid`=?, `foreign_id`=?, `user_id`=? WHERE `attachment_id`=?";
+								$rs = $this->mDb->query( $sql, array( $storeRow['content_id'], $storeRow['plugin_guid'], (int)$storeRow['foreign_id'], $storeRow['user_id'], $pParamHash['attachment_id'] ) );
+							} elseif(  @BitBase::verifyId( $storeRow['attachment_id'] ) ) {
 								$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `content_id`, `attachment_id`, `attachment_plugin_guid`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
 								$rs = $this->mDb->query( $sql, array( $storeRow['content_id'], $storeRow['attachment_id'], $storeRow['plugin_guid'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
 							}
