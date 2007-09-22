@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.293 2007/09/18 05:39:11 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.294 2007/09/22 20:50:47 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1549,6 +1549,12 @@ class LibertyContent extends LibertyBase {
 	*/
 	function getThumbnailUrl( $pSize='small', $pContentId=NULL, $pSecondaryId=NULL ) {
 		return '';
+	}
+
+
+	function getThumbnailUri( $pSize='small', $pInfoHash=NULL ) {
+		$url = $this->getThumbnailUrl( $pSize, $pInfoHash );
+		return( STORAGE_HOST_URI.substr( $url, 1 ) );
 	}
 
 
