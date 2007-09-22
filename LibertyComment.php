@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.49 2007/06/10 15:14:40 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.50 2007/09/22 15:07:31 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -241,7 +241,7 @@ class LibertyComment extends LibertyContent {
 	function getDisplayLink( $pLinkText=NULL, $pMixed=NULL ) {
 		$anchor = '';
 		if( @BitBase::verifyId( $pMixed['content_id'] )) {
-			$anchor = "#comment_{$pMixed['content_id']}";
+			$anchor = "&view_comment_id=".$pMixed['content_id']."#comment_{$pMixed['content_id']}";
 		}
 		return parent::getDisplayLink( $pLinkText, $pMixed, $anchor );
 	}
@@ -308,6 +308,9 @@ class LibertyComment extends LibertyContent {
 		if( $result = $this->mDb->query( $query, $bindVars, $pParamHash['max_records'], $pParamHash['offset'] )) {
 			while( $row = $result->FetchRow() ) {
 				$row['display_link'] = $this->getDisplayLink( $row['content_title'], $row );
+				if (!empty($pParamHash['parse'])) {
+					$row['parsed_data'] = $this->parseData($row);
+				}
 				$ret[] = $row;
 			}
 		}
