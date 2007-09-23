@@ -15,7 +15,7 @@
 {include file="bitpackage:liberty/edit_storage_list.tpl"}
 {if empty($gContent->mContentId)}
 	{foreach from=$gContent->mStorage item=storage key=attachmentId}
-		<input type="hidden" name="existing_attachment_id[]" value="{$attachmentId}" />
+		<input type="hidden" name="STORAGE[existing][]" value="{$attachmentId}" />
 	{/foreach}
 {/if}
 </body>

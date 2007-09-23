@@ -662,7 +662,7 @@ array( 'QUERY' =>
 		"UPDATE `".BIT_DB_PREFIX."liberty_attachments` la INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lc.`primary_attachment_id` = la.`attachment_id` ) SET `is_primary` = 'y'",
 
 		// now we do the generic update
-		"UPDATE `".BIT_DB_PREFIX."liberty_attachments` la SET `content_id` = ( SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_attachments_map` WHERE `attachment_id` = la.`attachment_id` LIMIT 1 ) WHERE la.`content_id` <> NULL;",
+		"UPDATE `".BIT_DB_PREFIX."liberty_attachments` la SET `content_id` = ( SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_attachments_map` WHERE `attachment_id` = la.`attachment_id` LIMIT 1 ) WHERE la.`content_id` <> NULL",
 	)),
 ),
 

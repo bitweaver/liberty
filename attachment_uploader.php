@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.7 2007/09/10 19:26:09 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.8 2007/09/23 18:17:22 nickpalmer Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -16,38 +16,64 @@ $gContent = new LibertyAttachable();
 
 // make a copy of $_REQUEST that we can mess with it without interfering with the rest of the page
 $storeHash = $_REQUEST;
-if( !empty( $storeHash['liberty_attachments']['content_id'] )) {
-	$gContent->mContentId = $storeHash['liberty_attachments']['content_id'];
-	$storeHash['content_id'] = $storeHash['liberty_attachments']['content_id'];
-}
 
-if( isset( $_FILES['upload'] )) {
-	if( !$gContent->storeAttachments( $storeHash, FALSE )) {
-		$gBitSmarty->assign('errors', $gContent->mErrors);
-	} elseif( empty( $gContent->mContentId )) {
-		// Fake it for preflight
-		$gContent->mStorage[$storeHash['attachment_id']] = $gContent->getAttachment( $storeHash['attachment_id'] );
+// Do we have an attachment to save?
+if( !empty($_FILES['upload']) ) {
+
+	// Do we have a content_id already or is this a preflight?
+	if( !empty( $storeHash['liberty_attachments']['content_id'] ) ) {
+
+		// Get the content_id into the right places.
+		$gContent->mContentId = $storeHash['content_id'] = $storeHash['liberty_attachments']['content_id'];
 	}
-}
+	else {
+		$storeHash['content_id'] = $gContent->mContentId = NULL;
+	}
 
-// load the attachments up
-if( !empty( $gContent->mContentId )) {
-	$gContent->load();
-} elseif( !empty( $storeHash['existing_attachment_id'] )) {
-	// Fake it for preflight
-	foreach( $storeHash['existing_attachment_id'] as $id ) {
-		if( !empty( $id )) {
-			$gContent->mStorage[$id] = $gContent->getAttachment( $id );
+	$storeHash['skip_content_store'] = true;
+
+	// store the attachment.
+	if (!$gContent->store($storeHash)) {
+		$gBitSmarty->assign('errors', $gContent->mErrors);
+	}
+	else {
+		// Load up the new attachment.
+		if (!empty($storeHash['STORAGE'])) {
+			foreach ($storeHash['STORAGE'] as $id => $file) {
+				if ($id != 'existing') {
+					foreach ($file as $key => $data) {
+						$gContent->mStorage[$data['attachment_id']] = $gContent->getAttachment($data['attachment_id']);
+					}
+				}
+			}
 		}
 	}
-}
 
-// Make them come out in the right order
-if( !empty( $gContent->mStorage )) {
-	ksort( $gContent->mStorage );
+	if ( empty($gContent->mContentId) ) {
+		// Setup the existing_attachment_id stuff
+		if( !empty( $storeHash['STORAGE']['existing'] )) {
+			// Fake it for preflight
+			foreach( $storeHash['STORAGE']['existing'] as $id ) {
+				if( !empty( $id )) {
+					$gContent->mStorage[$id] = $gContent->getAttachment( $id );
+				}
+			}
+		}
+	}
+	else {
+		$gContent->load();
+	}
+
+	// Make them come out in the right order
+	if( !empty( $gContent->mStorage )) {
+		ksort( $gContent->mStorage );
+	}
+}
+else {
+	$gBitSmarty->assign('errors', tra('There was an unknown error with the upload.'));
 }
 
 $gBitSmarty->assign( 'gContent', $gContent );
 $gBitSmarty->assign( 'libertyUploader', TRUE );
-echo $gBitSmarty->display( 'bitpackage:liberty/attachment_uploader.tpl' );
+echo $gBitSystem->display( 'bitpackage:liberty/attachment_uploader.tpl', NULL, 'none' );
 ?>

@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.132 2007/09/21 03:51:52 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.133 2007/09/23 18:17:22 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -301,9 +301,9 @@ class LibertyAttachable extends LibertyContent {
 
 	// Things to be stored should be shoved in the array $pParamHash['STORAGE']
 	function store( &$pParamHash ) {
-		global $gLibertySystem, $gBitSystem;
+		global $gLibertySystem, $gBitSystem, $gBitUser;
 		$this->mDb->StartTrans();
-		if( LibertyAttachable::verify( $pParamHash ) && LibertyContent::store( $pParamHash )) {
+		if( LibertyAttachable::verify( $pParamHash ) && ( isset($pParamHash['skip_content_store']) ||  LibertyContent::store( $pParamHash ) ) ) {
 			if(!empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] ) ) {
 				foreach( array_keys( $pParamHash['STORAGE'] ) as $guid ) {
 					$storeRows = &$pParamHash['STORAGE'][$guid]; // short hand variable assignment
@@ -314,13 +314,10 @@ class LibertyAttachable extends LibertyContent {
 					foreach( $storeRows as $key => $value ) {
 						$storeRow = &$pParamHash['STORAGE'][$guid][$key];
 						$storeRow['plugin_guid'] = $guid;
-						if (empty($pParamHash['content_id'])) {
-							$storeRow['content_id'] = $gBitUser->mContentId;
-						} else {
-							$storeRow['content_id'] = $pParamHash['content_id']; // copy in content_id
-						}
 
-						if (!empty($pParamHash['content_id'])) {
+						if (empty($pParamHash['content_id'])) {
+							$storeRow['content_id'] = NULL;
+						} else {
 							$storeRow['content_id'] = $pParamHash['content_id']; // copy in content_id
 						}
 
@@ -336,7 +333,7 @@ class LibertyAttachable extends LibertyContent {
 							// For backwards compatibility with a single upload.
 							if( @BitBase::verifyId( $pParamHash['attachment_id'] )) {
 								$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'] = $pParamHash['attachment_id'];
-							} else {
+							} else if ( !isset($storeRow['skip_insert'] ) ) {
 								if ( defined( 'LINKED_ATTACHMENTS' ) && @BitBase::verifyId( $pParamHash['content_id'] ) ) {
 									$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'] = $pParamHash['content_id'];
 								} else {
@@ -346,7 +343,7 @@ class LibertyAttachable extends LibertyContent {
 							}
 
 							// if we have uploaded a file, we can take care of that generically
-							if( is_array( $storeRow['upload'] ) && !empty( $storeRow['upload']['size'] ) ) {
+							if( !empty( $storeRow['upload'] ) && is_array( $storeRow['upload'] ) && !empty( $storeRow['upload']['size'] ) ) {
 								if( empty( $storeRow['upload']['type'] ) ) {
 									$ext = substr( $storeRow['upload']['name'], strrpos( $storeRow['upload']['name'], '.' ) + 1 );
 									$storeRow['upload']['type'] = $gBitSystem->lookupMimeType( $ext );
@@ -370,11 +367,7 @@ class LibertyAttachable extends LibertyContent {
 								$this->mStorage = $storeFunc( $storeRow );
 							}
 
-							if( @BitBase::verifyId( $pParamHash['attachment_id'] ) ) {
-								// we were passed in an attachment, assume an update to an existing row
-								$sql = "UPDATE `".BIT_DB_PREFIX."liberty_attachments` SET `content_id`=?, `attachment_plugin_guid`=?, `foreign_id`=?, `user_id`=? WHERE `attachment_id`=?";
-								$rs = $this->mDb->query( $sql, array( $storeRow['content_id'], $storeRow['plugin_guid'], (int)$storeRow['foreign_id'], $storeRow['user_id'], $pParamHash['attachment_id'] ) );
-							} elseif(  @BitBase::verifyId( $storeRow['attachment_id'] ) ) {
+							if( @BitBase::verifyId( $storeRow['attachment_id'] ) && !isset( $storeRow['skip_insert'] ) ) {
 								$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `content_id`, `attachment_id`, `attachment_plugin_guid`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
 								$rs = $this->mDb->query( $sql, array( $storeRow['content_id'], $storeRow['attachment_id'], $storeRow['plugin_guid'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
 							}

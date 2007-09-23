@@ -123,7 +123,7 @@ $tables = array(
 
 'liberty_attachments' => "
 	attachment_id I4 PRIMARY,
-	content_id I4 NOTNULL,
+	content_id I4,
 	attachment_plugin_guid C(16) NOTNULL,
 	foreign_id I4 NOTNULL,
 	user_id I4 NOTNULL,
