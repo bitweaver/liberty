@@ -19,6 +19,9 @@
 	{/if}
 	{smartlink ipackage=liberty ifile=content_permissions.php ititle="Assign Permissions" ibiticon=$perm_icon ipackage=liberty ifile="content_permissions.php" content_id=$serviceHash.content_id}
 {/if}
+{if $gBitSystem->isFeatureActive('promotions_icon')}
+	{include file="bitpackage:liberty/promotions_inc.tpl"}
+{/if}
 {* This should always be last so it is right most in the icons! *}
 {if $preview && $closeclick}
 	<a onclick="javascript:return cClick();">{biticon ipackage=icons iname=window-close iexplain="Close Popup"}</a>

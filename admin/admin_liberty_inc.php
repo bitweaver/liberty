@@ -1,4 +1,58 @@
 <?php
+$formLibertyPromotionsLocations = array(
+	'promotions_nav' => array(
+		'label' => 'Promotions in "nav"',
+		'note' => 'Displays the promotions in the "nav" section of each page.',
+	),
+	'promotions_view' => array(
+		'label' => 'Promotions in "view"',
+		'note' => 'Displays the promotions in the "view" section of each page.',
+	),
+	'promotions_icon' => array(
+		'label' => 'Promotions in "icons"',
+		'note' => 'Displays the promotions in the "icons" section of each page.',
+	),
+);
+$gBitSmarty->assign( 'formLibertyPromotionsLocations', $formLibertyPromotionsLocations );
+
+$formLibertyPromotions = array(
+	'promotions_digg' => array(
+		'label' => 'Display digg link',
+		'note' => 'Displays the digg logo to make it easy for people to digg your content.',
+		'styles' => array(
+			'text-icon' => 'Text and Icon',
+			'icon' => 'Wide Icon',
+			'active' => 'Active Javascript'
+		),
+	),
+	'promotions_stumbleupon' => array(
+		'label' => 'Display stumbleupon link',
+		'note' => 'Displays the stumbleupon logo to make it easy for people to stumbleupon your content.',
+		'styles' => array(
+			'text-icon' => 'Text and Icon',
+			'icon' => 'Wide Icon'
+		),
+	),
+	'promotions_delicious' => array(
+		'label' => 'Display delicious link',
+		'note' => 'Displays the delicious logo to make it easy for people to delicious your content.',
+		'styles' => array(
+			'text-icon' => 'Text and Icon',
+			'icon' => 'Wide Icon',
+			'active' => 'Active Javascript',
+		),
+	),
+	'promotions_furl' => array(
+		'label' => 'Display furl link',
+		'note' => 'Displays the furl logo to make it easy for people to furl your content.',
+		'styles' => array(
+			'text-icon' => 'Text and Icon',
+			'icon' => 'Wide Icon',
+		),
+	),
+);
+$gBitSmarty->assign( 'formLibertyPromotions', $formLibertyPromotions );
+
 $formLibertyFeatures = array(
 	"liberty_display_status" => array(
 		'label' => 'Display content status',
@@ -102,7 +156,10 @@ $gBitSmarty->assign( 'thumbFormats', $thumbFormats );
 $formValues = array( 'image_processor', 'liberty_attachment_link_format', 'comments_per_page', 'comments_default_ordering', 'comments_default_display_mode' );
 
 if( !empty( $_REQUEST['change_prefs'] )) {
-	$formFeatures = array_merge( $formLibertyFeatures, $formImageFeatures, $formCaptcha );
+	$formFeatures = array_merge( $formLibertyPromotionsLocations, $formLibertyPromotions, $formLibertyFeatures, $formImageFeatures, $formCaptcha );
+	foreach( $formLibertyPromotions as $item => $data ) {
+		simple_set_value( $item . "_style", LIBERTY_PKG_NAME );
+	}
 	foreach( $formFeatures as $item => $data ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
