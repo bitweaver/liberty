@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.11 2007/09/25 15:36:09 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.12 2007/09/25 15:53:37 squareing Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -47,8 +47,6 @@ function liberty_magickwand_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 			MagickSetImageCompressionQuality( $magickWand, 85 );
 			$iwidth = round( MagickGetImageWidth( $magickWand ) );
 			$iheight = round( MagickGetImageHeight( $magickWand ) );
-			vd($iwidth);
-			vd($iheight);
 
 			// this does not seem to be needed. magickwand will work out what to do by using the destination file extension
 			//MagickSetImageFormat( $magickWand, $format );
