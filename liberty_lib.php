@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.11 2007/09/15 01:58:34 spiderr Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.12 2007/09/25 06:36:45 spiderr Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -779,4 +779,19 @@ function get_image_size_options( $pEmptyOption = 'Disable this feature' ) {
 	}
 	return $ret;
 }
+
+function get_subtitle( $pTitle ) {
+	global $gBitSystem;
+	if( ($start = strpos( $pTitle, $gBitSystem->getConfig( 'libety_subtitle_delimiter',':' ) )) !== FALSE ) {
+		return( substr( $pTitle, ($start+1) ) );
+	}
+}
+
+
+function get_leadtitle( $pTitle ) {
+	global $gBitSystem;
+	return( substr( $pTitle, 0, strpos( $pTitle, $gBitSystem->getConfig( 'libety_subtitle_delimiter',':' ) ) ) );
+}
+
+
 ?>
