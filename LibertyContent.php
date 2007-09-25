@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.295 2007/09/25 06:43:58 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.296 2007/09/25 12:22:42 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2660,7 +2660,7 @@ class LibertyContent extends LibertyBase {
 		if( $this->mContentId ) {
 			$pSummary = trim( $pSummary );
 			if( empty( $pSummary ) ) {
-				$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_summaries` lcs WHERE `content_id`=?", array( $this->mContentId ) );
+				$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_summaries` WHERE `content_id`=?", array( $this->mContentId ) );
 			} else {
 				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_summaries` SET `summary`= ? WHERE `content_id` = ?";
 				$result = $this->mDb->query( $query, array( $pSummary, $this->mContentId ) );
