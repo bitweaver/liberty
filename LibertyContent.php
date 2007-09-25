@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.294 2007/09/22 20:50:47 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.295 2007/09/25 06:43:58 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -301,6 +301,8 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 
+		$pParamHash['summary_store']['summary'] = !empty( $pParamHash['summary'] ) ? $pParamHash['summary'] : NULL ;
+
 		return( count( $this->mErrors ) == 0 );
 	}
 
@@ -349,6 +351,9 @@ class LibertyContent extends LibertyBase {
 				$this->filterData( $pParamHash['content_store']['data'], $pParamHash['content_store'], 'poststore' );
 			}
 			LibertyContent::expungeCacheFile( $pParamHash['content_id'] );
+
+			// store hits and last hit
+			$this->storeSummary( $pParamHash['summary_store']['summary'] );
 
 			// store content preferences
 			if( @is_array( $pParamHash['preferences_store'] ) ) {
@@ -416,6 +421,10 @@ class LibertyContent extends LibertyBase {
 			// it's not this simple. what about orphans? needs real work. :( xoxo - spider
 //			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `content_id` = ?";
 //			$result = $this->mDb->query( $query, array( $this->mContentId ) );
+
+			// Remove hits
+			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_summaries` WHERE `content_id` = ?";
+			$result = $this->mDb->query( $query, array( $this->mContentId ) );
 
 			// Remove hits
 			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_hits` WHERE `content_id` = ?";
@@ -2641,6 +2650,30 @@ class LibertyContent extends LibertyBase {
 		global $gBitSystem;
 		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_hidden', -10 ) );
 	}
+
+	/**
+	* Store summary
+	*
+	* @return bool true ( will not currently report a failure )
+	*/
+	function storeSummary( $pSummary ) {
+		if( $this->mContentId ) {
+			$pSummary = trim( $pSummary );
+			if( empty( $pSummary ) ) {
+				$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_summaries` lcs WHERE `content_id`=?", array( $this->mContentId ) );
+			} else {
+				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_summaries` SET `summary`= ? WHERE `content_id` = ?";
+				$result = $this->mDb->query( $query, array( $pSummary, $this->mContentId ) );
+				$affected = $this->mDb->Affected_Rows();
+				if( !$affected ) {
+					$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_summaries` ( `summary`, `content_id` ) VALUES (?,?)";
+					$result = $this->mDb->query( $query, array( $pSummary, $this->mContentId ) );
+				}
+			}
+		}
+		return TRUE;
+	}
+
 
 	function storeStatus( $pContentStatusId ) {
 		if( $this->isValid() && $pContentStatusId ) {

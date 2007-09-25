@@ -37,6 +37,11 @@ array( 'DATADICT' => array(
 		'users_object_permissions'     => 'liberty_content_permissions',
 	)),
 	array( 'CREATE' => array (
+		'liberty_content_summaries' => "
+			content_id I4 PRIMARY,
+			summary X NOTNULL
+			CONSTRAINTS ', CONSTRAINT `liberty_content_summaries_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
+		",
 		'liberty_content_hits' => "
 			content_id I4 PRIMARY,
 			hits I4 NOTNULL DEFAULT 1,
