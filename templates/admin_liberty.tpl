@@ -74,68 +74,26 @@
 		{jstab title="Image Processing System"}
 			{legend legend="Image Processing System"}
 				<input type="hidden" name="page" value="{$page}" />
-				{php}if( extension_loaded( 'gd' ) ) {{/php}{assign var=gdInstalled value=TRUE}{php}}{/php}
-				{if !$gdInstalled}
-					{formfeedback warning='The GD library is not installed. For newer Linux systems (Fedora, etc.), you need to install the php-gd RPM with a command such as "yum install php-gd".'}
-				{/if}
-				<div class="row">
-					{formlabel label="GD library" for="gd"}
-					{forminput}
-						<label>
-							<input type="radio" id="gd" name="image_processor" value="gd" {if !$gdInstalled}disabled="disabled"{/if} {if !$gBitSystem->getConfig('image_processor') || $gBitSystem->getConfig('image_processor')=='gd'}checked="checked"{/if} />
-							{if !$gdInstalled}
-								{biticon ipackage=icons iname="large/image-missing" iexplain="Not Installed"} {tr}Library is <strong>not</strong> installed{/tr}
-							{else}
-								{biticon ipackage=icons iname="large/image-x-generic" iexplain="Installed"} {tr}Library is installed{/tr}
-							{/if}
-						</label>
-						{formhelp note="The GD libaries are quite limited and <strong>don't support</strong> a number of image formats including <strong>bmp</strong>. If you are planning on uploading and using a lot of images, we recommend you use one of the other image processors."}
-					{/forminput}
-				</div>
+				{foreach from=$imageProcessors key=item item=output}
+					<div class="row">
+						{formlabel label=`$output.label` for=$item}
+						{forminput}
+							<label>
+								<input type="radio" id="{$item}" name="image_processor" value="{$item}" {if !$output.installed}disabled="disabled"{/if} {if $gBitSystem->getConfig('image_processor','gd') == $item}checked="checked"{/if} />
+								{if !$output.installed}
+									{biticon ipackage=icons iname="large/image-missing" iexplain="Not Installed"} {tr}Library is <strong>not</strong> installed{/tr}
+								{else}
+									{biticon ipackage=icons iname="large/image-x-generic" iexplain="Installed"} {tr}Library is installed{/tr}
+								{/if}
+							</label>
 
-				{php}if( extension_loaded( 'magickwand' ) ) {{/php}{assign var=magickwandInstalled value=TRUE}{php}}{/php}
-				{if !$magickwandInstalled}
-					{formfeedback warning='To use MagickWand, you need to install the magickwand php extension. Unix and Windows users can find source code at <a href="http://www.magickwand.org/download/php/">the ImageMagick downloads website.</a>.'}
-				{/if}
-				<div class="row">
-					{formlabel label="ImageMagick MagickWand" for="wand"}
-					{forminput}
-						<label>
-							<input type="radio" id="wand" name="image_processor" value="magickwand" {if !$magickwandInstalled}disabled="disabled"{/if} {if $gBitSystem->getConfig('image_processor')=='magickwand'}checked="checked"{/if}/>
-							{if !$magickwandInstalled}
-								{biticon ipackage=icons iname="large/image-missing" iexplain="Not Installed"} {tr}Library is <strong>not</strong> installed{/tr}
-							{else}
-								{biticon ipackage=icons iname="large/image-x-generic" iexplain="Installed"} {tr}Library is installed{/tr}
+							{if !$output.installed}
+								{formhelp note=`$output.install_note` page=`$output.page`}
 							{/if}
-						</label>
-						{formhelp note="MagickWand is the recommended image processor and supports a multitude of different image and video formats. Using these libraries will allow you to upload most image formats without any difficulties."}
-						{if $magickwandInstalled}
-							{formhelp note=' For installation help, please view our online documentation: <a class="external" href="http://www.bitweaver.org/wiki/ImageMagick">ImageMagick and MagickWand installation instructions</a> or visit the <a class="external" href="http://www.imagemagick.org">ImageMagick</a> homepage.'}
-						{/if}
-					{/forminput}
-				</div>
-
-				{php}if( extension_loaded( 'imagick' ) ) {{/php}{assign var=imagickInstalled value=TRUE}{php}}{/php}
-				{if !$imagickInstalled}
-					{formfeedback warning='php-imagick is a no longer supported PECL extension for PHP + ImageMagick. We recommend using the much better supported magickwand option above. If you need to install the php-imagick extension, linux users can find RPM files at <a href="http://phprpms.sourceforge.net/imagick">PHPRPMs</a> (or compile a <a href="http://sourceforge.net/project/showfiles.php?group_id=112092&amp;package_id=139307&amp;release_id=292417">source rpm</a>). Windows users can try <a href="http://www.bitweaver.org/builds/php_imagick.dll">this dll</a> however it has not been tested well.'}
-				{/if}
-				<div class="row">
-					{formlabel label="ImageMagick PHP-iMagick" for="magick"}
-					{forminput}
-						<label>
-							<input type="radio" id="magick" name="image_processor" value="imagick" {if !$imagickInstalled}disabled="disabled"{/if} {if $gBitSystem->getConfig('image_processor')=='imagick'}checked="checked"{/if}/>
-							{if !$imagickInstalled}
-								{biticon ipackage=icons iname="image-missing" iexplain="Not Installed"} {tr}Library is <strong>not</strong> installed{/tr}
-							{else}
-								{biticon ipackage=icons iname="large/image-x-generic" iexplain="Installed"} {tr}Library is installed{/tr}
-							{/if}
-						</label>
-						{formhelp note="ImageMagick supports a multitude of different image and video formats. Using these libraries will allow you to upload most image formats without any difficulties."}
-						{if !$imagickInstalled}
-							{formhelp note=' For installation help, please view our online documentation: <a class="external" href="http://www.bitweaver.org/wiki/ImageMagick">ImageMagick and MagickWand installation instructions</a> or visit the <a class="external" href="http://www.imagemagick.org">ImageMagick</a> homepage.'}
-						{/if}
-					{/forminput}
-				</div>
+							{formhelp note=`$output.note` page=`$output.page`}
+						{/forminput}
+					</div>
+				{/foreach}
 
 				{foreach from=$formImageFeatures key=item item=output}
 					<div class="row">

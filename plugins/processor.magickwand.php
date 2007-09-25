@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.10 2007/07/29 14:23:25 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.11 2007/09/25 15:36:09 squareing Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -47,6 +47,8 @@ function liberty_magickwand_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 			MagickSetImageCompressionQuality( $magickWand, 85 );
 			$iwidth = round( MagickGetImageWidth( $magickWand ) );
 			$iheight = round( MagickGetImageHeight( $magickWand ) );
+			vd($iwidth);
+			vd($iheight);
 
 			// this does not seem to be needed. magickwand will work out what to do by using the destination file extension
 			//MagickSetImageFormat( $magickWand, $format );
@@ -54,13 +56,13 @@ function liberty_magickwand_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 			if( empty( $pFileHash['max_width'] ) || empty( $pFileHash['max_height'] ) || $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION || $pFileHash['max_height'] == MAX_THUMBNAIL_DIMENSION ) {
 				$pFileHash['max_width'] = $iwidth;
 				$pFileHash['max_height'] = $iheight;
-			} elseif( (($iwidth / $iheight) < 1) && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) ) {
+			} elseif(( $iwidth / $iheight ) < 1 && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] )) {
 				// we have a portrait image, flip everything
 				$temp = $pFileHash['max_width'];
 				$pFileHash['max_height'] = $pFileHash['max_width'];
 				$pFileHash['max_width'] = round( ($iwidth / $iheight) * $pFileHash['max_height'] );
 			} elseif( !empty( $pFileHash['max_width'] ) ) {
-				$pFileHash['max_height'] = round( ($iheight / $iwidth) * $pFileHash['max_width'] );
+				$pFileHash['max_height'] = round(( $iheight / $iwidth ) * $pFileHash['max_width'] );
 			}
 
 			// Make sure not to scale up

@@ -58,6 +58,31 @@ $attachmentStyleOptions = array(
 $gBitSmarty->assign( 'attachmentStyleOptions', $attachmentStyleOptions );
 
 
+$imageProcessors = array(
+	'gd' => array(
+		'installed'    => ( extension_loaded( 'gd' ) ? TRUE : FALSE ),
+		'install_note' => 'The GD library is not installed. For newer Linux systems (Fedora, etc.), you need to install the php-gd package with a command such as "yum install php-gd".',
+		'label'        => 'PHP - GD',
+		'note'         => 'The GD libraries are usually readily available but do not support as many image types as the other image processors. If you plan on uploading many images to your server, please consider using one of the more advanced image porcessors.',
+	),
+	'imagick' => array(
+		'installed'    => ( extension_loaded( 'imagick' ) ? TRUE : FALSE ),
+		'install_note' => 'The pecl imagick extension has recently been updated to version 2.0, which is still in the early phases of devlopment. We will automaigically make use of the correct installed version but please note that the 2.* version is still in beta and might not work well depending on the build you have. Many distributions have php-imagick available through their package manager. Try something like: yum install php-imagick or emerge dev-php5/pecl-imagick. You can get the latest version here: <a href="http://pecl.php.net/package/imagick">Pecl :: Package :: imagick</a>',
+		'label'        => 'PHP - Imagick',
+		'note'         => 'This pecl extension is a popular and frequently used extension. This extension is recommended and works with most image types. We support the older version 0.* and the new 2.* extension (please note that version 2.* is still in beta and some versions might not work as well as others).',
+		'recommended'  => TRUE,
+	),
+	'magickwand' => array(
+		'installed'    => extension_loaded( 'magickwand' ) ? TRUE : FALSE,
+		'install_note' => 'To use MagickWand, you need to install the magickwand php extension. Unix and Windows users can find source code at <a href="http://www.magickwand.org/download/php/">the ImageMagick downloads website.</a>.',
+		'label'        => 'PHP - Magickwand',
+		'note'         => 'The PHP imagick pecl extension is a rather new interface between PHP and ImageMagick. It is probably the best of the currently available image processing extensions.',
+		'recommended'  => TRUE,
+	),
+);
+$gBitSmarty->assign( 'imageProcessors', $imageProcessors );
+
+
 $cacheTimes = array(
 	0       => tra( "(no cache)" ),
 	3600    => "1 ".tra( "hour" ),
