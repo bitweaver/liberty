@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.18 $
+ * @version  $Revision: 1.19 $
  * @package  liberty
  * @subpackage functions
  *
@@ -21,12 +21,14 @@ if( empty( $attachmentActionBaseUrl )) {
 	$firstArg = TRUE;
 
 	foreach( $GETArgs as $arg ) {
-		$parts = split( '=',$arg );
+		$parts = split( '=', $arg );
 		if( $parts[0] != 'deleteAttachment' ) {
-			if( !$firstArg )
+			if( !$firstArg ) {
 				$attachmentActionBaseURL .= "&amp;";
-			else
+			} else {
 				$firstArg = FALSE;
+			}
+
 			$attachmentActionBaseURL .= $arg;
 		}
 	}
