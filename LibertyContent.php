@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.296 2007/09/25 12:22:42 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.297 2007/09/26 08:34:30 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -335,8 +335,8 @@ class LibertyContent extends LibertyBase {
 				if( empty( $pParamHash['has_no_history'] ) ) {
 					$this->storeHistory();
 				}
-				$action = "Created";
-				$mailEvents = 'wiki_page_changes';
+				//$action = "Created";
+				//$mailEvents = 'wiki_page_changes';
 			}
 
 			$this->invokeServices( 'content_store_function', $pParamHash );
@@ -451,25 +451,29 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
-	// *********  History functions for the wiki ********** //
+	/**
+	 * storeHistory will store the previous data into the history table for reference
+	 * 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function storeHistory() {
 		global $gBitSystem;
 
 		$ret = FALSE;
 		if( $this->isValid() ) {
-			// Ensure that edit_comment and description don't run over
-			if ( ($edit_comment = $this->getField('edit_comment')) != NULL ) {
-				$edit_comment = substr($this->getField( 'edit_comment' ), 0, 200);
-			}
-			if ( ($description = $this->getField('description')) != NULL ) {
-				$description = substr($this->getField( 'description' ), 0, 200);
-			}
-			// Ensure that format_guid is defaulted properly
-			if(( $format_guid = $this->getField( 'format_guid' )) == NULL ) {
-				$format_guid = $gBitSystem->getConfig( 'default_format', 'tikiwiki' );
-			}
-			$query = "insert into `".BIT_DB_PREFIX."liberty_content_history` ( `content_id`, `version`, `last_modified`, `user_id`, `ip`, `history_comment`, `data`, `description`, `format_guid`) values(?,?,?,?,?,?,?,?,?)";
-			$result = $this->mDb->query( $query, array( $this->mContentId, (int)$this->getField( 'version' ), (int)$this->getField( 'last_modified' ) , $this->getField( 'modifier_user_id' ), $this->getField( 'ip' ),  $edit_comment, $this->getField( 'data' ), $description, $format_guid ) );
+			$storeHash = array(
+				"content_id"      => $this->mContentId,
+				"version"         => $this->getField( "version" ),
+				"last_modified"   => $this->getField( "last_modified" ),
+				"user_id"         => $this->getField( "modifier_user_id" ),
+				"ip"              => $this->getField( "ip" ),
+				"data"            => $this->getField( "data" ),
+				"history_comment" => substr( $this->getField( "edit_comment" ), 0, 200 ),
+				"description"     => substr( $this->getField( "description" ), 0, 200 ),
+				"format_guid"     => $this->getField( "format_guid", $gBitSystem->getConfig( "default_format", "tikiwiki" )),
+			);
+			$this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_history", $storeHash );
 			$ret = TRUE;
 		}
 		return( $ret );
