@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.13 $
+ * @version  $Revision: 1.14 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.13 2007/07/05 05:34:17 squareing Exp $
+// $Id: data.toc.php,v 1.14 2007/09/26 20:07:07 spiderr Exp $
 
 /**
  * definitions
@@ -39,7 +39,8 @@ $pluginParams = array (
 	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN,
 	'biticon'       => '{biticon ilocation=quicktag ipackage=quicktags iname=toc iexplain="Structure Table of Contents"}',
-	'taginsert'     => '{toc}'
+	'taginsert'     => '{toc}',
+	'structure_id'  => 'id of the structure to display'
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATATOC, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATATOC );
@@ -65,14 +66,20 @@ function data_toc( $data, $params ) {
 	global $gStructure, $gContent, $gBitSmarty;
 	extract( $params );
 	$struct = NULL;
-	if( is_object( $gContent ) && ( empty( $gStructure ) || !$gStructure->isValid() ) ) {
+
+	if( is_object( $gStructure ) && $gStructure->isValid() ) {
+		$struct = &$gStructure;
+	} elseif( @BitBase::verifyId( $params['structure_id'] ) ) {
+			$struct = new LibertyStructure( $params['structure_id'] );
+			$struct->load();
+	} elseif( is_object( $gContent ) ) {
 		$structures = $gContent->getStructures();
 		// We take the first structure. not good, but works for now - spiderr
 		if( !empty( $structures[0] ) ) {
+			require_once( LIBERTY_PKG_PATH.'LibertyStructure.php' );
 			$struct = new LibertyStructure( $structures[0]['structure_id'] );
+			$struct->load();
 		}
-	} else {
-		$struct = &$gStructure;
 	}
 
 	$repl = '';
