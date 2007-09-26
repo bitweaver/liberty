@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -40,7 +40,7 @@ function data_jstabs( $pData, $pParams, $pCommonObject ) {
 	require_once $gBitSmarty->_get_plugin_filepath( 'block', 'jstabs' );
 
 	// collect all tabs
-	$tabs = preg_split( "!---tab:\s*!i", $pData );
+	$tabs = preg_split( "!\n---tab:\s*!i", $pData );
 	$html = '';
 
 	foreach( $tabs as $tab ) {
