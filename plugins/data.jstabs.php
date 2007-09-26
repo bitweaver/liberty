@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -49,14 +49,17 @@ function data_jstabs( $pData, $pParams, $pCommonObject ) {
 			// first line of every tab is the title
 			preg_match( "!(.*?)\n(.*)!s", $tab, $split );
 
-			// prepare data for tabification and parsing
-			$params['title'] = trim( $split[1] );
+			// we need a valid title and content to work with
+			if( !empty( $split[1] ) && !empty( $split[2] )) {
+				// prepare data for tabification and parsing
+				$params['title'] = trim( $split[1] );
 
-			$parseHash = $pCommonObject->mInfo;
-			$parseHash['no_cache'] = TRUE;
-			$parseHash['data'] = $split[2];
+				$parseHash = $pCommonObject->mInfo;
+				$parseHash['no_cache'] = TRUE;
+				$parseHash['data'] = $split[2];
 
-			$html .= smarty_block_jstab( $params, $pCommonObject->parseData( $parseHash ), $gBitSmarty );
+				$html .= smarty_block_jstab( $params, $pCommonObject->parseData( $parseHash ), $gBitSmarty );
+			}
 		}
 	}
 
