@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.12 2007/09/25 06:36:45 spiderr Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.13 2007/09/26 16:22:52 nickpalmer Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -18,7 +18,7 @@ function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject, $pParseHash )
 	global $gLibertySystem, $gBitSystem;
 
 	// note: $curlyTags[0] is the complete match, $curlyTags[1] is plugin name, $curlyTags[2] is plugin arguments
-	preg_match_all( "/\{\/?([A-Za-z0-9]+)([^\}]*)\}/", $pData, $curlyTags );
+	preg_match_all( "/\{\/?([A-Za-z0-9]+)([^\}]*)\}/", $pData, $curlyTags, PREG_OFFSET_CAPTURE);
 
 	if( count( $curlyTags[0] ) ) {
 		// if TRUE, replace only CODE plugin, if false, replace all other plugins
@@ -27,9 +27,9 @@ function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject, $pParseHash )
 		// Process plugins in reverse order, so that nested plugins are handled from the inside out.
 		$i = count( $curlyTags[0] ) - 1;
 		while( $i >= 0 ) {
-			$plugin_start = $curlyTags[0][$i];
-			$plugin = $curlyTags[1][$i];
-			$pos = strpos( $pData, $plugin_start ); // where plugin starts
+			$plugin_start = $curlyTags[0][$i][0];
+			$plugin = $curlyTags[1][$i][0];
+			$pos = $curlyTags[0][$i][1]; // where plugin starts
 			$dataTag = strtolower( $plugin );
 			// hush up the return of this in case someone uses curly braces to enclose text
 			$pluginInfo = $gLibertySystem->getPluginInfo( @$gLibertySystem->mDataTags[$dataTag] ) ;
@@ -72,21 +72,21 @@ function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject, $pParseHash )
 						$plugin_end = $plugin_end2;
 					}
 				} else {
-					$pos_end = $pos + strlen( $curlyTags[0][$i] );
+					$pos_end = $pos + strlen( $curlyTags[0][$i][0] );
 					$plugin_end = '';
 				}
 
 				// vd( "if ( ((($code_first) && ($plugin == 'CODE')) || ((!$code_first) && ($plugin <> 'CODE'))) && ($pos_end > $pos)) { <br/>" );
 
 				// Extract the plugin data
-				$plugin_data_len = $pos_end - $pos - strlen( $curlyTags[0][$i] );
+				$plugin_data_len = $pos_end - $pos - strlen( $curlyTags[0][$i][0] );
 				$plugin_data = substr( $pData, $pos + strlen( $plugin_start ), $plugin_data_len );
 
-				// vd( "$plugin_data_len = $pos_end - $pos - strlen(".$curlyTags[0][$i].") substr( $pos + strlen($plugin_start), $plugin_data_len);" );
+				// vd( "$plugin_data_len = $pos_end - $pos - strlen(".$curlyTags[0][$i][0].") substr( $pos + strlen($plugin_start), $plugin_data_len);" );
 
 				$arguments = array();
 				// Construct argument list array
-				$paramString = str_replace( '&gt;', '>', trim( $curlyTags[2][$i] ) );
+				$paramString = str_replace( '&gt;', '>', trim( $curlyTags[2][$i][0] ) );
 				if( preg_match( '/^\(.*=>.*\)$/', $paramString ) ) {
 					$paramString = preg_replace( '/[\(\)]/', '', $paramString );
 					//we have the old style parms like {CODE (in=>1)}
@@ -103,7 +103,7 @@ function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject, $pParseHash )
 						}
 					}
 				} else {
-					$paramString = trim( $curlyTags[2][$i], " \t()" );
+					$paramString = trim( $curlyTags[2][$i][0], " \t()" );
 					$paramString = str_replace("&quot;", '"', $paramString);
 					$arguments = parse_xml_attributes( $paramString );
 				}
