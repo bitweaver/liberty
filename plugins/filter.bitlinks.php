@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.10 2007/09/14 22:03:35 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.11 2007/09/27 17:55:03 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -174,10 +174,11 @@ class BitLinks extends BitBase {
 		global $gBitSystem;
 		$ret = array();
 		if( $gBitSystem->isPackageActive( 'wiki' ) && @BitBase::verifyId( $pContentId )) {
-			$query = "SELECT `page_id`, lc.`content_id`, `description`, lc.`last_modified`, lc.`title`
+			$query = "SELECT `page_id`, lc.`content_id`, lc.`last_modified`, lc.`title`, lcds.`data` AS `summary`
 				FROM `".BIT_DB_PREFIX."liberty_content_links` lcl
 				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcl.`to_content_id`=lc.`content_id` )
 				INNER JOIN `".BIT_DB_PREFIX."wiki_pages` wp ON( wp.`content_id`=lc.`content_id` )
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`data_type`='summary')
 				WHERE lcl.`from_content_id`=? ORDER BY lc.`title`";
 			if( $result = $this->mDb->query( $query, array( $pContentId ))) {
 				$lastTitle = '';
