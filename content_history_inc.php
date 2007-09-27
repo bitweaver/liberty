@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage functions
  */
@@ -33,9 +33,15 @@ if (isset($_REQUEST["delete"]) && isset($_REQUEST["hist"])) {
 	$from_version = $_REQUEST["diff2"];
 	$from_page = $gContent->getHistory( $from_version );
 	$from_lines = explode("\n",$from_page["data"][0]["data"]);
-	$to_version = $gContent->mInfo["version"];
-	$to_lines = explode("\n",$gContent->mInfo["data"]);
-	
+	if ( isset($_REQUEST["diff_to"]) && $_REQUEST["diff_to"] != $gContent->mInfo["version"] ) {
+		$to_version = $_REQUEST["diff_to"];
+		$to_page = $gContent->getHistory( $to_version );	
+		$to_lines = explode("\n",$to_page["data"][0]["data"]);
+	}
+	else {
+		$to_version = $gContent->mInfo["version"];
+		$to_lines = explode("\n",$gContent->mInfo["data"]);
+	}
 	/**
 	 * run 'pear install Text_Diff' to install the library,
 	 */ 
