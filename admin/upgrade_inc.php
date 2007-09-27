@@ -37,10 +37,11 @@ array( 'DATADICT' => array(
 		'users_object_permissions'     => 'liberty_content_permissions',
 	)),
 	array( 'CREATE' => array (
-		'liberty_content_summaries' => "
+		'liberty_content_data' => "
 			content_id I4 PRIMARY,
-			summary X NOTNULL
-			CONSTRAINTS ', CONSTRAINT `liberty_content_summaries_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
+			summary X NOTNULL,
+			type C(32) NOTNULL
+			CONSTRAINTS ', CONSTRAINT `liberty_content_data_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
 		",
 		'liberty_content_hits' => "
 			content_id I4 PRIMARY,
@@ -104,6 +105,9 @@ array( 'DATADICT' => array(
 		'liberty_content_permissions' => array(
 			'object_id' => array( '`content_id`', 'I4' ),
 			'is_revoked' => array( '`is_revoked`', 'VARCHAR(1)' ),
+		),
+		'liberty_content_history' => array(
+			'summary' => array( '`summary`', 'X' )
 		),
 	)),
 	/* The installer can't add constraints after table creation yet so drop this constraint.

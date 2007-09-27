@@ -44,10 +44,11 @@ $tables = array(
 		, CONSTRAINT liberty_aliases_content_fkey FOREIGN KEY( `content_id` ) REFERENCES `".BIT_DB_PREFIX."liberty_content` ( `content_id` )'
 ",
 
-'liberty_content_summaries' => "
+'liberty_content_data' => "
 	content_id I4 PRIMARY,
-	summary X NOTNULL
-	CONSTRAINT ', CONSTRAINT `liberty_content_summaries_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` ( `content_id` )'
+	data X NOTNULL,
+	type C(32) NOTNULL
+	CONSTRAINT ', CONSTRAINT `liberty_content_data_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` ( `content_id` )'
 ",
 
 'liberty_content_hits' => "

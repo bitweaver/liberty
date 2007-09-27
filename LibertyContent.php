@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.297 2007/09/26 08:34:30 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.298 2007/09/27 13:49:15 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -301,7 +301,7 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 
-		$pParamHash['summary_store']['summary'] = !empty( $pParamHash['summary'] ) ? $pParamHash['summary'] : NULL ;
+		$pParamHash['data_store']['summary'] = !empty( $pParamHash['summary'] ) ? $pParamHash['summary'] : NULL ;
 
 		return( count( $this->mErrors ) == 0 );
 	}
@@ -352,8 +352,10 @@ class LibertyContent extends LibertyBase {
 			}
 			LibertyContent::expungeCacheFile( $pParamHash['content_id'] );
 
-			// store hits and last hit
-			$this->storeSummary( $pParamHash['summary_store']['summary'] );
+			// store data
+			foreach ( $pParamHash['data_store'] AS $dataType => $data ) {
+				$this->storeData( $data, $dataType );
+			}
 
 			// store content preferences
 			if( @is_array( $pParamHash['preferences_store'] ) ) {
@@ -423,7 +425,7 @@ class LibertyContent extends LibertyBase {
 //			$result = $this->mDb->query( $query, array( $this->mContentId ) );
 
 			// Remove hits
-			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_summaries` WHERE `content_id` = ?";
+			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_data` WHERE `content_id` = ?";
 			$result = $this->mDb->query( $query, array( $this->mContentId ) );
 
 			// Remove hits
@@ -766,6 +768,29 @@ class LibertyContent extends LibertyBase {
 		}
 		return $errors;
 	}
+
+	/**
+	* Default liberty sql for joining a content object table to liberty
+
+	This is an example current, and would be invoked in getList
+		$this->getLibertySql( 'bp.`content_id`', $selectSql, $joinSql, $whereSql, $bindVars );
+	*//*
+
+SOOOO many joins on this function. so much work makes it highly inefficient since rarely do all classes need all of this
+	function getLibertySql( $pJoinColumn, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars, $pObject = NULL, $pParamHash = NULL) {
+		$pSelectSql = "lc.*, lcds.`data` AS `summary`, uu.`email`, uu.`login`, uu.`real_name`, ulf.`storage_path` as avatar,  lf.storage_path AS `image_attachment_path`, uue.`login` AS modifier_user, uue.`real_name` AS modifier_real_name, uu.`login` AS creator_user, uu.`real_name` AS creator_real_name";
+		$pJoinSql = "
+				INNER JOIN      `".BIT_DB_PREFIX."liberty_content`       lc ON lc.`content_id`         = $pJoinColumn
+				INNER JOIN		`".BIT_DB_PREFIX."users_users`			 uu ON uu.`user_id`			   = lc.`user_id`
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users`          uue ON (uue.`user_id` = lc.`modifier_user_id`)
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`type`='summary')
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON lc.`content_id`         = lch.`content_id`
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments`	  a ON (uu.`user_id` = a.`user_id` AND a.`attachment_id` = uu.`avatar_attachment_id`)
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files`	    ulf ON ulf.`file_id`		   = a.`foreign_id`
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments`   la ON la.`content_id`         = lc.`content_id` AND la.`is_primary` = 'y'
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files`         lf ON lf.`file_id`            = la.`foreign_id` ";
+	}
+	*/
 
 	/**
 	* Set up SQL strings for services used by the object
@@ -1363,8 +1388,9 @@ class LibertyContent extends LibertyBase {
 
 			$pageWhere = $pCaseSensitive ? 'lc.`title`' : $columnExpression;
 			$bindVars = array( ($pCaseSensitive ? $pPageName : strtoupper( $pPageName ) ) );
-			$query = "SELECT `page_id`, wp.`content_id`, `description`, lc.`last_modified`, lc.`title`
+			$query = "SELECT `page_id`, wp.`content_id`, lcds.`data` AS `summary`, lc.`last_modified`, lc.`title`
 				FROM `".BIT_DB_PREFIX."wiki_pages` wp, `".BIT_DB_PREFIX."liberty_content` lc
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`data_type`='summary')
 				WHERE lc.`content_id`=wp.`content_id` AND $pageWhere = ?";
 			$ret = $this->mDb->getAll( $query, $bindVars );
 		}
@@ -2263,10 +2289,11 @@ class LibertyContent extends LibertyBase {
 	function setIndexData( $pContentId = 0 ) {
 		global $gBitSystem ;
 		if ( $pContentId == 0 ) $pContentId = $this->mContentId;
-		$sql = "SELECT lc.`title`, lc.`data`, uu.`login`, uu.`real_name` " .
-				"FROM `" . BIT_DB_PREFIX . "liberty_content` lc " .
-				"INNER JOIN `" . BIT_DB_PREFIX . "users_users` uu ON uu.`user_id` = lc.`user_id` " .
-				"WHERE lc.`content_id` = ?" ;
+		$sql = "SELECT lc.`title`, lc.`data`, lcds.`data` AS `summary`, uu.`login`, uu.`real_name`, wp.`description` 
+				FROM `" . BIT_DB_PREFIX . "liberty_content` lc 
+					INNER JOIN `" . BIT_DB_PREFIX . "users_users` uu ON uu.`user_id`    = lc.`user_id` 
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`data_type`='summary')
+				WHERE lc.`content_id` = ?" ;
 		$res = $gBitSystem->mDb->getRow($sql, array($pContentId));
 		if (!(isset($this->mInfo['no_index']) and $this->mInfo['no_index'] == true)) {
 			$this->mInfo['index_data'] = $res["title"] . " " . $res["data"] . " " . $res["login"] . " " . $res["real_name"] ;
@@ -2656,22 +2683,22 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	* Store summary
+	* Store Data
 	*
 	* @return bool true ( will not currently report a failure )
 	*/
-	function storeSummary( $pSummary ) {
+	function storeData( $pData, $pType ) {
 		if( $this->mContentId ) {
-			$pSummary = trim( $pSummary );
-			if( empty( $pSummary ) ) {
-				$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_summaries` WHERE `content_id`=?", array( $this->mContentId ) );
+			$pData = trim( $pData );
+			if( empty( $pData ) ) {
+				$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_data` WHERE `content_id`=? AND `data_type`=?", array( $this->mContentId, $pType ) );
 			} else {
-				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_summaries` SET `summary`= ? WHERE `content_id` = ?";
-				$result = $this->mDb->query( $query, array( $pSummary, $this->mContentId ) );
+				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_data` SET `data`= ? WHERE `content_id` = ? AND `data_type`=?";
+				$result = $this->mDb->query( $query, array( $pData, $this->mContentId, $pType ) );
 				$affected = $this->mDb->Affected_Rows();
 				if( !$affected ) {
-					$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_summaries` ( `summary`, `content_id` ) VALUES (?,?)";
-					$result = $this->mDb->query( $query, array( $pSummary, $this->mContentId ) );
+					$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_data` ( `data`, `content_id`, `data_type` ) VALUES (?,?,?)";
+					$result = $this->mDb->query( $query, array( $pData, $this->mContentId, $pType ) );
 				}
 			}
 		}
