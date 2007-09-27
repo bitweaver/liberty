@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.300 2007/09/27 16:10:21 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.301 2007/09/27 18:09:22 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1344,13 +1344,16 @@ class LibertyContent extends LibertyBase {
 	function addHit() {
 		global $gBitUser,$gBitSystem;
 		if( empty( $_REQUEST['post_comment_submit'] ) && empty( $_REQUEST['post_comment_request'] ) ) {
-			if( @BitBase::verifyId( $this->mContentId ) && (($gBitUser->isRegistered() && !$this->isOwner()) || ($gBitUser->getField('user_id') == ANONYMOUS_USER_ID)) && !$gBitUser->isAdmin() ) {
-				if( $this->mDb->getOne( "SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_content_data` WHERE `content_id`=? AND `data_type`=?", array( $this->mContentId, $pType ) ) ) {
+			if( @BitBase::verifyId( $this->mContentId ) && (( $gBitUser->isRegistered() && !$this->isOwner() ) || ( $gBitUser->getField( 'user_id' ) == ANONYMOUS_USER_ID )) && !$gBitUser->isAdmin() ) {
+				if( $this->mDb->getOne( "SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_content_history` WHERE `content_id`=?", array( $this->mContentId ))) {
 					$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_hits` SET `hits`=`hits`+1, `last_hit`= ? WHERE `content_id` = ?";
 				} else {
-					$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_hits` ( `hits`, `last_hit`, `content_id` ) VALUES (?,?,?)";
+					$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_hits` ( `hits`, `last_hit`, `content_id` ) VALUES ( ?,?,? )";
+					$bindVars[] = 1;
 				}
-				$result = $this->mDb->query( $query, array( 1, $gBitSystem->getUTCTime(), $this->mContentId ) );
+				$bindVars[] = $gBitSystem->getUTCTime();
+				$bindVars[] = $this->mContentId;
+				$result = $this->mDb->query( $query, $bindVars );
 			}
 		}
 		return TRUE;
