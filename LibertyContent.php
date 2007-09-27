@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.299 2007/09/27 15:39:04 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.300 2007/09/27 16:10:21 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -771,24 +771,43 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	* Default liberty sql for joining a content object table to liberty
-
-	This is an example current, and would be invoked in getList
-		$this->getLibertySql( 'bp.`content_id`', $selectSql, $joinSql, $whereSql, $bindVars );
-	*//*
-
-SOOOO many joins on this function. so much work makes it highly inefficient since rarely do all classes need all of this
-	function getLibertySql( $pJoinColumn, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars, $pObject = NULL, $pParamHash = NULL) {
-		$pSelectSql = "lc.*, lcds.`data` AS `summary`, uu.`email`, uu.`login`, uu.`real_name`, ulf.`storage_path` as avatar,  lf.storage_path AS `image_attachment_path`, uue.`login` AS modifier_user, uue.`real_name` AS modifier_real_name, uu.`login` AS creator_user, uu.`real_name` AS creator_real_name";
+	*
+	*	This is an example current, and would be invoked in getList
+	*	$this->getLibertySql( 'bp.`content_id`', array('summary', 'users', 'hits', 'avatar', 'primary'), $selectSql, $joinSql, $whereSql, $bindVars );
+	*/
+	/*
+	function getLibertySql( $pJoinColumn, $pTypes, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars, $pObject = NULL, $pParamHash = NULL) {
+		$pSelectSql = "lc.*";
 		$pJoinSql = "
-				INNER JOIN      `".BIT_DB_PREFIX."liberty_content`       lc ON lc.`content_id`         = $pJoinColumn
+				INNER JOIN      `".BIT_DB_PREFIX."liberty_content`       lc ON lc.`content_id`         = $pJoinColumn";
+		if ( empty( $pTypes ) || in_array( 'summary', $pTypes ) ) {
+			$pSelectSql .= ", lcds.`data` AS `summary`";
+			$pJoinSql .= "
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`type`='summary')";
+		}
+		if ( empty( $pTypes ) || in_array( 'hits', $pTypes ) ) {
+			$pSelectSql .= ", lch.*";
+			$pJoinSql .= "
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON lc.`content_id`         = lch.`content_id`";
+		}
+		if ( empty( $pTypes ) || in_array( 'users', $pTypes ) ) {
+			$pSelectSql .= ", uu.`email`, uu.`login`, uu.`real_name`, uue.`email` as modifier_email, uue.`login` AS modifier_user, uue.`real_name` AS modifier_real_name";
+			$pJoinSql = "
 				INNER JOIN		`".BIT_DB_PREFIX."users_users`			 uu ON uu.`user_id`			   = lc.`user_id`
-				LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users`          uue ON (uue.`user_id` = lc.`modifier_user_id`)
-				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`type`='summary')
-				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON lc.`content_id`         = lch.`content_id`
-				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments`	  a ON (uu.`user_id` = a.`user_id` AND a.`attachment_id` = uu.`avatar_attachment_id`)
-				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files`	    ulf ON ulf.`file_id`		   = a.`foreign_id`
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users`          uue ON (uue.`user_id`		   = lc.`modifier_user_id`)";
+		}
+		if ( empty( $pTypes ) || in_array( 'avatar', $pTypes ) ) {
+			$pSelectSql .= ", ulf.`storage_path` as `avatar`,  lf.`storage_path` AS `image_attachment_path`";
+			$pJoinSql = "
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments`  a ON (uu.`user_id` = a.`user_id` AND a.`attachment_id` = uu.`avatar_attachment_id`)
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files`    ulf ON ulf.`file_id`   = a.`foreign_id`";
+		}
+		if ( empty( $pTypes ) || in_array( 'primary', $pTypes ) ) {
+			$pSelectSql .= ", la.`attachment_id` AS `primary_attachment`, lf.`storage_path` AS `primary_attachment_path`";
+			$pJoinSql = "
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments`   la ON la.`content_id`         = lc.`content_id` AND la.`is_primary` = 'y'
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files`         lf ON lf.`file_id`            = la.`foreign_id` ";
+		}
 	}
 	*/
 
