@@ -106,9 +106,6 @@ array( 'DATADICT' => array(
 			'object_id' => array( '`content_id`', 'I4' ),
 			'is_revoked' => array( '`is_revoked`', 'VARCHAR(1)' ),
 		),
-		'liberty_content_history' => array(
-			'summary' => array( '`summary`', 'X' )
-		),
 	)),
 	/* The installer can't add constraints after table creation yet so drop this constraint.
 	array( 'SQL' => array(
@@ -290,6 +287,7 @@ array( 'DATADICT' => array(
 	array( 'ALTER' => array (
 		'liberty_content_history' => array(
 			'content_id' => array( '`content_id`', 'I4' ),
+			'summary' => array( '`summary`', 'X' ),
 		),
 		'liberty_content' => array(
 			'version' => array( '`version`', 'I4' ),
@@ -300,13 +298,14 @@ array( 'DATADICT' => array(
 array( 'QUERY' =>
 	array( 'SQL92' => array(
 		"UPDATE `".BIT_DB_PREFIX."liberty_content_history` SET `content_id`=(SELECT `content_id` FROM `".BIT_DB_PREFIX."tiki_pages` wp WHERE wp.`page_id`=`".BIT_DB_PREFIX."liberty_content_history`.`page_id`)",
-		"UPDATE `".BIT_DB_PREFIX."liberty_content` SET version=(SELECT `version` from `".BIT_DB_PREFIX."tiki_pages` wp WHERE wp.`content_id`=`".BIT_DB_PREFIX."liberty_content`.`content_id`)"
+		"UPDATE `".BIT_DB_PREFIX."liberty_content` SET version=(SELECT `version` from `".BIT_DB_PREFIX."tiki_pages` wp WHERE wp.`content_id`=`".BIT_DB_PREFIX."liberty_content`.`content_id`)",
+		"UPDATE `".BIT_DB_PREFIX."liberty_content_history` SET `summary`=`decription`",
 	)),
 ),
 
 array( 'DATADICT' => array(
 	array( 'DROPCOLUMN' => array(
-		'liberty_content_history' => array( '`page_id`' ),
+		'liberty_content_history' => array( '`page_id`', '`description`' ),
 		'tiki_pages'              => array( '`version`' ),
 	)),
 )),
@@ -596,7 +595,7 @@ array( 'DATADICT' => array(
 )),
 array( 'QUERY' =>
 	array( 'SQL92' => array(
-		"UPDATE `".BIT_DB_PREFIX."liberty_action_log` SET `content_id`=( SELECT `content_id` FROM `".BIT_DB_PREFIX."tiki_pages` tp WHERE tp.`page_id`=`".BIT_DB_PREFIX."liberty_action_log`.`page_id` )"
+		"UPDATE `".BIT_DB_PREFIX."liberty_action_log` SET `content_id`=( SELECT `content_id` FROM `".BIT_DB_PREFIX."tiki_pages` tp WHERE tp.`page_id`=`".BIT_DB_PREFIX."liberty_action_log`.`page_id` )",
 	)),
 ),
 array( 'DATADICT' => array(

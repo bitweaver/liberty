@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.298 2007/09/27 13:49:15 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.299 2007/09/27 15:39:04 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -471,8 +471,8 @@ class LibertyContent extends LibertyBase {
 				"user_id"         => $this->getField( "modifier_user_id" ),
 				"ip"              => $this->getField( "ip" ),
 				"data"            => $this->getField( "data" ),
-				"history_comment" => substr( $this->getField( "edit_comment" ), 0, 200 ),
-				"description"     => substr( $this->getField( "description" ), 0, 200 ),
+				"summary"         => $this->getField( "summary" ),
+				"history_comment" => (string)substr( $this->getField( "edit_comment" ), 0, 200 ),
 				"format_guid"     => $this->getField( "format_guid", $gBitSystem->getConfig( "default_format", "tikiwiki" )),
 			);
 			$this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_history", $storeHash );
@@ -1326,13 +1326,12 @@ SOOOO many joins on this function. so much work makes it highly inefficient sinc
 		global $gBitUser,$gBitSystem;
 		if( empty( $_REQUEST['post_comment_submit'] ) && empty( $_REQUEST['post_comment_request'] ) ) {
 			if( @BitBase::verifyId( $this->mContentId ) && (($gBitUser->isRegistered() && !$this->isOwner()) || ($gBitUser->getField('user_id') == ANONYMOUS_USER_ID)) && !$gBitUser->isAdmin() ) {
-				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_hits` SET `hits`=`hits`+1, `last_hit`= ? WHERE `content_id` = ?";
-				$result = $this->mDb->query( $query, array( $gBitSystem->getUTCTime(), $this->mContentId ) );
-				$affected_rows = $this->mDb->Affected_Rows();
-				if( !$affected_rows ) {
+				if( $this->mDb->getOne( "SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_content_data` WHERE `content_id`=? AND `data_type`=?", array( $this->mContentId, $pType ) ) ) {
+					$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_hits` SET `hits`=`hits`+1, `last_hit`= ? WHERE `content_id` = ?";
+				} else {
 					$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_hits` ( `hits`, `last_hit`, `content_id` ) VALUES (?,?,?)";
-					$result = $this->mDb->query( $query, array( 1, $gBitSystem->getUTCTime(), $this->mContentId ) );
 				}
+				$result = $this->mDb->query( $query, array( 1, $gBitSystem->getUTCTime(), $this->mContentId ) );
 			}
 		}
 		return TRUE;
@@ -2693,13 +2692,12 @@ SOOOO many joins on this function. so much work makes it highly inefficient sinc
 			if( empty( $pData ) ) {
 				$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_data` WHERE `content_id`=? AND `data_type`=?", array( $this->mContentId, $pType ) );
 			} else {
-				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_data` SET `data`= ? WHERE `content_id` = ? AND `data_type`=?";
-				$result = $this->mDb->query( $query, array( $pData, $this->mContentId, $pType ) );
-				$affected = $this->mDb->Affected_Rows();
-				if( !$affected ) {
+				if( $this->mDb->getOne( "SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_content_data` WHERE `content_id`=? AND `data_type`=?", array( $this->mContentId, $pType ) ) ) {
+					$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_data` SET `data`= ? WHERE `content_id` = ? AND `data_type`=?";
+				} else {
 					$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_data` ( `data`, `content_id`, `data_type` ) VALUES (?,?,?)";
-					$result = $this->mDb->query( $query, array( $pData, $this->mContentId, $pType ) );
 				}
+				$result = $this->mDb->query( $query, array( $pData, $this->mContentId, $pType ) );
 			}
 		}
 		return TRUE;
