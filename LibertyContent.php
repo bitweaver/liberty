@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.301 2007/09/27 18:09:22 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.302 2007/09/30 03:08:01 jht001 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1345,7 +1345,7 @@ class LibertyContent extends LibertyBase {
 		global $gBitUser,$gBitSystem;
 		if( empty( $_REQUEST['post_comment_submit'] ) && empty( $_REQUEST['post_comment_request'] ) ) {
 			if( @BitBase::verifyId( $this->mContentId ) && (( $gBitUser->isRegistered() && !$this->isOwner() ) || ( $gBitUser->getField( 'user_id' ) == ANONYMOUS_USER_ID )) && !$gBitUser->isAdmin() ) {
-				if( $this->mDb->getOne( "SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_content_history` WHERE `content_id`=?", array( $this->mContentId ))) {
+				if( $this->mDb->getOne( "SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_content_hits` WHERE `content_id`=?", array( $this->mContentId ))) {
 					$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_hits` SET `hits`=`hits`+1, `last_hit`= ? WHERE `content_id` = ?";
 				} else {
 					$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_hits` ( `hits`, `last_hit`, `content_id` ) VALUES ( ?,?,? )";
