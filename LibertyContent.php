@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.302 2007/09/30 03:08:01 jht001 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.303 2007/09/30 15:47:40 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1722,7 +1722,6 @@ class LibertyContent extends LibertyBase {
 	* @return array An array of mInfo type arrays of content objects
 	**/
 	function getContentList( $pListHash ) {
-
 		global $gLibertySystem, $gBitSystem, $gBitUser, $gBitSmarty;
 
 		$this->prepGetList( $pListHash );
@@ -1792,11 +1791,20 @@ class LibertyContent extends LibertyBase {
 			$selectSql .= ", lc.`data`, lc.`format_guid`";
 		}
 
-		// calendar specific selection method - use timestamps to limit selection
-		if( !empty( $pListHash['start'] ) && !empty( $pListHash['stop'] ) ) {
-			$whereSql .= " AND ( lc.`".$pListHash['calendar_sort_mode']."` > ? AND lc.`".$pListHash['calendar_sort_mode']."` < ? ) ";
-			$bindVars[] = $pListHash['start'];
-			$bindVars[] = $pListHash['stop'];
+		// Allow selection based on arbitrary time limits -- used in calendar
+		// TODO: We should replace usages of from_date and until_date with this generic setup and depricate those
+		if ( !empty( $pListHash['time_limit_column'] )) {
+			if( empty( $pListHash['time_limit_table'] ) ) {
+				$pListHash['time_limit_table'] = 'lc.';
+			}
+			if( !empty( $pListHash['time_limit_start'] ) ) {
+				$whereSql .= " AND ".$pListHash['time_limit_table']."`".$pListHash['time_limit_column']."` >= ? ";
+				$bindVars[] = $pListHash['time_limit_start'];
+			}
+			if( !empty( $pListHash['time_limit_stop'] ) ) {
+				$whereSql .= " AND ".$pListHash['time_limit_table']."`".$pListHash['time_limit_column']."` <= ? ";
+				$bindVars[] = $pListHash['time_limit_stop'];
+			}
 		}
 
 		if( @$this->verifyId( $pListHash['user_id'] ) ) {
@@ -2470,6 +2478,7 @@ class LibertyContent extends LibertyBase {
 	}
 
 	// i think this function is not being used and will hopefully be removed soon - xing - Saturday Jul 07, 2007   19:54:02 CEST
+	// it is called in getContentList but I think that services can do what it does now - nick - Sunday Sep 30, 2007
 	function getFilter( $pContentTypeGuid, &$pSql, &$pBindVars, $pHash = null) {
 		global $gLibertySystem, $gBitSystem;
 		foreach ($gLibertySystem->mContentTypes as $type) {
