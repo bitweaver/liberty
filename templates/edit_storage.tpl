@@ -15,9 +15,7 @@
 	{/foreach}
 {/if}
 
-<div id="edit_storage_list_div">
-	{include file="bitpackage:liberty/edit_storage_list.tpl" uploadTab=TRUE}
-</div>
+{include file="bitpackage:liberty/edit_storage_list.tpl" uploadTab=TRUE}
 
 {* The new attachment browser is supposd to only provide an easy means of
 viewing existing content that can be inserted into the contnet using
