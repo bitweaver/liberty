@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -35,14 +35,13 @@ function existing_files_verify( &$pStoreRow ) {
 
 		if( $result = $gContent->mDb->query( $query, array( $pStoreRow ))) {
 			$pStoreRow = $result->fetchRow();
-			vd($pStoreRow);
+			//vd($pStoreRow);
 			// Tell LA not to do the insert.
 			$pStoreRow['skip_insert'] = TRUE;
 			$pStoreRow['plugin_guid'] = PLUGIN_GUID_EXISTING_FILES;
 
 			// Verify the user owns this attachment
-			if ( $gBitUser->isAdmin() ||
-				 $pStoreRow['user_id'] == $gBitUser->mUserId ) {
+			if( $gBitUser->isAdmin() || $pStoreRow['user_id'] == $gBitUser->mUserId ) {
 
 				// Verify that it isn't attached already
 				if ( $pStoreRow['content_id'] == NULL ) {
