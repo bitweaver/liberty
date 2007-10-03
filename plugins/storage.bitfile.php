@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.42 $
+ * @version  $Revision: 1.43 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -12,17 +12,17 @@ global $gLibertySystem, $gBitSystem, $gBitSmarty, $gBitThemes;
 define( 'PLUGIN_GUID_BIT_FILES', 'bitfile' );
 
 $pluginParams = array (
-	'store_function' => 'bit_files_store',
-	'verify_function' => 'bit_files_verify',
-	'load_function' => 'bit_files_load',
-	'expunge_function' => 'bit_files_expunge',
-	'description' => 'Always load by default, disable to prevent Direct File Upload To Server',
-	'plugin_type' => STORAGE_PLUGIN,
-	'auto_activate' => TRUE,
-	'edit_label' => 'Upload File',
+	'store_function'     => 'bit_files_store',
+	'verify_function'    => 'bit_files_verify',
+	'load_function'      => 'bit_files_load',
+	'expunge_function'   => 'bit_files_expunge',
+	'description'        => 'Always load by default, disable to prevent Direct File Upload To Server',
+	'plugin_type'        => STORAGE_PLUGIN,
+	'auto_activate'      => TRUE,
+	'edit_label'         => 'Upload File',
 	'primary_edit_field' => '<input type="file" name="primary_attachment" size="40" />',
-	'edit_field' => '<input type="file" name="upload" size="40" />',
-	'edit_help' => 'This file will be uploaded to your personal storage area.<br />After selecting the file you want to upload, please return to the edit area and click the save button.'
+	'edit_field'         => '<input type="file" name="upload" size="40" />',
+	'edit_help'          => 'This file will be uploaded to your personal storage area.<br />After selecting the file you want to upload, please return to the edit area and click the save button.'
 );
 
 if( isset( $gBitSystem ) ) {
@@ -32,17 +32,15 @@ if( isset( $gBitSystem ) ) {
 		$pluginParams['edit_field'] = '<div id="upload_div"></div><input type="file" name="upload" size="40" id="uploads" />'.
 			'<!-- Multiselect javascript. -->'.
 			'<script type="text/javascript">'.
-			'var upload_files = document.getElementById( \'upload_div\' );'.
-			'var upload_element = document.getElementById( \'uploads\' );'.
-			'var multi_selector = new MultiSelector( upload_files, '.
-			$gBitSystem->getConfig('liberty_max_multiple_attachments', 10).
-			' );'.
-			'multi_selector.addNamedElement( upload_element , \'uploads\');'.
+				'var upload_files = document.getElementById( \'upload_div\' );'.
+				'var upload_element = document.getElementById( \'uploads\' );'.
+				'var multi_selector = new MultiSelector( upload_files, '.$gBitSystem->getConfig('liberty_max_multiple_attachments', 10).' );'.
+				'multi_selector.addNamedElement( upload_element , \'uploads\');'.
 			'</script>';
 		$gBitSmarty->assign( 'loadMultiFile', TRUE );
-	} elseif ($gBitSystem->getConfig('liberty_attachment_style') == "ajax") {
-		$divid = $gBitSmarty->get_template_vars('upload_div_id');
-		if (empty($divid)) {
+	} elseif( $gBitSystem->getConfig( 'liberty_attachment_style' ) == "ajax" ) {
+		$divid = $gBitSmarty->get_template_vars( 'upload_div_id' );
+		if( empty( $divid )) {
 			$divid = 0;
 		}
 		$pluginParams['edit_help'] =  'The file(s) will be uploaded to your personal storage area.<br />After selecting the file you want to upload an attachment ID will be displayed for you to use in your content.';
@@ -127,11 +125,11 @@ function bit_files_expunge( $pStorageId ) {
 				if( $gBitUser->isAdmin() || $gBitUser->mUserId == $row['user_id'] ) {
 					if( file_exists( $absolutePath )) {
 						// make sure this is a valid storage directory before removing it
-					   if( preg_match( '!/users/\d+/\d+/\w+/\d+/.+!', $fileRow['storage_path'] )) {
-						   unlink_r( dirname( $absolutePath ));
-					   } else {
-						   unlink( $absolutePath );
-					   }
+						if( preg_match( '!/users/\d+/\d+/\w+/\d+/.+!', $fileRow['storage_path'] )) {
+							unlink_r( dirname( $absolutePath ));
+						} else {
+							unlink( $absolutePath );
+						}
 					}
 					$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_files` WHERE `file_id` = ?";
 					$gBitSystem->mDb->query($query, array($row['foreign_id']) );
