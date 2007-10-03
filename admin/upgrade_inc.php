@@ -37,6 +37,18 @@ array( 'DATADICT' => array(
 		'users_object_permissions'     => 'liberty_content_permissions',
 	)),
 	array( 'CREATE' => array (
+		'liberty_process_queue' => "
+			process_id I4 NOTNULL AUTO PRIMARY,
+			content_id I4 NOTNULL,
+			queue_date I8 NOTNULL,
+			begin_date I8,
+			end_date I8,
+			process_status C(64),
+			log_message X,
+			processor C(250),
+			processor_parameters X
+			CONSTRAINT ', CONSTRAINT `liberty_process_queue` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
+		",
 		'liberty_content_data' => "
 			content_id I4 PRIMARY,
 			data X NOTNULL,
@@ -175,35 +187,6 @@ array( 'DATADICT' => array(
 		'liberty_content_permissions' => array( '`object_type`' ),
 	)),
 )),
-
-/* this table has been dropped again
-// Create attachments map table
-array( 'DATADICT' => array(
-	array( 'CREATE' => array (
-		'liberty_attachments_map' => "
-			attachment_id I4 PRIMARY,
-			content_id I4 PRIMARY,
-			item_position I4
-			CONSTRAINT '
-				, CONSTRAINT `liberty_attachments_map_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
-				, CONSTRAINT `liberty_attachments_map_attachment_ref` FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments`( `attachment_id` ) '
-",
-	)),
-)),
-// Copy data from the old attachments system
-array( 'QUERY' =>
-	array( 'SQL92' => array(
-		"INSERT INTO `".BIT_DB_PREFIX."liberty_attachments_map` (attachment_id, content_id) (SELECT attachment_id, content_id FROM `".BIT_DB_PREFIX."liberty_attachments`)",
-	)),
-),
- */
-// drop original column
-array( 'DATADICT' => array(
-	array( 'DROPCOLUMN' => array(
-		'liberty_attachments' => array( '`content_id`' ),
-	)),
-)),
-
 // move hits and last_hit to a new table
 array( 'QUERY' =>
 	array( 'SQL92' => array(
@@ -652,6 +635,7 @@ array( 'QUERY' =>
  *
  *
  * Now we can start cleaning up the db
+*/
 array( 'DATADICT' => array(
 	array( 'ALTER' => array(
 		'liberty_attachments' => array(
@@ -682,7 +666,6 @@ array( 'DATADICT' => array(
 		'liberty_content' => array( 'primary_attachment_id' ),
 	)),
 )),
- */
 
 		),
 	),
