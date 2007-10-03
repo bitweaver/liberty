@@ -39,7 +39,7 @@ array( 'DATADICT' => array(
 	array( 'CREATE' => array (
 		'liberty_content_data' => "
 			content_id I4 PRIMARY,
-			summary X NOTNULL,
+			data X NOTNULL,
 			type C(32) NOTNULL
 			CONSTRAINTS ', CONSTRAINT `liberty_content_data_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
 		",
@@ -72,7 +72,7 @@ array( 'DATADICT' => array(
 		",
 		'liberty_meta_content_map' => "
 			content_id I4 PRIMARY NOTNULL,
-			meta_key C(250) PRIMARY NOTNULL,
+			meta_key C(250) PRIMARY NOTNULL
 			CONSTRAINT '
 				, CONSTRAINT `liberty_meta_map_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
 				, CONSTRAINT `liberty_meta_map_meta_key_ref` FOREIGN KEY (`meta_key`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_data` (`meta_key`)'
@@ -571,7 +571,7 @@ array( 'PHP' => '
 				$content_id = $row["content_id"];
 #				$tp = new TikiWikiParser();
 				$tp = new BitLinks();
-				$tp->storeLinks($row);
+				$tp->storeLinks( $row["edit"], $row );
 				$ci++;
 			}
 		}
