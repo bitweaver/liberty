@@ -40,7 +40,7 @@ array( 'DATADICT' => array(
 		'liberty_content_data' => "
 			content_id I4 PRIMARY,
 			data X NOTNULL,
-			type C(32) NOTNULL
+			data_type C(32) NOTNULL
 			CONSTRAINTS ', CONSTRAINT `liberty_content_data_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
 		",
 		'liberty_content_hits' => "
