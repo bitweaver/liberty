@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.13 2007/09/26 16:22:52 nickpalmer Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.14 2007/10/03 09:34:44 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -399,6 +399,7 @@ function liberty_content_display( &$pObject, &$pParamHash ) {
  */
 function liberty_content_edit( &$pObject ) {
 	include_once( LIBERTY_PKG_PATH.'edit_help_inc.php' );
+	include_once( LIBERTY_PKG_PATH."edit_storage_inc.php" );
 }
 
 

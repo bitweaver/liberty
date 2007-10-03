@@ -1,6 +1,8 @@
-{php} include (LIBERTY_PKG_PATH."edit_storage_inc.php"); {/php}
 {strip}
-<div id="edit_storage_list{if !$uploadTab}_tab{/if}">
+{* don't replicate the surrounding div when inserting ajax content *}
+{if !$gBitThemes->isAjaxRequest()}
+	<div id="edit_storage_list{if !$uploadTab}_tab{/if}">
+{/if}
 {if $gContent->mStorage}
 	<div class="row">
 		<table class="data" summary="List of attached files">
@@ -38,11 +40,19 @@
 						{/if}
 						{if $gBitUser->isAdmin() || ($storage.user_id == $gBitUser->mUserId && $gBitUser->hasPermission('p_liberty_delete_attachments') ) }
 							{if $attachmentBrowser}
-								<a href="javascript:ajax_updater('attbrowser', '{$attachmentActionBaseURL}', 'deleteAttachment={$attachmentId}');">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
+								<a href="javascript:
+									ajax_updater('edit_storage_list', '{$attachmentActionBaseUrl}', 'deleteAttachment={$attachmentId}');
+									ajax_updater('edit_storage_list_tab', '{$attachmentActionBaseUrl}', 'content_id={$gContent->mContentId}');">
+									{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}
+								</a>
 							{elseif $libertyUploader || $gBitSystem->getConfig('liberty_attachment_style') == 'ajax'}
-								<a href="javascript:ajax_updater('edit_storage_list', '{$attachmentActionBaseURL}', 'deleteAttachment={$attachmentId}{if empty($gContent->mContentId)}{foreach from=$gContent->mStorage key=key item=val}&STORAGE[existing][{$val.attachment_id}]={$val.attachment_id}{/foreach}{/if}');">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
+								<a href="javascript:
+									ajax_updater('edit_storage_list', '{$attachmentActionBaseUrl}', 'content_id={$gContent->mContentId}&amp;deleteAttachment={$attachmentId}{if empty($gContent->mContentId)}{foreach from=$gContent->mStorage key=key item=val}&amp;STORAGE[existing][{$val.attachment_id}]={$val.attachment_id}{/foreach}{/if}');
+									ajax_updater('edit_storage_list_tab', '{$attachmentActionBaseUrl}', 'content_id={$gContent->mContentId}');">
+									{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}
+								</a>
 							{else}
-								<a href="{$attachmentActionBaseURL}&amp;deleteAttachment={$attachmentId}">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
+								<a href="{$attachmentActionBaseUrl}&amp;deleteAttachment={$attachmentId}">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
 							{/if}
 						{/if}
 					</td>
@@ -51,5 +61,7 @@
 		</table>
 	</div>
 {/if}
-</div>
+{if !$gBitThemes->isAjaxRequest()}
+	</div>
+{/if}
 {/strip}
