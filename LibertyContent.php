@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.303 2007/09/30 15:47:40 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.304 2007/10/04 16:43:27 bitweaver Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1865,6 +1865,9 @@ class LibertyContent extends LibertyBase {
 			$orderTable = $pListHash['order_table'];
 		} elseif( !empty( $pListHash['sort_mode'] ) && strtolower( substr( $pListHash['sort_mode'], 0, 4 ) ) =='hits' ) {
 			$orderTable = 'lch.';
+		} elseif( strpos( $pListHash['sort_mode'], '.' ) ) {
+			// do not specifiy orderTable of sort_mode already has a . in it
+			$orderTable = '';
 		} else {
 			$orderTable = 'lc.';
 		}
