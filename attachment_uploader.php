@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.9 2007/09/30 00:49:23 nickpalmer Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.10 2007/10/08 13:03:45 nickpalmer Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -13,6 +13,9 @@ require_once( LIBERTY_PKG_PATH."LibertyAttachable.php" );
 global $gBitSmarty, $gContent;
 
 $gContent = new LibertyAttachable();
+
+// Handle delete.
+require_once( LIBERTY_PKG_PATH."edit_storage_inc.php" );
 
 // make a copy of $_REQUEST that we can mess with it without interfering with the rest of the page
 $storeHash = $_REQUEST;
