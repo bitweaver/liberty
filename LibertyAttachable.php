@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.134 2007/09/26 09:12:29 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.135 2007/10/10 05:12:54 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -115,11 +115,11 @@ class LibertyAttachable extends LibertyContent {
 	}
 
 	// Private Method used during verify to extract 
-	function extractMetaData( &$pParamHash ) {
+	function extractMetaData( &$pParamHash, &$pFile ) {
 
 		// Process a JPEG
-		if( function_exists( 'exif_read_data' ) && !empty( $pParamHash['upload']['tmp_name'] ) && stripos( $pParamHash['upload']['type'], 'jpeg' ) !== FALSE ) {
-			$exifHash = @exif_read_data( $pParamHash['upload']['tmp_name'], 0, true);
+		if( function_exists( 'exif_read_data' ) && !empty( $pFile['tmp_name'] ) && stripos( $pFile['type'], 'jpeg' ) !== FALSE ) {
+			$exifHash = @exif_read_data( $pFile['tmp_name'], 0, true);
 			//vd( $exifHash );
 
 			// Change: Allow this example file to be easily relocatable - as of version 1.11
@@ -130,10 +130,10 @@ class LibertyAttachable extends LibertyContent {
 			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/EXIF.php';
 
 			// Retrieve the header information from the JPEG file
-			$jpeg_header_data = get_jpeg_header_data( $pParamHash['upload']['tmp_name'] );
+			$jpeg_header_data = get_jpeg_header_data( $pFile['tmp_name'] );
 
 			// Retrieve EXIF information from the JPEG file
-			$Exif_array = get_EXIF_JPEG( $pParamHash['upload']['tmp_name'] );
+			$Exif_array = get_EXIF_JPEG( $pFile['tmp_name'] );
 
 			// Retrieve XMP information from the JPEG file
 			$XMP_array = read_XMP_array_from_text( get_XMP_text( $jpeg_header_data ) );
@@ -189,23 +189,23 @@ class LibertyAttachable extends LibertyContent {
 			}
 
 			if( !empty( $pFile['size'] ) ) {
-				$this->extractMetaData( $pParamHash );
+				$this->extractMetaData( $pParamHash, $pFile );
 				// meta data may be stupid and have stuffed title with all spaces
 				if( !empty( $pParamHash['title'] ) ) {
 					$pParamHash['title'] = trim( $pParamHash['title'] );
 				}
 
 				// let's add a default title
-				if( empty( $pParamHash['title'] ) && !empty( $pParamHash['upload']['name'] ) ) {
-					if( preg_match( '/^[A-Z]:\\\/', $pParamHash['upload']['name'] ) ) {
+				if( empty( $pParamHash['title'] ) && !empty( $pFile['name'] ) ) {
+					if( preg_match( '/^[A-Z]:\\\/', $pFile['name'] ) ) {
 						// MSIE shit file names if passthrough via gigaupload, etc.
 						// basename will not work - see http://us3.php.net/manual/en/function.basename.php
-						$tmp = preg_split("[\\\]",$pParamHash['upload']['name']);
+						$tmp = preg_split("[\\\]",$pFile['name']);
 						$defaultName = $tmp[count($tmp) - 1];
-					} elseif( strpos( '.', $pParamHash['upload']['name'] ) ) {
-						list( $defaultName, $ext ) = explode( '.', $pParamHash['upload']['name'] );
+					} elseif( strpos( '.', $pFile['name'] ) ) {
+						list( $defaultName, $ext ) = explode( '.', $pFile['name'] );
 					} else {
-						$defaultName = $pParamHash['upload']['name'];
+						$defaultName = $pFile['name'];
 					}
 					$pParamHash['title'] = str_replace( '_', ' ', substr( $defaultName, 0, strrpos( $defaultName, '.' ) ) );
 				}
