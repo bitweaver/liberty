@@ -12,7 +12,7 @@
 
 {* Note! iFrame MUST not be display: none or Safari pops a window instead. *}
 {* I am not dynamically creating the iFrame to give a warning for browsers with no iframe support. *}
-<iframe src="about:blank" id="liberty_upload_frame" name="liberty_upload_frame" onload="javascript:liberty_uploader_complete('liberty_upload_frame', 'edit_storage_list', 'upload');" style="position: absolute; left: -10000px;">
+<iframe src="about:blank" id="liberty_upload_frame" name="liberty_upload_frame" onload="javascript:LibertyAttachment.uploaderComplete('liberty_upload_frame', 'edit_storage_list', 'upload');" style="position: absolute; left: -10000px;">
 	<div class="warning">
 		{tr}iFrame support is required for AJAX uploads.{/tr}&nbsp;
 		{tr}You must save the content to upload an attachment.{/tr}

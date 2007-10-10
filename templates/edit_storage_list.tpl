@@ -41,14 +41,14 @@
 						{if $gBitUser->isAdmin() || ($storage.user_id == $gBitUser->mUserId && $gBitUser->hasPermission('p_liberty_delete_attachments') ) }
 							{if $attachmentBrowser}
 								<a href="javascript:
-									ajax_updater('edit_storage_list', '{$attachmentActionBaseUrl}', 'deleteAttachment={$attachmentId}');
-									ajax_updater('edit_storage_list_tab', '{$attachmentActionBaseUrl}', 'content_id={$gContent->mContentId}');">
+									BitAjax.updater('edit_storage_list', '{$attachmentActionBaseUrl}', 'deleteAttachment={$attachmentId}');
+									BitAjax.updater('edit_storage_list_tab', '{$attachmentActionBaseUrl}', 'content_id={$gContent->mContentId}');">
 									{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}
 								</a>
 							{elseif $libertyUploader || $gBitSystem->getConfig('liberty_attachment_style') == 'ajax'}
 								<a href="javascript:
-									ajax_updater('edit_storage_list', '{$attachmentActionBaseUrl}', 'content_id={$gContent->mContentId}&amp;deleteAttachment={$attachmentId}{if empty($gContent->mContentId)}{foreach from=$gContent->mStorage key=key item=val}&amp;STORAGE[existing][{$val.attachment_id}]={$val.attachment_id}{/foreach}{/if}');
-									ajax_updater('edit_storage_list_tab', '{$attachmentActionBaseUrl}', 'content_id={$gContent->mContentId}{if empty($gContent->mContentId)}{foreach from=$gContent->mStorage key=key item=val}&amp;STORAGE[existing][{$val.attachment_id}]={$val.attachment_id}{/foreach}{/if}');">
+									BitAjax.updater('edit_storage_list', '{$attachmentActionBaseUrl}', 'content_id={$gContent->mContentId}&amp;deleteAttachment={$attachmentId}{if empty($gContent->mContentId)}{foreach from=$gContent->mStorage key=key item=val}&amp;STORAGE[existing][{$val.attachment_id}]={$val.attachment_id}{/foreach}{/if}');
+									BitAjax.updater('edit_storage_list_tab', '{$attachmentActionBaseUrl}', 'content_id={$gContent->mContentId}{if empty($gContent->mContentId)}{foreach from=$gContent->mStorage key=key item=val}&amp;STORAGE[existing][{$val.attachment_id}]={$val.attachment_id}{/foreach}{/if}');">
 									{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}
 								</a>
 							{else}

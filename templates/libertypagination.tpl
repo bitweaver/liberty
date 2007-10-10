@@ -2,7 +2,7 @@
 <div class="pagination">
 	{if $pgnPage gt 1}
 		{if $ajaxId}
-			<a href="javascript:ajax_updater( '{$ajaxId}', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', '{$pgnName}={$pgnPage-1}{$pgnVars}' );">&laquo;</a>&nbsp;
+			<a href="javascript:void(0);" onclick="BitAjax.ajaxUpdater( '{$ajaxId}', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', '{$pgnName}={$pgnPage-1}{$pgnVars}' );">&laquo;</a>&nbsp;
 		{else}
 			<a href="{$smarty.server.SCRIPT_URL}?{$pgnName}={$pgnPage-1}{$pgnVars}">&laquo;</a>&nbsp;
 		{/if}
@@ -14,7 +14,7 @@
 
 	{if $pgnPage lt $numPages}
 		{if $ajaxId}
-			<a href="javascript:ajax_updater( '{$ajaxId}', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', '{$pgnName}={$pgnPage+1}{$pgnVars}' );">&raquo;</a>
+			<a href="javascript:void(0);" onclick="BitAjax.ajaxUpdater( '{$ajaxId}', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', '{$pgnName}={$pgnPage+1}{$pgnVars}' );">&raquo;</a>
 		{else}
 			&nbsp;<a href="{$smarty.server.SCRIPT_URL}?{$pgnName}={$pgnPage+1}{$pgnVars}">&raquo;</a>
 		{/if}

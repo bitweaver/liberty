@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage functions
  */
@@ -98,7 +98,7 @@ if( $gBitThemes->isAjaxRequest() ) {
 
 	require_once $gBitSmarty->_get_plugin_filepath( 'function', 'biticon' );
 	$ret = '<a title="'.$contentPerms['groups'][$gid]['group_name']." :: ".$perm.'" '.
-			'href="javascript:ajax_updater('.
+			'href="javascript:void(0);" onclick="BitAjax.updater('.
 			"'{$perm}{$gid}', ".
 			"'".LIBERTY_PKG_URL."content_permissions.php', ".
 			"'action={$action}&amp;content_id={$gContent->mContentId}&amp;perm={$perm}&amp;group_id={$gid}'".
@@ -108,6 +108,6 @@ if( $gBitThemes->isAjaxRequest() ) {
 }
 
 // enable ajaxed permission updating
-$gBitThemes->loadAjax( 'prototype' );
+$gBitThemes->loadAjax( 'mochikit' );
 $gBitSystem->display( 'bitpackage:liberty/content_permissions.tpl', tra( 'Content Permissions' ));
 ?>

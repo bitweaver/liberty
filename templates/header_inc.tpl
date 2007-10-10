@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/header_inc.tpl,v 1.8 2007/06/13 15:19:54 wjames5 Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/header_inc.tpl,v 1.9 2007/10/10 18:07:17 wjames5 Exp $ *}
 {strip}
 {if $structureInfo}
 	<link rel="index" title="{tr}Contents{/tr}" href="index.php?structure_id={$structureInfo.root_structure_id}" />
@@ -27,5 +27,8 @@
 		LibertyComment.SORT_MODE = "{$comments_sort_mode}";
 		LibertyComment.BROWSER = "{$gBrowserInfo.browser}";
 	</script>
+{/if}
+{if $attachments_ajax}
+	<script src="{$smarty.const.LIBERTY_PKG_URL}scripts/LibertyAttachment.js" type="text/javascript"></script>
 {/if}
 {/strip}

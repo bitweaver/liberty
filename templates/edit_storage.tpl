@@ -22,7 +22,7 @@ viewing existing content that can be inserted into the contnet using
 {attachment} or {content} or similar. there is no means to attach and detach
 content anymore *}
 {*if $gBitUser->hasPermission('p_liberty_attach_attachments') }
-	<h2 class="clear"><a href="javascript:ajax_updater( 'attbrowser', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', 'ajax=true&amp;content_id={$gContent->mContentId}' );">{tr}Attachment Browser{/tr}</a></h2>
+	<h2 class="clear"><a href="javascript:void(0);" onclick="BitAjax.updater( 'attbrowser', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', 'ajax=true&amp;content_id={$gContent->mContentId}' );">{tr}Attachment Browser{/tr}</a></h2>
 	<noscript><div class="warning">{tr}The attachment browser only works with javascript enabled.{/tr}</div></noscript>
 	<div id="attbrowser" class="attbrowser"><p>{tr}Please click on the Attachement Browser link above to view available attachments.{/tr}</p></div>
 {else}
