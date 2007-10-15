@@ -44,22 +44,22 @@ array( 'DATADICT' => array(
 			begin_date I8,
 			end_date I8,
 			process_status C(64),
-			log_message X,
+			log_message XL,
 			processor C(250),
-			processor_parameters X
+			processor_parameters XL
 			CONSTRAINT ', CONSTRAINT `liberty_process_queue` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
 		",
 		'liberty_content_data' => "
 			content_id I4 PRIMARY,
-			data X NOTNULL,
+			data XL NOTNULL,
 			data_type C(32) NOTNULL
-			CONSTRAINTS ', CONSTRAINT `liberty_content_data_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
+			CONSTRAINT ', CONSTRAINT `liberty_content_data_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
 		",
 		'liberty_content_hits' => "
 			content_id I4 PRIMARY,
 			hits I4 NOTNULL DEFAULT 1,
 			last_hit I8 NOTNULL DEFAULT 1
-			CONSTRAINTS ', CONSTRAINT `liberty_content_hits_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
+			CONSTRAINT ', CONSTRAINT `liberty_content_hits_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
 		",
 		'liberty_content_status' => "
 			content_status_id I4 PRIMARY KEY,
@@ -68,7 +68,7 @@ array( 'DATADICT' => array(
 		'liberty_aliases' => "
 			alias_title C(250) PRIMARY,
 			content_id INT NOTNULL PRIMARY
-			CONSTRAINTS ', CONSTRAINT liberty_aliases_content_fkey FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`(`content_id`) '
+			CONSTRAINT ', CONSTRAINT liberty_aliases_content_fkey FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`(`content_id`) '
 		",
 		'liberty_meta_types' => "
 			meta_type_guid C(16) PRIMARY,
@@ -79,7 +79,7 @@ array( 'DATADICT' => array(
 			meta_type_guid C(16),
 			meta_title C(250) NOTNULL,
 			meta_value_short C(250),
-			meta_value_long X
+			meta_value_long XL
 			CONSTRAINT ' , CONSTRAINT `liberty_meta_guid_ref` FOREIGN KEY (`meta_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_types` (`meta_type_guid`) '
 		",
 		'liberty_meta_content_map' => "
@@ -145,9 +145,9 @@ array( 'DATADICT' => array(
 			begin_date I8,
 			end_date I8,
 			process_status C(64),
-			log_message X,
+			log_message XL,
 			processor C(250),
-			processor_parameters X
+			processor_parameters XL
 			CONSTRAINT ', CONSTRAINT `liberty_process_queue` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
 		",
 	)),
@@ -719,7 +719,7 @@ array( 'DATADICT' => array(
 			language C(4),
 			title C(160),
 			ip C(39),
-			data X
+			data XL
 		",
 
 		'tiki_attachments' => "
@@ -732,7 +732,7 @@ array( 'DATADICT' => array(
 			hits I4,
 			error_code I4,
 			caption C(250)
-			CONSTRAINTS ', CONSTRAINT `tiki_attachment_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."tiki_content`( `content_id` )
+			CONSTRAINT ', CONSTRAINT `tiki_attachment_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."tiki_content`( `content_id` )
 						  , CONSTRAINT `tiki_attachment_type_ref` FOREIGN KEY (`attachment_plugin_guid`) REFERENCES `".BIT_DB_PREFIX."tiki_plugins`( `plugin_guid` )'
 		",
 
