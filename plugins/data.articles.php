@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_articles.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.articles.php,v 1.12 2007/06/25 00:35:53 nickpalmer Exp $
+// $Id: data.articles.php,v 1.13 2007/10/15 15:17:17 squareing Exp $
 
 /**
  * definitions
@@ -80,76 +80,75 @@ function data_articles_help() {
 
 // Executable Routine
 function data_articles($data, $params) { // No change in the parameters with Clyde
-  global $gLibertySystem, $gBitSmarty, $gBitSystem;
-  if( $gBitSystem->isPackageActive( 'articles' ) ) { // Do not include this Plugin if the Package is not active
-	// The next 2 lines allow access to the $pluginParams given above and may be removed when no longer needed
-	$pluginParams = $gLibertySystem->mPlugins[PLUGIN_GUID_DATAARTICLES];
+	global $gLibertySystem, $gBitSmarty, $gBitSystem;
+	if( $gBitSystem->isPackageActive( 'articles' ) ) { // Do not include this Plugin if the Package is not active
+		// The next 2 lines allow access to the $pluginParams given above and may be removed when no longer needed
+		$pluginParams = $gLibertySystem->mPlugins[PLUGIN_GUID_DATAARTICLES];
 
-	require_once( ARTICLES_PKG_PATH.'BitArticle.php');
-	require_once( LIBERTY_PKG_PATH.'lookup_content_inc.php' );
+		require_once( ARTICLES_PKG_PATH.'BitArticle.php');
+		require_once( LIBERTY_PKG_PATH.'lookup_content_inc.php' );
 
-	$module_params = $params;
-	$articlesObject = new BitArticle();
-	$stati = array( 'pending', 'approved' );
-	if( !empty( $module_params['status'] ) && in_array( $module_params['status'], $stati ) ) {
-		$status_id = constant( 'ARTICLE_STATUS_'.strtoupper( $module_params['status'] ) );
+		$module_params = $params;
+		$articlesObject = new BitArticle();
+		$stati = array( 'pending', 'approved' );
+		if( !empty( $module_params['status'] ) && in_array( $module_params['status'], $stati ) ) {
+			$status_id = constant( 'ARTICLE_STATUS_'.strtoupper( $module_params['status'] ) );
+		} else {
+			$status_id = ARTICLE_STATUS_APPROVED;
+		}
+
+		$sortOptions = array(
+			"last_modified_asc",
+			"last_modified_desc",
+			"created_asc",
+			"created_desc",
+			"random",
+		);
+		if( !empty( $module_params['sort_mode'] ) && in_array( $module_params['sort_mode'], $sortOptions ) ) {
+			$sort_mode = $module_params['sort_mode'];
+		} else {
+			$sort_mode = 'last_modified_desc';
+		}
+
+		$getHash = Array();
+		$getHash['status_id']     = $status_id;
+		$getHash['sort_mode']     = $sort_mode;
+		$getHash['max_records']   = empty( $module_params['max'] ) ? 1 : $module_params['max'];
+		if( isset( $module_params['topic'] )) {
+			$getHash['topic']     = !empty( $module_params['topic'] ) ? $module_params['topic'] : NULL;
+		}
+		if( isset( $module_params['topic_id'] )) {
+			$getHash['topic_id']  = $module_params['topic_id'];
+		}
+		$articles_results = $articlesObject->getList( $getHash );
+
+		$display_format = empty( $module_params['format'] ) ? 'simple_title_list' : $module_params['format'];
+		$display_result = "";
+
+		switch( $display_format ) {
+			case 'full':
+				$display_result = '<div class="articles">';
+				$gBitSmarty->assign( 'showDescriptionsOnly', TRUE );
+				foreach( $articles_results as $article ) {
+					$gBitSmarty->assign( 'article', $article );
+					$display_result .= $gBitSmarty->fetch( 'bitpackage:articles/article_display.tpl' );
+				}
+				$display_result .= '</div>';
+				$display_result = eregi_replace( "\n", "", $display_result );
+				break;
+			case 'list':
+			default:
+				$display_result = "<ul>";
+				foreach( $articles_results as $article ) {
+					$link = $articlesObject->getdisplaylink( $article['title'], $article );
+					$display_result .= "<li>$link</li>\n";
+				}
+				$display_result .= "</ul>\n";
+				break;
+		}
+		return $display_result;
 	} else {
-		$status_id = ARTICLE_STATUS_APPROVED;
+		return "<div class=error>The articles package is not active.</div>";
 	}
-
-	$sortOptions = array(
-		"last_modified_asc",
-		"last_modified_desc",
-		"created_asc",
-		"created_desc",
-		"random",
-	);
-	if( !empty( $module_params['sort_mode'] ) && in_array( $module_params['sort_mode'], $sortOptions ) ) {
-		$sort_mode = $module_params['sort_mode'];
-	} else {
-		$sort_mode = 'last_modified_desc';
-	}
-
-	$getHash = Array();
-	$getHash['status_id']     = $status_id;
-	$getHash['sort_mode']     = $sort_mode;
-	$getHash['max_records']   = empty($module_params['max']) ? 1 : $module_params['max'];
-	if (isset($module_params['topic'])) {
-	  $getHash['topic']         = !empty( $module_params['topic'] ) ? $module_params['topic'] : NULL;
-	}
-	if (isset($module_params['topic_id'])) {
-	  $getHash['topic_id'] = $module_params['topic_id'];
-	}
-	$articles_results = $articlesObject->getList( $getHash );
-
-	$display_format = empty($module_params['format']) ? 'simple_title_list' : $module_params['format'];
-	$display_result = "";
-
-	switch( $display_format ) {
-		case 'full':
-			$display_result = '<div class="articles">';
-			$gBitSmarty->assign( 'showDescriptionsOnly', TRUE );
-			foreach( $articles_results as $article ) {
-				$gBitSmarty->assign( 'article', $article );
-				$display_result .= $gBitSmarty->fetch( 'bitpackage:articles/article_display.tpl' );
-			}
-			$display_result .= '</div>';
-			$display_result = eregi_replace( "\n", "", $display_result );
-			break;
-		case 'list':
-		default:
-			$display_result = "<ul>";
-			foreach( $articles_results as $article ) {
-				$link = $articlesObject->getdisplaylink( $article['title'], $article );
-				$display_result .= "<li>$link</li>\n";
-			}
-			$display_result .= "</ul>\n";
-			break;
-	}
-	return $display_result;
-  }
-  else {
-    return "<div class=error>The articles package is not active.</div>";
-  }
 }
 ?>
