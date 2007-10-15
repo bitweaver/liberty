@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.13 $
+ * @version  $Revision: 1.14 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: StarRider <starrrider@users.sourceforge.net>
 // | Reworked from: wikiplugin_articles.php - see deprecated code below
 // +----------------------------------------------------------------------+
-// $Id: data.articles.php,v 1.13 2007/10/15 15:17:17 squareing Exp $
+// $Id: data.articles.php,v 1.14 2007/10/15 16:43:04 wjames5 Exp $
 
 /**
  * definitions
@@ -131,6 +131,7 @@ function data_articles($data, $params) { // No change in the parameters with Cly
 				$gBitSmarty->assign( 'showDescriptionsOnly', TRUE );
 				foreach( $articles_results as $article ) {
 					$gBitSmarty->assign( 'article', $article );
+					$gBitSmarty->assign( 'gContent', $articlesObject );
 					$display_result .= $gBitSmarty->fetch( 'bitpackage:articles/article_display.tpl' );
 				}
 				$display_result .= '</div>';
