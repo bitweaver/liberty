@@ -31,7 +31,7 @@ $tables = array(
 	lang_code C(32),
 	title C(160),
 	ip C(39),
-	data X
+	data XL
 	CONSTRAINT '
 		, CONSTRAINT `liberty_content_status_ref` FOREIGN KEY (`content_status_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content_status`( `content_status_id` )
 		, CONSTRAINT `liberty_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )'
@@ -64,11 +64,11 @@ $tables = array(
 	version I4 PRIMARY,
 	last_modified I8 NOTNULL,
 	format_guid C(16) NOTNULL,
-	summary X,
+	summary XL,
 	user_id C(40),
 	ip C(15),
 	history_comment C(200),
-	data X
+	data XL
 	CONSTRAINT ', CONSTRAINT `liberty_history_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
 ",
 
@@ -165,7 +165,7 @@ $tables = array(
 
 'liberty_dynamic_variables' => "
 	name C(40) PRIMARY,
-	data X
+	data XL
 ",
 
 // liberty_thumbnail_queue is being replaces with this
@@ -176,9 +176,9 @@ $tables = array(
 	begin_date I8,
 	end_date I8,
 	process_status C(64),
-	log_message X,
+	log_message XL,
 	processor C(250),
-	processor_parameters X
+	processor_parameters XL
 	CONSTRAINT ', CONSTRAINT `liberty_process_queue` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
 ",
 
@@ -204,7 +204,7 @@ $tables = array(
 	meta_type_guid C(16),
 	meta_title C(250) NOTNULL,
 	meta_value_short C(250),
-	meta_value_long X
+	meta_value_long XL
 	CONSTRAINT ' , CONSTRAINT `liberty_meta_guid_ref` FOREIGN KEY (`meta_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_types` (`meta_type_guid`) '
 ",
 
