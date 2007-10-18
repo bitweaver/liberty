@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.21 $
+ * @version  $Revision: 1.22 $
  * @package  liberty
  * @subpackage functions
  *
@@ -49,18 +49,21 @@ if( !empty( $_REQUEST['deleteAttachment'] )) {
 	$attachmentId = $_REQUEST['deleteAttachment'];
 	$attachmentInfo = $gContent->getAttachment( $attachmentId );
 
-	if( $gBitUser->isAdmin() || ( $attachmentInfo['user_id'] == $gBitUser->mUserId && $gBitUser->hasPermission( 'p_liberty_delete_attachment' ))) {
+	// the second part of this check seems odd (never used?) to me, but I'll leave it in for now - spiderr 10/17/2007
+	if( $gContent->hasAdminPermission() || ( $attachmentInfo['user_id'] == $gBitUser->mUserId && $gBitUser->hasPermission( 'p_liberty_delete_attachment' ))) {
 		$gContent->expungeAttachment( $attachmentId );
 	}
-}
-$gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
 
-// in case we have deleted attachments
-// seems like there should be a better way to do this -- maybe original assign should have been by reference?
-$gBitSmarty->clear_assign( 'gContent' );
-$gBitSmarty->assign( 'gContent', $gContent );
-$gBitThemes->loadAjax( 'mochikit' );
-$gBitSmarty->assign( 'attachments_ajax', TRUE );
+	// in case we have deleted attachments
+	// seems like there should be a better way to do this -- maybe original assign should have been by reference?
+	$gBitSmarty->clear_assign( 'gContent' );
+	$gBitSmarty->assign( 'gContent', $gContent );
+}
+
+if( $gBitSystem->getConfig('liberty_attachment_style') == 'ajax' ) {
+	$gBitThemes->loadAjax( 'mochikit' );
+	$gBitSmarty->assign( 'attachments_ajax', TRUE );
+}
 
 // output some stuff for ajax div
 if( BitThemes::isAjaxRequest() ) {
