@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.307 2007/10/21 11:53:53 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.308 2007/10/21 11:56:59 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -784,29 +784,29 @@ class LibertyContent extends LibertyBase {
 		$pQueryHash['join']['sql'][]= "
 				INNER JOIN      `".BIT_DB_PREFIX."liberty_content`       lc ON lc.`content_id`         = $pJoinColumn";
 		if ( empty( $pTypes ) || in_array( 'summary', $pTypes ) ) {
-			$pQueryHash['select']['sql'][] = ", lcds.`data` AS `summary`";
+			$pQueryHash['select']['sql'][] = "lcds.`data` AS `summary`";
 			$pQueryHash['join']['sql'][] = "
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`type`='summary')";
 		}
 		if ( empty( $pTypes ) || in_array( 'hits', $pTypes ) ) {
-			$pQueryHash['select']['sql'][] = ", lch.*";
+			$pQueryHash['select']['sql'][] = "lch.*";
 			$pQueryHash['join']['sql'][] = "
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON lc.`content_id`         = lch.`content_id`";
 		}
 		if ( empty( $pTypes ) || in_array( 'users', $pTypes ) ) {
-			$pQueryHash['select']['sql'][] = ", uu.`email`, uu.`login`, uu.`real_name`, uue.`email` as modifier_email, uue.`login` AS modifier_user, uue.`real_name` AS modifier_real_name";
+			$pQueryHash['select']['sql'][] = "uu.`email`, uu.`login`, uu.`real_name`, uue.`email` as modifier_email, uue.`login` AS modifier_user, uue.`real_name` AS modifier_real_name";
 			$pQueryHash['join']['sql'][] = "
 				INNER JOIN		`".BIT_DB_PREFIX."users_users`			 uu ON uu.`user_id`			   = lc.`user_id`
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users`          uue ON (uue.`user_id`		   = lc.`modifier_user_id`)";
 		}
 		if ( empty( $pTypes ) || in_array( 'avatar', $pTypes ) ) {
-			$pQueryHash['select']['sql'][] = ", ulf.`storage_path` as `avatar`,  lf.`storage_path` AS `image_attachment_path`";
+			$pQueryHash['select']['sql'][] = "ulf.`storage_path` as `avatar`,  lf.`storage_path` AS `image_attachment_path`";
 			$pQueryHash['join']['sql'][] = "
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments`  a ON (uu.`user_id` = a.`user_id` AND a.`attachment_id` = uu.`avatar_attachment_id`)
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files`    ulf ON ulf.`file_id`   = a.`foreign_id`";
 		}
 		if ( empty( $pTypes ) || in_array( 'primary', $pTypes ) ) {
-			$pQueryHash['select']['sql'][] = ", la.`attachment_id` AS `primary_attachment`, lf.`storage_path` AS `primary_attachment_path`";
+			$pQueryHash['select']['sql'][] = "la.`attachment_id` AS `primary_attachment`, lf.`storage_path` AS `primary_attachment_path`";
 			$pQueryHash['join']['sql'][] = "
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments`   la ON la.`content_id`         = lc.`content_id` AND la.`is_primary` = 'y'
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files`         lf ON lf.`file_id`            = la.`foreign_id` ";
