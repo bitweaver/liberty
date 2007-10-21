@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.306 2007/10/18 07:27:23 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.307 2007/10/21 11:53:53 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -770,46 +770,134 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	* Default liberty sql for joining a content object table to liberty
-	*
-	*	This is an example current, and would be invoked in getList
-	*	$this->getLibertySql( 'bp.`content_id`', array('summary', 'users', 'hits', 'avatar', 'primary'), $selectSql, $joinSql, $whereSql, $bindVars );
-	*/
+	 * Default liberty sql for joining a content object table to liberty.
+	 * We are proposing a new way of building queries here where we build up everything in a hash with implicit AND over all
+	 * where clauses and then do an array_merge and concatenation in a single function at the end. See convertQueryHash for details.
+	 *
+	 *	This is an example current, and would be invoked in getList
+	 *   $queryHash = array('summary', 'users', 'hits', 'avatar', 'primary'), array('select' => array('sql' => $selectSql), 'join' => array('sql' => $joinSql), 'where' => array('sql' => $whereSql, 'vars' => $bindVars ));
+	 *	$this->getLibertySql( 'bp.`content_id`', $queryHash);
+	 */
 	/*
-	function getLibertySql( $pJoinColumn, $pTypes, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars, $pObject = NULL, $pParamHash = NULL) {
-		$pSelectSql = "lc.*";
-		$pJoinSql = "
+	function getLibertySql( $pJoinColumn, $pTypes, &$pQueryHash, $pObject = NULL, $pParamHash = NULL) {
+		$pQyertHash['select']['sql'][] = "lc.*";
+		$pQueryHash['join']['sql'][]= "
 				INNER JOIN      `".BIT_DB_PREFIX."liberty_content`       lc ON lc.`content_id`         = $pJoinColumn";
 		if ( empty( $pTypes ) || in_array( 'summary', $pTypes ) ) {
-			$pSelectSql .= ", lcds.`data` AS `summary`";
-			$pJoinSql .= "
+			$pQueryHash['select']['sql'][] = ", lcds.`data` AS `summary`";
+			$pQueryHash['join']['sql'][] = "
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`type`='summary')";
 		}
 		if ( empty( $pTypes ) || in_array( 'hits', $pTypes ) ) {
-			$pSelectSql .= ", lch.*";
-			$pJoinSql .= "
+			$pQueryHash['select']['sql'][] = ", lch.*";
+			$pQueryHash['join']['sql'][] = "
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON lc.`content_id`         = lch.`content_id`";
 		}
 		if ( empty( $pTypes ) || in_array( 'users', $pTypes ) ) {
-			$pSelectSql .= ", uu.`email`, uu.`login`, uu.`real_name`, uue.`email` as modifier_email, uue.`login` AS modifier_user, uue.`real_name` AS modifier_real_name";
-			$pJoinSql = "
+			$pQueryHash['select']['sql'][] = ", uu.`email`, uu.`login`, uu.`real_name`, uue.`email` as modifier_email, uue.`login` AS modifier_user, uue.`real_name` AS modifier_real_name";
+			$pQueryHash['join']['sql'][] = "
 				INNER JOIN		`".BIT_DB_PREFIX."users_users`			 uu ON uu.`user_id`			   = lc.`user_id`
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users`          uue ON (uue.`user_id`		   = lc.`modifier_user_id`)";
 		}
 		if ( empty( $pTypes ) || in_array( 'avatar', $pTypes ) ) {
-			$pSelectSql .= ", ulf.`storage_path` as `avatar`,  lf.`storage_path` AS `image_attachment_path`";
-			$pJoinSql = "
+			$pQueryHash['select']['sql'][] = ", ulf.`storage_path` as `avatar`,  lf.`storage_path` AS `image_attachment_path`";
+			$pQueryHash['join']['sql'][] = "
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments`  a ON (uu.`user_id` = a.`user_id` AND a.`attachment_id` = uu.`avatar_attachment_id`)
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files`    ulf ON ulf.`file_id`   = a.`foreign_id`";
 		}
 		if ( empty( $pTypes ) || in_array( 'primary', $pTypes ) ) {
-			$pSelectSql .= ", la.`attachment_id` AS `primary_attachment`, lf.`storage_path` AS `primary_attachment_path`";
-			$pJoinSql = "
+			$pQueryHash['select']['sql'][] = ", la.`attachment_id` AS `primary_attachment`, lf.`storage_path` AS `primary_attachment_path`";
+			$pQueryHash['join']['sql'][] = "
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments`   la ON la.`content_id`         = lc.`content_id` AND la.`is_primary` = 'y'
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files`         lf ON lf.`file_id`            = la.`foreign_id` ";
 		}
 	}
 	*/
+
+	/**
+	 * Convert a built up pQueryHash into a single query string and set of bind variables.
+	 *
+	 * A pQueryHash is an array with required keys select and from, and optional keys join, where and order.
+	 * Each key other than order should be an array with an 'sql' key which points to an array with statements.
+	 * Statements should not include the keywords to start them excluding join statements nor should they
+	 * include trailing delimeters such as commas as the conversion adds these where required.
+	 * All where statments are automatically ANDed together.
+	 * Each key other than order can optionally have a 'values' key which points to an array with bind variables.
+	 * The order key can either be an array or a single value. convertSortmode is automatically called on each order
+	 * statement and built into the ORDER BY clause with delimeters where required.
+	 *
+	 * Results come back in $pQueryHash['query'] $pQueryHash['bindVars'] and $pQueryHash['query_count'] if requested
+	 */
+	/*
+	function convertQueryHash(&$pQueryHash, $pCountQuery = FALSE ) {
+		global $gBitSystem;
+
+		// Build up all the parts of the query
+		$queryParts = array( 'select', 'from', 'join', 'where' );
+		foreach ( $queryParts as $part ) {
+			if ( !empty( $pQueryHash[$part] ) && !empty( $pQueryHash[$part]['sql'] ) ) {
+				// Add the required keyword -- joins include their own
+				if ( $part != 'join' ) {
+					$pQueryHash['query'] .= strtoupper(" $part ");
+				}
+				// Add the count for the count query
+				if ($pCountQuery && $part == 'select') {
+					$pQueryHash['query_count'] .= 'COUNT(';
+				}
+				$first = true;
+				foreach ( $pQueryHash[$part]['sql'] as $sql ) {
+					if ( !$first ) {
+						// WHERE clauses have an implicit AND over all terms
+						if ( $part == 'where' ) {
+							$pQueryHash['query'] .= " AND ";
+							if ($pCountQuery)
+								$pQueryHash['query_count'] .= " AND ";
+						}
+						else if ( $part == 'select' || $part == 'from' ) {
+							$pQueryHash['query'] .= ", ";
+							if ($pCountQuery)
+								$pQueryHash['query_count'] .= ", ";
+						}
+					}
+					else {
+						$first = false;
+					}
+					$pQueryHash['query'] .= $sql;
+					if ($pCountQuery)
+						$pQueryHash['query_count'] .= $sql;
+				}
+				// Close the count for the count query
+				if ( $pCountQuery && $part == 'select' ) {
+					$pQueryHash['query_count'] .= ')';
+				}
+
+				if ( !empty( $pQueryHash[$part]['vars'] ) ) {
+					$pQueryHash['bindVars'] = array_merge( $pQueryHash['bindVars'], $pQueryHash[$part]['vars'] );
+				}
+			}
+		}
+
+		// Order can be a single value or an array of values all of which get passed to convertSortmode
+		if ( !empty( $pQueryHash['order'] ) ) {
+			if ( is_array( $pQueryHash['order'] ) ) {
+				$first = true;
+				foreach ( $pQueryHash['order'] as $order ) {
+					if ( !$first ) {
+						$pQueryHash['query'] .= ', ';
+					}
+					else {
+						$pQueryHash['query'] .= ' ORDER BY ';
+						$first = false;
+					}
+					$pQueryHash['query'] .= $gBitSystem->mDb->convertSortmode( $order );
+				}
+			}
+			else {
+				$pQueryHash['query'] .= ' ORDER BY ' . $gBitSystem->mDb->convertSortmode( $pQueryHash['order'] );
+			}
+		}
+	}
+    */
 
 	/**
 	* Set up SQL strings for services used by the object
