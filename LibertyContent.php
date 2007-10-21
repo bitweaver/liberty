@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.308 2007/10/21 11:56:59 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.309 2007/10/21 12:26:40 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -850,21 +850,22 @@ class LibertyContent extends LibertyBase {
 						// WHERE clauses have an implicit AND over all terms
 						if ( $part == 'where' ) {
 							$pQueryHash['query'] .= " AND ";
-							if ($pCountQuery)
+							if ($pCountQuery) {
 								$pQueryHash['query_count'] .= " AND ";
-						}
-						else if ( $part == 'select' || $part == 'from' ) {
+							}
+						} elseif ( $part == 'select' || $part == 'from' ) {
 							$pQueryHash['query'] .= ", ";
-							if ($pCountQuery)
+							if ($pCountQuery) {
 								$pQueryHash['query_count'] .= ", ";
+							}
 						}
-					}
-					else {
+					} else {
 						$first = false;
 					}
 					$pQueryHash['query'] .= $sql;
-					if ($pCountQuery)
+					if ($pCountQuery) {
 						$pQueryHash['query_count'] .= $sql;
+					}
 				}
 				// Close the count for the count query
 				if ( $pCountQuery && $part == 'select' ) {
@@ -884,15 +885,13 @@ class LibertyContent extends LibertyBase {
 				foreach ( $pQueryHash['order'] as $order ) {
 					if ( !$first ) {
 						$pQueryHash['query'] .= ', ';
-					}
-					else {
+					} else {
 						$pQueryHash['query'] .= ' ORDER BY ';
 						$first = false;
 					}
 					$pQueryHash['query'] .= $gBitSystem->mDb->convertSortmode( $order );
 				}
-			}
-			else {
+			} else {
 				$pQueryHash['query'] .= ' ORDER BY ' . $gBitSystem->mDb->convertSortmode( $pQueryHash['order'] );
 			}
 		}
