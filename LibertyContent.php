@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.310 2007/10/22 07:02:51 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.311 2007/10/22 08:34:04 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -821,7 +821,7 @@ class LibertyContent extends LibertyBase {
 	 * Statements should not include the keywords to start them excluding join statements nor should they
 	 * include trailing delimeters such as commas as the conversion adds these where required.
 	 * All where statments are automatically ANDed together.
-	 * Each key other than order can optionally have a 'values' key which points to an array with bind variables.
+	 * Each key other than order can optionally have a 'vars' key which points to an array with bind variables.
 	 * The order key can either be an array or a single value. convertSortmode is automatically called on each order
 	 * statement and built into the ORDER BY clause with delimeters where required.
 	 *
