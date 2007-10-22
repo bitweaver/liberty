@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.311 2007/10/22 08:34:04 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.312 2007/10/22 15:49:37 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -778,14 +778,14 @@ class LibertyContent extends LibertyBase {
 	 *   $queryHash = array('summary', 'users', 'hits', 'avatar', 'primary'), array('select' => array('sql' => $selectSql), 'join' => array('sql' => $joinSql), 'where' => array('sql' => $whereSql, 'var' => $bindVars ));
 	 *	$this->getLibertySql( 'bp.`content_id`', $queryHash);
 	 */
-	function getLibertySql( $pJoinColumn, &$pQueryHash, $pJoins = NULL ) {
-		$pQyertHash['select']['sql'][] = "lc.*";
+	function getLibertySql( $pJoinColumn, &$pQueryHash, $pJoins = NULL, $pServiceFunction = NULL, $pObject = NULL, $pParamHash = NULL ) {
+		$pQueryHash['select']['sql'][] = "lc.*";
 		$pQueryHash['join']['sql'][] = "
 				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lc.`content_id` = $pJoinColumn )";
 		if( empty( $pJoins ) || in_array( 'summary', $pJoins )) {
 			$pQueryHash['select']['sql'][] = "lcds.`data` AS `summary`";
 			$pQueryHash['join']['sql'][] = "
-				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON( lc.`content_id` = lcds.`content_id` AND lcds.`type` = ? )";
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON( lc.`content_id` = lcds.`content_id` AND lcds.`data_type` = ? )";
 			$pQueryHash['join']['var'][] = 'summary';
 		}
 		if( empty( $pJoins ) || in_array( 'hits', $pJoins )) {
@@ -794,13 +794,15 @@ class LibertyContent extends LibertyBase {
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON( lc.`content_id` = lch.`content_id` )";
 		}
 		if( empty( $pJoins ) || in_array( 'users', $pJoins )) {
-			$pQueryHash['select']['sql'][] = "uu.`email`, uu.`login`, uu.`real_name`, uue.`email` as modifier_email, uue.`login` AS modifier_user, uue.`real_name` AS modifier_real_name";
+			$pQueryHash['select']['sql'][] = "
+				uu.`email` AS creator_email, uu.`login` AS creator_user, uu.`real_name` AS creator_real_name,
+				uue.`email` AS modifier_email, uue.`login` AS modifier_user, uue.`real_name` AS modifier_real_name";
 			$pQueryHash['join']['sql'][] = "
 				INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id` = lc.`user_id` )
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uue ON( uue.`user_id` = lc.`modifier_user_id` )";
 		}
 		if( empty( $pJoins ) || in_array( 'avatar', $pJoins )) {
-			$pQueryHash['select']['sql'][] = "ulf.`storage_path` AS `avatar`, ulf.`storage_path` AS `image_attachment_path`";
+			$pQueryHash['select']['sql'][] = "ulf.`storage_path` AS `avatar`, ulf.`storage_path` AS `avatar_attachment_path`";
 			$pQueryHash['join']['sql'][] = "
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments` ula ON( uu.`user_id` = ula.`user_id` AND ula.`attachment_id` = uu.`avatar_attachment_id` )
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files` ulf ON( ulf.`file_id` = ula.`foreign_id` )";
@@ -810,6 +812,66 @@ class LibertyContent extends LibertyBase {
 			$pQueryHash['join']['sql'][] = "
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments` pla ON( pla.`content_id` = lc.`content_id` AND pla.`is_primary` = 'y' )
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files` plf ON( plf.`file_id` = pla.`foreign_id` )";
+		}
+
+		if( !empty( $pServiceFunction )) {
+			$this->getServicesSql2( $pServiceFunction, $pQueryHash, $pObject, $pParamHash );
+		}
+	}
+
+	/**
+	 * getServicesSql2
+	 * 
+	 * @param array $pServiceFunction 
+	 * @param array $pQueryHash 
+	 * @param array $pObject 
+	 * @param array $pParamHash 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 * @TODO this function still contains legacy code.
+	 * @TODO rename this function to getServicesSql has been weened out
+	 */
+	function getServicesSql2( $pServiceFunction, &$pQueryHash, $pObject = NULL, $pParamHash = NULL ) {
+		global $gLibertySystem;
+		if( $loadFuncs = $gLibertySystem->getServiceValues( $pServiceFunction ) ) {
+			// TODO: clear out this legacy code
+			$pQueryHash['service_select_sql'] = $pQueryHash['service_join_sql'] = $pQueryHash['service_where_sql'] = '';
+			foreach( $loadFuncs as $func ) {
+				if( function_exists( $func ) ) {
+					if( !empty( $pObject ) && is_object( $pObject )) {
+						$queryHash = $func( $pObject, $pParamHash );
+					} else {
+						$queryHash = $func( $this, $pParamHash );
+					}
+
+					// work out if we're using the old services sql method or the new one
+					if( !empty( $queryHash['select'] ) || !empty( $queryHash['from'] ) || !empty( $queryHash['join'] ) || !empty( $queryHash['where'] )) {
+						// we're using the new method
+						$pQueryHash = array_merge_recursive( $pQueryHash, $queryHash );
+					} else {
+						// TODO: clean out this legacy code {{{
+						// old method: warn the developer
+						//deprecated( 'This service is still using the old LibertyContent::getServicesSql() method. Please update the service to use the new SQL hash method' );
+						if( !empty( $queryHash['select_sql'] )) {
+							$pQueryHash['service_select_sql'] .= $queryHash['select_sql'];
+						}
+						if( !empty( $queryHash['join_sql'] )) {
+							$pQueryHash['service_join_sql'] .= $queryHash['join_sql'];
+						}
+						if( !empty( $queryHash['where_sql'] )) {
+							$pQueryHash['service_where_sql'] .= $queryHash['where_sql'];
+						}
+						if( !empty( $queryHash['bind_vars'] )) {
+							if ( is_array( $pQueryHash['service_bind_vars'] )) {
+								$pQueryHash ['service_bind_vars']= array_merge( $pQueryHash['service_bind_vars'], $queryHash['bind_vars'] );
+							} else {
+								$pQueryHash['service_bind_vars'] = $queryHash['bind_vars'];
+							}
+						}
+						// }}}
+					}
+				}
+			}
 		}
 	}
 
@@ -825,7 +887,8 @@ class LibertyContent extends LibertyBase {
 	 * The order key can either be an array or a single value. convertSortmode is automatically called on each order
 	 * statement and built into the ORDER BY clause with delimeters where required.
 	 *
-	 * Results come back in $pQueryHash['query'] $pQueryHash['bindVars'] and $pQueryHash['query_count'] if requested
+	 * @return Results come back in $pQueryHash['query'] $pQueryHash['bind_vars'] and $pQueryHash['query_count'] if requested
+	 * @TODO this function still contains legacy code.
 	 */
 	function convertQueryHash( &$pQueryHash, $pCountQuery = FALSE ) {
 		global $gBitSystem;
@@ -839,8 +902,8 @@ class LibertyContent extends LibertyBase {
 			$pQueryHash['query_count'] = '';
 		}
 
-		if( empty( $pQueryHash['bindVars'] )) {
-			$pQueryHash['bindVars'] = array();
+		if( empty( $pQueryHash['bind_vars'] )) {
+			$pQueryHash['bind_vars'] = array();
 		}
 
 		// Build up all the parts of the query
@@ -891,10 +954,28 @@ class LibertyContent extends LibertyBase {
 				}
 
 				if( !empty( $pQueryHash[$part]['var'] )) {
-					$pQueryHash['bindVars'] = array_merge( $pQueryHash['bindVars'], $pQueryHash[$part]['var'] );
+					$pQueryHash['bind_vars'] = array_merge( $pQueryHash['bind_vars'], $pQueryHash[$part]['var'] );
 				}
 			}
+
+			// TODO: clean out this legacy code {{{
+			// append old style serivce sql arguments
+			// since we don't allow bind_vars in the old services style, we can append everything here and then later on add the bind vars
+			if( !empty( $pQueryHash['service_'.$part.'_sql'] )) {
+				$pQueryHash['query'] .= $pQueryHash['service_'.$part.'_sql'];
+				if( $pCountQuery ) {
+					$pQueryHash['query_count'] .= $pQueryHash['service_'.$part.'_sql'];
+				}
+			}
+			// }}}
 		}
+
+		// TODO: clean out this legacy code {{{
+		// append legacy service bind vars
+		if( !empty( $pQueryHash['service_bind_vars'] )) {
+			$pQueryHash['bind_vars'] = array_merge( $pQueryHash['bind_vars'], $pQueryHash['service_bind_vars'] );
+		}
+		/// }}}
 
 		// Order can be a single value or an array of values all of which get passed to convertSortmode
 		if( !empty( $pQueryHash['order'] )) {
@@ -917,8 +998,10 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	* Set up SQL strings for services used by the object
+	* TODO: set this function deprecated and eventually nuke it
 	*/
 	function getServicesSql( $pServiceFunction, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars, $pObject = NULL, $pParamHash = NULL) {
+		//deprecated( 'You package is calling the deprecated LibertyContent::getServicesSql() method. Please update your code to use LibertyContent::getLibertySql' );
 		global $gLibertySystem;
 		if( $loadFuncs = $gLibertySystem->getServiceValues( $pServiceFunction ) ) {
 			foreach( $loadFuncs as $func ) {
