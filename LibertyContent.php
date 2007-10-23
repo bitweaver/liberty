@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.312 2007/10/22 15:49:37 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.313 2007/10/23 14:21:53 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1602,12 +1602,12 @@ class LibertyContent extends LibertyBase {
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`data_type`='summary')
 				WHERE $pageWhere = ?";
 			if( !$ret = $this->mDb->getAll( $query, $bindVars ) ) {
-				$query = "SELECT `page_id`, wp.`content_id`, lcds.`data` AS `summary`, lc.`last_modified`, lc.`title`, lal.`alias_name`
+				$query = "SELECT `page_id`, wp.`content_id`, lcds.`data` AS `summary`, lc.`last_modified`, lc.`title`, lal.`alias_title`
 					FROM `".BIT_DB_PREFIX."wiki_pages` wp
 						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id`=wp.`content_id`)
 						INNER JOIN `".BIT_DB_PREFIX."liberty_aliases` lal ON (lc.`content_id`=lal.`content_id`)
 						LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`data_type`='summary')
-					WHERE ".$this->mDb->getCaseLessColumn('lal.alias_name')." = ?";
+					WHERE ".$this->mDb->getCaseLessColumn('lal.alias_title')." = ?";
 				$ret = $this->mDb->getAll( $query, $bindVars );
 			}
 		}
