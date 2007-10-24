@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.313 2007/10/23 14:21:53 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.314 2007/10/24 05:00:28 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1809,8 +1809,12 @@ class LibertyContent extends LibertyBase {
 
 
 	function getThumbnailUri( $pSize='small', $pInfoHash=NULL ) {
-		$url = $this->getThumbnailUrl( $pSize, $pInfoHash );
-		return( STORAGE_HOST_URI.substr( $url, 1 ) );
+		$ret = $this->getThumbnailUrl( $pSize, $pInfoHash );
+		// Check to make sure we don't have an absolute URI already, which could be the case for custom classes
+		if( strpos( $ret, 'http' ) !== 0 ) {
+			$ret = STORAGE_HOST_URI.substr( $ret, 1 );
+		}
+		return( $ret );
 	}
 
 
