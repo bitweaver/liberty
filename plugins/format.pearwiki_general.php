@@ -78,13 +78,14 @@ function pearwiki_general_verify_data( &$pParamHash ) {
 }
 
 function pearwiki_general_parse_data( $parser_fmt, &$pParseHash, &$pCommonObject ) {
+    global $gBitSystem;
+
 	if (!defined('PAGE_SEP')) {
 		define('PAGE_SEP', 'PAGE MARKER HERE*&^%$#^$%*PAGEMARKERHERE');
 	}
-
 	$parser = Text_Wiki::singleton($parser_fmt);
 	if (PEAR::isError($parser)) {
-		vd($parser);
+        $gBitSystem->fatalError("PEAR Wiki Parser Error", "There was an unknown error while constructing the parser.");
 		die();
 	}
 	global $gBitSystem;

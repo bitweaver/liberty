@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.23 $
+ * @version  $Revision: 1.24 $
  * @package  liberty
  * @subpackage functions
  */
@@ -75,7 +75,7 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 				header( "Location: ".$_SERVER['PHP_SELF'].'?structure_id='.$gStructure->mInfo["parent_id"] );
 				die;
 			} else {
-				vd( $gStructure->mErrors );
+				error_log( "Error removing structure: " . vc($gStructure->mErrors ) );
 			}
 		} elseif( $_REQUEST["action"] == 'remove' ) {
 			$gBitSystem->setBrowserTitle( 'Confirm removal of '.$gContent->getTitle() );
