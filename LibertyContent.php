@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.315 2007/10/25 01:31:42 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.316 2007/10/25 06:57:09 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2268,7 +2268,7 @@ class LibertyContent extends LibertyBase {
 			$pParseHash['cache_extension'] .= '.'.$pLength;
 			$pParseHash['data'] = substr( $res['data'], 0, $pLength );
 			// snip off a broken tag at the end if there is one
-			$pParseHash['data'] = preg_replace('/<[^>]*?$/','',$pParseHash['data']);
+			$pParseHash['data'] = preg_replace( '!<[a-zA-Z/][^>]*?$!', '', $pParseHash['data'] );
 		}
 
 		// set 'has_more' and remove cache_extension if we don't need it
