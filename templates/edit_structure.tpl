@@ -4,7 +4,7 @@
 	{assign var=structureName value="Structure"}
 {/if}
 
-{if $gBitThemes->mAjax=='mochikit'}
+{if $gBitThemes->isAjaxLib('mochikit')}
 
 <div class="row">
 	<div class="formlabel">
