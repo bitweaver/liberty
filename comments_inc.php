@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.39 $
+ * @version  $Revision: 1.40 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.39 2007/08/19 07:26:40 jht001 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.40 2007/10/25 08:53:41 jht001 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -203,22 +203,41 @@ if (@BitBase::verifyId($_REQUEST['post_comment_reply_id'])) {
 	$gBitSmarty->assign('post_comment_reply_id', $post_comment_reply_id);
 }
 
-$maxComments = $gBitSystem->getConfig( 'comments_per_page', 10 );
+if (!empty($_SESSION['liberty_comments_per_page'])) {
+	$maxComments = $_SESSION['liberty_comments_per_page'];
+	}
+else {
+	$maxComments = $gBitSystem->getConfig( 'comments_per_page', 10 );
+	}
 if (!empty($_REQUEST["comments_maxComments"])) {
 	$maxComments = $_REQUEST["comments_maxComments"];
 	$comments_at_top_of_page = 'y';
+	$_SESSION['liberty_comments_per_page'] = $maxComments;
 }
 
-$comments_sort_mode = $gBitSystem->getConfig( 'comments_default_ordering', 'commentDate_desc' );
+
+if (!empty($_SESSION['liberty_comments_ordering'])) {
+	$comments_sort_mode = $_SESSION['liberty_comments_ordering'];
+	}
+else {
+	$comments_sort_mode = $gBitSystem->getConfig( 'comments_default_ordering', 'commentDate_desc' );
+	}
 if (!empty($_REQUEST["comments_sort_mode"])) {
 	$comments_sort_mode = $_REQUEST["comments_sort_mode"];
 	$comments_at_top_of_page = 'y';
+	$_SESSION['liberty_comments_ordering'] = $comments_sort_mode;
 }
 
-$comments_display_style = $gBitSystem->getConfig( 'comments_default_display_mode', 'threaded' );
+if (!empty($_SESSION['liberty_comments_display_mode'])) {
+	$comments_display_style = $_SESSION['liberty_comments_display_mode'];
+	}
+else {	
+	$comments_display_style = $gBitSystem->getConfig( 'comments_default_display_mode', 'threaded' );
+	}
 if( !empty( $_REQUEST["comments_style"] ) ) {
 	$comments_display_style = $_REQUEST["comments_style"];
 	$comments_at_top_of_page = 'y';
+	$_SESSION['liberty_comments_display_mode'] = $comments_display_style;
 }
 
 if( !empty( $_REQUEST['comment_page'] ) || !empty( $_REQUEST['post_comment_request'] ) ) {
@@ -270,7 +289,8 @@ else {
 		if (!empty( $comments[ $node['parent_id'] ])) {
 			$comments[ $node['parent_id'] ]['children'][$id] = &$comments[$id];
 		}
-		if ($node['parent_id'] == $node['root_id']){
+		if ($node['parent_id'] == $node['root_id'] or empty( $comments[ $node['parent_id'] ])){
+			$comments[$id]['level'] = 0;	
 			$commentsTree[$id] = &$comments[$id];
 		}
 	}

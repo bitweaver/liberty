@@ -11,11 +11,6 @@
 		{form action="`$comments_return_url`#editcomments" id="editcomment-form"}
 		{formfeedback hash=$formfeedback}
 		
-		{* DEPRECATED Slated for Removal - I see no reason for this -wjames5
-		<input type="hidden" name="comments_maxComments" value="{$maxComments}" />
-		<input type="hidden" name="comments_style" value="{$comments_style}" />
-		<input type="hidden" name="comments_sort_mode" value="{$comments_sort_mode}" />
-		*}
 		
 		{if $smarty.request.post_comment_request || $smarty.request.post_comment_preview || $comments_ajax}
 			{legend legend=$post_title} 

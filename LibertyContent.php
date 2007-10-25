@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.316 2007/10/25 06:57:09 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.317 2007/10/25 08:53:41 jht001 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -383,7 +383,7 @@ class LibertyContent extends LibertyBase {
 	function expungeComments() {
 		require_once( LIBERTY_PKG_PATH.'LibertyComment.php' );
 		// Delete all comments associated with this piece of content
-		$query = "SELECT `comment_id` FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `parent_id` = ?";
+		$query = "SELECT `comment_id` FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `root_id` = ?";
 		if( $commentIds = $this->mDb->getCol($query, array( $this->mContentId ) ) ) {
 			foreach ($commentIds as $commentId) {
 				$tmpComment = new LibertyComment($commentId);
