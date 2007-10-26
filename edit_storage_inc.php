@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.22 $
+ * @version  $Revision: 1.23 $
  * @package  liberty
  * @subpackage functions
  *
@@ -21,6 +21,7 @@ if( BitThemes::isAjaxRequest() ) {
 }
 
 $attachmentActionBaseUrl = $gBitSmarty->get_template_vars( 'attachmentActionBaseUrl' );
+
 if( empty( $attachmentActionBaseUrl )) {
 	if( $gBitSystem->getConfig( 'liberty_attachment_style' ) == 'ajax' ) {
 		$attachmentActionBaseUrl = LIBERTY_PKG_URL.'edit_storage_inc.php?';
@@ -68,6 +69,15 @@ if( $gBitSystem->getConfig('liberty_attachment_style') == 'ajax' ) {
 // output some stuff for ajax div
 if( BitThemes::isAjaxRequest() ) {
 	echo $gBitSmarty->fetch( 'bitpackage:liberty/edit_storage_list.tpl' );
-	die;
+	/* this die is no good here 
+	   it screws up all content editing that uses ajax to load forms.
+	   I'm taking it out, as it was added recently.
+	   If there is a need to have it then we have to target the cases when
+	   it is needed.  this comment was added on 10/26/07, if its been a while
+	   when you are reading this, then you can probably go ahead and 
+	   delete this all -wjames5
+	 */
+	// die;
 }
+
 ?>
