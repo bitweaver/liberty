@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.318 2007/10/29 21:20:13 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.319 2007/10/29 21:38:08 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1205,7 +1205,7 @@ class LibertyContent extends LibertyBase {
 	*/
 	function verifyPermission( $pPermName, $pFatalMessage = NULL ) {
 		$ret = TRUE;
-		if( $this->isValid() && !$this->hasUserPermission( $pPermName, TRUE, TRUE ) ) {
+		if( $this->isValid() && !$this->hasUserPermission( $pPermName ) ) {
 			global $gBitSystem;
 			$gBitSystem->fatalPermission( $pPermName, $pFatalMessage );
 		}
