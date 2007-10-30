@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.23 $
+ * @version  $Revision: 1.24 $
  * @package  liberty
  * @subpackage functions
  *
@@ -67,17 +67,21 @@ if( $gBitSystem->getConfig('liberty_attachment_style') == 'ajax' ) {
 }
 
 // output some stuff for ajax div
+/* This in general is no good here.
+ * it creates problems for packages loading up entire editing forms using ajax.
+ * If there is some need to display the list tpl, then it should probably 
+ * happen in an another tpl or via another php file - presumably the one 
+ * which is including this file. This is a bad shortcut. 
+ * I'm commenting it out for now, as I've not been able to find a part of bw 
+ * that needs it. If this causes something of yours to break come get me so we 
+ * can sort it out. -wjames5
+ */
+/*
 if( BitThemes::isAjaxRequest() ) {
 	echo $gBitSmarty->fetch( 'bitpackage:liberty/edit_storage_list.tpl' );
-	/* this die is no good here 
-	   it screws up all content editing that uses ajax to load forms.
-	   I'm taking it out, as it was added recently.
-	   If there is a need to have it then we have to target the cases when
-	   it is needed.  this comment was added on 10/26/07, if its been a while
-	   when you are reading this, then you can probably go ahead and 
-	   delete this all -wjames5
-	 */
+	// this die is no good here for ajax requests which this file is just a part of
+	// really should consider using display with a center_only header format instead of fetch
 	// die;
 }
-
+*/
 ?>
