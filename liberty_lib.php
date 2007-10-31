@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.14 2007/10/03 09:34:44 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.15 2007/10/31 10:39:08 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -781,18 +781,29 @@ function get_image_size_options( $pEmptyOption = 'Disable this feature' ) {
 	return $ret;
 }
 
-function get_subtitle( $pTitle ) {
+/**
+ * get_leadtitle will fetch the string before the liberty_subtitle_delimiter
+ * 
+ * @param string $pString string that should be checked for the delimiter
+ * @access public
+ * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+ */
+function get_leadtitle( $pString ) {
 	global $gBitSystem;
-	if( ($start = strpos( $pTitle, $gBitSystem->getConfig( 'libety_subtitle_delimiter',':' ) )) !== FALSE ) {
-		return( substr( $pTitle, ($start+1) ) );
+	return( substr( $pString, 0, strpos( $pString, $gBitSystem->getConfig( 'liberty_subtitle_delimiter', ':' ))));
+}
+
+/**
+ * get_subtitle will fetch the string after the liberty_subtitle_delimiter
+ * 
+ * @param string $pString string that should be checked for the delimiter
+ * @access public
+ * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+ */
+function get_subtitle( $pString ) {
+	global $gBitSystem;
+	if(( $start = strpos( $pString, $gBitSystem->getConfig( 'liberty_subtitle_delimiter', ':' ))) !== FALSE ) {
+		return( substr( $pString, ( $start + 1 )));
 	}
 }
-
-
-function get_leadtitle( $pTitle ) {
-	global $gBitSystem;
-	return( substr( $pTitle, 0, strpos( $pTitle, $gBitSystem->getConfig( 'libety_subtitle_delimiter',':' ) ) ) );
-}
-
-
 ?>
