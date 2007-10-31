@@ -1,6 +1,6 @@
 {strip}
 {* don't replicate the surrounding div when inserting ajax content *}
-{if !$gBitThemes->isAjaxRequest()}
+{if !$libertyUploader && !$attachmentBrowser}
 	<div id="edit_storage_list{if !$uploadTab}_tab{/if}">
 {/if}
 {if $gContent->mStorage}
@@ -61,7 +61,7 @@
 		</table>
 	</div>
 {/if}
-{if !$gBitThemes->isAjaxRequest()}
+{if !$libertyUploader && !$attachmentBrowser}
 	</div>
 {/if}
 {/strip}
