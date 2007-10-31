@@ -1,16 +1,12 @@
 {strip}
 {* don't replicate the surrounding div when inserting ajax content *}
-{if !$libertyUploader && !$attachmentBrowser}
+{if !$libertyUploader}
 	<div id="edit_storage_list{if !$uploadTab}_tab{/if}">
 {/if}
 {if $gContent->mStorage}
 	<div class="row">
 		<table class="data" summary="List of attached files">
-			{if $attachmentBrowser}
-				<caption>{tr}Your Attachments{/tr}</caption>
-			{else}
-				<caption>{tr}Items {if $libertyUploader && empty($gContent->mContentId)}That Will Be{/if} Attached Directly to this Content{/tr}</caption>
-			{/if}
+			<caption>{tr}Items {if $libertyUploader && empty($gContent->mContentId)}That Will Be{/if} Attached Directly to this Content{/tr}</caption>
 			<tr>
 				<th scope="col" style="width:30%;" title="{tr}Thumbnail{/tr}">{tr}Thumbnail{/tr}</th>
 				<th scope="col" style="width:40%;" title="{tr}Inclusion Code{/tr}">{tr}Inclusion Code{/tr}</th>
@@ -39,20 +35,15 @@
 							<br />
 						{/if}
 						{if $gBitUser->isAdmin() || ($storage.user_id == $gBitUser->mUserId && $gBitUser->hasPermission('p_liberty_delete_attachments') ) }
-							{if $attachmentBrowser}
+							{if $libertyUploader || $gBitSystem->getConfig('liberty_attachment_style') == 'ajax'}
+								{capture name=urlArgs}{$attachmentBaseArgs}content_id={$gContent->mContentId}{if empty($gContent->mContentId)}{foreach from=$gContent->mStorage key=key item=val}&amp;STORAGE[existing][{$val.attachment_id}]={$val.attachment_id}{/foreach}{/if}{/capture}
 								<a href="javascript:
-									BitAjax.updater('edit_storage_list', '{$attachmentBaseUrl}', 'deleteAttachment={$attachmentId}');
-									BitAjax.updater('edit_storage_list_tab', '{$attachmentBaseUrl}', 'content_id={$gContent->mContentId}');">
-									{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}
-								</a>
-							{elseif $libertyUploader || $gBitSystem->getConfig('liberty_attachment_style') == 'ajax'}
-								<a href="javascript:
-									BitAjax.updater('edit_storage_list', '{$attachmentBaseUrl}', '{$attachmentBaseArgs}content_id={$gContent->mContentId}&amp;deleteAttachment={$attachmentId}{if empty($gContent->mContentId)}{foreach from=$gContent->mStorage key=key item=val}&amp;STORAGE[existing][{$val.attachment_id}]={$val.attachment_id}{/foreach}{/if}');
-									BitAjax.updater('edit_storage_list_tab', '{$attachmentBaseUrl}', '{$attachmentBaseArgs}content_id={$gContent->mContentId}{if empty($gContent->mContentId)}{foreach from=$gContent->mStorage key=key item=val}&amp;STORAGE[existing][{$val.attachment_id}]={$val.attachment_id}{/foreach}{/if}');">
-									{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}
+									BitAjax.updater('edit_storage_list', '{$smarty.const.LIBERTY_PKG_URL}ajax_edit_storage.php', '{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}');
+									BitAjax.updater('edit_storage_list_tab', '{$smarty.const.LIBERTY_PKG_URL}ajax_edit_storage.php', '{$smarty.capture.urlArgs}');">
+										{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}
 								</a>
 							{else}
-								<a href="{$attachmentBaseUrl}&amp;deleteAttachment={$attachmentId}">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
+								<a href="{$smarty.server.PHP_SELF}?{$smarty.const.urlArgs}&amp;deleteAttachment={$attachmentId}">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
 							{/if}
 						{/if}
 					</td>
@@ -61,7 +52,7 @@
 		</table>
 	</div>
 {/if}
-{if !$libertyUploader && !$attachmentBrowser}
+{if !$libertyUploader}
 	</div>
 {/if}
 {/strip}
