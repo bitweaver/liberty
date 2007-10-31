@@ -1,7 +1,7 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/ajax_edit_storage.php,v 1.1 2007/10/31 15:47:58 squareing Exp $
- * @version  $Revision: 1.1 $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/ajax_edit_storage.php,v 1.2 2007/10/31 16:00:27 squareing Exp $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage functions
  */
@@ -16,7 +16,7 @@ include_once( LIBERTY_PKG_PATH.'edit_storage_inc.php' );
 
 // make sure js is being loaded
 $gBitThemes->loadAjax( 'mochikit', array( 'LibertyAttachments' ));
-$gBitThemes->loadAjax( 'custom', array( LIBERTY_PKG_URL.'scripts/LibertyAttachments.js' ));
+$gBitSmarty->assign( 'attachments_ajax', TRUE );
 
 // fetch the content of the page to display
 $gBitSystem->setFormatHeader( 'center_only' );
