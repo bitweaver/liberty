@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.319 2007/10/29 21:38:08 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.320 2007/11/01 14:09:58 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1090,7 +1090,7 @@ class LibertyContent extends LibertyBase {
 			}
 
 			$query = "SELECT COUNT(*)
-					  FROM `liberty_content` lc  $joinSql
+					  FROM `".BIT_DB_PREFIX."liberty_content` lc  $joinSql
 					  WHERE lc.`content_id`=? AND ( $whereSql $permWhereSql ) ";
 			$ret = $this->mDb->getOne( $query, $bindVars );
 		}
