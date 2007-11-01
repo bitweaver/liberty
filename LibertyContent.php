@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.322 2007/11/01 18:16:13 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.323 2007/11/01 18:17:25 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1751,7 +1751,7 @@ class LibertyContent extends LibertyBase {
 	* @return string Formated URL address to display the page.
 	*/
 	function getDisplayUri( $pContentId=NULL, $pMixed=NULL ) {
-		return BIT_ROOT_URI.substr( $this->getDisplayUrl( $pContentId, $pMixed ), 1 );
+		return BIT_ROOT_URI.substr( $this->getDisplayUrl( $pContentId, $pMixed ), substr( BIT_ROOT_URL ) );
 	}
 
 	/**
