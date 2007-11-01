@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.15 2007/10/31 10:39:08 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.16 2007/11/01 21:58:14 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -18,7 +18,7 @@ function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject, $pParseHash )
 	global $gLibertySystem, $gBitSystem;
 
 	// note: $curlyTags[0] is the complete match, $curlyTags[1] is plugin name, $curlyTags[2] is plugin arguments
-	preg_match_all( "/\{\/?([A-Za-z0-9]+)([^\}]*)\}/", $pData, $curlyTags, PREG_OFFSET_CAPTURE);
+	preg_match_all( "/\{\/?([A-Za-z0-9]+)([^\}]*)\}/", $pData, $curlyTags, PREG_OFFSET_CAPTURE );
 
 	if( count( $curlyTags[0] ) ) {
 		// if TRUE, replace only CODE plugin, if false, replace all other plugins
@@ -29,7 +29,12 @@ function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject, $pParseHash )
 		while( $i >= 0 ) {
 			$plugin_start = $curlyTags[0][$i][0];
 			$plugin = $curlyTags[1][$i][0];
-			$pos = $curlyTags[0][$i][1]; // where plugin starts
+			// Work out where the plugin starts. This can not be done using the 
+			// positional data from $curlyTags since the position might have 
+			// changed since the last cycle. We therefore need to determine the 
+			// position direclty. - xing - Thursday Nov 01, 2007   22:55:10 CET
+			//$pos = $curlyTags[0][$i][1];
+			$pos = strpos( $pData, $plugin_start );
 			$dataTag = strtolower( $plugin );
 			// hush up the return of this in case someone uses curly braces to enclose text
 			$pluginInfo = $gLibertySystem->getPluginInfo( @$gLibertySystem->mDataTags[$dataTag] ) ;
@@ -65,7 +70,7 @@ function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject, $pParseHash )
 					$plugin_end = '{/'.$plugin.'}';
 					$pos_end = strpos( strtolower( $pData ), strtolower( $plugin_end ), $pos ); // where plugin data ends
 					$plugin_end2 = '{'.$plugin.'}';
-					$pos_end2 = strpos( strtolower( $pData ), strtolower( $plugin_end2 ), $pos+1 ); // where plugin data ends
+					$pos_end2 = strpos( strtolower( $pData ), strtolower( $plugin_end2 ), $pos + 1 ); // where plugin data ends
 
 					if( ( $pos_end2 > 0 && $pos_end2 > 0 && $pos_end2 < $pos_end ) || $pos_end === FALSE ) {
 						$pos_end = $pos_end2;
