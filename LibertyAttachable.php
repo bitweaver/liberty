@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.135 2007/10/10 05:12:54 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.136 2007/11/01 17:59:03 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -117,8 +117,8 @@ class LibertyAttachable extends LibertyContent {
 	// Private Method used during verify to extract 
 	function extractMetaData( &$pParamHash, &$pFile ) {
 
-		// Process a JPEG
-		if( function_exists( 'exif_read_data' ) && !empty( $pFile['tmp_name'] ) && stripos( $pFile['type'], 'jpeg' ) !== FALSE ) {
+		// Process a JPEG , jpeg_metadata_tk REQUIRES short_tags because that is the way it was written. feel free to fix something. XOXO spiderr
+		if( ini_get( 'short_open_tag' ) && function_exists( 'exif_read_data' ) && !empty( $pFile['tmp_name'] ) && stripos( $pFile['type'], 'jpeg' ) !== FALSE ) {
 			$exifHash = @exif_read_data( $pFile['tmp_name'], 0, true);
 			//vd( $exifHash );
 
