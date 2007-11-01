@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.320 2007/11/01 14:09:58 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.321 2007/11/01 17:42:46 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2523,7 +2523,7 @@ class LibertyContent extends LibertyBase {
 	function setIndexData( $pContentId = 0 ) {
 		global $gBitSystem ;
 		if ( $pContentId == 0 ) $pContentId = $this->mContentId;
-		$sql = "SELECT lc.`title`, lc.`data`, lcds.`data` AS `summary`, uu.`login`, uu.`real_name`, wp.`description` 
+		$sql = "SELECT lc.`title`, lc.`data`, lcds.`data` AS `summary`, uu.`login`, uu.`real_name`, lcds.`data` AS `summary`
 				FROM `" . BIT_DB_PREFIX . "liberty_content` lc 
 					INNER JOIN `" . BIT_DB_PREFIX . "users_users` uu ON uu.`user_id`    = lc.`user_id` 
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`data_type`='summary')
