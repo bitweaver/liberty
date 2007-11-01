@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.11 2007/09/27 17:55:03 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.12 2007/11/01 11:22:31 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -150,9 +150,9 @@ class BitLinks extends BitBase {
 
 		global $gBitSystem;
 		if( $gBitSystem->getConfig( 'wiki_page_regex', 'strict' ) == 'strict' ) {
-			$this->mWikiWordRegex = '([A-Za-z0-9_])([\.: A-Za-z0-9_\-])*([A-Za-z0-9_])';
+			$this->mWikiWordRegex = '([A-Za-z0-9_])([\'\.: A-Za-z0-9_\-])*([\.:A-Za-z0-9_])';
 		} elseif( $gBitSystem->getConfig( 'wiki_page_regex', 'strict' ) == 'full' ) {
-			$this->mWikiWordRegex = '([A-Za-z0-9_]|[\x80-\xFF])([\.: A-Za-z0-9_\-]|[\x80-\xFF])*([A-Za-z0-9_]|[\x80-\xFF])';
+			$this->mWikiWordRegex = '([A-Za-z0-9_]|[\x80-\xFF])([\'\.: A-Za-z0-9_\-]|[\x80-\xFF])*([\.:A-Za-z0-9_]|[\x80-\xFF])';
 		} else {
 			// This is just evil. The middle section means "anything, as long
 			// as it's not a | and isn't followed by ))". -rlpowell
