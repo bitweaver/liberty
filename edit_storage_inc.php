@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.27 $
+ * @version  $Revision: 1.28 $
  * @package  liberty
  * @subpackage functions
  */
@@ -27,7 +27,7 @@ if( !empty( $_REQUEST['deleteAttachment'] )) {
 
 	// the second part of this check seems odd (never used?) to me, but I'll leave it in for now - spiderr 10/17/2007
 	if( $gContent->hasAdminPermission() || ( $gContent->isOwner( $attachmentInfo ) && $gBitUser->hasPermission( 'p_liberty_delete_attachment' ))) {
-		//$gContent->expungeAttachment( $attachmentId );
+		$gContent->expungeAttachment( $attachmentId );
 	}
 
 	// in case we have deleted attachments
