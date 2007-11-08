@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.calendar.php,v 1.1 2007/06/11 17:32:46 nickpalmer Exp $
+// $Id: data.calendar.php,v 1.2 2007/11/08 11:45:16 nickpalmer Exp $
 
 /**
  * definitions
@@ -116,7 +116,8 @@ function data_calendar( $data, $params ) {
 			 $week[] = $d;
 		 }
 		 $calendar[] = $week;
-		 
+
+		 $gBitSmarty->assign('minical', true);
 		 $gBitSmarty->assign('month_name', $month_name);
 		 $gBitSmarty->assign('month', $month);
 		 $gBitSmarty->assign('year', $year);
