@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/header_inc.tpl,v 1.11 2007/10/31 16:00:27 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/header_inc.tpl,v 1.12 2007/11/08 21:59:35 squareing Exp $ *}
 {strip}
 {if $structureInfo}
 	<link rel="index" title="{tr}Contents{/tr}" href="index.php?structure_id={$structureInfo.root_structure_id}" />
@@ -12,14 +12,9 @@
 		<link rel="next" title="{tr}Next{/tr}" href="index.php?structure_id={$structureInfo.next.structure_id}" />
 	{/if}
 {/if}
-{* all of the stuff below here will go at some point *}
-{if $loadDynamicTree}
-	<!--[if lte IE 5.0]>
-		<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/libs/mygosu/ie5.js"></script>
-	<![endif]-->
-	<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/libs/mygosu/DynamicTreeBuilder.js"></script>
-	<link rel="stylesheet" type="text/css" href="{$smarty.const.UTIL_PKG_URL}javascript/libs/mygosu/DynamicTree.css" />
-{/if}
+
+{* perhaps we can remove this as well at some point and load it using
+$gBitThemes->loadJavascript(); *}
 {if $comments_ajax}
 	<script src="{$smarty.const.LIBERTY_PKG_URL}templates/LibertyComment.js" type="text/javascript"></script>
 	<script type="text/javascript">
@@ -28,8 +23,5 @@
 		LibertyComment.SORT_MODE = "{$comments_sort_mode}";
 		LibertyComment.BROWSER = "{$gBrowserInfo.browser}";
 	</script>
-{/if}
-{if $attachments_ajax}
-	<script src="{$smarty.const.LIBERTY_PKG_URL}scripts/LibertyAttachment.js" type="text/javascript"></script>
 {/if}
 {/strip}
