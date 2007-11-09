@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.6 2007/07/23 20:17:34 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.7 2007/11/09 20:24:50 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -50,6 +50,39 @@ function maketoc_postparsefilter( &$pData, &$pFilterHash ) {
 		// get all headers into an array
 		preg_match_all( "/<h(\d)[^>]*>(.*?)<\/h\d>/i", $pData, $headers );
 
+		// clumsy way of finding out if index is set. since we can't allow 
+		// duplicate settings of index in one page, we either index everything 
+		// or nothing.
+		foreach( $params as $p ) {
+			if( empty( $index )) {
+				$index = ( in_array( 'index', array_keys( $p )));
+			}
+		}
+
+		if( $index ) {
+			$counter = array();
+			foreach( array_keys( $headers[2] ) as $key ) {
+				$level = $headers[1][$key];
+				if( empty( $counter[$level] )) {
+					$counter[$level] = 1;
+				} elseif( $level == $headers[1][$key - 1] ) {
+					$counter[$level]++;
+				} elseif( $level < $headers[1][$key - 1] ) {
+					$counter[$level] = $counter[$level] + 1;
+				} else {
+					$counter[$level] = 1;
+				}
+
+				$index = '';
+				foreach( $counter as $k => $c ) {
+					if( $k <= $level ) {
+						$index .= "$c.";
+					}
+				}
+				$headers[2][$key] = $index.' '.$headers[2][$key];
+			}
+		}
+
 		// remove any html tags from the output text and generate link ids
 		foreach( $headers[2] as $output ) {
 			$outputs[] = $temp = preg_replace( "/<[^>]*>/", "", $output );
@@ -60,7 +93,7 @@ function maketoc_postparsefilter( &$pData, &$pFilterHash ) {
 		// insert the <a name> tags in the right places
 		foreach( $headers[0] as $k => $header ) {
 			$reconstructed = "<h{$headers[1][$k]} id=\"{$ids[$k]}\">{$headers[2][$k]}</h{$headers[1][$k]}>";
-			$pData = preg_replace( "/".preg_quote( $header, "/" )."/", $reconstructed, $pData );
+			$pData = str_replace( $header, $reconstructed, $pData );
 		}
 
 		if( !empty( $outputs ) ) {
@@ -107,7 +140,7 @@ function maketoc_create_list( $pTocHash, $pParams ) {
 	$ignore = 0;
 	if( !isset( $pParams['include'] ) || $pParams['include'] != 'all' ) {
 		for( $i = 0; $i < count( $header_count ); $i++ ) {
-			$ignore += $pTocHash['header_count'][$i];
+			$ignore += $header_count[$i];
 		}
 	}
 
@@ -254,8 +287,13 @@ function data_maketoc_help() {
 				<td>'.tra( "key words").'<br />('.tra("optional").')</td>
 				<td>'.tra( 'Setting this to dropdown will create a dropdown instead of the default nested list of headings.' ).'</td>
 			</tr>
+			<tr class="odd">
+				<td>index</td>
+				<td>'.tra( "boolean").'<br />('.tra("optional").')</td>
+				<td>'.tra( 'Add index numbers to your headers and the page contents.' ).'</td>
+			</tr>
 		</table>'.
-		tra("Example: ").'{maketoc maxdepth=3 include=all backtotop=true}';
+		tra("Example: ").'{maketoc maxdepth=3 include=all backtotop=true index=true}';
 	return $help;
 }
 ?>
