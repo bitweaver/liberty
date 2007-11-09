@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/header_inc.tpl,v 1.12 2007/11/08 21:59:35 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/header_inc.tpl,v 1.13 2007/11/09 17:23:47 squareing Exp $ *}
 {strip}
 {if $structureInfo}
 	<link rel="index" title="{tr}Contents{/tr}" href="index.php?structure_id={$structureInfo.root_structure_id}" />
@@ -23,5 +23,10 @@ $gBitThemes->loadJavascript(); *}
 		LibertyComment.SORT_MODE = "{$comments_sort_mode}";
 		LibertyComment.BROWSER = "{$gBrowserInfo.browser}";
 	</script>
+{/if}
+
+{if $loadDynamicTree || $attachments_ajax}
+	Deprecated use of $loadDynamicTree or $attachments_ajax<br />
+	use: $gBitThemes-&gt;loadJavascript(); instead<br />
 {/if}
 {/strip}
