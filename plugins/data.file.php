@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -146,12 +146,12 @@ function data_file_help() {
 				<td>'.tra( "If you are attaching a file and you only want to display the description and not the image that goes with it, use: output=desc" ).'</td>
 			</tr>'
 			.'<tr class="odd">'
-				.'<td>'.tra( "styling" ).'</td>'
+				.'<td>styling</td>'
 				.'<td>'.tra( "string").'<br />'.tra("(optional)").'</td>'
 				.'<td>'.tra( "Multiple styling options available: padding, margin, background, border, text-align, color, font, font-size, font-weight, font-family, align. Please view CSS guidelines on what values these settings take.").'</td>'
 			.'</tr>'
 			.'<tr class="even">'
-				.'<td>'.tra( "download" ).'</td>'
+				.'<td>download</td>'
 				.'<td>'.tra( "boolean").'<br />'.tra("(optional)").'</td>'
 				.'<td>'.tra( "When you set download, clicking on the file will directly download it as opposed to linking to the file page." ).'</td>'
 			.'</tr>'
