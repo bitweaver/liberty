@@ -1,4 +1,4 @@
-/* Dependencies: ajax.js, MochiKit Base Async */
+/* Dependencies: MochiKit Base Async, BitAjax.j  */
 LibertyAttachment = {
 	"uploader_under_way":0,
 	
