@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.323 2007/11/01 18:17:25 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.324 2007/11/11 08:50:24 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2576,8 +2576,13 @@ class LibertyContent extends LibertyBase {
 
 		$ret = FALSE;
 		if( @BitBase::verifyId( $pContentId ) ) {
-			$subdir = $pContentId % 1000;
-			$path = LibertyContent::getCacheBasePath().$subdir.'/'.$pContentId.'/';
+			if ($gBitSystem->isFeatureActive( 'liberty_flat_cache' )) {
+				$subdir = floor($pContentId / 1000);
+				$path = LibertyContent::getCacheBasePath().$subdir.'/';
+			} else {
+				$subdir = $pContentId % 1000;
+				$path = LibertyContent::getCacheBasePath().$subdir.'/'.$pContentId.'/';
+			}
 			if( is_dir( $path ) || mkdir_p( $path ) ) {
 				$ret = $path;
 			}
