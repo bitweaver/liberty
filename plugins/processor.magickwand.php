@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.12 2007/09/25 15:53:37 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.13 2007/11/11 05:48:32 spiderr Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -29,7 +29,7 @@ function liberty_magickwand_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 			$rez =  empty( $pFileHash['max_width'] ) || $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION ? 250 : 72;
 			MagickSetResolution( $magickWand, 300, 300 );
 		}
-		if( $error = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand ) ) {
+		if( !$gBitSystem->isFeatureActive( 'liberty_thumbnail_pdf' ) || $error = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand ) ) {
 			// $pFileHash['error'] = $error;
 			$destUrl = liberty_process_generic( $pFileHash, FALSE );
 		} else {
