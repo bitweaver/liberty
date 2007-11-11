@@ -109,6 +109,11 @@ $formCaptcha = array(
 $gBitSmarty->assign( 'formCaptcha', $formCaptcha );
 
 $formImageFeatures = array(
+	"liberty_thumbnail_pdf" => array(
+		'label' => 'Create PDF Thumbnails',
+		'note' => 'Create thumbnails from PDF files. This is a <strong>very resource intensive process</strong>. Even the simplest text files can take up hundreds of MB of memory to convert. Additionally, any PDF files that can not be converted will cause the upload process to be aborted without the uploaded file being stored on the server. This option requires that you have <strong>GhostScript</strong> installed.',
+		'page' => '',
+	),
 	"liberty_jpeg_originals" => array(
 		'label' => 'JPEG Originals',
 		'note' => 'Automatically create JPEG versions of original images named \'original.jpg\' in the attachment directory with other thumbnails.',

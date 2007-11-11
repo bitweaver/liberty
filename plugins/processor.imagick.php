@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.5 2007/09/25 15:36:09 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.6 2007/11/11 09:19:42 squareing Exp $
  *
  * Image processor - extension: php-imagick
  * @package  liberty
@@ -41,9 +41,15 @@ function liberty_imagick_rotate_image( &$pFileHash ) {
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
 function liberty_imagick_can_thumbnail_image( $pMimeType ) {
+	global $gBitSystem;
 	$ret = FALSE;
 	if( !empty( $pMimeType ) ) {
-		$ret = preg_match( '/(^image|pdf$|postscript$)/i', $pMimeType );
+		// allow images, pdf, and postscript thumbnailing (eps, ai, etc...)
+		if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_pdf' )) {
+			$ret = preg_match( '/(^image|pdf$|postscript$)/i', $pMimeType );
+		} else {
+			$ret = preg_match( '/^image/i', $pMimeType );
+		}
 	}
 	return $ret;
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.13 2007/11/11 05:48:32 spiderr Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.14 2007/11/11 09:19:42 squareing Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -29,7 +29,7 @@ function liberty_magickwand_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 			$rez =  empty( $pFileHash['max_width'] ) || $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION ? 250 : 72;
 			MagickSetResolution( $magickWand, 300, 300 );
 		}
-		if( !$gBitSystem->isFeatureActive( 'liberty_thumbnail_pdf' ) || $error = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand ) ) {
+		if( $error = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand ) ) {
 			// $pFileHash['error'] = $error;
 			$destUrl = liberty_process_generic( $pFileHash, FALSE );
 		} else {
@@ -166,10 +166,15 @@ function liberty_magickwand_check_error( $pResult, $pWand ) {
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
 function liberty_magickwand_can_thumbnail_image( $pMimeType ) {
+	global $gBitSystem;
 	$ret = FALSE;
 	if( !empty( $pMimeType ) ) {
 		// allow images, pdf, and postscript thumbnailing (eps, ai, etc...)
-		$ret = preg_match( '/(^image|pdf$|postscript$)/i', $pMimeType );
+		if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_pdf' )) {
+			$ret = preg_match( '/(^image|pdf$|postscript$)/i', $pMimeType );
+		} else {
+			$ret = preg_match( '/^image/i', $pMimeType );
+		}
 	}
 	return $ret;
 }
@@ -184,7 +189,7 @@ function liberty_magickwand_can_thumbnail_image( $pMimeType ) {
  */
 function liberty_magickwand_convert_colorspace_image( &$pFileHash, $pColorSpace, $pThumbnail = false ) {
 	$ret = FALSE;
-    if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
+	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
 		$magickWand = NewMagickWand();
 		if( $error = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand ) ) {
 			bit_log_error( "MagickReadImage Failed:$error ( $pFileHash[source_file] )" );
