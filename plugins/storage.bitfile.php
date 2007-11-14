@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.44 $
+ * @version  $Revision: 1.45 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -25,7 +25,7 @@ $pluginParams = array (
 	'edit_help'          => 'This file will be uploaded to your personal storage area.<br />After selecting the file you want to upload, please return to the edit area and click the save button.'
 );
 
-if( isset( $gBitSystem ) ) {
+if( isset( $gBitSystem )) {
 	if ($gBitSystem->getConfig("liberty_attachment_style") == "multiple") {
 		$pluginParams['edit_label'] = 'Upload File(s)';
 		$pluginParams['edit_help'] =  'The file(s) will be uploaded to your personal storage area.<br />After selecting the file(s) you want to upload, please return to the edit area and click the save button.';
@@ -39,10 +39,6 @@ if( isset( $gBitSystem ) ) {
 			'</script>';
 		$gBitSmarty->assign( 'loadMultiFile', TRUE );
 	} elseif( $gBitSystem->getConfig( 'liberty_attachment_style' ) == "ajax" ) {
-		$divid = $gBitSmarty->get_template_vars( 'upload_div_id' );
-		if( empty( $divid )) {
-			$divid = 0;
-		}
 		$pluginParams['edit_help'] =  'The file(s) will be uploaded to your personal storage area.<br />After selecting the file you want to upload an attachment ID will be displayed for you to use in your content.';
 		$pluginParams['edit_field'] = '<input type="file" name="upload" size="40" id="upload" onchange="javascript:LibertyAttachment.uploader(this, \'{$smarty.const.LIBERTY_PKG_URL}attachment_uploader.php\',\'{tr}Please wait for the current upload to finish.{/tr}\', \'liberty_upload_frame\');" />'.
 			'{include file="bitpackage:liberty/attachment_uploader_inc.tpl"}';
