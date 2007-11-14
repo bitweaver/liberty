@@ -1,6 +1,6 @@
 {strip}
 {* don't replicate the surrounding div when inserting ajax content *}
-{if !$libertyUploader}
+{if !$gBitThemes->isAjaxRequest()}
 	<div id="edit_storage_list{if !$uploadTab}_tab{/if}">
 {/if}
 {if $gContent->mStorage}
@@ -38,8 +38,8 @@
 							{if $libertyUploader || $gBitSystem->getConfig('liberty_attachment_style') == 'ajax'}
 								{capture name=urlArgs}{$attachmentBaseArgs}content_id={$gContent->mContentId}{if empty($gContent->mContentId)}{foreach from=$gContent->mStorage key=key item=val}&amp;STORAGE[existing][{$val.attachment_id}]={$val.attachment_id}{/foreach}{/if}{/capture}
 								<a href="javascript:
-									BitAjax.updater('edit_storage_list', '{$smarty.const.LIBERTY_PKG_URL}ajax_edit_storage.php', '{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}');
-									BitAjax.updater('edit_storage_list_tab', '{$smarty.const.LIBERTY_PKG_URL}ajax_edit_storage.php', '{$smarty.capture.urlArgs}');">
+									BitAjax.updater('edit_storage_list_tab', '{$smarty.const.LIBERTY_PKG_URL}ajax_edit_storage.php', '{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}');
+									BitAjax.updater('edit_storage_list', '{$smarty.const.LIBERTY_PKG_URL}ajax_edit_storage.php', '{$smarty.capture.urlArgs}');">
 										{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}
 								</a>
 							{else}
@@ -52,7 +52,7 @@
 		</table>
 	</div>
 {/if}
-{if !$libertyUploader}
+{if !$gBitThemes->isAjaxRequest()}
 	</div>
 {/if}
 {/strip}
