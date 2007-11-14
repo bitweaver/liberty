@@ -1,4 +1,8 @@
 {strip}
+{* this condition is a temporary hack to disable ajax uploads on new content to avoid bogus entires in liberty_attachments.
+ * we all want to see this working asap and are thinking of the best way to fix this - xing - Wednesday Nov 14, 2007   18:38:18 CET *}
+{if $gBitSystem->getConfig('liberty_attachment_style') != 'ajax' || $gContent->isValid()}
+
 {if $gBitUser->hasPermission('p_liberty_attach_attachments') }
 	{php} include (LIBERTY_PKG_PATH."edit_storage_inc.php"); {/php}
 	{foreach from=$gLibertySystem->mPlugins item=plugin key=guid}
@@ -16,6 +20,9 @@
 {/if}
 
 {include file="bitpackage:liberty/edit_storage_list.tpl" uploadTab=TRUE}
+
+{/if}
+{* end of annoying ajax upload prevention hack *}
 
 {* The new attachment browser is supposd to only provide an easy means of
 viewing existing content that can be inserted into the contnet using
