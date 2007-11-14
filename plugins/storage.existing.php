@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -27,7 +27,7 @@ if( isset( $gBitSystem ) ) {
 function existing_files_verify( &$pStoreRow ) {
 	global $gBitUser, $gContent;
 
-	if ( @LibertyContent::verifyId( $gContent->mContentId ) ) {
+	if( @BitBase::verifyId( $gContent->mContentId ) ) {
 
 		// Pull all the data on the attachment in question
 		$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` a ".
@@ -44,7 +44,7 @@ function existing_files_verify( &$pStoreRow ) {
 			if( $gBitUser->isAdmin() || $pStoreRow['user_id'] == $gBitUser->mUserId ) {
 
 				// Verify that it isn't attached already
-				if ( $pStoreRow['content_id'] == NULL ) {
+				if( empty( $pStoreRow['content_id'] )) {
 					return( TRUE );
 				}
 			}
@@ -57,7 +57,7 @@ function existing_files_verify( &$pStoreRow ) {
 function existing_files_store( &$pStoreRow ) {
 	global $gBitSystem, $gContent;
 
-	if ( @LibertyContent::verifyId( $gContent->mContentId ) ) {
+	if ( @BitBase::verifyId( $gContent->mContentId ) ) {
 		// Update the attachments content_id
 		$query = "UPDATE `".BIT_DB_PREFIX."liberty_attachments` SET ".
 			"content_id = ? WHERE attachment_id = ?";
