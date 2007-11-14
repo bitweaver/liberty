@@ -20,7 +20,8 @@
 {/if}
 
 {include file="bitpackage:liberty/edit_storage_list.tpl" uploadTab=TRUE}
-
+{else}
+	{tr}You need to store the content and edit it to upload attachments. We are working on a solution to resolve this limitation.{/tr}
 {/if}
 {* end of annoying ajax upload prevention hack *}
 
