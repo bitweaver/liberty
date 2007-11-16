@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.14 2007/11/11 09:19:42 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.15 2007/11/16 11:16:33 spiderr Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -34,8 +34,9 @@ function liberty_magickwand_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 			$destUrl = liberty_process_generic( $pFileHash, FALSE );
 		} else {
 			if( MagickGetImageColorspace( $magickWand ) == MW_CMYKColorspace ) {
-				MagickRemoveImageProfile( $magickWand, "ICC" );
-				MagickSetImageProfile( $magickWand, 'ICC', file_get_contents( UTIL_PKG_PATH.'icc/USWebCoatedSWOP.icc' ) );	
+//				These two lines are a hack needed for version of Ghostscript less that 8.60
+//				MagickRemoveImageProfile( $magickWand, "ICC" );
+//				MagickSetImageProfile( $magickWand, 'ICC', file_get_contents( UTIL_PKG_PATH.'icc/USWebCoatedSWOP.icc' ) );
 				MagickProfileImage($magickWand, 'ICC', file_get_contents( UTIL_PKG_PATH.'icc/srgb.icm' ) ); 
 				MagickSetImageColorspace( $magickWand, MW_RGBColorspace );
 				$pFileHash['colorspace_conversion'] = TRUE;
