@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.16 2007/11/01 21:58:14 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.17 2007/11/16 14:52:51 wjames5 Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -658,7 +658,14 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 
 	// allow custom selecteion of thumbnail sizes
 	if( empty( $pFileHash['thumbnail_sizes'] ) ) {
-		$pFileHash['thumbnail_sizes'] = array( 'icon', 'avatar', 'small', 'medium', 'large' );
+		$pFileHash['thumbnail_sizes'] = array();
+		if ( isset( $gThumbSizes ) ){
+			foreach( array_keys( $gThumbSizes ) as $key ) {
+				array_push(	$pFileHash['thumbnail_sizes'], $key );
+			}
+		}else{
+			array_push( $pFileHash['thumbnail_sizes'], 'icon', 'avatar', 'small', 'medium', 'large' );
+		}
 	}
 
 	if(
