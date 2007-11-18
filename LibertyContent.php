@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.326 2007/11/13 04:28:40 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.327 2007/11/18 17:02:57 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1763,7 +1763,7 @@ class LibertyContent extends LibertyBase {
 	* @return string Formated URL address to display the page.
 	*/
 	function getDisplayUri( $pContentId=NULL, $pMixed=NULL ) {
-		return BIT_ROOT_URI.substr( $this->getDisplayUrl( $pContentId, $pMixed ), substr( BIT_ROOT_URL ) );
+		return BIT_ROOT_URI.substr( $this->getDisplayUrl( $pContentId, $pMixed ), strlen( BIT_ROOT_URL ) );
 	}
 
 	/**
@@ -2531,13 +2531,12 @@ class LibertyContent extends LibertyBase {
 	 * in your BitPackage.php file if you need to add more indexable words from files other than
 	 * tiki_content and users_users.
 	 */
-
 	function setIndexData( $pContentId = 0 ) {
 		global $gBitSystem ;
 		if ( $pContentId == 0 ) $pContentId = $this->mContentId;
-		$sql = "SELECT lc.`title`, lc.`data`, lcds.`data` AS `summary`, uu.`login`, uu.`real_name`, lcds.`data` AS `summary`
-				FROM `" . BIT_DB_PREFIX . "liberty_content` lc 
-					INNER JOIN `" . BIT_DB_PREFIX . "users_users` uu ON uu.`user_id`    = lc.`user_id` 
+		$sql = "SELECT lc.`title`, lc.`data`, lcds.`data` AS `summary`, uu.`login`, uu.`real_name`
+				FROM `" . BIT_DB_PREFIX . "liberty_content` lc
+					INNER JOIN `" . BIT_DB_PREFIX . "users_users` uu ON uu.`user_id`    = lc.`user_id`
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`data_type`='summary')
 				WHERE lc.`content_id` = ?" ;
 		$res = $gBitSystem->mDb->getRow($sql, array($pContentId));
