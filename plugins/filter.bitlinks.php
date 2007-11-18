@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.12 2007/11/01 11:22:31 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.13 2007/11/18 12:00:24 lsces Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -128,6 +128,7 @@ function bitlinks_expungefilter( &$pData, &$pFilterHash, $pObject ) {
 /**
  * BitLinks class
  * 
+ * @package liberty
  * @uses BitBase
  */
 class BitLinks extends BitBase {

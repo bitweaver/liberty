@@ -1,14 +1,17 @@
 <?php
 /**
- * $Id: edit_help_inc.php,v 1.18 2007/07/24 08:12:21 lsces Exp $
+ * $Id: edit_help_inc.php,v 1.19 2007/11/18 12:00:32 lsces Exp $
  * edit_help_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.18 $
+ * @version  $Revision: 1.19 $
  * @package  liberty
  * @subpackage functions
  */
 
+/**
+ * required setup
+ */
 global $gLibertySystem, $gBitSmarty;
 require_once( '../bit_setup_inc.php' );
 

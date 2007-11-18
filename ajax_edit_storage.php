@@ -1,9 +1,13 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/ajax_edit_storage.php,v 1.3 2007/10/31 16:17:04 squareing Exp $
- * @version  $Revision: 1.3 $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/ajax_edit_storage.php,v 1.4 2007/11/18 12:00:30 lsces Exp $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage functions
+ */
+
+/**
+ * required setup
  */
 global $gContent;
 include_once( '../bit_setup_inc.php' );
