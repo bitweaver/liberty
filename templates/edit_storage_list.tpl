@@ -13,6 +13,12 @@
 				<th scope="col" style="width:30%;" title="{tr}Actions{/tr}">{tr}Actions{/tr}</th>
 			</tr>
 
+			<tr>
+				<td></td><td></td>
+				<td style="text-align:right"><label>{tr}No {$primary_label|default:"Primary"}{/tr}:&nbsp;<input type="radio" name="liberty_attachments[primary]" value="none" {if empty($gContent->mInfo[primary])}checked="checked"{/if} /></label>
+			<tr>
+
+
 			{foreach from=$gContent->mStorage item=storage key=attachmentId name=atts}
 				<tr class="{cycle values="odd,even"}">
 					<td style="text-align:center;">

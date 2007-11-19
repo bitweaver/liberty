@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.136 2007/11/01 17:59:03 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.137 2007/11/19 19:24:58 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -118,7 +118,7 @@ class LibertyAttachable extends LibertyContent {
 	function extractMetaData( &$pParamHash, &$pFile ) {
 
 		// Process a JPEG , jpeg_metadata_tk REQUIRES short_tags because that is the way it was written. feel free to fix something. XOXO spiderr
-		if( ini_get( 'short_open_tag' ) && function_exists( 'exif_read_data' ) && !empty( $pFile['tmp_name'] ) && stripos( $pFile['type'], 'jpeg' ) !== FALSE ) {
+		if( ini_get( 'short_open_tag' ) && function_exists( 'exif_read_data' ) && !empty( $pFile['tmp_name'] ) && strpos( strtolower($pFile['type']), 'jpeg' ) !== FALSE ) {
 			$exifHash = @exif_read_data( $pFile['tmp_name'], 0, true);
 			//vd( $exifHash );
 
@@ -291,19 +291,33 @@ class LibertyAttachable extends LibertyContent {
 			}
 		}
 
-		// primary attachment
-		if( !@BitBase::verifyId( $pParamHash['liberty_attachments']['primary'] )) {
+		// primary attachment. Allow 'none' to clear the primary.
+		if( !@BitBase::verifyId( $pParamHash['liberty_attachments']['primary'] ) && ( empty( $pParamHash['liberty_attachments']['primary'] ) || $pParamHash['liberty_attachments']['primary'] != 'none' ) ) {
 			$pParamHash['liberty_attachments']['primary'] = NULL;
 		}
 
 		return ( count( $this->mErrors ) == 0 );
 	}
 
-	// Things to be stored should be shoved in the array $pParamHash['STORAGE']
+	/* store -- Stores any attachments
+	 *
+	 * pass $pParamHash['liberty_attachable']['skip_content_store'] == TRUE
+	 * to avoid the underlying content store and simply store the attachments.
+	 *
+	 * verify() will shove things to store into $pParamHash['STORAGE'] to be
+	 * gobbled up in this function.
+	 *
+	 * pass $pParamHash['liberty_attachable']['auto_primary'] == FALSE to turn off the auto
+	 * primary on first attachment feature for a content type.
+	 *
+	 * @param hash $pParamHash The hash of arguments
+	 *
+	 */
 	function store( &$pParamHash ) {
 		global $gLibertySystem, $gBitSystem, $gBitUser;
 		$this->mDb->StartTrans();
 		if( LibertyAttachable::verify( $pParamHash ) && ( isset($pParamHash['skip_content_store']) ||  LibertyContent::store( $pParamHash ) ) ) {
+
 			if(!empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] ) ) {
 				foreach( array_keys( $pParamHash['STORAGE'] ) as $guid ) {
 					$storeRows = &$pParamHash['STORAGE'][$guid]; // short hand variable assignment
@@ -315,7 +329,7 @@ class LibertyAttachable extends LibertyContent {
 						$storeRow = &$pParamHash['STORAGE'][$guid][$key];
 						$storeRow['plugin_guid'] = $guid;
 
-						if (empty($pParamHash['content_id'])) {
+						if (!@BitBase::verifyId($pParamHash['content_id'])) {
 							$storeRow['content_id'] = NULL;
 						} else {
 							$storeRow['content_id'] = $pParamHash['content_id']; // copy in content_id
@@ -378,7 +392,11 @@ class LibertyAttachable extends LibertyContent {
 			}
 
 			// set the primary attachment id
-			$this->setPrimaryAttachment( $pParamHash['liberty_attachments']['primary'], ( @BitBase::verifyId( $storeRow['content_id'] ) ? $storeRow['content_id'] : NULL ));
+			$this->setPrimaryAttachment(
+				$pParamHash['liberty_attachments']['primary'],
+				$pParamHash['content_id'],
+				empty( $pParamHash['liberty_attachments']['auto_primary'] ) || $pParamHash['liberty_attachments']['auto_primary'] ? TRUE : FALSE
+				);
 		}
 		$this->mDb->CompleteTrans();
 
@@ -554,37 +572,44 @@ class LibertyAttachable extends LibertyContent {
 	}
 
 	/**
-	 * setPrimary will set is_primary 'y' for the specified attachment and will ensure that all others are set to 'n'
+	 * setPrimaryAttachment will set is_primary 'y' for the specified
+	 * attachment and will ensure that all others are set to 'n'
 	 * 
-	 * @param numeric $pAttachmentId attachment id of the item we want to set primary
-	 * @param numeric $pContentId content id the attachment belongs to
-	 *                this is only needed when we don't have an attachment id 
-	 *                which only happens when the first attachment is uploaded
+	 * @param mixed   $pAttachmentId attachment id of the item we want to
+	 *				  set as the primary attachment. Use 'none' to clear.
+	 * @param numeric $pContentId content id we are working with.
+	 * @param boolean $pAutoPrimary automatically set primary if there is only
+	 *				  one attachment. Defaults to true.
 	 * @access public
 	 * @return TRUE on success, FALSE on failure
 	 */
-	function setPrimaryAttachment( $pAttachmentId = NULL, $pContentId = NULL ) {
+	function setPrimaryAttachment( $pAttachmentId = NULL, $pContentId = NULL, $pAutoPrimary = TRUE ) {
+		global $gBitSystem;
+
 		$ret = FALSE;
-		// if no attachment id has been given, we'll check to see if we already have a primary attachment set
-		if( !@BitBase::verifyId( $pAttachmentId ) && @BitBase::verifyId( $pContentId )) {
-			$query = "
-				SELECT `attachment_id`
-				FROM `".BIT_DB_PREFIX."liberty_content` lc
-				INNER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON( lc.`content_id` = la.`content_id` )
-				WHERE lc.`content_id` = ?";
-			$pAttachmentId = $this->mDb->getOne( $query, array( $pContentId ));
+
+		// If we are not given an attachment id but we where told the
+		// content_id and we are supposed to auto set the primary then
+		// figure out which one it is
+		if( !@BitBase::verifyId( $pAttachmentId ) &&
+		    ( empty( $pAttachmentId ) || $pAttachmentId != 'none' ) &&
+		    @BitBase::verifyId( $pContentId ) &&
+		    $pAutoPrimary) {
+				$query = "
+					SELECT `attachment_id`
+					FROM `".BIT_DB_PREFIX."liberty_content` lc
+					INNER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON( lc.`content_id` = la.`content_id` )
+					WHERE lc.`content_id` = ?";
+				$pAttachmentId = $this->mDb->getOne( $query, array( $pContentId ));
 		}
 
-		// we have been given an attachment_id. we'll use this to set the primary attachment_id
+		// If we have an attachment_id we'll set it to this
 		if( @BitBase::verifyId( $pAttachmentId )) {
 			// get attachment we want to set primary
 			$attachment = $this->getAttachment( $pAttachmentId );
 
-			// set is_primary as NULL first - there can only be one
-			$query = "
-				UPDATE `".BIT_DB_PREFIX."liberty_attachments`
-				SET `is_primary` = ? WHERE `content_id` = ?";
-			$this->mDb->query( $query, array( NULL, $attachment['content_id'] ));
+			// Clear old primary. There can only be one!
+			$this->clearPrimaryAttachment($attachment['content_id']);
 
 			// now update the attachment to is_primary
 			$query = "
@@ -592,6 +617,34 @@ class LibertyAttachable extends LibertyContent {
 				SET `is_primary` = ? WHERE `attachment_id` = ?";
 			$this->mDb->query( $query, array( 'y', $pAttachmentId ));
 
+			$ret = TRUE;
+		}
+		// Otherwise, are we supposed to clear the primary entirely?
+		else if (@BitBase::verifyId( $pContentId ) &&
+				 !empty($pAttachmentId) && $pAttachmentId == 'none') {
+			// Okay then do the job
+			$this->clearPrimaryAttachment($pContentId);
+		}
+
+
+		return $ret;
+	}
+
+	/*
+	 * clearPrimaryAttachment will remove the primary flag for all attachments
+	 * with the given content_id
+	 *
+	 * @param numeric the content_id for which primary should be unset.
+	 * @return TRUE on succes
+	 */
+	function clearPrimaryAttachment( $pContentId ) {
+		$ret = FALSE;
+
+		if (@BitBase::verifyId($pContentId)) {
+			$query = "
+				UPDATE `".BIT_DB_PREFIX."liberty_attachments`
+				SET `is_primary` = ? WHERE `content_id` = ?";
+			$this->mDb->query( $query, array( NULL, $pContentId ));
 			$ret = TRUE;
 		}
 
