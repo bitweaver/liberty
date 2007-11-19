@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.15 2007/11/16 11:16:33 spiderr Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.16 2007/11/19 15:55:26 nickpalmer Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -52,7 +52,7 @@ function liberty_magickwand_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 			// this does not seem to be needed. magickwand will work out what to do by using the destination file extension
 			//MagickSetImageFormat( $magickWand, $format );
 
-			if( empty( $pFileHash['max_width'] ) || empty( $pFileHash['max_height'] ) || $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION || $pFileHash['max_height'] == MAX_THUMBNAIL_DIMENSION ) {
+			if( ( empty( $pFileHash['max_width'] ) && empty( $pFileHash['max_height'] ) ) || ( !empty( $pFileHash['max_width'] ) && $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION ) || ( !empty( $pFileHash['max_height'] ) && $pFileHash['max_height'] == MAX_THUMBNAIL_DIMENSION ) ) {
 				$pFileHash['max_width'] = $iwidth;
 				$pFileHash['max_height'] = $iheight;
 			} elseif(( $iwidth / $iheight ) < 1 && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] )) {
@@ -62,6 +62,8 @@ function liberty_magickwand_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 				$pFileHash['max_width'] = round( ($iwidth / $iheight) * $pFileHash['max_height'] );
 			} elseif( !empty( $pFileHash['max_width'] ) ) {
 				$pFileHash['max_height'] = round(( $iheight / $iwidth ) * $pFileHash['max_width'] );
+			} elseif( !empty( $pFileHash['max_height'] ) ) {
+				$pFileHash['max_width'] = round(( $iwidth / $iheight ) * $pFileHash['max_height'] );
 			}
 
 			// Make sure not to scale up

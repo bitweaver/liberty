@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.17 2007/11/16 14:52:51 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.18 2007/11/19 15:55:26 nickpalmer Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -656,15 +656,12 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 	global $gBitSystem, $gThumbSizes;
 	$resizeFunc = liberty_get_function( 'resize' );
 
-	// allow custom selecteion of thumbnail sizes
+	// allow custom selection of thumbnail sizes
 	if( empty( $pFileHash['thumbnail_sizes'] ) ) {
-		$pFileHash['thumbnail_sizes'] = array();
 		if ( isset( $gThumbSizes ) ){
-			foreach( array_keys( $gThumbSizes ) as $key ) {
-				array_push(	$pFileHash['thumbnail_sizes'], $key );
-			}
+			$pFileHash['thumbnail_sizes'] = array_keys($gThumbSizes);
 		}else{
-			array_push( $pFileHash['thumbnail_sizes'], 'icon', 'avatar', 'small', 'medium', 'large' );
+			$pFileHash['thumbnail_sizes'] = array( 'icon', 'avatar', 'small', 'medium', 'large' );
 		}
 	}
 
@@ -697,8 +694,20 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		if( isset( $gThumbSizes[$thumbSize] )) {
 			$pFileHash['dest_base_name'] = $thumbSize;
 			$pFileHash['name'] = $thumbSize.$destExt;
-			$pFileHash['max_width'] = $gThumbSizes[$thumbSize]['width'];
-			$pFileHash['max_height'] = $gThumbSizes[$thumbSize]['height'];
+			if (!empty($gThumbSizes[$thumbSize]['width'])) {
+				$pFileHash['max_width'] = $gThumbSizes[$thumbSize]['width'];
+			}
+			else {
+				// Have to unset since we reuse $pFileHash
+				unset( $pFileHash['max_width'] );
+			}
+			if (!empty($gThumbSizes[$thumbSize]['height'])) {
+				$pFileHash['max_height'] = $gThumbSizes[$thumbSize]['height'];
+			}
+			else {
+				// Have to unset since we reuse $pFileHash
+				unset( $pFileHash['max_height'] );
+			}
 			$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash, TRUE );
 		}
 	}
