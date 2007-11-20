@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.16 $
+ * @version  $Revision: 1.17 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.flashvideo.php,v 1.16 2007/10/10 14:23:49 squareing Exp $
+// $Id: data.flashvideo.php,v 1.17 2007/11/20 10:14:09 squareing Exp $
 
 /**
  * definitions
@@ -105,7 +105,7 @@ function data_flashvideo( $pData, $pParams ) { // NOTE: The original plugin had 
 
 		$sizes = array( 'small', 'medium', 'large', 'huge', 'original' );
 		if( !empty( $pParams['view'] ) && in_array( $pParams['view'], $sizes )) {
-			$wrapper['description'] .= ( !empty( $wrapper['description'] ) ? '' : '' );
+			$wrapper['description'] .= ( !empty( $wrapper['description'] ) ? '<br />' : '' );
 			$wrapper['description'] .= '<a href="'.$ti->mInfo['display_url'].'&amp;size='.$pParams['view'].'">'.tra( "View larger version" ).'</a>';
 		}
 
