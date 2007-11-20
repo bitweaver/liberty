@@ -3,7 +3,7 @@
  * help_format_tikiwiki_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage functions
  */
@@ -194,12 +194,12 @@ if( $cache->isCached( $cacheFile, filemtime( __FILE__ ))) {
 		),
 		'Example 4' => array(
 			'data' =>
-'{| style="background:yellow; color:green"
+'{| style="background:yellow;color:green"
 |+ Table with many colours
 |-
 | abc
-| colspan="2" style="text-align:center; background:lightblue;" | defghi
-|- style="background:red; color:white"
+| colspan="2" style="text-align:center;background:lightblue;" | defghi
+|- style="background:red;color:white"
 | jkl
 | mno
 | pqr
