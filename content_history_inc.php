@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage functions
  */
@@ -75,7 +75,7 @@ if( isset( $_REQUEST["delete"] ) && isset( $_REQUEST["hist"] )) {
 
 } elseif( @BitBase::verifyId( $_REQUEST["rollback"] )) {
 	$gContent->verifyPermission( !empty( $rollbackPerm ) ? $rollbackPerm : $gContent->mEditContentPerm );
-	if( $gContent->rollbackVersion( $_REQUEST["rollback"] )) {
+	if( $gContent->rollbackVersion( $_REQUEST["rollback"], $_REQUEST["rollback_comment"] )) {
 		bit_redirect( $gContent->getDisplayUrl() );
 	}
 }

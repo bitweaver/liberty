@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.327 2007/11/18 17:02:57 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.328 2007/11/20 09:57:17 jht001 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -613,7 +613,7 @@ class LibertyContent extends LibertyBase {
 			if( $res = $this->mDb->getRow($query,array( $this->mContentId, $pVersion ) ) ) {
 				$res['edit_comment'] = 'Rollback to version '.$pVersion.' by '.$gBitUser->getDisplayName();
 				if (!empty($comment)) {
-					$res['edit_comment'] .=" $comment";
+					$res['edit_comment'] .=": $comment";
 				}
 				// JHT 2005-06-19_15:22:18
 				// set ['force_history'] to
