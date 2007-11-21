@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.19 2007/11/20 02:14:30 spiderr Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.20 2007/11/21 11:43:10 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -750,8 +750,7 @@ function liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl = NULL, $pThumbSize
 	foreach( $pThumbSizes as $size ) {
 		foreach( $exts as $ext ) {
 			if( empty( $ret[$size] ) && is_readable( BIT_ROOT_PATH.dirname( $pFilePath ).'/'.$size.'.'.$ext )) {
-				$path = str_replace( "//", "/", dirname( $pFilePath ).'/'.$size.'.'.$ext );
-				$ret[$size] = BIT_ROOT_URL.$path;
+				$ret[$size] = str_replace( "//", "/", BIT_ROOT_URL.dirname( $pFilePath ).'/'.$size.'.'.$ext );
 			}
 		}
 
