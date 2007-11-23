@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.40 $
+ * @version  $Revision: 1.41 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.40 2007/10/25 08:53:41 jht001 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.41 2007/11/23 19:21:56 jht001 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -250,7 +250,10 @@ if (empty($gComment)) {
 }
 
 $currentPage = !empty( $_REQUEST['comment_page'] ) ? $_REQUEST['comment_page'] : 1;
-
+if ($currentPage < 1) {
+	$currentPage = 1;
+	}
+	
 #logic to support displaying a single comment -- used when we need a URL pointing to a comment
 if (!empty($_REQUEST['view_comment_id'])) {
 	$commentOffset = $gComment->getNumComments_upto($_REQUEST['view_comment_id']);
@@ -276,8 +279,12 @@ if( !@BitBase::verifyId( $commentsParentId ) ) {
 	} else {
 		$parents = $commentsParentId;
 	}
-	$comments = $gComment->getComments( $parents, $maxComments, $commentOffset, $comments_sort_mode, $comments_display_style );
 	$numComments = $gComment->getNumComments( $commentsParentId );
+	if ($commentOffset > $numComments) {
+		$commentOffset = $numComments / $maxComments;
+		$currentPage = ceil( $commentOffset+1 / $maxComments );
+		}
+	$comments = $gComment->getComments( $parents, $maxComments, $commentOffset, $comments_sort_mode, $comments_display_style );
 }
 
 if ($comments_display_style == 'flat') {
@@ -307,9 +314,11 @@ $commentsPgnHash = array(
 	'page' => $currentPage,
 	'comment_page' => $currentPage,
 	'url' => $comments_return_url,
-	'comments_maxComments' => $maxComments,
-	'comments_sort_mode' => $comments_sort_mode,
-	'comments_style' => $comments_display_style,
+#no longer needed -- now stored in session data
+#	'comments_maxComments' => $maxComments,
+#	'comments_sort_mode' => $comments_sort_mode,
+#	'comments_style' => $comments_display_style,
+	'comments_page' => $comments_on_separate_page,
 	'ianchor' => 'editcomments',
 );
 $gBitSmarty->assign_by_ref( 'commentsPgnHash', $commentsPgnHash );
@@ -322,6 +331,7 @@ $gBitSmarty->assign('comments_at_top_of_page', ( isset( $comments_at_top_of_page
 $gBitSmarty->assign('comments_style', $comments_display_style);
 $gBitSmarty->assign('comments_sort_mode', $comments_sort_mode);
 $gBitSmarty->assign('textarea_id', 'commentpost');
+$gBitSmarty->assign('comments_count', $numComments);
 
 if (!empty($_REQUEST['post_comment_request'])) {
 	if ($gBitSystem->isPackageActive('bitboards') && BitBoardTopic::isLockedMsg( (@BitBase::verifyId($storeComment->mInfo['parent_id']) ? $storeComment->mInfo['parent_id'] : (!@BitBase::verifyId($_REQUEST['post_comment_reply_id']) ? $commentsParentId : $_REQUEST['post_comment_reply_id'])))) {
