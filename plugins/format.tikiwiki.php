@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.121 $
+ * @version  $Revision: 1.122 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -596,7 +596,7 @@ class TikiWikiParser extends BitBase {
 								if (($listate == '+' || $listate == '-') && !($litype == '*' && !strstr(current($listbeg), '</ul>') || $litype == '#' && !strstr(current($listbeg), '</ol>'))) {
 									$thisid = 'id' . microtime() * 1000000;
 
-									$data .= '<br /><a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\')">[' . ($listate == '-' ? '+' : '-') . ']</a>';
+									$data .= '<br /><a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\',1)">[' . ($listate == '-' ? '+' : '-') . ']</a>';
 									$listyle = ' id="' . $thisid . '" style="display:' . ($listate == '+' ? 'block' : 'none') . ';"';
 									$addremove = 1;
 								}
@@ -617,7 +617,7 @@ class TikiWikiParser extends BitBase {
 						if (($listate == '+' || $listate == '-')) {
 							$thisid = 'id' . microtime() * 1000000;
 
-							$data .= '<br /><a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\')">[' . ($listate == '-' ? '+' : '-') . ']</a>';
+							$data .= '<br /><a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\',1)">[' . ($listate == '-' ? '+' : '-') . ']</a>';
 							$listyle = ' id="' . $thisid . '" style="display:' . ($listate == '+' ? 'block' : 'none') . ';"';
 							$addremove = 1;
 						}
@@ -683,7 +683,7 @@ class TikiWikiParser extends BitBase {
 							// OK. Must insert flipper after HEADER, and then open new div...
 							$thisid = 'id' . microtime() * 1000000;
 
-							$aclose = '<a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\')">[' . ($divstate == '-' ? '+' : '-') . ']</a>';
+							$aclose = '<a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\',1)">[' . ($divstate == '-' ? '+' : '-') . ']</a>';
 							$aclose .= '<div id="' . $thisid . '" style="display:' . ($divstate == '+' ? 'block' : 'none') . ';">';
 							array_unshift($divdepth, $hdrlevel);
 							$addremove = 1;
