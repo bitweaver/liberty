@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.41 $
+ * @version  $Revision: 1.42 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.41 2007/11/23 19:21:56 jht001 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.42 2007/11/24 19:14:23 nickpalmer Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -308,6 +308,7 @@ $gBitSmarty->assign('maxComments', $maxComments);
 
 $numCommentPages = ceil( $numComments / $maxComments );
 
+/* Where is the new comments_on_separate_page supposed to come from? */
 $commentsPgnHash = array(
 	'numPages' => $numCommentPages,
 	'pgnName' => 'comment_page',
@@ -318,7 +319,7 @@ $commentsPgnHash = array(
 #	'comments_maxComments' => $maxComments,
 #	'comments_sort_mode' => $comments_sort_mode,
 #	'comments_style' => $comments_display_style,
-	'comments_page' => $comments_on_separate_page,
+	'comments_page' => ( empty( $comments_on_separate_page ) ? FALSE : $comments_on_separate_page ),
 	'ianchor' => 'editcomments',
 );
 $gBitSmarty->assign_by_ref( 'commentsPgnHash', $commentsPgnHash );
