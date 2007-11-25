@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.51 2007/10/25 08:53:41 jht001 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.52 2007/11/25 04:44:15 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -280,6 +280,10 @@ class LibertyComment extends LibertyContent {
 
 	function getDisplayLink( $pLinkText=NULL, $pMixed=NULL ) {
 		$anchor = '';
+		// Override default title with something comment centric
+		if( empty( $pLinkText ) ) {
+			$pLinkText = tra( 'Comment' );
+		}
 		if( @BitBase::verifyId( $pMixed['content_id'] )) {
 			$anchor = "&view_comment_id=".$pMixed['content_id']."#comment_{$pMixed['content_id']}";
 		}
@@ -287,7 +291,7 @@ class LibertyComment extends LibertyContent {
 	}
 
 	function getList( $pParamHash ) {
-		global $gBitSystem;
+		global $gBitSystem, $gLibertySystem;
 		if ( !isset( $pParamHash['sort_mode']) or $pParamHash['sort_mode'] == '' ){
 			$pParamHash['sort_mode'] = 'last_modified_desc';
 		}
@@ -300,8 +304,24 @@ class LibertyComment extends LibertyContent {
 		$joinSql = $whereSql = '';
 		$bindVars = $ret = array();
 		if ( !empty( $pParamHash['root_content_type_guid'] ) ) {
-			$whereSql .= " AND rlc.`content_type_guid`=? ";
-			$bindVars[] = $pParamHash['root_content_type_guid'];
+			if( is_string( $pParamHash['root_content_type_guid'] ) ) {
+				$pParamHash['root_content_type_guid'] = array( $pParamHash['root_content_type_guid'] );
+			}
+			if( is_array( $pParamHash['root_content_type_guid'] ) ) {
+				$contentTypes = array_keys( $gLibertySystem->mContentTypes );
+				$max = count( $pParamHash['root_content_type_guid'] );
+				$whereSql .= " AND (";
+				for( $i = 0; $i < $max; $i++ ) {
+					if( in_array( $pParamHash['root_content_type_guid'][$i], $contentTypes ) ) {
+						$whereSql .= " rlc.`content_type_guid`=? ";
+						$bindVars[] = $pParamHash['root_content_type_guid'][$i];
+						if( $max > 1 && $i < $max - 1 ) {
+							$whereSql .= ' OR ';
+						}
+					}
+				}
+				$whereSql .= ')';
+			}
 		}
 
 		if ( !empty( $pParamHash['content_type_guid'] ) ) {
@@ -321,30 +341,32 @@ class LibertyComment extends LibertyContent {
 
 		// left outer join on root so updater works
 
-		$query = "SELECT"
-			. " lcm.`comment_id` AS comment_id, "
-			. " lc.`content_id` AS content_id, "
-			. " lcm.`parent_id` AS parent_id, "
-			. " lcm.`anon_name` AS anon_name, "
-			. " lcm.`root_id` AS root_id, "
-			. " lc.`title` AS `content_title`, "
-			. " rlc.`title` AS `root_content_title`, "
-			. " lc.`created` as created, "
-			. " lc.`data` as data, "
-			. " lc.`last_modified` as last_modified, "
-			. " lc.`title` as title,  "
-			. " ptc.content_type_guid as parent_content_type_guid, "
-			. " rlc.content_type_guid as root_content_type_guid, "
-			. " lc.content_type_guid as content_type_guid, "
-			. " uu.`login` AS `creator_user`, "
-			. " uu.`real_name`"
-				  . " FROM `".BIT_DB_PREFIX."liberty_comments` lcm
+		$query = "SELECT
+					lcm.`comment_id`,
+					lc.`content_id`,
+					lcm.`parent_id`,
+					lcm.`anon_name`, 
+					lcm.`root_id`, 
+					lc.`title` AS `content_title`, 
+					lc.`title` AS `root_content_title`, 
+					lc.`created`, 
+					lc.`data`, 
+					lc.`last_modified` as `last_modified`, 
+					lc.`title` as `title`, 
+					ptc.`content_type_guid` as `parent_content_type_guid`, 
+					rlc.`content_type_guid` as `root_content_type_guid`, 
+					lc.`content_type_guid`, 
+					uu.`login` AS `creator_user`, 
+					uu.`login`,
+					uu.`real_name`, 
+					uu.`user_id` 
+				  FROM `".BIT_DB_PREFIX."liberty_comments` lcm
 				  		INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcm.`content_id`=lc.`content_id` )
 			      		INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id`=lc.`user_id`)
 						LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` rlc ON( rlc.`content_id`=lcm.`root_id` )
 						$joinSql, `".BIT_DB_PREFIX."liberty_content` ptc
-				  	 WHERE lcm.`parent_id`=ptc.`content_id` $whereSql
-				  	 ORDER BY $sort_mode";
+				  WHERE lcm.`parent_id`=ptc.`content_id` $whereSql
+				  ORDER BY $sort_mode";
 		if( $result = $this->mDb->query( $query, $bindVars, $pParamHash['max_records'], $pParamHash['offset'] )) {
 			while( $row = $result->FetchRow() ) {
 				$row['display_link'] = $this->getDisplayLink( $row['content_title'], $row );
