@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.328 2007/11/20 09:57:17 jht001 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.329 2007/11/26 16:48:23 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1604,7 +1604,7 @@ class LibertyContent extends LibertyBase {
 		global $gBitSystem;
 		$ret = NULL;
 		if( $gBitSystem->isPackageActive( 'wiki' ) ) {
-			$columnExpression = $this->mDb->getCaseLessColumn('lc.title');
+			$columnExpression = $gBitSystem->mDb->getCaseLessColumn('lc.title');
 
 			$pageWhere = $pCaseSensitive ? 'lc.`title`' : $columnExpression;
 			$bindVars = array( ($pCaseSensitive ? $pPageName : strtoupper( $pPageName ) ) );
@@ -1613,14 +1613,14 @@ class LibertyContent extends LibertyBase {
 					INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id`=wp.`content_id`)
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`data_type`='summary')
 				WHERE $pageWhere = ?";
-			if( !$ret = $this->mDb->getAll( $query, $bindVars ) ) {
+			if( !$ret = $gBitSystem->mDb->getAll( $query, $bindVars ) ) {
 				$query = "SELECT `page_id`, wp.`content_id`, lcds.`data` AS `summary`, lc.`last_modified`, lc.`title`, lal.`alias_title`
 					FROM `".BIT_DB_PREFIX."wiki_pages` wp
 						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lc.`content_id`=wp.`content_id`)
 						INNER JOIN `".BIT_DB_PREFIX."liberty_aliases` lal ON (lc.`content_id`=lal.`content_id`)
 						LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`data_type`='summary')
-					WHERE ".$this->mDb->getCaseLessColumn('lal.alias_title')." = ?";
-				$ret = $this->mDb->getAll( $query, $bindVars );
+					WHERE ".$gBitSystem->mDb->getCaseLessColumn('lal.alias_title')." = ?";
+				$ret = $gBitSystem->mDb->getAll( $query, $bindVars );
 			}
 		}
 		return $ret;
