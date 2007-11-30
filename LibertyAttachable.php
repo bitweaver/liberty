@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.137 2007/11/19 19:24:58 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.138 2007/11/30 09:56:35 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -141,7 +141,7 @@ class LibertyAttachable extends LibertyContent {
 			// Retrieve Photoshop IRB information from the JPEG file
 			$IRB_array = get_Photoshop_IRB( $jpeg_header_data );
 			if( !empty( $exifHash['IFD0']['Software'] ) && preg_match( '/photoshop/i', $exifHash['IFD0']['Software'] ) ) {
-				include UTIL_PKG_PATH.'jpeg_metadata_tk/Photoshop_File_Info.php';
+				require_once UTIL_PKG_PATH.'jpeg_metadata_tk/Photoshop_File_Info.php';
 				// Retrieve Photoshop File Info from the three previous arrays
 				$psFileInfo = get_photoshop_file_info( $Exif_array, $XMP_array, $IRB_array );
 
