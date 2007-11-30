@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.52 2007/11/25 04:44:15 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.53 2007/11/30 17:12:03 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -348,7 +348,7 @@ class LibertyComment extends LibertyContent {
 					lcm.`anon_name`, 
 					lcm.`root_id`, 
 					lc.`title` AS `content_title`, 
-					lc.`title` AS `root_content_title`, 
+					rlc.`title` AS `root_content_title`, 
 					lc.`created`, 
 					lc.`data`, 
 					lc.`last_modified` as `last_modified`, 
