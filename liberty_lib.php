@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.20 2007/11/21 11:43:10 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.21 2007/11/30 09:38:15 nickpalmer Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -797,7 +797,7 @@ function get_image_size_options( $pEmptyOption = 'Disable this feature' ) {
 		$ret[''] = tra( $pEmptyOption );
 	}
 	foreach( $gThumbSizes as $key => $size ) {
-		$ret[$key] = tra( ucfirst( $key ))." ( {$size['width']} x {$size['height']} ".tra( 'pixels' )." )";
+		$ret[$key] = tra( ucfirst( $key ))." ( ". ( empty($size['width']) ? tra('unlimited') : $size['width'] ) ." x ". ( empty($size['height']) ? tra('unlimited') : $size['height'] ) ." ".tra( 'pixels' )." )";
 	}
 	return $ret;
 }
