@@ -32,7 +32,7 @@
 					{/forminput}
 				</div>
 				
-				{if ! $gBitUser->isRegistered()}
+				{if !$gBitUser->isRegistered()}
 					<div class="row">
 						{formlabel label="Name" for="comments-name"}
 						{forminput}
