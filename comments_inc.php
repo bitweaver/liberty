@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.42 $
+ * @version  $Revision: 1.43 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.42 2007/11/24 19:14:23 nickpalmer Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.43 2007/12/03 06:41:18 spiderr Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -307,6 +307,7 @@ $gBitSmarty->assign_by_ref('comments', $commentsTree);
 $gBitSmarty->assign('maxComments', $maxComments);
 
 $numCommentPages = ceil( $numComments / $maxComments );
+$comments_return_url = $comments_return_url.(!strpos( $comments_return_url, '?' ) ? '?' : '');
 
 /* Where is the new comments_on_separate_page supposed to come from? */
 $commentsPgnHash = array(
@@ -327,7 +328,7 @@ $gBitSmarty->assign_by_ref('postComment', $postComment);
 $gBitSmarty->assign_by_ref('gComment', $gComment);
 
 $gBitSmarty->assign('currentTimestamp', time());
-$gBitSmarty->assign('comments_return_url', $comments_return_url);
+$gBitSmarty->assign('comments_return_url', $comments_return_url );
 $gBitSmarty->assign('comments_at_top_of_page', ( isset( $comments_at_top_of_page ) && $gBitSystem->getConfig( 'comments_reorganise_page_layout', 'n' ) == 'y' ) ? $comments_at_top_of_page : NULL );
 $gBitSmarty->assign('comments_style', $comments_display_style);
 $gBitSmarty->assign('comments_sort_mode', $comments_sort_mode);
