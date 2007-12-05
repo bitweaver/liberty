@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.330 2007/12/02 02:51:29 jht001 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.331 2007/12/05 14:39:35 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1049,8 +1049,8 @@ class LibertyContent extends LibertyBase {
 		global $gBitUser;
 		$pJoinSql .= "
 			LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcperm ON (lc.`content_id`=lcperm.`content_id`)
-			LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON (ugm.`group_id`=lcperm.`group_id`) ";
-		$pWhereSql .= " AND ( lcperm.perm_name IS NULL OR ( lcperm.perm_name=? AND ugm.user_id=? AND ( (lcperm.is_revoked !=? OR lcperm.is_revoked IS NULL) OR lc.`user_id`=? ) ) )";
+			LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugsm ON (ugsm.`group_id`=lcperm.`group_id`) ";
+		$pWhereSql .= " AND ( lcperm.perm_name IS NULL OR ( lcperm.perm_name=? AND ugsm.user_id=? AND ( (lcperm.is_revoked !=? OR lcperm.is_revoked IS NULL) OR lc.`user_id`=? ) ) )";
 		$pBindVars[] = $pPermName;
 		$pBindVars[] = $gBitUser->mUserId;
 		$pBindVars[] = "y";
