@@ -89,14 +89,6 @@ array( 'DATADICT' => array(
 				, CONSTRAINT `liberty_meta_map_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
 				, CONSTRAINT `liberty_meta_map_meta_key_ref` FOREIGN KEY (`meta_key`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_data` (`meta_key`)'
 		",
-		'liberty_content_connection_map' => "
-			from_content_id I4 PRIMARY,
-			to_content_id I4 PRIMARY,
-			item_position F
-			CONSTRAINT '
-				, CONSTRAINT `liberty_from_content_id_ref` FOREIGN KEY (`from_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
-				, CONSTRAINT `liberty_to_content_id_ref` FOREIGN KEY (`to_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
-		",
 	)),
 	array( 'ALTER' => array(
 		'liberty_content' => array(
@@ -211,7 +203,7 @@ array( 'QUERY' =>
 
 array( 'DATADICT' => array(
 	array( 'DROPCOLUMN' => array(
-		'liberty_content' => array( 
+		'liberty_content' => array(
 			'`last_hit`',
 			'`hits`',
 		),
@@ -371,7 +363,7 @@ array( 'PHP' => '
 				}
 			else {
 				$comment_status[$content_id] = 1;
-				}	
+				}
 			  //echo "A comment: $comment_id content: $content_id parent: $parent_id root: $root_id title: $title\n";
 
 		}
@@ -404,7 +396,7 @@ array( 'PHP' => '
 						}
 				}
 			}
-			
+
 			if ($c <= 0) {
 				$loop_done = 1;
 			}
@@ -467,10 +459,10 @@ array( 'PHP' => '
 			$depth = $depth_of_comment[$content_id];
 
 			// we used to number sequentially, easier to just use comemnt ID
-			#  $root_table_seq[$parent_id . "-" . $depth] =  empty($root_table_seq[$parent_id . "-" . $depth]) ? 1: $root_table_seq[$parent_id . "-" . $depth] + 1; 
+			#  $root_table_seq[$parent_id . "-" . $depth] =  empty($root_table_seq[$parent_id . "-" . $depth]) ? 1: $root_table_seq[$parent_id . "-" . $depth] + 1;
 			$root_table_seq[$parent_id . "-" . $depth] = $comment_id;
 
-			$root_table_seq3[$content_id] = $root_table_seq[$parent_id . "-" . $depth];  
+			$root_table_seq3[$content_id] = $root_table_seq[$parent_id . "-" . $depth];
 
 			  //echo "C comment $comment_id content: $content_id parent: $parent_id root: $root_id depth: $depth title: $title\n";
 			  //echo "update bit_liberty_comments set root_id=$root_id where comment_id=$comment_id;\n";
@@ -628,8 +620,8 @@ array( 'QUERY' =>
 // here we deal with the liberty_attachments upgrade
 /* so far untested and basically serve as notes for what has to be done
  *
- * NOTE: First we need to create new attachments of the duplicates we have that 
- * we have in the liberty_attachments_map to ensure that every attachment only 
+ * NOTE: First we need to create new attachments of the duplicates we have that
+ * we have in the liberty_attachments_map to ensure that every attachment only
  * has one content_id associated with it
  *
  *
@@ -696,7 +688,7 @@ array( 'DATADICT' => array(
 			plugin_description C(250),
 			maintainer_url C(250)
 		",
-// requires in PHP need liberty_content_types table 
+// requires in PHP need liberty_content_types table
 // since we are going from 1.8 to R2, we can get away with this here.
 		'liberty_content_types' => "
 			content_type_guid C(16) PRIMARY,
