@@ -16,6 +16,11 @@
 		{forminput}
 			<textarea {$textarea_class} {$textarea_attributes} {spellchecker width=$cols height=$rows} id="{$textarea_id|default:$smarty.const.LIBERTY_TEXT_AREA}" name="{$textarea_name|default:edit}" {$textarea_style}>{$textarea_data|escape:html}</textarea>
 			{formhelp note=$textarea_help}
+			{if $gBitSystem->isPackageActive('fckeditor') &&
+				($gBitSystem->isFeatureActive("fckeditor_ask") || 
+				$gBitSystem->isFeatureActive("fckeditor_on_click"))}
+				{formhelp note="Click in the textarea to activate the editor."}
+			{/if}
 		{/forminput}
 	</div>
 {/strip}
