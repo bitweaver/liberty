@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.13 2007/07/23 20:17:34 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.14 2007/12/12 14:40:24 wjames5 Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -108,12 +108,12 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 	}
 
 	// Did we manage to create one?
-	if (isset($gHtmlPurifier)) {
+	 if (isset($gHtmlPurifier)) { 
 		/* Clean up the paragraphs a bit */
 		//		$start = $pData;
 		$pString = htmlpure_cleanupPeeTags($pString);
 		//		$pee = $pString;
-		$pString = $gHtmlPurifier->purify($pString);
+		$gHtmlPurifier->purify( html_entity_decode( $pString ) );
 
 		/*
 		echo "<br/><hr/><br/>".$start;
