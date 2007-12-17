@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.14 2007/12/12 14:40:24 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.15 2007/12/17 18:34:26 nickpalmer Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -113,7 +113,8 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 		//		$start = $pData;
 		$pString = htmlpure_cleanupPeeTags($pString);
 		//		$pee = $pString;
-		$gHtmlPurifier->purify( html_entity_decode( $pString ) );
+		$pString = html_entity_decode( $pString );
+		$gHtmlPurifier->purify( $pString );
 
 		/*
 		echo "<br/><hr/><br/>".$start;
