@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.122 $
+ * @version  $Revision: 1.123 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -214,6 +214,10 @@ class TikiWikiParser extends BitBase {
 
 		$data      = $pParseHash['data'];
 		$contentId = $pParseHash['content_id'];
+		$userId	   = ! empty ( $pParseHash['user_id'] ) ?
+						$pParseHash['user_id'] : 
+						( empty ( $pCommonObject->mInfo['user_id'] ) ?
+							NULL : $pCommonObject->mInfo['user_id'] );
 
 		// this is used for setting the links when section editing is enabled
 		$section_count = 1;
@@ -232,10 +236,10 @@ class TikiWikiParser extends BitBase {
 		// only strip out html if needed
 		if( $gBitSystem->isFeatureActive( 'content_allow_html' ) || $gBitSystem->isFeatureActive( 'content_force_allow_html' )) {
 			// we allow html unconditionally with this parser
-		} elseif( !empty( $contentPrefs['content_enter_html'] ) && @BitBase::verifyId( $pCommonObject->mInfo['user_id'] )) {
+		} elseif( !empty( $contentPrefs['content_enter_html'] ) && @BitBase::verifyId( $userId )) {
 			// we need to load up the user who wrote this page to check their permissions
-			if( $gBitUser->mUserId != $pCommonObject->mInfo['user_id'] ) {
-				$tmpUser = new BitPermUser( $pCommonObject->mInfo['user_id'] );
+			if( $gBitUser->mUserId != $userId ) {
+				$tmpUser = new BitPermUser( $userId );
 				$tmpUser->loadPermissions();
 			} else {
 				$tmpUser = &$gBitUser;
