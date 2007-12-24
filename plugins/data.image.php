@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -14,7 +14,7 @@ $pluginParams = array (
 	'tag'           => 'image',
 	'title'         => 'Fisheye Image',
 	'description'   => tra( "Display an image in other content. This plugin only works with files that have been uploaded using fisheye." ),
-	'help_page'     => 'DataPluginAttachment',
+	'help_page'     => 'DataPluginImage',
 
 	'auto_activate' => TRUE,
 	'requires_pair' => FALSE,
@@ -24,7 +24,7 @@ $pluginParams = array (
 
 	// display icon in quicktags bar
 	'biticon'       => '{biticon ilocation=quicktag iname=image-x-generic iexplain="Image"}',
-	'taginsert'     => '{image id= align= size= description=}',
+	'taginsert'     => '{image id= size= nolink=}',
 
 	// functions
 	'help_function' => 'data_image_help',
@@ -43,6 +43,7 @@ function data_image( $pData, $pParams ) {
 		require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'display_bytes' );
 
 		$item = new FisheyeImage( $pParams['id'], NULL );
+
 		if( $item->load() ) {
 			// insert source url if we need the original file
 			if( !empty( $pParams['size'] ) && $pParams['size'] == 'original' ) {
@@ -62,7 +63,9 @@ function data_image( $pData, $pParams ) {
 					' src="'  .$thumburl.'"'.
 					' />';
 
-				if( empty( $pParams['size'] ) || $pParams['size'] != 'original' ) {
+				if( !empty( $pParams['nolink'] ) ) {
+				}
+				else if ( empty( $pParams['size'] ) || $pParams['size'] != 'original' ) {
 					$ret = '<a href="'.trim( $item->mInfo['image_file']['source_url'] ).'">'.$ret.'</a>';
 				}
 
@@ -75,7 +78,6 @@ function data_image( $pData, $pParams ) {
 	} else {
 		$ret = tra( "The image id given is not valid." );
 	}
-
 	return $ret;
 }
 
@@ -97,6 +99,11 @@ function data_image_help() {
 				.'<td>' . tra( "key-words") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "If the File is an image, you can specify the size of the thumbnail displayed. Possible values are:") . ' <strong>avatar, small, medium, large, original</strong> '
 				. tra( "(Default = " ) . '<strong>medium</strong>)</td>'
+			.'</tr>'
+			.'<tr class="odd">'
+				.'<td>nolink</td>'
+				.'<td>' . tra( "key-words") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "Remove hotlink from element. Used to display fixed copies of an image item.")
 			.'</tr>'
 		.'</table>'
 		. tra( "Example: ") . "{image id='13' size='small'}";
