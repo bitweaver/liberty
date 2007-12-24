@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -68,7 +68,7 @@ function data_file( $pData, $pParams ) {
 					$ret .= '<br />'.$item->getField( 'title' )."<br /><small>(".$item->getField( 'mime_type' )." ".smarty_modifier_display_bytes( $item->getField( 'file_size' )).")</small>";
 				}
 
-				if( !empty( $wrapper['description'] ) && !empty( $pParams['output'] ) && ( $pParams['output'] == 'desc' || $pParams['output'] == 'description' )) {
+				if( !empty( $description ) && !empty( $pParams['output'] ) && ( $pParams['output'] == 'desc' || $pParams['output'] == 'description' )) {
 					$ret = $description;
 					$nowrapper = TRUE;
 				} else {
@@ -87,6 +87,8 @@ function data_file( $pData, $pParams ) {
 					$ret = '<a '.$class.' href="'.trim( $pParams['link'] ).'">'.$ret.'</a>';
 				} elseif( empty( $pParams['download'] ) && $item->getField( 'display_url' )) {
 					$ret = '<a href="'.trim( $item->getField( 'display_url' )).'">'.$ret.'</a>';
+				} elseif( !empty( $pParams['download'] ) && $pParams['download'] = 'direct' ) {
+					$ret = '<a href="'.trim( $item->getField( 'source_url' )).'">'.$ret.'</a>';
 				} elseif( !empty( $pParams['download'] ) && $item->getField( 'download_url' )) {
 					$ret = '<a href="'.trim( $item->getField( 'download_url' )).'">'.$ret.'</a>';
 				} elseif( empty( $pParams['size'] ) || $pParams['size'] != 'original' ) {
