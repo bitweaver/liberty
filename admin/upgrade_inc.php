@@ -173,9 +173,7 @@ array( 'QUERY' =>
 // drop original column
 array( 'DATADICT' => array(
 	array( 'DROPCOLUMN' => array(
-		'liberty_action_log' => array( '`temp_log`' ),
-		'liberty_action_log' => array( '`temp_error`' ),
-		'liberty_action_log' => array( '`temp_id`' ),
+		'liberty_action_log' => array( '`temp_log`', '`temp_error`', '`temp_id`' ),
 		'liberty_content_permissions' => array( '`object_type`' ),
 	)),
 )),
