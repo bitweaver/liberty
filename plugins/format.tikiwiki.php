@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.123 $
+ * @version  $Revision: 1.124 $
  * @package  liberty
  */
 global $gLibertySystem;
@@ -214,10 +214,13 @@ class TikiWikiParser extends BitBase {
 
 		$data      = $pParseHash['data'];
 		$contentId = $pParseHash['content_id'];
-		$userId	   = ! empty ( $pParseHash['user_id'] ) ?
-						$pParseHash['user_id'] : 
-						( empty ( $pCommonObject->mInfo['user_id'] ) ?
-							NULL : $pCommonObject->mInfo['user_id'] );
+
+		// get the userId if available
+		if( !empty( $pParseHash['user_id'] )) {
+			$userId = $pParseHash['user_id'];
+		} elseif( !empty( $pCommonObject ) && !empty ( $pCommonObject->mInfo['user_id'] )) {
+			$userId = $pCommonObject->mInfo['user_id'];
+		}
 
 		// this is used for setting the links when section editing is enabled
 		$section_count = 1;
