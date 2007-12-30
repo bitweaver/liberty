@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.331 2007/12/05 14:39:35 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.332 2007/12/30 14:59:40 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -189,7 +189,7 @@ class LibertyContent extends LibertyBase {
 
 		// Do we need to change the status
 		if ($gBitSystem->isFeatureActive('liberty_display_status') && ($gBitUser->hasPermission('p_liberty_edit_content_status') || $gBitUser->hasPermission('p_liberty_edit_all_status'))) {
-		  	$allStatus = $this->getContentStatus();
+			$allStatus = $this->getAvailableContentStatuses();
 			if (!empty($pParamHash['content_status_id'])) {
 				if (empty($allStatus[$pParamHash['content_status_id']])) {
 					$this->mError['content_status_id'] = "No such status ID or permission denied.";
@@ -2903,15 +2903,30 @@ class LibertyContent extends LibertyBase {
 	 * getContentStatus
 	 * 
 	 * @access public
-	 * @return an array of content_status_id, content_status_names the current user can use on this content. Subclases may easily override with return LibertyContent::getContentStatus(-100, 0) for example to restrict to only hidden content types.
+	 * @return an array of content_status_id, content_status_names the current 
+	 * user can use on this content. Subclases may easily override with return 
+	 * LibertyContent::getContentStatus(-100, 0) for example to restrict to 
+	 * only hidden content types.
 	 */
-	function getContentStatus($pUserMinimum=-100, $pUserMaximum=100) {
+	function getAvailableContentStatuses( $pUserMinimum=-100, $pUserMaximum=100 ) {
 		global $gBitUser;
-		if ($gBitUser->hasPermission('p_liberty_edit_all_status')) {
+		if( $gBitUser->hasPermission( 'p_liberty_edit_all_status' )) {
 			return( $this->mDb->getAssoc( "SELECT `content_status_id`,`content_status_name` FROM `".BIT_DB_PREFIX."liberty_content_status` ORDER BY `content_status_id`" ) );
 		} else {
-			return( $this->mDb->getAssoc( "SELECT `content_status_id`, `content_status_name` FROM `".BIT_DB_PREFIX."liberty_content_status` WHERE `content_status_id` > ? AND `content_status_id` < ? ORDER BY `content_status_id`", array($pUserMinimum, $pUserMaximum)));
+			return( $this->mDb->getAssoc( "SELECT `content_status_id`, `content_status_name` FROM `".BIT_DB_PREFIX."liberty_content_status` WHERE `content_status_id` > ? AND `content_status_id` < ? ORDER BY `content_status_id`", array( $pUserMinimum, $pUserMaximum )));
 		}
+	}
+
+	/**
+	 * getContentStatus will return the content status of the currently loaded content.
+	 * 
+	 * @param array $pContentId Content ID of the content in question
+	 * @access public
+	 * @return Status ID
+	 * @TODO: remove deprecated notice and add some useful code
+	 */
+	function getContentStatus( $pContentId = NULL ) {
+		deprecated( 'This function will return the content status of the current content. if you are trying to get available content statuses, use getAvailableContentStatuses() instead.' );
 	}
 
 	function isDeleted() {
@@ -2932,6 +2947,32 @@ class LibertyContent extends LibertyBase {
 	function isHidden() {
 		global $gBitSystem;
 		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_hidden', -10 ) );
+	}
+
+	/**
+	 * getContentStatusName 
+	 * 
+	 * @param array $pStatusId Status ID if not available in $this->mInfo['content_status_id']
+	 * @access public
+	 * @return The name of the content status based on the status id of the content
+	 */
+	function getContentStatusName( $pStatusId = NULL ) {
+		$ret = 'Not a valid content status';
+
+		// check to see where we can get the status information from
+		if( !empty( $this ) && !empty( $this->mInfo['content_status_name'] )) {
+			return( $this->mInfo['content_status_name'] );
+		} elseif( is_null( $pStatusId ) && !empty( $this ) && !empty( $this->mInfo['content_status_id'] )) {
+			$pStatusId = $this->mInfo['content_status_id'];
+		}
+
+		// fetch from db if needed
+		if( !is_null( $pStatusId )) {
+			if( $ret = $this->mDb->getOne( "SELECT `content_status_name` FROM `".BIT_DB_PREFIX."liberty_content_status` WHERE `content_status_id` = ?", array( $pStatusId ))) {
+			}
+		}
+
+		return $ret;
 	}
 
 	/**
