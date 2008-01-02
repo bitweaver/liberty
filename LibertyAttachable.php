@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.138 2007/11/30 09:56:35 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.139 2008/01/02 09:28:54 jht001 Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -650,5 +650,40 @@ class LibertyAttachable extends LibertyContent {
 
 		return $ret;
 	}
+
+	/**
+	 * scanForAttchmentUse generates a list of all content associated with a given attachment
+	 * 
+	 * @param numeric $pAttachmentId attachment id of the item to check
+	 * @access public
+	 * @return FALSE on failure, or an array on success
+	 */
+	function scanForAttchmentUse( $pAttachmentId = NULL ) {
+		$ret = FALSE;
+		if(  !@BitBase::verifyId( $pAttachmentId )) {
+			return $ret;
+		}
+
+		$bindVars[] = $pAttachmentId;
+		
+		$query = "
+			SELECT *
+			FROM `".BIT_DB_PREFIX."liberty_content` lc
+			INNER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON( lc.`content_id` = la.`content_id` )
+			WHERE la.`attachment_id` = ?";
+
+		$result = $this->mDb->query( $query, $bindVars);
+		while( $res = $result->fetchRow() ) {
+			$content_id = $res['content_id'];
+			$liberty_content = new LibertyContent();
+			$res['display_link'] = $liberty_content->getDisplayLink(NULL,$res);
+			$attached_to[] = $res;
+		}
+
+		return $attached_to;
+
+
+	}
+
 }
 ?>

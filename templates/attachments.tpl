@@ -27,7 +27,7 @@
 
 		{if $smarty.request.attachment_id}
 			<ul class="data" id="usage">
-				<li>{tr}This attachment is used in the following content{/tr}:
+				<li>{tr}Attachment ID:{/tr} {$smarty.request.attachment_id} {tr}is used in the following content{/tr}:
 					<ul>
 						{foreach from=$attachmentUsage item=content}
 							<li class="{cycle values="odd,even"} item">
