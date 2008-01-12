@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.14 2007/09/26 20:07:07 spiderr Exp $
+// $Id: data.toc.php,v 1.15 2008/01/12 20:09:08 lsces Exp $
 
 /**
  * definitions
@@ -45,6 +45,9 @@ $pluginParams = array (
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATATOC, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATATOC );
 
+/**
+ * Help Function
+ */
 function data_toc_help() {
 	return '<table class="data help">'
 			.'<tr>'
@@ -61,6 +64,9 @@ function data_toc_help() {
 		. tra("Example: ") . '{toc structure_id=8 display=full_toc}';
 }
 
+/**
+ * Load Function
+ */
 function data_toc( $data, $params ) {
 	include_once( LIBERTY_PKG_PATH.'LibertyStructure.php' );
 	global $gStructure, $gContent, $gBitSmarty;
