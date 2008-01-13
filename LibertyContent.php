@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.332 2007/12/30 14:59:40 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.333 2008/01/13 14:53:46 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -83,6 +83,14 @@ class LibertyContent extends LibertyBase {
 	*/
 	var $mPrefs = NULL;
 	/**
+	* Flag to control access to protected content items - set via setProtection cleared when load is successful
+	* We need to be able to differentiate between content that does not exist and content with restricted access
+	* currently setting to true in package when we have a valid Id, but load fails due to security filter
+	* it is cleared by a successful load cycle
+	* @private
+	*/
+	var $mProtected;
+	/**
 	* Control permission specific to this LibertyContent type
 	* @private
 	*/
@@ -106,6 +114,7 @@ class LibertyContent extends LibertyBase {
 		if( empty( $this->mAdminContentPerm )) {
 			$this->mAdminContentPerm = 'p_admin_content';
 		}
+		$this->mProtected = false;
 	}
 
 	/**
@@ -118,6 +127,7 @@ class LibertyContent extends LibertyBase {
 			$this->loadPermissions();
 			$this->mInfo['content_type'] = $gLibertySystem->mContentTypes[$this->mInfo['content_type_guid']];
 			$this->invokeServices('content_load_function', $this);
+			$this->mProtected = false;
 		}
 	}
 
@@ -1333,8 +1343,10 @@ class LibertyContent extends LibertyBase {
 	*/
 	function verifyViewPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
 		global $gBitSystem;
-		if( $this->hasViewPermission( $pVerifyAccessControl, $pCheckGlobalPerm ) ) {
+	if( !$this->mProtected && $this->hasViewPermission( $pVerifyAccessControl, $pCheckGlobalPerm ) ) {
 			return TRUE;
+		} else if( $this->mProtected ) {
+			$gBitSystem->fatalError( tra( 'You do not have permission to access this link' ), 'error.tpl', tra( 'Permission denied.' ) );
 		} else {
 			$gBitSystem->fatalPermission( $this->mViewContentPerm );
 		}
@@ -2929,21 +2941,45 @@ class LibertyContent extends LibertyBase {
 		deprecated( 'This function will return the content status of the current content. if you are trying to get available content statuses, use getAvailableContentStatuses() instead.' );
 	}
 
+	/**
+	 * isDeleted status test
+	 * 
+	 * @return true when the content status = -999
+	 */
 	function isDeleted() {
 		global $gBitSystem;
 		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_deleted', -999 ) );
 	}
 
+	/**
+	 * isPrivate status test
+	 * 
+	 * @return true when the content status = -999
+	 */
 	function isPrivate() {
 		global $gBitSystem;
 		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_private', -40 ) );
 	}
 
+	/**
+	 * isProtected status test
+	 * 
+	 * @return true when the content status = -20 or content has protection flag set
+	 */
 	function isProtected() {
 		global $gBitSystem;
-		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_protected', -20 ) );
+		if ( $this->mProtected ) {
+			return true;
+		} else if ( $this->isValid() ) {
+			return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_protected', -20 ) );
+		} else return false;
 	}
 
+	/**
+	 * isHidden status test
+	 * 
+	 * @return true when the content status = -10
+	 */
 	function isHidden() {
 		global $gBitSystem;
 		return( $this->getField( 'content_status_id' ) <= $gBitSystem->getConfig( 'liberty_status_threshold_hidden', -10 ) );
@@ -3002,6 +3038,19 @@ class LibertyContent extends LibertyBase {
 		if( $this->isValid() && $pContentStatusId ) {
 			$this->mDb->query( "UPDATE `".BIT_DB_PREFIX."liberty_content` SET `content_status_id`=? WHERE `content_id`=?", array( $pContentStatusId, $this->mContentId ) );
 		}
+	}
+
+	/**
+	 * setProtected
+	 * 
+	 * heavy security packages prevent loading of content but we still need to know if 
+	 * a record exists and so a protected record will return a vaild mContentId and 
+	 * package identification Id but will have $mProtected set returning you do not
+	 * have permission rather than page does not exist this also prevents problems with 
+	 * creating content with the same title as an existing protected on
+	 */
+	function setProtected() {
+		$this->mProtected = true;
 	}
 
 	/**
