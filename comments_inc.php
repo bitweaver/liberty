@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.43 $
+ * @version  $Revision: 1.44 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.43 2007/12/03 06:41:18 spiderr Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.44 2008/01/25 14:46:50 spiderr Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -97,8 +97,8 @@ if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'p_lib
 	$storeRow['title'] = $_REQUEST['comment_title'];
 	$storeRow['edit'] = $_REQUEST['comment_data'];
 	if (empty($_REQUEST['post_comment_id'])&&$gBitSystem->isPackageActive('bitboards')) {
-		$content_type = $gBitUser->getPreference('signiture_content_type');
-		$content_data = $gBitUser->getPreference('signiture_content_data');
+		$content_type = $gBitUser->getPreference('signature_content_type');
+		$content_data = $gBitUser->getPreference('signature_content_data');
 		if (!empty($content_type) && !empty($content_data)) {
 			$storeRow['edit'] .= "\n{renderer format_guid=$content_type class=mb-signature}$content_data{/renderer}";
 		}
