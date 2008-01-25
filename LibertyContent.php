@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.334 2008/01/14 09:34:28 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.335 2008/01/25 14:46:12 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1511,7 +1511,7 @@ class LibertyContent extends LibertyBase {
 			$result   = $this->mDb->query($query, $bindvars);
 			if( !is_null( $pPrefValue )) {
 				$query      = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_prefs` (`content_id`,`pref_name`,`pref_value`) VALUES(?, ?, ?)";
-				$bindvars[] = $pPrefValue;
+				$bindvars[] = substr( $pPrefValue, 0, 250 );
 				$result     = $this->mDb->query( $query, $bindvars );
 				$this->mPrefs[$pPrefName] = $pPrefValue;
 			}
