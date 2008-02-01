@@ -1,11 +1,11 @@
 {strip}
-{assign var=url value=$gContent->getDisplayUrl()|default:$serviceHash.display_url}
-{if (not empty($url)) && strstr($url, "?") }
-	{assign var="amp" value="&amp;"}
-{else}
-	{assign var="amp" value="?"}
-{/if}
 {if $gBitSystem->isFeatureActive( 'liberty_cache' ) && $gContent && $gContent->isCached( $serviceHash.content_id ) && $gBitUser->hasPermission( 'p_users_view_icons_and_tools' )}
+	{assign var=url value=$gContent->getDisplayUrl()|default:$serviceHash.display_url}
+	{if (not empty($url)) && strstr($url, "?") }
+		{assign var="amp" value="&amp;"}
+	{else}
+		{assign var="amp" value="?"}
+	{/if}
 	<a title="{tr}Refresh cache{/tr}" href="{$url}{$amp}refresh_liberty_cache={$serviceHash.content_id}">
 		{biticon ipackage="icons" iname="view-refresh" iexplain="Refresh cache"}
 	</a>
