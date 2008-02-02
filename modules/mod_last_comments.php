@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_comments.php,v 1.5 2007/11/25 04:44:39 spiderr Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_comments.php,v 1.6 2008/02/02 19:03:41 nickpalmer Exp $
  * @package liberty
  * @subpackage modules
  */
@@ -25,6 +25,10 @@ $listHash = array(
 
 if (!empty($params['full'])) {
 	$listHash['parse'] = TRUE;
+}
+
+if (!empty($params['sort'])) {
+	$listHash['sort_mode'] = $params['sort'];
 }
 
 if (!empty($params['pigeonholes'])) {
