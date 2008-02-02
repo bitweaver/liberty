@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.53 2007/11/30 17:12:03 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.54 2008/02/02 18:52:22 nickpalmer Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -273,7 +273,14 @@ class LibertyComment extends LibertyContent {
 			$ret = NULL;
 			if( !empty( $pMixed['root_id'] ) && $viewContent = LibertyBase::getLibertyObject( $pMixed['root_id'] ) ) {
 					$ret = $viewContent->getDisplayUrl();
-					$ret .= "&view_comment_id=" . $pMixed['comment_id'];
+					if ( strstr($ret, '?') ) {
+						$ret .= "&";
+					}
+					else {
+						$ret .= "?";
+					}
+					$ret .= "view_comment_id=" . $pMixed['content_id'] .
+						"#comment_".$pMixed['content_id'];
 			}
 			return ( $ret );
 	}
@@ -301,8 +308,11 @@ class LibertyComment extends LibertyContent {
 		LibertyContent::prepGetList( $pParamHash );
 		$sort_mode = $this->mDb->convertSortmode($pParamHash['sort_mode']);
 
-		$joinSql = $whereSql = '';
+		$joinSql = $whereSql = $selectSql = '';
 		$bindVars = $ret = array();
+
+		$this->getServicesSql( 'content_list_sql_function', $selectSql, $joinSql, $whereSql, $bindVars, NULL, $pParamHash );
+
 		if ( !empty( $pParamHash['root_content_type_guid'] ) ) {
 			if( is_string( $pParamHash['root_content_type_guid'] ) ) {
 				$pParamHash['root_content_type_guid'] = array( $pParamHash['root_content_type_guid'] );
@@ -359,7 +369,8 @@ class LibertyComment extends LibertyContent {
 					uu.`login` AS `creator_user`, 
 					uu.`login`,
 					uu.`real_name`, 
-					uu.`user_id` 
+					uu.`user_id`
+					$selectSql
 				  FROM `".BIT_DB_PREFIX."liberty_comments` lcm
 				  		INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcm.`content_id`=lc.`content_id` )
 			      		INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id`=lc.`user_id`)
@@ -370,6 +381,7 @@ class LibertyComment extends LibertyContent {
 		if( $result = $this->mDb->query( $query, $bindVars, $pParamHash['max_records'], $pParamHash['offset'] )) {
 			while( $row = $result->FetchRow() ) {
 				$row['display_link'] = $this->getDisplayLink( $row['content_title'], $row );
+				$row['display_url'] = $this->getDisplayUrl2( $row['content_title'], $row );
 				if (!empty($pParamHash['parse'])) {
 					$row['parsed_data'] = $this->parseData($row);
 				}
@@ -441,35 +453,13 @@ class LibertyComment extends LibertyContent {
 		$last_modified = $comment_fields['last_modified'];
 		$contentId = $comment_fields['root_id'];
 
-		$mid = "";
-
-		$sort_order = "ASC";
-		$mid = 'last_modified ASC';
-		if (!empty($pSortOrder)) {
-			if ($pSortOrder == 'commentDate_desc') {
-				$mid = 'last_modified DESC';
-				}
-			if ($pSortOrder == 'commentDate_asc') {
-				$mid = 'last_modified ASC';
-				}
-			if ($pSortOrder == 'thread_asc') {
-				$mid = 'thread_forward_sequence  ASC';
-				}
-			// thread newest first is harder...
-			if ($pSortOrder == 'thread_desc') {
-				$mid = 'thread_reverse_sequence  ASC';
-				}
-			}
-		$mid = ' order by ' . $mid;
-
 		$commentCount = 0;
 		if ($contentId) {
 			$sql = "SELECT count(*)
 					FROM `".BIT_DB_PREFIX."liberty_comments` tc LEFT OUTER JOIN
 					 `".BIT_DB_PREFIX."liberty_content` tcn
 					 ON (tc.`content_id` = tcn.`content_id`)
-				    where tc.`root_id` =? and `last_modified` < ?
-					$mid";
+				    where tc.`root_id` =? and `last_modified` < ?";
 			$commentCount = $this->mDb->getOne($sql, array($contentId, $last_modified));
 		}
 		return $commentCount;
