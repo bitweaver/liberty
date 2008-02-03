@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.44 $
+ * @version  $Revision: 1.45 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.44 2008/01/25 14:46:50 spiderr Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.45 2008/02/03 05:43:28 jht001 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -240,16 +240,16 @@ if( !empty( $_REQUEST["comments_style"] ) ) {
 	$_SESSION['liberty_comments_display_mode'] = $comments_display_style;
 }
 
-if( !empty( $_REQUEST['comment_page'] ) || !empty( $_REQUEST['post_comment_request'] ) ) {
+if( !empty( $_REQUEST['list_page'] ) || !empty( $_REQUEST['post_comment_request'] ) ) {
 	$comments_at_top_of_page = 'y';
 }
-$commentOffset = !empty( $_REQUEST['comment_page'] ) ? ($_REQUEST['comment_page'] - 1) * $maxComments : 0;
+$commentOffset = !empty( $_REQUEST['list_page'] ) ? ($_REQUEST['list_page'] - 1) * $maxComments : 0;
 
 if (empty($gComment)) {
 	$gComment = new LibertyComment( NULL, $gContent->mContentId );
 }
 
-$currentPage = !empty( $_REQUEST['comment_page'] ) ? $_REQUEST['comment_page'] : 1;
+$currentPage = !empty( $_REQUEST['list_page'] ) ? $_REQUEST['list_page'] : 1;
 if ($currentPage < 1) {
 	$currentPage = 1;
 	}
@@ -309,21 +309,22 @@ $gBitSmarty->assign('maxComments', $maxComments);
 $numCommentPages = ceil( $numComments / $maxComments );
 $comments_return_url = $comments_return_url.(!strpos( $comments_return_url, '?' ) ? '?' : '');
 
-/* Where is the new comments_on_separate_page supposed to come from? */
-$commentsPgnHash = array(
-	'numPages' => $numCommentPages,
-	'pgnName' => 'comment_page',
-	'page' => $currentPage,
-	'comment_page' => $currentPage,
-	'url' => $comments_return_url,
-#no longer needed -- now stored in session data
-#	'comments_maxComments' => $maxComments,
-#	'comments_sort_mode' => $comments_sort_mode,
-#	'comments_style' => $comments_display_style,
-	'comments_page' => ( empty( $comments_on_separate_page ) ? FALSE : $comments_on_separate_page ),
-	'ianchor' => 'editcomments',
+# Parameters for Bitweaver standard pagination module
+$listInfo = array (
+'total_records' => $numComments,
+'total_pages' => $numCommentPages,
+'current_page' => $currentPage,
 );
-$gBitSmarty->assign_by_ref( 'commentsPgnHash', $commentsPgnHash );
+# Values in $listInfo['parameters'] will be passed back in on subsequent calls
+$listInfo['parameters'] = array (
+'comments_page' => ( empty( $comments_on_separate_page ) ? FALSE : $comments_on_separate_page ),
+'ianchor' => 'editcomments',
+);
+$gBitSmarty->assign( 'listInfo', $listInfo );
+$gBitSmarty->assign( 'returnUrl', $comments_return_url );
+
+
+
 $gBitSmarty->assign_by_ref('postComment', $postComment);
 $gBitSmarty->assign_by_ref('gComment', $gComment);
 

@@ -9,6 +9,5 @@
 
 {include file="bitpackage:liberty/edit_storage_list.tpl"}
 
-{libertypagination pgnName="pgnPage" pgnPage=$curPage numPages=$numPages offset=$smarty.request.offset ajaxId=attbrowser}
-{pagination ajaxId=attbrowser}
+{pagination pgnName="pgnPage" pgnPage=$curPage numPages=$numPages offset=$smarty.request.offset ajaxId=attbrowser}
 {/strip}
