@@ -27,7 +27,7 @@
 			{/foreach}		
 		<div id="comment_{$gContent->mContentId}_footer"></div>
 
-		{pagination}
+		{libertypagination ihash=$commentsPgnHash}
 	</div><!-- end .body -->
 </div><!-- end .comment -->
 {/strip}
