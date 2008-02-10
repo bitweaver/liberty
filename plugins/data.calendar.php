@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.calendar.php,v 1.2 2007/11/08 11:45:16 nickpalmer Exp $
+// $Id: data.calendar.php,v 1.3 2008/02/10 12:18:51 nickpalmer Exp $
 
 /**
  * definitions
@@ -126,7 +126,16 @@ function data_calendar( $data, $params ) {
 		 $gBitSmarty->assign('dow_abbrevs', $days);
 		 $gBitSmarty->assign('calendar', $calendar);
 		 $gBitSmarty->assign('today', $time);
-		 
+
+		 // Assign a base url
+		 if (empty($params['events'])) {
+			 $pBaseUrl = CALENDAR_PKG_URL.'index.php';
+		 }
+		 else {
+			 $pBaseUrl = EVENTS_PKG_URL.'calendar.php';
+		 }
+		 $gBitSmarty->assign('baseCalendarUrl', $pBaseUrl);
+
 		 return $gBitSmarty->fetch('bitpackage:calendar/minical.tpl');
 	 }
 	 
