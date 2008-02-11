@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.335 2008/01/25 14:46:12 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.336 2008/02/11 14:53:46 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -3079,6 +3079,44 @@ class LibertyContent extends LibertyBase {
 		$gContent = $oldGContent;
 
 		return $ret;
+	}
+
+	/**
+	 * mapContent
+	 *
+	 * @access public
+	 * @return if errors
+	 **/
+	function mapContent( $pParamHash ) {
+		if( $this->isValid() && isset( $pParamHash['content_id'] ) && $this->verifyId( $pParamHash['content_id'] ) ){
+			if( $this->mDb->getOne( "SELECT `from_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=? AND `to_content_id`=?", array( $this->mContentId, $pParamHash['content_id'] ) ) ) {
+				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET `to_title`= ? WHERE `from_content_id` = ? AND to_content_id` = ? ";
+			} else {
+				$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_links` ( `to_title`, `from_content_id`, `to_content_id` ) VALUES (?,?,?)";
+			}
+			if ( isset($pParamHash['title']) ){
+				$toTitle = $pParamHash['title'];
+			}else{
+				$toContent = new LibertyContent( $pParamHash['content_id'] );
+				$toContent->load();
+				$toTitle = $toContent->getTitle();
+			}
+			$result = $this->mDb->query( $query, array( $toTitle, $this->mContentId, $pParamHash['content_id'] ) );
+		}
+		return( count( $this->mErrors ) == 0 );
+	}
+	
+	/**
+	 * demapContent
+	 *
+	 * @access public
+	 * @return if errors
+	 **/
+	function demapContent( $pParamHash ) {
+		if( $this->isValid()  && isset( $pParamHash['content_id'] ) && $this->verifyId( $pParamHash['content_id'] ) ) {
+			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=? AND `to_content_id`=?", array( $this->mContentId, $pPramaHash['content_id'] ) );
+		}
+		return( count( $this->mErrors ) == 0 );
 	}
 
 }
