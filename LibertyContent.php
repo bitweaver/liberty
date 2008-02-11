@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.337 2008/02/11 18:21:45 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.338 2008/02/11 19:22:12 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2024,6 +2024,12 @@ class LibertyContent extends LibertyBase {
 			$bindVars[] = $pListHash['user_id'];
 		}
 
+		if( @$this->verifyId( $pListHash['link_content_id'] ) ){
+			$joinSql .= " INNER JOIN `".BIT_DB_PREFIX."liberty_content_links` lclk ON ( lc.`content_id` = lclk.`to_content_id` )";
+			$whereSql .= " AND lclk.`from_content_id` = ? ";
+			$bindVars[] = (int)$pListHash['link_content_id'];
+		}
+
 		if( !empty( $pListHash['content_type_guid'] ) && is_string( $pListHash['content_type_guid'] ) ) {
 			$whereSql .= ' AND `content_type_guid`=? ';
 			$bindVars[] = $pListHash['content_type_guid'];
@@ -3117,6 +3123,22 @@ class LibertyContent extends LibertyBase {
 			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=? AND `to_content_id`=?", array( $this->mContentId, $pPramaHash['content_id'] ) );
 		}
 		return( count( $this->mErrors ) == 0 );
+	}
+
+
+	/**
+	 * unlinkContent
+	 *
+	 * @access public
+	 **/
+	function getLinkedContent( $pListHash ){
+		if( !empty( $pListHash['content_type_guid'] ) && is_string( $pListHash['content_type_guid'] ) ) {
+			$whereSql .= ' AND `content_type_guid`=? ';
+			$bindVars[] = $pListHash['content_type_guid'];
+		} elseif( !empty( $pListHash['content_type_guid'] ) && is_array( $pListHash['content_type_guid'] ) ) {
+			$whereSql .= " AND lc.`content_type_guid` IN ( ".implode( ',',array_fill ( 0, count( $pListHash['content_type_guid'] ),'?' ) )." )";
+			$bindVars = array_merge( $bindVars, $pListHash['content_type_guid'] );
+		}
 	}
 
 }
