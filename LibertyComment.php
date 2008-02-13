@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.54 2008/02/02 18:52:22 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.55 2008/02/13 02:26:33 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -194,43 +194,43 @@ class LibertyComment extends LibertyContent {
 	// 1) change name
 	// 2) use materialized path to cut query count and eliminate recursion
 	
-//	function deleteComment() {
-//		global $gBitSystem;
-//		$ret = FALSE;
-//		if( $this->isValid() ) {
-//			$this->mDb->StartTrans();
-//			$sql = "SELECT `comment_id` FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `parent_id` = ?";
-//			$rows = $this->mDb->getAll($sql, array($this->mContentId));
-//
-//			foreach ($rows as $row) {
-//				$comment = new LibertyComment($row['comment_id']);
-//				$comment->deleteComment();
-//			}
-//
-//			if( $gBitSystem->isPackageActive( 'boards' ) ) {
-//				// due to foreign key constraints, this has to go in the base class of BitBoardPost
-//				$sql = "DELETE FROM `".BIT_DB_PREFIX."boards_posts` WHERE `comment_id` = ?";
-//				$rs = $this->mDb->query($sql, array($this->mCommentId ) );
-//				$query = "DELETE FROM `".BIT_DB_PREFIX."boards_topics` WHERE `parent_id` = ?";
-//				$result = $this->mDb->query( $query, array( $this->getField( 'content_id' ) ) );
-//			}
-//
-//			$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `comment_id` = ?";
-//			$rs = $this->mDb->query($sql, array($this->mCommentId));
-//
-//			if (method_exists($this,'expungeMetaData')) {
-//				$this->expungeMetaData();
-//			}
-//
-//			if( LibertyAttachable::expunge() ) {
-//				$ret = TRUE;
-//				$this->mDb->CompleteTrans();
-//			} else {
-//				$this->mDb->RollbackTrans();
-//			}
-//		}
-//		return $ret;
-//	}
+	function expunge() {
+		global $gBitSystem;
+		$ret = FALSE;
+		if( $this->isValid() ) {
+			$this->mDb->StartTrans();
+			$sql = "SELECT `comment_id` FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `parent_id` = ?";
+			$rows = $this->mDb->getAll($sql, array($this->mContentId));
+
+			foreach ($rows as $row) {
+				$comment = new LibertyComment($row['comment_id']);
+				$comment->deleteComment();
+			}
+
+			if( $gBitSystem->isPackageActive( 'boards' ) ) {
+				// due to foreign key constraints, this has to go in the base class of BitBoardPost
+				$sql = "DELETE FROM `".BIT_DB_PREFIX."boards_posts` WHERE `comment_id` = ?";
+				$rs = $this->mDb->query($sql, array($this->mCommentId ) );
+				$query = "DELETE FROM `".BIT_DB_PREFIX."boards_topics` WHERE `parent_id` = ?";
+				$result = $this->mDb->query( $query, array( $this->getField( 'content_id' ) ) );
+			}
+
+			$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `comment_id` = ?";
+			$rs = $this->mDb->query($sql, array($this->mCommentId));
+
+			if (method_exists($this,'expungeMetaData')) {
+				$this->expungeMetaData();
+			}
+
+			if( LibertyAttachable::expunge() ) {
+				$ret = TRUE;
+				$this->mDb->CompleteTrans();
+			} else {
+				$this->mDb->RollbackTrans();
+			}
+		}
+		return $ret;
+	}
 
 	function userCanEdit($pUserId = NULL) {
 		global $gBitUser;

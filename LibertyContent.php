@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.338 2008/02/11 19:22:12 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.339 2008/02/13 02:26:33 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -387,7 +387,7 @@ class LibertyContent extends LibertyBase {
 		if( $commentIds = $this->mDb->getCol($query, array( $this->mContentId ) ) ) {
 			foreach ($commentIds as $commentId) {
 				$tmpComment = new LibertyComment($commentId);
-				$tmpComment->deleteComment();
+				$tmpComment->expunge();
 			}
 		}
 		return TRUE;
