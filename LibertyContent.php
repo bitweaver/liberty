@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.340 2008/02/14 18:53:40 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.341 2008/02/14 20:41:59 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -3085,60 +3085,6 @@ class LibertyContent extends LibertyBase {
 		$gContent = $oldGContent;
 
 		return $ret;
-	}
-
-	/**
-	 * linkContent
-	 *
-	 * @access public
-	 * @return if errors
-	 **/
-	function linkContent( $pParamHash ) {
-		if( $this->isValid() && isset( $pParamHash['content_id'] ) && $this->verifyId( $pParamHash['content_id'] ) ){
-			if( $this->mDb->getOne( "SELECT `from_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=? AND `to_content_id`=?", array( $this->mContentId, $pParamHash['content_id'] ) ) ) {
-				$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET `to_title`= ? WHERE `from_content_id` = ? AND to_content_id` = ? ";
-			} else {
-				$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_links` ( `to_title`, `from_content_id`, `to_content_id` ) VALUES (?,?,?)";
-			}
-			if ( isset($pParamHash['title']) ){
-				$toTitle = $pParamHash['title'];
-			}else{
-				$toContent = new LibertyContent( $pParamHash['content_id'] );
-				$toContent->load();
-				$toTitle = $toContent->getTitle();
-			}
-			$result = $this->mDb->query( $query, array( $toTitle, $this->mContentId, $pParamHash['content_id'] ) );
-		}
-		return( count( $this->mErrors ) == 0 );
-	}
-	
-	/**
-	 * unlinkContent
-	 *
-	 * @access public
-	 * @return if errors
-	 **/
-	function unlinkContent( $pParamHash ) {
-		if( $this->isValid()  && isset( $pParamHash['content_id'] ) && $this->verifyId( $pParamHash['content_id'] ) ) {
-			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=? AND `to_content_id`=?", array( $this->mContentId, $pPramaHash['content_id'] ) );
-		}
-		return( count( $this->mErrors ) == 0 );
-	}
-
-
-	/**
-	 * unlinkContent
-	 *
-	 * @access public
-	 **/
-	function getLinkedContent( $pListHash ){
-		if( !empty( $pListHash['content_type_guid'] ) && is_string( $pListHash['content_type_guid'] ) ) {
-			$whereSql .= ' AND `content_type_guid`=? ';
-			$bindVars[] = $pListHash['content_type_guid'];
-		} elseif( !empty( $pListHash['content_type_guid'] ) && is_array( $pListHash['content_type_guid'] ) ) {
-			$whereSql .= " AND lc.`content_type_guid` IN ( ".implode( ',',array_fill ( 0, count( $pListHash['content_type_guid'] ),'?' ) )." )";
-			$bindVars = array_merge( $bindVars, $pListHash['content_type_guid'] );
-		}
 	}
 
 }
