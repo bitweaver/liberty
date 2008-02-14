@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.339 2008/02/13 02:26:33 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.340 2008/02/14 18:53:40 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2031,7 +2031,7 @@ class LibertyContent extends LibertyBase {
 		}
 
 		if( !empty( $pListHash['content_type_guid'] ) && is_string( $pListHash['content_type_guid'] ) ) {
-			$whereSql .= ' AND `content_type_guid`=? ';
+			$whereSql .= ' AND lc.`content_type_guid`=? ';
 			$bindVars[] = $pListHash['content_type_guid'];
 		} elseif( !empty( $pListHash['content_type_guid'] ) && is_array( $pListHash['content_type_guid'] ) ) {
 			$whereSql .= " AND lc.`content_type_guid` IN ( ".implode( ',',array_fill ( 0, count( $pListHash['content_type_guid'] ),'?' ) )." )";
