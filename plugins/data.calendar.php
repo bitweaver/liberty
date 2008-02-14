@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.calendar.php,v 1.3 2008/02/10 12:18:51 nickpalmer Exp $
+// $Id: data.calendar.php,v 1.4 2008/02/14 18:51:49 bitweaver Exp $
 
 /**
  * definitions
@@ -43,7 +43,7 @@ function data_calendar( $data, $params ) {
 	 global $gBitSmarty, $gBitSystem;
 
 	 if ($gBitSystem->isPackageActive('calendar')) {
-		 $offset = BitDate::get_display_offset();
+		 $offset = $gBitSystem->get_display_offset();
 		 $bitDate = new BitDate($offset);	
 		 
 		 $time = $bitDate->getUTCTime();
