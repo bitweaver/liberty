@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.16 2007/12/18 16:33:46 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.17 2008/02/18 10:52:25 nickpalmer Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -92,7 +92,23 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 				foreach (explode(',',$blacklistedTags) as $tag) {
 					unset($def->info[$tag]);
 				}
-		
+
+				if ($gBitSystem->getConfig('htmlpure_force_nofollow', 'y') == 'y') {
+					class HTMLPurifier_AttrTransform_ForceValue extends HTMLPurifier_AttrTransform
+					{
+						var $name, $value;
+						function HTMLPurifier_AttrTransform_ForceValue($name, $value) {
+							$this->name  = $name;
+							$this->value = $value;
+						}
+						function transform($attr, $config, &$context) {
+							$attr[$this->name] = $this->value;
+							return $attr;
+						}
+					}
+					$def->info['a']->attr_transform_post['rel'] = new HTMLPurifier_AttrTransform_ForceValue('rel', 'nofollow');
+				}
+
 				// As suggested here:  http://www.bitweaver.org/forums/index.php?t=8554
 				$gHtmlPurifier = new HTMLPurifier($config);
 
