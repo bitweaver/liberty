@@ -3,7 +3,7 @@
  * display_structure_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage functions
  */
@@ -17,6 +17,7 @@
 		$gBitSystem->setBrowserTitle( $gStructure->getRootTitle().' : '.$gContent->getTitle() );
 		include $gContent->getRenderFile();
 	} else {
+		$gBitSystem->setHttpStatus( 404 );
 		$gBitSystem->fatalError( tra( 'Page cannot be found' ));
 	}
 ?>
