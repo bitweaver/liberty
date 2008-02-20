@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.17 2008/02/18 10:52:25 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.18 2008/02/20 14:39:50 nickpalmer Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -130,7 +130,7 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 		$pString = htmlpure_cleanupPeeTags($pString);
 		//		$pee = $pString;
 		//		$pString = html_entity_decode( $pString );
-		$gHtmlPurifier->purify( $pString );
+		$pString = $gHtmlPurifier->purify( $pString );
 
 		/*
 		echo "<br/><hr/><br/>".$start;
@@ -139,7 +139,7 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 		$diff = &new Text_Diff(explode("\n", $start), explode("\n",$pee));
 		$renderer = &new Text_Diff_Renderer_inline();
 		echo "<br/><hr/><br/>". $renderer->render($diff);
-	
+
 		echo "<br/><hr/><br/>".$pString;
 		include_once( 'Text/Diff.php' );
 		include_once( 'Text/Diff/Renderer/inline.php' );
