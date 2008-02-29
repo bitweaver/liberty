@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/filter.stencil.php,v 1.4 2007/08/29 09:47:50 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/filter.stencil.php,v 1.5 2008/02/29 03:59:52 spiderr Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -28,7 +28,7 @@ function stencil_filter( &$pData, &$pFilterHash ) {
 	global $gBitSystem, $gBitSmarty;
 	if( $gBitSystem->isPackageActive( 'stencil' )) {
 		require_once( STENCIL_PKG_PATH.'BitStencil.php' );
-		$pData = preg_replace_callback( "/\{\{\/?([^|]+)([^\}]*)\}\}/", 'stencil_parse_data', $pData );
+		$pData = preg_replace_callback( "/\{\{\/?([^|]+)(.*?)\}\}/s", 'stencil_parse_data', $pData );
 	}
 }
 
@@ -52,7 +52,7 @@ function stencil_parse_data( $matches ) {
 		if( $lines = explode( '|', $matches[2] )) {
 			foreach( $lines as $line ) {
 				if( strpos( $line, '=' ) ) {
-					list( $name, $value ) = split( '=', trim( $line ) );
+					list( $name, $value ) = split( '=', trim( $line ), 2 );
 					// if the value is empty, we remove all the conditional stuff surrounding it
 					if( empty( $value ) && !is_numeric( $value )) {
 						$output = preg_replace( "!\{{3}$name>.*?<$name\}{3}!s", "", $output );
