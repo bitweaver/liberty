@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.341 2008/02/14 20:41:59 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.342 2008/03/01 10:31:55 jht001 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2135,7 +2135,19 @@ class LibertyContent extends LibertyBase {
 				INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (lc.`modifier_user_id`=uu.`user_id`)
 			$joinSql
 			$whereSql";
+
 		$cant = $this->mDb->getOne( $query_cant, $bindVars );
+		$pListHash["cant"] = $cant;
+
+		# Check for offset out of range
+		if ( $pListHash['offset'] < 0 ) {
+			$pListHash['offset'] = 0;
+			}
+		elseif ( $pListHash['offset']	> $pListHash["cant"] ) {
+			$lastPageNumber = ceil ( $pListHash["cant"] / $pListHash['max_records'] ) - 1;
+			$pListHash['offset'] = $pListHash['max_records'] * $lastPageNumber;
+			}
+
 
 		if( !empty( $hashBindVars['select'] ) ) {
 			$bindVars = array_merge($hashBindVars['select'], $bindVars);
@@ -2220,7 +2232,6 @@ class LibertyContent extends LibertyBase {
 		}
 
 		$pListHash["data"] = $ret;
-		$pListHash["cant"] = $cant;
 		LibertyContent::postGetList( $pListHash );
 		return $pListHash;
 	}
