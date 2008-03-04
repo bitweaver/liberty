@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.342 2008/03/01 10:31:55 jht001 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.343 2008/03/04 16:48:14 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1387,14 +1387,15 @@ class LibertyContent extends LibertyBase {
 	* @param integer Content Itentifier
 	* @return bool true ( will not currently report a failure )
 	*/
-	function storePermission( $pGroupId, $pPermName, $pIsRevoked=FALSE ) {
+	function storePermission( $pGroupId, $pPermName, $pIsRevoked=FALSE, $pContentId=NULL ){
 		$ret = FALSE;
-		if( @BitBase::verifyId( $pGroupId ) && !empty( $pPermName ) && $this->isValid() ) {
-			$this->removePermission( $pGroupId, $pPermName );
+		$pContentId = $pContentId == NULL?$this->mContentId:$pContentId;
+		if( @BitBase::verifyId( $pGroupId ) && !empty( $pPermName ) && @BitBase:verifyId( $pContentId ) ) {
+			$this->removePermission( $pGroupId, $pPermName, $pContentId );
 			$storeHash = array(
 				'group_id' => $pGroupId,
 				'perm_name' => $pPermName,
-				'content_id' => $this->mContentId,
+				'content_id' => $pContentId,
 			);
 			// check to see if this is an exclusion
 			if( $pIsRevoked ) {
@@ -1412,11 +1413,14 @@ class LibertyContent extends LibertyBase {
 	* @param string Name of the permission
 	* @return bool true ( will not currently report a failure )
 	*/
-	function removePermission( $pGroupId, $pPermName ) {
-		$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_permissions`
-				  WHERE `group_id` = ? and `content_id` = ? and `perm_name` = ?";
-		$bindVars = array( $pGroupId, $this->mContentId, $pPermName );
-		$result = $this->mDb->query( $query, $bindVars );
+	function removePermission( $pGroupId, $pPermName, $pContentId=NULL ) {
+		$pContentId = $pContentId == NULL?$this->mContentId:$pContentId;
+		if( @BitBase::verifyId( $pGroupId ) && !empty( $pPermName ) && @BitBase:verifyId( $pContentId ) ) {
+			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_permissions`
+					  WHERE `group_id` = ? and `content_id` = ? and `perm_name` = ?";
+			$bindVars = array( $pGroupId, $pContentId, $pPermName );
+			$result = $this->mDb->query( $query, $bindVars );
+		}
 		return TRUE;
 	}
 
