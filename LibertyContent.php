@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.343 2008/03/04 16:48:14 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.344 2008/03/04 17:07:34 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1390,7 +1390,7 @@ class LibertyContent extends LibertyBase {
 	function storePermission( $pGroupId, $pPermName, $pIsRevoked=FALSE, $pContentId=NULL ){
 		$ret = FALSE;
 		$pContentId = $pContentId == NULL?$this->mContentId:$pContentId;
-		if( @BitBase::verifyId( $pGroupId ) && !empty( $pPermName ) && @BitBase:verifyId( $pContentId ) ) {
+		if( @BitBase::verifyId( $pGroupId ) && !empty( $pPermName ) && @BitBase::verifyId( $pContentId ) ) {
 			$this->removePermission( $pGroupId, $pPermName, $pContentId );
 			$storeHash = array(
 				'group_id' => $pGroupId,
@@ -1415,7 +1415,7 @@ class LibertyContent extends LibertyBase {
 	*/
 	function removePermission( $pGroupId, $pPermName, $pContentId=NULL ) {
 		$pContentId = $pContentId == NULL?$this->mContentId:$pContentId;
-		if( @BitBase::verifyId( $pGroupId ) && !empty( $pPermName ) && @BitBase:verifyId( $pContentId ) ) {
+		if( @BitBase::verifyId( $pGroupId ) && !empty( $pPermName ) && @BitBase::verifyId( $pContentId ) ) {
 			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_permissions`
 					  WHERE `group_id` = ? and `content_id` = ? and `perm_name` = ?";
 			$bindVars = array( $pGroupId, $pContentId, $pPermName );
