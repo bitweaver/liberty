@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.345 2008/03/04 20:50:03 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.346 2008/03/07 03:50:28 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1340,6 +1340,30 @@ class LibertyContent extends LibertyBase {
 		}
 	}
 
+	/**
+	* Determine if current user has the ability to post comments to this type of content
+	*
+	* @return bool True if user has this type of content administration permission
+	*/
+	function hasPostCommentsPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
+		return( $this->hasUserPermission( 'p_liberty_post_comments', $pVerifyAccessControl, $pCheckGlobalPerm ));
+	}
+
+	// === verifyPostCommentsPermission
+	/**
+	* It will verify if a given user has a given $permission and if not, it will display the error template and die()
+	* @param $pVerifyAccessControl check access control service if available
+	* @return TRUE if permitted, method will fatal out if not
+	* @access public
+	*/
+	function verifyPostCommentsPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
+		global $gBitSystem;
+		if( $this->hasPostCommentPermission( $pVerifyAccessControl, $pCheckGlobalPerm ) ) {
+			return TRUE;
+		} else {
+			$gBitSystem->fatalPermission( 'p_liberty_post_comments' );
+		}
+	}
 
 	/**
 	* Get specific permissions for the specified user for this content
