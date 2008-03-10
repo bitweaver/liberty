@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.6 2007/11/11 09:19:42 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.7 2008/03/10 16:02:04 wjames5 Exp $
  *
  * Image processor - extension: php-imagick
  * @package  liberty
@@ -201,12 +201,21 @@ function liberty_imagick2_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 			$im->setCompressionQuality( 85 );
 			$iwidth = $im->getImageWidth();
 			$iheight = $im->getImageHeight();
-			if((( $iwidth / $iheight ) > 0 ) && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] )) {
+			/*
+			 * the math on this was bad and the property assignments were bad - those are fixed. 
+			 * however this is disabled since its being invoked by default, which prevents the max height
+			 * from being enforced on portrait images which is counter intuitive. by default the bounding
+			 * rectangle should be enforced. if someone wants this feature, then a flag for this needs to
+			 * be created which will likely require some bigger change up stream, like in gThumbSizes and
+			 * in liberty_generate_thumbnails()
+			 * -wjames5
+			if((( $iwidth / $iheight ) < 1 ) && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] )) {
 				// we have a portrait image, flip everything
-				$temp = $pFileHash['max_width'];
+				$temp = $pFileHash['max_height'];
 				$pFileHash['max_height'] = $pFileHash['max_width'];
 				$pFileHash['max_width'] = $temp;
 			}
+			 */
 
 			// override $mimeExt if we have a custom setting for it
 			if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
@@ -229,7 +238,7 @@ function liberty_imagick2_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 
 				// create thumb and write
-				$im->thumbnailImage( $pFileHash['max_width'], NULL );
+				$im->thumbnailImage( $pFileHash['max_width'],  $pFileHash['max_height'], TRUE );
 				$im->writeImage( $destFile );
 
 				$pFileHash['size'] = filesize( $destFile );
