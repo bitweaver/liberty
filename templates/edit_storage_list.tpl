@@ -29,7 +29,7 @@
 				<tr class="{cycle values="odd,even"}">
 					<td style="text-align:center;">
 						{jspopup href=$storage.source_url title=$storage.title|default:$storage.filename notra=1 img=$storage.thumbnail_url.avatar}
-						<br />{$storage.filename}
+						<br />{$storage.filename} <span class="date">{$storage.file_size|display_bytes}</span>
 						{if $smarty.foreach.atts.first}
 							{formhelp note="click to see large preview"}
 						{/if}
@@ -55,7 +55,7 @@
 										{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}
 								</a>
 							{else}
-								<a href="{$smarty.server.PHP_SELF}?{$smarty.const.urlArgs}&amp;deleteAttachment={$attachmentId}">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
+								<a href="{$smarty.server.PHP_SELF}?{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
 							{/if}
 						{/if}
 					</td>
