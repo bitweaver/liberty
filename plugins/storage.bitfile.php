@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.46 $
+ * @version  $Revision: 1.47 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -100,7 +100,7 @@ function bit_files_load( $pRow ) {
 			}
 			$ret['thumbnail_url'] = liberty_fetch_thumbnails( $ret['storage_path'], $thumbnailerImageUrl );
 			$ret['filename'] = str_replace('//', '/', substr( $ret['storage_path'], strrpos($ret['storage_path'], '/')+1) );
-			$ret['source_url'] = BIT_ROOT_URL.str_replace( '+', '%20', str_replace( '%2F', '/', urlencode( $ret['storage_path'] ) ) );
+			$ret['source_url'] = str_replace('//', '/', BIT_ROOT_URL.str_replace( '+', '%20', str_replace( '%2F', '/', urlencode( $ret['storage_path'] ) ) ) );
 			$ret['wiki_plugin_link'] = "{attachment id=".$ret['attachment_id']."}";
 		}
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -88,7 +88,7 @@ function data_file( $pData, $pParams ) {
 				} elseif( empty( $pParams['download'] ) && $item->getField( 'display_url' )) {
 					$ret = '<a href="'.trim( $item->getField( 'display_url' )).'">'.$ret.'</a>';
 				} elseif( !empty( $pParams['download'] ) && $pParams['download'] = 'direct' ) {
-					$ret = '<a href="'.trim( $item->getField( 'source_url' )).'">'.$ret.'</a>';
+					$ret = '<a href="'.trim( $item->getField( 'source_url' ) ).'">'.$ret.'</a>';
 				} elseif( !empty( $pParams['download'] ) && $item->getField( 'download_url' )) {
 					$ret = '<a href="'.trim( $item->getField( 'download_url' )).'">'.$ret.'</a>';
 				} elseif( empty( $pParams['size'] ) || $pParams['size'] != 'original' ) {
