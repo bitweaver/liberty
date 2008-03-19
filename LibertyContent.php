@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.346 2008/03/07 03:50:28 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.347 2008/03/19 15:04:54 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -339,6 +339,8 @@ class LibertyContent extends LibertyBase {
 				//$mailEvents = 'wiki_page_changes';
 			}
 
+			$this->storeAliases( $pParamHash );
+
 			$this->invokeServices( 'content_store_function', $pParamHash );
 
 			// Call the formatter's save
@@ -448,6 +450,27 @@ class LibertyContent extends LibertyBase {
 			$this->storeActionLog();
 
 			$this->mDb->CompleteTrans();
+			$ret = TRUE;
+		}
+		return $ret;
+	}
+
+	/**
+	 * storeHistory will store the previous data into the history table for reference
+	 * 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function storeAliases( $pParamHash ) {
+		$ret = FALSE;
+		if( $this->isValid() ) {
+			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_aliases` WHERE `content_id`=?", array( $this->mContentId ) );
+			$trimmedAliases = trim( $pParamHash['alias_string'] );
+			if( !empty( $trimmedAliases ) && $aliases = explode( "\n", $trimmedAliases ) ) {
+				foreach( $aliases as $a ) {
+					$this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."liberty_aliases` (`content_id`, `alias_title`) VALUES (?,?)", array( $this->mContentId, trim( $a ) ) );
+				}
+			}
 			$ret = TRUE;
 		}
 		return $ret;
@@ -1670,6 +1693,19 @@ class LibertyContent extends LibertyBase {
 			$ret = $pHash['title'];
 		} elseif( !empty( $pHash['content_description'] ) ) {
 			$ret = $pHash['content_description'];
+		}
+		return $ret;
+	}
+
+	/**
+	* Get array of aliases for this content object
+	*
+	* @return array list of aliases
+	*/
+	function getAliases() {
+		$ret = array();
+		if( $this->isValid() ) {
+			$ret = $this->mDb->getCol( "SELECT `alias_title` FROM `".BIT_DB_PREFIX."liberty_aliases` lal INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(lal.`content_id`=lc.`content_id`) WHERE lal.`content_id`=? ", array( $this->mContentId ) );
 		}
 		return $ret;
 	}
