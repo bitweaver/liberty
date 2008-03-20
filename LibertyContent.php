@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.348 2008/03/20 16:21:17 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.349 2008/03/20 16:38:45 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -468,7 +468,7 @@ class LibertyContent extends LibertyBase {
 	 */
 	function storeAliases( $pParamHash ) {
 		$ret = FALSE;
-		if( $this->isValid() ) {
+		if( $this->isValid() && isset( $pParamHash['alias_string']) ) {
 			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_aliases` WHERE `content_id`=?", array( $this->mContentId ) );
 			$trimmedAliases = trim( $pParamHash['alias_string'] );
 			if( !empty( $trimmedAliases ) && $aliases = explode( "\n", $trimmedAliases ) ) {
