@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.347 2008/03/19 15:04:54 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.348 2008/03/20 16:21:17 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -77,6 +77,11 @@ class LibertyContent extends LibertyBase {
 	* @public
 	*/
 	var $mPerms = NULL;
+	/**
+	 *Permissions hash specific to the user accessing this LibertyContetn object
+	 * @public
+	 */
+	var $mUserContentPerms;
 	/**
 	* Preferences hash specific to this LibertyContent object - accessed via getPreference/storePreference
 	* @private
@@ -1401,9 +1406,9 @@ class LibertyContent extends LibertyBase {
 	*/
 	function getUserPermissions( $pUserId ) {
 		// cache this out to a static hash to reduce query load
-		static $sUserPerms = array();
+		$this->mUserContentPerms = array();
 
-		if( !isset( $sUserPerms[$pUserId][$this->mContentId] )) {
+		if( !isset( $this->mUserContentPerms[$pUserId][$this->mContentId] )) {
 			// get the default permissions for specified user
 			$query = "SELECT ugp.`perm_name` as `hash_key`, ugp.`perm_name`, ugp.`perm_value`, ugp.`group_id`
 					  FROM `".BIT_DB_PREFIX."users_groups_map` ugm
@@ -1418,10 +1423,12 @@ class LibertyContent extends LibertyBase {
 					  WHERE lcp.content_id=? AND (ugm.user_id=? OR ugm.user_id=?) AND lcp.is_revoked IS NULL";
 			$nonDefaultPerms = $this->mDb->getAssoc( $query, array( $this->mContentId, $pUserId, ANONYMOUS_USER_ID ) );
 
-			$sUserPerms[$pUserId][$this->mContentId] = array_merge( $defaultPerms, $nonDefaultPerms );
+			$this->mUserContentPerms[$pUserId][$this->mContentId] = array_merge( $defaultPerms, $nonDefaultPerms );
+			
+			$this->invokeServices( 'content_user_perms_function' );
 		}
 
-		return $sUserPerms[$pUserId][$this->mContentId];
+		return $this->mUserContentPerms[$pUserId][$this->mContentId];
 	}
 
 	/**
