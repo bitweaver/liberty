@@ -330,6 +330,7 @@ $gBitInstaller->registerUserPermissions( LIBERTY_PKG_NAME, array(
 	array('p_liberty_edit_all_status', 'Can edit the status of content using all status', 'editors', LIBERTY_PKG_NAME),
 	array('p_liberty_view_all_status', 'Can view content with any status', 'editors', LIBERTY_PKG_NAME),
 	array('p_liberty_edit_content_owner', 'Can edit the owner of content', 'editors', LIBERTY_PKG_NAME),
+	array('p_liberty_edit_content_alias', 'Can edit the alternate titles of content', 'editors', LIBERTY_PKG_NAME),
 	array('p_liberty_assign_content_perms', 'Can assign individual content permissions', 'editors', LIBERTY_PKG_NAME),
 ) );
 
