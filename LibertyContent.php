@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.349 2008/03/20 16:38:45 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.350 2008/03/21 18:51:57 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1274,13 +1274,11 @@ class LibertyContent extends LibertyBase {
 				if( $pVerifyAccessControl ) {
 					$this->verifyAccessControl();
 				}
-				if( $this->loadPermissions() ) {
-					// this content has assigned perms
-
-					// make a copy of the user's global perms
-					$checkPerms = $this->getUserPermissions( $gBitUser->mUserId );
+				// this content has assigned perms ?
+				$checkPerms = $this->getUserPermissions();
+				if ( !empty($checkPerms) ) {
 					$ret = !empty( $checkPerms[$this->mAdminContentPerm] ) || !empty( $checkPerms[$pPermName] ); // && ( $checkPerms[$pPermName]['user_id'] == $gBitUser->mUserId );
-				} elseif( $pCheckGlobalPerm ) {
+				} else if( $pCheckGlobalPerm ) {
 					// return default user permission setting when no content perms are set
 					$ret = $gBitUser->hasPermission( $pPermName );
 				}
@@ -1396,39 +1394,39 @@ class LibertyContent extends LibertyBase {
 	/**
 	* Get specific permissions for the specified user for this content
 	*
-	* @param integer Id of user for whom permissions are to be loaded
-	* @return Array of all permissions for the current user joined with perms 
+	* @return Array of all permissions for the current user joined with perms
 	*         for the current content. This should handle cases where 
 	*         non-default permissions is assigned, default permission is 
 	*         removed, and duplicate default permissions where one group's perm 
 	*         is revoked, but another is still permitted. If the permission is 
 	*         revoked, is_revoked will be set to 'y'
 	*/
-	function getUserPermissions( $pUserId ) {
-		// cache this out to a static hash to reduce query load
-		$this->mUserContentPerms = array();
+	function getUserPermissions() {
+		global $gBitUser;
 
-		if( !isset( $this->mUserContentPerms[$pUserId][$this->mContentId] )) {
+		$userId = $gBitUser->mUserId;
+
+		if( !isset( $this->mUserContentPerms )) {
 			// get the default permissions for specified user
 			$query = "SELECT ugp.`perm_name` as `hash_key`, ugp.`perm_name`, ugp.`perm_value`, ugp.`group_id`
 					  FROM `".BIT_DB_PREFIX."users_groups_map` ugm
 						  LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.`group_id`=ugp.`group_id`)
 						  LEFT JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcp ON(lcp.`group_id`=ugm.`group_id` AND lcp.`content_id`=? AND ugp.`perm_name`=lcp.`perm_name`)
 					  WHERE (ugm.`user_id`=? OR ugm.`user_id`=?) AND lcp.`perm_name` IS NULL";
-			$defaultPerms = $this->mDb->getAssoc( $query, array( $this->mContentId, $pUserId, ANONYMOUS_USER_ID ) );
+			$defaultPerms = $this->mDb->getAssoc( $query, array( $this->mContentId, $userId, ANONYMOUS_USER_ID ) );
 			$query = "SELECT lcp.`perm_name` AS `hash_key`, lcp.*
 					  FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcp
 						  INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON(lcp.group_id=ugm.group_id)
 						  LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.group_id=ugp.group_id AND ugp.group_id!=lcp.group_id AND ugp.perm_name=lcp.perm_name)
 					  WHERE lcp.content_id=? AND (ugm.user_id=? OR ugm.user_id=?) AND lcp.is_revoked IS NULL";
-			$nonDefaultPerms = $this->mDb->getAssoc( $query, array( $this->mContentId, $pUserId, ANONYMOUS_USER_ID ) );
+			$nonDefaultPerms = $this->mDb->getAssoc( $query, array( $this->mContentId, $userId, ANONYMOUS_USER_ID ) );
 
-			$this->mUserContentPerms[$pUserId][$this->mContentId] = array_merge( $defaultPerms, $nonDefaultPerms );
+			$this->mUserContentPerms = array_merge( $defaultPerms, $nonDefaultPerms );
 			
 			$this->invokeServices( 'content_user_perms_function' );
 		}
 
-		return $this->mUserContentPerms[$pUserId][$this->mContentId];
+		return $this->mUserContentPerms;
 	}
 
 	/**
