@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.350 2008/03/21 18:51:57 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.351 2008/03/22 21:14:55 jht001 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -554,6 +554,25 @@ class LibertyContent extends LibertyBase {
 				array_push( $bindVars, $pVersion );
 				$versionSql = ' AND th.`version`=? ';
 			}
+
+			$query = "SELECT COUNT(*) AS `hcount`
+				FROM `".BIT_DB_PREFIX."liberty_content_history` th 
+				WHERE $whereSql $versionSql";
+			$query = "SELECT COUNT(*) AS `hcount`
+					FROM `".BIT_DB_PREFIX."liberty_content_history`
+					WHERE `content_id` = ?";
+			$rs = $this->mDb->query($query, array($this->mContentId));
+			$cant = $rs->fields['hcount'];
+
+			# Check for offset out of range
+			if ( $pOffset < 0 ) {
+				$pOffset = 0;
+				}
+			elseif ( $pOffset > $cant ) {
+				$lastPageNumber = ceil ( $cant / $max_records ) - 1;
+				$pOffset = $max_records * $lastPageNumber;
+				}
+
 			$query = "SELECT lc.`title`, th.*,
 				uue.`login` AS modifier_user, uue.`real_name` AS modifier_real_name,
 				uuc.`login` AS creator_user, uuc.`real_name` AS creator_real_name
@@ -576,14 +595,6 @@ class LibertyContent extends LibertyBase {
 			}
 
 
-			$query = "SELECT COUNT(*) AS `hcount`
-				FROM `".BIT_DB_PREFIX."liberty_content_history` th 
-				WHERE $whereSql $versionSql";
-			$query = "SELECT COUNT(*) AS `hcount`
-					FROM `".BIT_DB_PREFIX."liberty_content_history`
-					WHERE `content_id` = ?";
-			$rs = $this->mDb->query($query, array($this->mContentId));
-			$cant = $rs->fields['hcount'];
 			
 
 		}
