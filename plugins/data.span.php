@@ -3,7 +3,7 @@
  * assigned_modules
  *
  * @author     xing
- * @version    $Revision: 1.4 $
+ * @version    $Revision: 1.5 $
  * @package    liberty
  * @subpackage plugins_data
  * @copyright  Copyright (c) 2004, bitweaver.org
@@ -94,6 +94,8 @@ function data_span( $pData, $pParams, $pCommonObject ) {
 	$parseHash = $pCommonObject->mInfo;
 	$parseHash['no_cache'] = TRUE;
 	$parseHash['data'] = $pData;
-	return( '<span '.( !empty( $class ) ? 'class="'.$class.'" ' : '' ).'style="'.$style.'">'.$pCommonObject->parseData( $parseHash ).'</span>' );
+	$parsedData = $pCommonObject->parseData( $parseHash );
+	$parsedData = preg_replace( '|<br\s*/?>$|', '', $parsedData );
+	return( '<span '.( !empty( $class ) ? 'class="'.$class.'" ' : '' ).'style="'.$style.'">'.$parsedData.'</span>' );
 }
 ?>
