@@ -3,7 +3,7 @@
  * tr translation plugin
  *
  * @author     wjames5 will@tekimaki.com 
- * @version    $Revision: 1.1 $
+ * @version    $Revision: 1.2 $
  * @package    liberty
  * @subpackage plugins_data
  * @copyright  Copyright (c) 2008, bitweaver.org
@@ -41,6 +41,8 @@ function data_tr( $pData, $pParams, $pCommonObject ) {
 	$parseHash = $pCommonObject->mInfo;
 	$parseHash['no_cache'] = TRUE;
 	$parseHash['data'] = $transString;
-	return $pCommonObject->parseData( $parseHash );
+	$parsedData = $pCommonObject->parseData( $parseHash );
+	$parsedData = preg_replace( '|<br\s*/?>$|', '', $parsedData );
+	return $parsedData;
 }
 ?>
