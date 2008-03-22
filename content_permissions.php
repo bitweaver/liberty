@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage functions
  */
@@ -13,6 +13,11 @@ require_once( '../bit_setup_inc.php' );
 $gBitSystem->verifyPermission( 'p_liberty_assign_content_perms' );
 
 require_once( LIBERTY_PKG_PATH.'lookup_content_inc.php' );
+
+if( $gContent == null ) {
+	$gBitSystem->setHttpStatus(404);
+	$gBitSystem->fatalError('Could not find the requested content.');
+}
 
 // Process the form
 // send the user to the content page if he wants to
