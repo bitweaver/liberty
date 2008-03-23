@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage functions
  */
@@ -29,6 +29,7 @@ if( isset( $_REQUEST["delete"] ) && isset( $_REQUEST["hist"] )) {
 } elseif( @BitBase::verifyId( $_REQUEST["preview"] )) {
 	if( $version = $gContent->getHistory( $_REQUEST["preview"] )) {
 		$version['data'][0]['parsed_data'] = $gContent->parseData( $version["data"][0] );
+		$version['data'][0]['page_id'] = $gContent->mInfo['page_id']; 
 		$gBitSmarty->assign_by_ref( $smartyContentRef, $version['data'][0] );
 		$gBitSmarty->assign_by_ref( 'version', $_REQUEST["preview"] );
 	}
