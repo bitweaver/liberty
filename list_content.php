@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.25 $
+ * @version  $Revision: 1.26 $
  * @package  liberty
  * @subpackage functions
  */
@@ -34,17 +34,15 @@ if (!empty($_REQUEST["max_records"])) {
 	$_SESSION['liberty_records_per_page'] = $max_content;
 }
 
-
-
-$gBitSmarty->assign( 'user_id', @BitBase::verifyId( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : NULL );
-
 // now that we have all the offsets, we can get the content list
 include_once( LIBERTY_PKG_PATH.'get_content_list_inc.php' );
 
 $gBitSmarty->assign( 'contentSelect', $contentSelect );
 $gBitSmarty->assign( 'contentTypes', $contentTypes );
 $gBitSmarty->assign( 'contentList', $contentList['data'] );
-$contentList['listInfo']['parameters']['content_type_guid'] = $contentSelect;
+$contentList['listInfo']['ihash']['content_type_guid'] = $contentSelect[0];
+$contentList['listInfo']['ihash']['user_id'] = @BitBase::verifyId( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : NULL;
+$contentList['listInfo']['ihash']['find_objects'] = $contentList['listInfo']['find'];
 $gBitSmarty->assign( 'listInfo', $contentList['listInfo'] );
 $gBitSmarty->assign( 'content_type_guids', ( isset( $_REQUEST['content_type_guid'] ) ? $_REQUEST['content_type_guid'] : NULL ));
 
