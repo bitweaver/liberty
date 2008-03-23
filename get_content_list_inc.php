@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.29 $
+ * @version  $Revision: 1.30 $
  * @package  liberty
  * @subpackage functions
  */
@@ -72,5 +72,6 @@ if( empty( $contentTypes ) ) {
 	foreach( $gLibertySystem->mContentTypes as $cType ) {
 		$contentTypes[$cType['content_type_guid']] = $cType['content_description'];
 	}
+	asort($contentTypes);
 }
 ?>
