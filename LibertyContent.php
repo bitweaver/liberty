@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.351 2008/03/22 21:14:55 jht001 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.352 2008/03/28 21:09:48 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1785,6 +1785,23 @@ class LibertyContent extends LibertyBase {
 	}
 
 
+	/**
+	* returns a path to the template type requested
+	* this is intended for package override. while not a requirement please use a naming convention of center_<action>_<content_type_guid>.tpl for new tpls
+	*
+	* @param string $pAction the type of template. common types are view and list
+	*/
+	function getViewTemplate( $pAction ){				
+		$ret = null;
+		switch ( $pAction ){
+			case "view":
+			case "list":
+				$ret = "bitpackage:liberty/center_".$pAction."_generic.tpl"; 
+				break;
+		}
+		return $ret;
+	}
+	
 	/**
 	* Pure virtual function that returns the include file that should render a page of content of this type
 	* @return the fully specified path to file to be included
