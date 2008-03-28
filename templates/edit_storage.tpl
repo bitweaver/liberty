@@ -21,7 +21,23 @@
 
 {include file="bitpackage:liberty/edit_storage_list.tpl" uploadTab=TRUE}
 {else}
-	{tr}You need to store the content and edit it to upload attachments. We are working on a solution to resolve this limitation.{/tr}
+
+{if $gBitUser->hasPermission('p_liberty_attach_attachments') }
+	{php} include (LIBERTY_PKG_PATH."edit_storage_inc.php"); {/php}
+	{foreach from=$gLibertySystem->mPlugins item=plugin key=guid}
+		{* $no_plugins is set by the including template *}
+		{if $plugin.is_active eq 'y' and $plugin.edit_field and $plugin.plugin_type eq 'storage' and !$no_plugins}
+			<div class="row">
+				{formlabel label=`$plugin.edit_label`}
+				{forminput}
+					{eval var=$plugin.edit_field_new}
+					{formhelp note=`$plugin.edit_help_new`}
+				{/forminput}
+			</div>
+		{/if}
+	{/foreach}
+{/if}
+
 {/if}
 {* end of annoying ajax upload prevention hack *}
 
