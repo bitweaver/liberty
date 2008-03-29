@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.22 2008/01/16 17:27:21 spiderr Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.23 2008/03/29 20:44:36 spiderr Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -750,7 +750,9 @@ function liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl = NULL, $pThumbSize
 	foreach( $pThumbSizes as $size ) {
 		foreach( $exts as $ext ) {
 			if( empty( $ret[$size] ) && is_readable( BIT_ROOT_PATH.dirname( $pFilePath ).'/'.$size.'.'.$ext )) {
-				$ret[$size] = str_replace( "//", "/", BIT_ROOT_URL.dirname( $pFilePath ).'/'.$size.'.'.$ext );
+				$path = str_replace( "//", "/", '/'.dirname( $pFilePath ).'/'.$size.'.'.$ext );
+				// the storage dir name is stored in the database. dumb, but that is the way it is.
+				$ret[$size] = dirname( STORAGE_PKG_URI ).$path;
 			}
 		}
 
