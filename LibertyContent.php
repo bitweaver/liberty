@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.352 2008/03/28 21:09:48 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.353 2008/03/29 19:29:18 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1941,6 +1941,10 @@ class LibertyContent extends LibertyBase {
 			$pListHash['min_content_status_id'] = -99;
 		} else {
 			$pListHash['min_content_status_id'] = 1;
+		}
+
+		if( empty( $pListHash['query_cache_time'] ) ) {
+			$pListHash['query_cache_time'] = 0;
 		}
 
 		// if sort_mode is not set then use last_modified_desc
