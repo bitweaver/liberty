@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.353 2008/03/29 19:29:18 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.354 2008/03/30 17:58:33 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1877,6 +1877,31 @@ class LibertyContent extends LibertyBase {
 			$ret = BIT_ROOT_URL.'index.php?content_id='.$this->mContentId;
 		} else {
 			$ret = NULL;
+		}
+		return $ret;
+	}
+
+
+	/**
+	* Returns the create/edit url to a piece of content
+	* @param number $pContentId a valid content id
+	* @param array $pMixed a hash of params to add to the url  
+	*/
+	function getEditUrl( $pContentId = NULL, $pMixed = NULL ){
+		global $gLibertySystem; 
+		$package = $gLibertySystem->mContentTypes[$this->mContentTypeGuid]['handler_package'];
+		if( @BitBase::verifyId( $pContentId ) ) {
+			$ret = BIT_ROOT_URL.$package.'/edit.php?content_id='.$pContentId;
+		} elseif( $this->isValid() ) {
+			$ret = BIT_ROOT_URL.$package.'/edit.php?content_id='.$this->mContentId;
+		} else {
+			$ret = BIT_ROOT_URL.$package.'/edit.php'.(!empty( $pMixed )?"?":"");
+		}
+		foreach( $pMixed as $key => $value ){
+			if( $key != "content_id" || ( $key == "content_id" && @BitBase::verifyId( $value ) ) ) {
+				$ret .= (isset($amp)?"&":"").$key."=".$value;
+			}
+			$amp = TRUE;
 		}
 		return $ret;
 	}
