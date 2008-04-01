@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.354 2008/03/30 17:58:33 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.355 2008/04/01 23:40:42 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1889,7 +1889,7 @@ class LibertyContent extends LibertyBase {
 	*/
 	function getEditUrl( $pContentId = NULL, $pMixed = NULL ){
 		global $gLibertySystem; 
-		$package = $gLibertySystem->mContentTypes[$this->mContentTypeGuid]['handler_package'];
+		$package = $gLibertySystem->mContentTypes[$this->mType['content_type_guid']]['handler_package'];
 		if( @BitBase::verifyId( $pContentId ) ) {
 			$ret = BIT_ROOT_URL.$package.'/edit.php?content_id='.$pContentId;
 		} elseif( $this->isValid() ) {
@@ -2306,7 +2306,7 @@ class LibertyContent extends LibertyBase {
 					} else {
 						$aux['title']        = $type['content_object']->getTitle( $aux );
 						$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
-						$aux['display_url']  = $type['content_object']->getDisplayUrl( $aux['content_id'], $aux );
+						$aux['display_url']  = $type['content_object']->getDisplayUrl( NULL, $aux );
 					}
 
 					if( !empty( $pListHash['thumbnail_size'] ) ) {
