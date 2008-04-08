@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.355 2008/04/01 23:40:42 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.356 2008/04/08 13:54:47 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -556,9 +556,6 @@ class LibertyContent extends LibertyBase {
 			}
 
 			$query = "SELECT COUNT(*) AS `hcount`
-				FROM `".BIT_DB_PREFIX."liberty_content_history` th 
-				WHERE $whereSql $versionSql";
-			$query = "SELECT COUNT(*) AS `hcount`
 					FROM `".BIT_DB_PREFIX."liberty_content_history`
 					WHERE `content_id` = ?";
 			$rs = $this->mDb->query($query, array($this->mContentId));
@@ -567,11 +564,10 @@ class LibertyContent extends LibertyBase {
 			# Check for offset out of range
 			if ( $pOffset < 0 ) {
 				$pOffset = 0;
-				}
-			elseif ( $pOffset > $cant ) {
+			} elseif ( $pOffset > $cant ) {
 				$lastPageNumber = ceil ( $cant / $max_records ) - 1;
 				$pOffset = $max_records * $lastPageNumber;
-				}
+			}
 
 			$query = "SELECT lc.`title`, th.*,
 				uue.`login` AS modifier_user, uue.`real_name` AS modifier_real_name,
