@@ -15,7 +15,7 @@
 
 			<tr>
 				<td></td><td></td>
-				{if $uploadTab && ( $libertyUploader || ( $gBitSystem->getConfig('liberty_attachment_style' ) == 'ajax' && !$gBitThemes->isAjaxRequest() ))}
+				{if $uploadTab }
 					<td class="actionicon">
 						<label>
 							{tr}No {$primary_label|default:"Primary"}{/tr}:&nbsp;
