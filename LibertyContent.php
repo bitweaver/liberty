@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.357 2008/04/12 00:29:19 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.358 2008/04/12 00:50:02 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1285,10 +1285,10 @@ class LibertyContent extends LibertyBase {
 				if ( !empty($checkPerms) ) {
 					// Do they have the admin permission or the one we want?
 					if ( !empty($checkPerms[$this->mAdminContentPerm]) &&
-						 ( $pCheckGlobalPerm || $checkPerms[$this->mAdminContentPerm]['default_perm'] != 1 ) ) {
+						 ( $pCheckGlobalPerm || empty($checkPerms[$this->mAdminContentPerm]['default_perm']) ) ) {
 						$ret = TRUE;
 					} else if ( !empty($checkPerms[$pPermName]) &&
-							   ( $pCheckGlobalPerm || $checkPerms[$pPermName]['default_perm'] != 1 ) ) {
+							   ( $pCheckGlobalPerm || empty($checkPerms[$pPermName]['default_perm']) ) ) {
 						$ret = TRUE;
 					}
 				} else if( $pCheckGlobalPerm ) {
