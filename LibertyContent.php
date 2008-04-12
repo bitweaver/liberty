@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.356 2008/04/08 13:54:47 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.357 2008/04/12 00:29:19 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1281,10 +1281,16 @@ class LibertyContent extends LibertyBase {
 				if( $pVerifyAccessControl ) {
 					$this->verifyAccessControl();
 				}
-				// this content has assigned perms ?
 				$checkPerms = $this->getUserPermissions();
 				if ( !empty($checkPerms) ) {
-					$ret = !empty( $checkPerms[$this->mAdminContentPerm] ) || !empty( $checkPerms[$pPermName] ); // && ( $checkPerms[$pPermName]['user_id'] == $gBitUser->mUserId );
+					// Do they have the admin permission or the one we want?
+					if ( !empty($checkPerms[$this->mAdminContentPerm]) &&
+						 ( $pCheckGlobalPerm || $checkPerms[$this->mAdminContentPerm]['default_perm'] != 1 ) ) {
+						$ret = TRUE;
+					} else if ( !empty($checkPerms[$pPermName]) &&
+							   ( $pCheckGlobalPerm || $checkPerms[$pPermName]['default_perm'] != 1 ) ) {
+						$ret = TRUE;
+					}
 				} else if( $pCheckGlobalPerm ) {
 					// return default user permission setting when no content perms are set
 					$ret = $gBitUser->hasPermission( $pPermName );
@@ -1415,7 +1421,7 @@ class LibertyContent extends LibertyBase {
 
 		if( !isset( $this->mUserContentPerms )) {
 			// get the default permissions for specified user
-			$query = "SELECT ugp.`perm_name` as `hash_key`, ugp.`perm_name`, ugp.`perm_value`, ugp.`group_id`
+			$query = "SELECT ugp.`perm_name` as `hash_key`, 1 as `default_perm`, ugp.`perm_name`, ugp.`perm_value`, ugp.`group_id`
 					  FROM `".BIT_DB_PREFIX."users_groups_map` ugm
 						  LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.`group_id`=ugp.`group_id`)
 						  LEFT JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcp ON(lcp.`group_id`=ugm.`group_id` AND lcp.`content_id`=? AND ugp.`perm_name`=lcp.`perm_name`)
