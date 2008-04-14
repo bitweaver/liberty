@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.23 2008/03/29 20:44:36 spiderr Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.24 2008/04/14 08:58:12 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -373,6 +373,7 @@ function liberty_content_preview( &$pObject ) {
 	if ($gBitSystem->isFeatureActive('liberty_allow_change_owner') && $gBitUser->hasPermission('p_liberty_edit_content_owner')) {
 		$pObject->mInfo['owner_id'] = $_REQUEST['owner_id'];
 	}
+	include_once( LIBERTY_PKG_PATH.'edit_help_inc.php' );
 }
 
 /**
