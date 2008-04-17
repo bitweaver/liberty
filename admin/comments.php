@@ -34,8 +34,33 @@ $commentSettings = array(
 );
 $gBitSmarty->assign( 'commentSettings', $commentSettings );
 
+$commentModerationSettings = array();
+
+if ( $gBitSystem->isPackageActive('moderation') ){
+	$commentModerationSettings = array(
+		"comments_allow_moderation" => array(
+			'label' => 'Allow admins to moderate comments',
+			'note' => 'Checking this allows users with the permission to edit comments the ability to force moderation on comment posts. When comments are moderated they are automatically hidden until approved by a moderator. This is opt in, meaning you can limit the moderation requirement on a content by content basis.',
+			'page' => '',
+		),
+		"comments_allow_owner_moderation" => array(
+			'label' => 'Allow content creators to moderate comments on their content',
+			'note' => 'This is similar to allowing admins to moderate comments, but this lets the creator of a content item to require and moderate the comments on the things they create. Administrators will also be able to admin those comments.',
+			'page' => '',
+		),
+		"comments_moderate_all" => array(
+			'label' => 'Require moderation of all comments',
+			'note' => 'This forces all comments to be held for moderation before being published. We recommend this only if you are have extensive problems with spam or malicious comments; on high traffic sites this features requires a lot of hands on work to read all comments',
+			'page' => '',
+		),
+	);
+
+	$gBitSmarty->assign( 'commentModerationSettings', $commentModerationSettings );
+}
+
 if( !empty( $_REQUEST['change_prefs'] ) ) {
-	foreach( array_keys( $commentSettings ) as $item ) {
+	$commentOptions = array_merge( $commentSettings, $commentModerationSettings );
+	foreach( array_keys( $commentOptions ) as $item ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
 

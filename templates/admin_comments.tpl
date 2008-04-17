@@ -7,7 +7,10 @@
 	</div>
 
 	<div class="body">
-		{form legend="Comment Settings"}
+	{form}
+		{jstabs}
+			{jstab title="Comment Display"}
+			{legend legend="Display Settings"}
 			{foreach from=$commentSettings key=item item=output}
 				<div class="row">
 					{formlabel label=`$output.label` for=$item}
@@ -67,11 +70,30 @@
 					{formhelp note="Default number of lines in the comment post textarea."}
 				{/forminput}
 			</div>
+			{/legend}
+			{/jstab}
+			{if $gBitSystem->isPackageActive( 'moderation' ) }
+				{jstab title="Comment Moderation"}
+				<p>This feature is new and still in development, you may find it buggy.</p>
+				{legend legend="Moderation Settings"}
+				{foreach from=$commentModerationSettings key=item item=output}
+					<div class="row">
+						{formlabel label=`$output.label` for=$item}
+						{forminput}
+							{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
+							{formhelp note=`$output.note` page=`$output.page`}
+						{/forminput}
+					</div>
+				{/foreach}
+				{/legend}
+				{/jstab}
+			{/if}
+		{/jstabs}
 
-			<div class="row submit">
-				<input type="submit" name="change_prefs" value="{tr}Change preferences{/tr}" />
-			</div>
-		{/form}
+		<div class="row submit">
+			<input type="submit" name="change_prefs" value="{tr}Change preferences{/tr}" />
+		</div>
+	{/form}
 
 		{capture name=commentUrls}
 			<ul>
