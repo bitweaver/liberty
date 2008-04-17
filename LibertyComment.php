@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.58 2008/04/17 13:26:29 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.59 2008/04/17 18:16:07 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -13,11 +13,6 @@
 require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
 
 define( 'BITCOMMENT_CONTENT_TYPE_GUID', 'bitcomment' );
-
-/**
- * Load up our moderation handlers
- */
-require_once( LIBERTY_PKG_PATH.'comments_moderation_inc.php' );
 
 /**
  * Virtual base class (as much as one can have such things in PHP) for all
@@ -519,26 +514,6 @@ class LibertyComment extends LibertyContent {
 			$bindVars = array( $pContentId );
 			$select1 = '';
 			$join1 = '';
-		}
-
-		// if comment moderation is enabled join onto the moderation table to get references
-		global $gBitSystem, $gBitUser;
-		if ( $gBitSystem->isFeatureActive('liberty_display_status') &&
-			 $gBitSystem->isPackageActive('moderation')
-			 /* would like to enforce access to the moderations along these terms
-			  * the problem is we can't do a real check because we don't have a reference to the parent content object
-			 && ( 
-				( $gBitSystem->isFeatureActive( 'comments_allow_owner_moderation' ) && $gContent->hasEditPermission() ) ||
-				( 
-					( $gBitSystem->isFeatureActive( 'comments_moderate_all' ) || $gBitSystem->isFeatureActive( 'comments_allow_moderation' ) ) && 
-					( $gBitUser->isAdmin() || $gContent->hasUserPermission('p_liberty_edit_comments') )
-				)
-			 )
-			 */
-		   ){
-			// where we have a status_id of -1 join to moderation table
-			$select1 .= ", m.`moderation_id`";
-			$join1 .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."moderation` m ON (m.`content_id` = lc.`content_id`) ";
 		}
 
 		$joinSql = $selectSql = $whereSql = '';

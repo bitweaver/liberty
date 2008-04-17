@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.47 $
+ * @version  $Revision: 1.48 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.47 2008/04/17 13:26:29 wjames5 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.48 2008/04/17 18:16:07 wjames5 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -117,38 +117,6 @@ if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'p_lib
 	}
 	if(!($gBitSystem->isPackageActive('bitboards') && BitBoardTopic::isLockedMsg($storeRow['parent_id']))) {
 		if( $storeComment->storeComment($storeRow) ) {
-			// hold comments for moderation - requires moderation package is installed
-			if(	$gBitSystem->isPackageActive('moderation') &&
-				empty( $_REQUEST['post_comment_id'] ) &&
-				!( $gContent->isOwner() || $gBitUser->isAdmin() ) && 
-				( $gBitSystem->isFeatureActive( 'comments_moderate_all' ) ||
-				  (( $gBitSystem->isFeatureActive( 'comments_allow_moderation' ) || $gBitSystem->isFeatureActive('comments_allow_owner_moderation')) && 
-					 $gContent->getPreference( 'moderate_comments' ))
-				)){
-				// if we are enforcing moderation on the comment then change the status_id
-				$storeComment->storeStatus( -1 );
-				// prep info what we'll store in the moderation ticket
-				$modMsg = tra( "A comment has been submitted to " ).$gContent->mType['content_description']." ".$gContent->getTitle();
-				$modDataHash = array( 'display_url' => $storeComment->getDisplayUrl() );
-				if ( $gBitSystem->isFeatureActive('comments_allow_owner_moderation') ){
-					$modUserId = $gContent->mInfo['user_id'];
-				}else{
-					$modUserId = 2; //assign it to admin rather than the owner so as to prevent content owner from accessing if they should not be able to
-				}
-				// register it for moderation
-				$pendingModeration = $gModerationSystem->requestModeration( 'liberty', 
-																			'comment_post', 
-																			$modUserId,
-																			NULL, 
-																			'p_liberty_edit_comments',
-																			$storeComment->mContentId, 
-																			$modMsg, 
-																			MODERATION_PENDING, 
-																			$modDataHash
-																		);
-			}
-			// end moderation		
-			
 			if($gBitSystem->isPackageActive('bitboards') && $gBitSystem->isFeatureActive('bitboards_thread_track')) {
 				$topic_id = substr($storeComment->mInfo['thread_forward_sequence'],0,10);
 				$data = BitBoardTopic::getNotificationData($topic_id);
