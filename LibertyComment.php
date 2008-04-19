@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.60 2008/04/19 18:13:25 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.61 2008/04/19 18:55:40 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -159,7 +159,7 @@ class LibertyComment extends LibertyContent {
 	// (Hint: see mailing list integreation in boards)
 	function storeMessageId( $pMessageId ) {
 		if( $this->isValid() ) {
-			$this->mDb->query( "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `message_id`=? WHERE `content_id`=?", array( $pMessageId, $this->mContentId ) );
+			$this->mDb->query( "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `message_guid`=? WHERE `content_id`=?", array( $pMessageId, $this->mContentId ) );
 		}
 	}
 
