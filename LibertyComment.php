@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.59 2008/04/17 18:16:07 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.60 2008/04/19 18:13:25 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -154,6 +154,14 @@ class LibertyComment extends LibertyContent {
 		return (count($this->mErrors) == 0);
 	}
 
+
+	// This is a highly specialized method only used for emailing list synchronization. If you don't know anything about this, just move along and live in bliss
+	// (Hint: see mailing list integreation in boards)
+	function storeMessageId( $pMessageId ) {
+		if( $this->isValid() ) {
+			$this->mDb->query( "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `message_id`=? WHERE `content_id`=?", array( $pMessageId, $this->mContentId ) );
+		}
+	}
 
 	// delete a single comment
 	function deleteComment() {
