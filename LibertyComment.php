@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.63 2008/04/21 22:16:43 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.64 2008/04/21 22:32:25 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -319,6 +319,7 @@ class LibertyComment extends LibertyContent {
 		$joinSql = $whereSql = $selectSql = '';
 		$bindVars = $ret = array();
 
+		$pParamHash['include_comments'] = TRUE;
 		$this->getServicesSql( 'content_list_sql_function', $selectSql, $joinSql, $whereSql, $bindVars, NULL, $pParamHash );
 
 		if ( !empty( $pParamHash['root_content_type_guid'] ) ) {
@@ -557,7 +558,7 @@ class LibertyComment extends LibertyContent {
 		}
 
 		$joinSql = $selectSql = $whereSql = '';
-		$pListHash = array( 'content_id' => $contentId, 'max_records' => $pMaxComments, 'offset'=>$pOffset, 'sort_mode'=> $pSortOrder, 'display_mode' => $pDisplayMode, 'include_comments' => 'y' );
+		$pListHash = array( 'content_id' => $contentId, 'max_records' => $pMaxComments, 'offset'=>$pOffset, 'sort_mode'=> $pSortOrder, 'display_mode' => $pDisplayMode, 'has_comment_view_perm' => TRUE );
 		$this->getServicesSql( 'content_list_sql_function', $selectSql, $joinSql, $whereSql, $bindVars, $this, $pListHash );
 
 		if ($pContentId) {
