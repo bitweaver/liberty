@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.62 2008/04/21 16:28:05 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.63 2008/04/21 22:16:43 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -439,14 +439,46 @@ class LibertyComment extends LibertyContent {
 			$bindVars = array($pContentId);
 		}
 		$commentCount = 0;
+
+		$joinSql = $selectSql = $whereSql = '';
+
+		/* brute force call to liberty_content_list_sql 
+		 * for status enforcement
+		 * 
+		 * here we call liberty_content_list_sql which has a 
+		 * restriction to enforce content_status_id. we could 
+		 * have called the full list_sql service, but that
+		 * would be overkill for just getting a count.
+		 */
+		if ( !is_array($pContentId) ){
+			$sqlHash = liberty_content_list_sql(); 
+			if( !empty( $sqlHash['select_sql'] ) ) {
+				$selectSql .= $sqlHash['select_sql'];
+			}
+			if( !empty( $sqlHash['join_sql'] ) ) {
+				$joinSql .= $sqlHash['join_sql'];
+			}
+			if( !empty( $sqlHash['where_sql'] ) ) {
+				$whereSql .= $sqlHash['where_sql'];
+			}
+			if( !empty( $sqlHash['bind_vars'] ) ) {
+				if ( is_array( $bindVars ) ) {
+					$bindVars = array_merge( $bindVars, $sqlHash['bind_vars'] );
+				} else {
+					$bindVars = $sqlHash['bind_vars'];
+				}
+			}
+		}
+
 		if ($bindVars) {
 			$sql = "SELECT count(*) as comment_count
 					FROM `".BIT_DB_PREFIX."liberty_comments` lcm
-					WHERE lcm.`root_id` $mid";
+						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lcm.`content_id` = lc.`content_id`) $joinSql
+					WHERE lcm.`root_id` $mid $whereSql";
 			$commentCount = $this->mDb->getOne($sql, $bindVars);
 		}
 		return $commentCount;
-	}
+	 }
 
 
 	// used for direct access to view a single comment
