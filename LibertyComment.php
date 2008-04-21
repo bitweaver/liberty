@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.61 2008/04/19 18:55:40 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.62 2008/04/21 16:28:05 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -59,7 +59,7 @@ class LibertyComment extends LibertyContent {
 		}
 
 		$joinSql = $selectSql = $whereSql = '';
-		$this->getServicesSql( 'content_list_sql_function', $selectSql, $joinSql, $whereSql, $bindVars, $this );
+		$this->getServicesSql( 'content_load_sql_function', $selectSql, $joinSql, $whereSql, $bindVars, $this );
 
 		$sql = "SELECT lcom.*, lc.*, uu.`email`, uu.`real_name`, uu.`login` $selectSql
 				FROM `".BIT_DB_PREFIX."liberty_comments` lcom
