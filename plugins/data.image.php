@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/data.image.php,v 1.4 2008/04/23 01:29:50 spiderr Exp $
+ * @version  $Revision: 1.5 $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/data.image.php,v 1.5 2008/04/23 02:07:32 spiderr Exp $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -39,7 +39,31 @@ function data_image( $pData, $pParams ) {
 	global $gBitSystem, $gBitSmarty;
 	$ret = ' ';
 
-	if( @BitBase::verifyId( $pParams['id'] ) && $gBitSystem->isPackageActive( 'fisheye' )) {
+	$imgStyle = '';
+	$wrapper = liberty_plugins_wrapper_style( $pParams );
+
+	$description = !isset( $wrapper['description'] ) ? $wrapper['description'] : NULL;
+	foreach( $pParams as $key => $value ) {
+		if( !empty( $value ) ) {
+			switch( $key ) {
+				// rename a couple of parameters
+				case 'width':
+				case 'height':
+					if( preg_match( "/^\d+(em|px|%|pt)$/", trim( $value ) ) ) {
+						$imgStyle .= $key.':'.$value.';';
+					} elseif( preg_match( "/^\d+$/", $value ) ) {
+						$imgStyle .= $key.':'.$value.'px;';
+					}
+					// remove values from the hash that they don't get used in the div as well
+					$pParams[$key] = NULL;
+					break;
+			}
+		}
+	}
+
+	if( !empty( $pParams['src'] ) ) {
+		$thumbUrl = $pParams['src'];
+	} elseif( @BitBase::verifyId( $pParams['id'] ) && $gBitSystem->isPackageActive( 'fisheye' )) {
 		require_once( FISHEYE_PKG_PATH.'FisheyeImage.php' );
 		require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'display_bytes' );
 
@@ -48,66 +72,42 @@ function data_image( $pData, $pParams ) {
 		if( $item->load() ) {
 			// insert source url if we need the original file
 			if( !empty( $pParams['size'] ) && $pParams['size'] == 'original' ) {
-				$thumburl = $item->mInfo['image_file']['source_url'];
+				$thumbUrl = $item->mInfo['image_file']['source_url'];
 			} elseif( $item->mInfo['image_file']['thumbnail_url'] ) {
-				$thumburl = ( !empty( $pParams['size'] ) && !empty( $item->mInfo['image_file']['thumbnail_url'][$pParams['size']] ) ? $item->mInfo['image_file']['thumbnail_url'][$pParams['size']] : $item->mInfo['image_file']['thumbnail_url']['medium'] );
+				$thumbUrl = ( !empty( $pParams['size'] ) && !empty( $item->mInfo['image_file']['thumbnail_url'][$pParams['size']] ) ? $item->mInfo['image_file']['thumbnail_url'][$pParams['size']] : $item->mInfo['image_file']['thumbnail_url']['medium'] );
 			}
 
-			$img_style = '';
-
-			foreach( $pParams as $key => $value ) {
-				if( !empty( $value ) ) {
-					switch( $key ) {
-						// rename a couple of parameters
-						case 'width':
-						case 'height':
-							if( preg_match( "/^\d+(em|px|%|pt)$/", trim( $value ) ) ) {
-								$img_style .= $key.':'.$value.';';
-							} elseif( preg_match( "/^\d+$/", $value ) ) {
-								$img_style .= $key.':'.$value.'px;';
-							}
-							// remove values from the hash that they don't get used in the div as well
-							$pParams[$key] = NULL;
-							break;
-					}
-				}
-			}
-
-			$wrapper = liberty_plugins_wrapper_style( $pParams );
-
-			// check if we have a valid thumbnail
-			if( !empty( $thumburl )) {
+			if( empty( $description ) ) {
 				$description = !isset( $wrapper['description'] ) ? $wrapper['description'] : $item->getField( 'title', tra( 'Image' ) );
-
-				// set up image first
-				$ret = '<img'.
-					' alt="'.  $description.'"'.
-					' title="'.$description.'"'.
-					' src="'  .$thumburl.'"'.
-					' style="'.$img_style.'"'.
-					' />';
-
-				if( !empty( $pParams['nolink'] ) ) {
-				} elseif( !empty( $wrapper['link'] ) ) {
-					// if this image is linking to something, wrap the image with the <a>
-					$ret = '<a href="'.trim( $wrapper['link'] ).'">'.$ret.'</a>';
-				} elseif ( empty( $pParams['size'] ) || $pParams['size'] != 'original' ) {
-					$ret = '<a href="'.trim( $item->mInfo['image_file']['source_url'] ).'">'.$ret.'</a>';
-				}
-
-				if( !empty( $wrapper['style'] ) || !empty( $class ) || !empty( $wrapper['description'] ) ) {
-					$ret = '<'.$wrapper['wrapper'].' class="'.( !empty( $wrapper['class'] ) ? $wrapper['class'] : "img-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.( !empty( $wrapper['description'] ) ? '<br />'.$wrapper['description'] : '' ).'</'.$wrapper['wrapper'].'>';
-				}
-
-			} else {
-				$ret = tra( "There was a problem getting an image for the file." );
 			}
-		} else {
-			$ret = tra( "The image id given is not valid." );
+		}
+	}
+
+	// check if we have a valid thumbnail
+	if( !empty( $thumbUrl )) {
+		// set up image first
+		$ret = '<img'.
+			' alt="'.  $description.'"'.
+			' title="'.$description.'"'.
+			' src="'  .$thumbUrl.'"'.
+			' style="'.$imgStyle.'"'.
+			' />';
+
+		if( !empty( $pParams['nolink'] ) ) {
+		} elseif( !empty( $wrapper['link'] ) ) {
+			// if this image is linking to something, wrap the image with the <a>
+			$ret = '<a href="'.trim( $wrapper['link'] ).'">'.$ret.'</a>';
+		} elseif ( empty( $pParams['size'] ) || $pParams['size'] != 'original' ) {
+			$ret = '<a href="'.trim( $item->mInfo['image_file']['source_url'] ).'">'.$ret.'</a>';
+		}
+
+		if( !empty( $wrapper['style'] ) || !empty( $class ) || !empty( $wrapper['description'] ) ) {
+			$ret = '<'.$wrapper['wrapper'].' class="'.( !empty( $wrapper['class'] ) ? $wrapper['class'] : "img-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.( !empty( $wrapper['description'] ) ? '<br />'.$wrapper['description'] : '' ).'</'.$wrapper['wrapper'].'>';
 		}
 	} else {
-		$ret = tra( "The image id given is not valid." );
+		$ret = tra( "Unknown Image" );
 	}
+
 	return $ret;
 }
 

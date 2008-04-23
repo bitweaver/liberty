@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.49 $
+ * @version  $Revision: 1.50 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -53,6 +53,9 @@ $gLibertySystem->registerPlugin( PLUGIN_GUID_BIT_FILES, $pluginParams );
 function bit_files_verify( &$pStoreRow ) {
 	$pStoreRow['plugin_guid'] = PLUGIN_GUID_BIT_FILES;
 	$pStoreRow['foreign_id'] = NULL;
+	if( strlen( $pStoreRow['name'] ) > 200 ) {
+		$pStoreRow['name'] = substr( $pStoreRow['name'], 0, 200 );
+	}
 	$pStoreRow['dest_base_name'] = substr( $pStoreRow['upload']['name'], 0, strrpos( $pStoreRow['upload']['name'], '.' ) );
 	if( function_exists( 'transliterate' ) ) {
 //		$pStoreRow['dest_base_name'] = transliterate( $pStoreRow['dest_base_name'], array('han_transliterate', 'diacritical_remove'), 'utf-8', 'utf-8' );
