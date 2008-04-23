@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.16 $
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.16 2007/07/05 05:34:17 squareing Exp $
+ * @version  $Revision: 1.17 $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.17 2008/04/23 01:28:19 spiderr Exp $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -98,7 +98,7 @@ function data_img( $pData, $pParams ) {
 
 		// finally, wrap the image
 		if( !empty( $wrapper['style'] ) || !empty( $class ) || !empty( $wrapper['description'] ) ) {
-			$ret = '<'.$wrapper['wrapper'].' class="'.( !empty( $wrapper['class'] ) ? $wrapper['class'] : "img-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.'<br />'.( !empty( $wrapper['description'] ) ? $wrapper['description'] : '' ).'</'.$wrapper['wrapper'].'>';
+			$ret = '<'.$wrapper['wrapper'].' class="'.( !empty( $wrapper['class'] ) ? $wrapper['class'] : "img-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.( !empty( $wrapper['description'] ) ? '<br />'.$wrapper['description'] : '' ).'</'.$wrapper['wrapper'].'>';
 		}
 	} else {
 		$ret = '<span class="warning">'.tra( 'When using <strong>{img}</strong> the <strong>src</strong> parameter is required.' ).'</span>';
