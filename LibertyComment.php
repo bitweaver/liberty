@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.64 2008/04/21 22:32:25 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.65 2008/04/26 16:35:34 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -37,6 +37,7 @@ class LibertyComment extends LibertyContent {
 		$this->mContentId = $pContentId;
 		$this->mInfo = $pInfo;
 		$this->mAdminContentPerm = 'p_liberty_admin_comments';
+		$this->mRootObj = NULL;
 
 		if ($this->mCommentId || $this->mContentId) {
 			$this->loadComment();
@@ -241,7 +242,7 @@ class LibertyComment extends LibertyContent {
 	}
 
 	function userCanEdit($pUserId = NULL) {
-		global $gBitUser;
+		global $gBitUser, $gBitSystem;
 
 		if (!empty($pUserId)) {
 			$tmpUser = new BitUser($pUserId);
@@ -249,10 +250,25 @@ class LibertyComment extends LibertyContent {
 		} else {
 			$tmpUser = &$gBitUser;
 		}
+		
+		// check the allowed edit time limit - we'll use it later
+		$withinEditTime = FALSE;
+		if ( $gBitSystem->getConfig( 'comment_edit_minutes', 60 ) * 60 + $this->getField( 'created' ) > time() ) {
+			$withinEditTime = TRUE;
+		}
+
 		if($tmpUser->isRegistered()) {
-			return ($tmpUser->isAdmin() || ($tmpUser->mUserId == $this->mInfo['user_id']));
+			/* get the hash of the users perms rather than call hasUserPermission which 
+			 * always returns true for owner which interferes with trying to time limit editing
+			 */
+			$checkPerms = $this->getUserPermissions();
+			return ( !empty( $checkPerms['p_liberty_edit_comments'] ) ||
+					 !empty( $checkPerms['p_liberty_admin_comments'] ) ||
+					 $tmpUser->isAdmin() ||
+					 ( $tmpUser->mUserId == $this->mInfo['user_id'] && $withinEditTime )
+					);
 		} elseif($this->mInfo['user_id']==ANONYMOUS_USER_ID) {
-			return (($_SERVER['REMOTE_ADDR']==$this->mInfo['ip'])&&(($this->mInfo['created']-time())<3600));
+			return (($_SERVER['REMOTE_ADDR']==$this->mInfo['ip']) && $withinEditTime );
 		}
 		return FALSE;
 	}
@@ -361,11 +377,11 @@ class LibertyComment extends LibertyContent {
 		// left outer join on root so updater works
 
 		$query = "SELECT
-					lcm.`comment_id`,
+					lcom.`comment_id`,
 					lc.`content_id`,
-					lcm.`parent_id`,
-					lcm.`anon_name`, 
-					lcm.`root_id`, 
+					lcom.`parent_id`,
+					lcom.`anon_name`, 
+					lcom.`root_id`, 
 					lc.`title` AS `content_title`, 
 					rlc.`title` AS `root_content_title`, 
 					lc.`created`, 
@@ -380,12 +396,12 @@ class LibertyComment extends LibertyContent {
 					uu.`real_name`, 
 					uu.`user_id`
 					$selectSql
-				  FROM `".BIT_DB_PREFIX."liberty_comments` lcm
-				  		INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcm.`content_id`=lc.`content_id` )
+				  FROM `".BIT_DB_PREFIX."liberty_comments` lcom
+				  		INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcom.`content_id`=lc.`content_id` )
 			      		INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id`=lc.`user_id`)
-						LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` rlc ON( rlc.`content_id`=lcm.`root_id` )
+						LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` rlc ON( rlc.`content_id`=lcom.`root_id` )
 						$joinSql, `".BIT_DB_PREFIX."liberty_content` ptc
-				  WHERE lcm.`parent_id`=ptc.`content_id` $whereSql
+				  WHERE lcom.`parent_id`=ptc.`content_id` $whereSql
 				  ORDER BY $sort_mode";
 		if( $result = $this->mDb->query( $query, $bindVars, $pParamHash['max_records'], $pParamHash['offset'] )) {
 			while( $row = $result->FetchRow() ) {
@@ -452,7 +468,7 @@ class LibertyComment extends LibertyContent {
 		 * would be overkill for just getting a count.
 		 */
 		if ( !is_array($pContentId) ){
-			$sqlHash = liberty_content_list_sql(); 
+			$sqlHash = liberty_content_list_sql( $this, NULL ); 
 			if( !empty( $sqlHash['select_sql'] ) ) {
 				$selectSql .= $sqlHash['select_sql'];
 			}
@@ -472,10 +488,10 @@ class LibertyComment extends LibertyContent {
 		}
 
 		if ($bindVars) {
-			$sql = "SELECT count(*) as comment_count
-					FROM `".BIT_DB_PREFIX."liberty_comments` lcm
-						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lcm.`content_id` = lc.`content_id`) $joinSql
-					WHERE lcm.`root_id` $mid $whereSql";
+			$sql = "SELECT count(*) as comment_count $selectSql
+					FROM `".BIT_DB_PREFIX."liberty_comments` lcom
+						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON (lcom.`content_id` = lc.`content_id`) $joinSql
+					WHERE lcom.`root_id` $mid $whereSql";
 			$commentCount = $this->mDb->getOne($sql, $bindVars);
 		}
 		return $commentCount;
