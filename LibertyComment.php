@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.66 2008/04/28 15:50:59 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.67 2008/04/28 15:52:35 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -262,7 +262,7 @@ class LibertyComment extends LibertyContent {
 			 * always returns true for owner which interferes with trying to time limit editing
 			 */
 			if ( $this->getRootObj() != NULL ){
-				$root = &$this->getRootObj();
+				$root = $this->getRootObj();
 				$checkPerms = $root->getUserPermissions();
 			}else{
 				$checkPerms = array(
@@ -270,13 +270,6 @@ class LibertyComment extends LibertyContent {
 									'p_liberty_admin_comments' => $tmpUser->hasPermission( 'p_liberty_admin_comments' ),
 								);
 			}
-			/*
-			vd( $checkPerms['p_liberty_edit_comments'] );
-			vd( $checkPerms['p_liberty_admin_comments'] );
-			vd( $tmpUser->isAdmin() );
-			vd( $tmpUser->mUserId == $this->mInfo['user_id'] );
-			vd( $withinEditTime );
-			 */
 			return ( !empty( $checkPerms['p_liberty_edit_comments'] ) ||
 					 !empty( $checkPerms['p_liberty_admin_comments'] ) ||
 					 $tmpUser->isAdmin() ||
