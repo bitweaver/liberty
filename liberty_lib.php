@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.26 2008/04/28 04:20:09 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.27 2008/04/28 23:54:45 wjames5 Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -330,12 +330,23 @@ function liberty_plugins_wrapper_style( $pParamHash ) {
  * @access public
  * @return content load sql
  */
-function liberty_content_load_sql() {
+function liberty_content_load_sql( &$pObject, $pParamHash=NULL ) {
 	global $gBitSystem, $gBitUser;
 	$ret = array();
-	if ($gBitSystem->isFeatureActive('liberty_display_status') && !$gBitUser->hasPermission('p_liberty_edit_all_status')) {
-		$ret['where_sql'] = " AND lc.`content_status_id` < 100 AND ( (lc.`user_id` = '".$gBitUser->getUserId()."' AND lc.`content_status_id` > -100) OR lc.`content_status_id` > 0 )";
+
+	$hasPerm = is_object($pObject)?$pObject->hasUserPermission('p_liberty_edit_all_status'):$gBitUser->hasPermission('p_liberty_edit_all_status');
+
+	if ( $gBitSystem->isFeatureActive('liberty_display_status') && !$hasPerm ){
+		if (( is_object($pObject) && $pObject->mType['content_type_guid'] == 'bitcomment' )||( !empty( $pParamHash['include_comments'] ) && $pParamHash['include_comments']  == 'y')) {
+			// if we are getting a list of comments then lets check the owner of the comment root and the owner of the content
+			$ret['join_sql'] = " INNER JOIN `".BIT_DB_PREFIX."liberty_content` rlcs ON( rlcs.`content_id`=lcom.`root_id` )";
+			$ret['where_sql'] = " AND lc.`content_status_id` < 100 AND ( ( (rlcs.`user_id` = '".$gBitUser->getUserId()."' OR lc.`user_id` = '".$gBitUser->getUserId()."') AND lc.`content_status_id` > -100) OR lc.`content_status_id` > 0 )";
+		}else{
+			// let owner see any of their own content with a status > -100
+			$ret['where_sql'] = " AND lc.`content_status_id` < 100 AND ( (lc.`user_id` = '".$gBitUser->getUserId()."' AND lc.`content_status_id` > -100) OR lc.`content_status_id` > 0 )";
+		}
 	}
+	
 	// Make sure owner comes out properly for all content
 	if ($gBitSystem->isFeatureActive('liberty_allow_change_owner') && $gBitUser->hasPermission('p_liberty_edit_content_owner')) {
 		$ret['select_sql'] = " , lc.`user_id` AS owner_id";
