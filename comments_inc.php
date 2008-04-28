@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.48 $
+ * @version  $Revision: 1.49 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.48 2008/04/17 18:16:07 wjames5 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.49 2008/04/28 15:50:59 wjames5 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -281,6 +281,10 @@ if( !@BitBase::verifyId( $commentsParentId ) ) {
 		$parents = $commentsParentIds;
 	} else {
 		$parents = $commentsParentId;
+	}
+	// pass in a reference to the root object so that we can do proper permissions checks
+	if ( is_object( $gContent ) ){
+		$gComment->mRootObj = $gContent;
 	}
 	$numComments = $gComment->getNumComments( $commentsParentId );
 	if ($commentOffset > $numComments) {

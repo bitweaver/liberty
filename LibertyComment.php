@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.65 2008/04/26 16:35:34 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.66 2008/04/28 15:50:59 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -261,7 +261,22 @@ class LibertyComment extends LibertyContent {
 			/* get the hash of the users perms rather than call hasUserPermission which 
 			 * always returns true for owner which interferes with trying to time limit editing
 			 */
-			$checkPerms = $this->getUserPermissions();
+			if ( $this->getRootObj() != NULL ){
+				$root = &$this->getRootObj();
+				$checkPerms = $root->getUserPermissions();
+			}else{
+				$checkPerms = array(
+									'p_liberty_edit_comments' => $tmpUser->hasPermission( 'p_liberty_edit_comments' ),
+									'p_liberty_admin_comments' => $tmpUser->hasPermission( 'p_liberty_admin_comments' ),
+								);
+			}
+			/*
+			vd( $checkPerms['p_liberty_edit_comments'] );
+			vd( $checkPerms['p_liberty_admin_comments'] );
+			vd( $tmpUser->isAdmin() );
+			vd( $tmpUser->mUserId == $this->mInfo['user_id'] );
+			vd( $withinEditTime );
+			 */
 			return ( !empty( $checkPerms['p_liberty_edit_comments'] ) ||
 					 !empty( $checkPerms['p_liberty_admin_comments'] ) ||
 					 $tmpUser->isAdmin() ||
@@ -590,6 +605,7 @@ class LibertyComment extends LibertyContent {
 					$row['level'] = substr_count ( $row['thread_forward_sequence'], '.' ) - 1;
 					$c = new LibertyComment();
 					$c->mInfo=$row;
+					$c->mRootObj = $this->getRootObj();
 					$row['editable'] = $c->userCanEdit();
 					$flat_comments[$row['content_id']] = $row;
 				}
@@ -615,6 +631,15 @@ class LibertyComment extends LibertyContent {
 		$ret = '> '.$commentData;
 		$ret = eregi_replace("\n", "\n>", $ret);
 		return $ret;
+	}
+
+	function getRootObj(){
+		if ( !is_object( $this->mRootObj ) && !empty( $this->mInfo['root_id'] ) ){
+			if ( $obj = LibertyBase::getLibertyObject( $this->mInfo['root_id'] ) ) { 
+				$this->mRootObj = $obj; 
+			}
+		}
+		return $this->mRootObj;
 	}
 }
 
