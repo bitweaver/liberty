@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.49 $
+ * @version  $Revision: 1.50 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.49 2008/04/28 15:50:59 wjames5 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.50 2008/04/28 21:14:37 wjames5 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -58,12 +58,12 @@ if( $gBitSystem->isFeatureActive( 'comments_ajax' ) && !empty( $gContent ) && is
 
 if( @BitBase::verifyId($_REQUEST['delete_comment_id']) ) {
 	$deleteComment = new LibertyComment($_REQUEST['delete_comment_id']);
-	if( $deleteComment->isValid() && $gBitUser->hasPermission('p_liberty_admin_comments') ) {
+	if( $deleteComment->isValid() && $gContent->hasUserPermission('p_liberty_admin_comments') ) {
 		$deleteComment->deleteComment();
 	}
 }
 
-if( @BitBase::verifyId($_REQUEST['post_comment_id']) && $gBitUser->hasPermission( 'p_liberty_post_comments' )) {
+if( @BitBase::verifyId($_REQUEST['post_comment_id']) && $gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE )) {
 	$post_comment_id = $_REQUEST['post_comment_id'];
 	$editComment = new LibertyComment($post_comment_id);
 	//if we are passed a comment id but not going to store it then turn off ajax
@@ -91,7 +91,7 @@ if( @BitBase::verifyId($_REQUEST['post_comment_id']) && $gBitUser->hasPermission
 $gBitSmarty->assign('post_comment_id', $post_comment_id);
 
 // Store comment posts
-if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'p_liberty_post_comments' )) {
+if (!empty($_REQUEST['post_comment_submit']) && $gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE )) {
 	$storeComment = new LibertyComment(@BitBase::verifyId($editComment->mCommentId) ? $editComment->mCommentId : NULL);
 	$storeRow = array();
 	$storeRow['title'] = $_REQUEST['comment_title'];
@@ -140,16 +140,17 @@ if (!empty($_REQUEST['post_comment_submit']) && $gBitUser->hasPermission( 'p_lib
 	} else {
 		$formfeedback['warning']="The selected Topic is Locked posting is disabled";
 	}
-} elseif(!empty($_REQUEST['post_comment_request']) && !$gBitUser->hasPermission( 'p_liberty_post_comments' )) {
+} elseif(!empty($_REQUEST['post_comment_request']) && !$gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE )) {
 	$formfeedback['warning']="You don't have p_liberty_post_comments";
 }
 // $post_comment_request is a flag indicating whether or not to display the comment input form
 if( empty( $_REQUEST['post_comment_request'] ) && !$gBitSystem->isFeatureActive( 'comments_auto_show_form' ) ) {
 	$post_comment_request = NULL;
-} elseif( $gBitUser->hasPermission( 'p_liberty_post_comments' ) ) {
+} elseif( $gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE ) ) {
 	$post_comment_request = TRUE;
 }
-if( !empty( $_REQUEST['post_comment_request'] ) && $_REQUEST['post_comment_request'] == 'y' && !$gBitUser->hasPermission( 'p_liberty_post_comments' ) ) {
+
+if( !empty( $_REQUEST['post_comment_request'] ) && $_REQUEST['post_comment_request'] == 'y' && !$gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE ) ) {
 	$gBitSystem->fatalPermission( 'p_liberty_post_comments' );
 }
 $gBitSmarty->assign_by_ref('post_comment_request', $post_comment_request);

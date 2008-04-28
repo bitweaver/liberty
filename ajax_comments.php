@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/ajax_comments.php,v 1.6 2007/07/26 20:17:47 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/ajax_comments.php,v 1.7 2008/04/28 21:14:37 wjames5 Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -14,7 +14,7 @@ $staticContent = new LibertyContent();
 $gContent = $staticContent->getLibertyObject( $_REQUEST['parent_id'], (!empty($_REQUEST['parent_guid'])?$_REQUEST['parent_guid']:NULL) );
 $XMLContent = "";
 
-if( !$gBitUser->hasPermission( 'p_liberty_post_comments' )) {
+if( !$gContent->hasUserPermission( 'p_liberty_post_comments' )) {
 	$statusCode = 401;
 	$XMLContent = tra( "You do not have the required permissions to post new comments" );
 } elseif( $gContent->isCommentable() ) {
