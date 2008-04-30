@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.67 2008/04/28 15:52:35 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.68 2008/04/30 00:28:19 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -152,6 +152,9 @@ class LibertyComment extends LibertyContent {
 				$this->mContentId = $pParamHash['content_id'];
 			}
 		}
+
+		$this->invokeServices( 'comment_store_function', $pParamHash );
+
 		return (count($this->mErrors) == 0);
 	}
 
