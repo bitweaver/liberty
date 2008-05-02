@@ -26,7 +26,18 @@
 		  "stars_user_rating":{if $icontent.stars_user_rating}{$icontent.stars_user_rating}{else}null{/if},
 		  "stars_user_pixels":{if $icontent.stars_user_pixels}{$icontent.stars_user_pixels}{else}null{/if}
 		{rdelim}{if !$smarty.foreach.loop.last},{/if}
-   {/foreach}]
+	{/foreach}],
+	"ListInfo":{ldelim}
+		"total_records":{if $listInfo.total_records}{$listInfo.total_records}{else}null{/if},
+		"total_pages":{if $listInfo.total_pages}{$listInfo.total_pages}{else}null{/if},
+		"current_page":{if $listInfo.current_page}{$listInfo.current_page}{else}null{/if},
+		"next_offset":{if $listInfo.next_offset}{$listInfo.next_offset}{else}null{/if},
+		"prev_offset":{if $listInfo.prev_offset}{$listInfo.prev_offset}{else}null{/if},
+		"offset":{if $listInfo.offset}{$listInfo.offset}{else}null{/if},
+		"find":{if $listInfo.find}"{$listInfo.find}"{else}null{/if},
+		"sort_mode":{if $listInfo.sort_mode}"{$listInfo.sort_mode}"{else}null{/if},
+		"max_records":{if $listInfo.max_records}{$listInfo.max_records}{else}null{/if}
+	{rdelim}
 {elseif count($listcontent) == 0}
   /*put error code here*/
   "Status": {ldelim}
