@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.27 2008/04/28 23:54:45 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.28 2008/05/02 17:54:28 wjames5 Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -334,7 +334,7 @@ function liberty_content_load_sql( &$pObject, $pParamHash=NULL ) {
 	global $gBitSystem, $gBitUser;
 	$ret = array();
 
-	$hasPerm = is_object($pObject)?$pObject->hasUserPermission('p_liberty_edit_all_status'):$gBitUser->hasPermission('p_liberty_edit_all_status');
+	$hasPerm = ( is_object($pObject) && isset($pObject->hasUSerPermissioni) )?$pObject->hasUserPermission('p_liberty_edit_all_status'):$gBitUser->hasPermission('p_liberty_edit_all_status');
 
 	if ( $gBitSystem->isFeatureActive('liberty_display_status') && !$hasPerm ){
 		if (( is_object($pObject) && $pObject->mType['content_type_guid'] == 'bitcomment' )||( !empty( $pParamHash['include_comments'] ) && $pParamHash['include_comments']  == 'y')) {
@@ -364,7 +364,7 @@ function liberty_content_list_sql(  &$pObject, $pParamHash=NULL ) {
 	global $gBitSystem, $gBitUser;
 	$ret = array();
 
-	$hasPerm = is_object($pObject)?$pObject->hasUserPermission('p_liberty_edit_all_status'):$gBitUser->hasPermission('p_liberty_edit_all_status');
+	$hasPerm = ( is_object($pObject) && isset($pObject->hasUSerPermissioni) )?$pObject->hasUserPermission('p_liberty_edit_all_status'):$gBitUser->hasPermission('p_liberty_edit_all_status');
 	
 	if ( $gBitSystem->isFeatureActive('liberty_display_status') && !$hasPerm ){
 		if (( is_object($pObject) && $pObject->mType['content_type_guid'] == 'bitcomment' )||( !empty( $pParamHash['include_comments'] ) && $pParamHash['include_comments']  == 'y')) {
