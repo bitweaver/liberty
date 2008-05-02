@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.358 2008/04/12 00:50:02 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.359 2008/05/02 15:08:57 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1418,7 +1418,6 @@ class LibertyContent extends LibertyBase {
 		global $gBitUser;
 
 		$userId = $gBitUser->mUserId;
-
 		if( !isset( $this->mUserContentPerms )) {
 			// get the default permissions for specified user
 			$query = "SELECT ugp.`perm_name` as `hash_key`, 1 as `default_perm`, ugp.`perm_name`, ugp.`perm_value`, ugp.`group_id`
@@ -1426,13 +1425,17 @@ class LibertyContent extends LibertyBase {
 						  LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.`group_id`=ugp.`group_id`)
 						  LEFT JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcp ON(lcp.`group_id`=ugm.`group_id` AND lcp.`content_id`=? AND ugp.`perm_name`=lcp.`perm_name`)
 					  WHERE (ugm.`user_id`=? OR ugm.`user_id`=?) AND lcp.`perm_name` IS NULL";
-			$defaultPerms = $this->mDb->getAssoc( $query, array( $this->mContentId, $userId, ANONYMOUS_USER_ID ) );
+			if( !$defaultPerms = $this->mDb->getAssoc( $query, array( $this->mContentId, $userId, ANONYMOUS_USER_ID ) ) ) {
+				$defaultPerms = array();
+			}
 			$query = "SELECT lcp.`perm_name` AS `hash_key`, lcp.*
 					  FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcp
 						  INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON(lcp.group_id=ugm.group_id)
 						  LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.group_id=ugp.group_id AND ugp.group_id!=lcp.group_id AND ugp.perm_name=lcp.perm_name)
 					  WHERE lcp.content_id=? AND (ugm.user_id=? OR ugm.user_id=?) AND lcp.is_revoked IS NULL";
-			$nonDefaultPerms = $this->mDb->getAssoc( $query, array( $this->mContentId, $userId, ANONYMOUS_USER_ID ) );
+			if( !$nonDefaultPerms = $this->mDb->getAssoc( $query, array( $this->mContentId, $userId, ANONYMOUS_USER_ID ) ) ) {
+				$nonDefaultPerms = array();
+			}
 
 			$this->mUserContentPerms = array_merge( $defaultPerms, $nonDefaultPerms );
 			
