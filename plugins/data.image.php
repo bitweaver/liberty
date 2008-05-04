@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/data.image.php,v 1.6 2008/04/23 08:24:01 squareing Exp $
+ * @version  $Revision: 1.7 $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/data.image.php,v 1.7 2008/05/04 17:47:39 spiderr Exp $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -40,6 +40,8 @@ function data_image( $pData, $pParams ) {
 	$ret = ' ';
 
 	$imgStyle = '';
+
+	$wrapper = liberty_plugins_wrapper_style( $pParams );
 
 	$description = !isset( $wrapper['description'] ) ? $wrapper['description'] : NULL;
 	foreach( $pParams as $key => $value ) {
