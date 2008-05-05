@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.23 $
+ * @version  $Revision: 1.24 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.23 2007/07/05 05:34:17 squareing Exp $
+// $Id: data.attachment.php,v 1.24 2008/05/05 15:49:00 wjames5 Exp $
 
 /**
  * definitions
@@ -149,8 +149,8 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 			$pParams['link'] = $wp->getDisplayUrl( $pParams['page_name'] );
 		}
 
-		if( !empty( $wrapper['description'] ) && !empty( $pParams['output'] ) && ( $pParams['output'] == 'desc' || $pParams['output'] == 'description' )) {
-			$ret = ( !empty( $wrapper['description'] )  ? $wrapper['description'] : '' );
+		if( !empty( $pParams['output'] ) && ( $pParams['output'] == 'desc' || $pParams['output'] == 'description' )) {
+			$ret = ( !empty( $wrapper['description'] )  ? $wrapper['description'] : $att['filename'] );
 			$nowrapper = TRUE;
 		} else {
 			$ret .= ( !empty( $wrapper['description'] )  ? '<br />'.$wrapper['description']  : '' );
