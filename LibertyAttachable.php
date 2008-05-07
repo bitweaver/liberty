@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.139 2008/01/02 09:28:54 jht001 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.140 2008/05/07 20:46:29 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -591,16 +591,13 @@ class LibertyAttachable extends LibertyContent {
 		// If we are not given an attachment id but we where told the
 		// content_id and we are supposed to auto set the primary then
 		// figure out which one it is
-		if( !@BitBase::verifyId( $pAttachmentId ) &&
-		    ( empty( $pAttachmentId ) || $pAttachmentId != 'none' ) &&
-		    @BitBase::verifyId( $pContentId ) &&
-		    $pAutoPrimary) {
-				$query = "
-					SELECT `attachment_id`
-					FROM `".BIT_DB_PREFIX."liberty_content` lc
-					INNER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON( lc.`content_id` = la.`content_id` )
-					WHERE lc.`content_id` = ?";
-				$pAttachmentId = $this->mDb->getOne( $query, array( $pContentId ));
+		if( !@BitBase::verifyId( $pAttachmentId ) && ( empty( $pAttachmentId ) || $pAttachmentId != 'none' ) && @BitBase::verifyId( $pContentId ) && $pAutoPrimary ) {
+			$query = "
+				SELECT `attachment_id`
+				FROM `".BIT_DB_PREFIX."liberty_content` lc
+				INNER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON( lc.`content_id` = la.`content_id` )
+				WHERE lc.`content_id` = ?";
+			$pAttachmentId = $this->mDb->getOne( $query, array( $pContentId ));
 		}
 
 		// If we have an attachment_id we'll set it to this
@@ -609,7 +606,7 @@ class LibertyAttachable extends LibertyContent {
 			$attachment = $this->getAttachment( $pAttachmentId );
 
 			// Clear old primary. There can only be one!
-			$this->clearPrimaryAttachment($attachment['content_id']);
+			$this->clearPrimaryAttachment( $attachment['content_id'] );
 
 			// now update the attachment to is_primary
 			$query = "
@@ -618,14 +615,11 @@ class LibertyAttachable extends LibertyContent {
 			$this->mDb->query( $query, array( 'y', $pAttachmentId ));
 
 			$ret = TRUE;
-		}
 		// Otherwise, are we supposed to clear the primary entirely?
-		else if (@BitBase::verifyId( $pContentId ) &&
-				 !empty($pAttachmentId) && $pAttachmentId == 'none') {
+		} elseif( @BitBase::verifyId( $pContentId ) && !empty( $pAttachmentId ) && $pAttachmentId == 'none' ) {
 			// Okay then do the job
-			$this->clearPrimaryAttachment($pContentId);
+			$this->clearPrimaryAttachment( $pContentId );
 		}
-
 
 		return $ret;
 	}
