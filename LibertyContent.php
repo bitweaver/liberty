@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.359 2008/05/02 15:08:57 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.360 2008/05/07 06:49:31 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -198,8 +198,7 @@ class LibertyContent extends LibertyBase {
 			if (!empty($pParamHash['content_status_id'])) {
 				if (empty($allStatus[$pParamHash['content_status_id']])) {
 					$this->mError['content_status_id'] = "No such status ID or permission denied.";
-				}
-				else {
+				} else {
 					$pParamHash['content_store']['content_status_id'] = $pParamHash['content_status_id'];
 				}
 			}
@@ -589,10 +588,6 @@ class LibertyContent extends LibertyBase {
 //				array_push( $ret, $aux );
 				$result->MoveNext();
 			}
-
-
-			
-
 		}
 // Temporary patch to get a $pListHash array for the output
 // this needs to be tidied on the input side
@@ -664,7 +659,6 @@ class LibertyContent extends LibertyBase {
 					$ret = TRUE;
 				}
 //vd( $this->mErrors );
-				
 				$this->mDb->CompleteTrans();
 			} else {
 				$this->mDb->RollbackTrans();
@@ -1245,11 +1239,11 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	* Function that determines if this content specified permission for the current gBitUser, and will throw a fatal error if not.
-	*
-	* @param string Name of the permission to check
-	* @param string Message if permission denigned
-	*/
+	 * Function that determines if this content specified permission for the current gBitUser, and will throw a fatal error if not.
+	 *
+	 * @param string Name of the permission to check
+	 * @param string Message if permission denigned
+	 */
 	function verifyPermission( $pPermName, $pFatalMessage = NULL ) {
 		$ret = TRUE;
 		if( $this->isValid() && !$this->hasUserPermission( $pPermName ) ) {
@@ -1262,12 +1256,12 @@ class LibertyContent extends LibertyBase {
 	/**
 	 * Function that determines if this content specified permission for the current gBitUser. 
 	 * Assigned content perms override the indvidual global perms, so the result is the union of the global permission set + overridden individual content perms
-	*
-	* @param string Name of the permission to check
-	* @param string Check access control service if available
-	* @param string return default user permission setting when no content perms are set
-	* @return bool true if user has permission to access file
-	*/
+	 *
+	 * @param string Name of the permission to check
+	 * @param string Check access control service if available
+	 * @param string return default user permission setting when no content perms are set
+	 * @return bool true if user has permission to access file
+	 */
 	function hasUserPermission( $pPermName, $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
 		global $gBitUser;
 		$ret = FALSE;
@@ -1282,16 +1276,14 @@ class LibertyContent extends LibertyBase {
 					$this->verifyAccessControl();
 				}
 				$checkPerms = $this->getUserPermissions();
-				if ( !empty($checkPerms) ) {
+				if ( !empty( $checkPerms ) ) {
 					// Do they have the admin permission or the one we want?
-					if ( !empty($checkPerms[$this->mAdminContentPerm]) &&
-						 ( $pCheckGlobalPerm || empty($checkPerms[$this->mAdminContentPerm]['default_perm']) ) ) {
+					if ( !empty( $checkPerms[$this->mAdminContentPerm] ) && ( $pCheckGlobalPerm || empty( $checkPerms[$this->mAdminContentPerm]['default_perm'] ) ) ) {
 						$ret = TRUE;
-					} else if ( !empty($checkPerms[$pPermName]) &&
-							   ( $pCheckGlobalPerm || empty($checkPerms[$pPermName]['default_perm']) ) ) {
+					} elseif ( !empty( $checkPerms[$pPermName] ) && ( $pCheckGlobalPerm || empty( $checkPerms[$pPermName]['default_perm'] ) ) ) {
 						$ret = TRUE;
 					}
-				} else if( $pCheckGlobalPerm ) {
+				} elseif( $pCheckGlobalPerm ) {
 					// return default user permission setting when no content perms are set
 					$ret = $gBitUser->hasPermission( $pPermName );
 				}
@@ -1520,7 +1512,7 @@ class LibertyContent extends LibertyBase {
 		global $gBitDb;
 		$ret = NULL;
 
-		if ($pContentId && !empty($pPrefName)) {
+		if( $pContentId && !empty( $pPrefName )) {
 			// Get a user preference for an arbitrary user
 			$sql = "SELECT `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=? AND `pref_name`=?";
 
@@ -2272,11 +2264,10 @@ class LibertyContent extends LibertyBase {
 		# Check for offset out of range
 		if ( $pListHash['offset'] < 0 ) {
 			$pListHash['offset'] = 0;
-			}
-		elseif ( $pListHash['offset']	> $pListHash["cant"] ) {
+		} elseif ( $pListHash['offset']	> $pListHash["cant"] ) {
 			$lastPageNumber = ceil ( $pListHash["cant"] / $pListHash['max_records'] ) - 1;
 			$pListHash['offset'] = $pListHash['max_records'] * $lastPageNumber;
-			}
+		}
 
 
 		if( !empty( $hashBindVars['select'] ) ) {
@@ -2629,14 +2620,16 @@ class LibertyContent extends LibertyBase {
 		// Get slides
 		$parts = explode(defined('PAGE_SEP') ? PAGE_SEP : "...page...", $data);
 
-		if (substr($parts[$i - 1], 1, 5) == "<br/>")
+		if (substr($parts[$i - 1], 1, 5) == "<br/>") {
 			$ret = substr($parts[$i - 1], 6);
-		else
+		} else {
 			$ret = $parts[$i - 1];
+		}
 
 		// Replace back <PRE> sections
-		foreach ($preparsed as $pp)
+		foreach ($preparsed as $pp) {
 			$ret = str_replace($pp["key"], "<pre>" . $pp["data"] . "</pre>", $ret);
+		}
 
 		return $ret;
 	}
