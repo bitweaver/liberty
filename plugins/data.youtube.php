@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author:  xing
 // +----------------------------------------------------------------------+
-// $Id: data.youtube.php,v 1.1 2008/05/07 21:36:59 squareing Exp $
+// $Id: data.youtube.php,v 1.2 2008/05/07 21:39:51 squareing Exp $
 
 /**
  * definitions
@@ -33,9 +33,9 @@ $pluginParams = array (
 	'load_function' => 'data_youtube',
 	'title'         => 'Youtube',
 	'help_page'     => 'DataPluginYoutube',
-	'description'   => tra("This plugin adds Youtube Code to page."),
+	'description'   => tra( "This plugin allows you to simply and safely insert a YouTube video in a page." ),
 	'help_function' => 'data_youtube_help',
-	'syntax'        => "{youtube}",
+	'syntax'        => "{youtube id=?}",
 	'path'          => LIBERTY_PKG_PATH.'plugins/data.youtube.php',
 	'plugin_type'   => DATA_PLUGIN
 );
