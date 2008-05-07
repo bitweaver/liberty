@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.50 $
+ * @version  $Revision: 1.51 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.50 2008/04/28 21:14:37 wjames5 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.51 2008/05/07 06:44:59 squareing Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -163,11 +163,11 @@ if( !empty( $_REQUEST['post_comment_cancel'] ) ) {
 if( !empty( $_REQUEST['post_comment_preview'] ) ) {
 	if ( isset($_REQUEST['no_js_preview']) && $_REQUEST['no_js_preview']=="y" ){
 		$no_js_preview = $_REQUEST['no_js_preview'];
-		$gBitSmarty->assign('comments_ajax', FALSE);  //even if ajax is on - we force it off in this case		
-	}else{
+		$gBitSmarty->assign('comments_ajax', FALSE);  //even if ajax is on - we force it off in this case
+	} else {
 		$no_js_preview = "n";
 	}
-	
+
 	$gBitSmarty->assign_by_ref('no_js_preview', $no_js_preview);
 
 	$postComment['user_id'] = $gBitUser->mUserId;
@@ -192,8 +192,7 @@ if (@BitBase::verifyId($_REQUEST['post_comment_reply_id'])) {
 	}
 	if (preg_match('/^' . tra('Re:') . '/', $tmpComment->mInfo['title'])) {
 		$comment_prefix = '';
-	}
-	else {
+	} else {
 		$comment_prefix = tra('Re:') . " ";
 	}
 	//this always overrides the title with "Re: Parent Title" -- not sure what it really should do so I put in this conditional for previews
@@ -206,10 +205,9 @@ if (@BitBase::verifyId($_REQUEST['post_comment_reply_id'])) {
 
 if (!empty($_SESSION['liberty_comments_per_page'])) {
 	$maxComments = $_SESSION['liberty_comments_per_page'];
-	}
-else {
+} else {
 	$maxComments = $gBitSystem->getConfig( 'comments_per_page', 10 );
-	}
+}
 if (!empty($_REQUEST["comments_maxComments"])) {
 	$maxComments = $_REQUEST["comments_maxComments"];
 	$comments_at_top_of_page = 'y';
@@ -219,10 +217,9 @@ if (!empty($_REQUEST["comments_maxComments"])) {
 
 if (!empty($_SESSION['liberty_comments_ordering'])) {
 	$comments_sort_mode = $_SESSION['liberty_comments_ordering'];
-	}
-else {
+} else {
 	$comments_sort_mode = $gBitSystem->getConfig( 'comments_default_ordering', 'commentDate_desc' );
-	}
+}
 if (!empty($_REQUEST["comments_sort_mode"])) {
 	$comments_sort_mode = $_REQUEST["comments_sort_mode"];
 	$comments_at_top_of_page = 'y';
@@ -231,10 +228,9 @@ if (!empty($_REQUEST["comments_sort_mode"])) {
 
 if (!empty($_SESSION['liberty_comments_display_mode'])) {
 	$comments_display_style = $_SESSION['liberty_comments_display_mode'];
-	}
-else {	
+} else {
 	$comments_display_style = $gBitSystem->getConfig( 'comments_default_display_mode', 'threaded' );
-	}
+}
 if( !empty( $_REQUEST["comments_style"] ) ) {
 	$comments_display_style = $_REQUEST["comments_style"];
 	$comments_at_top_of_page = 'y';
@@ -256,19 +252,18 @@ if (empty($gComment)) {
 $currentPage = !empty( $_REQUEST['comment_page'] ) ? $_REQUEST['comment_page'] : 1;
 if ($currentPage < 1) {
 	$currentPage = 1;
-	}
-	
+}
+
 #logic to support displaying a single comment -- used when we need a URL pointing to a comment
 if (!empty($_REQUEST['view_comment_id'])) {
 	$commentOffset = $gComment->getNumComments_upto($_REQUEST['view_comment_id']);
-#       echo "commentOffset =$commentOffset= maxComments=$maxComments=\n";
+	#       echo "commentOffset =$commentOffset= maxComments=$maxComments=\n";
 	$comments_sort_mode = 'commentDate_asc';
 	$comments_display_style = 'flat';
 	$comments_at_top_of_page = 'y';
 	$maxComments = 1;
 	$currentPage = ceil( $commentOffset+1 / $maxComments );
-}
-else {
+} else {
 	$commentOffset = ($currentPage - 1) * $maxComments;
 }
 
@@ -291,21 +286,20 @@ if( !@BitBase::verifyId( $commentsParentId ) ) {
 	if ($commentOffset > $numComments) {
 		$commentOffset = $numComments / $maxComments;
 		$currentPage = ceil( $commentOffset+1 / $maxComments );
-		}
+	}
 	$comments = $gComment->getComments( $parents, $maxComments, $commentOffset, $comments_sort_mode, $comments_display_style );
 }
 
 if ($comments_display_style == 'flat') {
 	$commentsTree = $comments;
-}
-else {	
+} else {
 	$commentsTree = array();
 	foreach ($comments as $id => $node){
 		if (!empty( $comments[ $node['parent_id'] ])) {
 			$comments[ $node['parent_id'] ]['children'][$id] = &$comments[$id];
 		}
 		if ($node['parent_id'] == $node['root_id'] or empty( $comments[ $node['parent_id'] ])){
-			$comments[$id]['level'] = 0;	
+			$comments[$id]['level'] = 0;
 			$commentsTree[$id] = &$comments[$id];
 		}
 	}
@@ -342,7 +336,7 @@ $listInfo['parameters'] = array (
 );
 $gBitSmarty->assign( 'listInfo', $listInfo );
 $gBitSmarty->assign( 'returnUrl', $comments_return_url );
-*/
+ */
 
 
 $gBitSmarty->assign_by_ref('postComment', $postComment);
