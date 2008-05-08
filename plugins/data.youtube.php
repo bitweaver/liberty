@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.2 $
+ * @version  $Revision: 1.3 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author:  xing
 // +----------------------------------------------------------------------+
-// $Id: data.youtube.php,v 1.2 2008/05/07 21:39:51 squareing Exp $
+// $Id: data.youtube.php,v 1.3 2008/05/08 09:43:29 squareing Exp $
 
 /**
  * definitions
@@ -57,10 +57,11 @@ function data_youtube( $pData, $pParams ) {
 	$width   = ( !empty( $width )   ? $width   : "425" );
 	$height  = ( !empty( $height )  ? $height  : "355" );
 	$hl      = ( !empty( $lang )    ? $lang    : "en" );
+	$hires   = ( !empty( $hires )   ? $hires   : "y" );
 
 	if( !empty( $id )) {
 		//return '<!--~np~--><object width="'.$width.'" height="'.$height.'"><param name="movie" value="http://www.youtube.com/v/'.$id.'&hl='.$hl.'">';
-		return '<!--~np~--><object width="'.$width.'" height="'.$height.'"><param name="movie" value="http://www.youtube.com/v/'.$id.'&hl='.$hl.'"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/'.$id.'&hl='.$hl.'" type="application/x-shockwave-flash" wmode="transparent" width="'.$width.'" height="'.$height.'"></embed></object><!--~/np~-->';
+		return '<!--~np~--><object width="'.$width.'" height="'.$height.'"><param name="movie" value="http://www.youtube.com/v/'.$id.'&amp;hl='.$hl.'&amp;hires='.$hires.'"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/'.$id.'&amp;hl='.$hl.'&amp;hires='.$hires.'" type="application/x-shockwave-flash" wmode="transparent" width="'.$width.'" height="'.$height.'"></embed></object><!--~/np~-->';
 	} else {
 		return tra( 'No ID given' );
 	}
