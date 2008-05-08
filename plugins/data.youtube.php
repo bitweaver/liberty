@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -61,13 +61,11 @@ function data_youtube_help() {
 				.'<td>' . tra( "string" ) . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "Alternate language of the Youtube interface, default is 'en'" ).'</td>'
 			.'</tr>'
-			// currently this is not possible. read up about this issue on:
-			// http://blog.jimmyr.com/High_Quality_on_Youtube_11_2008.php
-//			.'<tr class="odd">'
-//				.'<td>quality</td>'
-//				.'<td>' . tra( "string" ) . '<br />' . tra("(optional)") . '</td>'
-//				.'<td>' . tra( "Fetch the high resolution version instead of the normal one - not available for all videos." ).'</td>'
-//			.'</tr>'
+			.'<tr class="odd">'
+				.'<td>format</td>'
+				.'<td>' . tra( "numeric" ) . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "Fetch different video format instead of the default one. Format 6 and Format 18 seem to work quite well for some videos. Please note that this might be buggy and is not available for all videos." ).'</td>'
+			.'</tr>'
 		.'</table>'
 		. tra( "Example: " ) . '{youtube id=XXXXX width=425 height=355 lang=en}';
 }
@@ -82,12 +80,13 @@ function data_youtube_help() {
  */
 function data_youtube( $pData, $pParams ) {
 	extract( $pParams );
-	$width   = ( !empty( $width )   ? $width   : "425" );
-	$height  = ( !empty( $height )  ? $height  : "355" );
-	$hl      = ( !empty( $lang )    ? $lang    : "en" );
+	$width   = ( !empty( $width )  ? $width  : "425" );
+	$height  = ( !empty( $height ) ? $height : "355" );
+	$lang    = "&amp;hl=".( !empty( $lang ) ? $lang : "en" );
+	$format  = ( !empty( $format )  ? "&amp;ap=%2526fmt%3D".$format  : "" );
 
 	if( !empty( $id )) {
-		return '<!--~np~--><object width="'.$width.'" height="'.$height.'"><param name="movie" value="http://www.youtube.com/v/'.$id.'&amp;hl='.$hl.'"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/'.$id.'&amp;hl='.$hl.'" type="application/x-shockwave-flash" wmode="transparent" width="'.$width.'" height="'.$height.'""></embed></object><!--~/np~-->';
+		return '<!--~np~--><object width="'.$width.'" height="'.$height.'"><param name="movie" value="http://www.youtube.com/v/'.$id.$lang.$format.'"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/'.$id.$lang.$format.'" type="application/x-shockwave-flash" wmode="transparent" width="'.$width.'" height="'.$height.'""></embed></object><!--~/np~-->';
 	} else {
 		return tra( 'No ID given' );
 	}
