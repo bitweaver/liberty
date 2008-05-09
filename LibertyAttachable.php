@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.140 2008/05/07 20:46:29 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.141 2008/05/09 10:13:14 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -553,14 +553,12 @@ class LibertyAttachable extends LibertyContent {
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
 	function getAttachment( $pAttachmentId ) {
-		global $gLibertySystem;
+		global $gLibertySystem, $gBitSystem;
 		$ret = NULL;
 
-		if( @$this->verifyId( $pAttachmentId ) ) {
-			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` a
-					  WHERE a.`attachment_id`=?";
-			if( $result = $this->mDb->query( $query, array( (int)$pAttachmentId ))) {
-				$ret = array();
+		if( @BitBase::verifyId( $pAttachmentId ) ) {
+			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` la WHERE la.`attachment_id`=?";
+			if( $result = $gBitSystem->mDb->query( $query, array( (int)$pAttachmentId ))) {
 				if( $row = $result->fetchRow() ) {
 					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function'  ) ) {
 						$ret = $func( $row );
