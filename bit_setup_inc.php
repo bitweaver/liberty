@@ -3,7 +3,7 @@
  * base package include
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.21 $
+ * @version  $Revision: 1.22 $
  * @package  liberty
  * @subpackage functions
  */
@@ -46,4 +46,8 @@ if( @BitBase::verifyId( $_REQUEST['refresh_liberty_cache'] )) {
 	require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
 	LibertyContent::expungeCacheFile( $_REQUEST['refresh_liberty_cache'] );
 }
+
+// make thumbnail sizes available to smarty
+global $gThumbSizes;
+$gBitSmarty->assign_by_ref( 'gThumbSizes', $gThumbSizes );
 ?>
