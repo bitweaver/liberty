@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.96 2008/04/17 18:24:43 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.97 2008/05/10 21:50:36 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -26,6 +26,7 @@
 define( 'STORAGE_PLUGIN', 'storage' );
 define( 'FORMAT_PLUGIN', 'format' );
 define( 'DATA_PLUGIN', 'data' );
+define( 'MIME_PLUGIN', 'mime' );
 define( 'FILTER_PLUGIN', 'filter' );
 
 // Service Definitions
@@ -33,7 +34,7 @@ define( 'LIBERTY_SERVICE_ACCESS_CONTROL', 'access_control' );
 define( 'LIBERTY_SERVICE_BLOGS', 'blogs' );
 define( 'LIBERTY_SERVICE_CATEGORIZATION', 'categorization' );
 define( 'LIBERTY_SERVICE_COMMERCE', 'commerce' );
-define( 'LIBERTY_SERVICE_CONTENT_TEMPLATES', 'content_templates');
+define( 'LIBERTY_SERVICE_CONTENT_TEMPLATES', 'content_templates' );
 define( 'LIBERTY_SERVICE_DOCUMENT_GENERATION', 'document_generation' );
 define( 'LIBERTY_SERVICE_FORUMS', 'forums' );
 define( 'LIBERTY_SERVICE_GROUP', 'groups' );
@@ -41,19 +42,19 @@ define( 'LIBERTY_SERVICE_GEO', 'global_positioning' );
 define( 'LIBERTY_SERVICE_MAPS', 'map_display' );
 define( 'LIBERTY_SERVICE_METADATA', 'metadata' );
 define( 'LIBERTY_SERVICE_MENU', 'menu' );
-define( 'LIBERTY_SERVICE_RATING', 'rating');
-define( 'LIBERTY_SERVICE_REBLOG', 'reblogging_rss_feeds');
-define( 'LIBERTY_SERVICE_SEARCH', 'search');
-define( 'LIBERTY_SERVICE_THEMES', 'themes');
-define( 'LIBERTY_SERVICE_TAGS', 'tags');
-define( 'LIBERTY_SERVICE_TOPICA', 'topica');
-define( 'LIBERTY_SERVICE_TRANSLATION', 'translation');
-define( 'LIBERTY_SERVICE_TRANSLITERATION', 'transliteration');
-define( 'LIBERTY_SERVICE_LIBERTYSECURE', 'security');
-define( 'LIBERTY_SERVICE_MODCOMMENTS', 'comment_moderation');
-	
-define( 'LIBERTY_TEXT_AREA', 'editliberty');
-define( 'LIBERTY_UPLOAD', 'upload');
+define( 'LIBERTY_SERVICE_RATING', 'rating' );
+define( 'LIBERTY_SERVICE_REBLOG', 'reblogging_rss_feeds' );
+define( 'LIBERTY_SERVICE_SEARCH', 'search' );
+define( 'LIBERTY_SERVICE_THEMES', 'themes' );
+define( 'LIBERTY_SERVICE_TAGS', 'tags' );
+define( 'LIBERTY_SERVICE_TOPICA', 'topica' );
+define( 'LIBERTY_SERVICE_TRANSLATION', 'translation' );
+define( 'LIBERTY_SERVICE_TRANSLITERATION', 'transliteration' );
+define( 'LIBERTY_SERVICE_LIBERTYSECURE', 'security' );
+define( 'LIBERTY_SERVICE_MODCOMMENTS', 'comment_moderation' );
+
+define( 'LIBERTY_TEXT_AREA', 'editliberty' );
+define( 'LIBERTY_UPLOAD', 'upload' );
 
 /**
  * Link to base class
@@ -314,9 +315,7 @@ class LibertySystem extends LibertyBase {
 	 */
 	function getPluginInfo( $pGuid ) {
 		$ret = NULL;
-		if( !empty( $pGuid )
-			&& !empty( $this->mPlugins[$pGuid] )
-		) {
+		if( !empty( $pGuid ) && !empty( $this->mPlugins[$pGuid] )) {
 			$ret = $this->mPlugins[$pGuid];
 		}
 		return $ret;
@@ -550,6 +549,43 @@ class LibertySystem extends LibertyBase {
 			}
 		}
 		return $ret;
+	}
+
+	/**
+	 * Will return the plugin that is responsible for the given mime type
+	 *
+	 * @param string $pFileHash['mimetype'] (required if no tmp_name) Mime type of file that needs to be dealt with
+	 * @param string $pFileHash['tmp_name'] (required if no mimetype) Full path to file that needs to be dealt with
+	 * @access public
+	 * @return handler plugin guid
+	 * TODO: Currently this will return the first found handler - might want to have a sort order?
+	 **/
+	function lookupMimeHandler( &$pFileHash ) {
+		global $gBitSystem;
+
+		if( empty( $this->mPlugins )) {
+			$this->scanAllPlugins( NULL, "mime\." );
+		}
+
+		// we will do our best to work out what this file is.
+		// both these methods use a different method for fetching the filetype
+		// this can be particularly important when fetching the mime-type of video files.
+		$pFileHash['type'] = $gBitSystem->verifyMimeType( $pFileHash['tmp_name'] );
+		if( $pFileHash['type'] == 'application/binary' || $pFileHash['type'] == 'application/octet-stream' ) {
+			$pFileHash['type'] = $gBitSystem->lookupMimeType( $pFileHash['name'] );
+		}
+
+		foreach( $this->mPlugins as $handler => $plugin ) {
+			if( $plugin['is_active'] && !empty( $plugin['mimetypes'] ) && is_array( $plugin['mimetypes'] )) {
+				foreach( $plugin['mimetypes'] as $pattern ) {
+					if( preg_match( $pattern, $pFileHash['type'] )) {
+						return $handler;
+					}
+				}
+			}
+		}
+
+		return LIBERTY_DEFAULT_MIME_HANDLER;
 	}
 }
 

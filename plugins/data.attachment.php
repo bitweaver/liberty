@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.24 $
+ * @version  $Revision: 1.25 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.24 2008/05/05 15:49:00 wjames5 Exp $
+// $Id: data.attachment.php,v 1.25 2008/05/10 21:50:37 squareing Exp $
 
 /**
  * definitions
@@ -96,91 +96,112 @@ function data_attachment_help() {
 }
 
 function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had several parameters that have been dropped
+	require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
+
 	// at a minimum, return blank string (not empty) so we still replace the tag
 	$ret = ' ';
+
+	// The Manditory Parameter is missing. we are not gonna trow an error, and 
+	// just return empty since many sites use the old style required second 
+	// "closing" empty tag
 	if( empty( $pParams['id'] ) ) {
-		// The Manditory Parameter is missing. we are not gonna trow an error, and just return empty since
-		// many sites use the old style required second "closing" empty tag
 		return $ret;
 	}
 
-	$liba = new LibertyAttachable();
-	if( !$att = $liba->getAttachment( $pParams['id'] ) ) {
+	if( !$att = LibertyMime::getAttachment( $pParams['id'], $pParams )) {
 		$ret = tra( "The attachment id given is not valid." );
 		return $ret;
 	}
 
-	// insert source url if we need the original file
-	if( !empty( $pParams['size'] ) && $pParams['size'] == 'original' ) {
-		$thumburl = $att['source_url'];
-	} elseif( !empty( $att['thumbnail_url'] )) {
-		$thumburl = ( !empty( $pParams['size'] ) && !empty( $att['thumbnail_url'][$pParams['size']] ) ? $att['thumbnail_url'][$pParams['size']] : $att['thumbnail_url']['medium'] );
-	}
+	// we will do slightly different stuff if this is using a mime plugin
+	if( !empty( $att['is_mime'] )) {
+		global $gBitSmarty;
+		$gBitSmarty->assign( 'attachment', $att );
 
-	// check if we have a valid thumbnail
-	if( !empty( $thumburl ) ) {
 		$wrapper = liberty_plugins_wrapper_style( $pParams );
+		$gBitSmarty->assign( 'wrapper', $wrapper );
 
-		// set up image first
-		$ret = '<img'.
+		$thumbsize = !empty( $pParams['size'] ) && !empty( $item->mInfo['thumbnail_url'][$pParams['size']] ) ? $pParams['size'] : 'medium';
+		$gBitSmarty->assign( 'thumbsize', $thumbsize );
+
+		$template = LibertyMime::getMimeTemplate( 'inline', $att['attachment_plugin_guid'] );
+		$ret = $gBitSmarty->fetch( $template );
+	} else {
+		// TODO: legacy code - should be faded out if possible
+
+
+		// insert source url if we need the original file
+		if( !empty( $pParams['size'] ) && $pParams['size'] == 'original' ) {
+			$thumburl = $att['source_url'];
+		} elseif( !empty( $att['thumbnail_url'] )) {
+			$thumburl = ( !empty( $pParams['size'] ) && !empty( $att['thumbnail_url'][$pParams['size']] ) ? $att['thumbnail_url'][$pParams['size']] : $att['thumbnail_url']['medium'] );
+		}
+
+		// check if we have a valid thumbnail
+		if( !empty( $thumburl ) ) {
+			$wrapper = liberty_plugins_wrapper_style( $pParams );
+
+			// set up image first
+			$ret = '<img'.
 				' alt="'.  ( !empty( $wrapper['description'] ) ? $wrapper['description'] : tra( 'Image' ) ).'"'.
 				' title="'.( !empty( $wrapper['description'] ) ? $wrapper['description'] : tra( 'Image' ) ).'"'.
 				' src="'  .$thumburl.'"'.
-			' />';
+				' />';
 
-		$ret .= ( !empty( $att['file_details'] ) ? '<br />'.$att['file_details'] : '' );
+			$ret .= ( !empty( $att['file_details'] ) ? '<br />'.$att['file_details'] : '' );
 
-		// link to page by page_id
-		if( @BitBase::verifyId( $pParams['page_id'] ) ) {
-			require_once( WIKI_PKG_PATH.'BitPage.php');
-			$wp = new BitPage( $pParams['page_id'] );
-			if( $wp->load() ) {
-				$pParams['link'] = $wp->getDisplayUrl();
+			// link to page by page_id
+			if( @BitBase::verifyId( $pParams['page_id'] ) ) {
+				require_once( WIKI_PKG_PATH.'BitPage.php');
+				$wp = new BitPage( $pParams['page_id'] );
+				if( $wp->load() ) {
+					$pParams['link'] = $wp->getDisplayUrl();
+				}
+				// link to any content by content_id
+			} elseif( isset( $pParams['content_id'] ) && is_numeric( $pParams['content_id'] ) ) {
+				if( $obj = LibertyBase::getLibertyObject( $pParams['content_id'] ) ) {
+					$pParams['link'] = $obj->getDisplayUrl();
+				}
+				// link to page by page_name
+			} elseif( isset( $pParams['page_name'] ) ) {
+				require_once( WIKI_PKG_PATH.'BitPage.php');
+				$wp = new BitPage();
+				$pParams['link'] = $wp->getDisplayUrl( $pParams['page_name'] );
 			}
-		// link to any content by content_id
-		} elseif( isset( $pParams['content_id'] ) && is_numeric( $pParams['content_id'] ) ) {
-			if( $obj = LibertyBase::getLibertyObject( $pParams['content_id'] ) ) {
-				$pParams['link'] = $obj->getDisplayUrl();
-			}
-		// link to page by page_name
-		} elseif( isset( $pParams['page_name'] ) ) {
-			require_once( WIKI_PKG_PATH.'BitPage.php');
-			$wp = new BitPage();
-			$pParams['link'] = $wp->getDisplayUrl( $pParams['page_name'] );
-		}
 
-		if( !empty( $pParams['output'] ) && ( $pParams['output'] == 'desc' || $pParams['output'] == 'description' )) {
-			$ret = ( !empty( $wrapper['description'] )  ? $wrapper['description'] : $att['filename'] );
-			$nowrapper = TRUE;
-		} else {
-			$ret .= ( !empty( $wrapper['description'] )  ? '<br />'.$wrapper['description']  : '' );
-		}
-
-		// use specified link as href. insert default link to source only when 
-		// source not already displayed
-		if( !empty( $pParams['link'] ) && $pParams['link'] == 'false' ) {
-		} elseif( !empty( $pParams['link'] ) ) {
-			if(( strstr( $pParams['link'], $_SERVER["SERVER_NAME"] )) || (!strstr( $pParams['link'], '//' ))) {
-				$class = '';
+			if( !empty( $pParams['output'] ) && ( $pParams['output'] == 'desc' || $pParams['output'] == 'description' )) {
+				$ret = ( !empty( $wrapper['description'] )  ? $wrapper['description'] : $att['filename'] );
+				$nowrapper = TRUE;
 			} else {
-				$class = 'class="external"';
+				$ret .= ( !empty( $wrapper['description'] )  ? '<br />'.$wrapper['description']  : '' );
 			}
 
-			$ret = '<a '.$class.' href="'.trim( $pParams['link'] ).'">'.$ret.'</a>';
-		} elseif( !empty( $att['download_url'] ) ) {
-			$ret = '<a href="'.trim( $att['download_url'] ).'">'.$ret.'</a>';
-		} elseif( !empty( $att['display_url'] ) ) {
-			$ret = '<a href="'.trim( $att['display_url'] ).'">'.$ret.'</a>';
-		} elseif( empty( $pParams['size'] ) || $pParams['size'] != 'original' ) {
-			$ret = '<a href="'.trim( $att['source_url'] ).'">'.$ret.'</a>';
-		}
+			// use specified link as href. insert default link to source only when 
+			// source not already displayed
+			if( !empty( $pParams['link'] ) && $pParams['link'] == 'false' ) {
+			} elseif( !empty( $pParams['link'] ) ) {
+				if(( strstr( $pParams['link'], $_SERVER["SERVER_NAME"] )) || (!strstr( $pParams['link'], '//' ))) {
+					$class = '';
+				} else {
+					$class = 'class="external"';
+				}
 
-		// finally, wrap the output.
-		if( empty( $nowrapper )) {
-			$ret = '<'.$wrapper['wrapper'].' class="'.( isset( $wrapper ) && !empty( $wrapper['class'] ) ? $wrapper['class'] : "att-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.'</'.$wrapper['wrapper'].'>';
+				$ret = '<a '.$class.' href="'.trim( $pParams['link'] ).'">'.$ret.'</a>';
+			} elseif( !empty( $att['download_url'] ) ) {
+				$ret = '<a href="'.trim( $att['download_url'] ).'">'.$ret.'</a>';
+			} elseif( !empty( $att['display_url'] ) ) {
+				$ret = '<a href="'.trim( $att['display_url'] ).'">'.$ret.'</a>';
+			} elseif( empty( $pParams['size'] ) || $pParams['size'] != 'original' ) {
+				$ret = '<a href="'.trim( $att['source_url'] ).'">'.$ret.'</a>';
+			}
+
+			// finally, wrap the output.
+			if( empty( $nowrapper )) {
+				$ret = '<'.$wrapper['wrapper'].' class="'.( isset( $wrapper ) && !empty( $wrapper['class'] ) ? $wrapper['class'] : "att-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.'</'.$wrapper['wrapper'].'>';
+			}
+		} else {
+			$ret = tra( "The attachment id given is not valid." );
 		}
-	} else {
-		$ret = tra( "The attachment id given is not valid." );
 	}
 
 	return $ret;

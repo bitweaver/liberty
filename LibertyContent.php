@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.360 2008/05/07 06:49:31 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.361 2008/05/10 21:50:36 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -658,7 +658,7 @@ class LibertyContent extends LibertyBase {
 				if( $this->store( $res ) ) {
 					$ret = TRUE;
 				}
-//vd( $this->mErrors );
+				//vd( $this->mErrors );
 				$this->mDb->CompleteTrans();
 			} else {
 				$this->mDb->RollbackTrans();

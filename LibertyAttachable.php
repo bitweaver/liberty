@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.141 2008/05/09 10:13:14 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.142 2008/05/10 21:50:36 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -468,7 +468,7 @@ class LibertyAttachable extends LibertyContent {
 	function expunge() {
 		if( !empty( $this->mStorage ) && count( $this->mStorage )) {
 			foreach( array_keys( $this->mStorage ) as $i ) {
-				$this->expungeAttachment(  $this->mStorage[$i]['attachment_id'] );
+				$this->expungeAttachment( $this->mStorage[$i]['attachment_id'] );
 			}
 		}
 		return LibertyContent::expunge();
@@ -490,19 +490,21 @@ class LibertyAttachable extends LibertyContent {
 			$guid = $row['attachment_plugin_guid'];
 			if( $guid && ( $this->isOwner( $row ) || $gBitUser->isAdmin() )) {
 				// check if we have the means available to remove this attachment
-				if( $expungeFunc = $gLibertySystem->getPluginFunction( $guid,'expunge_function' )) {
+				if( $expungeFunc = $gLibertySystem->getPluginFunction( $guid, 'expunge_function' )) {
 					// --- Do the final cleanup of liberty related tables ---
 					if( $expungeFunc( $pAttachmentId )) {
-						// Delete the attachment record.
+						// Delete the attachment prefs and record.
+						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachment_prefs` WHERE `attachment_id` = ?";
+						$this->mDb->query( $sql, array( $pAttachmentId ));
 						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id`=?";
-						$this->mDb->query( $sql, array( $pAttachmentId ) );
+						$this->mDb->query( $sql, array( $pAttachmentId ));
 
 						// Remove attachment from memory
 						unset( $this->mStorage[$pAttachmentId] );
+						$ret = TRUE;
 					}
 				} else {
 					print( "Expunge function not found for this content!" );
-					$ret = NULL;
 				}
 			}
 		}
@@ -561,7 +563,9 @@ class LibertyAttachable extends LibertyContent {
 			if( $result = $gBitSystem->mDb->query( $query, array( (int)$pAttachmentId ))) {
 				if( $row = $result->fetchRow() ) {
 					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function'  ) ) {
-						$ret = $func( $row );
+						// this dummy is needed for forward compatability with LibertyMime plugins
+						$dummy = array();
+						$ret = $func( $row, $dummy );
 					}
 				}
 			}
