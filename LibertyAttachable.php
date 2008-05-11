@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.143 2008/05/11 06:36:51 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.144 2008/05/11 08:32:29 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -70,8 +70,24 @@ class LibertyAttachable extends LibertyContent {
 		return BIT_ROOT_URL.LibertyAttachable::getStorageBranch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pRootDir );
 	}
 
-	function getStorageSubDirName() {
-		return 'images';
+	/**
+	 * getStorageSubDirName get a filename based on the uploaded file
+	 * 
+	 * @param array $pFileHash File hash geven in $_FILES - relevant information is in ['type']
+	 * @access public
+	 * @return appropriate sub dir name
+	 */
+	function getStorageSubDirName( $pMimeType = NULL ) {
+		if( !empty( $pMimeType )) {
+			$ret = preg_replace( "!/.*$!", "", $pMimeType );
+		}
+
+		// append an 's' to not create an image and images dir side by side (legacy reasons)
+		if( empty( $ret ) || $ret == 'image' ) {
+			$ret = 'images';
+		}
+
+		return $ret;
 	}
 
 	/**
