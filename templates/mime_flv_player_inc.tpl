@@ -17,6 +17,6 @@
 /* ]]> */</script>
 
 {if $area eq "storage_thumbs"}
-	<a href="{$attachment.display_url}">Original version</a>
+	<a href="{$attachment.display_url}">{tr}Original version{/tr}</a>
 {/if}
 {/strip}
