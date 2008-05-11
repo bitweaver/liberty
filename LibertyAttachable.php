@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.144 2008/05/11 08:32:29 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.145 2008/05/11 08:42:58 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -73,12 +73,12 @@ class LibertyAttachable extends LibertyContent {
 	/**
 	 * getStorageSubDirName get a filename based on the uploaded file
 	 * 
-	 * @param array $pFileHash File hash geven in $_FILES - relevant information is in ['type']
+	 * @param array $pMimeType Mime type you want a subdir for
 	 * @access public
 	 * @return appropriate sub dir name
 	 */
 	function getStorageSubDirName( $pMimeType = NULL ) {
-		if( !empty( $pMimeType )) {
+		if( !empty( $pMimeType ) && strstr( $pMimeType, "/" )) {
 			$ret = preg_replace( "!/.*$!", "", $pMimeType );
 		}
 
