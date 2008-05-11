@@ -89,6 +89,12 @@ array( 'DATADICT' => array(
 				, CONSTRAINT `liberty_meta_map_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
 				, CONSTRAINT `liberty_meta_map_meta_key_ref` FOREIGN KEY (`meta_key`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_data` (`meta_key`)'
 		",
+		'liberty_attachment_prefs' => "
+			attachment_id I4 PRIMARY,
+			pref_name C(40) PRIMARY,
+			pref_value C(250)
+			CONSTRAINT ', CONSTRAINT `lib_attachment_prefs_content_ref` FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments` (`attachment_id`)'
+		",
 	)),
 	array( 'ALTER' => array(
 		'liberty_content' => array(
