@@ -3,14 +3,14 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.1 2008/05/10 21:50:36 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.2 2008/05/11 08:43:57 squareing Exp $
  */
 
 /**
  * required setup
  */
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
-define( 'LIBERTY_DEFAULT_MIME_HANDLER', 'mime_default' );
+define( 'LIBERTY_DEFAULT_MIME_HANDLER', 'mimedefault' );
 
 /**
  * LibertyMime class
@@ -375,6 +375,7 @@ class LibertyMime extends LibertyAttachable {
 		$return = TRUE;
 		if( !@BitBase::verifyId( $pContentId ) && $this->isValid() && @BitBase::verifyId( $this->mContentId )) {
 			$pContentId = $this->mContentId;
+			$store_prefs = TRUE;
 		}
 
 		$ret = array();
@@ -393,7 +394,7 @@ class LibertyMime extends LibertyAttachable {
 		}
 
 		// if neither a content id nor an attachment id are given, we will place the results in mStoragePrefs
-		if( !@BitBase::verifyId( $pContentId )) {
+		if( !empty( $store_prefs )) {
 			$this->mStoragePrefs = $ret;
 		} else {
 			return $ret;
