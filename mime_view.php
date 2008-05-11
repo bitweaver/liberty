@@ -1,6 +1,6 @@
 <?php
 /**
- * @version      $Header: /cvsroot/bitweaver/_bit_liberty/Attic/mime_view.php,v 1.1 2008/05/10 21:50:36 squareing Exp $
+ * @version      $Header: /cvsroot/bitweaver/_bit_liberty/Attic/mime_view.php,v 1.2 2008/05/11 08:37:45 squareing Exp $
  *
  * @author       xing  <xing@synapse.plus.com>
  * @package      treasury
@@ -15,7 +15,9 @@ require_once( '../bit_setup_inc.php' );
 require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
 
 // fetch the attachment details
-$attachment = LibertyMime::getAttachment( $_REQUEST['attachment_id'], $_REQUEST );
+if( !( $attachment = LibertyMime::getAttachment( $_REQUEST['attachment_id'], $_REQUEST ))) {
+	$gBitSystem->fatalError( tra( "The Attachment ID given is not valid" ));
+}
 $gBitSmarty->assign( 'attachment', $attachment );
 
 // first we need to check the permissions of the content the attachment belongs to since they inherit them
