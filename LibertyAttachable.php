@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.142 2008/05/10 21:50:36 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.143 2008/05/11 06:36:51 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -535,7 +535,9 @@ class LibertyAttachable extends LibertyContent {
 				$this->mStorage = array();
 				while( $row = $result->fetchRow() ) {
 					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function' )) {
-						$this->mStorage[$row['attachment_id']] = $func( $row );
+						// this dummy is needed for forward compatability with LibertyMime plugins
+						$dummy = array();
+						$this->mStorage[$row['attachment_id']] = $func( $row, $dummy );
 						//$this->mStorage[$row['attachment_id']]['is_primary'] = !empty( $row['primary_attachment_id'] );
 					} else {
 						print "No load_function for ".$row['attachment_plugin_guid']." ".$gLibertySystem->mPlugins[$row['attachment_plugin_guid']];
