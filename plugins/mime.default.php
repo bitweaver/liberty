@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.1 2008/05/10 21:50:37 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.2 2008/05/11 08:45:21 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.1 $
+ * @version     $Revision: 1.2 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -73,38 +73,31 @@ function mime_default_verify( &$pStoreRow ) {
 	// er... or at least admin if somehow we have a NULL mUserId - anon uploads maybe?
 	$pStoreRow['user_id'] = @BitBase::verifyId( $gBitUser->mUserId ) ? $gBitUser->mUserId : ROOT_USER_ID;
 
-	// attachment_id is only set when we are updating the file
-	if( @BitBase::verifyId( $pStoreRow['attachment_id'] )) {
-		// if a new file has been uploaded, we need to get some information from the database for the file update
-		if( !empty( $pStoreRow['upload']['tmp_name'] ) && is_file( $pStoreRow['upload']['tmp_name'] )) {
-			// Generic values needed by the storing mechanism
-			$pStoreRow['upload']['source_file'] = $pStoreRow['upload']['tmp_name'];
-
-			// Store all uploaded files in the users storage area
-			// TODO: allow users to create personal galleries
+	if( !empty( $pStoreRow['upload']['tmp_name'] ) && is_file( $pStoreRow['upload']['tmp_name'] )) {
+		// attachment_id is only set when we are updating the file
+		if( @BitBase::verifyId( $pStoreRow['attachment_id'] )) {
+			// if a new file has been uploaded, we need to get some information from the database for the file update
 			$fileInfo = $gBitSystem->mDb->getRow( "
 				SELECT la.`attachment_id`, lf.`file_id`, lf.`storage_path`
 				FROM `".BIT_DB_PREFIX."liberty_content` lc
-					INNER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON ( la.`content_id` = lc.`content_id` )
-					INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON ( lf.`file_id` = la.`foreign_id` )
+				INNER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON ( la.`content_id` = lc.`content_id` )
+				INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON ( lf.`file_id` = la.`foreign_id` )
 				WHERE lc.`content_id` = ?", array( $pStoreRow['content_id'] ));
 			$pStoreRow = array_merge( $pStoreRow, $fileInfo );
-			$pStoreRow['upload']['dest_path'] = LibertyAttachable::getStorageBranch( $pStoreRow['attachment_id'], $gBitUser->mUserId );
-		}
+		} else {
+			// try to generate thumbnails for the upload
+			//$pStoreRow['upload']['thumbnail'] = !$gBitSystem->isFeatureActive( 'liberty_offline_thumbnailer' );
+			$pStoreRow['upload']['thumbnail'] = TRUE;
 
-		$ret = TRUE;
-	} elseif( !empty( $pStoreRow['upload']['tmp_name'] ) && is_file( $pStoreRow['upload']['tmp_name'] )) {
-		// try to generate thumbnails for the upload
-		//$pStoreRow['upload']['thumbnail'] = !$gBitSystem->isFeatureActive( 'liberty_offline_thumbnailer' );
-		$pStoreRow['upload']['thumbnail'] = TRUE;
+			// Store all uploaded files in the users storage area
+			// TODO: allow users to create personal galleries
+			$pStoreRow['attachment_id'] = $gBitSystem->mDb->GenID( 'liberty_attachments_id_seq' );
+		}
 
 		// Generic values needed by the storing mechanism
 		$pStoreRow['upload']['source_file'] = $pStoreRow['upload']['tmp_name'];
-
 		// Store all uploaded files in the users storage area
-		// TODO: allow users to create personal galleries
-		$pStoreRow['attachment_id'] = $gBitSystem->mDb->GenID( 'liberty_attachments_id_seq' );
-		$pStoreRow['upload']['dest_path'] = LibertyAttachable::getStorageBranch( $pStoreRow['attachment_id'], $gBitUser->mUserId );
+		$pStoreRow['upload']['dest_path'] = LibertyMime::getStorageBranch( $pStoreRow['attachment_id'], $pStoreRow['user_id'], LibertyMime::getStorageSubDirName( $pStoreRow['upload']['type'] ));
 
 		$ret = TRUE;
 	} else {
@@ -321,11 +314,11 @@ function mime_default_expunge( $pAttachmentId ) {
 	$ret = FALSE;
 	if( @BitBase::verifyId( $pAttachmentId )) {
 		if( $fileHash = LibertyMime::getAttachment( $pAttachmentId )) {
-			if( $gBitUser->isAdmin() || $gBitUser->mUserId == $fileHash['user_id'] ) {
+			if( $gBitUser->isAdmin() || $gBitUser->mUserId == $fileHash['user_id'] && !empty( $fileHash['storage_path'] )) {
 				$absolutePath = BIT_ROOT_PATH.'/'.$fileHash['storage_path'];
 				if( file_exists( $absolutePath )) {
 					// make sure this is a valid storage directory before removing it
-					if( preg_match( '!/\w+/\d+/\d+/\w+/\d+/.+!', $fileRow['storage_path'] )) {
+					if( preg_match( '!/users/\d+/\d+/\w+/\d+/.+!', $fileHash['storage_path'] )) {
 						unlink_r( dirname( $absolutePath ));
 					} else {
 						unlink( $absolutePath );
