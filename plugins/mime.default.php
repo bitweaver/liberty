@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.2 2008/05/11 08:45:21 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.3 2008/05/12 16:17:11 wjames5 Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.2 $
+ * @version     $Revision: 1.3 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -23,8 +23,8 @@ global $gLibertySystem;
 
 /**
  *  This is the name of the plugin - max char length is 16
- * As a naming convention, the treasury mime handler definition should start with:
- * TREASURY_MIME_GUID_
+ * As a naming convention, the liberty mime handler definition should start with:
+ * PLUGIN_MIME_GUID_
  */
 define( 'PLUGIN_MIME_GUID_DEFAULT', 'mimedefault' );
 
@@ -305,7 +305,7 @@ function mime_default_download( &$pFileHash ) {
 /**
  * Nuke data in tables when content is removed
  * 
- * @param array $pParamHash The contents of TreasuryItem->mInfo
+ * @param array $pParamHash The contents of LibertyMime->mInfo
  * @access public
  * @return TRUE on success, FALSE on failure - $pParamHash['errors'] will contain reason for failure
  */
