@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.1 2008/05/10 21:50:37 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.2 2008/05/12 16:59:08 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.1 $
+ * @version		$Revision: 1.2 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -129,7 +129,7 @@ function mime_flv_update( &$pStoreRow ) {
  */
 function mime_flv_load( $pFileHash, &$pPrefs, $pParams = NULL ) {
 	global $gLibertySystem, $gBitThemes;
-	if( $ret = mime_default_load( $pFileHash, $pCommonObject )) {
+	if( $ret = mime_default_load( $pFileHash, $pParams )) {
 		// check for status of conversion
 		if( is_file( dirname( $ret['source_file'] ).'/error' )) {
 			$ret['status']['error'] = TRUE;
