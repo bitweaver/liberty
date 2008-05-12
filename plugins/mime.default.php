@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.3 2008/05/12 16:17:11 wjames5 Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.4 2008/05/12 20:35:48 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.3 $
+ * @version     $Revision: 1.4 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -227,9 +227,7 @@ function mime_default_load( $pFileHash, &$pPrefs ) {
 			$ret['attachment_id']    = $row['attachment_id'];
 			$ret['preferences']      = $pPrefs;
 
-			if( $gLibertySystem->isPluginActive( 'datafile' )) {
-				$ret['wiki_plugin_link'] = "{file id=".$row['attachment_id']."}";
-			} elseif( $gLibertySystem->isPluginActive( 'dataattachment' )) {
+			if( $gLibertySystem->isPluginActive( 'dataattachment' )) {
 				$ret['wiki_plugin_link'] = "{attachment id=".$row['attachment_id']."}";
 			}
 
