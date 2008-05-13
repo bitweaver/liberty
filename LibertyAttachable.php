@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.145 2008/05/11 08:42:58 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.146 2008/05/13 17:07:38 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -73,13 +73,17 @@ class LibertyAttachable extends LibertyContent {
 	/**
 	 * getStorageSubDirName get a filename based on the uploaded file
 	 * 
-	 * @param array $pMimeType Mime type you want a subdir for
+	 * @param array $pFileHash File information provided in $_FILES
 	 * @access public
 	 * @return appropriate sub dir name
 	 */
-	function getStorageSubDirName( $pMimeType = NULL ) {
-		if( !empty( $pMimeType ) && strstr( $pMimeType, "/" )) {
-			$ret = preg_replace( "!/.*$!", "", $pMimeType );
+	function getStorageSubDirName( $pFileHash = NULL ) {
+		if( !empty( $pFileHash['type'] ) && strstr( $pFileHash['type'], "/" )) {
+			$ret = strtolower( preg_replace( "!/.*$!", "", $pFileHash['type'] ));
+			// if we only got 'application' we will use the file extenstion
+			if( $ret = 'application' && !empty( $pFileHash['name'] ) && ( $pos = strpos( $pFileHash['name'], "." )) !== FALSE ) {
+				$ret = strtolower( substr( $pFileHash['name'], $pos + 1 ));
+			}
 		}
 
 		// append an 's' to not create an image and images dir side by side (legacy reasons)

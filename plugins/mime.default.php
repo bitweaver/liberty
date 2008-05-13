@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.4 2008/05/12 20:35:48 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.5 2008/05/13 17:07:38 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.4 $
+ * @version     $Revision: 1.5 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -97,7 +97,7 @@ function mime_default_verify( &$pStoreRow ) {
 		// Generic values needed by the storing mechanism
 		$pStoreRow['upload']['source_file'] = $pStoreRow['upload']['tmp_name'];
 		// Store all uploaded files in the users storage area
-		$pStoreRow['upload']['dest_path'] = LibertyMime::getStorageBranch( $pStoreRow['attachment_id'], $pStoreRow['user_id'], LibertyMime::getStorageSubDirName( $pStoreRow['upload']['type'] ));
+		$pStoreRow['upload']['dest_path'] = LibertyMime::getStorageBranch( $pStoreRow['attachment_id'], $pStoreRow['user_id'], LibertyMime::getStorageSubDirName( $pStoreRow['upload'] ));
 
 		$ret = TRUE;
 	} else {
