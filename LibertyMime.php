@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.2 2008/05/11 08:43:57 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.3 2008/05/15 15:45:06 squareing Exp $
  */
 
 /**
@@ -262,7 +262,6 @@ class LibertyMime extends LibertyAttachable {
 
 	/**
 	 * === Attachment Preferences ===
-	 * We abuse the liberty_meta_ tables to store attachment preferences
 	 */
 
 	/**
