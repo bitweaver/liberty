@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.3 2008/05/15 15:45:06 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.4 2008/05/15 17:25:57 squareing Exp $
  */
 
 /**
@@ -85,7 +85,9 @@ class LibertyMime extends LibertyAttachable {
 			foreach( $pStoreHash['upload_store']['files'] as $upload ) {
 				$storeRow = $pStoreHash['upload_store'];
 				unset( $storeRow['files'] );
-				$storeRow['upload'] = $upload;
+
+				// copy by reference that the filetype when changes are made in lookupMimeHandler()
+				$storeRow['upload'] = &$upload;
 
 				// when content is created the content_id is only available after LibertyContent::store()
 				if( !@BitBase::verifyId( $pStoreHash['content_id'] )) {
