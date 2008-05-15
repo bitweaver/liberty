@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.147 2008/05/14 16:04:42 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.148 2008/05/15 17:59:11 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -81,7 +81,7 @@ class LibertyAttachable extends LibertyContent {
 		if( !empty( $pFileHash['type'] ) && strstr( $pFileHash['type'], "/" )) {
 			$ret = strtolower( preg_replace( "!/.*$!", "", $pFileHash['type'] ));
 			// if we only got 'application' we will use the file extenstion
-			if( $ret = 'application' && !empty( $pFileHash['name'] ) && ( $pos = strrpos( $pFileHash['name'], "." )) !== FALSE ) {
+			if( $ret == 'application' && !empty( $pFileHash['name'] ) && ( $pos = strrpos( $pFileHash['name'], "." )) !== FALSE ) {
 				$ret = strtolower( substr( $pFileHash['name'], $pos + 1 ));
 			}
 		}
@@ -91,6 +91,7 @@ class LibertyAttachable extends LibertyContent {
 			$ret = 'images';
 		}
 
+		vd($ret);
 		return $ret;
 	}
 
