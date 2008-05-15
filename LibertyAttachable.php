@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.148 2008/05/15 17:59:11 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.149 2008/05/15 19:48:08 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -46,15 +46,15 @@ class LibertyAttachable extends LibertyContent {
 	}
 
 	/**
-	* getStoragePath - get path to store files for the feature site_upload_dir. It creates a calculable hierarchy of directories
-	*
-	* @access public
-	* @author Christian Fowler<spider@steelsun.com>
-	* @param $pSubDir any desired directory below the StoragePath. this will be created if it doesn't exist
-	* @param $pCommon indicates not to use the 'common' branch, and not the 'users/.../<user_id>' branch
-	* @param $pRootDir override BIT_ROOT_DIR with a custom absolute path - useful for areas where no we access should be allowed
-	* @return string full path on local filsystem to store files.
-	*/
+	 * getStoragePath - get path to store files for the feature site_upload_dir. It creates a calculable hierarchy of directories
+	 *
+	 * @access public
+	 * @author Christian Fowler<spider@steelsun.com>
+	 * @param $pSubDir any desired directory below the StoragePath. this will be created if it doesn't exist
+	 * @param $pCommon indicates not to use the 'common' branch, and not the 'users/.../<user_id>' branch
+	 * @param $pRootDir override BIT_ROOT_DIR with a custom absolute path - useful for areas where no we access should be allowed
+	 * @return string full path on local filsystem to store files.
+	 */
 	function getStoragePath( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pRootDir = NULL ) {
 		$ret = null;
 		if( $storageUrl = LibertyAttachable::getStorageBranch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pRootDir ) ) {
@@ -96,15 +96,15 @@ class LibertyAttachable extends LibertyContent {
 	}
 
 	/**
-	* getStorageBranch - get url to store files for the feature site_upload_dir. It creates a calculable hierarchy of directories
-	*
-	* @access public
-	* @author Christian Fowler<spider@steelsun.com>
-	* @param $pSubDir any desired directory below the StoragePath. this will be created if it doesn't exist
-	* @param $pUserId indicates the 'users/.../<user_id>' branch or use the 'common' branch if null
-	* @param $pRootDir override BIT_ROOT_DIR with a custom absolute path - useful for areas where no we access should be allowed
-	* @return string full path on local filsystem to store files.
-	*/
+	 * getStorageBranch - get url to store files for the feature site_upload_dir. It creates a calculable hierarchy of directories
+	 *
+	 * @access public
+	 * @author Christian Fowler<spider@steelsun.com>
+	 * @param $pSubDir any desired directory below the StoragePath. this will be created if it doesn't exist
+	 * @param $pUserId indicates the 'users/.../<user_id>' branch or use the 'common' branch if null
+	 * @param $pRootDir override BIT_ROOT_DIR with a custom absolute path - useful for areas where no we access should be allowed
+	 * @return string full path on local filsystem to store files.
+	 */
 	function getStorageBranch( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pRootDir = NULL ) {
 		// *PRIVATE FUNCTION. GO AWAY! DO NOT CALL DIRECTLY!!!
 		global $gBitSystem;
@@ -135,7 +135,14 @@ class LibertyAttachable extends LibertyContent {
 		return $ret;
 	}
 
-	// Private Method used during verify to extract 
+	/**
+	 * extractMetaData extract meta data from images
+	 * 
+	 * @param array $pParamHash 
+	 * @param array $pFile 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function extractMetaData( &$pParamHash, &$pFile ) {
 
 		// Process a JPEG , jpeg_metadata_tk REQUIRES short_tags because that is the way it was written. feel free to fix something. XOXO spiderr
@@ -194,10 +201,17 @@ class LibertyAttachable extends LibertyContent {
 				}
 			}
 		}
-
-
 	}
 
+	/**
+	 * verifyAttachment 
+	 * 
+	 * @param array $pParamHash 
+	 * @param array $pFile 
+	 * @param array $pKey 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function verifyAttachment( &$pParamHash, $pFile, $pKey ) {
 		global $gBitSystem, $gBitUser, $gLibertySystem;
 
@@ -235,7 +249,7 @@ class LibertyAttachable extends LibertyContent {
 				if ( !is_windows() ) {
 					list( $pFile['name'], $pFile['type'] ) = $gBitSystem->verifyFileExtension( $pFile['tmp_name'], $pFile['name'] );
 				} else {
-//						$pFile['type'] = $gBitSystem->verifyMimeType( $pFile['tmp_name'] );
+					//$pFile['type'] = $gBitSystem->verifyMimeType( $pFile['tmp_name'] );
 				}
 				// clean out crap that can make life difficult in server maintenance
 				$cleanedBaseName = preg_replace( '/[&\%:\/\\\]/', '', substr( $pFile['name'], 0, strrpos( $pFile['name'], '.' ) ) );
@@ -251,15 +265,14 @@ class LibertyAttachable extends LibertyContent {
 		}
 	}
 
-	
 	/**
-	* verify - standard API method, with a twist. It will gobble up anything in $_FILES if available, unless an array of arrays is passed in to  $pParamHash['_files_override']
-	*
-	* @access private
-	* @author Christian Fowler<spider@steelsun.com>
-	* @param $pParamHash
-	* @return FALSE if errors were present, TRUE meaning object is ready to store
-	*/
+	 * verify - standard API method, with a twist. It will gobble up anything in $_FILES if available, unless an array of arrays is passed in to  $pParamHash['_files_override']
+	 *
+	 * @access private
+	 * @author Christian Fowler<spider@steelsun.com>
+	 * @param $pParamHash
+	 * @return FALSE if errors were present, TRUE meaning object is ready to store
+	 */
 	function verify( &$pParamHash ) {
 		global $gBitSystem, $gBitUser;
 		// check to see if we have any files to upload
@@ -374,7 +387,7 @@ class LibertyAttachable extends LibertyContent {
 								} else {
 									$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'] = 
 										defined( 'LINKED_ATTACHMENTS' ) ? $this->mDb->GenID( 'liberty_content_id_seq') : $this->mDb->GenID( 'liberty_attachments_id_seq' );
-								}	
+								}
 							}
 
 							// if we have uploaded a file, we can take care of that generically
@@ -684,7 +697,7 @@ class LibertyAttachable extends LibertyContent {
 		}
 
 		$bindVars[] = $pAttachmentId;
-		
+
 		$query = "
 			SELECT *
 			FROM `".BIT_DB_PREFIX."liberty_content` lc
@@ -700,9 +713,6 @@ class LibertyAttachable extends LibertyContent {
 		}
 
 		return $attached_to;
-
-
 	}
-
 }
 ?>
