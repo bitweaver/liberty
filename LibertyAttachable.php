@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.149 2008/05/15 19:48:08 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.150 2008/05/16 06:40:30 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -91,7 +91,6 @@ class LibertyAttachable extends LibertyContent {
 			$ret = 'images';
 		}
 
-		vd($ret);
 		return $ret;
 	}
 
@@ -713,6 +712,74 @@ class LibertyAttachable extends LibertyContent {
 		}
 
 		return $attached_to;
+	}
+
+	/**
+	 * storeMetaData 
+	 * 
+	 * @param array $pAttachmentId 
+	 * @param array $pGuidTitle 
+	 * @param array $pData 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 *
+	 * liberty_meta_data
+	 *     meta_key          nikonp5000
+	 *     meta_type_guid    exif
+	 *     meta_title        Nikon P5000
+	 *     meta_value_short  short data
+	 *     meta_value_long   long data
+	 */
+	function storeMetaData( $pAttachmentId, $pGuidTitle, $pData ) {
+		if( @BitBase::verifyId( $pAttachmentId )) {
+			if( !is_array( $pData )) {
+				$pData = array( $pData );
+			}
+
+			$guid = $this->convertMetaKey( $pGuidTitle );
+			foreach( $pData as $key => $data ) {
+				if( !is_array( $data )) {
+					// check for $guid
+					// insert into table where:
+					// $key  = liberty_meta_data.meta_key
+					// $data = liberty_meta_data.meta_value_(short|long)
+					//
+					// meta_title ?
+				}
+			}
+		}
+	}
+
+	/**
+	 * convertMetaKey 
+	 * 
+	 * @param array $pGuidTitle 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function convertMetaKey( $pGuidTitle ) {
+		return strtolower( preg_replace( "![^a-zA-Z0-9_-]!", "", trim( $pGuidTitle )));
+	}
+
+	/**
+	 * storeMetaGuid 
+	 * 
+	 * @param array $pGuid 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function storeMetaGuid( $pGuid ) {
+		global $gBitSystem;
+		if( !empty( $pGuid )) {
+			$guid = strstr( 0, 15, $this->convertMetaKey( $pGuid ));
+			if( !$gBitSystem->mDb->getOne( "SELECT `meta_type_guid` FROM `".BIT_DB_PREFIX."liberty_meta_types` WHERE `meta_type_guid` = ?", array( $guid ))) {
+				$store = array(
+					'meta_type_guid'  = $guid,
+					'meta_type_title' = $pGuidTitle,
+				);
+				$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_meta_types", $store );
+			}
+		}
 	}
 }
 ?>
