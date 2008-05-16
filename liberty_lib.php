@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.29 2008/05/06 19:33:34 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.30 2008/05/16 16:05:37 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -337,7 +337,7 @@ function liberty_content_load_sql( &$pObject, $pParamHash=NULL ) {
 	$hasPerm = ( is_object($pObject) && isset($pObject->hasUSerPermissioni) )?$pObject->hasUserPermission('p_liberty_edit_all_status'):$gBitUser->hasPermission('p_liberty_edit_all_status');
 
 	if ( $gBitSystem->isFeatureActive('liberty_display_status') && !$hasPerm ){
-		if (( is_object($pObject) && $pObject->mType['content_type_guid'] == 'bitcomment' )||( !empty( $pParamHash['include_comments'] ) && $pParamHash['include_comments']  == 'y')) {
+		if (( is_object( $pObject ) && !empty( $pObject->mType['content_type_guid'] ) && $pObject->mType['content_type_guid'] == 'bitcomment' )||( !empty( $pParamHash['include_comments'] ) && $pParamHash['include_comments']  == 'y')) {
 			// if we are getting a list of comments then lets check the owner of the comment root and the owner of the content
 			$ret['join_sql'] = " INNER JOIN `".BIT_DB_PREFIX."liberty_content` rlcs ON( rlcs.`content_id`=lcom.`root_id` )";
 			$ret['where_sql'] = " AND lc.`content_status_id` < 100 AND ( ( (rlcs.`user_id` = '".$gBitUser->getUserId()."' OR lc.`user_id` = '".$gBitUser->getUserId()."') AND lc.`content_status_id` > -100) OR lc.`content_status_id` > 0 )";
