@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.150 2008/05/16 06:40:30 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.151 2008/05/16 18:30:24 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -774,8 +774,8 @@ class LibertyAttachable extends LibertyContent {
 			$guid = strstr( 0, 15, $this->convertMetaKey( $pGuid ));
 			if( !$gBitSystem->mDb->getOne( "SELECT `meta_type_guid` FROM `".BIT_DB_PREFIX."liberty_meta_types` WHERE `meta_type_guid` = ?", array( $guid ))) {
 				$store = array(
-					'meta_type_guid'  = $guid,
-					'meta_type_title' = $pGuidTitle,
+					'meta_type_guid'  => $guid,
+					'meta_type_title' => $pGuidTitle,
 				);
 				$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_meta_types", $store );
 			}
