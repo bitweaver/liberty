@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.2 2008/05/12 16:59:08 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.3 2008/05/16 14:37:59 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.2 $
+ * @version		$Revision: 1.3 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -295,21 +295,12 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 					$info = $default;
 				}
 
-				// annoyingly, ffmpeg can take kbits or bits ( does this depend on configure flags, version ??? )
-				$vd = $ad = 1;
-				if( preg_match( "!\n-b\b.*in kbit/s!", $ff )) {
-					$vd = 1000;
-				}
-				if( preg_match( "!\n-ab\b.*in kbit/s!", $ff )) {
-					$ad = 1000;
-				}
-
 				// set up parameters to convert video
 				$parameters =
 					" -i '$source'".
 					" -acodec mp3".
-					" -b ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ) / $vd ).
-					" -ab ".trim( $gBitSystem->getConfig( 'mime_flv_audio_bitrate', 32000 ) / $ad ).
+					" -b ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
+					" -ab ".trim( $gBitSystem->getConfig( 'mime_flv_audio_bitrate', 32000 ).'b' ).
 					" -ar ".trim( $gBitSystem->getConfig( 'mime_flv_audio_samplerate', 22050 )).
 					" -f flv".
 					" -s ".$info['size'].
