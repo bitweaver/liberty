@@ -19,7 +19,7 @@
 				{formlabel label="Path to ffmpeg" for="mime_flv_ffmpeg_path"}
 				{forminput}
 					<input type='text' name="mime_flv_ffmpeg_path" id="mime_flv_ffmpeg_path" size="40" value="{$gBitSystem->getConfig('mime_flv_ffmpeg_path')|escape|default:$ffmpeg_path}" />
-					{formhelp note="If this path is not correct, please set the correct path to ffmepg."}
+					{formhelp note="If this path is not correct, please set the correct path to ffmpeg."}
 				{/forminput}
 			</div>
 
