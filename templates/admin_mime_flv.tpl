@@ -1,5 +1,5 @@
 {strip}
-<div class="display ___">
+<div class="display liberty">
 	<div class="header">
 		<h1>{tr}Flashvideo Plugin Settings{/tr}</h1>
 	</div>
@@ -109,5 +109,5 @@
 			</div>
 		{/form}
 	</div><!-- end .body -->
-</div><!-- end .___ -->
+</div><!-- end .liberty -->
 {/strip}
