@@ -11,11 +11,19 @@ if( function_exists( 'shell_exec' )) {
 $feedback = array();
 
 $rates = array(
+	'video_codec' => array(
+		'flv'        => 'Flashvideo using flv codec',
+		'h264'       => 'MP4/AVC using h264 codec',
+		'h264-2pass' => 'MP4/AVC using h264 codec - 2 passes',
+	),
 	'video_bitrate' => array(
 		160000 => 200,
 		240000 => 300,
 		320000 => 400,
 		400000 => 500,
+		480000 => 600,
+		560000 => 700,
+		640000 => 800,
 	),
 	'video_width' => array(
 		240 => 240,
@@ -49,8 +57,14 @@ if( !empty( $_REQUEST['plugin_settings'] )) {
 		'mime_flv_ffmpeg_path' => array(
 			'type'  => 'text',
 		),
+		'mime_flv_video_codec' => array(
+			'type'  => 'text',
+		),
 		'mime_flv_video_bitrate' => array(
 			'type'  => 'numeric',
+		),
+		'mime_flv_force_encode' => array(
+			'type'  => 'checkbox',
 		),
 		'mime_flv_audio_samplerate' => array(
 			'type'  => 'numeric',

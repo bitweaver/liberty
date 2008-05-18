@@ -24,6 +24,32 @@
 			</div>
 
 			<div class="row">
+				{formlabel label="Video codec" for="mime_flv_video_codec"}
+				{forminput}
+					{html_options
+						options=$rates.video_codec
+						values=$rates.video_codec
+						name=mime_flv_video_codec
+						id=mime_flv_video_codec
+						selected=$gBitSystem->getConfig('mime_flv_video_codec')|default:flv}
+						{formhelp note="You can choose between codecs you wan to use to encode the uploaded video with. We recommend flashvideo if you don't require high quality videos.
+						<dl>
+							<dt>Flashvideo</dt><dd>Medium filesize, medium quality, fast encoding.</dd>
+							<dt>MP4/AVC</dt><dd>Small filesize, high quality, slow encoding.</dd>
+							<dt>MP4/AVC - 2 passes</dt><dd>Small filesize, very high quality, very slow encoding (this is likey to take at least as long as the video length).</dd>
+						<dl>."}
+				{/forminput}
+			</div>
+
+			<div class="row">
+				{formlabel label="Force encode" for="mime_flv_force_encode"}
+				{forminput}
+					<input type='checkbox' name="mime_flv_force_encode" id="mime_flv_force_encode" value="y" {if $gBitSystem->isFeatureActive('mime_flv_force_encode')}checked="checked"{/if} />
+					{formhelp note="The inline player supports videos encoded using the flv or h264 codec with mp3 audio. When users upload such videos, we can use those directly for streaming instead of re-encoding them. In some cases, the uploaded files might be excessively large for streaming and re-encoding takes care of that (requires ffmpeg-php)."}
+				{/forminput}
+			</div>
+
+			<div class="row">
 				{formlabel label="Video bitrate" for="mime_flv_video_bitrate"}
 				{forminput}
 					{html_options

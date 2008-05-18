@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.3 2008/05/16 14:37:59 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.4 2008/05/18 11:21:25 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.3 $
+ * @version		$Revision: 1.4 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -139,6 +139,10 @@ function mime_flv_load( $pFileHash, &$pPrefs, $pParams = NULL ) {
 			$ret['flv_url'] = dirname( $ret['source_url'] ).'/flick.flv';
 			// we need some javascript for the flv player:
 			$gBitThemes->loadJavascript( UTIL_PKG_PATH."javascript/flv_player/swfobject.js", FALSE, 25 );
+		} elseif( is_file( dirname( $ret['source_file'] ).'/flick.mp4' )) {
+			$ret['flv_url'] = dirname( $ret['source_url'] ).'/flick.mp4';
+			// we need some javascript for the flv player:
+			$gBitThemes->loadJavascript( UTIL_PKG_PATH."javascript/flv_player/swfobject.js", FALSE, 25 );
 		}
 
 		// now that we have the original width and height, we can get the displayed values
@@ -203,16 +207,20 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 		$width  = trim( $gBitSystem->getConfig( 'mime_flv_width', 320 ));
 
 		$begin = date( 'U' );
-		$log   = array();
+		$log   = $actionLog = array();
 
 		if( !( $ff = shell_exec( "$ffmpeg 2>&1" ))) {
 			$log['time']     = date( 'Y-M-d - H:i:s O' );
 			$log['duration'] = 0;
 			$log['message']  = 'ERROR: ffmpeg does not seem to be available on your system at: '.$ffmpeg.' Please set the path to ffmpeg in the liberty plugin administration screen.';
 		} else {
+			// this is the codec we'll use - currently this might be: flv, h264, h264-2pass
+			$codec = $gBitSystem->getConfig( "mime_flv_video_codec", "flv" );
+
 			$source = BIT_ROOT_PATH.$pParamHash['upload']['dest_path'].$pParamHash['upload']['name'];
 			$dest_path = dirname( $source );
-			$dest_file = $dest_path.'/flick.flv';
+			$extension = (( $codec == "flv" ) ? "flv" : "mp4" );
+			$dest_file = $dest_path."/flick.$extension";
 
 			// set some default values if ffpeg-php isn't available or fails
 			$default['aspect']     = 4 / 3;
@@ -221,10 +229,20 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 			$default['size']       = "{$default['flv_width']}x{$default['flv_height']}";
 			$default['offset']     = '00:00:10';
 
-			if( $pParamHash['upload']['type'] == 'video/x-flv' ) {
-				// this is already an flv file - we'll just extract some information and store the video
-				if( extension_loaded( 'ffmpeg' )) {
-					$movie = new ffmpeg_movie( $source );
+			if( extension_loaded( 'ffmpeg' )) {
+				// we silence this call since it might spew errors
+				$movie = @new ffmpeg_movie( $source );
+				$info['vcodec']   = $movie->getVideoCodec();
+				$info['acodec']   = $movie->getAudioCodec();
+				$info['duration'] = round( $movie->getDuration() );
+				$info['width']    = $movie->getFrameWidth();
+				$info['height']   = $movie->getFrameHeight();
+			}
+
+			// our player supports flv and h264 so we might as well use the default
+			if( !$gBitSystem->isFeatureActive( 'mime_flv_force_encode' ) && !empty( $info ) && ( $info['vcodec'] == 'h264' || $info['vcodec'] == 'flv' ) && $info['acodec'] == 'mp3' ) {
+				// this is already the same format as we want - we'll just extract some information and store the video
+				if( !empty( $movie )) {
 					$info['duration'] = round( $movie->getDuration() );
 					$info['width']    = $movie->getFrameWidth();
 					$info['height']   = $movie->getFrameHeight();
@@ -243,15 +261,11 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 				mime_flv_create_thumbnail( $source, $info['offset'] );
 				rename( $source, $dest_file );
 				$log['message'] = 'SUCCESS: Converted to flash video';
-				//$item->mLogs['flv_converter'] = "Flv video file was successfully uploaded and thumbnails extracted.";
+				$actionLog['log_message'] = "Flv video file was successfully uploaded and thumbnails extracted.";
 				$ret = TRUE;
 			} else {
 				// we can do some nice stuff if ffmpeg-php is available
-				if( extension_loaded( 'ffmpeg' )) {
-					$movie = new ffmpeg_movie( $source );
-					$info['duration']         = round( $movie->getDuration() );
-					$info['width']            = $movie->getFrameWidth();
-					$info['height']           = $movie->getFrameHeight();
+				if( !empty( $movie )) {
 					$info['video_bitrate']    = $movie->getVideoBitRate();
 					$info['audio_bitrate']    = $movie->getAudioBitRate();
 					$info['audio_samplerate'] = $movie->getAudioSampleRate();
@@ -295,22 +309,95 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 					$info = $default;
 				}
 
-				// set up parameters to convert video
-				$parameters =
-					" -i '$source'".
-					" -acodec mp3".
-					" -b ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
-					" -ab ".trim( $gBitSystem->getConfig( 'mime_flv_audio_bitrate', 32000 ).'b' ).
-					" -ar ".trim( $gBitSystem->getConfig( 'mime_flv_audio_samplerate', 22050 )).
-					" -f flv".
-					" -s ".$info['size'].
-					" -aspect ".$info['aspect'].
-					" -y '$dest_file'";
+				if( $codec == "h264" ) {
+					$parameters =
+						" -i '$source'".
+						// audio
+						" -acodec mp3".
+						" -ab ".trim( $gBitSystem->getConfig( 'mime_flv_audio_bitrate', 32000 ).'b' ).
+						" -ar ".trim( $gBitSystem->getConfig( 'mime_flv_audio_samplerate', 22050 )).
+						// video
+						" -vcodec libx264".
+						" -b ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
+						" -bt ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
+						" -s ".$info['size'].
+						" -aspect ".$info['aspect'].
+						" -flags +loop -cmp +chroma -refs 1 -coder 0 -me_range 16 -g 300 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -maxrate 10M -bufsize 10M -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -level 30".
+						" -partitions +parti4x4+partp8x8+partb8x8 -me umh -subq 5 -trellis 1".
+						// output
+						" -y '$dest_file'";
+
+				} elseif( $codec == "h264-2pass" ) {
+					// it is not possible to pass in the path for the x264 log file and it is always generated in the working dir.
+					$cwd = getcwd();
+					chdir( dirname( $dest_file ));
+
+					$passlogfile = dirname( $dest_file )."/ffmpeg2pass";
+
+					// pass 1
+					$parameters =
+						" -i '$source'".
+						// audio
+						" -an".
+						// video
+						" -pass 1".
+						" -passlogfile $passlogfile".
+						" -vcodec libx264".
+						" -b ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
+						" -bt ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
+						" -s ".$info['size'].
+						" -aspect ".$info['aspect'].
+						" -flags +loop -cmp +chroma -refs 1 -coder 0 -me_range 16 -g 300 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -bf 16 -maxrate 10M -bufsize 10M -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -level 30".
+						" -partitions 0 -me epzs -subq 1 -trellis 0".
+						// output
+						" -y '$dest_file'";
+
+					// pass 2
+					$parameters2 =
+						" -i '$source'".
+						// audio
+						" -acodec mp3".
+						" -ab ".trim( $gBitSystem->getConfig( 'mime_flv_audio_bitrate', 32000 ).'b' ).
+						" -ar ".trim( $gBitSystem->getConfig( 'mime_flv_audio_samplerate', 22050 )).
+						// video
+						" -pass 2".
+						" -passlogfile $passlogfile".
+						" -vcodec libx264".
+						" -b ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
+						" -bt ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
+						" -s ".$info['size'].
+						" -aspect ".$info['aspect'].
+						" -flags +loop -cmp +chroma -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4".
+						" -partitions +parti8x8+parti4x4+partp8x8+partp4x4+partb8x8 -flags2 +brdo+dct8x8+wpred+bpyramid+mixed_refs -me umh -subq 7 -trellis 1 -refs 6 -bf 16 -directpred 3 -b_strategy 1 -bidir_refine 1 -coder 1".
+						// output
+						" -y '$dest_file'";
+
+				} else {
+					$parameters =
+						" -i '$source'".
+						// audio
+						" -acodec mp3".
+						" -ab ".trim( $gBitSystem->getConfig( 'mime_flv_audio_bitrate', 32000 ).'b' ).
+						" -ar ".trim( $gBitSystem->getConfig( 'mime_flv_audio_samplerate', 22050 )).
+						// video
+						" -f flv".
+						" -b ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
+						" -bt ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
+						" -s ".$info['size'].
+						" -aspect ".$info['aspect'].
+						// output
+						" -y '$dest_file'";
+				}
+
 				if( $pOnlyGetParameters ) {
 					return $parameters;
 				} else {
 					// we keep the output of this that we can store it to the error file if we need to do so
-					$debug = shell_exec( "$ffmpeg $parameters 2>&1" );
+					if( $debug = shell_exec( "$ffmpeg $parameters 2>&1" ) && !empty( $parameters2 )) {
+						$debug .= shell_exec( "$ffmpeg $parameters2 2>&1" );
+						// change back to whence we came
+						chdir( $cwd );
+					}
 				}
 
 				// make sure the conversion was successfull
@@ -331,13 +418,13 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 					mime_flv_create_thumbnail( $dest_file, $info['offset'] );
 
 					$log['message'] = 'SUCCESS: Converted to flash video';
-					//$item->mLogs['flv_converter'] = "Converted to flashvideo in ".( date( 'U' ) - $begin )." seconds";
+					$actionLog['log_message'] = "Converted to flashvideo in ".( date( 'U' ) - $begin )." seconds";
 					$ret = TRUE;
 				} else {
 					// remove unsuccessfully converted file
 					@unlink( $dest_file );
 					$log['message'] = 'ERROR: The video you uploaded could not be converted by ffmpeg. DEBUG OUTPUT: '.nl2br( $debug );
-					//$item->mErrors['flv_converter'] = "Video could not be converted to flashvideo. An error dump was saved to: ".$dest_path.'/error';
+					$actionLog['log_message'] = "Video could not be converted to flashvideo. An error dump was saved to: ".$dest_path.'/error';
 
 					// write error message to error file
 					$h = fopen( $dest_path."/error", 'w' );
@@ -351,8 +438,15 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 		$log['time']     = date( 'd/M/Y:H:i:s O' );
 		$log['duration'] = date( 'U' ) - $begin;
 
+		// we'll insert some info into the database for reference
+		$actionLog['content_id'] = $pParamHash['content_id'];
+		$actionLog['title'] = "Uploaded file: {$pParamHash['upload']['name']} [Attchment ID: {$pParamHash['attachment_id']}]";
+
+		// if this all goes tits up, we'll know why
+		$pParamHash['log'] = $log;
+
 		// we'll add an entry in the action logs
-		//$item->storeActionLog();
+		LibertyContent::storeActionLog( array( 'action_log' => $actionLog ));
 
 		// return the log
 		$pParamHash['log'] = $log;
