@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.4 2008/05/18 11:21:25 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.5 2008/05/19 09:19:59 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.4 $
+ * @version		$Revision: 1.5 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -232,24 +232,20 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 			if( extension_loaded( 'ffmpeg' )) {
 				// we silence this call since it might spew errors
 				$movie = @new ffmpeg_movie( $source );
-				$info['vcodec']   = $movie->getVideoCodec();
-				$info['acodec']   = $movie->getAudioCodec();
-				$info['duration'] = round( $movie->getDuration() );
-				$info['width']    = $movie->getFrameWidth();
-				$info['height']   = $movie->getFrameHeight();
+				$info['vcodec']           = $movie->getVideoCodec();
+				$info['acodec']           = $movie->getAudioCodec();
+				$info['duration']         = round( $movie->getDuration() );
+				$info['width']            = $movie->getFrameWidth();
+				$info['height']           = $movie->getFrameHeight();
+				$info['video_bitrate']    = $movie->getVideoBitRate();
+				$info['audio_bitrate']    = $movie->getAudioBitRate();
+				$info['audio_samplerate'] = $movie->getAudioSampleRate();
 			}
 
 			// our player supports flv and h264 so we might as well use the default
 			if( !$gBitSystem->isFeatureActive( 'mime_flv_force_encode' ) && !empty( $info ) && ( $info['vcodec'] == 'h264' || $info['vcodec'] == 'flv' ) && $info['acodec'] == 'mp3' ) {
-				// this is already the same format as we want - we'll just extract some information and store the video
-				if( !empty( $movie )) {
-					$info['duration'] = round( $movie->getDuration() );
-					$info['width']    = $movie->getFrameWidth();
-					$info['height']   = $movie->getFrameHeight();
-				}
-
-				// if we have a width, ffmpeg-php was successful
-				if( !empty( $info['width'] )) {
+				// if the video can be processed by ffmpeg-php, width and height are greater than 1
+				if( !empty( $info['width'] ) && $info['width'] > 1 ) {
 					$info['aspect']   = $info['width'] / $info['height'];
 					$info['offset']   = strftime( "%T", round( $info['duration'] / 5 - ( 60 * 60 )));
 				} else {
@@ -264,13 +260,6 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 				$actionLog['log_message'] = "Flv video file was successfully uploaded and thumbnails extracted.";
 				$ret = TRUE;
 			} else {
-				// we can do some nice stuff if ffmpeg-php is available
-				if( !empty( $movie )) {
-					$info['video_bitrate']    = $movie->getVideoBitRate();
-					$info['audio_bitrate']    = $movie->getAudioBitRate();
-					$info['audio_samplerate'] = $movie->getAudioSampleRate();
-				}
-
 				// if the video can be processed by ffmpeg-php, width and height are greater than 1
 				if( !empty( $info['width'] ) && $info['width'] > 1 ) {
 					// reset some values to reduce video size
@@ -283,6 +272,7 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 						unset( $info['audio_samplerate'] );
 					}
 
+					/* not sure why this is here.
 					$compare = array(
 						'video_bitrate'    => 160000,
 						'audio_bitrate'    => 32000,
@@ -294,6 +284,7 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 							$gBitSystem->setConfig( 'mime_flv_'.$comp, $info[$comp] );
 						}
 					}
+					 */
 
 					// here we calculate the size and aspect ratio of the output video
 					$size_ratio         = $width / $info['width'];
