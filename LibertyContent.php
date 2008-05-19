@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.361 2008/05/10 21:50:36 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.362 2008/05/19 01:17:14 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1887,12 +1887,20 @@ class LibertyContent extends LibertyBase {
 	function getEditUrl( $pContentId = NULL, $pMixed = NULL ){
 		global $gLibertySystem; 
 		$package = $gLibertySystem->mContentTypes[$this->mType['content_type_guid']]['handler_package'];
+
+		$pathConst = strtoupper($package).'_PKG_URL'; 
+		if( defined( $pathConst ) ) { 
+			$packagePath = constant( $pathConst );
+		}else{
+			$packagePath = BIT_ROOT_URL.$package."/";
+		}
+
 		if( @BitBase::verifyId( $pContentId ) ) {
-			$ret = BIT_ROOT_URL.$package.'/edit.php?content_id='.$pContentId;
+			$ret = $packagePath.'edit.php?content_id='.$pContentId;
 		} elseif( $this->isValid() ) {
-			$ret = BIT_ROOT_URL.$package.'/edit.php?content_id='.$this->mContentId;
+			$ret = $packagePath.'edit.php?content_id='.$this->mContentId;
 		} else {
-			$ret = BIT_ROOT_URL.$package.'/edit.php'.(!empty( $pMixed )?"?":"");
+			$ret = $packagePath.'edit.php'.(!empty( $pMixed )?"?":"");
 		}
 		foreach( $pMixed as $key => $value ){
 			if( $key != "content_id" || ( $key == "content_id" && @BitBase::verifyId( $value ) ) ) {
