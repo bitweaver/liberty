@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.68 2008/04/30 00:28:19 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.69 2008/05/20 21:03:09 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -216,7 +216,7 @@ class LibertyComment extends LibertyContent {
 
 			foreach ($rows as $row) {
 				$comment = new LibertyComment($row['comment_id']);
-				$comment->deleteComment();
+				$comment->expunge();
 			}
 
 			if( $gBitSystem->isPackageActive( 'boards' ) ) {
