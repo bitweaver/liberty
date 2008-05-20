@@ -2,8 +2,12 @@
 
 $formLibertyFeatures = array(
 	"liberty_display_status" => array(
-		'label' => 'Display content status',
-		'note' => 'Display a status selection menu when editing content (not fully developed, experimental feature).',
+		'label' => 'Enforce content status',
+		'note' => 'This causes queries to enforce content status settings on content. Content status setting options are new, and you can uncheck this to opt out of status options.',
+	),
+	"liberty_display_status_menu" => array(
+		'label' => 'Display content status menu',
+		'note' => 'Display a status selection menu when editing content (not fully developed, experimental feature). Enforce content status above must also be checked.',
 	),
 	"liberty_allow_change_owner" => array(
 		'label' => 'Allow Owner Change',
