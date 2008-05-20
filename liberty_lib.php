@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.31 2008/05/18 22:24:26 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.32 2008/05/20 16:39:46 wjames5 Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -357,6 +357,11 @@ function liberty_content_load_sql( &$pObject, $pParamHash=NULL ) {
 /**
  * liberty_content_list_sql 
  * 
+ * @param array $pParamHash
+ * @param array $pParamHash['enforce_status'] will add joins to status_id even if user is admin
+ * @param array $pParamHash['min_status_id'] one less than the minimum status a content can have to be included
+ * @param array $pParamHash['max_status_id'] one more than the maximum status a content can have to be included
+ * @param array $pParamHash['min_owner_status_id'] one less than the mimimum status a content can have to be included that is owned by the requester
  * @access public
  * @return content list sql
  */
@@ -364,16 +369,34 @@ function liberty_content_list_sql(  &$pObject, $pParamHash=NULL ) {
 	global $gBitSystem, $gBitUser;
 	$ret = array();
 
-	$hasPerm = ( is_object($pObject) && isset($pObject->hasUserPermission) )?$pObject->hasUserPermission('p_liberty_edit_all_status'):$gBitUser->hasPermission('p_liberty_edit_all_status');
-	
+	$hasPerm = FALSE;
+	// enforce_status will require the status limit on everyone including admin and thus we can ignore permission checks
+	if ( !isset( $pParamHash['enforce_status'] ) ){
+		$hasPerm = ( is_object($pObject) && isset($pObject->hasUserPermission) )?$pObject->hasUserPermission('p_liberty_edit_all_status'):$gBitUser->hasPermission('p_liberty_edit_all_status');
+	}
+
+	// default show content with status between 0 and 100;
+	$min_status_id = isset( $pParamHash['min_status_id'] ) && ( @BitBase::verifyId( $pParamHash['min_status_id'] ) || $pParamHash['min_status_id'] === 0 )?$pParamHash['min_status_id']:0;
+	$max_status_id = isset( $pParamHash['max_status_id'] ) && ( @BitBase::verifyId( $pParamHash['max_status_id'] ) || $pParamHash['max_status_id'] === 0 )?$pParamHash['max_status_id']:100;
+	// let owner see any of their own content with a status > -100
+	$min_owner_status_id = isset( $pParamHash['min_owner_status_id'] ) && ( @BitBase::verifyId( $pParamHash['min_owner_status_id'] ) || $pParamHash['min_owner_status_id'] === 0 )?$pParamHash['min_owner_status_id']:-100;
+
 	if( $gBitSystem->isFeatureActive('liberty_display_status') && !$hasPerm ) {
-		if (( is_object( $pObject ) && !empty( $pObject->mType['content_type_guid'] ) && $pObject->mType['content_type_guid'] == 'bitcomment' ) || ( !empty( $pParamHash['include_comments'] ) && $pParamHash['include_comments']  == 'y' )) {
+		if (( is_object( $pObject ) && !empty( $pObject->mType['content_type_guid'] ) && $pObject->mType['content_type_guid'] == 'bitcomment' ) 
+			|| ( !empty( $pParamHash['include_comments'] ) && $pParamHash['include_comments']  == 'y' )) {
 			// if we are getting a list of comments then lets check the owner of the comment root and the owner of the content
 			$ret['join_sql'] = " INNER JOIN `".BIT_DB_PREFIX."liberty_content` rlcs ON( rlcs.`content_id`=lcom.`root_id` )";
-			$ret['where_sql'] = " AND lc.`content_status_id` < 100 AND ( ( (rlcs.`user_id` = '".$gBitUser->getUserId()."' OR lc.`user_id` = '".$gBitUser->getUserId()."') AND lc.`content_status_id` > -100) OR lc.`content_status_id` > 0 )";
+			$ret['where_sql'] = " AND lc.`content_status_id` < ".$max_status_id.
+								" AND ( 
+									( (rlcs.`user_id` = '".$gBitUser->getUserId()."' OR lc.`user_id` = '".$gBitUser->getUserId()."') AND lc.`content_status_id` > ".$min_owner_status_id.") 
+									OR lc.`content_status_id` > ".$min_status_id." 
+								)";
 		} else {
-			// let owner see any of their own content with a status > -100
-			$ret['where_sql'] = " AND lc.`content_status_id` < 100 AND ( (lc.`user_id` = '".$gBitUser->getUserId()."' AND lc.`content_status_id` > -100) OR lc.`content_status_id` > 0 )";
+			$ret['where_sql'] = " AND lc.`content_status_id` < ".$max_status_id.
+								" AND ( 
+									(lc.`user_id` = '".$gBitUser->getUserId()."' AND lc.`content_status_id` > ".$min_owner_status_id.") 
+									OR lc.`content_status_id` > ".$min_status_id." 
+								)";
 		}
 	}
 
