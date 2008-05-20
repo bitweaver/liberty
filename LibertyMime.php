@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.4 2008/05/15 17:25:57 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.5 2008/05/20 18:08:28 squareing Exp $
  */
 
 /**
@@ -158,7 +158,7 @@ class LibertyMime extends LibertyAttachable {
 
 		if( !empty( $uploads ) ) {
 			foreach( array_keys( $uploads ) as $file ) {
-				$pParamHash['upload_store']['files'][$file] = $this->verifyAttachment( $uploads[$file] );
+				$pParamHash['upload_store']['files'][$file] = LibertyMime::verifyAttachment( $uploads[$file] );
 			}
 		}
 
