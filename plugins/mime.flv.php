@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.5 2008/05/19 09:19:59 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.6 2008/05/23 10:05:20 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.5 $
+ * @version		$Revision: 1.6 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -230,16 +230,16 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 			$default['offset']     = '00:00:10';
 
 			if( extension_loaded( 'ffmpeg' )) {
-				// we silence this call since it might spew errors
+				// we silence these calls since they might spew errors
 				$movie = @new ffmpeg_movie( $source );
-				$info['vcodec']           = $movie->getVideoCodec();
-				$info['acodec']           = $movie->getAudioCodec();
-				$info['duration']         = round( $movie->getDuration() );
-				$info['width']            = $movie->getFrameWidth();
-				$info['height']           = $movie->getFrameHeight();
-				$info['video_bitrate']    = $movie->getVideoBitRate();
-				$info['audio_bitrate']    = $movie->getAudioBitRate();
-				$info['audio_samplerate'] = $movie->getAudioSampleRate();
+				$info['vcodec']           = @$movie->getVideoCodec();
+				$info['acodec']           = @$movie->getAudioCodec();
+				$info['duration']         = round( @$movie->getDuration() );
+				$info['width']            = @$movie->getFrameWidth();
+				$info['height']           = @$movie->getFrameHeight();
+				$info['video_bitrate']    = @$movie->getVideoBitRate();
+				$info['audio_bitrate']    = @$movie->getAudioBitRate();
+				$info['audio_samplerate'] = @$movie->getAudioSampleRate();
 			}
 
 			// our player supports flv and h264 so we might as well use the default
