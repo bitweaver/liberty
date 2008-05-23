@@ -240,9 +240,9 @@ $tables = array(
 	meta_title_id I4 PRIMARY NOTNULL,
 	meta_value XL
 	CONSTRAINT '
-		, CONSTRAINT `liberty_meta_id_ref`    FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments` (`attachment_id`)
-		, CONSTRAINT `liberty_meta_type_ref`  FOREIGN KEY (`meta_type_id`)  REFERENCES `".BIT_DB_PREFIX."liberty_meta_types`  (`meta_type_id`)
-		, CONSTRAINT `liberty_meta_title_ref` FOREIGN KEY (`meta_title_id`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_titles` (`meta_title_id`) '
+		, CONSTRAINT `lib_attachment_meta_id_ref`    FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments` (`attachment_id`)
+		, CONSTRAINT `lib_attachment_meta_type_ref`  FOREIGN KEY (`meta_type_id`)  REFERENCES `".BIT_DB_PREFIX."liberty_meta_types`  (`meta_type_id`)
+		, CONSTRAINT `lib_attachment_meta_title_ref` FOREIGN KEY (`meta_title_id`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_titles` (`meta_title_id`) '
 ",
 
 );
@@ -290,9 +290,9 @@ $indices = array (
 	'liberty_content_perm_perm_idx' => array( 'table' => 'liberty_content_permissions', 'cols' => 'perm_name', 'opts' => NULL ),
 	'liberty_content_perm_cont_idx' => array( 'table' => 'liberty_content_permissions', 'cols' => 'content_id', 'opts' => NULL ),
 	'process_id_idx' => array( 'table' => 'liberty_process_queue', 'cols' => 'content_id', 'opts' => NULL ),
-	'liberty_att_meta_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'attachment_id', 'opts' => NULL ),
-	'liberty_att_meta_type_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'meta_type_id', 'opts' => NULL ),
-	'liberty_att_meta_title_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'meta_title_id', 'opts' => NULL ),
+	'lib_attachment_meta_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'attachment_id', 'opts' => NULL ),
+	'lib_attachment_meta_type_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'meta_type_id', 'opts' => NULL ),
+	'lib_attachment_meta_title_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'meta_title_id', 'opts' => NULL ),
 );
 $gBitInstaller->registerSchemaIndexes( LIBERTY_PKG_NAME, $indices );
 
