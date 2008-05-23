@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.151 2008/05/16 18:30:24 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.152 2008/05/23 10:03:36 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -92,6 +92,28 @@ class LibertyAttachable extends LibertyContent {
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * validateStoragePath make sure that the file/dir you are trying to delete is valid
+	 * 
+	 * @param array $pPath absolute path to the file/dir we want to validate
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function validateStoragePath( $pPath ) {
+		// file_exists checks for file or directory
+		if( !empty( $pPath ) && file_exists( $pPath )) {
+			// make sure this is a valid storage directory before removing it
+			$pPath = str_replace( "//", "/", $pPath );
+			$store = str_replace( "//", "/", STORAGE_PKG_PATH );
+			// remove the STORAGE_PKG_PATH
+			if( strpos( $pPath, $store ) === 0 && $check = str_replace( $store, "", $pPath )) {
+				if( preg_match( '!^(users|common)/\d+/\d+/\w+/\d+!', $check )) {
+					return $pPath;
+				}
+			}
+		}
 	}
 
 	/**
@@ -526,7 +548,9 @@ class LibertyAttachable extends LibertyContent {
 				if( $expungeFunc = $gLibertySystem->getPluginFunction( $guid, 'expunge_function' )) {
 					// --- Do the final cleanup of liberty related tables ---
 					if( $expungeFunc( $pAttachmentId )) {
-						// Delete the attachment prefs and record.
+						// Delete the attachment meta data, prefs and record.
+//						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_meta_data` WHERE `attachment_id` = ?";
+//						$this->mDb->query( $sql, array( $pAttachmentId ));
 						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachment_prefs` WHERE `attachment_id` = ?";
 						$this->mDb->query( $sql, array( $pAttachmentId ));
 						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id`=?";
@@ -715,71 +739,190 @@ class LibertyAttachable extends LibertyContent {
 	}
 
 	/**
-	 * storeMetaData 
-	 * 
-	 * @param array $pAttachmentId 
-	 * @param array $pGuidTitle 
-	 * @param array $pData 
-	 * @access public
-	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
-	 *
-	 * liberty_meta_data
-	 *     meta_key          nikonp5000
-	 *     meta_type_guid    exif
-	 *     meta_title        Nikon P5000
-	 *     meta_value_short  short data
-	 *     meta_value_long   long data
+	 * Meta methods
 	 */
-	function storeMetaData( $pAttachmentId, $pGuidTitle, $pData ) {
-		if( @BitBase::verifyId( $pAttachmentId )) {
-			if( !is_array( $pData )) {
-				$pData = array( $pData );
-			}
 
-			$guid = $this->convertMetaKey( $pGuidTitle );
-			foreach( $pData as $key => $data ) {
-				if( !is_array( $data )) {
-					// check for $guid
-					// insert into table where:
-					// $key  = liberty_meta_data.meta_key
-					// $data = liberty_meta_data.meta_value_(short|long)
-					//
-					// meta_title ?
+	/**
+	 * storeMetaData 
+	 *
+	 * @param numeric $pAttachmentId AttachmentID the data belongs to
+	 * @param string $pType Type of data. e.g.: EXIF, ID3. This will default to "Meta Data"
+	 * @param array $pStoreHash Data that needs to be stored in the database in an array. The key will be used as the meta_title.
+	 * @access public
+	 * @return TRUE on success, FALSE on failure
+	 */
+	function storeMetaData( $pAttachmentId, $pType = "Meta Data", $pStoreHash ) {
+		global $gBitSystem;
+		$ret = FALSE;
+		if( @BitBase::verifyId( $pAttachmentId ) && !empty( $pType ) && !empty( $pStoreHash )) {
+			if( is_array( $pStoreHash )) {
+				foreach( $pStoreHash as $key => $data ) {
+					if( !is_array( $data )) {
+						// store the data in the meta table
+						$meta = array(
+							'attachment_id' => $pAttachmentId,
+							'meta_type_id'  => LibertyMime::storeMetaId( $pType, 'type' ),
+							'meta_title_id' => LibertyMime::storeMetaId( $key, 'title' ),
+						);
+
+						// remove this entry from the database if it already exists
+						$gBitSystem->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_meta_data` WHERE `attachment_id` = ? AND `meta_type_id` = ? AND `meta_title_id` = ?", $meta );
+
+						$meta['meta_value'] = $data;
+						$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_meta_data", $meta );
+
+						$ret = TRUE;
+					} else {
+						// should we recurse?
+					}
 				}
 			}
 		}
+		return $ret;
 	}
 
 	/**
-	 * convertMetaKey 
+	 * storeMetaId 
 	 * 
-	 * @param array $pGuidTitle 
+	 * @param string $pDescription Description of meta key. e.g.: Exif, ID3, Album, Artist
+	 * @param string $pTable Table data is stored in - either 'type' or 'title'
 	 * @access public
-	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 * @return newly stored ID on success, FALSE on failure
 	 */
-	function convertMetaKey( $pGuidTitle ) {
-		return strtolower( preg_replace( "![^a-zA-Z0-9_-]!", "", trim( $pGuidTitle )));
-	}
-
-	/**
-	 * storeMetaGuid 
-	 * 
-	 * @param array $pGuid 
-	 * @access public
-	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
-	 */
-	function storeMetaGuid( $pGuid ) {
+	function storeMetaId( $pDescription, $pTable = 'type' ) {
 		global $gBitSystem;
-		if( !empty( $pGuid )) {
-			$guid = strstr( 0, 15, $this->convertMetaKey( $pGuid ));
-			if( !$gBitSystem->mDb->getOne( "SELECT `meta_type_guid` FROM `".BIT_DB_PREFIX."liberty_meta_types` WHERE `meta_type_guid` = ?", array( $guid ))) {
+		$ret = FALSE;
+		if( !empty( $pDescription )) {
+			if( !( $ret = LibertyMime::getMetaId( $pDescription, $pTable ))) {
 				$store = array(
-					'meta_type_guid'  => $guid,
-					'meta_type_title' => $pGuidTitle,
+					"meta_{$pTable}_id" => $gBitSystem->mDb->GenID( "liberty_meta_{$pTable}s_id_seq" ),
+					"meta_{$pTable}"    => LibertyMime::normalizeMetaDescription( $pDescription ),
 				);
-				$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_meta_types", $store );
+				$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_meta_{$pTable}s", $store );
+				$ret = $store["meta_{$pTable}_id"];
 			}
 		}
+		return $ret;
+	}
+
+	/**
+	 * getMetaData 
+	 * 
+	 * @param numeric $pAttachmentId AttachmentID the data belongs to
+	 * @param string $pType Type of data. e.g.: EXIF, ID3.
+	 * @param string $pTitle Title of data. e.g.: Artist, Album.
+	 * @access public
+	 * @return array with meta data on success, FALSE on failure
+	 * $note: Output format varies depending on requested data
+	 */
+	function getMetaData( $pAttachmentId, $pType = NULL, $pTitle = NULL ) {
+		global $gBitSystem;
+		$ret = array();
+		if( @BitBase::verifyId( $pAttachmentId )) {
+			$bindVars = array( $pAttachmentId );
+			$whereSql = "";
+			if( !empty( $pType ) && !empty( $pTitle )) {
+
+				// we have a type and title - only one entry will be returned
+				$bindVars[] = LibertyMime::normalizeMetaDescription( $pType );
+				$bindVars[] = LibertyMime::normalizeMetaDescription( $pTitle );
+
+				$sql = "
+					SELECT lmd.`meta_value`
+					FROM `".BIT_DB_PREFIX."liberty_meta_data` lmd
+						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_types` lmtype ON( lmd.`meta_type_id` = lmtype.`meta_type_id` )
+						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_titles` lmtitle ON( lmd.`meta_title_id` = lmtitle.`meta_title_id` )
+					WHERE lmd.`attachment_id` = ? AND lmtype.`meta_type` = ? AND lmtitle.`meta_title` = ?";
+				$ret = $gBitSystem->mDb->getOne( $sql, $bindVars );
+
+			} elseif( !empty( $pType )) {
+
+				// only type given - return array with all vlues of this type
+				$bindVars[] = LibertyMime::normalizeMetaDescription( $pType );
+
+				$sql = "
+					SELECT lmtitle.`meta_title`, lmd.`meta_value`
+					FROM `".BIT_DB_PREFIX."liberty_meta_data` lmd
+						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_types` lmtype ON( lmd.`meta_type_id` = lmtype.`meta_type_id` )
+						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_titles` lmtitle ON( lmd.`meta_title_id` = lmtitle.`meta_title_id` )
+					WHERE lmd.`attachment_id` = ? AND lmtype.`meta_type` = ?";
+				$ret = $gBitSystem->mDb->getAssoc( $sql, $bindVars );
+
+			} elseif( !empty( $pTitle )) {
+
+				// only title given - return array with all vlues with this title
+				$bindVars[] = LibertyMime::normalizeMetaDescription( $pTitle );
+
+				$sql = "
+					SELECT lmtype.`meta_type`, lmd.`meta_value`
+					FROM `".BIT_DB_PREFIX."liberty_meta_data` lmd
+						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_types` lmtype ON( lmd.`meta_type_id` = lmtype.`meta_type_id` )
+						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_titles` lmtitle ON( lmd.`meta_title_id` = lmtitle.`meta_title_id` )
+					WHERE lmd.`attachment_id` = ? AND lmtitle.`meta_title` = ?";
+				$ret = $gBitSystem->mDb->getAssoc( $sql, $bindVars );
+
+			} else {
+
+				// nothing given - return nested array based on type and title
+				$sql = "
+					SELECT lmd.`attachment_id`, lmd.`meta_value`, lmtype.`meta_type`, lmtitle.`meta_title`
+					FROM `".BIT_DB_PREFIX."liberty_meta_data` lmd
+						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_types` lmtype ON( lmd.`meta_type_id` = lmtype.`meta_type_id` )
+						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_titles` lmtitle ON( lmd.`meta_title_id` = lmtitle.`meta_title_id` )
+					WHERE lmd.`attachment_id` = ?";
+
+				$result = $gBitSystem->mDb->query( $sql, $bindVars );
+				while( $aux = $result->fetchRow() ) {
+					$ret[$aux['meta_type']][$aux['meta_title']] = $aux['meta_value'];
+				}
+			}
+		}
+		return $ret;
+	}
+
+	/**
+	 * getMetaId 
+	 * 
+	 * @param string $pDescription Description of meta key. e.g.: Exif, ID3, Album, Artist
+	 * @param string $pTable Table data is stored in - either 'type' or 'title'
+	 * @access public
+	 * @return meta type or title id on sucess, FALSE on failure
+	 */
+	function getMetaId( $pDescription, $pTable = 'type' ) {
+		global $gBitSystem;
+		$ret = FALSE;
+		if( !empty( $pDescription ) && ( $pTable == 'type' || $pTable == 'title' )) {
+			$ret = $gBitSystem->mDb->getOne( "SELECT `meta_{$pTable}_id` FROM `".BIT_DB_PREFIX."liberty_meta_{$pTable}s` WHERE `meta_{$pTable}` = ?", array( LibertyMime::normalizeMetaDescription( $pDescription )));
+		}
+		return $ret;
+	}
+
+	/**
+	 * getMetaDescription 
+	 * 
+	 * @param string $pId ID of type or title we want the description for
+	 * @param string $pTable Table data is stored in - either 'type' or 'title'
+	 * @access public
+	 * @return description on sucess, FALSE on failure
+	 */
+	function getMetaDescription( $pId, $pTable = 'type' ) {
+		global $gBitSystem;
+		$ret = FALSE;
+		if( @BitBase::verifyId( $pId )) {
+			$ret = $gBitSystem->mDb->getOne( "SELECT `meta_{$pTable}` FROM `".BIT_DB_PREFIX."liberty_meta_{$pTable}s` WHERE `meta_{$pTable}_id` = ?", array( $pId ));
+		}
+		return $ret;
+	}
+
+	/**
+	 * normalizeMetaDescription 
+	 * 
+	 * @param string $pDescription Description of meta key. e.g.: Exif, ID3, Album, Artist
+	 * @access public
+	 * @return normalized meta description that can be used as a guid
+	 */
+	function normalizeMetaDescription( $pDescription ) {
+		return strtolower( substr( preg_replace( "![^a-zA-Z0-9]!", "", trim( $pDescription )), 0, 250 ));
 	}
 }
 ?>
