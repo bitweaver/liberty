@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.362 2008/05/19 01:17:14 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.363 2008/05/23 16:43:56 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -3048,12 +3048,12 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	 * getContentStatus
+	 * getAvailableContentStatus
 	 * 
 	 * @access public
 	 * @return an array of content_status_id, content_status_names the current 
 	 * user can use on this content. Subclases may easily override with return 
-	 * LibertyContent::getContentStatus(-100, 0) for example to restrict to 
+	 * LibertyContent::getAvailableContentStatus(-100, 0) for example to restrict to 
 	 * only hidden content types.
 	 */
 	function getAvailableContentStatuses( $pUserMinimum=-100, $pUserMaximum=100 ) {
@@ -3071,10 +3071,19 @@ class LibertyContent extends LibertyBase {
 	 * @param array $pContentId Content ID of the content in question
 	 * @access public
 	 * @return Status ID
-	 * @TODO: remove deprecated notice and add some useful code
 	 */
-	function getContentStatus( $pContentId = NULL ) {
-		deprecated( 'This function will return the content status of the current content. if you are trying to get available content statuses, use getAvailableContentStatuses() instead.' );
+	function getContentStatus( $pDefault = 50, $pContentId = NULL ) {
+		$ret = NULL;
+		if ( @!BitBase::verifyId( $pContentId ) && $this->isValid() ){
+			if ( !( $ret = $this->getField( 'content_status_id' ) ) ){
+				$pContentId = $this->mContentId;
+			}
+		}
+		if( !is_null( $pContentId )) {
+			$ret = $this->mDb->getOne( "SELECT `content_status_id` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id` = ?", array( $pContentId ));
+		}
+		$ret = is_null( $ret ) ? $pDefault : $ret;
+		return $ret;
 	}
 
 	/**
