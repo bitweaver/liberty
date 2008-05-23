@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.5 2008/05/20 18:08:28 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.6 2008/05/23 09:59:15 squareing Exp $
  */
 
 /**
@@ -79,10 +79,14 @@ class LibertyMime extends LibertyAttachable {
 		global $gLibertySystem;
 		// make sure all the data is in order
 		if( LibertyContent::store( $pStoreHash ) && LibertyMime::verify( $pStoreHash ) && !empty( $pStoreHash['upload_store']['files'] )) {
-			// short hand
 			$this->mDb->StartTrans();
 
 			foreach( $pStoreHash['upload_store']['files'] as $upload ) {
+				// exit if $upload is empty
+				if( empty( $upload )) {
+					break;
+				}
+
 				$storeRow = $pStoreHash['upload_store'];
 				unset( $storeRow['files'] );
 
@@ -111,13 +115,13 @@ class LibertyMime extends LibertyAttachable {
 
 						if( $store_function = LibertyMime::getPluginFunction( $guid, $function_name )) {
 							if( !$store_function( $storeRow, $this )) {
-								$this->mErrors = array_merge( $this->mErrors, $upload['errors'] );
+								$this->mErrors = array_merge( $this->mErrors, $storeRow['errors'] );
 							}
 						} else {
 							$this->mErrors['store_function'] = tra( 'No suitable store function found.' );
 						}
 					} else {
-						$this->mErrors = array_merge( $this->mErrors, $upload['errors'] );
+						$this->mErrors = array_merge( $this->mErrors, $storeRow['errors'] );
 					}
 				} else {
 					$this->mErrors['verify_function'] = tra( 'No suitable verify function found.' );
