@@ -186,21 +186,21 @@ $tables = array(
 	log_message XL,
 	processor C(250),
 	processor_parameters XL
-	CONSTRAINT ', CONSTRAINT `liberty_process_queue` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
+	CONSTRAINT ' , CONSTRAINT `liberty_process_queue` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
 ",
 
 'liberty_content_permissions' => "
-  group_id I4 PRIMARY,
-  perm_name C(30) PRIMARY,
-  content_id I4 PRIMARY,
-  is_revoked C(1)
-  CONSTRAINT   '
-                , CONSTRAINT `liberty_content_id_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
+	group_id I4 PRIMARY,
+	perm_name C(30) PRIMARY,
+	content_id I4 PRIMARY,
+	is_revoked C(1)
+	CONSTRAINT   ' , CONSTRAINT `liberty_content_id_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`) '
 ",
 /* chicken-and-egg constraint dependencies: Liberty needs user_id, Users needs liberty
                 , CONSTRAINT `liberty_content_perm_perm_ref` FOREIGN KEY (`perm_name`) REFERENCES `".BIT_DB_PREFIX."users_permissions` (`perm_name`)
 */
 
+/* old meta tables - replaced by new ones below
 'liberty_meta_types' => "
 	meta_type_guid C(16) PRIMARY,
 	meta_type_title C(250) NOTNULL
@@ -215,12 +215,34 @@ $tables = array(
 	CONSTRAINT ' , CONSTRAINT `liberty_meta_guid_ref` FOREIGN KEY (`meta_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_types` (`meta_type_guid`) '
 ",
 
-'liberty_meta_content_map' => "
-	content_id I4 PRIMARY NOTNULL,
+'liberty_meta_attachment_map' => "
+	attachment_id I4 PRIMARY NOTNULL,
 	meta_key C(250) PRIMARY NOTNULL
 	CONSTRAINT '
-		, CONSTRAINT `liberty_meta_map_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
+		, CONSTRAINT `liberty_meta_map_content_ref` FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`attachment_id`)
 		, CONSTRAINT `liberty_meta_map_meta_key_ref` FOREIGN KEY (`meta_key`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_data` (`meta_key`)'
+",
+ */
+
+'liberty_meta_titles' => "
+	meta_title_id I4 PRIMARY,
+	meta_title C(250) NOTNULL
+",
+
+'liberty_meta_types' => "
+	meta_type_id I4 PRIMARY,
+	meta_type C(250) NOTNULL
+",
+
+'liberty_meta_data' => "
+	attachment_id I4 PRIMARY NOTNULL,
+	meta_type_id I4 PRIMARY NOTNULL,
+	meta_title_id I4 PRIMARY NOTNULL,
+	meta_value XL
+	CONSTRAINT '
+		, CONSTRAINT `liberty_meta_id_ref`    FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments` (`attachment_id`)
+		, CONSTRAINT `liberty_meta_type_ref`  FOREIGN KEY (`meta_type_id`)  REFERENCES `".BIT_DB_PREFIX."liberty_meta_types`  (`meta_type_id`)
+		, CONSTRAINT `liberty_meta_title_ref` FOREIGN KEY (`meta_title_id`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_titles` (`meta_title_id`) '
 ",
 
 );
@@ -268,22 +290,21 @@ $indices = array (
 	'liberty_content_perm_perm_idx' => array( 'table' => 'liberty_content_permissions', 'cols' => 'perm_name', 'opts' => NULL ),
 	'liberty_content_perm_cont_idx' => array( 'table' => 'liberty_content_permissions', 'cols' => 'content_id', 'opts' => NULL ),
 	'process_id_idx' => array( 'table' => 'liberty_process_queue', 'cols' => 'content_id', 'opts' => NULL ),
-	'liberty_meta_map_content_idx' => array( 'table' => 'liberty_meta_content_map', 'cols' => 'content_id', 'opts' => NULL ),
-	'liberty_meta_map_key_idx' => array( 'table' => 'liberty_meta_content_map', 'cols' => 'meta_key', 'opts' => NULL ),
-	'liberty_meta_data_key_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'meta_key', 'opts' => NULL ),
-	'liberty_meta_data_guid_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'meta_key', 'opts' => NULL ),
-	'liberty_meta_data_title_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'meta_key', 'opts' => NULL ),
-	'liberty_meta_data_values_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'meta_key', 'opts' => NULL ),
+//	'liberty_att_meta_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'attachment_id', 'opts' => NULL ),
+//	'liberty_att_meta_type_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'meta_type_id', 'opts' => NULL ),
+//	'liberty_att_meta_title_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'meta_title_id', 'opts' => NULL ),
 );
 $gBitInstaller->registerSchemaIndexes( LIBERTY_PKG_NAME, $indices );
 
 // ### Sequences
 $sequences = array (
-	'liberty_content_id_seq' => array( 'start' => 1 ),
-	'liberty_comments_id_seq' => array( 'start' => 1 ),
-	'liberty_files_id_seq' => array( 'start' => 1 ),
+	'liberty_content_id_seq'     => array( 'start' => 1 ),
+	'liberty_comments_id_seq'    => array( 'start' => 1 ),
+	'liberty_files_id_seq'       => array( 'start' => 1 ),
 	'liberty_attachments_id_seq' => array( 'start' => 1 ),
-	'liberty_structures_id_seq' => array( 'start' => 4 )
+	'liberty_structures_id_seq'  => array( 'start' => 4 ),
+	'liberty_meta_types_id_seq'  => array( 'start' => 1 ),
+	'liberty_meta_titles_id_seq' => array( 'start' => 1 ),
 );
 $gBitInstaller->registerSchemaSequences( LIBERTY_PKG_NAME, $sequences );
 
