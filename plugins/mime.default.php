@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.7 2008/05/19 17:28:41 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.8 2008/05/23 10:00:59 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.7 $
+ * @version     $Revision: 1.8 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -75,7 +75,7 @@ function mime_default_verify( &$pStoreRow ) {
 
 	if( !empty( $pStoreRow['upload']['tmp_name'] ) && is_file( $pStoreRow['upload']['tmp_name'] )) {
 		// attachment_id is only set when we are updating the file
-		if( @BitBase::verifyId( $pStoreRow['attachment_id'] )) {
+		if( @BitBase::verifyId( $pStoreRow['upload']['attachment_id'] )) {
 			// if a new file has been uploaded, we need to get some information from the database for the file update
 			$fileInfo = $gBitSystem->mDb->getRow( "
 				SELECT la.`attachment_id`, lf.`file_id`, lf.`storage_path`
@@ -117,14 +117,18 @@ function mime_default_verify( &$pStoreRow ) {
 function mime_default_update( &$pStoreRow ) {
 	global $gBitSystem;
 
-	if( !empty( $pStoreRow['upload']['tmp_name'] )) {
+	if( BitBase::verifyId( $pStoreRow['attachment_id'] )) {
 		// get the data we need to deal with
 		$query = "SELECT `storage_path` FROM `".BIT_DB_PREFIX."liberty_files` lf WHERE `file_id` = ?";
-		if( $storage_path = $gBitSystem->mDb->getOne( $query, array( $pStoreRow['file_id'] ))) {
+		if( !empty( $pStoreRow['storage_path'] )) {
 			// First we remove the old file
-			@unlink( BIT_ROOT_PATH.$storage_path );
+			$file = BIT_ROOT_PATH.$pStoreRow['storage_path'];
+			if(( $nuke = LibertyAttachable::validateStoragePath( $file )) && is_file( $nuke )) {
+				@unlink( BIT_ROOT_PATH.$pStoreRow['storage_path'] );
+			}
+
 			// make sure we store the new file in the same place as before
-			$pStoreRow['upload']['dest_path'] = dirname( $storage_path ).'/';
+			$pStoreRow['upload']['dest_path'] = dirname( $pStoreRow['storage_path'] ).'/';
 
 			// if we can create new thumbnails for this file, we remove the old ones first
 			$canThumbFunc = liberty_get_function( 'can_thumbnail' );
@@ -172,7 +176,6 @@ function mime_default_store( &$pStoreRow ) {
 			"foreign_id"             => $storeHash['file_id'],
 			"user_id"                => $pStoreRow['user_id'],
 		);
-
 		$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_attachments", $storeHash );
 
 		// TODO: deal with primary attachments
@@ -217,8 +220,6 @@ function mime_default_load( $pFileHash, &$pPrefs ) {
 
 			$ret['thumbnail_url']    = liberty_fetch_thumbnails( $row['storage_path'], $thumbnailerImageUrl, NULL, empty( $pFileHash['no_mime_image'] ));
 			$ret['filename']         = basename( $row['storage_path'] );
-			$ret['source_file']      = BIT_ROOT_PATH.$row['storage_path'];
-			$ret['source_url']       = str_replace('//', '/', BIT_ROOT_URL.str_replace( '+', '%20', str_replace( '%2F', '/', urlencode( $row['storage_path'] ))));
 			$ret['download_url']     = LIBERTY_PKG_URL."mime_download.php?attachment_id=".$row['attachment_id'];
 			$ret['display_url']      = LIBERTY_PKG_URL."mime_view.php?attachment_id=".$row['attachment_id'];
 			$ret['mime_type']        = $row['mime_type'];
@@ -226,8 +227,10 @@ function mime_default_load( $pFileHash, &$pPrefs ) {
 			$ret['attachment_id']    = $row['attachment_id'];
 			$ret['preferences']      = $pPrefs;
 
-			// make sure we have a file to check mtime on
-			if( is_file( $ret['source_file'] )) {
+			// make sure we have a file
+			if( is_file( BIT_ROOT_PATH.$row['storage_path'] )) {
+				$ret['source_file']      = BIT_ROOT_PATH.$row['storage_path'];
+				$ret['source_url']       = str_replace('//', '/', BIT_ROOT_URL.str_replace( '+', '%20', str_replace( '%2F', '/', urlencode( $row['storage_path'] ))));
 				$ret['last_modified'] = filemtime( $ret['source_file'] );
 			}
 
