@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.32 2008/05/20 16:39:46 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.33 2008/05/23 09:32:49 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -657,7 +657,7 @@ function liberty_process_image( &$pFileHash ) {
 function liberty_clear_thumbnails( &$pFileHash ) {
 	if( !empty( $pFileHash['dest_path'] )) {
 		// get thumbnails we want to remove
-		if( $thumbs = liberty_fetch_thumbnails( $pFileHash['dest_path'], NULL, NULL, FALSE )) {
+		if( $thumbs = liberty_fetch_thumbnails( $pFileHash['dest_path'], NULL, NULL, FALSE, FALSE )) {
 			foreach( $thumbs as $thumb ) {
 				$thumb = BIT_ROOT_PATH.$thumb;
 				if( is_writable( $thumb ) ) {
@@ -665,7 +665,7 @@ function liberty_clear_thumbnails( &$pFileHash ) {
 				}
 			}
 			// just to make sure that we have all thumbnails cleared, we run through another round
-			if( $thumbs = liberty_fetch_thumbnails( $pFileHash['dest_path'], NULL, NULL, FALSE )) {
+			if( $thumbs = liberty_fetch_thumbnails( $pFileHash['dest_path'], NULL, NULL, FALSE , FALSE )) {
 				foreach( $thumbs as $thumb ) {
 					$thumb = BIT_ROOT_PATH.$thumb;
 					if( is_writable( $thumb ) ) {
@@ -769,7 +769,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
  * @access public
  * @return array of available thumbnails or mime icons
  */
-function liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl = NULL, $pThumbSizes = NULL, $pMimeImage = TRUE ) {
+function liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl = NULL, $pThumbSizes = NULL, $pMimeImage = TRUE, $pReturnUri = TRUE ) {
 	global $gBitSystem, $gThumbSizes;
 	$ret = array();
 
@@ -797,8 +797,12 @@ function liberty_fetch_thumbnails( $pFilePath, $pAltImageUrl = NULL, $pThumbSize
 		foreach( $exts as $ext ) {
 			if( empty( $ret[$size] ) && is_readable( BIT_ROOT_PATH.dirname( $pFilePath ).'/'.$size.'.'.$ext )) {
 				$path = str_replace( "//", "/", '/'.dirname( $pFilePath ).'/'.$size.'.'.$ext );
-				// the storage dir name is stored in the database. dumb, but that is the way it is.
-				$ret[$size] = dirname( STORAGE_PKG_URI ).$path;
+				if( $pReturnUri ) {
+					// the storage dir name is stored in the database. dumb, but that is the way it is.
+					$ret[$size] = dirname( STORAGE_PKG_URI ).$path;
+				} else {
+					$ret[$size] = $path;
+				}
 			}
 		}
 
