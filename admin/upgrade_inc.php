@@ -70,24 +70,23 @@ array( 'DATADICT' => array(
 			content_id INT NOTNULL PRIMARY
 			CONSTRAINT ', CONSTRAINT liberty_aliases_content_fkey FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`(`content_id`) '
 		",
+		'liberty_meta_titles' => "
+			meta_title_id I4 PRIMARY,
+			meta_title C(250) NOTNULL
+		",
 		'liberty_meta_types' => "
-			meta_type_guid C(16) PRIMARY,
-			meta_type_title C(250) NOTNULL
+			meta_type_id I4 PRIMARY,
+			meta_type C(250) NOTNULL
 		",
-		'liberty_meta_data' => "
-			meta_key C(250) PRIMARY,
-			meta_type_guid C(16),
-			meta_title C(250) NOTNULL,
-			meta_value_short C(250),
-			meta_value_long XL
-			CONSTRAINT ' , CONSTRAINT `liberty_meta_guid_ref` FOREIGN KEY (`meta_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_types` (`meta_type_guid`) '
-		",
-		'liberty_meta_content_map' => "
-			content_id I4 PRIMARY NOTNULL,
-			meta_key C(250) PRIMARY NOTNULL
+		'liberty_attachment_meta_data' => "
+			attachment_id I4 PRIMARY NOTNULL,
+			meta_type_id I4 PRIMARY NOTNULL,
+			meta_title_id I4 PRIMARY NOTNULL,
+			meta_value XL
 			CONSTRAINT '
-				, CONSTRAINT `liberty_meta_map_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
-				, CONSTRAINT `liberty_meta_map_meta_key_ref` FOREIGN KEY (`meta_key`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_data` (`meta_key`)'
+				, CONSTRAINT `liberty_meta_id_ref`    FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments` (`attachment_id`)
+				, CONSTRAINT `liberty_meta_type_ref`  FOREIGN KEY (`meta_type_id`)  REFERENCES `".BIT_DB_PREFIX."liberty_meta_types`  (`meta_type_id`)
+				, CONSTRAINT `liberty_meta_title_ref` FOREIGN KEY (`meta_title_id`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_titles` (`meta_title_id`) '
 		",
 		'liberty_attachment_prefs' => "
 			attachment_id I4 PRIMARY,
@@ -231,12 +230,9 @@ array( 'DATADICT' => array(
 	array( 'CREATEINDEX' => array(
 		'liberty_content_links_title_idx' => array( 'liberty_content_links', '`to_title`', array() ),
 		'process_id_idx' => array( 'liberty_process_queue', 'content_id', array() ),
-		'liberty_meta_map_content_idx' => array( 'liberty_meta_content_map', 'content_id', array() ),
-		'liberty_meta_map_key_idx' => array( 'liberty_meta_content_map', 'meta_key', array() ),
-		'liberty_meta_data_key_idx' => array( 'liberty_meta_data', 'meta_key', array() ),
-		'liberty_meta_data_guid_idx' => array( 'liberty_meta_data', 'meta_key', array() ),
-		'liberty_meta_data_title_idx' => array( 'liberty_meta_data', 'meta_key', array() ),
-		'liberty_meta_data_values_idx' => array( 'liberty_meta_data', 'meta_key', array() ),
+		'liberty_att_meta_idx' => array( 'liberty_attachment_meta_data', 'attachment_id', array() ),
+		'liberty_att_meta_type_idx' => array( 'liberty_attachment_meta_data', 'meta_type_id', array() ),
+		'liberty_att_meta_title_idx' => array( 'liberty_attachment_meta_data', 'meta_title_id', array() ),
 	)),
 )),
 

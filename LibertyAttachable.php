@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.152 2008/05/23 10:03:36 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.153 2008/05/23 17:06:53 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -549,8 +549,8 @@ class LibertyAttachable extends LibertyContent {
 					// --- Do the final cleanup of liberty related tables ---
 					if( $expungeFunc( $pAttachmentId )) {
 						// Delete the attachment meta data, prefs and record.
-//						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_meta_data` WHERE `attachment_id` = ?";
-//						$this->mDb->query( $sql, array( $pAttachmentId ));
+						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` WHERE `attachment_id` = ?";
+						$this->mDb->query( $sql, array( $pAttachmentId ));
 						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachment_prefs` WHERE `attachment_id` = ?";
 						$this->mDb->query( $sql, array( $pAttachmentId ));
 						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id`=?";
@@ -766,10 +766,10 @@ class LibertyAttachable extends LibertyContent {
 						);
 
 						// remove this entry from the database if it already exists
-						$gBitSystem->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_meta_data` WHERE `attachment_id` = ? AND `meta_type_id` = ? AND `meta_title_id` = ?", $meta );
+						$gBitSystem->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` WHERE `attachment_id` = ? AND `meta_type_id` = ? AND `meta_title_id` = ?", $meta );
 
 						$meta['meta_value'] = $data;
-						$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_meta_data", $meta );
+						$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_attachment_meta_data", $meta );
 
 						$ret = TRUE;
 					} else {
@@ -829,7 +829,7 @@ class LibertyAttachable extends LibertyContent {
 
 				$sql = "
 					SELECT lmd.`meta_value`
-					FROM `".BIT_DB_PREFIX."liberty_meta_data` lmd
+					FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` lmd
 						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_types` lmtype ON( lmd.`meta_type_id` = lmtype.`meta_type_id` )
 						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_titles` lmtitle ON( lmd.`meta_title_id` = lmtitle.`meta_title_id` )
 					WHERE lmd.`attachment_id` = ? AND lmtype.`meta_type` = ? AND lmtitle.`meta_title` = ?";
@@ -842,7 +842,7 @@ class LibertyAttachable extends LibertyContent {
 
 				$sql = "
 					SELECT lmtitle.`meta_title`, lmd.`meta_value`
-					FROM `".BIT_DB_PREFIX."liberty_meta_data` lmd
+					FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` lmd
 						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_types` lmtype ON( lmd.`meta_type_id` = lmtype.`meta_type_id` )
 						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_titles` lmtitle ON( lmd.`meta_title_id` = lmtitle.`meta_title_id` )
 					WHERE lmd.`attachment_id` = ? AND lmtype.`meta_type` = ?";
@@ -855,7 +855,7 @@ class LibertyAttachable extends LibertyContent {
 
 				$sql = "
 					SELECT lmtype.`meta_type`, lmd.`meta_value`
-					FROM `".BIT_DB_PREFIX."liberty_meta_data` lmd
+					FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` lmd
 						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_types` lmtype ON( lmd.`meta_type_id` = lmtype.`meta_type_id` )
 						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_titles` lmtitle ON( lmd.`meta_title_id` = lmtitle.`meta_title_id` )
 					WHERE lmd.`attachment_id` = ? AND lmtitle.`meta_title` = ?";
@@ -866,7 +866,7 @@ class LibertyAttachable extends LibertyContent {
 				// nothing given - return nested array based on type and title
 				$sql = "
 					SELECT lmd.`attachment_id`, lmd.`meta_value`, lmtype.`meta_type`, lmtitle.`meta_title`
-					FROM `".BIT_DB_PREFIX."liberty_meta_data` lmd
+					FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` lmd
 						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_types` lmtype ON( lmd.`meta_type_id` = lmtype.`meta_type_id` )
 						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_titles` lmtitle ON( lmd.`meta_title_id` = lmtitle.`meta_title_id` )
 					WHERE lmd.`attachment_id` = ?";

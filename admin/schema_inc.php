@@ -234,7 +234,7 @@ $tables = array(
 	meta_type C(250) NOTNULL
 ",
 
-'liberty_meta_data' => "
+'liberty_attachment_meta_data' => "
 	attachment_id I4 PRIMARY NOTNULL,
 	meta_type_id I4 PRIMARY NOTNULL,
 	meta_title_id I4 PRIMARY NOTNULL,
@@ -290,9 +290,9 @@ $indices = array (
 	'liberty_content_perm_perm_idx' => array( 'table' => 'liberty_content_permissions', 'cols' => 'perm_name', 'opts' => NULL ),
 	'liberty_content_perm_cont_idx' => array( 'table' => 'liberty_content_permissions', 'cols' => 'content_id', 'opts' => NULL ),
 	'process_id_idx' => array( 'table' => 'liberty_process_queue', 'cols' => 'content_id', 'opts' => NULL ),
-//	'liberty_att_meta_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'attachment_id', 'opts' => NULL ),
-//	'liberty_att_meta_type_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'meta_type_id', 'opts' => NULL ),
-//	'liberty_att_meta_title_idx' => array( 'table' => 'liberty_meta_data', 'cols' => 'meta_title_id', 'opts' => NULL ),
+	'liberty_att_meta_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'attachment_id', 'opts' => NULL ),
+	'liberty_att_meta_type_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'meta_type_id', 'opts' => NULL ),
+	'liberty_att_meta_title_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'meta_title_id', 'opts' => NULL ),
 );
 $gBitInstaller->registerSchemaIndexes( LIBERTY_PKG_NAME, $indices );
 
