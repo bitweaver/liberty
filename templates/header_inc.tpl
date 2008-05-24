@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/header_inc.tpl,v 1.13 2007/11/09 17:23:47 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/header_inc.tpl,v 1.14 2008/05/24 23:17:14 wjames5 Exp $ *}
 {strip}
 {if $structureInfo}
 	<link rel="index" title="{tr}Contents{/tr}" href="index.php?structure_id={$structureInfo.root_structure_id}" />
@@ -22,6 +22,12 @@ $gBitThemes->loadJavascript(); *}
 		LibertyComment.ROOT_GUID = "{if $gContent->mContentTypeGuid}{$gContent->mContentTypeGuid}{/if}";
 		LibertyComment.SORT_MODE = "{$comments_sort_mode}";
 		LibertyComment.BROWSER = "{$gBrowserInfo.browser}";
+	</script>
+{/if}
+{if $gContent->mContentTypeGuid}
+	<script type="text/javascript">
+		LibertyContent = {ldelim}{rdelim};
+		LibertyContent.CONTENT_TYPE_GUID = "{$gContent->mContentTypeGuid}";
 	</script>
 {/if}
 
