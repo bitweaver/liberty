@@ -49,7 +49,7 @@
 						{if $gBitUser->isAdmin() || ($storage.user_id == $gBitUser->mUserId && $gBitUser->hasPermission('p_liberty_delete_attachments') ) }
 							{capture name=urlArgs}{$attachmentBaseArgs}content_id={$gContent->mContentId}{if empty($gContent->mContentId)}{foreach from=$gContent->mStorage key=key item=val}&amp;STORAGE[existing][{$val.attachment_id}]={$val.attachment_id}{/foreach}{/if}{/capture}
 							{if $libertyUploader || $gBitSystem->getConfig('liberty_attachment_style') == 'ajax'}
-								<a href="javascript:
+								<a href="javascript:void(0);" onclick="
 									BitAjax.updater('edit_storage_list_tab', '{$smarty.const.LIBERTY_PKG_URL}ajax_edit_storage.php', '{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}');
 									BitAjax.updater('edit_storage_list', '{$smarty.const.LIBERTY_PKG_URL}ajax_edit_storage.php', '{$smarty.capture.urlArgs}');">
 										{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}
