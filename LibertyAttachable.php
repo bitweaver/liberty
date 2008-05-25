@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.153 2008/05/23 17:06:53 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.154 2008/05/25 21:00:07 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -499,7 +499,11 @@ class LibertyAttachable extends LibertyContent {
 
 		foreach( $attachments as $attachment ) {
 			if( $loadFunc = $gLibertySystem->getPluginFunction( $attachment['attachment_plugin_guid'], 'load_function' )) {
-				$ret[$attachment['attachment_id']] = $loadFunc( $attachment );
+				/* @$prefs - quick hack to stop LibertyMime plugins from breaking until migration to LibertyMime is complete
+				 * see expected arguments of liberty/plugins/mime.default.php::mime_default_load -wjames5 
+				 */
+				$prefs = array();
+				$ret[$attachment['attachment_id']] = $loadFunc( $attachment, $prefs );
 			}
 		}
 
