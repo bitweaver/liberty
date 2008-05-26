@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.6 2008/05/23 09:59:15 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.7 2008/05/26 20:12:23 squareing Exp $
  */
 
 /**
@@ -192,40 +192,6 @@ class LibertyMime extends LibertyAttachable {
 		if( !empty( $pFile['tmp_name'] ) && is_file( $pFile['tmp_name'] ) && empty( $pFile['error'] )) {
 			return $pFile;
 		}
-	}
-
-	/**
-	 * getAttachment will load details of a given attachment
-	 * 
-	 * @param array $pAttachmentId Attachment ID of the attachment
-	 * @access public
-	 * @return attachment details
-	 */
-	function getAttachment( $pAttachmentId, $pParams = NULL ) {
-		require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
-		global $gLibertySystem, $gBitSystem;
-		$ret = NULL;
-
-		if( @BitBase::verifyId( $pAttachmentId )) {
-			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` la WHERE la.`attachment_id`=?";
-			if( $result = $gBitSystem->mDb->query( $query, array( (int)$pAttachmentId ))) {
-				if( $row = $result->fetchRow() ) {
-					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function' )) {
-						$prefs = array();
-						// if the object is available, we'll copy the preferences by reference to allow the plugin to update them as needed
-						if( !empty( $this )) {
-							if( !empty( $this->mStoragePrefs[$pAttachmentId] )) {
-								$prefs = &$this->mStoragePrefs[$pAttachmentId];
-							}
-						} else {
-							$prefs = LibertyMime::getAttachmentPreferences( $pAttachmentId );
-						}
-						$ret = $func( $row, $prefs, $pParams );
-					}
-				}
-			}
-		}
-		return $ret;
 	}
 
 	/**
