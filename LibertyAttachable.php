@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.154 2008/05/25 21:00:07 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.155 2008/05/26 19:10:48 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -610,25 +610,30 @@ class LibertyAttachable extends LibertyContent {
 	}
 
 	/**
-	 * load details of a given attachment
-	 * allow an optional content_id to be passed in to ease legacy lib style objects (like blogs, articles, etc.)
-	 *
-	 * @param array $pAttachmentId
+	 * getAttachment will load details of a given attachment
+	 * 
+	 * @param numeric $pAttachmentId Attachment ID of the attachment
 	 * @access public
-	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 * @return attachment details
 	 */
-	function getAttachment( $pAttachmentId ) {
+	function getAttachment( $pAttachmentId, $pParams = NULL ) {
+		require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
 		global $gLibertySystem, $gBitSystem;
 		$ret = NULL;
 
-		if( @BitBase::verifyId( $pAttachmentId ) ) {
+		if( @BitBase::verifyId( $pAttachmentId )) {
 			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` la WHERE la.`attachment_id`=?";
 			if( $result = $gBitSystem->mDb->query( $query, array( (int)$pAttachmentId ))) {
 				if( $row = $result->fetchRow() ) {
-					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function'  ) ) {
-						// this dummy is needed for forward compatability with LibertyMime plugins
-						$dummy = array();
-						$ret = $func( $row, $dummy );
+					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function' )) {
+						$prefs = array();
+						// if the object is available, we'll copy the preferences by reference to allow the plugin to update them as needed
+						if( !empty( $this ) && !empty( $this->mStoragePrefs[$pAttachmentId] )) {
+							$prefs = &$this->mStoragePrefs[$pAttachmentId];
+						} else {
+							$prefs = LibertyMime::getAttachmentPreferences( $pAttachmentId );
+						}
+						$ret = $func( $row, $prefs, $pParams );
 					}
 				}
 			}
@@ -929,4 +934,9 @@ class LibertyAttachable extends LibertyContent {
 		return strtolower( substr( preg_replace( "![^a-zA-Z0-9]!", "", trim( $pDescription )), 0, 250 ));
 	}
 }
+
+// FIXME: this is really dirty and needs to go away from here
+// make sure LibertyMime is available during this transition phase
+// we need to call this down here since LM extends LA and can't be included before LA is available
+require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
 ?>
