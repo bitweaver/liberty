@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.7 2008/05/26 20:12:23 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.8 2008/05/27 14:46:47 squareing Exp $
  */
 
 /**
@@ -27,7 +27,12 @@ class LibertyMime extends LibertyAttachable {
 	 * @return void
 	 */
 	function LibertyMime() {
+		global $gLibertySystem;
 		LibertyAttachable::LibertyAttachable();
+
+		// ensure that default mime handler is enabled
+		// FIXME: this should really be somewhere else and should not be as crude as this.
+		$gLibertySystem->setActivePlugin( LIBERTY_DEFAULT_MIME_HANDLER );
 	}
 
 	/**
@@ -60,7 +65,7 @@ class LibertyMime extends LibertyAttachable {
 						}
 						$this->mStorage[$row['attachment_id']] = $func( $row, $this->mStoragePrefs[$row['attachment_id']] );
 					} else {
-						print "No load_function for ".$row['attachment_plugin_guid']." ".$gLibertySystem->mPlugins[$row['attachment_plugin_guid']];
+						print "No load_function for ".$row['attachment_plugin_guid'];
 					}
 				}
 			}
