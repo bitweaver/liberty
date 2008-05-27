@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.6 2008/05/23 10:05:20 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.7 2008/05/27 14:47:54 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.6 $
+ * @version		$Revision: 1.7 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -131,18 +131,20 @@ function mime_flv_load( $pFileHash, &$pPrefs, $pParams = NULL ) {
 	global $gLibertySystem, $gBitThemes;
 	if( $ret = mime_default_load( $pFileHash, $pParams )) {
 		// check for status of conversion
-		if( is_file( dirname( $ret['source_file'] ).'/error' )) {
-			$ret['status']['error'] = TRUE;
-		} elseif( is_file( dirname( $ret['source_file'] ).'/processing' )) {
-			$ret['status']['processing'] = TRUE;
-		} elseif( is_file( dirname( $ret['source_file'] ).'/flick.flv' )) {
-			$ret['flv_url'] = dirname( $ret['source_url'] ).'/flick.flv';
-			// we need some javascript for the flv player:
-			$gBitThemes->loadJavascript( UTIL_PKG_PATH."javascript/flv_player/swfobject.js", FALSE, 25 );
-		} elseif( is_file( dirname( $ret['source_file'] ).'/flick.mp4' )) {
-			$ret['flv_url'] = dirname( $ret['source_url'] ).'/flick.mp4';
-			// we need some javascript for the flv player:
-			$gBitThemes->loadJavascript( UTIL_PKG_PATH."javascript/flv_player/swfobject.js", FALSE, 25 );
+		if( !empty( $ret['source_file'] )) {
+			if( is_file( dirname( $ret['source_file'] ).'/error' )) {
+				$ret['status']['error'] = TRUE;
+			} elseif( is_file( dirname( $ret['source_file'] ).'/processing' )) {
+				$ret['status']['processing'] = TRUE;
+			} elseif( is_file( dirname( $ret['source_file'] ).'/flick.flv' )) {
+				$ret['flv_url'] = dirname( $ret['source_url'] ).'/flick.flv';
+				// we need some javascript for the flv player:
+				$gBitThemes->loadJavascript( UTIL_PKG_PATH."javascript/flv_player/swfobject.js", FALSE, 25 );
+			} elseif( is_file( dirname( $ret['source_file'] ).'/flick.mp4' )) {
+				$ret['flv_url'] = dirname( $ret['source_url'] ).'/flick.mp4';
+				// we need some javascript for the flv player:
+				$gBitThemes->loadJavascript( UTIL_PKG_PATH."javascript/flv_player/swfobject.js", FALSE, 25 );
+			}
 		}
 
 		// now that we have the original width and height, we can get the displayed values
