@@ -9,7 +9,7 @@
 			{include file=$view_template preferences=$attachment.preferences}
 		{/legend}
 
-		{if ( $gBitUser->isAdmin() || $gBitUser->mUserId() == $attachment.user_id ) && $edit_template}
+		{if ( $gBitUser->isAdmin() || $gBitUser->mUserId == $attachment.user_id ) && $edit_template}
 			{form legend="Edit File Details"}
 				{formfeedback hash=$feedback}
 				{include file=$edit_template preferences=$attachment.preferences}
