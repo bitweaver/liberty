@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.2 2008/05/28 13:02:06 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.3 2008/05/28 13:07:59 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.2 $
+ * @version		$Revision: 1.3 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -151,7 +151,9 @@ function mime_audio_converter( &$pParamHash ) {
 	if( @BitBase::verifyId( $pParamHash['attachment_id'] )) {
 		if( !$gBitSystem->isFeatureActive( 'mime_audio_force_encode' ) && preg_match( "!.mp3$!i", $pParamHash['upload']['name'] )) {
 			// make a copy of the original
-			copy( $source, $dest_file );
+			if( !link( $source, $dest_file )) {
+				copy( $source, $dest_file );
+			}
 			$ret = TRUE;
 		} else {
 			// TODO: have a better mechanism of converting audio to mp3. ffmpeg works well as long as the source is 'perfect'
