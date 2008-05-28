@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.6 2008/05/28 17:58:06 wjames5 Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.7 2008/05/28 18:55:00 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.6 $
+ * @version		$Revision: 1.7 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -36,7 +36,7 @@ $pluginParams = array (
 	// Templates to display the files
 	'view_tpl'            => 'bitpackage:liberty/mime_audio_view_inc.tpl',
 	'inline_tpl'          => 'bitpackage:liberty/mime_audio_inline_inc.tpl',
-	//'edit_tpl'            => 'bitpackage:liberty/mime_audio_edit_inc.tpl',
+	'edit_tpl'            => 'bitpackage:liberty/mime_audio_edit_inc.tpl',
 	// url to page with options for this plugin
 	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/mime_audio.php',
 	// This should be the same for all mime plugins
@@ -53,7 +53,6 @@ $gLibertySystem->registerPlugin( PLUGIN_MIME_GUID_AUDIO, $pluginParams );
 
 // depending on the scan the default file might not be included yet. we need to get it manually - simply use the relative path
 require_once( 'mime.default.php' );
-require_once( UTIL_PKG_PATH.'getid3/getid3/getid3.php' );
 
 /**
  * Store the data in the database
@@ -85,17 +84,44 @@ function mime_audio_store( &$pStoreRow ) {
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function mime_audio_update( &$pStoreRow ) {
-	// this will set the correct pluign guid, even if we let default handle the store process
-	$pStoreRow['attachment_plugin_guid'] = PLUGIN_MIME_GUID_AUDIO;
-	$pStoreRow['log'] = array();
+function mime_audio_update( &$pStoreRow, $pParams = NULL ) {
+	// if we have been passed a set of parameters, we're only interested in updating the meta data
+	$ret = FALSE;
+	if( BitBase::verifyId( $pStoreRow['attachment_id'] )) {
+		if( !empty( $pStoreRow['storage_path'] ) && !empty( $pParams )) {
+			// update our local version of the file
+			$file = BIT_ROOT_PATH.$pStoreRow['storage_path'];
+			$verted = dirname( $file ).'/bitverted.mp3';
+			if( $errors = mime_audio_update_tags( $verted, $pParams )) {
+				$log['tagging'] = $errors;
+			}
 
-	// if storing works, we process the audio
-	if( $ret = mime_default_update( $pStoreRow )) {
-		if( !mime_audio_converter( $pStoreRow )) {
-			// if it all goes tits up, we'll know why
-			$pStoreRow['errors'] = $pStoreRow['log'];
-			$ret = FALSE;
+			// the original file might be an mp3 as well - don't worry about errors on this file
+			mime_audio_update_tags( $file, $pParams );
+
+			// finally we update the meta table data
+			if( !LibertyMime::storeMetaData( $pStoreRow['attachment_id'], 'ID3', $pParams )) {
+				$log['store_meta'] = "There was a problem storing the meta data in the database";
+			}
+
+			if( empty( $log )) {
+				$ret = TRUE;
+			} else {
+				$pStoreRow['errors'] = $log;
+			}
+		} else {
+			// this will set the correct pluign guid, even if we let default handle the store process
+			$pStoreRow['attachment_plugin_guid'] = PLUGIN_MIME_GUID_AUDIO;
+			$pStoreRow['log'] = array();
+
+			// if storing works, we process the audio
+			if( $ret = mime_default_update( $pStoreRow )) {
+				if( !mime_audio_converter( $pStoreRow )) {
+					// if it all goes tits up, we'll know why
+					$pStoreRow['errors'] = $pStoreRow['log'];
+					$ret = FALSE;
+				}
+			}
 		}
 	}
 	return $ret;
@@ -115,7 +141,7 @@ function mime_audio_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 
 	// don't load a mime image if we don't have an image for this file
 	$pFileHash['no_mime_image'] = TRUE;
-	if( $ret = mime_default_load( $pFileHash, $pParams )) {
+	if( $ret = mime_default_load( $pFileHash, $pPrefs, $pParams )) {
 		// fetch meta data from the db
 		$ret['meta'] = LibertyMime::getMetaData( $pFileHash['attachment_id'], "ID3" );
 
@@ -149,7 +175,7 @@ function mime_audio_converter( &$pParamHash ) {
 	$dest_file = $dest_path.'/bitverted.mp3';
 
 	if( @BitBase::verifyId( $pParamHash['attachment_id'] )) {
-		if( !$gBitSystem->isFeatureActive( 'mime_audio_force_encode' ) && preg_match( "!.mp3$!i", $pParamHash['upload']['name'] )) {
+		if( !$gBitSystem->isFeatureActive( 'mime_audio_force_encode' ) && preg_match( "#\.mp3$#i", $pParamHash['upload']['name'] )) {
 			// make a copy of the original
 			if( !link( $source, $dest_file )) {
 				copy( $source, $dest_file );
@@ -171,27 +197,15 @@ function mime_audio_converter( &$pParamHash ) {
 			$log['success'] = 'SUCCESS: Converted to mp3 audio';
 
 			// now that we have a new mp3 file, we might as well copy the tags accross in case someone downloads it
+			require_once( UTIL_PKG_PATH.'getid3/getid3/getid3.php' );
 			$getID3 = new getID3;
 			// we silence this since this will spew lots of ugly errors when using UTF-8 and some odd character in the file ID
 			$meta = @$getID3->analyze( $source );
 			getid3_lib::CopyTagsToComments( $meta );
 
-			require_once( UTIL_PKG_PATH.'getid3/getid3/write.php' );
-			// Initialize getID3 tag-writing module
-			$tagwriter = new getid3_writetags;
-			$tagwriter->filename       = $dest_file;
-			$tagwriter->tagformats     = array( 'id3v1', 'id3v2.3' );
-
-			// set various options
-			$tagwriter->overwrite_tags = TRUE;
-			$tagwriter->tag_encoding   = "UTF-8";
-
-			// store some stuff
-			$tagwriter->tag_data       = $meta['comments'];
-
-			// write tags
-			if( !$tagwriter->WriteTags() ) {
-				$log['tagging'] = "There was a proglem writing the tags to the mp3 file.".implode( "\n\n", $tagwriter->errors );
+			// write tags to new mp3 file
+			if( $errors = mime_audio_update_tags( $source, $meta['comments'] )) {
+				$log['tagging'] = $errors;
 			}
 
 			// getID3 returns everything in subarrays - we want to store everything in [0]
@@ -209,13 +223,13 @@ function mime_audio_converter( &$pParamHash ) {
 			// we'll simply use the first image we can find in the file
 			if( !empty( $meta['id3v2']['APIC'][0]['data'] )) {
 				$image = $meta['id3v2']['APIC'][0];
-			}elseif( !empty( $meta['id3v2']['PIC'][0]['data'] )) {
+			} elseif( !empty( $meta['id3v2']['PIC'][0]['data'] )) {
 				$image = $meta['id3v2']['PIC'][0];
 			}
 
-			if ( isset( $image ) ){
+			if ( !empty( $image )) {
 				// write the image to temp file for us to process
-				$tmpfile = str_replace( "//", "/", tempnam( TEMP_PKG_PATH, LIBERTY_PKG_NAME ) );
+				$tmpfile = str_replace( "//", "/", tempnam( TEMP_PKG_PATH, LIBERTY_PKG_NAME ));
 
 				if( $fp = fopen( $tmpfile, 'w' )) {
 					fwrite( $fp, $image['data'] );
@@ -347,6 +361,42 @@ function mime_audio_conver_ffmpeg( &$pParamHash, $pSource, $pDest ) {
 	// update log
 	$pParamHash['log'] = array_merge( $pParamHash['log'], $log );
 
+	return $ret;
+}
+
+function mime_audio_update_tags( $pFile, $pMetaData ) {
+	$ret = NULL;
+	if( !empty( $pFile ) && is_file( $pFile ) && is_array( $pMetaData )) {
+		// we need to initiate getID3 for the writer to work
+		require_once( UTIL_PKG_PATH.'getid3/getid3/getid3.php' );
+		$getID3 = new getID3;
+
+		require_once( UTIL_PKG_PATH.'getid3/getid3/write.php' );
+		// Initialize getID3 tag-writing module
+		$tagwriter = new getid3_writetags();
+		$tagwriter->filename       = $pFile;
+		$tagwriter->tagformats     = array( 'id3v1', 'id3v2.3' );
+
+		// set various options
+		$tagwriter->overwrite_tags = TRUE;
+		$tagwriter->tag_encoding   = "UTF-8";
+
+		// prepare meta data for storing
+		foreach( $pMetaData as $key => $data ) {
+			if( !is_array( $data )) {
+				$data = array( $data );
+			}
+			$write[$key] = $data;
+		}
+
+		// store the tags
+		if( !empty( $write )) {
+			$tagwriter->tag_data = $write;
+			if( !$tagwriter->WriteTags() ) {
+				$ret = 'Failed to write tags!<br />'.implode( '<br /><br />', $tagwriter->errors );
+			}
+		}
+	}
 	return $ret;
 }
 ?>

@@ -50,6 +50,15 @@
 	</div>
 {/if}
 
+{if $attachment.meta.genre}
+	<div class="row">
+		{formlabel label="Genre" for=""}
+		{forminput}
+			{$attachment.meta.genre}
+		{/forminput}
+	</div>
+{/if}
+
 {if $attachment.download_url}
 	<div class="row">
 		{formlabel label="Filename" for=""}
