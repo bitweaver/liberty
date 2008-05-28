@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.5 2008/05/28 14:00:46 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.6 2008/05/28 17:58:06 wjames5 Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.5 $
+ * @version		$Revision: 1.6 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -208,12 +208,16 @@ function mime_audio_converter( &$pParamHash ) {
 			// if we have an image in the id3v2 tag, we might as well do something with it
 			// we'll simply use the first image we can find in the file
 			if( !empty( $meta['id3v2']['APIC'][0]['data'] )) {
+				$image = $meta['id3v2']['APIC'][0];
+			}elseif( !empty( $meta['id3v2']['PIC'][0]['data'] )) {
+				$image = $meta['id3v2']['PIC'][0];
+			}
+
+			if ( isset( $image ) ){
 				// write the image to temp file for us to process
 				$tmpfile = str_replace( "//", "/", tempnam( TEMP_PKG_PATH, LIBERTY_PKG_NAME ) );
 
 				if( $fp = fopen( $tmpfile, 'w' )) {
-					$image = $meta['id3v2']['APIC'][0];
-
 					fwrite( $fp, $image['data'] );
 					fclose( $fp );
 
