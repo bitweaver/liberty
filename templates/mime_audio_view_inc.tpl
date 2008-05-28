@@ -41,11 +41,11 @@
 	</div>
 {/if}
 
-{if $attachment.meta.playtime_string}
+{if $attachment.meta.playtimestring}
 	<div class="row">
 		{formlabel label="Duration" for=""}
 		{forminput}
-			{$attachment.meta.playtime_string}
+			{$attachment.meta.playtimestring}
 		{/forminput}
 	</div>
 {/if}
