@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.155 2008/05/26 19:10:48 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.156 2008/05/28 18:27:22 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -613,6 +613,7 @@ class LibertyAttachable extends LibertyContent {
 	 * getAttachment will load details of a given attachment
 	 * 
 	 * @param numeric $pAttachmentId Attachment ID of the attachment
+	 * @param array $pParams optional parameters that might contain information like display thumbnail size
 	 * @access public
 	 * @return attachment details
 	 */
