@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.1 2008/05/23 19:35:15 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.2 2008/05/28 13:02:06 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.1 $
+ * @version		$Revision: 1.2 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -162,52 +162,53 @@ function mime_audio_converter( &$pParamHash ) {
 				// fall back to using slower mplayer / lame combo
 				$ret = mime_audio_conver_mplayer_lame( $pParamHash, $source, $dest_file );
 			}
+		}
 
-			// if the conversion was successful, we'll copy the tags to the new mp3 file and import data to meta tables
-			if( $ret == TRUE ) {
-				$log['success'] = 'SUCCESS: Converted to mp3 audio';
+		// if the conversion was successful, we'll copy the tags to the new mp3 file and import data to meta tables
+		if( $ret == TRUE ) {
+			$log['success'] = 'SUCCESS: Converted to mp3 audio';
 
-				// now that we have a new mp3 file, we might as well copy the tags accross in case someone downloads it
-				$getID3 = new getID3;
-				// we silence this since this will spew lots of ugly errors when using UTF-8 and some odd character in the file ID
-				$meta = @$getID3->analyze( $source );
-				getid3_lib::CopyTagsToComments( $meta );
+			// now that we have a new mp3 file, we might as well copy the tags accross in case someone downloads it
+			$getID3 = new getID3;
+			// we silence this since this will spew lots of ugly errors when using UTF-8 and some odd character in the file ID
+			$meta = @$getID3->analyze( $source );
+			getid3_lib::CopyTagsToComments( $meta );
 
-				require_once( UTIL_PKG_PATH.'getid3/getid3/write.php' );
-				// Initialize getID3 tag-writing module
-				$tagwriter = new getid3_writetags;
-				$tagwriter->filename       = $dest_file;
-				$tagwriter->tagformats     = array( 'id3v1', 'id3v2.3' );
+			require_once( UTIL_PKG_PATH.'getid3/getid3/write.php' );
+			// Initialize getID3 tag-writing module
+			$tagwriter = new getid3_writetags;
+			$tagwriter->filename       = $dest_file;
+			$tagwriter->tagformats     = array( 'id3v1', 'id3v2.3' );
 
-				// set various options
-				$tagwriter->overwrite_tags = TRUE;
-				$tagwriter->tag_encoding   = "UTF-8";
+			// set various options
+			$tagwriter->overwrite_tags = TRUE;
+			$tagwriter->tag_encoding   = "UTF-8";
 
-				// store the tags
-				$tagwriter->tag_data       = $meta['comments'];
+			// store the tags
+			$tagwriter->tag_data       = $meta['comments'];
 
-				// write tags
-				if( !$tagwriter->WriteTags() ) {
-					$log['tagging'] = "There was a proglem writing the tags to the mp3 file.".implode( "\n\n", $tagwriter->errors );
-				}
-
-				// getID3 returns everything in subarrays - we want to store everything in [0]
-				foreach( $meta['comments'] as $key => $comment ) {
-					$store[$key] = $comment[0];
-				}
-
-				if( !LibertyMime::storeMetaData( $pParamHash['attachment_id'], 'ID3', $store )) {
-					$log['store_meta'] = "There was a problem storing the meta data in the database";
-				}
-
-				// TODO: when tags package is enabled add an option to add tags
-				//       recommended tags might be artist and album
-
-				// TODO: fetch album cover from amazon.com or musicbrainz.org
-				//       fetch lyrics from lyricwiki.org
-
-				//$item->mLogs['audio_converter'] = "Audio file was successfully converted to MP3.";
+			// write tags
+			if( !$tagwriter->WriteTags() ) {
+				$log['tagging'] = "There was a proglem writing the tags to the mp3 file.".implode( "\n\n", $tagwriter->errors );
 			}
+
+			// getID3 returns everything in subarrays - we want to store everything in [0]
+			foreach( $meta['comments'] as $key => $comment ) {
+				$store[$key] = $comment[0];
+			}
+
+			if( !LibertyMime::storeMetaData( $pParamHash['attachment_id'], 'ID3', $store )) {
+				$log['store_meta'] = "There was a problem storing the meta data in the database";
+			}
+
+
+			// TODO: when tags package is enabled add an option to add tags
+			//       recommended tags might be artist and album
+
+			// TODO: fetch album cover from amazon.com or musicbrainz.org
+			//       fetch lyrics from lyricwiki.org
+
+			//$item->mLogs['audio_converter'] = "Audio file was successfully converted to MP3.";
 		}
 	}
 
