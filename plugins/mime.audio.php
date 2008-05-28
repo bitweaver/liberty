@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.4 2008/05/28 13:37:29 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.5 2008/05/28 14:00:46 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.4 $
+ * @version		$Revision: 1.5 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -205,6 +205,29 @@ function mime_audio_converter( &$pParamHash ) {
 				$log['store_meta'] = "There was a problem storing the meta data in the database";
 			}
 
+			// if we have an image in the id3v2 tag, we might as well do something with it
+			// we'll simply use the first image we can find in the file
+			if( !empty( $meta['id3v2']['APIC'][0]['data'] )) {
+				// write the image to temp file for us to process
+				$tmpfile = str_replace( "//", "/", tempnam( TEMP_PKG_PATH, LIBERTY_PKG_NAME ) );
+
+				if( $fp = fopen( $tmpfile, 'w' )) {
+					$image = $meta['id3v2']['APIC'][0];
+
+					fwrite( $fp, $image['data'] );
+					fclose( $fp );
+
+					$fileHash['type']            = $image['mime'];
+					$fileHash['source_file']     = $tmpfile;
+					$fileHash['dest_path']       = $pParamHash['upload']['dest_path'];
+					liberty_generate_thumbnails( $fileHash );
+
+					// remove temp file
+					if( !empty( $tmpfile ) && is_file( $tmpfile )) {
+						unlink( $tmpfile );
+					}
+				}
+			}
 
 			// TODO: when tags package is enabled add an option to add tags
 			//       recommended tags might be artist and album
