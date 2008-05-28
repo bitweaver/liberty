@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.3 2008/05/28 13:07:59 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.4 2008/05/28 13:37:29 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.3 $
+ * @version		$Revision: 1.4 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -186,7 +186,7 @@ function mime_audio_converter( &$pParamHash ) {
 			$tagwriter->overwrite_tags = TRUE;
 			$tagwriter->tag_encoding   = "UTF-8";
 
-			// store the tags
+			// store some stuff
 			$tagwriter->tag_data       = $meta['comments'];
 
 			// write tags
@@ -198,6 +198,8 @@ function mime_audio_converter( &$pParamHash ) {
 			foreach( $meta['comments'] as $key => $comment ) {
 				$store[$key] = $comment[0];
 			}
+			$store['playtimeseconds'] = $meta['playtime_seconds'];
+			$store['playtimestring']  = $meta['playtime_string'];
 
 			if( !LibertyMime::storeMetaData( $pParamHash['attachment_id'], 'ID3', $store )) {
 				$log['store_meta'] = "There was a problem storing the meta data in the database";
