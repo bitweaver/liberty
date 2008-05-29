@@ -23,12 +23,12 @@
 							<table class="panel">
 								<caption>{tr}Plugin Type: {$plugin_type_label}{/tr}</caption>
 								<tr>
-									<th style="width:90%;">{tr}Plugin{/tr} <small>[guid]</small></th>
+									<th style="width:85%;">{tr}Plugin{/tr} <small>[guid]</small></th>
 									{if $plugin_type eq 'format'}
 										<th style="width:5%;">{tr}Default{/tr}</th>
-										<th style="width:5%;">{tr}Active{/tr}</th>
-									{else}
 										<th style="width:10%;">{tr}Active{/tr}</th>
+									{else}
+										<th style="width:15%;">{tr}Active{/tr}</th>
 									{/if}
 								</tr>
 
@@ -39,27 +39,26 @@
 												{if $plugin.edit_label}
 													<h3>
 														<label for="{$guid}">{$plugin.edit_label} <small>[{$guid}]</small></label>
-														{if $plugin.help_page}
-															&nbsp; {jspopup href="http://www.bitweaver.org/wiki/`$plugin.help_page`" ibiticon="icons/dialog-information" title=`$plugin.help_page` class="external"}
-														{/if}
 													</h3>
 												{else}
 													<h3>
 														<label for="{$guid}">{$plugin.title|escape} <small>[{$guid}]</small></label>
-														{if $plugin.help_page}
-															&nbsp; {jspopup href="http://www.bitweaver.org/wiki/`$plugin.help_page`" ibiticon="icons/dialog-information" title=`$plugin.help_page` class="external"}
-														{/if}
-														{if $plugin.plugin_settings_url}
-															&nbsp; <a href="{$plugin.plugin_settings_url}">{biticon iname=accessories-text-editor iexplain="Plugin Settings"}</a>
-														{/if}
 													</h3>
 												{/if}
 												<label for="{$guid}">{$plugin.description}</label>
 											</td>
 											{if $plugin_type eq 'format'}
-												<td align="center">{if $plugin.is_active == 'y'}{html_radios values=$guid name="default_format" checked=$gBitSystem->getConfig('default_format')}{/if}</td>
+												<td align="center">
+													{if $plugin.is_active == 'y'}{html_radios values=$guid name="default_format" checked=$gBitSystem->getConfig('default_format')}{/if}
+												</td>
 											{/if}
-											<td align="center">
+											<td class="actionicon">
+												{if $plugin.plugin_settings_url}
+													<a href="{$plugin.plugin_settings_url}">{biticon iname=accessories-text-editor iexplain="Plugin Settings"}</a>
+												{/if}
+												{if $plugin.help_page}
+													{jspopup href="http://www.bitweaver.org/wiki/`$plugin.help_page`" ibiticon="icons/dialog-information" title=`$plugin.help_page` class="external"}
+												{/if}
 												{if $plugin.is_active=='x'}
 													Missing
 												{else}
