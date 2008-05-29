@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.9 2008/05/29 09:04:36 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.10 2008/05/29 09:55:41 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.9 $
+ * @version     $Revision: 1.10 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -47,8 +47,8 @@ $pluginParams = array (
 	'plugin_type'        => MIME_PLUGIN,
 	// Set this to TRUE if you want the plugin active right after installation
 	'auto_activate'      => TRUE,
-	// Allow for additional processing options - passed in during verify and store
-	//'processing_options' => '<label><input type="checkbox" name="liberty[mime][process_archives]" value="true" /> '.tra( 'Process Archives' ).'</label>',
+	// Help page on bitweaver.org
+	//'help_page'          => 'MimeHelpPage',
 
 	// Here you can use a perl regular expression to pick out file extensions you want to handle
 	// e.g.: Some image types: '#^image/(jpe?g|gif|png)#i'

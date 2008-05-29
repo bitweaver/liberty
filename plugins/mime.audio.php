@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.8 2008/05/29 09:04:36 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.9 2008/05/29 09:55:41 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.8 $
+ * @version		$Revision: 1.9 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -43,7 +43,8 @@ $pluginParams = array (
 	'plugin_type'         => MIME_PLUGIN,
 	// Set this to TRUE if you want the plugin active right after installation
 	'auto_activate'       => FALSE,
-	'processing_options'  => '',
+	// Help page on bitweaver.org
+	//'help_page'           => 'LibertyMime+Audio+Plugin',
 	// this should pick up all audio
 	'mimetypes'           => array(
 		'#audio/.*#i',
