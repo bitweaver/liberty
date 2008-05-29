@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.8 2008/05/27 14:46:47 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.9 2008/05/29 09:04:35 squareing Exp $
  */
 
 /**
@@ -87,8 +87,15 @@ class LibertyMime extends LibertyAttachable {
 			$this->mDb->StartTrans();
 
 			foreach( $pStoreHash['upload_store']['files'] as $upload ) {
+				// we might be updating attachments and they might have some additional data they need to process
+				if( @BitBase::verifyId( $upload['attachment_id'] ) && !empty( $pStoreHash['plugin'][$upload['attachment_id']] ) && is_array( $pStoreHash['plugin'][$upload['attachment_id']] )) {
+					foreach( $pStoreHash['plugin'][$upload['attachment_id']] as $guid => $params ) {
+						$this->updateAttachmentParams( $upload['attachment_id'], $guid, $params );
+					}
+				}
+
 				// exit if $upload is empty
-				if( empty( $upload )) {
+				if( empty( $upload['tmp_name'] )) {
 					break;
 				}
 
@@ -118,8 +125,8 @@ class LibertyMime extends LibertyAttachable {
 							$function_name = 'store_function';
 						}
 
-						if( $store_function = LibertyMime::getPluginFunction( $guid, $function_name )) {
-							if( !$store_function( $storeRow, $this )) {
+						if( $process_function = LibertyMime::getPluginFunction( $guid, $function_name )) {
+							if( !$process_function( $storeRow )) {
 								$this->mErrors = array_merge( $this->mErrors, $storeRow['errors'] );
 							}
 						} else {
@@ -148,23 +155,24 @@ class LibertyMime extends LibertyAttachable {
 	 * @Note: If one of the uploaded files is an update, place the attachment_id with the upload hash in $_FILES or in _files_override
 	 */
 	function verify( &$pParamHash ) {
-		global $gBitUser;
+		global $gBitUser, $gLibertySystem;
 
 		// check to see if we have any files to upload
 		if( isset( $pParamHash['_files_override'] )) {
 			// we have been passed in a manually stuffed files attachment, such as a custom uploader would have done.
 			// process this, and skip over $_FILES
 			$uploads = $pParamHash['_files_override'];
-		} elseif( !empty( $_FILES ) ) {
+		} elseif( !empty( $_FILES )) {
 			// we have some _FILES hanging around we will gobble up. This is inherently dagnerous chewing up a _FILES like this as 
 			// it can cause premature storing of a _FILE if you are trying to store multiple pieces of content at once.
 			foreach( $_FILES as $key => $file ) {
-				if( !empty( $file['name'] )) {
+				if( !empty( $file['name'] ) || !empty( $file['attachment_id'] )) {
 					$uploads[$key] = $file;
 				}
 			}
 		}
 
+		// verify uploads
 		if( !empty( $uploads ) ) {
 			foreach( array_keys( $uploads ) as $file ) {
 				$pParamHash['upload_store']['files'][$file] = LibertyMime::verifyAttachment( $uploads[$file] );
@@ -187,6 +195,41 @@ class LibertyMime extends LibertyAttachable {
 	}
 
 	/**
+	 * updateAttachmentParams will update attachment parameters
+	 * 
+	 * @param numeric $pAttachmentId attachment_id of the item we want the prefs from (optional)
+	 * @param string $pPluginGuid GUID of the plugin that should process the data
+	 * @param array $pParamHash Data to be processed by the plugin
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function updateAttachmentParams( $pAttachmentId, $pPluginGuid, $pParamHash ) {
+		global $gLibertySystem;
+		$ret = FALSE;
+
+		if( BitBase::verifyId( $pAttachmentId )) {
+			if( !empty( $this ) && !empty( $this->mStorage[$pAttachmentId] )) {
+				$file = $this->mStorage[$pAttachmentId];
+			} else {
+				$file = LibertyMime::getAttachment( $pAttachmentId );
+			}
+
+			if( !empty( $file['attachment_id'] ) && !empty( $pPluginGuid ) && !empty( $pParamHash ) && $update_function = LibertyMime::getPluginFunction( $pPluginGuid, 'update_function' )) {
+				if( $update_function( $file, $pParamHash )) {
+					$ret = TRUE;
+				} else {
+					if( !empty( $file['errors'] )) {
+						$this->mErrors['param_update'] = $file['errors'];
+					} else {
+						$this->mErrors['param_update'] = tra( 'There was an unspecified error while updating the file.' );
+					}
+				}
+			}
+		}
+		return $ret;
+	}
+
+	/**
 	 * verifyAttachment will perform a generic check if a file is valid for processing
 	 * 
 	 * @param array $pFile file array from $_FILES
@@ -194,7 +237,7 @@ class LibertyMime extends LibertyAttachable {
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
 	function verifyAttachment( $pFile ) {
-		if( !empty( $pFile['tmp_name'] ) && is_file( $pFile['tmp_name'] ) && empty( $pFile['error'] )) {
+		if( !empty( $pFile['tmp_name'] ) && is_file( $pFile['tmp_name'] ) && empty( $pFile['error'] ) || !empty( $pFile['attachment_id'] )) {
 			return $pFile;
 		}
 	}

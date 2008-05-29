@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.8 2008/05/23 10:00:59 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.9 2008/05/29 09:04:36 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.8 $
+ * @version     $Revision: 1.9 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -117,9 +117,8 @@ function mime_default_verify( &$pStoreRow ) {
 function mime_default_update( &$pStoreRow ) {
 	global $gBitSystem;
 
-	if( BitBase::verifyId( $pStoreRow['attachment_id'] )) {
-		// get the data we need to deal with
-		$query = "SELECT `storage_path` FROM `".BIT_DB_PREFIX."liberty_files` lf WHERE `file_id` = ?";
+	// this will reset the uploaded file
+	if( BitBase::verifyId( $pStoreRow['attachment_id'] ) && !empty( $pStoreRow['upload'] )) {
 		if( !empty( $pStoreRow['storage_path'] )) {
 			// First we remove the old file
 			$file = BIT_ROOT_PATH.$pStoreRow['storage_path'];

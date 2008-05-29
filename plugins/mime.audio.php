@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.7 2008/05/28 18:55:00 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.8 2008/05/29 09:04:36 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.7 $
+ * @version		$Revision: 1.8 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -88,6 +88,7 @@ function mime_audio_update( &$pStoreRow, $pParams = NULL ) {
 	// if we have been passed a set of parameters, we're only interested in updating the meta data
 	$ret = FALSE;
 	if( BitBase::verifyId( $pStoreRow['attachment_id'] )) {
+		// now that the upload has been processed (if there was one), we'll deal with the additional params
 		if( !empty( $pStoreRow['storage_path'] ) && !empty( $pParams )) {
 			// update our local version of the file
 			$file = BIT_ROOT_PATH.$pStoreRow['storage_path'];
@@ -109,18 +110,18 @@ function mime_audio_update( &$pStoreRow, $pParams = NULL ) {
 			} else {
 				$pStoreRow['errors'] = $log;
 			}
-		} else {
-			// this will set the correct pluign guid, even if we let default handle the store process
-			$pStoreRow['attachment_plugin_guid'] = PLUGIN_MIME_GUID_AUDIO;
-			$pStoreRow['log'] = array();
+		}
 
-			// if storing works, we process the audio
-			if( $ret = mime_default_update( $pStoreRow )) {
-				if( !mime_audio_converter( $pStoreRow )) {
-					// if it all goes tits up, we'll know why
-					$pStoreRow['errors'] = $pStoreRow['log'];
-					$ret = FALSE;
-				}
+		// this will set the correct pluign guid, even if we let default handle the store process
+		$pStoreRow['attachment_plugin_guid'] = PLUGIN_MIME_GUID_AUDIO;
+		$pStoreRow['log'] = array();
+
+		// if storing works, we process the audio
+		if( !empty( $pStoreRow['upload'] ) && $ret = mime_default_update( $pStoreRow )) {
+			if( !mime_audio_converter( $pStoreRow )) {
+				// if it all goes tits up, we'll know why
+				$pStoreRow['errors'] = $pStoreRow['log'];
+				$ret = FALSE;
 			}
 		}
 	}

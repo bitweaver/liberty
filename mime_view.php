@@ -1,6 +1,6 @@
 <?php
 /**
- * @version      $Header: /cvsroot/bitweaver/_bit_liberty/Attic/mime_view.php,v 1.3 2008/05/28 18:55:00 squareing Exp $
+ * @version      $Header: /cvsroot/bitweaver/_bit_liberty/Attic/mime_view.php,v 1.4 2008/05/29 09:04:35 squareing Exp $
  *
  * @author       xing  <xing@synapse.plus.com>
  * @package      treasury
@@ -21,31 +21,25 @@ if( @!BitBase::verifyId( $_REQUEST['attachment_id'] ) || !( $attachment = Libert
 	$gBitSystem->fatalError( tra( "The Attachment ID given is not valid" ));
 }
 
+// first we need to check the permissions of the content the attachment belongs to since they inherit them
+$gContent = LibertyBase::getLibertyObject( $attachment['content_id'] );
+$gContent->verifyViewPermission();
+
 if( !empty( $_REQUEST['plugin_submit'] )) {
 	// now that we have data for a plugin, we'll simply feed it back to the update function of that plugin
-	foreach( $_REQUEST['plugin'] as $guid => $data ) {
-		if( $update_function = LibertyMime::getPluginFunction( $guid, 'update_function' )) {
-			// verify the uploaded file using the plugin
-			if( !$update_function( $attachment, $data )) {
-				if( !empty( $attachment['errors'] )) {
-					$feedback['error'] = $attachment['errors'];
-				} else {
-					$feedback['error'] = tra( 'There was an unspecified error while updating the file.' );
-				}
-			} else {
-				$feedback['success'] = tra( "The data was successfully updated." );
-			}
+	foreach( $_REQUEST['plugin'][$attachment['attachment_id']] as $guid => $data ) {
+		if( $gContent->updateAttachmentParams( $_REQUEST['attachment_id'], $guid, $data )) {
+			$feedback['success'] = tra( "The data was successfully updated." );
+		} else {
+			$feedback['error'] = $gContent->mErrors;
 		}
 	}
 	// reload the attachment
 	$attachment = LibertyMime::getAttachment( $_REQUEST['attachment_id'] );
 }
 
-// first we need to check the permissions of the content the attachment belongs to since they inherit them
-$gContent = LibertyBase::getLibertyObject( $attachment['content_id'] );
-$gContent->verifyViewPermission();
-$gBitSmarty->assign( 'gContent', $gContent );
 $gBitSmarty->assign( 'attachment', $attachment );
+$gBitSmarty->assign( 'gContent', $gContent );
 $gBitSmarty->assign( 'feedback', $feedback );
 
 // what template are we going to use to display this attachment
