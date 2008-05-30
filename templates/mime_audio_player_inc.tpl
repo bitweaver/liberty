@@ -9,7 +9,7 @@
 	{/if}
 	<div id="audio_player_{$area}{$attachment.attachment_id}"><a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see this video.</div>
 	<script type="text/javascript">/* <![CDATA[ */
-		{if $attachment.thumbnail_url.medium}
+		{if !$attachment.thumbnail_is_mime && $attachment.thumbnail_url.medium}
 			var so = new SWFObject('{$smarty.const.UTIL_PKG_URL}javascript/flv_player/mediaplayer.swf','mpl','{$width}','{$height}','7');
 			so.addVariable("image","{$attachment.thumbnail_url.medium}");
 		{else}

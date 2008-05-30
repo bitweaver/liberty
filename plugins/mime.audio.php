@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.9 2008/05/29 09:55:41 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.10 2008/05/30 17:54:00 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.9 $
+ * @version		$Revision: 1.10 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -142,7 +142,6 @@ function mime_audio_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 	global $gLibertySystem, $gBitThemes;
 
 	// don't load a mime image if we don't have an image for this file
-	$pFileHash['no_mime_image'] = TRUE;
 	if( $ret = mime_default_load( $pFileHash, $pPrefs, $pParams )) {
 		// fetch meta data from the db
 		$ret['meta'] = LibertyMime::getMetaData( $pFileHash['attachment_id'], "ID3" );

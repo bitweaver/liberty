@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.10 2008/05/29 09:55:41 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.11 2008/05/30 17:54:00 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.10 $
+ * @version     $Revision: 1.11 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -217,7 +217,10 @@ function mime_default_load( $pFileHash, &$pPrefs ) {
 				$thumbnailerImageUrl = NULL;
 			}
 
-			$ret['thumbnail_url']    = liberty_fetch_thumbnails( $row['storage_path'], $thumbnailerImageUrl, NULL, empty( $pFileHash['no_mime_image'] ));
+			$ret['thumbnail_url']    = liberty_fetch_thumbnails( $row['storage_path'], $thumbnailerImageUrl );
+			if( !empty( $ret['thumbnail_url']['medium'] ) && strpos( $ret['thumbnail_url']['medium'], '/mime/' )) {
+				$ret['thumbnail_is_mime'] = TRUE;
+			}
 			$ret['filename']         = basename( $row['storage_path'] );
 			$ret['download_url']     = LIBERTY_PKG_URL."mime_download.php?attachment_id=".$row['attachment_id'];
 			$ret['display_url']      = LIBERTY_PKG_URL."mime_view.php?attachment_id=".$row['attachment_id'];
