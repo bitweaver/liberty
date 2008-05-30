@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.10 2008/05/30 17:54:00 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.11 2008/05/30 20:01:22 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.10 $
+ * @version		$Revision: 1.11 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -89,6 +89,8 @@ function mime_audio_update( &$pStoreRow, $pParams = NULL ) {
 	// if we have been passed a set of parameters, we're only interested in updating the meta data
 	$ret = FALSE;
 	if( BitBase::verifyId( $pStoreRow['attachment_id'] )) {
+		$pStoreRow['log'] = array();
+
 		// now that the upload has been processed (if there was one), we'll deal with the additional params
 		if( !empty( $pStoreRow['storage_path'] ) && !empty( $pParams )) {
 			// update our local version of the file
@@ -115,7 +117,6 @@ function mime_audio_update( &$pStoreRow, $pParams = NULL ) {
 
 		// this will set the correct pluign guid, even if we let default handle the store process
 		$pStoreRow['attachment_plugin_guid'] = PLUGIN_MIME_GUID_AUDIO;
-		$pStoreRow['log'] = array();
 
 		// if storing works, we process the audio
 		if( !empty( $pStoreRow['upload'] ) && $ret = mime_default_update( $pStoreRow )) {
@@ -146,9 +147,16 @@ function mime_audio_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 		// fetch meta data from the db
 		$ret['meta'] = LibertyMime::getMetaData( $pFileHash['attachment_id'], "ID3" );
 
-		if( !empty( $ret['source_file'] ) && is_file( dirname( $ret['source_file'] ).'/bitverted.mp3' )) {
-			$ret['audio_url'] = dirname( $ret['source_url'] ).'/bitverted.mp3';
-			// we need some javascript for the flv player:
+		if( !empty( $ret['source_file'] )) {
+			if( is_file( dirname( $ret['source_file'] ).'/bitverted.mp3' )) {
+				$ret['audio_url'] = dirname( $ret['source_url'] ).'/bitverted.mp3';
+				// we need some javascript for the flv player:
+			} elseif( is_file( dirname( $ret['source_file'] ).'/bitverted.m4a' )) {
+				$ret['audio_url'] = dirname( $ret['source_url'] ).'/bitverted.m4a';
+			}
+		}
+
+		if( !empty( $ret['audio_url'] )) {
 			$gBitThemes->loadJavascript( UTIL_PKG_PATH."javascript/flv_player/swfobject.js", FALSE, 25 );
 		}
 	}
@@ -176,8 +184,10 @@ function mime_audio_converter( &$pParamHash ) {
 	$dest_file = $dest_path.'/bitverted.mp3';
 
 	if( @BitBase::verifyId( $pParamHash['attachment_id'] )) {
-		if( !$gBitSystem->isFeatureActive( 'mime_audio_force_encode' ) && preg_match( "#\.mp3$#i", $pParamHash['upload']['name'] )) {
-			// make a copy of the original
+		$pattern = "#.*\.(mp3|m4a)$#i";
+		if( !$gBitSystem->isFeatureActive( 'mime_audio_force_encode' ) && preg_match( $pattern, $pParamHash['upload']['name'] )) {
+			// make a copy of the original maintaining the original extension
+			$dest_file = $dest_path.'/bitverted.'.preg_replace( $pattern, "$1", strtolower( $pParamHash['upload']['name'] ));
 			if( !link( $source, $dest_file )) {
 				copy( $source, $dest_file );
 			}
@@ -187,9 +197,9 @@ function mime_audio_converter( &$pParamHash ) {
 			//       there are many audiofiles that can't be read by ffmpeg but by other tools like flac, faac, oggenc
 			//       mplayer is very good, but has a lot of dependencies and not many servers have it installed
 
-			if( !( $ret = mime_audio_conver_ffmpeg( $pParamHash, $source, $dest_file ))) {
+			if( !( $ret = mime_audio_converter_ffmpeg( $pParamHash, $source, $dest_file ))) {
 				// fall back to using slower mplayer / lame combo
-				$ret = mime_audio_conver_mplayer_lame( $pParamHash, $source, $dest_file );
+				$ret = mime_audio_converter_mplayer_lame( $pParamHash, $source, $dest_file );
 			}
 		}
 
@@ -265,7 +275,7 @@ function mime_audio_converter( &$pParamHash ) {
 }
 
 /**
- * mime_audio_conver_mplayer_lame will decode the audio to wav using mplayer and then encode to mp3 using lame
+ * mime_audio_converter_mplayer_lame will decode the audio to wav using mplayer and then encode to mp3 using lame
  * 
  * @param array $pParamHash file information
  * @param array $pSource source file
@@ -273,7 +283,7 @@ function mime_audio_converter( &$pParamHash ) {
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function mime_audio_conver_mplayer_lame( &$pParamHash, $pSource, $pDest ) {
+function mime_audio_converter_mplayer_lame( &$pParamHash, $pSource, $pDest ) {
 	global $gBitSystem;
 	$ret = FALSE;
 	$log = array();
@@ -316,7 +326,7 @@ function mime_audio_conver_mplayer_lame( &$pParamHash, $pSource, $pDest ) {
 }
 
 /**
- * mime_audio_conver_ffmpeg 
+ * mime_audio_converter_ffmpeg 
  * 
  * @param array $pParamHash file information
  * @param array $pSource source file
@@ -324,7 +334,7 @@ function mime_audio_conver_mplayer_lame( &$pParamHash, $pSource, $pDest ) {
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function mime_audio_conver_ffmpeg( &$pParamHash, $pSource, $pDest ) {
+function mime_audio_converter_ffmpeg( &$pParamHash, $pSource, $pDest ) {
 	global $gBitSystem;
 	$ret = FALSE;
 	$log = array();
