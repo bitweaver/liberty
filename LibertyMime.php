@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.9 2008/05/29 09:04:35 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.10 2008/05/30 12:28:29 wjames5 Exp $
  */
 
 /**
@@ -274,7 +274,7 @@ class LibertyMime extends LibertyAttachable {
 		if( $plugin = $gLibertySystem->getPluginInfo( $pGuid )) {
 			if( !empty( $plugin[$pTemplate.'_tpl'] )) {
 				return $plugin[$pTemplate.'_tpl'];
-			} else {
+			} elseif( $pGuid != LIBERTY_DEFAULT_MIME_HANDLER ) {
 				return LibertyMime::getMimeTemplate( $pTemplate, LIBERTY_DEFAULT_MIME_HANDLER );
 			}
 		}
