@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.12 2008/05/31 06:04:16 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.13 2008/05/31 10:28:54 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.12 $
+ * @version     $Revision: 1.13 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -211,22 +211,25 @@ function mime_default_load( $pFileHash, &$pPrefs ) {
 			}
 
 			$ret['thumbnail_url']    = liberty_fetch_thumbnails( $row['storage_path'], $thumbnailerImageUrl );
+			// indicate that this is a mime thumbnail
 			if( !empty( $ret['thumbnail_url']['medium'] ) && strpos( $ret['thumbnail_url']['medium'], '/mime/' )) {
 				$ret['thumbnail_is_mime'] = TRUE;
 			}
 			$ret['filename']         = basename( $row['storage_path'] );
-			$ret['download_url']     = LIBERTY_PKG_URL."mime_download.php?attachment_id=".$row['attachment_id'];
 			$ret['display_url']      = LIBERTY_PKG_URL."mime_view.php?attachment_id=".$row['attachment_id'];
 			$ret['mime_type']        = $row['mime_type'];
 			$ret['file_size']        = $row['file_size'];
 			$ret['attachment_id']    = $row['attachment_id'];
 			$ret['preferences']      = $pPrefs;
 
-			// make sure we have a file
+			// some stuff is only available if we have a source file
+			//    make sure to check for these when you use them. frequently the original might not be available
+			//    e.g.: video files are large and the original might be deleted after conversion
 			if( is_file( BIT_ROOT_PATH.$row['storage_path'] )) {
-				$ret['source_file']      = BIT_ROOT_PATH.$row['storage_path'];
-				$ret['source_url']       = str_replace('//', '/', BIT_ROOT_URL.str_replace( '+', '%20', str_replace( '%2F', '/', urlencode( $row['storage_path'] ))));
+				$ret['source_file']   = BIT_ROOT_PATH.$row['storage_path'];
+				$ret['source_url']    = path_to_url( $row['storage_path'] );
 				$ret['last_modified'] = filemtime( $ret['source_file'] );
+				$ret['download_url']  = LIBERTY_PKG_URL."mime_download.php?attachment_id=".$row['attachment_id'];
 			}
 
 			if( $gLibertySystem->isPluginActive( 'dataattachment' )) {
@@ -254,7 +257,7 @@ function mime_default_download( &$pFileHash ) {
 	$ret = FALSE;
 
 	// Check to see if the file actually exists
-	if( is_readable( $pFileHash['source_file'] )) {
+	if( !empty( $pFileHash['source_file'] ) && is_readable( $pFileHash['source_file'] )) {
 		// if we have PEAR HTTP/Download installed, we make use of it since it allows download resume and download manager access
 		// read the docs if you want to enable download throttling and the like
 		if( @include_once( 'HTTP/Download.php' )) {
