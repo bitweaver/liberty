@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.11 2008/05/30 17:54:00 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.12 2008/05/31 06:04:16 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.11 $
+ * @version     $Revision: 1.12 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -176,13 +176,6 @@ function mime_default_store( &$pStoreRow ) {
 			"user_id"                => $pStoreRow['user_id'],
 		);
 		$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_attachments", $storeHash );
-
-		// TODO: deal with primary attachments
-		//$this->setPrimaryAttachment(
-		//	$pParamHash['liberty_attachments']['primary'],
-		//	$pParamHash['content_id'],
-		//	empty( $pParamHash['liberty_attachments']['auto_primary'] ) || $pParamHash['liberty_attachments']['auto_primary'] ? TRUE : FALSE
-		//);
 
 		$ret = TRUE;
 	} else {
