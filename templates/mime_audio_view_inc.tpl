@@ -63,15 +63,7 @@
 	<div class="row">
 		{formlabel label="Filename" for=""}
 		{forminput}
-			<a href="{$attachment.download_url}">{$attachment.filename|escape}</a>
-			&nbsp; <small>({$attachment.mime_type})</small>
-			{* TODO: get this to work if $gContent->hasEditPermission() && $attachment.flv_url}
-				{form ipackage=treasury ifile="plugins/form.flv.php"}
-					<input type="hidden" name="content_id" value="{$gContent->mContentId}" />
-					<input type="submit" name="remove_original" value="{tr}Remove Original{/tr}" />
-					{formhelp note="This will remove the original file from the server. The falsh video will remain and you can still view the video but you cannot download the original anymore."}
-				{/form}
-			{/if*}
+			<a href="{$attachment.download_url}">{$attachment.filename|escape}</a> <small>({$attachment.mime_type})</small>
 		{/forminput}
 	</div>
 
