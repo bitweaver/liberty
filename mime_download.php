@@ -1,6 +1,6 @@
 <?php
 /**
- * @version      $Header: /cvsroot/bitweaver/_bit_liberty/Attic/mime_download.php,v 1.1 2008/05/10 21:50:36 squareing Exp $
+ * @version      $Header: /cvsroot/bitweaver/_bit_liberty/Attic/mime_download.php,v 1.2 2008/05/31 10:26:56 squareing Exp $
  *
  * @author       xing  <xing@synapse.plus.com>
  * @package      treasury
@@ -27,9 +27,9 @@ if( $download_function = LibertyMime::getPluginFunction( $attachment['attachment
 	if( $download_function( $attachment )) {
 		die;
 	} else {
-		if( !empty( $gContent->mInfo['errors'] )) {
+		if( !empty( $attachment['errors'] )) {
 			$msg = '';
-			foreach( $gContent->mInfo['errors'] as $error ) {
+			foreach( $attachment['errors'] as $error ) {
 				$msg .= $error.'<br />';
 			}
 			$gBitSystem->fatalError( tra( $msg ));
