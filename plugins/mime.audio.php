@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.11 2008/05/30 20:01:22 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.12 2008/05/31 09:06:06 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.11 $
+ * @version		$Revision: 1.12 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -181,7 +181,6 @@ function mime_audio_converter( &$pParamHash ) {
 
 	$source = BIT_ROOT_PATH.$pParamHash['upload']['dest_path'].$pParamHash['upload']['name'];
 	$dest_path = dirname( $source );
-	$dest_file = $dest_path.'/bitverted.mp3';
 
 	if( @BitBase::verifyId( $pParamHash['attachment_id'] )) {
 		$pattern = "#.*\.(mp3|m4a)$#i";
@@ -197,6 +196,8 @@ function mime_audio_converter( &$pParamHash ) {
 			//       there are many audiofiles that can't be read by ffmpeg but by other tools like flac, faac, oggenc
 			//       mplayer is very good, but has a lot of dependencies and not many servers have it installed
 
+			// if we convert audio, we always make an mp3
+			$dest_file = $dest_path.'/bitverted.mp3';
 			if( !( $ret = mime_audio_converter_ffmpeg( $pParamHash, $source, $dest_file ))) {
 				// fall back to using slower mplayer / lame combo
 				$ret = mime_audio_converter_mplayer_lame( $pParamHash, $source, $dest_file );
@@ -205,7 +206,7 @@ function mime_audio_converter( &$pParamHash ) {
 
 		// if the conversion was successful, we'll copy the tags to the new mp3 file and import data to meta tables
 		if( $ret == TRUE ) {
-			$log['success'] = 'SUCCESS: Converted to mp3 audio';
+			$log['success'] = 'Successfully converted to mp3 audio';
 
 			// now that we have a new mp3 file, we might as well copy the tags accross in case someone downloads it
 			require_once( UTIL_PKG_PATH.'getid3/getid3/getid3.php' );
@@ -215,7 +216,7 @@ function mime_audio_converter( &$pParamHash ) {
 			getid3_lib::CopyTagsToComments( $meta );
 
 			// write tags to new mp3 file
-			if( $errors = mime_audio_update_tags( $source, $meta['comments'] )) {
+			if( $errors = mime_audio_update_tags( $dest_file, $meta['comments'] )) {
 				$log['tagging'] = $errors;
 			}
 
