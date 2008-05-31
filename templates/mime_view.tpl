@@ -16,7 +16,7 @@
 
 				<div class="row submit">
 					<input type="hidden" name="attachment_id" value="{$smarty.request.attachment_id}" />
-					<input type="submit" name="plugin_submit" value="{tr}Update Plugin Data{/tr}" />
+					<input type="submit" name="plugin_submit" value="{tr}Update File{/tr}" />
 				</div>
 			{/form}
 		{/if}
