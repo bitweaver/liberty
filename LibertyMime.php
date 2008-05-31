@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.11 2008/05/30 12:30:25 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.12 2008/05/31 06:05:07 squareing Exp $
  */
 
 /**
@@ -83,62 +83,71 @@ class LibertyMime extends LibertyAttachable {
 	function store( &$pStoreHash ) {
 		global $gLibertySystem;
 		// make sure all the data is in order
-		if( LibertyContent::store( $pStoreHash ) && LibertyMime::verify( $pStoreHash ) && !empty( $pStoreHash['upload_store']['files'] )) {
-			$this->mDb->StartTrans();
+		if( LibertyContent::store( $pStoreHash ) && LibertyMime::verify( $pStoreHash )) {
+			if( !empty( $pStoreHash['upload_store']['files'] ) && is_array( $pStoreHash['upload_store']['files'] )) {
+				$this->mDb->StartTrans();
 
-			foreach( $pStoreHash['upload_store']['files'] as $upload ) {
-				// we might be updating attachments and they might have some additional data they need to process
-				if( @BitBase::verifyId( $upload['attachment_id'] ) && !empty( $pStoreHash['plugin'][$upload['attachment_id']] ) && is_array( $pStoreHash['plugin'][$upload['attachment_id']] )) {
-					foreach( $pStoreHash['plugin'][$upload['attachment_id']] as $guid => $params ) {
-						$this->updateAttachmentParams( $upload['attachment_id'], $guid, $params );
-					}
-				}
-
-				// exit if $upload is empty
-				if( empty( $upload['tmp_name'] )) {
-					break;
-				}
-
-				$storeRow = $pStoreHash['upload_store'];
-				unset( $storeRow['files'] );
-
-				// copy by reference that the filetype when changes are made in lookupMimeHandler()
-				$storeRow['upload'] = &$upload;
-
-				// when content is created the content_id is only available after LibertyContent::store()
-				if( !@BitBase::verifyId( $pStoreHash['content_id'] )) {
-					// this probably isn't necessary anymore since every attachment should have a content_id associated with it
-					$storeRow['content_id'] = NULL;
-				} else {
-					$storeRow['content_id'] = $pStoreHash['content_id'];
-				}
-
-				// call the appropriate plugin to deal with the upload
-				$guid = $gLibertySystem->lookupMimeHandler( $upload );
-				if( $verify_function = LibertyMime::getPluginFunction( $guid, 'verify_function' )) {
-					// verify the uploaded file using the plugin
-					if( $verify_function( $storeRow )) {
-						// if we have an attachment id we know it's an update
-						if( @BitBase::verifyId( $upload['attachment_id'] )) {
-							$function_name = 'update_function';
-						} else {
-							$function_name = 'store_function';
+				foreach( $pStoreHash['upload_store']['files'] as $upload ) {
+					// we might be updating attachments and they might have some additional data they need to process
+					if( @BitBase::verifyId( $upload['attachment_id'] ) && !empty( $pStoreHash['plugin'][$upload['attachment_id']] ) && is_array( $pStoreHash['plugin'][$upload['attachment_id']] )) {
+						foreach( $pStoreHash['plugin'][$upload['attachment_id']] as $guid => $params ) {
+							$this->updateAttachmentParams( $upload['attachment_id'], $guid, $params );
 						}
+					}
 
-						if( $process_function = LibertyMime::getPluginFunction( $guid, $function_name )) {
-							if( !$process_function( $storeRow )) {
-								$this->mErrors = array_merge( $this->mErrors, $storeRow['errors'] );
+					// exit if $upload is empty
+					if( empty( $upload['tmp_name'] )) {
+						break;
+					}
+
+					$storeRow = $pStoreHash['upload_store'];
+					unset( $storeRow['files'] );
+
+					// copy by reference that the filetype when changes are made in lookupMimeHandler()
+					$storeRow['upload'] = &$upload;
+
+					// when content is created the content_id is only available after LibertyContent::store()
+					if( !@BitBase::verifyId( $pStoreHash['content_id'] )) {
+						// this probably isn't necessary anymore since every attachment should have a content_id associated with it
+						$storeRow['content_id'] = NULL;
+					} else {
+						$storeRow['content_id'] = $pStoreHash['content_id'];
+					}
+
+					// call the appropriate plugin to deal with the upload
+					$guid = $gLibertySystem->lookupMimeHandler( $upload );
+					if( $verify_function = LibertyMime::getPluginFunction( $guid, 'verify_function' )) {
+						// verify the uploaded file using the plugin
+						if( $verify_function( $storeRow )) {
+							// if we have an attachment id we know it's an update
+							if( @BitBase::verifyId( $upload['attachment_id'] )) {
+								$function_name = 'update_function';
+							} else {
+								$function_name = 'store_function';
+							}
+
+							if( $process_function = LibertyMime::getPluginFunction( $guid, $function_name )) {
+								if( !$process_function( $storeRow )) {
+									$this->mErrors = array_merge( $this->mErrors, $storeRow['errors'] );
+								}
+							} else {
+								$this->mErrors['store_function'] = tra( 'No suitable store function found.' );
 							}
 						} else {
-							$this->mErrors['store_function'] = tra( 'No suitable store function found.' );
+							$this->mErrors = array_merge( $this->mErrors, $storeRow['errors'] );
 						}
 					} else {
-						$this->mErrors = array_merge( $this->mErrors, $storeRow['errors'] );
+						$this->mErrors['verify_function'] = tra( 'No suitable verify function found.' );
 					}
-				} else {
-					$this->mErrors['verify_function'] = tra( 'No suitable verify function found.' );
 				}
 			}
+
+			// deal with the primary attachment after we've dealt with all the files
+			$this->setPrimaryAttachment(
+				$pStoreHash['liberty_attachments']['primary'],
+				$pStoreHash['content_id'],
+				empty( $pStoreHash['liberty_attachments']['auto_primary'] ) || $pStoreHash['liberty_attachments']['auto_primary'] ? TRUE : FALSE
+			);
 
 			$this->mDb->CompleteTrans();
 		}
@@ -189,6 +198,11 @@ class LibertyMime extends LibertyAttachable {
 			if( !$gBitUser->hasPermission( 'p_liberty_attach_attachments' )) {
 				$this->mErrors['permission'] = tra( 'You do not have permission to upload attachments.' );
 			}
+		}
+
+		// primary attachment. Allow 'none' to clear the primary.
+		if( !@BitBase::verifyId( $pParamHash['liberty_attachments']['primary'] ) && ( empty( $pParamHash['liberty_attachments']['primary'] ) || $pParamHash['liberty_attachments']['primary'] != 'none' ) ) {
+			$pParamHash['liberty_attachments']['primary'] = NULL;
 		}
 
 		return ( count( $this->mErrors ) == 0 );
