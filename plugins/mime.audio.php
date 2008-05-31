@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.12 2008/05/31 09:06:06 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.13 2008/05/31 10:34:22 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.12 $
+ * @version		$Revision: 1.13 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -91,20 +91,26 @@ function mime_audio_update( &$pStoreRow, $pParams = NULL ) {
 	if( BitBase::verifyId( $pStoreRow['attachment_id'] )) {
 		$pStoreRow['log'] = array();
 
+		if( !empty( $pStoreRow['source_file'] ) && !empty( $pParams['remove_original'] )) {
+			if( $file = LibertyMime::validateStoragePath( $pStoreRow['source_file'] )) {
+				unlink( $file );
+			}
+		}
+
 		// now that the upload has been processed (if there was one), we'll deal with the additional params
-		if( !empty( $pStoreRow['storage_path'] ) && !empty( $pParams )) {
+		if( !empty( $pStoreRow['storage_path'] ) && !empty( $pParams['meta'] )) {
 			// update our local version of the file
 			$file = BIT_ROOT_PATH.$pStoreRow['storage_path'];
 			$verted = dirname( $file ).'/bitverted.mp3';
-			if( $errors = mime_audio_update_tags( $verted, $pParams )) {
+			if( $errors = mime_audio_update_tags( $verted, $pParams['meta'] )) {
 				$log['tagging'] = $errors;
 			}
 
 			// the original file might be an mp3 as well - don't worry about errors on this file
-			mime_audio_update_tags( $file, $pParams );
+			mime_audio_update_tags( $file, $pParams['meta'] );
 
 			// finally we update the meta table data
-			if( !LibertyMime::storeMetaData( $pStoreRow['attachment_id'], 'ID3', $pParams )) {
+			if( !LibertyMime::storeMetaData( $pStoreRow['attachment_id'], 'ID3', $pParams['meta'] )) {
 				$log['store_meta'] = "There was a problem storing the meta data in the database";
 			}
 
@@ -147,12 +153,12 @@ function mime_audio_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 		// fetch meta data from the db
 		$ret['meta'] = LibertyMime::getMetaData( $pFileHash['attachment_id'], "ID3" );
 
-		if( !empty( $ret['source_file'] )) {
-			if( is_file( dirname( $ret['source_file'] ).'/bitverted.mp3' )) {
-				$ret['audio_url'] = dirname( $ret['source_url'] ).'/bitverted.mp3';
+		if( !empty( $ret['storage_path'] )) {
+			if( is_file( dirname( BIT_ROOT_PATH.$ret['storage_path'] ).'/bitverted.mp3' )) {
+				$ret['audio_url'] = dirname( path_to_url( $ret['storage_path'] )).'/bitverted.mp3';
 				// we need some javascript for the flv player:
-			} elseif( is_file( dirname( $ret['source_file'] ).'/bitverted.m4a' )) {
-				$ret['audio_url'] = dirname( $ret['source_url'] ).'/bitverted.m4a';
+			} elseif( is_file( dirname( BIT_ROOT_PATH.$ret['storage_path'] ).'/bitverted.m4a' )) {
+				$ret['audio_url'] = dirname( path_to_url( $ret['storage_path'] )).'/bitverted.m4a';
 			}
 		}
 
