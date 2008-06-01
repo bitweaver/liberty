@@ -1,6 +1,6 @@
 {strip}
 {if $attachment.audio_url}
-	{if $area eq "storage_thumbs"}
+	{if $thumbsize eq "small"}
 		{assign var=width value=160}
 		{assign var=height value=140}
 	{else}
