@@ -15,23 +15,28 @@
 
 			<tr>
 				<td></td><td></td>
-				{if $uploadTab }
+				{if $uploadTab}
 					<td class="actionicon">
 						<label>
 							{tr}No {$primary_label|default:"Primary"}{/tr}:&nbsp;
 							<input type="radio" name="liberty_attachments[primary]" value="none" {if empty($gContent->mInfo[primary])}checked="checked"{/if} />
 						</label>
 					</td>
+					{assign var=area value=upload_tab}
 				{/if}
-			<tr>
+			</tr>
 
 			{foreach from=$gContent->mStorage item=storage key=attachmentId name=atts}
 				<tr class="{cycle values="odd,even"}">
 					<td style="text-align:center;">
-						{jspopup href=$storage.source_url title=$storage.title|default:$storage.filename notra=1 img=$storage.thumbnail_url.avatar}
-						<br />{$storage.filename} <span class="date">{$storage.file_size|display_bytes}</span>
-						{if $smarty.foreach.atts.first}
-							{formhelp note="click to see large preview"}
+						{if $storage.is_mime}
+							{include file=$gContent->getMimeTemplate('inline',$storage.attachment_plugin_guid) area=$area thumbsize=small preferences=$gContent->mStoragePrefs.$attachmentId attachment=$storage}
+						{else}
+							{jspopup href=$storage.source_url title=$storage.title|default:$storage.filename notra=1 img=$storage.thumbnail_url.avatar}
+							<br />{$storage.filename} <span class="date">{$storage.file_size|display_bytes}</span>
+							{if $smarty.foreach.atts.first}
+								{formhelp note="click to see large preview"}
+							{/if}
 						{/if}
 					</td>
 					<td style="text-align:center;">
@@ -55,7 +60,10 @@
 										{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}
 								</a>
 							{else}
-								<a href="{$smarty.server.PHP_SELF}?{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}">{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}</a>
+								{if $storage.is_mime}
+									<a href="{$smarty.const.LIBERTY_PKG_URL}mime_view.php?attachment_id={$attachmentId}">{biticon ipackage="icons" iname="document-open" iexplain="View"}</a>
+								{/if}
+								<a href="{$smarty.server.PHP_SELF}?{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}">{biticon ipackage="icons" iname="edit-delete" iexplain="Delete"}</a>
 							{/if}
 						{/if}
 					</td>
