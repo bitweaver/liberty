@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.21 $
+ * @version  $Revision: 1.22 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.21 2007/07/14 07:46:56 squareing Exp $
+// $Id: data.code.php,v 1.22 2008/06/01 09:41:59 squareing Exp $
 
 /**
  * definitions
@@ -111,7 +111,7 @@ function data_code_help() {
 			<strong>VisualFoxPro</strong> &bull;
 			<strong>XML</strong>';
 	} else {
-		$help = $help .'HTML or PHP</strong>. ';
+		$help = $help .'<strong>HTML</strong> or <strong>PHP</strong>. ';
 	}
 	$help = $help . '<br />' . tra("The Default = ") . '<strong>PHP</strong></td>'
 			.'</tr>'

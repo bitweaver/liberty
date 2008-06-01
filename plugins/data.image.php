@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/data.image.php,v 1.7 2008/05/04 17:47:39 spiderr Exp $
+ * @version  $Revision: 1.8 $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/data.image.php,v 1.8 2008/06/01 09:47:04 squareing Exp $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -136,7 +136,7 @@ function data_image_help() {
 			.'<tr class="odd">'
 				.'<td>nolink</td>'
 				.'<td>' . tra( "key-words") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Remove hotlink from element. Used to display fixed copies of an image item.")
+				.'<td>' . tra( "Remove hotlink from element. Used to display fixed copies of an image item.") . '</td>'
 			.'</tr>'
 		.'</table>'
 		. tra( "Example: ") . "{image id='13' size='small'}";
