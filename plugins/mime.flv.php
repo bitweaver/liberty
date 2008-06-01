@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.8 2008/05/29 09:55:41 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.9 2008/06/01 09:49:00 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.8 $
+ * @version		$Revision: 1.9 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -139,22 +139,13 @@ function mime_flv_load( $pFileHash, &$pPrefs, $pParams = NULL ) {
 				$ret['status']['processing'] = TRUE;
 			} elseif( is_file( dirname( $ret['source_file'] ).'/flick.flv' )) {
 				$ret['flv_url'] = dirname( $ret['source_url'] ).'/flick.flv';
-				// we need some javascript for the flv player:
-				$gBitThemes->loadJavascript( UTIL_PKG_PATH."javascript/flv_player/swfobject.js", FALSE, 25 );
 			} elseif( is_file( dirname( $ret['source_file'] ).'/flick.mp4' )) {
 				$ret['flv_url'] = dirname( $ret['source_url'] ).'/flick.mp4';
-				// we need some javascript for the flv player:
-				$gBitThemes->loadJavascript( UTIL_PKG_PATH."javascript/flv_player/swfobject.js", FALSE, 25 );
 			}
 		}
 
 		// now that we have the original width and height, we can get the displayed values
 		$ret['preferences'] = mime_flv_calculate_videosize( $ret, $pPrefs, $pParams );
-
-		// we can use a special plugin if active to include flvs in wiki pages
-		if( $gLibertySystem->isPluginActive( 'dataflashvideo' )) {
-			$ret['wiki_plugin_link'] = "{flashvideo id={$ret['attachment_id']}}";
-		}
 	}
 	return $ret;
 }

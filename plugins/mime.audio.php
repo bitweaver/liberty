@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.13 2008/05/31 10:34:22 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.14 2008/06/01 09:49:00 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.13 $
+ * @version		$Revision: 1.14 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -160,10 +160,6 @@ function mime_audio_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 			} elseif( is_file( dirname( BIT_ROOT_PATH.$ret['storage_path'] ).'/bitverted.m4a' )) {
 				$ret['audio_url'] = dirname( path_to_url( $ret['storage_path'] )).'/bitverted.m4a';
 			}
-		}
-
-		if( !empty( $ret['audio_url'] )) {
-			$gBitThemes->loadJavascript( UTIL_PKG_PATH."javascript/flv_player/swfobject.js", FALSE, 25 );
 		}
 	}
 	return $ret;
