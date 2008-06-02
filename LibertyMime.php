@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.12 2008/05/31 06:05:07 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.13 2008/06/02 18:08:17 squareing Exp $
  */
 
 /**
@@ -27,12 +27,7 @@ class LibertyMime extends LibertyAttachable {
 	 * @return void
 	 */
 	function LibertyMime() {
-		global $gLibertySystem;
 		LibertyAttachable::LibertyAttachable();
-
-		// ensure that default mime handler is enabled
-		// FIXME: this should really be somewhere else and should not be as crude as this.
-		$gLibertySystem->setActivePlugin( LIBERTY_DEFAULT_MIME_HANDLER );
 	}
 
 	/**
