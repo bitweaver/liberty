@@ -3,7 +3,7 @@
  * attachment_browser
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.15 $
+ * @version  $Revision: 1.16 $
  * @package  liberty
  * @subpackage functions
  */
@@ -18,7 +18,7 @@ global $gBitSmarty, $gContent, $gBitUser, $gBitSystem, $gLibertySystem;
 // we just want information about a single attachment
 if (isset($_REQUEST['attachment_id']) && is_numeric($_REQUEST['attachment_id'])){
 	if ( !$gContent ){
-		$gContent = new LibertyAttachable();
+		$gContent = new LibertyMime();
 	}
 	// this is a hack to make it compatible with existing tpls for now
 	$attachment = $gContent->getAttachment($_REQUEST['attachment_id']);
