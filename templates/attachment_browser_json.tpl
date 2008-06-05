@@ -8,6 +8,7 @@
     {ldelim}
 		  "id":{$attachmentId},
 		  "url":'{$storage.source_url}',
+		  "mime_type":'{$storage.mime_type}',
 		  "avatar":'{$storage.thumbnail_url.avatar}',
 		  "small":'{$storage.thumbnail_url.small}',
 		  "medium":'{$storage.thumbnail_url.medium}',
