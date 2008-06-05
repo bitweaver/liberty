@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.13 2008/06/02 18:08:17 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.14 2008/06/05 23:20:53 wjames5 Exp $
  */
 
 /**
@@ -330,7 +330,7 @@ class LibertyMime extends LibertyAttachable {
 		global $gBitSystem;
 
 		$ret = array();
-		if( !empty( $this )) {
+		if( !empty( $this ) && is_subclass_of( $this, "LibertyMime" ) ) {
 			// we're loading from within object
 			if( is_null( $this->mStoragePrefs )) {
 				$this->loadAttachmentPreferences();
