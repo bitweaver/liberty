@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.14 2008/06/01 09:49:00 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.15 2008/06/06 05:47:20 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.14 $
+ * @version		$Revision: 1.15 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -91,22 +91,32 @@ function mime_audio_update( &$pStoreRow, $pParams = NULL ) {
 	if( BitBase::verifyId( $pStoreRow['attachment_id'] )) {
 		$pStoreRow['log'] = array();
 
-		if( !empty( $pStoreRow['source_file'] ) && !empty( $pParams['remove_original'] )) {
-			if( $file = LibertyMime::validateStoragePath( $pStoreRow['source_file'] )) {
-				unlink( $file );
+		// set the correct pluign guid, even if we let default handle the store process
+		$pStoreRow['attachment_plugin_guid'] = PLUGIN_MIME_GUID_AUDIO;
+		// remove the entire directory
+		$pStoreRow['unlink_dir'] = TRUE;
+
+		// if storing works, we process the audio
+		if( !empty( $pStoreRow['upload'] ) && $ret = mime_default_update( $pStoreRow )) {
+			if( !mime_audio_converter( $pStoreRow )) {
+				// if it all goes tits up, we'll know why
+				$pStoreRow['errors'] = $pStoreRow['log'];
+				$ret = FALSE;
 			}
 		}
 
-		// now that the upload has been processed (if there was one), we'll deal with the additional params
-		if( !empty( $pStoreRow['storage_path'] ) && !empty( $pParams['meta'] )) {
+		// if there was no upload we'll process the file parameters
+		if( empty( $pStoreRow['upload'] ) && !empty( $pParams['meta'] )) {
 			// update our local version of the file
 			$file = BIT_ROOT_PATH.$pStoreRow['storage_path'];
-			$verted = dirname( $file ).'/bitverted.mp3';
-			if( $errors = mime_audio_update_tags( $verted, $pParams['meta'] )) {
-				$log['tagging'] = $errors;
+			if( is_file( dirname( $file ).'/bitverted.mp3' )) {
+				$verted = dirname( $file ).'/bitverted.mp3';
+			} elseif( is_file( dirname( $file ).'/bitverted.m4a' )) {
+				$verted = dirname( $file ).'/bitverted.m4a';
 			}
 
-			// the original file might be an mp3 as well - don't worry about errors on this file
+			// update audio tags of converted and original file (ignore errors since these might be m4a)
+			mime_audio_update_tags( $verted, $pParams['meta'] );
 			mime_audio_update_tags( $file, $pParams['meta'] );
 
 			// finally we update the meta table data
@@ -118,18 +128,6 @@ function mime_audio_update( &$pStoreRow, $pParams = NULL ) {
 				$ret = TRUE;
 			} else {
 				$pStoreRow['errors'] = $log;
-			}
-		}
-
-		// this will set the correct pluign guid, even if we let default handle the store process
-		$pStoreRow['attachment_plugin_guid'] = PLUGIN_MIME_GUID_AUDIO;
-
-		// if storing works, we process the audio
-		if( !empty( $pStoreRow['upload'] ) && $ret = mime_default_update( $pStoreRow )) {
-			if( !mime_audio_converter( $pStoreRow )) {
-				// if it all goes tits up, we'll know why
-				$pStoreRow['errors'] = $pStoreRow['log'];
-				$ret = FALSE;
 			}
 		}
 	}
@@ -189,7 +187,7 @@ function mime_audio_converter( &$pParamHash ) {
 		if( !$gBitSystem->isFeatureActive( 'mime_audio_force_encode' ) && preg_match( $pattern, $pParamHash['upload']['name'] )) {
 			// make a copy of the original maintaining the original extension
 			$dest_file = $dest_path.'/bitverted.'.preg_replace( $pattern, "$1", strtolower( $pParamHash['upload']['name'] ));
-			if( !link( $source, $dest_file )) {
+			if( !is_file( $dest_file ) && !link( $source, $dest_file )) {
 				copy( $source, $dest_file );
 			}
 			$ret = TRUE;
@@ -197,6 +195,7 @@ function mime_audio_converter( &$pParamHash ) {
 			// TODO: have a better mechanism of converting audio to mp3. ffmpeg works well as long as the source is 'perfect'
 			//       there are many audiofiles that can't be read by ffmpeg but by other tools like flac, faac, oggenc
 			//       mplayer is very good, but has a lot of dependencies and not many servers have it installed
+			//       also, using mplayer is a 2 step process: decoding and encoding
 
 			// if we convert audio, we always make an mp3
 			$dest_file = $dest_path.'/bitverted.mp3';
