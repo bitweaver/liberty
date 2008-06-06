@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.15 2008/06/06 05:47:20 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.16 2008/06/06 06:23:36 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.15 $
+ * @version		$Revision: 1.16 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -120,6 +120,7 @@ function mime_audio_update( &$pStoreRow, $pParams = NULL ) {
 			mime_audio_update_tags( $file, $pParams['meta'] );
 
 			// finally we update the meta table data
+			LibertyMime::expungeMetaData( $pStoreRow['attachment_id'] );
 			if( !LibertyMime::storeMetaData( $pStoreRow['attachment_id'], 'ID3', $pParams['meta'] )) {
 				$log['store_meta'] = "There was a problem storing the meta data in the database";
 			}
@@ -228,6 +229,8 @@ function mime_audio_converter( &$pParamHash ) {
 			$store['playtimeseconds'] = $meta['playtime_seconds'];
 			$store['playtimestring']  = $meta['playtime_string'];
 
+			// make sure we remove previous entries first
+			LibertyMime::expungeMetaData( $pParamHash['attachment_id'] );
 			if( !LibertyMime::storeMetaData( $pParamHash['attachment_id'], 'ID3', $store )) {
 				$log['store_meta'] = "There was a problem storing the meta data in the database";
 			}
