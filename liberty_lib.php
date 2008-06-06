@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.33 2008/05/23 09:32:49 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.34 2008/06/06 06:23:04 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -840,7 +840,7 @@ function liberty_fetch_thumbnail_url( $pFilePath, $pThumbSize = 'small', $pAltIm
  * 
  * @param string $pEmptyOption string to use as empty option - if set to FALSE no empty string is eincluded - Note that string is tra()'d
  * @access public
- * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+ * @return array of image size options suitable for use in a form
  */
 function get_image_size_options( $pEmptyOption = 'Disable this feature' ) {
 	global $gThumbSizes;
@@ -849,7 +849,7 @@ function get_image_size_options( $pEmptyOption = 'Disable this feature' ) {
 		$ret[''] = tra( $pEmptyOption );
 	}
 	foreach( $gThumbSizes as $key => $size ) {
-		$ret[$key] = tra( ucfirst( $key ))." ( ". ( empty($size['width']) ? tra('unlimited') : $size['width'] ) ." x ". ( empty($size['height']) ? tra('unlimited') : $size['height'] ) ." ".tra( 'pixels' )." )";
+		$ret[$key] = tra( ucfirst( $key ))." ( ". ( empty( $size['width'] ) ? tra( 'unlimited' ) : $size['width'] ) ." x ". ( empty($size['height'] ) ? tra('unlimited') : $size['height'] ) ." ".tra( 'pixels' )." )";
 	}
 	return $ret;
 }
