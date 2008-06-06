@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.14 2008/06/05 22:23:57 wjames5 Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.15 2008/06/06 05:45:51 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.14 $
+ * @version     $Revision: 1.15 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -123,7 +123,12 @@ function mime_default_update( &$pStoreRow ) {
 			// First we remove the old file
 			$file = BIT_ROOT_PATH.$pStoreRow['storage_path'];
 			if(( $nuke = LibertyMime::validateStoragePath( $file )) && is_file( $nuke )) {
-				@unlink( BIT_ROOT_PATH.$pStoreRow['storage_path'] );
+				if( !empty( $pStoreRow['unlink_dir'] )) {
+					@unlink_r( dirname( BIT_ROOT_PATH.$pStoreRow['storage_path'] ));
+					mkdir( dirname( BIT_ROOT_PATH.$pStoreRow['storage_path'] ));
+				} else {
+					@unlink( BIT_ROOT_PATH.$pStoreRow['storage_path'] );
+				}
 			}
 
 			// make sure we store the new file in the same place as before
