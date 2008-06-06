@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.156 2008/05/28 18:27:22 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.157 2008/06/06 06:22:41 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -705,7 +705,7 @@ class LibertyAttachable extends LibertyContent {
 	function clearPrimaryAttachment( $pContentId ) {
 		$ret = FALSE;
 
-		if (@BitBase::verifyId($pContentId)) {
+		if( @BitBase::verifyId( $pContentId )) {
 			$query = "
 				UPDATE `".BIT_DB_PREFIX."liberty_attachments`
 				SET `is_primary` = ? WHERE `content_id` = ?";
@@ -888,6 +888,19 @@ class LibertyAttachable extends LibertyContent {
 			}
 		}
 		return $ret;
+	}
+
+	/**
+	 * expungeMetaData will remove the meta data for a given attachment
+	 * 
+	 * @param array $pAttachmentId Attachment ID of attachment
+	 * @access public
+	 * @return query result
+	 */
+	function expungeMetaData( $pAttachmentId ) {
+		if( @BitBase::verifyId( $pAttachmentId )) {
+			return $this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` WHERE `attachment_id` = ?", array( $pAttachmentId ));
+		}
 	}
 
 	/**
