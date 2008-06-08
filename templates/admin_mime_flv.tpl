@@ -10,6 +10,16 @@
 				You can find some information relating to this plugin on the <a class="external" href="http://www.bitweaver.org/wiki/TreasuryFlvPlugin">TreasuryFlvPlugin plugin page</a> at bitweaver.org.
 			</p>
 
+			{if $ffmpeg_extension}
+				<p class="success">
+					{biticon iname="dialog-ok" iexplain="OK"} {tr}The <a href="http://ffmpeg-php.sourceforge.net/">ffmpeg-php</a> extension is available.{/tr}
+				</p>
+			{else}
+				<p class="warning">
+					{biticon iname="dialog-warning" iexplain="Warining"} {tr}If possible, please install the <a href="http://ffmpeg-php.sourceforge.net/">ffmpeg-php</a> php extension. This plugin will work without the extension but many features will not work well such as video recognition and mp4 uploads.{/tr}
+				</p>
+			{/if}
+
 			{if !$gLibertySystem->isPluginActive( 'mimeflv' )}
 				{formfeedback error="This plugins has not been enabled. All settings you change here will have no effect on uploaded videos unless you enable the plugin in the liberty plugins administration screen"}
 			{/if}
