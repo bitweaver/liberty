@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.15 2008/06/06 05:45:51 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.16 2008/06/08 16:42:34 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.15 $
+ * @version     $Revision: 1.16 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -232,7 +232,7 @@ function mime_default_load( $pFileHash, &$pPrefs ) {
 			//    e.g.: video files are large and the original might be deleted after conversion
 			if( is_file( BIT_ROOT_PATH.$row['storage_path'] )) {
 				$ret['source_file']   = BIT_ROOT_PATH.$row['storage_path'];
-				$ret['source_url']    = path_to_url( $row['storage_path'] );
+				$ret['source_url']    = str_replace( "//", "/", BIT_ROOT_URL.path_to_url( $row['storage_path'] ));
 				$ret['last_modified'] = filemtime( $ret['source_file'] );
 				$ret['download_url']  = LIBERTY_PKG_URL."mime_download.php?attachment_id=".$row['attachment_id'];
 			}
