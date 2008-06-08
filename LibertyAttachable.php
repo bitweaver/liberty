@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.157 2008/06/06 06:22:41 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.158 2008/06/08 10:17:12 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -778,8 +778,11 @@ class LibertyAttachable extends LibertyContent {
 						// remove this entry from the database if it already exists
 						$gBitSystem->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` WHERE `attachment_id` = ? AND `meta_type_id` = ? AND `meta_title_id` = ?", $meta );
 
-						$meta['meta_value'] = $data;
-						$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_attachment_meta_data", $meta );
+						// don't insert empty lines
+						if( !empty( $data )) {
+							$meta['meta_value'] = $data;
+							$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_attachment_meta_data", $meta );
+						}
 
 						$ret = TRUE;
 					} else {
@@ -898,8 +901,9 @@ class LibertyAttachable extends LibertyContent {
 	 * @return query result
 	 */
 	function expungeMetaData( $pAttachmentId ) {
+		global $gBitSystem;
 		if( @BitBase::verifyId( $pAttachmentId )) {
-			return $this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` WHERE `attachment_id` = ?", array( $pAttachmentId ));
+			return $gBitSystem->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` WHERE `attachment_id` = ?", array( $pAttachmentId ));
 		}
 	}
 
