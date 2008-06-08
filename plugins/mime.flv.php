@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.9 2008/06/01 09:49:00 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.10 2008/06/08 16:46:07 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.9 $
+ * @version		$Revision: 1.10 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -36,7 +36,7 @@ $pluginParams = array (
 	// Templates to display the files
 	'view_tpl'            => 'bitpackage:liberty/mime_flv_view_inc.tpl',
 	'inline_tpl'          => 'bitpackage:liberty/mime_flv_inline_inc.tpl',
-	//'edit_tpl'            => 'bitpackage:liberty/mime_flv_edit_inc.tpl',
+	'edit_tpl'            => 'bitpackage:liberty/mime_flv_edit_inc.tpl',
 	// url to page with options for this plugin
 	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/mime_flv.php',
 	// This should be the same for all mime plugins
@@ -70,17 +70,9 @@ function mime_flv_store( &$pStoreRow ) {
 
 	// if storing works, we process the video
 	if( $ret = mime_default_store( $pStoreRow )) {
-		if( $gBitSystem->isFeatureActive( 'mime_use_cron' )) {
-			// if we want to use cron, we add a process, otherwise we convert video right away
-			if( mime_flv_add_process( $pStoreRow )) {
-				// add an indication that this file is being processed
-				touch( BIT_ROOT_PATH.$pStoreRow['upload']['dest_path']."processing" );
-			}
-		} else {
-			if( !mime_flv_converter( $pStoreRow )) {
-				$pStoreRow['errors'] = $pStoreRow['log'];
-				$ret = FALSE;
-			}
+		if( !mime_flv_converter( $pStoreRow )) {
+			$pStoreRow['errors'] = $pStoreRow['log'];
+			$ret = FALSE;
 		}
 	}
 	return $ret;
@@ -93,26 +85,41 @@ function mime_flv_store( &$pStoreRow ) {
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function mime_flv_update( &$pStoreRow ) {
-	global $gBitSystem;
-	// if storing works, we process the video
-	if( $ret = mime_default_update( $pStoreRow )) {
-		// we only need to add a new process when we are actually uploading a new file
-		if( !empty( $pStoreRow['upload']['tmp_name'] )) {
-			// add an indication that this file is being processed
-			touch( BIT_ROOT_PATH.$pStoreRow['upload']['dest_path']."processing" );
-			// remove any error file since this is a new video file
-			@unlink( BIT_ROOT_PATH.$pStoreRow['upload']['dest_path']."error" );
-			// since this user is uploading a new video, we will remove the old flick.flv file
-			@unlink( BIT_ROOT_PATH.$pStoreRow['upload']['dest_path']."flick.flv" );
+function mime_flv_update( &$pStoreRow, $pParams = NULL ) {
+	$ret = FALSE;
+	if( BitBase::verifyId( $pStoreRow['attachment_id'] )) {
+		$pStoreRow['log'] = array();
 
-			// if we want to use cron, we add a process, otherwise we convert video right away
-			if( $gBitSystem->isFeatureActive( 'mime_use_cron' )) {
-				mime_flv_add_process( $pStoreRow );
+		// set the correct pluign guid, even if we let default handle the store process
+		$pStoreRow['attachment_plugin_guid'] = PLUGIN_MIME_GUID_FLV;
+		// remove the entire directory
+		$pStoreRow['unlink_dir'] = TRUE;
+
+		// if storing works, we process the video
+		if( !empty( $pStoreRow['upload'] ) && $ret = mime_default_update( $pStoreRow )) {
+			if( !mime_flv_converter( $pStoreRow )) {
+				// if it all goes tits up, we'll know why
+				$pStoreRow['errors'] = $pStoreRow['log'];
+				$ret = FALSE;
+			}
+		}
+
+		// if there was no upload we'll process the file parameters
+		if( empty( $pStoreRow['upload'] ) && isset( $pParams['meta']['aspect'] )) {
+			// set aspect NULL that it's removed from the database
+			if( empty( $pParams['meta']['aspect'] )) {
+				$pParams['meta']['aspect'] = NULL;
+			}
+
+			// finally we update the meta table data
+			if( !LibertyMime::storeAttachmentPreference( $pStoreRow['attachment_id'], 'aspect', $pParams['meta']['aspect'] )) {
+				$log['store_meta'] = "There was a problem storing the preference in the database";
+			}
+
+			if( empty( $log )) {
+				$ret = TRUE;
 			} else {
-				if( !mime_flv_converter( $pStoreRow )) {
-					$pStoreRow['errors'] = $pStoreRow['log']['message'];
-				}
+				$pStoreRow['errors'] = $log;
 			}
 		}
 	}
@@ -132,20 +139,22 @@ function mime_flv_load( $pFileHash, &$pPrefs, $pParams = NULL ) {
 	global $gLibertySystem, $gBitThemes;
 	if( $ret = mime_default_load( $pFileHash, $pParams )) {
 		// check for status of conversion
-		if( !empty( $ret['source_file'] )) {
-			if( is_file( dirname( $ret['source_file'] ).'/error' )) {
+		if( !empty( $ret['storage_path'] )) {
+			$source_path = BIT_ROOT_PATH.dirname( $ret['storage_path'] ).'/';
+			if( is_file( $source_path.'error' )) {
 				$ret['status']['error'] = TRUE;
-			} elseif( is_file( dirname( $ret['source_file'] ).'/processing' )) {
+			} elseif( is_file( $source_path.'processing' )) {
 				$ret['status']['processing'] = TRUE;
-			} elseif( is_file( dirname( $ret['source_file'] ).'/flick.flv' )) {
-				$ret['flv_url'] = dirname( $ret['source_url'] ).'/flick.flv';
-			} elseif( is_file( dirname( $ret['source_file'] ).'/flick.mp4' )) {
-				$ret['flv_url'] = dirname( $ret['source_url'] ).'/flick.mp4';
+			} elseif( is_file( $source_path.'flick.flv' )) {
+				$ret['video_url'] = str_replace( "//", "/", BIT_ROOT_URL.path_to_url( dirname( $ret['storage_path'] ).'/flick.flv' ));
+			} elseif( is_file( $source_path.'flick.mp4' )) {
+				$ret['video_url'] = str_replace( "//", "/", BIT_ROOT_URL.path_to_url( dirname( $ret['storage_path'] ).'/flick.mp4' ));
 			}
 		}
 
 		// now that we have the original width and height, we can get the displayed values
-		$ret['preferences'] = mime_flv_calculate_videosize( $ret, $pPrefs, $pParams );
+		$ret['meta'] = array_merge( LibertyMime::getMetaData( $pFileHash['attachment_id'], "Video" ), $pPrefs );
+		mime_flv_calculate_videosize( $ret['meta'], $pParams );
 	}
 	return $ret;
 }
@@ -196,25 +205,25 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 	$ret = FALSE;
 
 	if( @BitBase::verifyId( $pParamHash['attachment_id'] )) {
+		// we might have some attachment preferences set if this is an update
+		LibertyMime::expungeAttachmentPreferences( $pParamHash['attachment_id'] );
+
 		// these are set in the liberty plugin admin screen
 		$ffmpeg = trim( $gBitSystem->getConfig( 'mime_flv_ffmpeg_path', shell_exec( 'which ffmpeg' )));
 		$width  = trim( $gBitSystem->getConfig( 'mime_flv_width', 320 ));
-
-		$begin = date( 'U' );
-		$log   = $actionLog = array();
+		$begin  = date( 'U' );
+		$log    = $actionLog = array();
 
 		if( !( $ff = shell_exec( "$ffmpeg 2>&1" ))) {
 			$log['time']     = date( 'Y-M-d - H:i:s O' );
 			$log['duration'] = 0;
 			$log['message']  = 'ERROR: ffmpeg does not seem to be available on your system at: '.$ffmpeg.' Please set the path to ffmpeg in the liberty plugin administration screen.';
+			$actionLog['log_message'] = "ERROR: ffmpeg does not seem to be available on your system at: '$ffmpeg' Please set the path to ffmpeg in the liberty plugin administration screen.";
 		} else {
 			// this is the codec we'll use - currently this might be: flv, h264, h264-2pass
 			$codec = $gBitSystem->getConfig( "mime_flv_video_codec", "flv" );
-
 			$source = BIT_ROOT_PATH.$pParamHash['upload']['dest_path'].$pParamHash['upload']['name'];
 			$dest_path = dirname( $source );
-			$extension = (( $codec == "flv" ) ? "flv" : "mp4" );
-			$dest_file = $dest_path."/flick.$extension";
 
 			// set some default values if ffpeg-php isn't available or fails
 			$default['aspect']     = 4 / 3;
@@ -226,18 +235,29 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 			if( extension_loaded( 'ffmpeg' )) {
 				// we silence these calls since they might spew errors
 				$movie = @new ffmpeg_movie( $source );
-				$info['vcodec']           = @$movie->getVideoCodec();
-				$info['acodec']           = @$movie->getAudioCodec();
-				$info['duration']         = round( @$movie->getDuration() );
-				$info['width']            = @$movie->getFrameWidth();
-				$info['height']           = @$movie->getFrameHeight();
-				$info['video_bitrate']    = @$movie->getVideoBitRate();
-				$info['audio_bitrate']    = @$movie->getAudioBitRate();
-				$info['audio_samplerate'] = @$movie->getAudioSampleRate();
+				$info = array(
+					'vcodec'           => @$movie->getVideoCodec(),
+					'acodec'           => @$movie->getAudioCodec(),
+					'duration'         => round( @$movie->getDuration() ),
+					'width'            => @$movie->getFrameWidth(),
+					'height'           => @$movie->getFrameHeight(),
+					'video_bitrate'    => @$movie->getVideoBitRate(),
+					'audio_bitrate'    => @$movie->getAudioBitRate(),
+					'audio_samplerate' => @$movie->getAudioSampleRate(),
+				);
+
+				// make sure audio sample rate is valid
+				if( !in_array( $info['audio_samplerate'], array( 11025, 22050, 44100 ))) {
+					unset( $info['audio_samplerate'] );
+				}
 			}
 
 			// our player supports flv and h264 so we might as well use the default
 			if( !$gBitSystem->isFeatureActive( 'mime_flv_force_encode' ) && !empty( $info ) && ( $info['vcodec'] == 'h264' || $info['vcodec'] == 'flv' ) && $info['acodec'] == 'mp3' ) {
+				// work out what the target filename is
+				$extension = (( $info['vcodec'] == "flv" ) ? "flv" : "mp4" );
+				$dest_file = $dest_path."/flick.$extension";
+
 				// if the video can be processed by ffmpeg-php, width and height are greater than 1
 				if( !empty( $info['width'] ) && $info['width'] > 1 ) {
 					$info['aspect']   = $info['width'] / $info['height'];
@@ -247,38 +267,26 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 				}
 
 				// store prefs and create thumbnails
-				mime_flv_store_preferences( $pParamHash, $info );
+				LibertyMime::expungeMetaData( $pParamHash['attachment_id'] );
+				LibertyMime::storeMetaData( $pParamHash['attachment_id'], 'Video', $info );
 				mime_flv_create_thumbnail( $source, $info['offset'] );
-				rename( $source, $dest_file );
+				if( !is_file( $dest_file ) && !link( $source, $dest_file )) {
+					copy( $source, $dest_file );
+				}
 				$log['message'] = 'SUCCESS: Converted to flash video';
 				$actionLog['log_message'] = "Flv video file was successfully uploaded and thumbnails extracted.";
 				$ret = TRUE;
 			} else {
+				// work out what the target filename is
+				$extension = (( $codec == "flv" ) ? "flv" : "mp4" );
+				$dest_file = $dest_path."/flick.$extension";
+
 				// if the video can be processed by ffmpeg-php, width and height are greater than 1
 				if( !empty( $info['width'] ) && $info['width'] > 1 ) {
 					// reset some values to reduce video size
 					if( $info['width'] < $width ) {
 						$width = $info['width'];
 					}
-
-					// make sure audio sample rate is valid
-					if( !in_array( $info['audio_samplerate'], array( 11025, 22050, 44100 ))) {
-						unset( $info['audio_samplerate'] );
-					}
-
-					/* not sure why this is here.
-					$compare = array(
-						'video_bitrate'    => 160000,
-						'audio_bitrate'    => 32000,
-						'audio_samplerate' => 22050,
-					);
-
-					foreach( $compare as $comp => $default ) {
-						if( !empty( $info[$comp] ) && $info[$comp] < $gBitSystem->getConfig( 'mime_flv_'.$comp, $default )) {
-							$gBitSystem->setConfig( 'mime_flv_'.$comp, $info[$comp] );
-						}
-					}
-					 */
 
 					// here we calculate the size and aspect ratio of the output video
 					$size_ratio         = $width / $info['width'];
@@ -397,7 +405,8 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 						$info['offset'] = "00:00:10";
 					}
 					// store some video specific settings
-					mime_flv_store_preferences( $pParamHash, $info );
+					LibertyMime::expungeMetaData( $pParamHash['attachment_id'] );
+					LibertyMime::storeMetaData( $pParamHash['attachment_id'], 'Video', $info );
 
 					// since the flv conversion worked, we will create a preview screenshots to show.
 					mime_flv_create_thumbnail( $dest_file, $info['offset'] );
@@ -461,14 +470,16 @@ function mime_flv_create_thumbnail( $pFile, $pOffset = 60 ) {
 		}
 
 		if( !empty( $thumbnailer )) {
-			shell_exec( "$thumbnailer -i '$pFile' -o '$dest_path/medium.jpg' -s 600" );
-			if( is_file( "$dest_path/medium.jpg" )) {
+			shell_exec( "$thumbnailer -i '$pFile' -o '$dest_path/thumb.jpg' -s 1024" );
+			if( is_file( "$dest_path/thumb.jpg" )) {
 				$fileHash['type']            = 'image/jpg';
-				$fileHash['thumbnail_sizes'] = array( 'icon', 'avatar', 'small' );
-				$fileHash['source_file']     = "$dest_path/medium.jpg";
+				$fileHash['source_file']     = "$dest_path/thumb.jpg";
 				$fileHash['dest_path']       = str_replace( BIT_ROOT_PATH, '', "$dest_path/" );
 				liberty_generate_thumbnails( $fileHash );
 				$ret = TRUE;
+
+				// remove temp file
+				@unlink( "$dest_path/thumb.jpg" );
 			}
 		} else {
 			// fall back to using ffmepg
@@ -476,41 +487,16 @@ function mime_flv_create_thumbnail( $pFile, $pOffset = 60 ) {
 			shell_exec( "$ffmpeg -i '$pFile' -an -ss $pOffset -t 00:00:01 -r 1 -y '$dest_path/preview%d.jpg'" );
 			if( is_file( "$dest_path/preview1.jpg" )) {
 				$fileHash['type']            = 'image/jpg';
-				$fileHash['thumbnail_sizes'] = array( 'icon', 'avatar', 'small', 'medium' );
 				$fileHash['source_file']     = "$dest_path/preview1.jpg";
 				$fileHash['dest_path']       = str_replace( BIT_ROOT_PATH, '', "$dest_path/" );
 				liberty_generate_thumbnails( $fileHash );
 				$ret = TRUE;
+
+				// remove temp file
+				@unlink( "$dest_path/preview1.jpg" );
 			}
 		}
 	}
-	return $ret;
-}
-
-/**
- * mime_flv_store_preferences 
- * 
- * @param array $pVideoInfo Video information
- * @access public
- * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
- */
-function mime_flv_store_preferences( $pFileHash, $pVideoInfo ) {
-	$ret = FALSE;
-
-	if( @BitBase::verifyId( $pFileHash['attachment_id'] )) {
-		// store duration of video
-		if( !empty( $pVideoInfo['duration'] )) {
-			LibertyMime::storeAttachmentPreference( $pFileHash['attachment_id'], 'duration', $pVideoInfo['duration'] );
-		}
-
-		// only store aspect if aspect is different to 4:3
-		$default = 4 / 3;
-		if( !empty( $pVideoInfo['aspect'] ) && $pVideoInfo['aspect'] != $default ) {
-			LibertyMime::storeAttachmentPreference( $pFileHash['attachment_id'], 'aspect', $pVideoInfo['aspect'] );
-		}
-		$ret = TRUE;
-	}
-
 	return $ret;
 }
 
@@ -522,11 +508,16 @@ function mime_flv_store_preferences( $pFileHash, $pVideoInfo ) {
  * @access public
  * @return void
  */
-function mime_flv_calculate_videosize( $pFileHash, &$pPrefs, $pParams ) {
+function mime_flv_calculate_videosize( &$pMetaData, $pParams ) {
 	global $gBitSystem;
 
-	$pPrefs['flv_width']  = $gBitSystem->getConfig( 'mime_flv_width', 320 );
-	$pPrefs['flv_height'] = ( $gBitSystem->getConfig( 'mime_flv_width', 320 ) / ( !empty( $pPrefs['aspect'] ) ? $pPrefs['aspect'] : 4 / 3 ));
+	// fetch default if width is missing
+	if( empty( $pMetaData['width'] )) {
+		$pMetaData['width']  = $gBitSystem->getConfig( 'mime_flv_width', 320 );
+	}
+
+	// use aspect to calculate height since it might be different from original
+	$pMetaData['height'] = ( $pMetaData['width'] / ( !empty( $pMetaData['aspect'] ) ? $pMetaData['aspect'] : 4 / 3 ));
 
 	// if we want to display a different size
 	if( !empty( $pParams['size'] )) {
@@ -545,13 +536,11 @@ function mime_flv_calculate_videosize( $pFileHash, &$pPrefs, $pParams ) {
 
 	// if we want to change the video size
 	if( !empty( $new_width )) {
-		$ratio = $pPrefs['flv_width'] / $new_width;
-		$pPrefs['flv_height'] = round( $pPrefs['flv_height'] / $ratio );
+		$ratio = $pMetaData['width'] / $new_width;
+		$pMetaData['height'] = round( $pMetaData['height'] / $ratio );
 
 		// now that all calculations are done, we apply the width
-		$pPrefs['flv_width']  = $new_width;
+		$pMetaData['width']  = $new_width;
 	}
-
-	return $pPrefs;
 }
 ?>

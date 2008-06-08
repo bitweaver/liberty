@@ -1,5 +1,5 @@
 {strip}
-{if $attachment.flv_url}
+{if $attachment.video_url}
 	<div class="row" style="text-align:center;">
 		{include file="bitpackage:liberty/mime_flv_player_inc.tpl"}
 	</div>
@@ -33,11 +33,11 @@
 	{formfeedback error="{tr}The Video could not be processed. You can upload a different version of the film or simply leave as is.{/tr}"}
 {/if}
 
-{if $attachment.preferences.duration}
+{if $attachment.meta.duration}
 	<div class="row">
 		{formlabel label="Duration" for=""}
 		{forminput}
-			{$attachment.preferences.duration|display_duration}
+			{$attachment.meta.duration|display_duration}
 		{/forminput}
 	</div>
 {/if}
@@ -48,7 +48,7 @@
 		{forminput}
 			<a href="{$attachment.download_url}">{$attachment.filename|escape}</a>
 			&nbsp; <small>({$attachment.mime_type})</small>
-			{* TODO: get this to work if $gContent->hasEditPermission() && $attachment.flv_url}
+			{* TODO: get this to work if $gContent->hasEditPermission() && $attachment.video_url}
 				{form ipackage=treasury ifile="plugins/form.flv.php"}
 					<input type="hidden" name="content_id" value="{$gContent->mContentId}" />
 					<input type="submit" name="remove_original" value="{tr}Remove Original{/tr}" />
@@ -66,7 +66,7 @@
 	</div>
 {/if}
 
-{* TODO: get this to work if $gContent->hasEditPermission() && $attachment.flv_url}
+{* TODO: get this to work if $gContent->hasEditPermission() && $attachment.video_url}
 	<div class="row">
 		{formlabel label="New Aspect Ratio" for="aspect"}
 		{forminput}

@@ -8,6 +8,10 @@ if( function_exists( 'shell_exec' )) {
 	$gBitSmarty->assign( 'ffmpeg_path', shell_exec( 'which ffmpeg' ));
 }
 
+if( extension_loaded( 'ffmpeg' )) {
+	$gBitSmarty->assign( 'ffmpeg_extension', TRUE );
+}
+
 $feedback = array();
 
 $rates = array(
