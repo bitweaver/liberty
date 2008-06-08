@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.14 2008/06/05 23:20:53 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.15 2008/06/08 11:21:52 squareing Exp $
  */
 
 /**
@@ -37,7 +37,7 @@ class LibertyMime extends LibertyAttachable {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function load( $pContentId = NULL ) {
+	function load( $pContentId = NULL, $pPluginParams = NULL ) {
 		// assume a derived class has joined on the liberty_content table, and loaded it's columns already.
 		global $gLibertySystem;
 		$contentId = ( @BitBase::verifyId( $pContentId ) ? $pContentId : $this->mContentId );
@@ -58,7 +58,7 @@ class LibertyMime extends LibertyAttachable {
 						if( empty( $this->mStoragePrefs[$row['attachment_id']] )) {
 							$this->mStoragePrefs[$row['attachment_id']] = array();
 						}
-						$this->mStorage[$row['attachment_id']] = $func( $row, $this->mStoragePrefs[$row['attachment_id']] );
+						$this->mStorage[$row['attachment_id']] = $func( $row, $this->mStoragePrefs[$row['attachment_id']], $pPluginParams );
 					} else {
 						print "No load_function for ".$row['attachment_plugin_guid'];
 					}
@@ -387,6 +387,8 @@ class LibertyMime extends LibertyAttachable {
 			if( !empty( $this ) && $this->isValid() ) {
 				$this->mStoragePrefs[$pAttachmentId][$pPrefName] = $pPrefValue;
 			}
+
+			$ret = TRUE;
 		}
 		return $ret;
 	}
@@ -402,7 +404,6 @@ class LibertyMime extends LibertyAttachable {
 	function loadAttachmentPreferences( $pContentId = NULL ) {
 		global $gBitSystem;
 
-		$return = TRUE;
 		if( !@BitBase::verifyId( $pContentId ) && $this->isValid() && @BitBase::verifyId( $this->mContentId )) {
 			$pContentId = $this->mContentId;
 			$store_prefs = TRUE;
@@ -429,6 +430,24 @@ class LibertyMime extends LibertyAttachable {
 		} else {
 			return $ret;
 		}
+	}
+
+	/**
+	 * expungeAttachmentPreferences will remove all attachment preferences of a given attachmtent
+	 * 
+	 * @param array $pAttachmentId attachemnt we want to remove the prefs for
+	 * @access public
+	 * @return TRUE on success, FALSE on failure
+	 */
+	function expungeAttachmentPreferences( $pAttachmentId ) {
+		global $gBitSystem;
+		$ret = FALSE;
+		if( @BitBase::verifyId( $pAttachmentId ) ) {
+			$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachment_prefs` WHERE `attachment_id` = ?";
+			$gBitSystem->mDb->query( $sql, array( $pAttachmentId ));
+			$ret = TRUE;
+		}
+		return $ret;
 	}
 }
 ?>
