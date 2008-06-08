@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.16 2008/06/06 06:23:36 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.17 2008/06/08 16:42:09 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.16 $
+ * @version		$Revision: 1.17 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -86,7 +86,6 @@ function mime_audio_store( &$pStoreRow ) {
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
 function mime_audio_update( &$pStoreRow, $pParams = NULL ) {
-	// if we have been passed a set of parameters, we're only interested in updating the meta data
 	$ret = FALSE;
 	if( BitBase::verifyId( $pStoreRow['attachment_id'] )) {
 		$pStoreRow['log'] = array();
@@ -120,7 +119,6 @@ function mime_audio_update( &$pStoreRow, $pParams = NULL ) {
 			mime_audio_update_tags( $file, $pParams['meta'] );
 
 			// finally we update the meta table data
-			LibertyMime::expungeMetaData( $pStoreRow['attachment_id'] );
 			if( !LibertyMime::storeMetaData( $pStoreRow['attachment_id'], 'ID3', $pParams['meta'] )) {
 				$log['store_meta'] = "There was a problem storing the meta data in the database";
 			}
