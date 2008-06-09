@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.17 2008/06/08 16:42:09 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.18 2008/06/09 16:57:55 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.17 $
+ * @version		$Revision: 1.18 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -31,7 +31,7 @@ $pluginParams = array (
 	'download_function'   => 'mime_default_download',
 	'expunge_function'    => 'mime_default_expunge',
 	// Brief description of what the plugin does
-	'title'               => 'Extract Audio File Information',
+	'title'               => 'Listen to uploaded Audio files',
 	'description'         => 'This plugin will extract as much information about an uploaded audio file as possible and allow you to listen to it on the website using a streaming player.',
 	// Templates to display the files
 	'view_tpl'            => 'bitpackage:liberty/mime_audio_view_inc.tpl',
@@ -378,6 +378,14 @@ function mime_audio_converter_ffmpeg( &$pParamHash, $pSource, $pDest ) {
 	return $ret;
 }
 
+/**
+ * mime_audio_update_tags will update the tags of a given audio file
+ * 
+ * @param array $pFile absolute path to file
+ * @param array $pMetaData Hash of data that should be passed to the file.
+ * @access public
+ * @return NULL on success, String of errors on failure
+ */
 function mime_audio_update_tags( $pFile, $pMetaData ) {
 	$ret = NULL;
 	if( !empty( $pFile ) && is_file( $pFile ) && is_array( $pMetaData )) {
