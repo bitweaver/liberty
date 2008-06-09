@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.18 2008/02/20 14:39:50 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.19 2008/06/09 02:17:57 omniscent Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -48,9 +48,15 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 			getConfig('blacklisted_html_tags', '');
 
 		$pear_version = false;
-		if (@include_once("PEAR.php")) {
-			if (@include_once("HTMLPurifier.php")) {
-
+		
+		if (@include_once("PEAR.php")) {		
+			if(@include_once("HTMLPurifier.php")) {
+				// If using 3.10+
+				if(!class_exists("HTMLPurifier_Config")) {
+					@include_once("HTMLPurifier.auto.php");
+					$auto_config = true;
+				}
+				
 				$config = HTMLPurifier_Config::createDefault();
 
 				// Set the cache path
@@ -79,7 +85,7 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 					$config->set('HTML', 'Strict', true);
 				}
 				if ($gBitSystem->getConfig('htmlpure_xhtml', 'n') == 'n') {
-					$config->set('Core', 'XHTML', true);
+					$config->set('HTML', 'XHTML', true);
 				}
 
 				// Set that we are using a div to wrap things.
@@ -101,7 +107,7 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 							$this->name  = $name;
 							$this->value = $value;
 						}
-						function transform($attr, $config, &$context) {
+						function transform($attr, $config, $context) {
 							$attr[$this->name] = $this->value;
 							return $attr;
 						}
