@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.19 2008/06/09 02:17:57 omniscent Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.20 2008/06/09 19:04:16 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -42,13 +42,13 @@ $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERHTMLPURIFIER, $pluginParams )
 
 function htmlpure_filter( &$pString, &$pFilterHash ) {
 	global $gHtmlPurifier, $gBitSystem;
-	
+
 	if (!isset($gHtmlPurifier)) {
 		$blacklistedTags = $gBitSystem->
 			getConfig('blacklisted_html_tags', '');
 
 		$pear_version = false;
-		
+
 		if (@include_once("PEAR.php")) {		
 			if(@include_once("HTMLPurifier.php")) {
 				// If using 3.10+
@@ -56,7 +56,7 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 					@include_once("HTMLPurifier.auto.php");
 					$auto_config = true;
 				}
-				
+
 				$config = HTMLPurifier_Config::createDefault();
 
 				// Set the cache path
@@ -130,7 +130,7 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 	}
 
 	// Did we manage to create one?
-	 if (isset($gHtmlPurifier)) { 
+	if (isset($gHtmlPurifier)) { 
 		/* Clean up the paragraphs a bit */
 		//		$start = $pData;
 		$pString = htmlpure_cleanupPeeTags($pString);
@@ -152,7 +152,7 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 		$diff = &new Text_Diff(explode("\n", $pee), explode("\n",$pString));
 		$renderer = &new Text_Diff_Renderer_inline();
 		echo "<br/><hr/><br/>". $renderer->render($diff);
-		*/
+		 */
 	} else {
 		bit_log_error("HTMLPurifier not installed. Install with: pear channel-discover htmlpurifier.org; pear install hp/HTMLPurifier;");
 	}
@@ -161,28 +161,28 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 }
 
 function htmlpure_cleanupPeeTags( $pee ) {
-	
+
 	// Convert us some form feeds for better cross platform support
 	$pee = str_replace(array("\r\n", "\r"), "\n", $pee);
-	
+
 	// Strip out lots of duplicate newlines now
 	$pee = preg_replace("#\n\n+#", "\n\n", $pee);
-	
+
 	// Pee in block quotes - Removed as we now have purifier insert a div instead. See above.
 	//	$pee = preg_replace('#<blockquote(.*?(?:[^>]*))>(.*?)</blockquote>#s', '<blockquote$1><p>$2</p></blockquote>', $pee);
-	
+
 	// Strip empty pee
 	$pee = preg_replace('#<p>\s*</p>#', '', $pee);
-		
+
 	// Unpee pre blocks
 	$pee = preg_replace('#(<pre.*?(?:[^>]*)>)(.*?)</pre>#sie',
-						" '$1' . preg_replace('#<br[\s/]*(?:[^>]*)/>#', '"."\n"."',
-						preg_replace('#<p[\s]*(?:[^>]*)>#', '"."\n"."',
-						preg_replace('#</p[\s]*(?:[^>]*)>#', '', '$2'))). '</pre>'", $pee);
+		" '$1' . preg_replace('#<br[\s/]*(?:[^>]*)/>#', '"."\n"."',
+		preg_replace('#<p[\s]*(?:[^>]*)>#', '"."\n"."',
+		preg_replace('#</p[\s]*(?:[^>]*)>#', '', '$2'))). '</pre>'", $pee);
 
 	// Fixup align divs so we can keep them.
 	$pee = preg_replace('#<div(.*?)align="(.*?)"(.*?)>#', '<div$1style="text-align:$2;"$3>', $pee);
-	
+
 	return $pee;
 }
 
