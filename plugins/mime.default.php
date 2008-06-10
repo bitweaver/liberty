@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.18 2008/06/10 18:43:54 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.19 2008/06/10 18:54:00 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.18 $
+ * @version     $Revision: 1.19 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -221,7 +221,11 @@ function mime_default_load( $pFileHash, &$pPrefs ) {
 				$ret['thumbnail_is_mime'] = TRUE;
 			}
 			$ret['filename']         = basename( $row['storage_path'] );
-			$ret['display_url']      = LIBERTY_PKG_URL."view_file.php?attachment_id=".$row['attachment_id'];
+			if( $gBitSystem->isFeatureActive( "pretty_urls" ) || $gBitSystem->isFeatureActive( "pretty_urls_extended" )) {
+				$ret['display_url']      = LIBERTY_PKG_URL."view/file/".$row['attachment_id'];
+			} else {
+				$ret['display_url']      = LIBERTY_PKG_URL."view_file.php?attachment_id=".$row['attachment_id'];
+			}
 			$ret['mime_type']        = $row['mime_type'];
 			$ret['file_size']        = $row['file_size'];
 			$ret['attachment_id']    = $row['attachment_id'];
@@ -234,7 +238,11 @@ function mime_default_load( $pFileHash, &$pPrefs ) {
 				$ret['source_file']   = BIT_ROOT_PATH.$row['storage_path'];
 				$ret['source_url']    = str_replace( "//", "/", BIT_ROOT_URL.path_to_url( $row['storage_path'] ));
 				$ret['last_modified'] = filemtime( $ret['source_file'] );
-				$ret['download_url']  = LIBERTY_PKG_URL."download_file.php?attachment_id=".$row['attachment_id'];
+				if( $gBitSystem->isFeatureActive( "pretty_urls" ) || $gBitSystem->isFeatureActive( "pretty_urls_extended" )) {
+					$ret['download_url']  = LIBERTY_PKG_URL."download/file/".$row['attachment_id'];
+				} else {
+					$ret['download_url']  = LIBERTY_PKG_URL."download_file.php?attachment_id=".$row['attachment_id'];
+				}
 			}
 
 			if( $gLibertySystem->isPluginActive( 'dataattachment' )) {
