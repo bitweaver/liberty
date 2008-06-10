@@ -43,7 +43,7 @@
 			{/legend}
 		{/form}
 
-		<h1>Need to add some filtering options here</h1>
+		{* Need to add some filtering options here *}
 
 		{minifind}
 
