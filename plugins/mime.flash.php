@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.flash.php,v 1.1 2008/05/12 21:30:57 wjames5 Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.flash.php,v 1.2 2008/06/10 19:34:31 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.1 $
+ * @version		$Revision: 1.2 $
  * created		Sunday Jul 02, 2006   14:42:13 CEST
  * @package		liberty	
  * @subpackage	liberty_mime_handler
@@ -67,6 +67,9 @@ $gLibertySystem->registerPlugin( PLUGIN_MIME_GUID_FLASH, $pluginParams );
  */
 function mime_flash_update( &$pStoreRow ) {
 	global $gBitSystem;
+
+	// this will set the correct pluign guid, even if we let default handle the store process
+	$pStoreRow['attachment_plugin_guid'] = PLUGIN_MIME_GUID_FLASH;
 	if( $ret = mime_default_update( $pStoreRow ) ) {
 		mime_flash_store_preferences( $pStoreRow );
 	}
@@ -84,7 +87,6 @@ function mime_flash_store( &$pStoreRow ) {
 
 	// this will set the correct pluign guid, even if we let default handle the store process
 	$pStoreRow['attachment_plugin_guid'] = PLUGIN_MIME_GUID_FLASH;
-	
 	if( $ret = mime_default_store( $pStoreRow ) ) {
 		mime_flash_store_preferences( $pStoreRow );
 	}

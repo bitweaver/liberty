@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.1 2008/06/10 09:13:54 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.2 2008/06/10 19:34:31 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.1 $
+ * @version		$Revision: 1.2 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -87,14 +87,16 @@ function mime_image_store( &$pStoreRow ) {
  */
 function mime_image_update( &$pStoreRow, $pParams = NULL ) {
 	$ret = FALSE;
-	if( BitBase::verifyId( $pStoreRow['attachment_id'] )) {
-		// if storing works, we process the image
-		if( !empty( $pStoreRow['upload'] ) && $ret = mime_default_update( $pStoreRow )) {
-			if( !mime_image_store_exif_data( $pStoreRow )) {
-				// if it all goes tits up, we'll know why
-				$pStoreRow['errors'] = $pStoreRow['log'];
-				$ret = FALSE;
-			}
+
+	// this will set the correct pluign guid, even if we let default handle the store process
+	$pStoreRow['attachment_plugin_guid'] = PLUGIN_MIME_GUID_IMAGE;
+
+	// if storing works, we process the image
+	if( !empty( $pStoreRow['upload'] ) && $ret = mime_default_update( $pStoreRow )) {
+		if( !mime_image_store_exif_data( $pStoreRow )) {
+			// if it all goes tits up, we'll know why
+			$pStoreRow['errors'] = $pStoreRow['log'];
+			$ret = FALSE;
 		}
 	}
 	return $ret;
@@ -172,5 +174,7 @@ function mime_image_store_exif_data( $pFileHash ) {
 
 		LibertyMime::storeMetaData( $pFileHash['attachment_id'], 'EXIF', $exifHash['EXIF'] );
 	}
+
+	return TRUE;
 }
 ?>

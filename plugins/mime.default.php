@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.19 2008/06/10 18:54:00 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.20 2008/06/10 19:34:31 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.19 $
+ * @version     $Revision: 1.20 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -145,6 +145,17 @@ function mime_default_update( &$pStoreRow ) {
 				$sql = "UPDATE `".BIT_DB_PREFIX."liberty_files` SET `storage_path` = ?, `mime_type` = ?, `file_size` = ?, `user_id` = ? WHERE `file_id` = ?";
 				$gBitSystem->mDb->query( $sql, array( $pStoreRow['upload']['dest_path'].$pStoreRow['upload']['name'], $pStoreRow['upload']['type'], $pStoreRow['upload']['size'], $pStoreRow['user_id'], $pStoreRow['file_id'] ));
 			}
+
+			// ensure we have the correct guid in the db
+			if( empty( $pStoreRow['attachment_plugin_guid'] )) {
+				$pStoreRow['attachment_plugin_guid'] = LIBERTY_DEFAULT_MIME_HANDLER;
+			}
+
+			$gBitSystem->mDb->associateUpdate(
+				BIT_DB_PREFIX."liberty_attachments",
+				array( 'attachment_plugin_guid' => $pStoreRow['attachment_plugin_guid'] ),
+				array( 'attachment_id' => $pStoreRow['attachment_id'] )
+			);
 		}
 	}
 	return TRUE;
