@@ -1,6 +1,6 @@
 <?php
 /**
- * @version      $Header: /cvsroot/bitweaver/_bit_liberty/Attic/view.php,v 1.1 2008/06/10 18:33:36 squareing Exp $
+ * @version      $Header: /cvsroot/bitweaver/_bit_liberty/view_file.php,v 1.1 2008/06/10 18:43:54 squareing Exp $
  *
  * @author       xing  <xing@synapse.plus.com>
  * @package      treasury

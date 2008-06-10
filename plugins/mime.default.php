@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.17 2008/06/10 18:33:36 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.18 2008/06/10 18:43:54 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.17 $
+ * @version     $Revision: 1.18 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -221,7 +221,7 @@ function mime_default_load( $pFileHash, &$pPrefs ) {
 				$ret['thumbnail_is_mime'] = TRUE;
 			}
 			$ret['filename']         = basename( $row['storage_path'] );
-			$ret['display_url']      = LIBERTY_PKG_URL."view.php?attachment_id=".$row['attachment_id'];
+			$ret['display_url']      = LIBERTY_PKG_URL."view_file.php?attachment_id=".$row['attachment_id'];
 			$ret['mime_type']        = $row['mime_type'];
 			$ret['file_size']        = $row['file_size'];
 			$ret['attachment_id']    = $row['attachment_id'];
@@ -234,7 +234,7 @@ function mime_default_load( $pFileHash, &$pPrefs ) {
 				$ret['source_file']   = BIT_ROOT_PATH.$row['storage_path'];
 				$ret['source_url']    = str_replace( "//", "/", BIT_ROOT_URL.path_to_url( $row['storage_path'] ));
 				$ret['last_modified'] = filemtime( $ret['source_file'] );
-				$ret['download_url']  = LIBERTY_PKG_URL."download.php?attachment_id=".$row['attachment_id'];
+				$ret['download_url']  = LIBERTY_PKG_URL."download_file.php?attachment_id=".$row['attachment_id'];
 			}
 
 			if( $gLibertySystem->isPluginActive( 'dataattachment' )) {

@@ -61,7 +61,7 @@
 								</a>
 							{else}
 								{if $storage.is_mime}
-									<a href="{$smarty.const.LIBERTY_PKG_URL}view.php?attachment_id={$attachmentId}">{biticon ipackage="icons" iname="document-open" iexplain="View"}</a>
+									<a href="{$smarty.const.LIBERTY_PKG_URL}view_file.php?attachment_id={$attachmentId}">{biticon ipackage="icons" iname="document-open" iexplain="View"}</a>
 								{/if}
 								<a href="{$smarty.server.PHP_SELF}?{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}">{biticon ipackage="icons" iname="edit-delete" iexplain="Delete"}</a>
 							{/if}
