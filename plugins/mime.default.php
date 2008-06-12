@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.21 2008/06/12 17:18:25 wjames5 Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.22 2008/06/12 19:55:30 wjames5 Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.21 $
+ * @version     $Revision: 1.22 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -247,10 +247,6 @@ function mime_default_load( $pFileHash, &$pPrefs ) {
 			//    e.g.: video files are large and the original might be deleted after conversion
 			if( is_file( BIT_ROOT_PATH.$row['storage_path'] )) {
 				$ret['source_file']   = BIT_ROOT_PATH.$row['storage_path'];
-				/* Using BIT_ROOT_URL like this results in double root path for installs in subdirectories,
-				 * Rolling back to what seems to work. If there is problem lets share experiences to work it out -wjames5
-				 */
-				// $ret['source_url']    = str_replace( "//", "/", BIT_ROOT_URL.path_to_url( $row['storage_path'] ));
 				$ret['source_url'] = path_to_url( $row['storage_path'] );
 				$ret['last_modified'] = filemtime( $ret['source_file'] );
 				if( $gBitSystem->isFeatureActive( "pretty_urls" ) || $gBitSystem->isFeatureActive( "pretty_urls_extended" )) {
