@@ -10,7 +10,7 @@
 		<param name="movie" value="{$attachment.source_url}" />
 		<embed src="{$attachment.source_url}" width="{$swfwidth}" height="{$swfheight}">
 		</embed>
-		<img src="{$smarty.const.TREASURY_PKG_URL}templates/noflash.container.gif" width="200" height="100" alt="" />
+		<img src="{$smarty.const.LIBERTY_PKG_URL}templates/noflash.container.gif" width="200" height="100" alt="" />
 	</object>
 	<br />
 	<a href="{$attachment.display_url}">View SWF</a>
