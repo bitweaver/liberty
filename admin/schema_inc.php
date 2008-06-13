@@ -148,7 +148,7 @@ $tables = array(
 	attachment_id I4 PRIMARY,
 	pref_name C(40) PRIMARY,
 	pref_value C(250)
-	CONSTRAINT ', CONSTRAINT `lib_attachment_prefs_content_ref` FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments` (`attachment_id`)'
+	CONSTRAINT ', CONSTRAINT `lib_att_prefs_content_ref` FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments` (`attachment_id`)'
 ",
 
 'liberty_files' => "
