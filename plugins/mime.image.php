@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.2 2008/06/10 19:34:31 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.3 2008/06/13 13:48:39 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.2 $
+ * @version		$Revision: 1.3 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -60,7 +60,7 @@ require_once( 'mime.default.php' );
  * 
  * @param array $pStoreRow File data needed to store details in the database - sanitised and generated in the verify function
  * @access public
- * @return TRUE on success, FALSE on failure - $pStoreRow['errors'] will contain reason
+ * @return TRUE on success, FALSE on failure - $pStoreRow[errors] will contain reason
  */
 function mime_image_store( &$pStoreRow ) {
 	// this will set the correct pluign guid, even if we let default handle the store process
@@ -79,11 +79,11 @@ function mime_image_store( &$pStoreRow ) {
 }
 
 /**
- * mime_image_update 
+ * mime_image_update update file information in the database if there were changes.
  * 
- * @param array $pStoreRow 
+ * @param array $pStoreRow File data needed to update details in the database
  * @access public
- * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+ * @return TRUE on success, FALSE on failure - $pStoreRow[errors] will contain reason
  */
 function mime_image_update( &$pStoreRow, $pParams = NULL ) {
 	$ret = FALSE;
@@ -107,9 +107,9 @@ function mime_image_update( &$pStoreRow, $pParams = NULL ) {
  * 
  * @param array $pFileHash Contains all file information
  * @param array $pPrefs Attachment preferences taken liberty_attachment_prefs
- * @param array $pParams Parameters for loading the plugin - e.g.: might contain values from the view page
+ * @param array $pParams Parameters for loading the plugin - e.g.: might contain values such as thumbnail size from the view page
  * @access public
- * @return TRUE on success, FALSE on failure - ['errors'] will contain reason for failure
+ * @return TRUE on success, FALSE on failure - $pStoreRow[errors] will contain reason
  */
 function mime_image_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 	global $gLibertySystem, $gBitThemes;
@@ -128,7 +128,7 @@ function mime_image_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
  * @param array $pFileHash file details.
  * @param array $pFileHash[upload] should contain a complete hash from $_FILES
  * @access public
- * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+ * @return TRUE on success, FALSE on failure
  */
 function mime_image_store_exif_data( $pFileHash ) {
 	if( !empty( $pFileHash['upload'] )) {
