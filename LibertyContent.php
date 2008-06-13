@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.363 2008/05/23 16:43:56 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.364 2008/06/13 16:36:25 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -639,7 +639,7 @@ class LibertyContent extends LibertyBase {
 			global $gBitUser,$gBitSystem;
 			$this->mDb->StartTrans();
 			// JHT - cache invalidation appears to be handled by store function - so don't need to do it here
-			$query = "select *, `user_id` AS modifier_user_id, `data` AS `edit` from `".BIT_DB_PREFIX."liberty_content_history` where `content_id`=? and `version`=?";
+			$query = "select lch.*, lch.`user_id` AS modifier_user_id, lch.`data` AS `edit` from `".BIT_DB_PREFIX."liberty_content_history` lch where lch.`content_id`=? and lch.`version`=?";
 			if( $res = $this->mDb->getRow($query,array( $this->mContentId, $pVersion ) ) ) {
 				$res['edit_comment'] = 'Rollback to version '.$pVersion.' by '.$gBitUser->getDisplayName();
 				if (!empty($comment)) {
