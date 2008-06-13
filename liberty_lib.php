@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.34 2008/06/06 06:23:04 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.35 2008/06/13 06:17:33 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -180,54 +180,6 @@ function parse_protect( &$pData, &$pReplace ) {
 			$pData       = str_replace( "~np~$np~/np~", $aux['key'], $pData );
 		}
 	}
-
-	/* don't quite understand why this has to be so complicated - i've replaced the code below with the short section above
-	// Find all sections delimited by ~np~ ... ~/np~
-	if( preg_match( "!\~np\~(.*?)\~/np\~!s", $pData, $nparse )) {
-		$new_data = '';
-		$nopa     = '';
-		$state    = TRUE;
-		$skip     = FALSE;
-		$dlength  = strlen( $pData );
-
-		for( $i = 0; $i < $dlength; $i++ ) {
-			$tag5 = substr( $pData, $i, 5 );
-			$tag4 = substr( $tag5, 0, 4 );
-			$tag1 = substr( $tag4, 0, 1 );
-
-			// Beginning of a noparse section found
-			if( $state && $tag4 == '~np~' ) {
-				$i    += 3;
-				$state = FALSE;
-				$skip  = TRUE;
-			}
-
-			// Termination of a noparse section found
-			if( !$state && $tag5 == '~/np~' ) {
-				$state       = TRUE;
-				$i          += 4;
-				$skip        = TRUE;
-				$key         = md5( mt_rand() );
-				$new_data   .= $key;
-				$aux["key"]  = $key;
-				$aux["data"] = htmlspecialchars( $nopa );
-				$pReplace[]  = $aux;
-				$nopa        = '';
-			}
-
-			if( !$skip ) {              // This character is not part of a noparse tag
-				if( $state ) {          // This character is not within a noparse section
-					$new_data .= $tag1;
-				} else {                // This character is within a noparse section
-					$nopa     .= $tag1;
-				}
-			} else {                    // Tag is now skipped over
-				$skip = FALSE;
-			}
-		}
-		$pData = $new_data;
-	}
-	 */
 }
 
 
@@ -412,10 +364,10 @@ function liberty_content_list_sql(  &$pObject, $pParamHash=NULL ) {
  */
 function liberty_content_preview( &$pObject ) {
 	global $gBitSystem, $gBitUser;
-	if ($gBitSystem->isFeatureActive('liberty_display_status') && ($gBitUser->hasPermission('p_liberty_edit_content_status') || $gBitUser->hasPermission('p_libert_edit_all_status'))) {
+	if( $gBitSystem->isFeatureActive( 'liberty_display_status' ) && ( $gBitUser->hasPermission('p_liberty_edit_content_status' ) || $gBitUser->hasPermission( 'p_libert_edit_all_status' ))) {
 		$pObject->mInfo['content_status_id'] = $_REQUEST['content_status_id'];
 	}
-	if ($gBitSystem->isFeatureActive('liberty_allow_change_owner') && $gBitUser->hasPermission('p_liberty_edit_content_owner')) {
+	if( $gBitSystem->isFeatureActive( 'liberty_allow_change_owner' ) && $gBitUser->hasPermission( 'p_liberty_edit_content_owner' )) {
 		$pObject->mInfo['owner_id'] = $_REQUEST['owner_id'];
 	}
 	include_once( LIBERTY_PKG_PATH.'edit_help_inc.php' );
