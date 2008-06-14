@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.22 2008/06/12 19:55:30 wjames5 Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.23 2008/06/14 09:06:12 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.22 $
+ * @version     $Revision: 1.23 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -41,6 +41,7 @@ $pluginParams = array (
 	'title'              => 'Default File Handler',
 	'description'        => 'This mime handler can handle any file type, creates thumbnails when possible and will make the file available as an attachment.',
 	// Templates to display the files
+	'upload_tpl'         => 'bitpackage:liberty/mime_default_upload_inc.tpl',
 	'view_tpl'           => 'bitpackage:liberty/mime_default_view_inc.tpl',
 	'inline_tpl'         => 'bitpackage:liberty/mime_default_inline_inc.tpl',
 	// This should be the same for all mime plugins

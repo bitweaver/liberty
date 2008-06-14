@@ -1,4 +1,12 @@
 {strip}
+{* we will use the LibertyMime method if available *}
+{if $gLibertySystem->isPluginActive( $smarty.const.LIBERTY_DEFAULT_MIME_HANDLER )}
+	{foreach from=$gLibertySystem->getAllMimeTemplates('upload') item=tpl}
+		{include file=$tpl}
+	{/foreach}
+
+{else}
+
 {* this condition is a temporary hack to disable ajax uploads on new content to avoid bogus entires in liberty_attachments.
  * we all want to see this working asap and are thinking of the best way to fix this - xing - Wednesday Nov 14, 2007   18:38:18 CET *}
 {if $gBitSystem->getConfig('liberty_attachment_style') != 'ajax' || $gContent->isValid()}
@@ -52,4 +60,6 @@ content anymore *}
 {else}
 	<p>{tr}Sorry - you do not have permission to attach files to this content.{/tr}</p>
 {/if*}
+
+{/if}
 {/strip}
