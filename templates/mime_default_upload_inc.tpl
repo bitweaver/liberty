@@ -1,8 +1,5 @@
 {strip}
 {if $gBitUser->hasPermission('p_liberty_attach_attachments') }
-	{* thinking of moving this stuff into an upload_function in the default plugin - xing *}
-	{php} include (LIBERTY_PKG_PATH."edit_storage_inc.php"); {/php}
-
 	<div class="row">
 		{formlabel label="Upload File(s)"}
 		{forminput}
