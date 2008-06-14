@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.26 $
+ * @version  $Revision: 1.27 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.26 2008/05/27 14:47:31 squareing Exp $
+// $Id: data.attachment.php,v 1.27 2008/06/14 09:04:15 squareing Exp $
 
 /**
  * definitions
@@ -127,7 +127,7 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 		$thumbsize = !empty( $pParams['size'] ) && !empty( $item->mInfo['thumbnail_url'][$pParams['size']] ) ? $pParams['size'] : 'medium';
 		$gBitSmarty->assign( 'thumbsize', $thumbsize );
 
-		$template = LibertyMime::getMimeTemplate( 'inline', $att['attachment_plugin_guid'] );
+		$template = $gLibertySystem->getMimeTemplate( 'inline', $att['attachment_plugin_guid'] );
 		$ret = $gBitSmarty->fetch( $template );
 	} else {
 		// TODO: legacy code - should be faded out if possible

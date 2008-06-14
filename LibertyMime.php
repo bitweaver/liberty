@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.16 2008/06/14 08:15:56 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.17 2008/06/14 09:04:15 squareing Exp $
  */
 
 /**
@@ -268,27 +268,6 @@ class LibertyMime extends LibertyAttachable {
 		}
 
 		return $ret;
-	}
-
-	/**
-	 * getMimeTemplate will fetch an appropriate template to display a given filetype
-	 * 
-	 * @param array $pTemplate 
-	 * @param array $pGuid 
-	 * @access public
-	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
-	 */
-	function getMimeTemplate( $pTemplate, $pGuid = LIBERTY_DEFAULT_MIME_HANDLER ) {
-		global $gLibertySystem;
-		if( $plugin = $gLibertySystem->getPluginInfo( $pGuid )) {
-			if( !empty( $plugin[$pTemplate.'_tpl'] )) {
-				return $plugin[$pTemplate.'_tpl'];
-			} elseif( $pGuid != LIBERTY_DEFAULT_MIME_HANDLER ) {
-				return LibertyMime::getMimeTemplate( $pTemplate );
-			}else{
-				return NULL;
-			}
-		}
 	}
 
 	/**
