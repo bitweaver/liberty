@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.100 2008/06/14 09:04:15 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.101 2008/06/14 09:11:35 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -380,7 +380,7 @@ class LibertySystem extends LibertyBase {
 	}
 
 	/**
-	 * getPluginType will fetch all plugins of a given type
+	 * getPluginsOfType will fetch all plugins of a given type
 	 * 
 	 * @param string $pPluginType 
 	 * @access public
