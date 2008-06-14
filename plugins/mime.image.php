@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.3 2008/06/13 13:48:39 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.4 2008/06/14 07:58:28 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.3 $
+ * @version		$Revision: 1.4 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -172,7 +172,9 @@ function mime_image_store_exif_data( $pFileHash ) {
 			}
 		}
 
-		LibertyMime::storeMetaData( $pFileHash['attachment_id'], 'EXIF', $exifHash['EXIF'] );
+		if( !empty( $exifHash['EXIF'] )) {
+			LibertyMime::storeMetaData( $pFileHash['attachment_id'], 'EXIF', $exifHash['EXIF'] );
+		}
 	}
 
 	return TRUE;
