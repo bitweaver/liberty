@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.102 2008/06/14 14:44:16 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.103 2008/06/14 15:07:01 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -612,8 +612,9 @@ class LibertySystem extends LibertyBase {
 		// this can be particularly important when fetching the mime-type of video files.
 		// ! Windows looses the file extension when creating the tmp file
 		// need a better way of handling this
-		if ( !is_windows() )
+		if ( !is_windows() ) {
 			$pFileHash['type'] = $gBitSystem->verifyMimeType( $pFileHash['tmp_name'] );
+		}
 		if( $pFileHash['type'] == 'application/binary' || $pFileHash['type'] == 'application/octet-stream' ) {
 			$pFileHash['type'] = $gBitSystem->lookupMimeType( $pFileHash['name'] );
 		}
