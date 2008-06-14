@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.27 $
+ * @version  $Revision: 1.28 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.27 2008/06/14 09:04:15 squareing Exp $
+// $Id: data.attachment.php,v 1.28 2008/06/14 10:34:32 squareing Exp $
 
 /**
  * definitions
@@ -115,7 +115,7 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 
 	// we will do slightly different stuff if this is using a mime plugin
 	if( !empty( $att['is_mime'] )) {
-		global $gBitSmarty;
+		global $gBitSmarty, $gLibertySystem;
 
 		// pass useful stuff to the template
 		$gBitSmarty->assign( 'attachmentParams', $pParams );
