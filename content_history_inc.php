@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.15 $
+ * @version  $Revision: 1.16 $
  * @package  liberty
  * @subpackage functions
  */
@@ -37,12 +37,11 @@ if( isset( $_REQUEST["delete"] ) && isset( $_REQUEST["hist"] )) {
 	$from_version = $_REQUEST["diff2"];
 	$from_page = $gContent->getHistory( $from_version );
 	$from_lines = explode( "\n",$from_page["data"][0]["data"] );
-	if ( isset($_REQUEST["diff_to"]) && $_REQUEST["diff_to"] != $gContent->mInfo["version"] ) {
+	if( isset( $_REQUEST["diff_to"] ) && $_REQUEST["diff_to"] != $gContent->mInfo["version"] ) {
 		$to_version = $_REQUEST["diff_to"];
 		$to_page = $gContent->getHistory( $to_version );
 		$to_lines = explode( "\n",$to_page["data"][0]["data"] );
-	}
-	else {
+	} else {
 		$to_version = $gContent->mInfo["version"];
 		$to_lines = explode( "\n",$gContent->mInfo["data"] );
 	}
@@ -75,7 +74,9 @@ if( isset( $_REQUEST["delete"] ) && isset( $_REQUEST["hist"] )) {
 
 } elseif( @BitBase::verifyId( $_REQUEST["rollback"] )) {
 	$gContent->verifyPermission( !empty( $rollbackPerm ) ? $rollbackPerm : $gContent->mEditContentPerm );
-	if (! isset($_REQUEST["rollback_comment"]) ) $_REQUEST["rollback_comment"] = '';
+	if( !isset( $_REQUEST["rollback_comment"] )) {
+		$_REQUEST["rollback_comment"] = '';
+	}
 	if( $gContent->rollbackVersion( $_REQUEST["rollback"], $_REQUEST["rollback_comment"] )) {
 		bit_redirect( $gContent->getDisplayUrl() );
 	}
