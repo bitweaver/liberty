@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.20 2008/06/09 19:04:16 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.21 2008/06/15 14:51:00 wjames5 Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -51,10 +51,14 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 
 		if (@include_once("PEAR.php")) {		
 			if(@include_once("HTMLPurifier.php")) {
+				// for backward compatibility checks
+				$htmlp_version = NULL;
+
 				// If using 3.10+
 				if(!class_exists("HTMLPurifier_Config")) {
 					@include_once("HTMLPurifier.auto.php");
 					$auto_config = true;
+					$htmlp_version = 3.1;
 				}
 
 				$config = HTMLPurifier_Config::createDefault();
@@ -115,14 +119,24 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 					$def->info['a']->attr_transform_post['rel'] = new HTMLPurifier_AttrTransform_ForceValue('rel', 'nofollow');
 				}
 
-				// As suggested here:  http://www.bitweaver.org/forums/index.php?t=8554
-				$gHtmlPurifier = new HTMLPurifier($config);
-
+				// set plugins
 				// TODO: devise a way to parse plugins dir
 				// and check for the right property here
 				// so new plugins are just drop in place.
 				if ($gBitSystem->isFeatureActive('htmlpure_allow_youtube')) {
 					require_once(UTIL_PKG_PATH.'htmlpure/Filter/YouTube.php');
+
+					if ( $htmlp_version >= 3.1 ){
+						$config->set('Filter', 'YouTube', array(new HTMLPurifier_Filter_YouTube()));
+					}
+				}
+
+				// As suggested here:  http://www.bitweaver.org/forums/index.php?t=8554
+				$gHtmlPurifier = new HTMLPurifier($config);
+
+				// how plugins are registered changed in v3.1 
+				// old way of adding plugins before v3.1
+				if ($gBitSystem->isFeatureActive('htmlpure_allow_youtube') && !( $htmlp_version >= 3.1 ) ) {
 					$gHtmlPurifier->addFilter(new HTMLPurifier_Filter_YouTube());
 				}
 			}
