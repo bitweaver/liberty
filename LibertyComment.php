@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.69 2008/05/20 21:03:09 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.70 2008/06/15 09:45:45 jht001 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -256,10 +256,9 @@ class LibertyComment extends LibertyContent {
 		
 		// check the allowed edit time limit - we'll use it later
 		$withinEditTime = FALSE;
-		if ( $gBitSystem->getConfig( 'comment_edit_minutes', 60 ) * 60 + $this->getField( 'created' ) > time() ) {
+		if ( $gBitSystem->getConfig( 'comments_edit_minutes', 60 ) * 60 + $this->getField( 'created' ) > time() ) {
 			$withinEditTime = TRUE;
 		}
-
 		if($tmpUser->isRegistered()) {
 			/* get the hash of the users perms rather than call hasUserPermission which 
 			 * always returns true for owner which interferes with trying to time limit editing
