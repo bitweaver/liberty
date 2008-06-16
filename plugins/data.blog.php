@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.blog.php,v 1.14 2007/08/22 22:43:38 wjames5 Exp $
+// $Id: data.blog.php,v 1.15 2008/06/16 14:32:57 wjames5 Exp $
 
 /**
  * definitions
@@ -121,6 +121,25 @@ function data_blog($data, $params) { // No change in the parameters with Clyde
 		if ( isset($module_params['id']) ){ $getHash['blog_id'] = $module_params['id'];}
 		if ( isset($module_params['group_id']) ){ $getHash['group_id'] = $module_params['group_id'];}
 		
+		// handle draft posts
+		$listHash['enforce_status'] = TRUE;
+		// @TODO enable lists that include draft posts
+		// the current tpl configuration doesnt allow us to support draft lists right now
+		// there is an object reference problem in liberty::service_content_body_inc.tpl
+		// if the object reference problem in the above mentions tpl is patched then use this if to enable drafts
+		// if ( !empty( $module_params['status'] ) && $module_params['status'] = "draft" && isset( $gBitUser->mUserId ) ){
+		if ( FALSE ){
+			// if we are getting drafts then get future posts too 
+			$getHash['show_future'] = TRUE;
+			$getHash['min_status_id'] = -6;
+			$getHash['max_status_id'] = -4;
+			$getHash['min_owner_status_id'] = -6;
+			// limit by user
+			$getHash['user_id'] = $gBitUser->mUserId;
+		}else{
+			$getHash['min_owner_status_id'] = 0;
+		}
+
 		$getHash['sort_mode']   = $sort_mode;
 		$getHash['parse_data'] = TRUE;
 		$getHash['max_records'] = empty($module_params['max']) ? 1 : $module_params['max'];
