@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/data.image.php,v 1.8 2008/06/01 09:47:04 squareing Exp $
+ * @version  $Revision: 1.9 $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/data.image.php,v 1.9 2008/06/17 17:07:50 lsces Exp $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -75,9 +75,9 @@ function data_image( $pData, $pParams ) {
 		if( $item->load() ) {
 			// insert source url if we need the original file
 			if( !empty( $pParams['size'] ) && $pParams['size'] == 'original' ) {
-				$thumbUrl = $item->mInfo['image_file']['source_url'];
-			} elseif( $item->mInfo['image_file']['thumbnail_url'] ) {
-				$thumbUrl = ( !empty( $pParams['size'] ) && !empty( $item->mInfo['image_file']['thumbnail_url'][$pParams['size']] ) ? $item->mInfo['image_file']['thumbnail_url'][$pParams['size']] : $item->mInfo['image_file']['thumbnail_url']['medium'] );
+				$thumbUrl = $item->mInfo['source_url'];
+			} elseif( $item->mInfo['thumbnail_url'] ) {
+				$thumbUrl = ( !empty( $pParams['size'] ) && !empty( $item->mInfo['thumbnail_url'][$pParams['size']] ) ? $item->mInfo['thumbnail_url'][$pParams['size']] : $item->mInfo['thumbnail_url']['medium'] );
 			}
 
 			if( empty( $description ) ) {
@@ -101,7 +101,7 @@ function data_image( $pData, $pParams ) {
 			// if this image is linking to something, wrap the image with the <a>
 			$ret = '<a href="'.trim( $wrapper['link'] ).'">'.$ret.'</a>';
 		} elseif ( empty( $pParams['size'] ) || $pParams['size'] != 'original' ) {
-			$ret = '<a href="'.trim( $item->mInfo['image_file']['source_url'] ).'">'.$ret.'</a>';
+			$ret = '<a href="'.trim( $item->mInfo['source_url'] ).'">'.$ret.'</a>';
 		}
 
 		if( !empty( $wrapper['style'] ) || !empty( $class ) || !empty( $wrapper['description'] ) ) {
