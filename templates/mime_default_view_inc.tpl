@@ -10,6 +10,9 @@
 		<a href="{$attachment.display_url|escape}&amp;size={$size}">{tr}{$size}{/tr}</a>
 		{if !$smarty.foreach.size.last}&nbsp;&bull;&nbsp;{/if}
 	{/foreach}
+	{if ( $attachment.original ) }
+		&nbsp;&bull;&nbsp;<a href="{$attachment.source_url|escape}">{tr}Original File{/tr}</a>
+	{/if}
 </div>
 {/strip}
 {include file="bitpackage:liberty/mime_meta_inc.tpl"}
