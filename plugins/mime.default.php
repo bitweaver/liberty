@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.23 2008/06/14 09:06:12 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.24 2008/06/17 14:43:46 lsces Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.23 $
+ * @version     $Revision: 1.24 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -92,7 +92,7 @@ function mime_default_verify( &$pStoreRow ) {
 
 			// Store all uploaded files in the users storage area
 			// TODO: allow users to create personal galleries
-			$pStoreRow['attachment_id'] = $gBitSystem->mDb->GenID( 'liberty_attachments_id_seq' );
+			$pStoreRow['attachment_id'] = defined( 'LINKED_ATTACHMENTS' ) ? $pStoreRow['content_id'] : $gBitSystem->mDb->GenID( 'liberty_attachments_id_seq' );
 		}
 
 		// Generic values needed by the storing mechanism
