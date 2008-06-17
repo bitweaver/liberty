@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.103 2008/06/14 15:07:01 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.104 2008/06/17 09:45:13 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -333,7 +333,7 @@ class LibertySystem extends LibertyBase {
 		$ret = NULL;
 		if( !empty( $pGuid )
 			&& !empty( $this->mPlugins[$pGuid] )
-			&& ( empty( $this->mPlugins[$pGuid]['is_active'] ) || $this->mPlugins[$pGuid]['is_active'] != 'n' )
+			&& ( empty( $this->mPlugins[$pGuid]['is_active'] ) || $this->mPlugins[$pGuid]['is_active'] != 'n' || $pGuid = 'bitfile' )
 			&& !empty( $this->mPlugins[$pGuid][$pFunctionName] )
 			&& function_exists( $this->mPlugins[$pGuid][$pFunctionName] )
 		) {
