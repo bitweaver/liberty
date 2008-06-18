@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.15 $
+ * @version  $Revision: 1.16 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.blog.php,v 1.15 2008/06/16 14:32:57 wjames5 Exp $
+// $Id: data.blog.php,v 1.16 2008/06/18 01:43:31 wjames5 Exp $
 
 /**
  * definitions
@@ -122,7 +122,7 @@ function data_blog($data, $params) { // No change in the parameters with Clyde
 		if ( isset($module_params['group_id']) ){ $getHash['group_id'] = $module_params['group_id'];}
 		
 		// handle draft posts
-		$listHash['enforce_status'] = TRUE;
+		$getHash['enforce_status'] = TRUE;
 		// @TODO enable lists that include draft posts
 		// the current tpl configuration doesnt allow us to support draft lists right now
 		// there is an object reference problem in liberty::service_content_body_inc.tpl
