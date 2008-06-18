@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.17 2008/06/14 09:04:15 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.18 2008/06/18 10:12:56 lsces Exp $
  */
 
 /**
@@ -156,7 +156,7 @@ class LibertyMime extends LibertyAttachable {
 	 * @param array $pStoreHash hash of all data that needs to be stored in the database
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason
-	 * @Note: If one of the uploaded files is an update, place the attachment_id with the upload hash in $_FILES or in _files_override
+	 * @todo If one of the uploaded files is an update, place the attachment_id with the upload hash in $_FILES or in _files_override
 	 */
 	function verify( &$pParamHash ) {
 		global $gBitUser, $gLibertySystem;
@@ -258,7 +258,7 @@ class LibertyMime extends LibertyAttachable {
 	 * @param string $pFunctionName Function type we want to use
 	 * @access public
 	 * @return function name
-	 * @TODO: Move this to LibertySystem. Currently it's here since LibertyMime is a test project...
+	 * TODO: Move this to LibertySystem. Currently it's here since LibertyMime is a test project...
 	 */
 	function getPluginFunction( $pGuid, $pFunctionName ) {
 		global $gLibertySystem;
