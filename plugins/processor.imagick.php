@@ -1,9 +1,10 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.7 2008/03/10 16:02:04 wjames5 Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.8 2008/06/19 07:29:56 lsces Exp $
  *
  * Image processor - extension: php-imagick
  * @package  liberty
+ * @subpackage plugins_processor
  * @author   spider <spider@steelsun.com>
  */
 

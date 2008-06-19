@@ -1,9 +1,10 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.16 2007/11/19 15:55:26 nickpalmer Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.17 2008/06/19 07:29:56 lsces Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
+ * @subpackage plugins_processor
  * @author   spider <spider@steelsun.com>
  */
 

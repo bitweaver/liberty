@@ -1,7 +1,8 @@
 <?php
 /**
- * @version  $Revision: 1.124 $
+ * @version  $Revision: 1.125 $
  * @package  liberty
+ * @subpackage plugins_format
  */
 global $gLibertySystem;
 
@@ -10,10 +11,6 @@ global $gLibertySystem;
  */
 define( 'PLUGIN_GUID_TIKIWIKI', 'tikiwiki' );
 
-/**
- * @package  liberty
- * @subpackage plugins_format
- */
 $pluginParams = array (
 	'auto_activate'    => TRUE,
 	'store_function'   => 'tikiwiki_save_data',

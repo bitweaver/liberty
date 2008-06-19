@@ -1,9 +1,10 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.9 2007/07/29 14:23:25 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.10 2008/06/19 07:29:56 lsces Exp $
  *
  * Image processor - extension: php-gd
  * @package  liberty
+ * @subpackage plugins_processor
  * @author   spider <spider@steelsun.com>
  */
 
