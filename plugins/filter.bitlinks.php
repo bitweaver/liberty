@@ -1,8 +1,7 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.13 2007/11/18 12:00:24 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.14 2008/06/19 07:32:12 lsces Exp $
  * @package  liberty
- * @subpackage plugins_filter
  */
 
 /**
