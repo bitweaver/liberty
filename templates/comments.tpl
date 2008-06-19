@@ -1,5 +1,4 @@
 {strip}
-<br />
 <div class="display comment">
 	<div class="header">
 		{if !( $smarty.request.post_comment_request || $post_comment_preview )}
