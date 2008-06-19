@@ -3,7 +3,7 @@
  * assigned_modules
  *
  * @author     xing
- * @version    $Revision: 1.12 $
+ * @version    $Revision: 1.13 $
  * @package    liberty
  * @subpackage plugins_data
  * @copyright  Copyright (c) 2004, bitweaver.org
@@ -54,7 +54,7 @@ function data_div_help() {
 	return $help;
 }
 
-function data_div( $pData, $pParams, $pCommonObject ) {
+function data_div( $pData, $pParams, $pCommonObject, $pParseHash ) {
 	$style = '';
 	foreach( $pParams as $key => $value ) {
 		if( !empty( $value ) ) {
@@ -84,9 +84,11 @@ function data_div( $pData, $pParams, $pCommonObject ) {
 			}
 		}
 	}
-	$parseHash = $pCommonObject->mInfo;
+	$parseHash['content_id'] = $pParseHash['content_id'];
+	$parseHash['user_id'] = $pParseHash['user_id'];
 	$parseHash['no_cache'] = TRUE;
 	$parseHash['data'] = $pData;
-	return( '<div '.( !empty( $class ) ? 'class="'.$class.'" ' : '' ).'style="'.$style.'">'.$pCommonObject->parseData( $parseHash ).'</div>' );
+	$ret = '<div '.( !empty( $class ) ? 'class="'.$class.'" ' : '' ).'style="'.$style.'">'.$pCommonObject->parseData( $parseHash ).'</div>';
+	return $ret;
 }
 ?>
