@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.104 2008/06/17 09:45:13 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.105 2008/06/20 07:49:09 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -615,7 +615,7 @@ class LibertySystem extends LibertyBase {
 		if ( !is_windows() ) {
 			$pFileHash['type'] = $gBitSystem->verifyMimeType( $pFileHash['tmp_name'] );
 		}
-		if( $pFileHash['type'] == 'application/binary' || $pFileHash['type'] == 'application/octet-stream' ) {
+		if( $pFileHash['type'] == 'application/binary' || $pFileHash['type'] == 'application/octet-stream' || $pFileHash['type'] == 'application/octetstream' ) {
 			$pFileHash['type'] = $gBitSystem->lookupMimeType( $pFileHash['name'] );
 		}
 
