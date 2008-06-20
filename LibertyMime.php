@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.18 2008/06/18 10:12:56 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.19 2008/06/20 22:28:42 wjames5 Exp $
  */
 
 /**
@@ -78,7 +78,7 @@ class LibertyMime extends LibertyAttachable {
 	function store( &$pStoreHash ) {
 		global $gLibertySystem;
 		// make sure all the data is in order
-		if( LibertyContent::store( $pStoreHash ) && LibertyMime::verify( $pStoreHash )) {
+		if( LibertyMime::verify( $pStoreHash ) && ( isset( $pStoreHash['skip_content_store'] ) || LibertyContent::store( $pStoreHash ) ) ) {
 			if( !empty( $pStoreHash['upload_store']['files'] ) && is_array( $pStoreHash['upload_store']['files'] )) {
 				$this->mDb->StartTrans();
 
