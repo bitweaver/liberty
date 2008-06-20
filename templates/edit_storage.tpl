@@ -5,6 +5,7 @@
 		{include file=$tpl}
 	{/foreach}
 
+	{include file="bitpackage:liberty/edit_storage_list.tpl" uploadTab=TRUE}
 {else}
 
 {* this condition is a temporary hack to disable ajax uploads on new content to avoid bogus entires in liberty_attachments.
