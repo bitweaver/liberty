@@ -2,7 +2,7 @@
 LibertyAttachment = {
 	"uploader_under_way":0,
 	
-	"uploader": function(file, action, waitmsg, frmid) {
+	"uploader": function(file, action, waitmsg, frmid, actionid) {
 		if (LibertyAttachment.uploader_under_way) {
 			alert(waitmsg);
 		}else{
@@ -11,10 +11,13 @@ LibertyAttachment = {
 			var old_target = file.form.target;
 			file.form.target = frmid;
 			var old_action = file.form.action;
+			// var action_item = document.getElementById(actionid);
+			// action_item.value = old_action;
 			file.form.action=action;
 			file.form.submit();
 			file.form.target = old_target;
 			file.form.action = old_action;
+			// action_item.value = '';
 		}
 	},
 
@@ -32,6 +35,14 @@ LibertyAttachment = {
 			if (d.location.href == "about:blank") {
 				return;
 			}
+
+			// 
+			for( n=0; n<document.forms.length; n++ ){
+				if ( typeof( document.forms[n].content_id != "undefined" ) ){
+					document.forms[n].content_id.value = d.getElementById("new_content_id").value;
+				}
+			}
+
 			var errMsg = "<div>Sorry, there was a problem retrieving results.</div>";
 			var divO = document.getElementById(divid);
 			divR = d.getElementById('result_tab');

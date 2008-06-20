@@ -1,7 +1,7 @@
 {strip}
 {if !empty($errors)}
 	<script type="text/javascript">
-		addLoadHook(function(){ldelim} alert("Error with upload: {$errors}"); {rdelim});
+		alert("Error with upload: {$errors}");
 	</script>
 {/if}
 <div id="result_tab">
@@ -15,4 +15,7 @@
 <div id="result_list">
 	{include file="bitpackage:liberty/edit_storage_list.tpl" uploadTab=0}
 </div>
+{if $gContent->mContentId}
+	<input type="hidden" name="new_content_id" id="new_content_id" value="{$gContent->mContentId}" />
+{/if}
 {/strip}

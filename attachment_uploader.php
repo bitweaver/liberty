@@ -1,65 +1,61 @@
 <?php
-/**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.10 2007/10/08 13:03:45 nickpalmer Exp $
- * @package liberty
- * @subpackage functions
- */
-
-/**
- * required setup
- */
 require_once( '../bit_setup_inc.php' );
-require_once( LIBERTY_PKG_PATH."LibertyAttachable.php" );
 global $gBitSmarty, $gContent;
 
-$gContent = new LibertyAttachable();
-
-// Handle delete.
-require_once( LIBERTY_PKG_PATH."edit_storage_inc.php" );
-
-// make a copy of $_REQUEST that we can mess with it without interfering with the rest of the page
-$storeHash = $_REQUEST;
-
-// Take the one we are going to delete out of existing.
-//if( !empty($_REQUEST['deleteAttachment'] ) ) {
-//	unset($storeHash['STORAGE']['existing'][$_REQUEST['deleteAttachment']]);
-//}
-
-// Do we have an attachment to save?
-if( !empty($_FILES['upload']) ) {
-
-	// Do we have a content_id already or is this a preflight?
-	if( !empty( $storeHash['liberty_attachments']['content_id'] ) ) {
-
-		// Get the content_id into the right places.
-		$gContent->mContentId = $storeHash['content_id'] = $storeHash['liberty_attachments']['content_id'];
+$error = NULL;
+if ( !isset($_FILES['upload'] ) ) {
+	$error = tra( "No upload submitted." );
+}elseif( !empty( $_REQUEST['liberty_attachments']['content_id'] )) {
+// if we have a content id then we just load up that
+	if( !($gContent = LibertyBase::getLibertyObject( $_REQUEST['liberty_attachments']['content_id'] )) ) {
+		// if there is something wrong with the content id spit back an error
+		$error = tra( "You are attempting to upload a file to a content item that does not exist." );
 	}
-	else {
-		$storeHash['content_id'] = $gContent->mContentId = NULL;
-	}
+}elseif( isset ( $_REQUEST['liberty_attachments']['content_type_guid'] ) ){
+/* if we don't have a content id then we assume this is new content and we need to create a draft.
+ * we'll pass a new content_id back to the edit form so it can make the right association later on save.
+ */
+	// if we are creating new content the status must be enforced, so status recognition must be enabled
+	if( !$gBitSystem->isFeatureActive( "liberty_display_status" ) ){
+		$error = tra( "You must save the content to upload an attachment." );
+	}elseif( !isset( $gLibertySystem->mContentTypes[$_REQUEST['liberty_attachments']['content_type_guid']] ) ){
+		$error = tra( "You are attempting to upload a file to an invalid content type" );
+	}else{
+		// load up the requested content type handler class
+		$contentType = $_REQUEST['liberty_attachments']['content_type_guid'];
+		$contentTypeHash = $gLibertySystem->mContentTypes[$contentType];
+		$class =  $contentTypeHash['handler_class'];
+		$classFile =  $contentTypeHash['handler_file'];
+		$package = $contentTypeHash['handler_package'];
+		$pathVar = strtoupper($package).'_PKG_PATH';
 
-	$storeHash['skip_content_store'] = true;
+		if( !defined( $pathVar ) ) {
+			$error = tra( "Undefined handler package path" );
+		}else{
+			require_once( constant( $pathVar ).$classFile );
+			$gContent = new $class();
+		}
+	}
+}else{
+// if we don't have a valid content_id or content_type_guid we can't do nothing for you
+	$error = "You have not specified a content item or content type to associate this upload with";
+}
+
+if( isset( $gContent ) ){
+	$storeHash = $_REQUEST['liberty_attachments'];
+
+	if ( !$gContent->isValid() ){
+		// if we dont have a content object for this attachment yet, lets create a draft.
+		$storeHash['content_status_id'] = -5;
+	}else{
+		// else we'll skip storing the content
+		$storeHash['skip_content_store'] = true;
+	}
 
 	// store the attachment.
 	if ( !$gContent->store( $storeHash ) ) {
-		$gBitSmarty->assign('errors', $gContent->mErrors);
-		// If this is the first set it to be primary
-		if ( empty( $storeHash['STORAGE']['existing'] ) ) {
-			foreach ( $storeHash['STORAGE'] as $id => $file ) {
-				if ( $id != 'existing' ) {
-					foreach ( $file as $key => $data ) {
-						$gContent->setPrimaryAttachment( $key );
-						$done = true;
-						break;
-					}
-				}
-				if ( $done ) {
-					break;
-				}
-			}
-		}
-	}
-	else {
+		$error = $gContent->mErrors;
+	}else{
 		// Load up the new attachment.
 		if ( !empty($storeHash['STORAGE'] ) ) {
 			foreach ( $storeHash['STORAGE'] as $id => $file ) {
@@ -72,32 +68,24 @@ if( !empty($_FILES['upload']) ) {
 		}
 	}
 }
-else {
-	$gBitSmarty->assign( 'errors', tra( 'There was an unknown error with the upload.' ) );
-}
 
-if ( empty($gContent->mContentId) ) {
-	// Setup the existing_attachment_id stuff
-	if( !empty( $storeHash['STORAGE']['existing'] ) ) {
-		// Fake it for preflight
-		foreach( $storeHash['STORAGE']['existing'] as $id ) {
-			if( !empty( $id ) ) {
-				$gContent->mStorage[$id] = $gContent->getAttachment( $id );
-			}
-		}
-	}
-}
-else {
+if ( !is_null( $error ) ){
+	if ( is_array( $error ) ){
+		$error = implode("\n", $error);
+	} 
+	$gBitSmarty->assign('errors', $error);
+}else{
+	// @Todo is this stuff necessary?
 	$gContent->load();
-}
-
-// Make them come out in the right order
-if( !empty( $gContent->mStorage ) ) {
-	ksort( $gContent->mStorage );
+	// Make them come out in the right order
+	if( !empty( $gContent->mStorage ) ) {
+		ksort( $gContent->mStorage );
+	}
 }
 
 $gBitSmarty->assign( 'gContent', $gContent );
 $gBitSmarty->assign( 'libertyUploader', TRUE );
 $gBitSmarty->assign( 'uploadTab', TRUE );
+
 echo $gBitSystem->display( 'bitpackage:liberty/attachment_uploader.tpl', NULL, 'none' );
 ?>
