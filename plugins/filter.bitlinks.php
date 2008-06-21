@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.14 2008/06/19 07:32:12 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.15 2008/06/21 04:12:55 jht001 Exp $
  * @package  liberty
  */
 
@@ -491,7 +491,13 @@ class BitLinks extends BitBase {
 		$title_list_count = count( $unique_new_wiki_links );
 		if( $title_list_count > 0 ) {
 			$inSql      = '?'.str_repeat( ',?', $title_list_count - 1 );
-			$bindVars   = array_keys( $unique_new_wiki_links );
+			//$bindVars   = array_keys( $unique_new_wiki_links );
+			// All arguments to MySQL in() function have to be passed as strings or it doesn't work correctly
+			// code above was updating the incorrect rows for totally numeric page names like 97834
+			$bindVars = array();
+			foreach (array_keys($unique_new_wiki_links) as $v) {
+				$bindVars[] = "$v";
+				}
 			$bindVars[] = BITPAGE_CONTENT_TYPE_GUID;
 
 			$new_link_pointing_to_existing_content = array();
@@ -504,7 +510,13 @@ class BitLinks extends BitBase {
 
 			if( count( $new_link_pointing_to_existing_content ) > 0 ) {
 				// insert all new links pointing to existing content
-				$bindVars   = array_keys( $new_link_pointing_to_existing_content );
+				//$bindVars   = array_keys( $new_link_pointing_to_existing_content );
+				// All arguments to MySQL in() function have to be passed as strings or it doesn't work correctly
+				// code above was updating the incorrect rows for totally numeric page names like 97834
+				$bindVars = array();
+				foreach (array_keys($new_link_pointing_to_existing_content) as $v) {
+					$bindVars[] = "$v";
+					}
 				$bindVars[] = BITPAGE_CONTENT_TYPE_GUID;
 				$inSql      = '?' . str_repeat( ',?', count( $new_link_pointing_to_existing_content ) - 1 );
 				$query      = "
