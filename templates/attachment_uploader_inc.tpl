@@ -8,8 +8,9 @@
 </noscript>
 
 {* Ensure content_id and content_type_guid are sent with the form if possible. *}
-<input type="hidden" name="liberty_attachments[content_id]" value="{$gContent->mContentId}" />
+<input type="hidden" name="liberty_attachments[content_id]" id="la_content_id" value="{$gContent->mContentId}" />
 <input type="hidden" name="liberty_attachments[content_type_guid]" value="{$gContent->mContentTypeGuid}" />
+<input type="hidden" name="liberty_attachments[title]" id="la_title" value="{* this is a place holder populated by our upload scrpt - see LibertyAttachable.js *}" />
 
 {* Note! iFrame MUST not be display: none or Safari pops a window instead. *}
 {* I am not dynamically creating the iFrame to give a warning for browsers with no iframe support. *}

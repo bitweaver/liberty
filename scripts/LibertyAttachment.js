@@ -6,18 +6,24 @@ LibertyAttachment = {
 		if (LibertyAttachment.uploader_under_way) {
 			alert(waitmsg);
 		}else{
-			LibertyAttachment.uploader_under_way = 1;
-			BitAjax.showSpinner();
-			var old_target = file.form.target;
-			file.form.target = frmid;
-			var old_action = file.form.action;
-			// var action_item = document.getElementById(actionid);
-			// action_item.value = old_action;
-			file.form.action=action;
-			file.form.submit();
-			file.form.target = old_target;
-			file.form.action = old_action;
-			// action_item.value = '';
+			var t = document.forms.editpageform.title.value;
+			if ( MochiKit.Base.isEmpty(t) ){
+				alert( "Please enter a title for your new content before attempting to upload a file." );
+			}else{
+				$('la_title').value = t;
+				LibertyAttachment.uploader_under_way = 1;
+				BitAjax.showSpinner();
+				var old_target = file.form.target;
+				file.form.target = frmid;
+				var old_action = file.form.action;
+				// var action_item = document.getElementById(actionid);
+				// action_item.value = old_action;
+				file.form.action=action;
+				file.form.submit();
+				file.form.target = old_target;
+				file.form.action = old_action;
+				// action_item.value = '';
+			}
 		}
 	},
 
@@ -36,12 +42,15 @@ LibertyAttachment = {
 				return;
 			}
 
-			// 
-			for( n=0; n<document.forms.length; n++ ){
-				if ( typeof( document.forms[n].content_id != "undefined" ) ){
-					document.forms[n].content_id.value = d.getElementById("new_content_id").value;
-				}
+			var form = document.forms.editpageform;
+			var cid = d.getElementById("upload_content_id").value;
+			if ( typeof( form.content_id ) == "undefined" ){
+				var i = INPUT( {'name':'content_id', 'type':'hidden', 'value':cid}, null );
+				form.insertBefore( i, form.firstChild ); 
+			}else{
+				form.content_id.value = cid;
 			}
+			$('la_content_id').value = cid;
 
 			var errMsg = "<div>Sorry, there was a problem retrieving results.</div>";
 			var divO = document.getElementById(divid);

@@ -3,7 +3,7 @@
  * edit_storage_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.29 $
+ * @version  $Revision: 1.30 $
  * @package  liberty
  * @subpackage functions
  */
@@ -38,7 +38,7 @@ if( !empty( $_REQUEST['deleteAttachment'] )) {
 
 // make sure js is being loaded
 if( $gBitSystem->getConfig( 'liberty_attachment_style' ) == 'ajax' ) {
-	$gBitThemes->loadAjax( 'mochikit' );
+	$gBitThemes->loadAjax( 'mochikit', array( 'DOM.js' ) );
 	$gBitThemes->loadJavascript( LIBERTY_PKG_PATH.'scripts/LibertyAttachment.js', TRUE );
 }
 ?>
