@@ -1,9 +1,9 @@
 <?php
 /**
- * edit_storage_inc
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/edit_storage_inc.php,v 1.31 2008/06/23 06:30:50 lsces Exp $
  *
+ * edit_storage_inc
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.30 $
  * @package  liberty
  * @subpackage functions
  */
