@@ -1,4 +1,13 @@
 <?php
+/**
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.12 2008/06/23 06:29:21 lsces Exp $
+ * @package liberty
+ * @subpackage functions
+ */
+
+/**
+ * required setup
+ */
 require_once( '../bit_setup_inc.php' );
 global $gBitSmarty, $gContent;
 
