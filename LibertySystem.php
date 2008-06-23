@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.105 2008/06/20 07:49:09 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.106 2008/06/23 15:40:44 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -612,15 +612,16 @@ class LibertySystem extends LibertyBase {
 		// this can be particularly important when fetching the mime-type of video files.
 		// ! Windows looses the file extension when creating the tmp file
 		// need a better way of handling this
-		if ( !is_windows() ) {
+		if( !is_windows() ) {
 			$pFileHash['type'] = $gBitSystem->verifyMimeType( $pFileHash['tmp_name'] );
 		}
+
 		if( $pFileHash['type'] == 'application/binary' || $pFileHash['type'] == 'application/octet-stream' || $pFileHash['type'] == 'application/octetstream' ) {
 			$pFileHash['type'] = $gBitSystem->lookupMimeType( $pFileHash['name'] );
 		}
 
-		foreach( $this->mPlugins as $handler => $plugin ) {
-			if( $plugin['is_active'] && !empty( $plugin['mimetypes'] ) && is_array( $plugin['mimetypes'] )) {
+		foreach( $this->getPluginsOfType( MIME_PLUGIN ) as $handler => $plugin ) {
+			if( $this->isPluginActive( $handler ) && !empty( $plugin['mimetypes'] ) && is_array( $plugin['mimetypes'] )) {
 				foreach( $plugin['mimetypes'] as $pattern ) {
 					if( preg_match( $pattern, $pFileHash['type'] )) {
 						return $handler;
