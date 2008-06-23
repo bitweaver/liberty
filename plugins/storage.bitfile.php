@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.51 $
+ * @version  $Revision: 1.52 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -97,13 +97,12 @@ function bit_files_load( $pRow ) {
 				INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON (lf.`file_id` = la.`foreign_id`)
 			WHERE la.`foreign_id` = ? AND `attachment_plugin_guid` = ?";
 		if( $ret = $gBitSystem->mDb->getRow( $query, array( $pRow['foreign_id'], PLUGIN_GUID_BIT_FILES ))) {
+			$thumbHash['storage_path'] = $ret['storage_path'];
 			$canThumbFunc = liberty_get_function( 'can_thumbnail' );
-			if( $canThumbFunc( $ret['mime_type'] )) {
-				$thumbnailerImageUrl = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
-			} else {
-				$thumbnailerImageUrl = NULL;
+			if( $canThumbFunc( $row['mime_type'] )) {
+				$thumbHash['default_image'] = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
 			}
-			$ret['thumbnail_url'] = liberty_fetch_thumbnails( $ret['storage_path'], $thumbnailerImageUrl );
+			$ret['thumbnail_url'] = liberty_fetch_thumbnails( $thumbHash );
 			$ret['filename'] = str_replace('//', '/', substr( $ret['storage_path'], strrpos($ret['storage_path'], '/')+1) );
 			$ret['source_url'] = str_replace('//', '/', BIT_ROOT_URL.str_replace( '+', '%20', str_replace( '%2F', '/', urlencode( $ret['storage_path'] ) ) ) );
 			$ret['wiki_plugin_link'] = "{attachment id=".$ret['attachment_id']."}";

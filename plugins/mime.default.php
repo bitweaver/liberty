@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.24 2008/06/17 14:43:46 lsces Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.25 2008/06/23 21:56:12 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.24 $
+ * @version     $Revision: 1.25 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -220,43 +220,43 @@ function mime_default_load( $pFileHash, &$pPrefs ) {
 		if( $row = $gBitSystem->mDb->getRow( $query, array( $pFileHash['attachment_id'] ))) {
 			$ret = array_merge( $pFileHash, $row );
 
+			// this will fetch the correct thumbnails
+			$thumbHash['storage_path'] = $row['storage_path'];
 			$canThumbFunc = liberty_get_function( 'can_thumbnail' );
 			if( $canThumbFunc( $row['mime_type'] )) {
-				$thumbnailerImageUrl = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
-			} else {
-				$thumbnailerImageUrl = NULL;
+				$thumbHash['default_image'] = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
 			}
-
-			$ret['thumbnail_url']    = liberty_fetch_thumbnails( $row['storage_path'], $thumbnailerImageUrl );
+			$ret['thumbnail_url'] = liberty_fetch_thumbnails( $thumbHash );
 			// indicate that this is a mime thumbnail
 			if( !empty( $ret['thumbnail_url']['medium'] ) && strpos( $ret['thumbnail_url']['medium'], '/mime/' )) {
 				$ret['thumbnail_is_mime'] = TRUE;
 			}
-			$ret['filename']         = basename( $row['storage_path'] );
+
+			// pretty URLs
 			if( $gBitSystem->isFeatureActive( "pretty_urls" ) || $gBitSystem->isFeatureActive( "pretty_urls_extended" )) {
-				$ret['display_url']      = LIBERTY_PKG_URL."view/file/".$row['attachment_id'];
+				$ret['display_url'] = LIBERTY_PKG_URL."view/file/".$row['attachment_id'];
 			} else {
-				$ret['display_url']      = LIBERTY_PKG_URL."view_file.php?attachment_id=".$row['attachment_id'];
+				$ret['display_url'] = LIBERTY_PKG_URL."view_file.php?attachment_id=".$row['attachment_id'];
 			}
-			$ret['mime_type']        = $row['mime_type'];
-			$ret['file_size']        = $row['file_size'];
-			$ret['attachment_id']    = $row['attachment_id'];
-			$ret['preferences']      = $pPrefs;
+
+			$ret['filename']    = basename( $row['storage_path'] );
+			$ret['preferences'] = $pPrefs;
 
 			// some stuff is only available if we have a source file
 			//    make sure to check for these when you use them. frequently the original might not be available
 			//    e.g.: video files are large and the original might be deleted after conversion
 			if( is_file( BIT_ROOT_PATH.$row['storage_path'] )) {
 				$ret['source_file']   = BIT_ROOT_PATH.$row['storage_path'];
-				$ret['source_url'] = path_to_url( $row['storage_path'] );
+				$ret['source_url']    = path_to_url( $row['storage_path'] );
 				$ret['last_modified'] = filemtime( $ret['source_file'] );
 				if( $gBitSystem->isFeatureActive( "pretty_urls" ) || $gBitSystem->isFeatureActive( "pretty_urls_extended" )) {
-					$ret['download_url']  = LIBERTY_PKG_URL."download/file/".$row['attachment_id'];
+					$ret['download_url'] = LIBERTY_PKG_URL."download/file/".$row['attachment_id'];
 				} else {
-					$ret['download_url']  = LIBERTY_PKG_URL."download_file.php?attachment_id=".$row['attachment_id'];
+					$ret['download_url'] = LIBERTY_PKG_URL."download_file.php?attachment_id=".$row['attachment_id'];
 				}
 			}
 
+			// add a description of how to insert this file into a wiki page
 			if( $gLibertySystem->isPluginActive( 'dataattachment' )) {
 				$ret['wiki_plugin_link'] = "{attachment id=".$row['attachment_id']."}";
 			}
