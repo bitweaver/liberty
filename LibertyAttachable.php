@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.158 2008/06/08 10:17:12 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.159 2008/06/24 10:02:48 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -626,7 +626,7 @@ class LibertyAttachable extends LibertyContent {
 			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` la WHERE la.`attachment_id`=?";
 			if( $result = $gBitSystem->mDb->query( $query, array( (int)$pAttachmentId ))) {
 				if( $row = $result->fetchRow() ) {
-					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function' )) {
+					if( $func = LibertyMime::getPluginFunction( $row['attachment_plugin_guid'], 'load_function' )) {
 						$prefs = array();
 						// if the object is available, we'll copy the preferences by reference to allow the plugin to update them as needed
 						if( !empty( $this ) && !empty( $this->mStoragePrefs[$pAttachmentId] )) {
