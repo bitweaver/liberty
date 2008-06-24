@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.application.php,v 1.3 2008/06/24 10:16:18 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.application.php,v 1.4 2008/06/24 10:20:20 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com> 
- * @version     $Revision: 1.3 $
+ * @version     $Revision: 1.4 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -45,7 +45,7 @@ $pluginParams = array (
 	// This should be the same for all mime plugins
 	'plugin_type'        => MIME_PLUGIN,
 	// Set this to TRUE if you want the plugin active right after installation
-	'auto_activate'      => TRUE,
+	'auto_activate'      => FALSE,
 	// Help page on bitweaver.org
 	//'help_page'          => 'MimeHelpPage',
 
