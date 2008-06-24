@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.106 2008/06/23 15:40:44 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.107 2008/06/24 10:14:10 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -345,20 +345,18 @@ class LibertySystem extends LibertyBase {
 	/**
 	 * getMimeTemplate will fetch an appropriate template to display a given filetype
 	 * 
-	 * @param array $pTemplate Name of the template
-	 * @param array $pGuid GUID of plugin
+	 * @param string $pTemplate Basename of the template
+	 * @param string $pGuid GUID of plugin
 	 * @access public
 	 * @return resource path to template
 	 */
 	function getMimeTemplate( $pTemplate, $pGuid = LIBERTY_DEFAULT_MIME_HANDLER ) {
-		if( $this->isPluginActive( $pGuid ) && $plugin = $this->getPluginInfo( $pGuid )) {
-			if( !empty( $plugin[$pTemplate.'_tpl'] )) {
-				return $plugin[$pTemplate.'_tpl'];
-			} elseif( $pGuid != LIBERTY_DEFAULT_MIME_HANDLER ) {
-				return $this->getMimeTemplate( $pTemplate );
-			} else {
-				return NULL;
-			}
+		if( $this->isPluginActive( $pGuid ) && ( $plugin = $this->getPluginInfo( $pGuid )) && !empty( $plugin[$pTemplate.'_tpl'] )) {
+			return $plugin[$pTemplate.'_tpl'];
+		} elseif( $pGuid != LIBERTY_DEFAULT_MIME_HANDLER ) {
+			return $this->getMimeTemplate( $pTemplate );
+		} else {
+			return NULL;
 		}
 	}
 
