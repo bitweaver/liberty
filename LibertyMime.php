@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.19 2008/06/20 22:28:42 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.20 2008/06/24 10:01:49 squareing Exp $
  */
 
 /**
@@ -39,7 +39,6 @@ class LibertyMime extends LibertyAttachable {
 	 */
 	function load( $pContentId = NULL, $pPluginParams = NULL ) {
 		// assume a derived class has joined on the liberty_content table, and loaded it's columns already.
-		global $gLibertySystem;
 		$contentId = ( @BitBase::verifyId( $pContentId ) ? $pContentId : $this->mContentId );
 
 		if( @BitBase::verifyId( $contentId )) {
@@ -53,7 +52,7 @@ class LibertyMime extends LibertyAttachable {
 			if( $result = $this->mDb->query( $query,array( (int)$contentId ))) {
 				$this->mStorage = array();
 				while( $row = $result->fetchRow() ) {
-					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function' )) {
+					if( $func = $this->getPluginFunction( $row['attachment_plugin_guid'], 'load_function' )) {
 						// we will pass the preferences by reference that the plugin can easily update them
 						if( empty( $this->mStoragePrefs[$row['attachment_id']] )) {
 							$this->mStoragePrefs[$row['attachment_id']] = array();
