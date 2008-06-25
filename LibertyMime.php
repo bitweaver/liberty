@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.20 2008/06/24 10:01:49 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.21 2008/06/25 09:01:12 squareing Exp $
  */
 
 /**
@@ -77,7 +77,8 @@ class LibertyMime extends LibertyAttachable {
 	function store( &$pStoreHash ) {
 		global $gLibertySystem;
 		// make sure all the data is in order
-		if( LibertyMime::verify( $pStoreHash ) && ( isset( $pStoreHash['skip_content_store'] ) || LibertyContent::store( $pStoreHash ) ) ) {
+		if( LibertyMime::verify( $pStoreHash ) && ( !empty( $pStoreHash['skip_content_store'] ) || LibertyContent::store( $pStoreHash ) ) ) {
+			// files have been uploaded
 			if( !empty( $pStoreHash['upload_store']['files'] ) && is_array( $pStoreHash['upload_store']['files'] )) {
 				$this->mDb->StartTrans();
 
@@ -101,37 +102,29 @@ class LibertyMime extends LibertyAttachable {
 					$storeRow['upload'] = &$upload;
 
 					// when content is created the content_id is only available after LibertyContent::store()
-					if( !@BitBase::verifyId( $pStoreHash['content_id'] )) {
-						// this probably isn't necessary anymore since every attachment should have a content_id associated with it
-						$storeRow['content_id'] = NULL;
-					} else {
-						$storeRow['content_id'] = $pStoreHash['content_id'];
+					$storeRow['content_id'] = $pStoreHash['content_id'];
+
+					// let the plugin do the rest
+					$guid = $gLibertySystem->lookupMimeHandler( $upload );
+					$this->pluginStore( $storeRow, $guid, @BitBase::verifyId( $upload['attachment_id'] ));
+				}
+			}
+
+			// some mime plugins might not have file uploads - these plugins will tell us what mime handlers they are using
+			if( !empty( $pStoreHash['mimeplugin'] ) && is_array( $pStoreHash['mimeplugin'] )) {
+				foreach( $pStoreHash['mimeplugin'] as $guid => $storeRow ) {
+					// check to see if we have anything worth storing in the array
+					$plugin_store = FALSE;
+					foreach( array_values( $storeRow ) as $value ) {
+						if( !empty( $value )) {
+							$plugin_store = TRUE;
+						}
 					}
 
-					// call the appropriate plugin to deal with the upload
-					$guid = $gLibertySystem->lookupMimeHandler( $upload );
-					if( $verify_function = LibertyMime::getPluginFunction( $guid, 'verify_function' )) {
-						// verify the uploaded file using the plugin
-						if( $verify_function( $storeRow )) {
-							// if we have an attachment id we know it's an update
-							if( @BitBase::verifyId( $upload['attachment_id'] )) {
-								$function_name = 'update_function';
-							} else {
-								$function_name = 'store_function';
-							}
-
-							if( $process_function = LibertyMime::getPluginFunction( $guid, $function_name )) {
-								if( !$process_function( $storeRow )) {
-									$this->mErrors = array_merge( $this->mErrors, $storeRow['errors'] );
-								}
-							} else {
-								$this->mErrors['store_function'] = tra( 'No suitable store function found.' );
-							}
-						} else {
-							$this->mErrors = array_merge( $this->mErrors, $storeRow['errors'] );
-						}
-					} else {
-						$this->mErrors['verify_function'] = tra( 'No suitable verify function found.' );
+					if( !empty( $plugin_store )) {
+						// when content is created the content_id is only available after LibertyContent::store()
+						$storeRow['content_id'] = $pStoreHash['content_id'];
+						$this->pluginStore( $storeRow, $guid, @BitBase::verifyId( $upload['attachment_id'] ));
 					}
 				}
 			}
@@ -143,7 +136,42 @@ class LibertyMime extends LibertyAttachable {
 				empty( $pStoreHash['liberty_attachments']['auto_primary'] ) || $pStoreHash['liberty_attachments']['auto_primary'] ? TRUE : FALSE
 			);
 
-			$this->mDb->CompleteTrans();
+			// Roll back if something went wrong
+			if( empty( $this->mErrors )) {
+				$this->mDb->CompleteTrans();
+			} else {
+				$this->mDb->RollbackTrans();
+			}
+		}
+
+		return( count( $this->mErrors ) == 0 );
+	}
+
+	/**
+	 * pluginStore will use a given plugin to store uploaded file data
+	 * 
+	 * @param string $pGuid GUID of plugin
+	 * @param array $pStoreHash Data to be prcessed and stored by the plugin
+	 * @param boolean $pUpdate set to TRUE if this is just an update
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function pluginStore( $pStoreHash, $pGuid, $pUpdate = FALSE ) {
+		if( !empty( $pStoreHash ) && $verify_function = LibertyMime::getPluginFunction( $pGuid, 'verify_function', FALSE )) {
+			// verify the uploaded file using the plugin
+			if( $verify_function( $pStoreHash )) {
+				if( $process_function = LibertyMime::getPluginFunction( $pGuid, (( $pUpdate ) ? 'update_function' : 'store_function' ), FALSE )) {
+					if( !$process_function( $pStoreHash )) {
+						$this->mErrors = array_merge( $this->mErrors, $pStoreHash['errors'] );
+					}
+				} else {
+					$this->mErrors['store_function'] = tra( 'No suitable store function found.' );
+				}
+			} else {
+				$this->mErrors = array_merge( $this->mErrors, $pStoreHash['errors'] );
+			}
+		} else {
+			$this->mErrors['verify_function'] = tra( 'No suitable verify function found.' );
 		}
 
 		return( count( $this->mErrors ) == 0 );
@@ -255,14 +283,15 @@ class LibertyMime extends LibertyAttachable {
 	 * 
 	 * @param string $pGuid GUID of plugin used
 	 * @param string $pFunctionName Function type we want to use
+	 * @param boolean $pGetDefault Get default function if we can't find the specified one
 	 * @access public
 	 * @return function name
 	 * TODO: Move this to LibertySystem. Currently it's here since LibertyMime is a test project...
 	 */
-	function getPluginFunction( $pGuid, $pFunctionName ) {
+	function getPluginFunction( $pGuid, $pFunctionName, $pGetDefault = TRUE ) {
 		global $gLibertySystem;
 		// if we can't get a function on the first round, we fetch the default
-		if( !( $ret = $gLibertySystem->getPluginFunction( $pGuid, $pFunctionName ))) {
+		if( !( $ret = $gLibertySystem->getPluginFunction( $pGuid, $pFunctionName )) && $pGetDefault ) {
 			$ret = $gLibertySystem->getPluginFunction( LIBERTY_DEFAULT_MIME_HANDLER, $pFunctionName );
 		}
 
