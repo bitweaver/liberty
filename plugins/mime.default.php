@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.25 2008/06/23 21:56:12 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.26 2008/06/25 08:00:27 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.25 $
+ * @version     $Revision: 1.26 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -89,9 +89,6 @@ function mime_default_verify( &$pStoreRow ) {
 			// try to generate thumbnails for the upload
 			//$pStoreRow['upload']['thumbnail'] = !$gBitSystem->isFeatureActive( 'liberty_offline_thumbnailer' );
 			$pStoreRow['upload']['thumbnail'] = TRUE;
-
-			// Store all uploaded files in the users storage area
-			// TODO: allow users to create personal galleries
 			$pStoreRow['attachment_id'] = defined( 'LINKED_ATTACHMENTS' ) ? $pStoreRow['content_id'] : $gBitSystem->mDb->GenID( 'liberty_attachments_id_seq' );
 		}
 
