@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.36 2008/06/23 21:56:12 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.37 2008/06/25 23:03:05 bitweaver Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -324,7 +324,7 @@ function liberty_content_list_sql(  &$pObject, $pParamHash=NULL ) {
 	$hasPerm = FALSE;
 	// enforce_status will require the status limit on everyone including admin and thus we can ignore permission checks
 	if ( !isset( $pParamHash['enforce_status'] ) ){
-		$hasPerm = ( is_object($pObject) && isset($pObject->hasUserPermission) )?$pObject->hasUserPermission('p_liberty_edit_all_status'):$gBitUser->hasPermission('p_liberty_edit_all_status');
+		$hasPerm = ( is_object($pObject) && method_exists( $pObject, 'hasUserPermission' ) )?$pObject->hasUserPermission('p_liberty_edit_all_status'):$gBitUser->hasPermission('p_liberty_edit_all_status');
 	}
 
 	// default show content with status between 0 and 100;
