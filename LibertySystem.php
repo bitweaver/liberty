@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.107 2008/06/24 10:14:10 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.108 2008/06/25 07:05:42 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -371,7 +371,7 @@ class LibertySystem extends LibertyBase {
 		$ret = array();
 		foreach( $this->getPluginsOfType( MIME_PLUGIN ) as $guid => $plugin ) {
 			if( $this->isPluginActive( $guid ) && !empty( $plugin[$pTemplate.'_tpl'] )) {
-				$ret = $plugin[$pTemplate.'_tpl'];
+				$ret[] = $plugin[$pTemplate.'_tpl'];
 			}
 		}
 		return $ret;
