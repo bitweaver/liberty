@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.52 $
+ * @version  $Revision: 1.53 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -99,7 +99,7 @@ function bit_files_load( $pRow ) {
 		if( $ret = $gBitSystem->mDb->getRow( $query, array( $pRow['foreign_id'], PLUGIN_GUID_BIT_FILES ))) {
 			$thumbHash['storage_path'] = $ret['storage_path'];
 			$canThumbFunc = liberty_get_function( 'can_thumbnail' );
-			if( $canThumbFunc( $row['mime_type'] )) {
+			if( $canThumbFunc( $ret['mime_type'] )) {
 				$thumbHash['default_image'] = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
 			}
 			$ret['thumbnail_url'] = liberty_fetch_thumbnails( $thumbHash );
