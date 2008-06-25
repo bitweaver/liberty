@@ -80,5 +80,5 @@ if( !empty( $_REQUEST['plugin_settings'] )) {
 }
 
 $gBitSmarty->assign( 'feedback', $feedback );
-$gBitSystem->display( 'bitpackage:liberty/admin_mime_audio.tpl', tra( 'Flashvideo Plugin Settings' ));
+$gBitSystem->display( 'bitpackage:liberty/admin_mime_audio.tpl', tra( 'Flashvideo Plugin Settings' ), array( 'display_mode' => 'admin' ));
 ?>

@@ -33,5 +33,5 @@ $tags = $gBitSystem->getConfig( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
 
 $gBitSmarty->assign( 'approved_html_tags', $tags );
 
-$gBitSystem->display( 'bitpackage:liberty/filter_simplepurifier.tpl', 'Simple HTML Purifier' );
+$gBitSystem->display( 'bitpackage:liberty/filter_simplepurifier.tpl', 'Simple HTML Purifier' , array( 'display_mode' => 'admin' ));
 ?>

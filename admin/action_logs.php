@@ -35,5 +35,5 @@ $actionLogs = $gContent->getActionLogs( $listHash );
 $gBitSmarty->assign( 'listInfo', $listHash['listInfo'] );
 $gBitSmarty->assign( 'actionLogs', $actionLogs );
 
-$gBitSystem->display( 'bitpackage:liberty/action_logs.tpl', tra( 'Action Logs' ) );
+$gBitSystem->display( 'bitpackage:liberty/action_logs.tpl', tra( 'Action Logs' ) , array( 'display_mode' => 'admin' ));
 ?>

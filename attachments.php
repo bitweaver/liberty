@@ -3,7 +3,7 @@
  * attachment_browser
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage functions
  */
@@ -47,5 +47,5 @@ $attachments = $gContent->getAttachmentList( $listHash );
 $gBitSmarty->assign( 'listInfo', $listHash['listInfo'] );
 $gBitSmarty->assign( 'attachments', $attachments );
 $gBitSmarty->assign( 'feedback', $feedback );
-$gBitSystem->display( 'bitpackage:liberty/attachments.tpl', tra( 'Attachments' ));
+$gBitSystem->display( 'bitpackage:liberty/attachments.tpl', tra( 'Attachments' ), array( 'display_mode' => 'display' ));
 ?>

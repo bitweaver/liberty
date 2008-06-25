@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.12 2008/06/23 06:29:21 lsces Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.13 2008/06/25 22:21:12 spiderr Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -96,5 +96,5 @@ $gBitSmarty->assign( 'gContent', $gContent );
 $gBitSmarty->assign( 'libertyUploader', TRUE );
 $gBitSmarty->assign( 'uploadTab', TRUE );
 
-echo $gBitSystem->display( 'bitpackage:liberty/attachment_uploader.tpl', NULL, 'none' );
+echo $gBitSystem->display( 'bitpackage:liberty/attachment_uploader.tpl', NULL, 'none' , array( 'display_mode' => 'display' ));
 ?>

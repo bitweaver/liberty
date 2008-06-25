@@ -1,6 +1,6 @@
 <?php
 /**
- * @version      $Header: /cvsroot/bitweaver/_bit_liberty/view_file.php,v 1.2 2008/06/14 09:04:15 squareing Exp $
+ * @version      $Header: /cvsroot/bitweaver/_bit_liberty/view_file.php,v 1.3 2008/06/25 22:21:13 spiderr Exp $
  *
  * @author       xing  <xing@synapse.plus.com>
  * @package      treasury
@@ -46,5 +46,5 @@ $gBitSmarty->assign( 'feedback', $feedback );
 $gBitSmarty->assign( 'view_template', $gLibertySystem->getMimeTemplate( 'view', $attachment['attachment_plugin_guid'] ));
 $gBitSmarty->assign( 'edit_template', $gLibertySystem->getMimeTemplate( 'edit', $attachment['attachment_plugin_guid'] ));
 
-$gBitSystem->display( 'bitpackage:liberty/mime_view.tpl', tra( "View File" ));
+$gBitSystem->display( 'bitpackage:liberty/mime_view.tpl', tra( "View File" ), array( 'display_mode' => 'display' ));
 ?>

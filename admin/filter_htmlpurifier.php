@@ -77,5 +77,5 @@ if( !empty( $_REQUEST['apply'] )) {
 	$gBitSmarty->assign($errors);
 }
 
-$gBitSystem->display( 'bitpackage:liberty/filter_htmlpurifier.tpl', 'HTML Purifier' );
+$gBitSystem->display( 'bitpackage:liberty/filter_htmlpurifier.tpl', 'HTML Purifier' , array( 'display_mode' => 'admin' ));
 ?>

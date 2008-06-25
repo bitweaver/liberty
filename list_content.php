@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.26 $
+ * @version  $Revision: 1.27 $
  * @package  liberty
  * @subpackage functions
  */
@@ -80,6 +80,6 @@ if( !empty( $_REQUEST['output'] )) {
 	}
 } else {
 	$gBitSystem->setBrowserTitle( 'List Content' );
-	$gBitSystem->display( 'bitpackage:liberty/list_content.tpl' );
+	$gBitSystem->display( 'bitpackage:liberty/list_content.tpl' , NULL, array( 'display_mode' => 'list' ));
 }
 ?>

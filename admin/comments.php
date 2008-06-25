@@ -45,5 +45,5 @@ if( !empty( $_REQUEST['change_prefs'] ) ) {
 	}
 }
 
-$gBitSystem->display( 'bitpackage:liberty/admin_comments.tpl', tra( 'Comment Settings' ) );
+$gBitSystem->display( 'bitpackage:liberty/admin_comments.tpl', tra( 'Comment Settings' ) , array( 'display_mode' => 'admin' ));
 ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage functions
  */
@@ -114,5 +114,5 @@ if( $gBitThemes->isAjaxRequest() ) {
 
 // enable ajaxed permission updating
 $gBitThemes->loadAjax( 'mochikit' );
-$gBitSystem->display( 'bitpackage:liberty/content_permissions.tpl', tra( 'Content Permissions' ));
+$gBitSystem->display( 'bitpackage:liberty/content_permissions.tpl', tra( 'Content Permissions' ), array( 'display_mode' => 'display' ));
 ?>

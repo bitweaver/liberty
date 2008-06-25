@@ -3,7 +3,7 @@
  * display_content_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage functions
  */
@@ -13,6 +13,6 @@
 //	vd( $gContent->mInfo );
 	$gBitSmarty->assign_by_ref( 'pageInfo', $gContent->mInfo );
 
-	$gBitSystem->display( 'bitpackage:liberty/display_content.tpl' );
+	$gBitSystem->display( 'bitpackage:liberty/display_content.tpl' , NULL, array( 'display_mode' => 'display' ));
 
 ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage functions
  */
@@ -14,7 +14,7 @@ if( empty( $gContent ) ) {
 	// make sure we have a content_id we can work with
 	if( empty( $_REQUEST["perm_content_id"] ) || $_REQUEST["perm_content_id"] < 1 ) {
 		$gBitSmarty->assign( 'msg', tra( "No valid content id given." ) );
-		$gBitSystem->display( 'error.tpl' );
+		$gBitSystem->display( 'error.tpl' , NULL, array( 'display_mode' => 'display' ));
 die;
 	}
 
