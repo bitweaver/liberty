@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.108 2008/06/25 07:05:42 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.109 2008/06/26 10:59:45 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -272,7 +272,7 @@ class LibertySystem extends LibertyBase {
 
 		if( is_array( $pPluginGuids ) ) {
 			// zap list of plugins from DB
-			$gBitSystem->setConfigMatch( "/^{$this->mSystem}_plugin_status/i", NULL, 'n', LIBERTY_PKG_NAME );
+			$gBitSystem->storeConfigMatch( "/^{$this->mSystem}_plugin_status/i", NULL, 'n', LIBERTY_PKG_NAME );
 			foreach( array_keys( $this->mPlugins ) as $guid ) {
 				$this->mPlugins[$guid]['is_active'] = 'n';
 			}
