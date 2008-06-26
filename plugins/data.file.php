@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -16,7 +16,7 @@ $pluginParams = array (
 	'description'   => tra( "Display a file in content with some useful information. This plugin only works with files that have been uploaded using treasury." ),
 	'help_page'     => 'DataPluginAttachment',
 
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'syntax'        => '{file id= }',
 	'path'          => LIBERTY_PKG_PATH.'plugins/data.file.php',
