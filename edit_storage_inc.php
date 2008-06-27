@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/edit_storage_inc.php,v 1.31 2008/06/23 06:30:50 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/edit_storage_inc.php,v 1.32 2008/06/27 10:41:29 squareing Exp $
  *
  * edit_storage_inc
  * @author   spider <spider@steelsun.com>
@@ -22,6 +22,13 @@ $gBitSmarty->assign( 'attachmentBaseArgs', $attachmentBaseArgs );
 
 // delete attachment if requested
 if( !empty( $_REQUEST['deleteAttachment'] )) {
+
+	// $gContent is empty when we're editing our personal webpage
+	// this is a brutish hack but it seems to work without adverse effeects
+	if( empty( $gContent )) {
+		$gContent = $gBitUser;
+	}
+
 	$attachmentId = $_REQUEST['deleteAttachment'];
 	$attachmentInfo = $gContent->getAttachment( $attachmentId );
 
