@@ -3,7 +3,7 @@
  * attachment_browser
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage functions
  */
@@ -13,7 +13,7 @@
  */
 require_once("../bit_setup_inc.php");
 
-$gContent = new LibertyAttachable();
+$gContent = new LibertyMime();
 
 if( !$gBitUser->isRegistered() ) {
 	$gBitSystem->fatalError( tra( 'You need to be logged in to view this page.' ));
