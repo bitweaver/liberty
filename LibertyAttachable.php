@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.160 2008/06/27 08:43:42 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.161 2008/06/27 10:39:25 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -544,13 +544,20 @@ class LibertyAttachable extends LibertyContent {
 		global $gLibertySystem, $gBitUser;
 		$ret = NULL;
 		if( @$this->verifyId( $pAttachmentId ) ) {
-			$sql = "SELECT `attachment_plugin_guid`, `user_id` FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id`=?";
-			$row = $this->mDb->getRow( $sql, array( $pAttachmentId ) );
-			$guid = $row['attachment_plugin_guid'];
-			if( $guid && ( $this->isOwner( $row ) || $gBitUser->isAdmin() )) {
+			$sql = "SELECT `attachment_plugin_guid`, `user_id` FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id` = ?";
+			if(( $row = $this->mDb->getRow( $sql, array( $pAttachmentId ))) && ( $this->isOwner( $row ) || $gBitUser->isAdmin() )) {
 				// check if we have the means available to remove this attachment
-				if( $expungeFunc = $gLibertySystem->getPluginFunction( $guid, 'expunge_function', 'mime' )) {
+				if(( $guid = $row['attachment_plugin_guid'] ) && $expungeFunc = $gLibertySystem->getPluginFunction( $guid, 'expunge_function', 'mime' )) {
 					// --- Do the final cleanup of liberty related tables ---
+
+					// there might be situations where we remove user images including portrait, avatar or logo
+					// This needs to happen before the plugin can do it's work due to constraints
+					$types = array( 'portrait', 'avatar', 'logo' );
+					foreach( $types as $type ) {
+						$sql = "UPDATE `".BIT_DB_PREFIX."users_users` SET `{$type}_attachment_id` = NULL WHERE `{$type}_attachment_id` = ?";
+						$this->mDb->query( $sql, array( $pAttachmentId ));
+					}
+
 					if( $expungeFunc( $pAttachmentId )) {
 						// Delete the attachment meta data, prefs and record.
 						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` WHERE `attachment_id` = ?";
