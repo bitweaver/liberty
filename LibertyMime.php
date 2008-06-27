@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.22 2008/06/27 08:43:42 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.23 2008/06/27 10:40:34 squareing Exp $
  */
 
 /**
@@ -83,7 +83,7 @@ class LibertyMime extends LibertyAttachable {
 			if( !empty( $pStoreHash['upload_store']['files'] ) && is_array( $pStoreHash['upload_store']['files'] )) {
 				$this->mDb->StartTrans();
 
-				foreach( $pStoreHash['upload_store']['files'] as $upload ) {
+				foreach( $pStoreHash['upload_store']['files'] as $key => $upload ) {
 					// we might be updating attachments and they might have some additional data they need to process
 					if( @BitBase::verifyId( $upload['attachment_id'] ) && !empty( $pStoreHash['plugin'][$upload['attachment_id']] ) && is_array( $pStoreHash['plugin'][$upload['attachment_id']] )) {
 						foreach( $pStoreHash['plugin'][$upload['attachment_id']] as $guid => $params ) {
@@ -99,7 +99,7 @@ class LibertyMime extends LibertyAttachable {
 					$storeRow = $pStoreHash['upload_store'];
 					unset( $storeRow['files'] );
 
-					// copy by reference that the filetype when changes are made in lookupMimeHandler()
+					// copy by reference that filetype changes are made in lookupMimeHandler()
 					$storeRow['upload'] = &$upload;
 
 					// when content is created the content_id is only available after LibertyContent::store()
@@ -108,6 +108,9 @@ class LibertyMime extends LibertyAttachable {
 					// let the plugin do the rest
 					$guid = $gLibertySystem->lookupMimeHandler( $upload );
 					$this->pluginStore( $storeRow, $guid, @BitBase::verifyId( $upload['attachment_id'] ));
+
+					// finally, we need to update the original hash with the new values
+					$pStoreHash['upload_store']['files'][$key] = $storeRow;
 				}
 			}
 
@@ -157,7 +160,7 @@ class LibertyMime extends LibertyAttachable {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function pluginStore( $pStoreHash, $pGuid, $pUpdate = FALSE ) {
+	function pluginStore( &$pStoreHash, $pGuid, $pUpdate = FALSE ) {
 		global $gLibertySystem;
 		if( !empty( $pStoreHash ) && $verify_function = $gLibertySystem->getPluginFunction( $pGuid, 'verify_function' )) {
 			// verify the uploaded file using the plugin
