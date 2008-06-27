@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.109 2008/06/26 10:59:45 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.110 2008/06/27 08:43:42 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -324,12 +324,13 @@ class LibertySystem extends LibertyBase {
 	/**
 	 * getPluginFunction 
 	 * 
-	 * @param array $pGuid 
-	 * @param array $pFunctionName 
+	 * @param string $pGuid GUID of plugin used
+	 * @param string $pFunctionName Function type we want to use
+	 * @param string $pGetDefault Get default function for a given plugin type such as 'mime'
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function getPluginFunction( $pGuid, $pFunctionName ) {
+	function getPluginFunction( $pGuid, $pFunctionName, $pGetDefault = FALSE ) {
 		$ret = NULL;
 		if( !empty( $pGuid )
 			&& !empty( $this->mPlugins[$pGuid] )
@@ -339,6 +340,12 @@ class LibertySystem extends LibertyBase {
 		) {
 			$ret = $this->mPlugins[$pGuid][$pFunctionName];
 		}
+
+		// if we can't get a function on the first round, we fetch the default
+		if( empty( $ret ) && $pGetDefault == 'mime' && $pGuid != LIBERTY_DEFAULT_MIME_HANDLER ) {
+			$ret = $this->getPluginFunction( LIBERTY_DEFAULT_MIME_HANDLER, $pFunctionName );
+		}
+
 		return $ret;
 	}
 

@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.159 2008/06/24 10:02:48 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.160 2008/06/27 08:43:42 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -498,7 +498,7 @@ class LibertyAttachable extends LibertyContent {
 		}
 
 		foreach( $attachments as $attachment ) {
-			if( $loadFunc = $gLibertySystem->getPluginFunction( $attachment['attachment_plugin_guid'], 'load_function' )) {
+			if( $loadFunc = $gLibertySystem->getPluginFunction( $attachment['attachment_plugin_guid'], 'load_function', 'mime' )) {
 				/* @$prefs - quick hack to stop LibertyMime plugins from breaking until migration to LibertyMime is complete
 				 * see expected arguments of liberty/plugins/mime.default.php::mime_default_load -wjames5 
 				 */
@@ -549,7 +549,7 @@ class LibertyAttachable extends LibertyContent {
 			$guid = $row['attachment_plugin_guid'];
 			if( $guid && ( $this->isOwner( $row ) || $gBitUser->isAdmin() )) {
 				// check if we have the means available to remove this attachment
-				if( $expungeFunc = $gLibertySystem->getPluginFunction( $guid, 'expunge_function' )) {
+				if( $expungeFunc = $gLibertySystem->getPluginFunction( $guid, 'expunge_function', 'mime' )) {
 					// --- Do the final cleanup of liberty related tables ---
 					if( $expungeFunc( $pAttachmentId )) {
 						// Delete the attachment meta data, prefs and record.
@@ -595,7 +595,7 @@ class LibertyAttachable extends LibertyContent {
 			if( $result = $this->mDb->query( $query,array( (int)$conId ))) {
 				$this->mStorage = array();
 				while( $row = $result->fetchRow() ) {
-					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function' )) {
+					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function', 'mime' )) {
 						// this dummy is needed for forward compatability with LibertyMime plugins
 						$dummy = array();
 						$this->mStorage[$row['attachment_id']] = $func( $row, $dummy );
@@ -618,7 +618,6 @@ class LibertyAttachable extends LibertyContent {
 	 * @return attachment details
 	 */
 	function getAttachment( $pAttachmentId, $pParams = NULL ) {
-		require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
 		global $gLibertySystem, $gBitSystem;
 		$ret = NULL;
 
@@ -626,7 +625,7 @@ class LibertyAttachable extends LibertyContent {
 			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` la WHERE la.`attachment_id`=?";
 			if( $result = $gBitSystem->mDb->query( $query, array( (int)$pAttachmentId ))) {
 				if( $row = $result->fetchRow() ) {
-					if( $func = LibertyMime::getPluginFunction( $row['attachment_plugin_guid'], 'load_function' )) {
+					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function', 'mime' )) {
 						$prefs = array();
 						// if the object is available, we'll copy the preferences by reference to allow the plugin to update them as needed
 						if( !empty( $this ) && !empty( $this->mStoragePrefs[$pAttachmentId] )) {

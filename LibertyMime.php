@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.21 2008/06/25 09:01:12 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.22 2008/06/27 08:43:42 squareing Exp $
  */
 
 /**
@@ -38,6 +38,7 @@ class LibertyMime extends LibertyAttachable {
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
 	function load( $pContentId = NULL, $pPluginParams = NULL ) {
+		global $gLibertySystem;
 		// assume a derived class has joined on the liberty_content table, and loaded it's columns already.
 		$contentId = ( @BitBase::verifyId( $pContentId ) ? $pContentId : $this->mContentId );
 
@@ -52,7 +53,7 @@ class LibertyMime extends LibertyAttachable {
 			if( $result = $this->mDb->query( $query,array( (int)$contentId ))) {
 				$this->mStorage = array();
 				while( $row = $result->fetchRow() ) {
-					if( $func = $this->getPluginFunction( $row['attachment_plugin_guid'], 'load_function' )) {
+					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function', 'mime' )) {
 						// we will pass the preferences by reference that the plugin can easily update them
 						if( empty( $this->mStoragePrefs[$row['attachment_id']] )) {
 							$this->mStoragePrefs[$row['attachment_id']] = array();
@@ -157,10 +158,11 @@ class LibertyMime extends LibertyAttachable {
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
 	function pluginStore( $pStoreHash, $pGuid, $pUpdate = FALSE ) {
-		if( !empty( $pStoreHash ) && $verify_function = LibertyMime::getPluginFunction( $pGuid, 'verify_function', FALSE )) {
+		global $gLibertySystem;
+		if( !empty( $pStoreHash ) && $verify_function = $gLibertySystem->getPluginFunction( $pGuid, 'verify_function' )) {
 			// verify the uploaded file using the plugin
 			if( $verify_function( $pStoreHash )) {
-				if( $process_function = LibertyMime::getPluginFunction( $pGuid, (( $pUpdate ) ? 'update_function' : 'store_function' ), FALSE )) {
+				if( $process_function = $gLibertySystem->getPluginFunction( $pGuid, (( $pUpdate ) ? 'update_function' : 'store_function' ))) {
 					if( !$process_function( $pStoreHash )) {
 						$this->mErrors = array_merge( $this->mErrors, $pStoreHash['errors'] );
 					}
@@ -250,7 +252,7 @@ class LibertyMime extends LibertyAttachable {
 				$file = LibertyMime::getAttachment( $pAttachmentId );
 			}
 
-			if( !empty( $file['attachment_id'] ) && !empty( $pPluginGuid ) && !empty( $pParamHash ) && $update_function = LibertyMime::getPluginFunction( $pPluginGuid, 'update_function' )) {
+			if( @BitBase::verifyId( $file['attachment_id'] ) && !empty( $pPluginGuid ) && !empty( $pParamHash ) && ( $update_function = $gLibertySystem->getPluginFunction( $pPluginGuid, 'update_function', 'mime' ))) {
 				if( $update_function( $file, $pParamHash )) {
 					$ret = TRUE;
 				} else {
@@ -286,16 +288,11 @@ class LibertyMime extends LibertyAttachable {
 	 * @param boolean $pGetDefault Get default function if we can't find the specified one
 	 * @access public
 	 * @return function name
-	 * TODO: Move this to LibertySystem. Currently it's here since LibertyMime is a test project...
 	 */
-	function getPluginFunction( $pGuid, $pFunctionName, $pGetDefault = TRUE ) {
+	function getPluginFunction( $pGuid, $pFunctionName, $pGetDefault = 'mime' ) {
+		deprecated( 'Please call $gLibertySystem->getMimePluginFunction() directly' );
 		global $gLibertySystem;
-		// if we can't get a function on the first round, we fetch the default
-		if( !( $ret = $gLibertySystem->getPluginFunction( $pGuid, $pFunctionName )) && $pGetDefault ) {
-			$ret = $gLibertySystem->getPluginFunction( LIBERTY_DEFAULT_MIME_HANDLER, $pFunctionName );
-		}
-
-		return $ret;
+		return $gLibertySystem->getPluginFunction( LIBERTY_DEFAULT_MIME_HANDLER, $pFunctionName, $pGetDefault );
 	}
 
 	/**
