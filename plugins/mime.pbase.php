@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.pbase.php,v 1.1 2008/06/25 09:02:14 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.pbase.php,v 1.2 2008/06/28 08:42:33 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.1 $
+ * @version		$Revision: 1.2 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -26,10 +26,10 @@ $pluginParams = array (
 	// Use the GUID as your namespace
 	'verify_function'     => 'mime_pbase_verify',
 	'store_function'      => 'mime_pbase_store',
-	'update_function'     => 'mime_pbase_update',
+	//'update_function'     => 'mime_pbase_update',
 	'load_function'       => 'mime_pbase_load',
-	'download_function'   => 'mime_pbase_download',
-	'expunge_function'    => 'mime_pbase_expunge',
+	//'download_function'   => 'mime_pbase_download',
+	//'expunge_function'    => 'mime_pbase_expunge',
 	// Brief description of what the plugin does
 	'title'               => 'Display image from PBase',
 	'description'         => 'Use a PBase image ID to display it on your website.',
