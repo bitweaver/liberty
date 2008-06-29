@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.110 2008/06/27 08:43:42 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.111 2008/06/29 08:24:44 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -638,7 +638,4 @@ class LibertySystem extends LibertyBase {
 		return LIBERTY_DEFAULT_MIME_HANDLER;
 	}
 }
-
-global $gLibertySystem;
-$gLibertySystem = new LibertySystem();
 ?>

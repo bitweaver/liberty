@@ -3,7 +3,7 @@
  * base package include
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.22 $
+ * @version  $Revision: 1.23 $
  * @package  liberty
  * @subpackage functions
  */
@@ -15,7 +15,10 @@ $registerHash = array(
 );
 $gBitSystem->registerPackage( $registerHash );
 
+// initiate LibertySystem
 require_once( LIBERTY_PKG_PATH.'LibertySystem.php' );
+global $gLibertySystem;
+$gLibertySystem = new LibertySystem();
 
 $gLibertySystem->registerService( 'liberty', LIBERTY_PKG_NAME, array(
 	'content_edit_mini_tpl'      => 'bitpackage:liberty/service_content_edit_mini_inc.tpl',

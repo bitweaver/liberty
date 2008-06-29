@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.161 2008/06/27 10:39:25 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.162 2008/06/29 08:24:44 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -22,7 +22,6 @@
  * required setup
  */
 require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
-require_once( LIBERTY_PKG_PATH.'LibertySystem.php' );
 
 // load the image processor plugin, check for loaded 'gd' since that is the default processor, and config might not be set.
 if( $gBitSystem->isFeatureActive( 'image_processor' ) || extension_loaded( 'gd' ) ) {
