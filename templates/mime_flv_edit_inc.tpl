@@ -13,7 +13,7 @@
 			<option value="">{tr}Original{/tr}</option>
 			<option {if $attachment.meta.aspect == $tv    }selected="selected" {/if}value="{$tv}">4:3 ({tr}TV{/tr})</option>
 			<option {if $attachment.meta.aspect == $ana   }selected="selected" {/if}value="{$ana}">14:9 ({tr}Anamorphic{/tr})</option>
-			<option {if $attachment.meta.aspect == $wide  }selected="selected" {/if}value="{$wide}">16:9 ({tr}Widescreen{/tr})</option>
+			<option {if $attachment.meta.aspect == $wide  }selected="selected" {/if}value="{$wide}">16:9 ({tr}TV Widescreen{/tr})</option>
 			<option {if $attachment.meta.aspect == $cin1  }selected="selected" {/if}value="{$cin1}">1.85 ({tr}Cinema Widescreen{/tr})</option>
 			<option {if $attachment.meta.aspect == $cin2  }selected="selected" {/if}value="{$cin2}">2.39 ({tr}Cinema Widescreen{/tr})</option>
 			<option {if $attachment.meta.aspect == $puter }selected="selected" {/if}value="{$puter}">16:10 ({tr}Computer Widescreen{/tr})</option>
