@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.19 2008/06/30 15:35:01 wjames5 Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.20 2008/06/30 17:09:12 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.19 $
+ * @version		$Revision: 1.20 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -152,10 +152,10 @@ function mime_audio_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 
 		if( !empty( $ret['storage_path'] )) {
 			if( is_file( dirname( BIT_ROOT_PATH.$ret['storage_path'] ).'/bitverted.mp3' )) {
-				$ret['audio_url'] = dirname( path_to_url( $ret['storage_path'] )).'/bitverted.mp3';
+				$ret['audio_url'] = path_to_url( dirname( $ret['storage_path'] )).'/bitverted.mp3';
 				// we need some javascript for the flv player:
 			} elseif( is_file( dirname( BIT_ROOT_PATH.$ret['storage_path'] ).'/bitverted.m4a' )) {
-				$ret['audio_url'] = dirname( path_to_url( $ret['storage_path'] )).'/bitverted.m4a';
+				$ret['audio_url'] = path_to_url( dirname( $ret['storage_path'] )).'/bitverted.m4a';
 			}
 		}
 	}
