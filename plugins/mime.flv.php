@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.15 2008/06/30 18:42:26 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.16 2008/06/30 22:23:21 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.15 $
+ * @version		$Revision: 1.16 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -111,7 +111,7 @@ function mime_flv_update( &$pStoreRow, $pParams = NULL ) {
 				$pParams['meta']['aspect'] = NULL;
 			}
 
-			// finally we update the meta table data
+			// we store the custom aspect ratio as a preference which we will use to override the original one
 			if( !LibertyMime::storeAttachmentPreference( $pStoreRow['attachment_id'], 'aspect', $pParams['meta']['aspect'] )) {
 				$log['store_meta'] = "There was a problem storing the preference in the database";
 			}
