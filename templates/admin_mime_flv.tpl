@@ -7,7 +7,7 @@
 	<div class="body">
 		{form legend="Flashvideo specific settings"}
 			<p class="formhelp">
-				You can find some information relating to this plugin on the <a class="external" href="http://www.bitweaver.org/wiki/TreasuryFlvPlugin">TreasuryFlvPlugin plugin page</a> at bitweaver.org.
+				You can find some information relating to this plugin on the <a class="external" href="http://www.bitweaver.org/wiki/LibertyMime+Flv+Plugin">LibertyMime Flv Plugin page</a> at bitweaver.org.
 			</p>
 
 			{if $ffmpeg_extension}
@@ -48,6 +48,19 @@
 							<dt>MP4/AVC</dt><dd>Small filesize, high quality, slow encoding.</dd>
 							<dt>MP4/AVC - 2 passes</dt><dd>Small filesize, very high quality, very slow encoding (this is likey to take at least as long as the video length).</dd>
 						<dl>."}
+				{/forminput}
+			</div>
+
+			<div class="row">
+				{formlabel label="ffmpeg mp3 param" for="ffmpeg_mp3_param"}
+				{forminput}
+					{html_options
+						options=$rates.mp3_param
+						values=$rates.mp3_param
+						name=ffmpeg_mp3_param
+						id=ffmpeg_mp3_param
+						selected=$gBitSystem->getConfig('ffmpeg_mp3_param')|default:libmp3lame}
+						{formhelp note="Due to differences in versions of ffmpeg you may need to change this setting. If ffmpeg and ffmpeg-php are installed, but uploaded videos are still not processed, try changing this param."}
 				{/forminput}
 			</div>
 

@@ -15,6 +15,10 @@ if( extension_loaded( 'ffmpeg' )) {
 $feedback = array();
 
 $rates = array(
+	'mp3_param' => array(
+		'libmp3lame' => 'libmp3lame',
+		'mp3' => 'mp3',
+	),
 	'video_codec' => array(
 		'flv'        => 'Flashvideo using flv codec',
 		'h264'       => 'MP4/AVC using h264 codec',
@@ -62,6 +66,9 @@ if( !empty( $_REQUEST['plugin_settings'] )) {
 			'type'  => 'text',
 		),
 		'mime_flv_video_codec' => array(
+			'type'  => 'text',
+		),
+		'ffmpeg_mp3_param' => array(
 			'type'  => 'text',
 		),
 		'mime_flv_video_bitrate' => array(
