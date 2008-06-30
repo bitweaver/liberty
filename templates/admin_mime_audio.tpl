@@ -7,7 +7,7 @@
 	<div class="body">
 		{form legend="Flashvideo specific settings"}
 			<p class="formhelp">
-				You can find some information relating to this plugin on the <a class="external" href="http://www.bitweaver.org/wiki/TreasuryFlvPlugin">TreasuryFlvPlugin plugin page</a> at bitweaver.org.
+				You can find some information relating to this plugin on the <a class="external" href="http://www.bitweaver.org/wiki/LibertyMime+Flv+Plugin">LibertyMime Flv Plugin page</a> at bitweaver.org.
 			</p>
 
 			{if !$gLibertySystem->isPluginActive( 'mimeaudio' )}
@@ -22,6 +22,19 @@
 				{forminput}
 					<input type='text' name="mime_audio_ffmpeg_path" id="mime_audio_ffmpeg_path" size="40" value="{$gBitSystem->getConfig('mime_audio_ffmpeg_path')|escape|default:$ffmpeg_path}" />
 					{formhelp note="If this path is not correct, please set the correct path to ffmpeg."}
+				{/forminput}
+			</div>
+
+			<div class="row">
+				{formlabel label="ffmpeg mp3 param" for="ffmpeg_mp3_param"}
+				{forminput}
+					{html_options
+						options=$rates.mp3_param
+						values=$rates.mp3_param
+						name=ffmpeg_mp3_param
+						id=ffmpeg_mp3_param
+						selected=$gBitSystem->getConfig('ffmpeg_mp3_param')|default:libmp3lame}
+						{formhelp note="Due to differences in versions of ffmpeg you may need to change this setting. If ffmpeg and ffmpeg-php are installed, but uploaded audio is still not processed, try changing this param."}
 				{/forminput}
 			</div>
 

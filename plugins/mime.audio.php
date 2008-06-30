@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.18 2008/06/09 16:57:55 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.19 2008/06/30 15:35:01 wjames5 Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.18 $
+ * @version		$Revision: 1.19 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -350,7 +350,7 @@ function mime_audio_converter_ffmpeg( &$pParamHash, $pSource, $pDest ) {
 			// set up parameters to convert audio
 			$params =
 				" -i '$pSource'".
-				" -acodec libmp3lame".
+				" -acodec ".$gBitSystem->getConfig('ffmpeg_mp3_param', 'libmp3lame').
 				" -ab ".trim( $gBitSystem->getConfig( 'mime_audio_bitrate', 64000 ).'b' ).
 				" -ar ".trim( $gBitSystem->getConfig( 'mime_audio_samplerate', 22050 )).
 				" -y '$pDest'";

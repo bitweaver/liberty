@@ -13,6 +13,10 @@ if( function_exists( 'shell_exec' )) {
 $feedback = array();
 
 $rates = array(
+	'mp3_param' => array(
+		'libmp3lame' => 'libmp3lame',
+		'mp3' => 'mp3',
+	),
 	'audio_bitrate' => array(
 		32000  => 32,
 		64000  => 64,
@@ -36,6 +40,9 @@ if( !empty( $_REQUEST['plugin_settings'] )) {
 		),
 		'mime_audio_ffmpeg_use' => array(
 			'type'  => 'checkbox',
+		),
+		'ffmpeg_mp3_param' => array(
+			'type'  => 'text',
 		),
 		'mime_audio_samplerate' => array(
 			'type'  => 'numeric',
