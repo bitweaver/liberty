@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.111 2008/06/29 08:24:44 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.112 2008/06/30 18:42:26 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -590,8 +590,6 @@ class LibertySystem extends LibertyBase {
 					$ret = smarty_function_biticon( $biticon,$gBitSmarty );
 				}
 			}
-
-			$ret = BIT_BASE_URI.$ret;
 		}
 		return $ret;
 	}

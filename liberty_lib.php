@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.37 2008/06/25 23:03:05 bitweaver Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.38 2008/06/30 18:42:26 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -611,7 +611,6 @@ function liberty_clear_thumbnails( &$pFileHash ) {
 		$thumbHash = array(
 			'storage_path' => $pFileHash['dest_path'],
 			'mime_image'   => FALSE,
-			'get_uri'      => FALSE,
 		);
 
 		// get thumbnails we want to remove
@@ -726,7 +725,6 @@ function liberty_generate_thumbnails( &$pFileHash ) {
  * @param string  $pParamHash['default_image'] URL to an alternative fallback image such as a background thumbnailer image
  * @param array   $pParamHash['thumbnail_sizes'] array of images to search for in the pFilePath
  * @param boolean $pParamHash['mime_image specify if you want to fetch an alternative image or not (default TRUE)
- * @param boolean $pParamHash['get_uri'] return absolute URI instead of realtive URL (default TRUE)
  * @access public
  * @return array of available thumbnails or mime icons
  * TODO: individual options are only for legacy reasons - remove options and deprecated() soon - xing - Monday Jun 23, 2008   22:36:53 CEST
@@ -742,7 +740,6 @@ function liberty_fetch_thumbnails( $pParamHash, $pAltImageUrl = NULL, $pThumbSiz
 				'default_image'   => $pAltImageUrl,
 				'thumbnail_sizes' => $pThumbSizes,
 				'mime_image'      => $pMimeImage,
-				'get_uri'         => $pReturnUri,
 			);
 			deprecated( "Please use an array of parameters to fetch thumbnails.\nUse something like this:\n\$thumbHash = ".var_export( $pParamHash, 1 ));
 		}
@@ -773,12 +770,7 @@ function liberty_fetch_thumbnails( $pParamHash, $pAltImageUrl = NULL, $pThumbSiz
 			foreach( $exts as $ext ) {
 				$image = str_replace( "//", "/", dirname( $path ).'/'.$size.'.'.$ext );
 				if( empty( $ret[$size] ) && is_readable( BIT_ROOT_PATH.$image )) {
-					if( !isset( $pParamHash['get_uri'] ) || $pParamHash['get_uri'] === TRUE ) {
-						// the storage dir name is stored in the database. dumb, but that is the way it is.
-						$ret[$size] = dirname( STORAGE_PKG_URI )."/".$image;
-					} else {
-						$ret[$size] = $image;
-					}
+					$ret[$size] = storage_path_to_url( $image );
 				}
 			}
 
@@ -804,7 +796,6 @@ function liberty_fetch_thumbnails( $pParamHash, $pAltImageUrl = NULL, $pThumbSiz
  * @param string  $pParamHash['storage_path'] Relative path to file we want to get thumbnails for (needs to include file name for mime icons)
  * @param string  $pParamHash['default_image'] URL to an alternative fallback image such as a background thumbnailer image
  * @param boolean $pParamHash['mime_image specify if you want to fetch an alternative image or not (default TRUE)
- * @param boolean $pParamHash['get_uri'] return absolute URI instead of realtive URL (default TRUE)
  * @access public
  * @return string url
  * TODO: individual options are only for legacy reasons - remove options and deprecated() soon - xing - Monday Jun 23, 2008   22:36:53 CEST
