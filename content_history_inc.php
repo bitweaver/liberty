@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.16 $
+ * @version  $Revision: 1.17 $
  * @package  liberty
  * @subpackage functions
  */
@@ -28,6 +28,7 @@ if( isset( $_REQUEST["delete"] ) && isset( $_REQUEST["hist"] )) {
 
 } elseif( @BitBase::verifyId( $_REQUEST["preview"] )) {
 	if( $version = $gContent->getHistory( $_REQUEST["preview"] )) {
+		$version['data'][0]['no_cache'] = TRUE;
 		$version['data'][0]['parsed_data'] = $gContent->parseData( $version["data"][0] );
 		$gBitSmarty->assign_by_ref( $smartyContentRef, $version['data'][0] );
 		$gBitSmarty->assign_by_ref( 'version', $_REQUEST["preview"] );
@@ -67,8 +68,9 @@ if( isset( $_REQUEST["delete"] ) && isset( $_REQUEST["hist"] )) {
 } elseif( @BitBase::verifyId( $_REQUEST["compare"] )) {
 	$from_version = $_REQUEST["compare"];
 	$from_page = $gContent->getHistory( $from_version );
+	$from_page['data'][0]['no_cache'] = TRUE;
 	$gBitSmarty->assign( 'compare', 'y' );
-	$gBitSmarty->assign_by_ref( 'diff_from', $gContent->parseData( $from_page["data"][0] ));
+	$gBitSmarty->assign_by_ref( 'diff_from', $gContent->parseData( $from_page['data'][0] ) );
 	$gBitSmarty->assign_by_ref( 'diff_to', $gContent->parseData() );
 	$gBitSmarty->assign_by_ref( 'version_from', $from_version );
 
