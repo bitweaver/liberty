@@ -1,6 +1,6 @@
 <?php
 /**
- * @version      $Header: /cvsroot/bitweaver/_bit_liberty/view_file.php,v 1.3 2008/06/25 22:21:13 spiderr Exp $
+ * @version      $Header: /cvsroot/bitweaver/_bit_liberty/view_file.php,v 1.4 2008/07/01 09:04:10 squareing Exp $
  *
  * @author       xing  <xing@synapse.plus.com>
  * @package      treasury
@@ -27,12 +27,11 @@ $gContent->verifyViewPermission();
 
 if( !empty( $_REQUEST['plugin_submit'] )) {
 	// now that we have data for a plugin, we'll simply feed it back to the update function of that plugin
-	foreach( $_REQUEST['plugin'][$attachment['attachment_id']] as $guid => $data ) {
-		if( $gContent->updateAttachmentParams( $_REQUEST['attachment_id'], $guid, $data )) {
-			$feedback['success'] = tra( "The data was successfully updated." );
-		} else {
-			$feedback['error'] = $gContent->mErrors;
-		}
+	$data = !empty( $_REQUEST['plugin'][$attachment['attachment_id']][$attachment['attachment_plugin_guid']] ) ? $_REQUEST['plugin'][$attachment['attachment_id']][$attachment['attachment_plugin_guid']] : array();
+	if( $gContent->updateAttachmentParams( $attachment['attachment_id'], $attachment['attachment_plugin_guid'], $data )) {
+		$feedback['success'] = tra( "The data was successfully updated." );
+	} else {
+		$feedback['error'] = $gContent->mErrors;
 	}
 	// reload the attachment
 	$attachment = LibertyMime::getAttachment( $_REQUEST['attachment_id'] );
