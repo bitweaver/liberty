@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.4 2008/06/14 07:58:28 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.5 2008/07/01 09:08:10 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.4 $
+ * @version		$Revision: 1.5 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -34,15 +34,15 @@ $pluginParams = array (
 	'title'               => 'Extract image meta data',
 	'description'         => 'Extract image meta data and display relevant information to the user.',
 	// Templates to display the files
-	//'view_tpl'            => 'bitpackage:liberty/mime_image_view_inc.tpl',
+	'view_tpl'            => 'bitpackage:liberty/mime_image_view_inc.tpl',
 	//'inline_tpl'          => 'bitpackage:liberty/mime_image_inline_inc.tpl',
-	//'edit_tpl'            => 'bitpackage:liberty/mime_image_edit_inc.tpl',
+	'edit_tpl'            => 'bitpackage:liberty/mime_image_edit_inc.tpl',
 	// url to page with options for this plugin
 	//'plugin_settings_url' => LIBERTY_PKG_URL.'admin/mime_image.php',
 	// This should be the same for all mime plugins
 	'plugin_type'         => MIME_PLUGIN,
 	// Set this to TRUE if you want the plugin active right after installation
-	'auto_activate'       => FALSE,
+	'auto_activate'       => TRUE,
 	// Help page on bitweaver.org
 	//'help_page'           => 'LibertyMime+Image+Plugin',
 	// this should pick up all image
@@ -86,7 +86,9 @@ function mime_image_store( &$pStoreRow ) {
  * @return TRUE on success, FALSE on failure - $pStoreRow[errors] will contain reason
  */
 function mime_image_update( &$pStoreRow, $pParams = NULL ) {
-	$ret = FALSE;
+	global $gThumbSizes, $gBitSystem;
+
+	$ret = TRUE;
 
 	// this will set the correct pluign guid, even if we let default handle the store process
 	$pStoreRow['attachment_plugin_guid'] = PLUGIN_MIME_GUID_IMAGE;
@@ -98,7 +100,28 @@ function mime_image_update( &$pStoreRow, $pParams = NULL ) {
 			$pStoreRow['errors'] = $pStoreRow['log'];
 			$ret = FALSE;
 		}
+	} elseif( !empty( $pParams['preference']['is_panorama'] ) && empty( $pStoreRow['thumbnail_url']['panorama'] )) {
+			// the panorama has to be a jpg
+			$gBitSystem->setConfig( 'liberty_thumbnail_format', 'jpg' );
+			$gThumbSizes['panorama'] = array( 'width' => 2000, 'height' => 1000 );
+			$genHash = array(
+				'dest_path'       => dirname( $pStoreRow['storage_path'] )."/",
+				'source_file'     => $pStoreRow['source_file'],
+				'type'            => $pStoreRow['mime_type'],
+				'thumbnail_sizes' => array( 'panorama' ),
+			);
+
+			if( !liberty_generate_thumbnails( $genHash )) {
+				$log['store_meta'] = "There was a problem generating the panorama thumbnail.";
+				$ret = FALSE;
+			}
+	} elseif( empty( $pParams['preference']['is_panorama'] ) && !empty( $pStoreRow['thumbnail_url']['panorama'] )) {
+		// we remove the panorama setting in the database and the panorama thumb
+		if( LibertyAttachable::validateStoragePath( BIT_ROOT_PATH.$pStoreRow['thumbnail_url']['panorama'] )) {
+			@unlink( BIT_ROOT_PATH.$pStoreRow['thumbnail_url']['panorama'] );
+		}
 	}
+
 	return $ret;
 }
 
@@ -112,12 +135,14 @@ function mime_image_update( &$pStoreRow, $pParams = NULL ) {
  * @return TRUE on success, FALSE on failure - $pStoreRow[errors] will contain reason
  */
 function mime_image_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
-	global $gLibertySystem, $gBitThemes;
-
 	// don't load a mime image if we don't have an image for this file
 	if( $ret = mime_default_load( $pFileHash, $pPrefs, $pParams )) {
 		// fetch meta data from the db
-		$ret['meta'] = LibertyMime::getMetaData( $pFileHash['attachment_id'], "EXIF" );
+		$ret['meta'] = LibertyMime::getMetaData( $ret['attachment_id'], "EXIF" );
+		// check for panorama image
+		if( is_file( BIT_ROOT_PATH.dirname( $ret['storage_path'] )."/panorama.jpg" )) {
+			$ret['thumbnail_url']['panorama'] = storage_path_to_url( dirname( $ret['storage_path'] )."/panorama.jpg" );
+		}
 	}
 	return $ret;
 }
