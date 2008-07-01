@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.8 2008/06/19 07:29:56 lsces Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.9 2008/07/01 08:35:35 squareing Exp $
  *
  * Image processor - extension: php-imagick
  * @package  liberty
@@ -15,9 +15,9 @@
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function liberty_imagick_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
+function liberty_imagick_resize_image( &$pFileHash ) {
 	if( $func = liberty_imagick_get_function( 'resize_image' )) {
-		return $func( $pFileHash, $pThumbnail );
+		return $func( $pFileHash );
 	}
 }
 
@@ -30,7 +30,7 @@ function liberty_imagick_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
  */
 function liberty_imagick_rotate_image( &$pFileHash ) {
 	if( $func = liberty_imagick_get_function( 'rotate_image' )) {
-		return $func( $pFileHash, $pThumbnail );
+		return $func( $pFileHash );
 	}
 }
 
@@ -83,8 +83,8 @@ function liberty_imagick_get_function( $pFunction ) {
 // =============================================
 // ======== Version 0.9* of php-imagick ========
 // =============================================
-function liberty_imagick0_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
-  	global $gBitSystem;
+function liberty_imagick0_resize_image( &$pFileHash ) {
+	global $gBitSystem;
 	$pFileHash['error'] = NULL;
 	$ret = NULL;
 	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
@@ -189,7 +189,7 @@ function liberty_imagick0_rotate_image( &$pFileHash ) {
 // ============================================
 // ======== Version 2.* of php-imagick ========
 // ============================================
-function liberty_imagick2_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
+function liberty_imagick2_resize_image( &$pFileHash ) {
 	global $gBitSystem;
 	$pFileHash['error'] = NULL;
 	$ret = NULL;

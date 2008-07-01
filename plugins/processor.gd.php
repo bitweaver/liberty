@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.10 2008/06/19 07:29:56 lsces Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.11 2008/07/01 08:35:35 squareing Exp $
  *
  * Image processor - extension: php-gd
  * @package  liberty
@@ -15,8 +15,8 @@
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function liberty_gd_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
-  	global $gBitSystem;
+function liberty_gd_resize_image( &$pFileHash ) {
+	global $gBitSystem;
 	$ret = NULL;
 	list($iwidth, $iheight, $itype, $iattr) = @getimagesize( $pFileHash['source_file'] );
 	list($type, $ext) = split( '/', strtolower( $pFileHash['type'] ) );

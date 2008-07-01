@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.17 2008/06/19 07:29:56 lsces Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.18 2008/07/01 08:35:35 squareing Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -15,7 +15,7 @@
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function liberty_magickwand_resize_image( &$pFileHash, $pThumbnail = FALSE ) {
+function liberty_magickwand_resize_image( &$pFileHash ) {
 	global $gBitSystem;
 	// static var here is crucial
 	static $rgbConverts = array();
@@ -191,7 +191,7 @@ function liberty_magickwand_can_thumbnail_image( $pMimeType ) {
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function liberty_magickwand_convert_colorspace_image( &$pFileHash, $pColorSpace, $pThumbnail = false ) {
+function liberty_magickwand_convert_colorspace_image( &$pFileHash, $pColorSpace ) {
 	$ret = FALSE;
 	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
 		$magickWand = NewMagickWand();
