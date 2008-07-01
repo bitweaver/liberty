@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.24 2008/07/01 07:57:37 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.25 2008/07/01 09:03:17 squareing Exp $
  */
 
 /**
@@ -84,13 +84,6 @@ class LibertyMime extends LibertyAttachable {
 				$this->mDb->StartTrans();
 
 				foreach( $pStoreHash['upload_store']['files'] as $key => $upload ) {
-					// we might be updating attachments and they might have some additional data they need to process
-					if( @BitBase::verifyId( $upload['attachment_id'] ) && !empty( $pStoreHash['plugin'][$upload['attachment_id']] ) && is_array( $pStoreHash['plugin'][$upload['attachment_id']] )) {
-						foreach( $pStoreHash['plugin'][$upload['attachment_id']] as $guid => $params ) {
-							$this->updateAttachmentParams( $upload['attachment_id'], $guid, $params );
-						}
-					}
-
 					// exit if $upload is empty
 					if( empty( $upload['tmp_name'] )) {
 						break;
