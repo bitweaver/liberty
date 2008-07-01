@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.23 2008/06/27 10:40:34 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.24 2008/07/01 07:57:37 squareing Exp $
  */
 
 /**
@@ -244,7 +244,7 @@ class LibertyMime extends LibertyAttachable {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function updateAttachmentParams( $pAttachmentId, $pPluginGuid, $pParamHash ) {
+	function updateAttachmentParams( $pAttachmentId, $pPluginGuid, $pParamHash = array() ) {
 		global $gLibertySystem;
 		$ret = FALSE;
 
@@ -255,7 +255,7 @@ class LibertyMime extends LibertyAttachable {
 				$file = LibertyMime::getAttachment( $pAttachmentId );
 			}
 
-			if( @BitBase::verifyId( $file['attachment_id'] ) && !empty( $pPluginGuid ) && !empty( $pParamHash ) && ( $update_function = $gLibertySystem->getPluginFunction( $pPluginGuid, 'update_function', 'mime' ))) {
+			if( @BitBase::verifyId( $file['attachment_id'] ) && !empty( $pPluginGuid ) && ( $update_function = $gLibertySystem->getPluginFunction( $pPluginGuid, 'update_function', 'mime' ))) {
 				if( $update_function( $file, $pParamHash )) {
 					$ret = TRUE;
 				} else {
