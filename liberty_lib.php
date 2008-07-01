@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.38 2008/06/30 18:42:26 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.39 2008/07/01 08:38:09 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -413,7 +413,7 @@ function liberty_content_edit( &$pObject ) {
  * @param array $pFileHash Data require to process the files
  * @param array $pFileHash['upload']['name'] (required) Name of the uploaded file
  * @param array $pFileHash['upload']['type'] (required) Mime type of the file uploaded
- * @param array $pFileHash['upload']['dest_path'] (required) Relative path where you want to store the file
+ * @param array $pFileHash['upload']['dest_path'] (required) Relative path where you want to store the file (trailing slash required)
  * @param array $pFileHash['upload']['source_file'] (required) Absolute path to file including file name
  * @param boolean $pFileHash['upload']['thumbnail'] (optional) Set to FALSE if you don't want to generate thumbnails
  * @param array $pFileHash['upload']['thumbnail_sizes'] (optional) Decide what sizes thumbnails you want to create: icon, avatar, small, medium, large
@@ -659,18 +659,19 @@ function liberty_get_function( $pType ) {
 function liberty_generate_thumbnails( &$pFileHash ) {
 	global $gBitSystem, $gThumbSizes;
 	$resizeFunc = liberty_get_function( 'resize' );
+	$ret = FALSE;
 
 	// allow custom selection of thumbnail sizes
-	if( empty( $pFileHash['thumbnail_sizes'] ) ) {
-		if ( isset( $gThumbSizes ) ){
-			$pFileHash['thumbnail_sizes'] = array_keys($gThumbSizes);
+	if( empty( $pFileHash['thumbnail_sizes'] )) {
+		if( !empty( $gThumbSizes ) && is_array( $gThumbSizes )) {
+			$pFileHash['thumbnail_sizes'] = array_keys( $gThumbSizes );
 		} else {
 			$pFileHash['thumbnail_sizes'] = array( 'icon', 'avatar', 'small', 'medium', 'large' );
 		}
 	}
 
 	if(
-		( !preg_match( '/image\/(gif|jpg|jpeg|png)/', strtolower( $pFileHash['type'] )) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ))
+		( !preg_match( '#image/(gif|jpe?g|png)#i', $pFileHash['type'] ) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ))
 		|| in_array( 'original', $pFileHash['thumbnail_sizes'] )
 	) {
 		// jpeg version of original
@@ -678,7 +679,9 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$pFileHash['name'] = 'original.jpg';
 		$pFileHash['max_width'] = MAX_THUMBNAIL_DIMENSION;
 		$pFileHash['max_height'] = MAX_THUMBNAIL_DIMENSION;
-		$pFileHash['original_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash );
+		if( $pFileHash['original_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash )) {
+			$ret = TRUE;
+		}
 	}
 
 	// override $mimeExt if we have a custom setting for it
@@ -698,23 +701,27 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		if( isset( $gThumbSizes[$thumbSize] )) {
 			$pFileHash['dest_base_name'] = $thumbSize;
 			$pFileHash['name'] = $thumbSize.$destExt;
-			if (!empty($gThumbSizes[$thumbSize]['width'])) {
+			if( !empty( $gThumbSizes[$thumbSize]['width'] )) {
 				$pFileHash['max_width'] = $gThumbSizes[$thumbSize]['width'];
-			}
-			else {
+			} else {
 				// Have to unset since we reuse $pFileHash
 				unset( $pFileHash['max_width'] );
 			}
-			if (!empty($gThumbSizes[$thumbSize]['height'])) {
+
+			if( !empty( $gThumbSizes[$thumbSize]['height'] )) {
 				$pFileHash['max_height'] = $gThumbSizes[$thumbSize]['height'];
-			}
-			else {
+			} else {
 				// Have to unset since we reuse $pFileHash
 				unset( $pFileHash['max_height'] );
 			}
-			$pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash, TRUE );
+
+			if( $pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash )) {
+				$ret = TRUE;
+			}
 		}
 	}
+
+	return $ret;
 }
 
 /**
