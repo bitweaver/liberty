@@ -2,15 +2,11 @@
 LibertyAttachment = {
 	"uploader_under_way":0,
 	
-	"uploader": function(file, action, waitmsg, frmid, actionid) {
+	"uploader": function(file, action, waitmsg, frmid, cform) {
 		if (LibertyAttachment.uploader_under_way) {
 			alert(waitmsg);
 		}else{
-			var t = document.forms.editpageform.title.value;
-			if ( MochiKit.Base.isEmpty(t) ){
-				alert( "Please enter a title for your new content before attempting to upload a file." );
-			}else{
-				$('la_title').value = t;
+			if ( LibertyAttachment.preflightCheck( cform ) ){
 				LibertyAttachment.uploader_under_way = 1;
 				BitAjax.showSpinner();
 				var old_target = file.form.target;
@@ -27,7 +23,18 @@ LibertyAttachment = {
 		}
 	},
 
-	"uploaderComplete": function(frmid, divid, fileid) {
+	"preflightCheck": function( cform ){
+		var t = $(cform).title.value;
+		if ( MochiKit.Base.isEmpty(t) ){
+			alert( "Please enter a title for your new content before attempting to upload a file." );
+			return false;
+		}else{
+			$('la_title').value = t;
+			return true;
+		}
+	},
+
+	"uploaderComplete": function(frmid, divid, fileid, cform) {
 		if (LibertyAttachment.uploader_under_way){
 			BitAjax.hideSpinner();
 			var ifrm = document.getElementById(frmid);
@@ -41,16 +48,8 @@ LibertyAttachment = {
 			if (d.location.href == "about:blank") {
 				return;
 			}
-
-			var form = document.forms.editpageform;
-			var cid = d.getElementById("upload_content_id").value;
-			if ( typeof( form.content_id ) == "undefined" ){
-				var i = INPUT( {'name':'content_id', 'type':'hidden', 'value':cid}, null );
-				form.insertBefore( i, form.firstChild ); 
-			}else{
-				form.content_id.value = cid;
-			}
-			$('la_content_id').value = cid;
+			
+			LibertyAttachment.postflightCheck( cform, d );
 
 			var errMsg = "<div>Sorry, there was a problem retrieving results.</div>";
 			var divO = document.getElementById(divid);
@@ -68,5 +67,16 @@ LibertyAttachment = {
 			var file = document.getElementById(fileid);
 			file.value = '';
 		}
+	},
+	
+	"postflightCheck": function( form, d ){
+		var cid = d.getElementById("upload_content_id").value;
+		if ( typeof( form.content_id ) == "undefined" ){
+			var i = INPUT( {'name':'content_id', 'type':'hidden', 'value':cid}, null );
+			form.insertBefore( i, form.firstChild ); 
+		}else{
+			form.content_id.value = cid;
+		}
+		$('la_content_id').value = cid;
 	}
 }

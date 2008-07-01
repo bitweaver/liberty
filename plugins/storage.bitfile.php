@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.53 $
+ * @version  $Revision: 1.54 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -42,7 +42,7 @@ if( isset( $gBitSystem )) {
 		$pluginParams['edit_help_new'] = $pluginParams['edit_help'];
 		$pluginParams['edit_field_new'] = $pluginParams['edit_field'];
 		$pluginParams['edit_help'] =  'The file(s) will be uploaded to your personal storage area.<br />After selecting the file you want to upload an attachment ID will be displayed for you to use in your content.';
-		$pluginParams['edit_field'] = '<input type="file" name="upload" size="40" id="upload" onchange="javascript:LibertyAttachment.uploader(this, \'{$smarty.const.LIBERTY_PKG_URL}attachment_uploader.php\',\'{tr}Please wait for the current upload to finish.{/tr}\', \'liberty_upload_frame\');" />'.
+		$pluginParams['edit_field'] = '<input type="file" name="upload" size="40" id="upload" onchange="javascript:LibertyAttachment.uploader(this, \'{$smarty.const.LIBERTY_PKG_URL}attachment_uploader.php\',\'{tr}Please wait for the current upload to finish.{/tr}\', \'liberty_upload_frame\', \'editpageform\');" />'.
 			'{include file="bitpackage:liberty/attachment_uploader_inc.tpl"}';
 	}
 }
