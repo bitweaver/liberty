@@ -1,8 +1,8 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/Attic/admin_mime_image.tpl,v 1.1 2008/07/02 09:14:00 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/Attic/admin_mime_image.tpl,v 1.2 2008/07/02 10:47:30 squareing Exp $ *}
 {strip}
 <div class="display liberty">
 	<div class="header">
-		<h1>{tr}Flashvideo Plugin Settings{/tr}</h1>
+		<h1>{tr}Image Plugin Settings{/tr}</h1>
 	</div>
 
 	<div class="body">
