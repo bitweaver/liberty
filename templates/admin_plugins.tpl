@@ -53,11 +53,11 @@
 												</td>
 											{/if}
 											<td class="actionicon">
-												{if $plugin.plugin_settings_url}
-													<a href="{$plugin.plugin_settings_url}">{biticon iname=accessories-text-editor iexplain="Plugin Settings"}</a>
-												{/if}
 												{if $plugin.help_page}
 													{jspopup href="http://www.bitweaver.org/wiki/`$plugin.help_page`" ibiticon="icons/dialog-information" title=`$plugin.help_page` class="external"}
+												{/if}
+												{if $plugin.plugin_settings_url}
+													<a href="{$plugin.plugin_settings_url}">{biticon iname=accessories-text-editor iexplain="Plugin Settings"}</a>
 												{/if}
 												{if $plugin.is_active == 'x'}
 													Missing
