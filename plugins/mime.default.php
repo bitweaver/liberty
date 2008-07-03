@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.29 2008/07/03 20:27:12 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.30 2008/07/03 20:43:02 lsces Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.29 $
+ * @version     $Revision: 1.30 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -88,7 +88,15 @@ function mime_default_verify( &$pStoreRow ) {
 			// try to generate thumbnails for the upload
 			//$pStoreRow['upload']['thumbnail'] = !$gBitSystem->isFeatureActive( 'liberty_offline_thumbnailer' );
 			$pStoreRow['upload']['thumbnail'] = TRUE;
-			$pStoreRow['attachment_id'] = defined( 'LINKED_ATTACHMENTS' ) ? $pStoreRow['content_id'] : $gBitSystem->mDb->GenID( 'liberty_attachments_id_seq' );
+			if ( defined( 'LINKED_ATTACHMENTS' ) ) {
+				if ( $pStoreRow['upload']['attachment_id'] == '' ) {
+					$pStoreRow['attachment_id'] = $gBitSystem->mDb->GenID( 'liberty_content_id_seq' );
+				} else {
+					$pStoreRow['attachment_id'] = $pStoreRow['content_id'];
+				}
+			} else {
+				$pStoreRow['attachment_id'] =  $gBitSystem->mDb->GenID( 'liberty_attachments_id_seq' );
+			}
 		}
 
 		// Generic values needed by the storing mechanism
@@ -176,7 +184,7 @@ function mime_default_store( &$pStoreRow ) {
 		// add row to liberty_files
 		$storeHash = array(
 			"storage_path" => $pStoreRow['upload']['dest_path'].$pStoreRow['upload']['name'],
-			"file_id"      => defined( 'LINKED_ATTACHMENTS' ) ? $pStoreRow['content_id'] : $gBitSystem->mDb->GenID( 'liberty_files_id_seq' ),
+			"file_id"      => defined( 'LINKED_ATTACHMENTS' ) ? $pStoreRow['attachment_id'] : $gBitSystem->mDb->GenID( 'liberty_files_id_seq' ),
 			"mime_type"    => $pStoreRow['upload']['type'],
 			"file_size"    => $pStoreRow['upload']['size'],
 			"user_id"      => $pStoreRow['user_id'],
