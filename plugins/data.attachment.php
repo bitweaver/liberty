@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.28 $
+ * @version  $Revision: 1.29 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.28 2008/06/14 10:34:32 squareing Exp $
+// $Id: data.attachment.php,v 1.29 2008/07/03 05:42:25 squareing Exp $
 
 /**
  * definitions
@@ -104,7 +104,7 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 	// The Manditory Parameter is missing. we are not gonna trow an error, and 
 	// just return empty since many sites use the old style required second 
 	// "closing" empty tag
-	if( empty( $pParams['id'] ) ) {
+	if( empty( $pParams['id'] )) {
 		return $ret;
 	}
 
@@ -115,20 +115,52 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 
 	// we will do slightly different stuff if this is using a mime plugin
 	if( !empty( $att['is_mime'] )) {
-		global $gBitSmarty, $gLibertySystem;
+		global $gBitSmarty, $gLibertySystem, $gContent;
 
-		// pass useful stuff to the template
-		$gBitSmarty->assign( 'attachmentParams', $pParams );
-		$gBitSmarty->assign( 'attachment', $att );
-
+		// convert parameters into display properties
 		$wrapper = liberty_plugins_wrapper_style( $pParams );
+
+		// work out custom URL if there is one
+		if( @BitBase::verifyId( $pParams['page_id'] )) {
+			// link to page by page_id
+			// avoid endless loops
+			static $wp;
+			if( empty( $wp )) {
+				require_once( WIKI_PKG_PATH.'BitPage.php');
+				$wp = new BitPage( $pParams['page_id'] );
+				if( $wp->load() ) {
+					$wrapper['display_url'] = $wp->getDisplayUrl();
+				}
+			}
+		} elseif( @BitBase::verifyId( $pParams['content_id'] )) {
+			// link to any content by content_id
+			static $obj;
+			if( empty( $obj ) && $obj = LibertyBase::getLibertyObject( $pParams['content_id'] )) {
+				$wrapper['display_url'] = $obj->getDisplayUrl();
+			}
+		} elseif( !empty( $pParams['page_name'] )) {
+			// link to page by page_name
+			require_once( WIKI_PKG_PATH.'BitPage.php');
+			$wp = new BitPage();
+			$wrapper['display_url'] = $wp->getDisplayUrl( $pParams['page_name'] );
+		} elseif( !empty( $pParams['link'] ) && $pParams['link'] == 'false' ) {
+			// no link
+		} elseif( !empty( $pParams['link'] )) {
+			// custom link that can point anywhere
+			if( !strstr( $pParams['link'], $_SERVER["SERVER_NAME"] ) && strstr( $pParams['link'], '//' )) {
+				$wrapper['href_class'] = 'class="external"';
+			}
+			$wrapper['display_url'] = $pParams['link'];
+		} else {
+			$wrapper['display_url'] = $att['display_url'];
+		}
+
+		// pass stuff to the template
+		$gBitSmarty->assign( 'attachment', $att );
 		$gBitSmarty->assign( 'wrapper', $wrapper );
+		$gBitSmarty->assign( 'thumbsize', (( !empty( $pParams['size'] ) && !empty( $att['thumbnail_url'][$pParams['size']] )) ? $pParams['size'] : 'medium' ));
 
-		$thumbsize = !empty( $pParams['size'] ) && !empty( $item->mInfo['thumbnail_url'][$pParams['size']] ) ? $pParams['size'] : 'medium';
-		$gBitSmarty->assign( 'thumbsize', $thumbsize );
-
-		$template = $gLibertySystem->getMimeTemplate( 'inline', $att['attachment_plugin_guid'] );
-		$ret = $gBitSmarty->fetch( $template );
+		$ret = $gBitSmarty->fetch( $gLibertySystem->getMimeTemplate( 'inline', $att['attachment_plugin_guid'] ));
 	} else {
 		// TODO: legacy code - should be faded out if possible
 
