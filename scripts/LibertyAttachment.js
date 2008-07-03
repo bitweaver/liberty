@@ -69,7 +69,8 @@ LibertyAttachment = {
 		}
 	},
 	
-	"postflightCheck": function( form, d ){
+	"postflightCheck": function( cform, d ){
+		var form = $(cform);
 		var cid = d.getElementById("upload_content_id").value;
 		if ( typeof( form.content_id ) == "undefined" ){
 			var i = INPUT( {'name':'content_id', 'type':'hidden', 'value':cid}, null );

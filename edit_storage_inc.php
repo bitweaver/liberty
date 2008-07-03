@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/edit_storage_inc.php,v 1.32 2008/06/27 10:41:29 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/edit_storage_inc.php,v 1.33 2008/07/03 15:19:09 wjames5 Exp $
  *
  * edit_storage_inc
  * @author   spider <spider@steelsun.com>
@@ -46,6 +46,6 @@ if( !empty( $_REQUEST['deleteAttachment'] )) {
 // make sure js is being loaded
 if( $gBitSystem->getConfig( 'liberty_attachment_style' ) == 'ajax' ) {
 	$gBitThemes->loadAjax( 'mochikit', array( 'DOM.js' ) );
-	$gBitThemes->loadJavascript( LIBERTY_PKG_PATH.'scripts/LibertyAttachment.js', TRUE );
+	$gBitThemes->loadJavascript( LIBERTY_PKG_PATH.'scripts/LibertyAttachment.js', FALSE );
 }
 ?>
