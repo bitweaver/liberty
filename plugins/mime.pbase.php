@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.pbase.php,v 1.2 2008/06/28 08:42:33 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.pbase.php,v 1.3 2008/07/03 20:46:02 lsces Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.2 $
+ * @version		$Revision: 1.3 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -54,7 +54,7 @@ function mime_pbase_verify( &$pStoreRow ) {
 	$ret = FALSE;
 	if( @BitBase::verifyId( $pStoreRow['pbase_id'] )) {
 		$pStoreRow['user_id']       = @BitBase::verifyId( $gBitUser->mUserId ) ? $gBitUser->mUserId : ROOT_USER_ID;
-		$pStoreRow['attachment_id'] = defined( 'LINKED_ATTACHMENTS' ) ? $pStoreRow['content_id'] : $gBitSystem->mDb->GenID( 'liberty_attachments_id_seq' );
+		$pStoreRow['attachment_id'] = defined( 'LINKED_ATTACHMENTS' ) ? $gBitSystem->mDb->GenID( 'liberty_content_id_seq' ) : $gBitSystem->mDb->GenID( 'liberty_attachments_id_seq' );
 		$ret = TRUE;
 	} else {
 		$pStoreRow['errors']['pbase_id'] = "No valid PBase ID given.";
