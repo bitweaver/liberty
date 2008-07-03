@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.28 2008/06/30 18:42:26 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.29 2008/07/03 20:27:12 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.28 $
+ * @version     $Revision: 1.29 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -80,10 +80,9 @@ function mime_default_verify( &$pStoreRow ) {
 			// if a new file has been uploaded, we need to get some information from the database for the file update
 			$fileInfo = $gBitSystem->mDb->getRow( "
 				SELECT la.`attachment_id`, lf.`file_id`, lf.`storage_path`
-				FROM `".BIT_DB_PREFIX."liberty_content` lc
-				INNER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON ( la.`content_id` = lc.`content_id` )
+				FROM `".BIT_DB_PREFIX."liberty_attachments` la
 				INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON ( lf.`file_id` = la.`foreign_id` )
-				WHERE lc.`content_id` = ?", array( $pStoreRow['content_id'] ));
+				WHERE la.`attachment_id` = ?", array( $pStoreRow['upload']['attachment_id'] ));
 			$pStoreRow = array_merge( $pStoreRow, $fileInfo );
 		} else {
 			// try to generate thumbnails for the upload
