@@ -1,6 +1,11 @@
 /* Dependencies: MochiKit Base Async, BitAjax.j  */
 LibertyAttachment = {
+	"fileInputClone":null,
 	"uploader_under_way":0,
+
+	"uploaderSetup":function(fileid){
+		LibertyAttachment.fileInputClone = $(fileid).cloneNode(true);
+	},
 	
 	"uploader": function(file, action, waitmsg, frmid, cform) {
 		if (LibertyAttachment.uploader_under_way) {
@@ -12,13 +17,10 @@ LibertyAttachment = {
 				var old_target = file.form.target;
 				file.form.target = frmid;
 				var old_action = file.form.action;
-				// var action_item = document.getElementById(actionid);
-				// action_item.value = old_action;
 				file.form.action=action;
 				file.form.submit();
 				file.form.target = old_target;
 				file.form.action = old_action;
-				// action_item.value = '';
 			}
 		}
 	},
@@ -65,7 +67,10 @@ LibertyAttachment = {
 			}
 			LibertyAttachment.uploader_under_way = 0;
 			var file = document.getElementById(fileid);
-			file.value = '';
+			LibertyAttachment.fileInputClone.id = fileid;
+			MochiKit.DOM.swapDOM(file, LibertyAttachment.fileInputClone);
+			LibertyAttachment.uploaderSetup( fileid );
+			// file.value = '';
 		}
 	},
 	
