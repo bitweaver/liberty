@@ -1,5 +1,5 @@
 {strip}
-{if $attachment.video_url}
+{if $attachment.media_url}
 	<div class="row" style="text-align:center;">
 		{include file="bitpackage:liberty/mime_flv_player_inc.tpl"}
 	</div>
@@ -48,13 +48,6 @@
 		{forminput}
 			<a href="{$attachment.download_url}">{$attachment.filename|escape}</a>
 			&nbsp; <small>({$attachment.mime_type})</small>
-			{* TODO: get this to work if $gContent->hasEditPermission() && $attachment.video_url}
-				{form ipackage=treasury ifile="plugins/form.flv.php"}
-					<input type="hidden" name="content_id" value="{$gContent->mContentId}" />
-					<input type="submit" name="remove_original" value="{tr}Remove Original{/tr}" />
-					{formhelp note="This will remove the original file from the server. The falsh video will remain and you can still view the video but you cannot download the original anymore."}
-				{/form}
-			{/if*}
 		{/forminput}
 	</div>
 
@@ -65,26 +58,6 @@
 		{/forminput}
 	</div>
 {/if}
-
-{* TODO: get this to work if $gContent->hasEditPermission() && $attachment.video_url}
-	<div class="row">
-		{formlabel label="New Aspect Ratio" for="aspect"}
-		{forminput}
-			{form ipackage=treasury ifile="plugins/form.flv.php"}
-				<input type="hidden" name="content_id" value="{$gContent->mContentId}" />
-				<select name="aspect" id="aspect">
-					<option value="">{tr}No Change{/tr}</option>
-					<option value="{math equation="x/y" x=4  y=3 }">4:3 ({tr}TV{/tr})</option>
-					<option value="{math equation="x/y" x=14 y=9 }">14:9 ({tr}Anamorphic{/tr})</option>
-					<option value="{math equation="x/y" x=16 y=9 }">16:9 ({tr}Widescreen{/tr})</option>
-					<option value="{math equation="x/y" x=16 y=10}">16:10 ({tr}Computer Widescreen{/tr})</option>
-				</select>
-				<input type="submit" name="aspect_ratio" value="{tr}Set Aspect{/tr}" />
-				{formhelp note="Here you can override the initially set aspect ratio. Please note that the displayed aspect aspect ratio might not correspond to the set value."}
-			{/form}
-		{/forminput}
-	</div>
-{/if*}
 
 {attachhelp legend=1 hash=$attachment}
 {/strip}

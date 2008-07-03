@@ -1,5 +1,5 @@
 {strip}
-{if $area == "storage_thumbs"}
+{if $display_type == "storage_thumbs"}
 	<div class="item">
 		{if $attachment.thumbnail_url.$thumbsize}
 			{if !$attachment.is_primary or ( $attachment.is_primary and !$hideprimary )}

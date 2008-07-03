@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.16 2008/06/30 22:23:21 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.17 2008/07/03 07:43:23 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.16 $
+ * @version		$Revision: 1.17 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -146,9 +146,9 @@ function mime_flv_load( $pFileHash, &$pPrefs, $pParams = NULL ) {
 			} elseif( is_file( $source_path.'processing' )) {
 				$ret['status']['processing'] = TRUE;
 			} elseif( is_file( $source_path.'flick.flv' )) {
-				$ret['video_url'] = storage_path_to_url( dirname( $ret['storage_path'] ).'/flick.flv' );
+				$ret['media_url'] = storage_path_to_url( dirname( $ret['storage_path'] ).'/flick.flv' );
 			} elseif( is_file( $source_path.'flick.mp4' )) {
-				$ret['video_url'] = storage_path_to_url( dirname( $ret['storage_path'] ).'/flick.mp4' );
+				$ret['media_url'] = storage_path_to_url( dirname( $ret['storage_path'] ).'/flick.mp4' );
 			}
 		}
 

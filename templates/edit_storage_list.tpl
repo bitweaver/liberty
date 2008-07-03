@@ -22,7 +22,6 @@
 							<input type="radio" name="liberty_attachments[primary]" value="none" {if empty($gContent->mInfo[primary])}checked="checked"{/if} />
 						</label>
 					</td>
-					{assign var=area value=upload_tab}
 				{/if}
 			</tr>
 
@@ -30,7 +29,7 @@
 				<tr class="{cycle values="odd,even"}">
 					<td style="text-align:center;">
 						{if $storage.is_mime}
-							{include file=$gLibertySystem->getMimeTemplate('inline',$storage.attachment_plugin_guid) area=$area thumbsize=small preferences=$gContent->mStoragePrefs.$attachmentId attachment=$storage}
+							{include file=$gLibertySystem->getMimeTemplate('inline',$storage.attachment_plugin_guid) display_type=storage_thumbs thumbsize=small preferences=$gContent->mStoragePrefs.$attachmentId attachment=$storage}
 						{else}
 							{jspopup href=$storage.source_url title=$storage.title|default:$storage.filename notra=1 img=$storage.thumbnail_url.avatar}
 							<br />{$storage.filename} <span class="date">{$storage.file_size|display_bytes}</span>
