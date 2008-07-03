@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.6 2008/07/02 09:14:00 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.7 2008/07/03 09:43:32 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.6 $
+ * @version		$Revision: 1.7 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -148,6 +148,7 @@ function mime_image_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
  * @return TRUE on success, FALSE on failure
  */
 function mime_image_store_exif_data( $pFileHash ) {
+	global $gBitSystem;
 	if( !empty( $pFileHash['upload'] )) {
 		$upload = &$pFileHash['upload'];
 	}
@@ -189,12 +190,62 @@ function mime_image_store_exif_data( $pFileHash ) {
 			}
 		}
 
+		// only makes sense to store the GPS data if we at least have latitude and longitude
+		if( !empty( $exifHash['GPS']['GPSLongitude'] ) && !empty( $exifHash['GPS']['GPSLatitude'] )) {
+			$store['geo']['lng'] = mime_image_convert_exifgps( $exifHash['GPS']['GPSLongitude'] );
+			$store['geo']['lat'] = mime_image_convert_exifgps( $exifHash['GPS']['GPSLatitude'] );
+			if( !empty( $exifHash['GPS']['GPSLongitudeRef'] ) && $exifHash['GPS']['GPSLongitudeRef'] == 'W' ) {
+				$store['geo']['lng'] = 0 - $store['geo']['lng'];
+			}
+			if( !empty( $exifHash['GPS']['GPSLatitudeRef'] ) && $exifHash['GPS']['GPSLatitudeRef'] == 'S' ) {
+				$store['geo']['lat'] = 0 - $store['geo']['lat'];
+			}
+			// set sea level data when available
+			if( !empty( $exifHash['GPS']['GPSAltitude'] )) {
+				list( $dividend, $divisor ) = explode( "/", $exifHash['GPS']['GPSAltitude'] );
+				$store['geo']['amsl'] = $dividend / $divisor;
+				$store['geo']['amsl_unit'] = 'm';
+			}
+			$exifHash['EXIF'] = array_merge( $exifHash['EXIF'], $store['geo'] );
+			/* would be nice to store this as geo data, but we can't since we're an attachment
+			if( $gBitSystem->isPackageActive( 'geo' )) {
+				$geo = new LibertyGeo( $pFileHash['content_id'] );
+				$geo->store( $store );
+			}
+			*/
+		}
+
 		if( !empty( $exifHash['EXIF'] )) {
 			LibertyMime::storeMetaData( $pFileHash['attachment_id'], 'EXIF', $exifHash['EXIF'] );
 		}
 	}
 
 	return TRUE;
+}
+
+/**
+ * mime_image_convert_exifgps
+ * 
+ * @param array $pParams array of positional data in fractions form EXIF tag
+ * @access public
+ * @return numeric value of positional data
+ */
+function mime_image_convert_exifgps( $pParams ) {
+	$ret = 0;
+	if( !empty( $pParams ) && is_array( $pParams ) && count( $pParams ) == 3 ) {
+		list( $lng['deg'], $lng['min'], $lng['sec'] ) = array_values( $pParams );
+		foreach( $lng as $key => $fraction ) {
+			list( $dividend, $divisor ) = explode( "/", $fraction );
+			$num = $dividend / $divisor;
+			if( $key == 'min' ) {
+				$num = $num / 60;
+			} elseif( $key == 'sec' ) {
+				$num = $num / 3600;
+			}
+			$ret += $num;
+		}
+	}
+	return $ret;
 }
 
 /**
