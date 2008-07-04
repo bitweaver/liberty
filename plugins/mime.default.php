@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.30 2008/07/03 20:43:02 lsces Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.31 2008/07/04 09:38:28 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.30 $
+ * @version     $Revision: 1.31 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -88,8 +88,8 @@ function mime_default_verify( &$pStoreRow ) {
 			// try to generate thumbnails for the upload
 			//$pStoreRow['upload']['thumbnail'] = !$gBitSystem->isFeatureActive( 'liberty_offline_thumbnailer' );
 			$pStoreRow['upload']['thumbnail'] = TRUE;
-			if ( defined( 'LINKED_ATTACHMENTS' ) ) {
-				if ( $pStoreRow['upload']['attachment_id'] == '' ) {
+			if( defined( 'LINKED_ATTACHMENTS' )) {
+				if( !@BitBase::verifyId( $pStoreRow['upload']['attachment_id'] )) {
 					$pStoreRow['attachment_id'] = $gBitSystem->mDb->GenID( 'liberty_content_id_seq' );
 				} else {
 					$pStoreRow['attachment_id'] = $pStoreRow['content_id'];
