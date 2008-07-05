@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.32 2008/07/05 06:42:38 lsces Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.33 2008/07/05 20:27:15 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.32 $
+ * @version     $Revision: 1.33 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -46,6 +46,8 @@ $pluginParams = array (
 	'inline_tpl'         => 'bitpackage:liberty/mime_default_inline_inc.tpl',
 	// This should be the same for all mime plugins
 	'plugin_type'        => MIME_PLUGIN,
+	// This needs to be specified by plugins that are included by other plugins
+	'file_name'          => 'mime.default.php',
 	// Set this to TRUE if you want the plugin active right after installation
 	'auto_activate'      => TRUE,
 	// Help page on bitweaver.org
