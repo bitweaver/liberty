@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.54 $
+ * @version  $Revision: 1.55 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -18,7 +18,7 @@ $pluginParams = array (
 	'expunge_function'   => 'bit_files_expunge',
 	'description'        => 'Always load by default, disable to prevent Direct File Upload To Server',
 	'plugin_type'        => STORAGE_PLUGIN,
-	'auto_activate'      => TRUE,
+	'auto_activate'      => FALSE,
 	'edit_label'         => 'Upload File',
 	'primary_edit_field' => '<input type="file" name="primary_attachment" size="40" />',
 	'edit_field'         => '<input type="file" name="upload" size="40" />',

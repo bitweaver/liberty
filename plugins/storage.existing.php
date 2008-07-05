@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -17,7 +17,7 @@ $pluginParams = array (
 	'description' => 'Always load for handling ajax attachments',
 	'edit_label' => 'Ajax Upload Files',
 	'plugin_type' => STORAGE_PLUGIN,
-	'auto_activate' => TRUE,
+	'auto_activate' => FALSE,
 );
 
 if( isset( $gBitSystem ) ) {
