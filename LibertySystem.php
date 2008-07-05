@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.112 2008/06/30 18:42:26 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.113 2008/07/05 20:25:37 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -116,20 +116,27 @@ class LibertySystem extends LibertyBase {
 	 **/
 	function loadActivePlugins() {
 		global $gBitSystem;
-		$active_plugins = $gBitSystem->getConfigMatch( "/^{$this->mSystem}_plugin_status_/i", 'y' );
-		// check for default storage plugin and add even if direct use is disabled
-		if ( !in_array( 'liberty_plugin_status_bitfile', $active_plugins ) ) $active_plugins['liberty_plugin_status_bitfile'] = 'n';
-		foreach( $active_plugins as $key=>$value ) {
-			$pluginGuid = preg_replace( "/^{$this->mSystem}_plugin_status_/", '', $key,1 );
-			if( $pluginFile = $gBitSystem->getConfig( "{$this->mSystem}_plugin_file_$pluginGuid" ) ) {
+		foreach( array_keys( $gBitSystem->getConfigMatch( "/^{$this->mSystem}_plugin_status_/i", 'y' )) as $config ) {
+			$pluginGuid = preg_replace( "/^{$this->mSystem}_plugin_status_/", '', $config, 1 );
+			if( $pluginFile = $gBitSystem->getConfig( "{$this->mSystem}_plugin_path_$pluginGuid" ) ) {
+				if( is_file( BIT_ROOT_PATH.$pluginFile )) {
+					$this->mPluginFilePath = BIT_ROOT_PATH.$pluginFile;
+					include_once( BIT_ROOT_PATH.$pluginFile );
+				}
+			} elseif( $pluginFile = $gBitSystem->getConfig( "{$this->mSystem}_plugin_file_$pluginGuid" ) ) {
+				// TODO: all this is deprecated and doesn't really rock bitweavers boat anymore - we use the _plugin_path_ setting now.
+				// this code here is only relevant if a user has updated bitweaver and scanAllPlugins() hasn't been called yet.
+				// scanAllPlugins() is called during the upgrade in the installer so we really are only keeping this here for CVS users
+				// - xing - Saturday Jul 05, 2008   20:47:29 CEST
+
 				// check for the plugin in the default location - in case bitweaver root path changed.
-				if ( file_exists( $pluginFile ) ) {
-					$this->mPluginFileName = basename( $pluginFile );
+				if( file_exists( $pluginFile )) {
+					$this->mPluginFilePath = $pluginFile;
 					include_once( $pluginFile );
 				} else {
 					$defaultFile = $this->mPluginPath.basename( $pluginFile );
-					if( file_exists( $defaultFile ) ) {
-						$this->mPluginFileName = basename( $defaultFile );
+					if( file_exists( $defaultFile )) {
+						$this->mPluginFilePath = $defaultFile;
 						include_once( $defaultFile );
 					}
 				}
@@ -148,16 +155,31 @@ class LibertySystem extends LibertyBase {
 	 */
 	function scanAllPlugins( $pPluginsPath = NULL, $pPrefixPattern = NULL ) {
 		global $gBitSystem;
-		if( empty( $pPluginsPath ) ) {
+		if( empty( $pPluginsPath )) {
 			$pPluginsPath = $this->mPluginPath;
 		}
 
-		if( $pluginDir = opendir( $pPluginsPath ) ) {
-			while( FALSE !== ( $plugin = readdir( $pluginDir ) ) ) {
+		// check for plugins in plugins/ dir
+		if( $pluginHandle = opendir( $pPluginsPath )) {
+			while( FALSE !== ( $plugin = readdir( $pluginHandle ) ) ) {
 				$pattern = "/^{$pPrefixPattern}.*\.php$/";
 				if( preg_match( $pattern, $plugin ) ) {
-					$this->mPluginFileName = basename( $plugin );
+					$this->mPluginFilePath = $pPluginsPath.$plugin;
 					include_once( $pPluginsPath.$plugin );
+				}
+			}
+		}
+
+		// check for liberty plugins in other packages as well
+		if( $this->mSystem == LIBERTY_PKG_NAME && $pkgHandle = opendir( BIT_ROOT_PATH )) {
+			while( FALSE !== ( $dirName = readdir( $pkgHandle ))) {
+				if( preg_match( '/^\w/', $dirName )  && $dirName != 'CVS' && is_dir( $pluginDir = BIT_ROOT_PATH.$dirName.'/liberty_plugins/' ) && ( $pluginHandle = opendir( $pluginDir ))) {
+					while( FALSE !== ( $plugin = readdir( $pluginHandle ))) {
+						if( preg_match( "/^{$pPrefixPattern}.*\.php$/", $plugin )) {
+							$this->mPluginFilePath = $pluginDir.$plugin;
+							include_once( $pluginDir.$plugin );
+						}
+					}
 				}
 			}
 		}
@@ -165,51 +187,46 @@ class LibertySystem extends LibertyBase {
 		// keep plugin list in sorted order
 		asort( $this->mPlugins );
 
-		// There must be at least one format plugin active and set as the default format
-		$format_plugin_count = 0;
-		$default_format_found = 0;
-		$current_default_format_guid = $gBitSystem->getConfig( 'default_format' );
-		foreach( $this->mPlugins as $guid => $plugin ) {
-			if( $plugin['is_active'] == 'y' ) {
-				if( $plugin['plugin_type'] == FORMAT_PLUGIN ) {
-					$format_plugin_count++;
-				}
-				if( $current_default_format_guid == $guid ) {
-					$default_format_found++;
-				}
-			}
-		}
-
-		// if no current default format or no format plugins active
-		// activate format.tikiwiki and make it the default format plugin
-		// This happens during installation and therefore requires that we include the plugin file for the constant definitions
-
 		// only execute the following if this class hasn't been extended
 		if( $this->mSystem == LIBERTY_PKG_NAME ) {
+			// There must be at least one format plugin active and set as the default format
+			$format_plugin_count = $default_format_found = 0;
+			$current_default_format_guid = $gBitSystem->getConfig( 'default_format' );
+			foreach( $this->mPlugins as $guid => $plugin ) {
+				if( $this->isPluginActive( $guid )) {
+					if( $plugin['plugin_type'] == FORMAT_PLUGIN ) {
+						$format_plugin_count++;
+					}
+					if( $current_default_format_guid == $guid ) {
+						$default_format_found++;
+					}
+				}
+			}
+
+			// if no current default format or no format plugins active
+			// activate format.tikiwiki and make it the default format plugin
+			// This happens during installation and therefore requires that we include the plugin file for the constant definitions
 			$plugin_file = $this->mPluginPath.'format.tikiwiki.php';
 			if( $format_plugin_count == 0 || $default_format_found == 0 && is_file( $plugin_file ) ) {
 				require_once( $plugin_file );
-				$guid = PLUGIN_GUID_TIKIWIKI;
-				$config_name = "{$this->mSystem}_plugin_status_" . $guid;
-				$config_value = 'y';
-				$gBitSystem->storeConfig( $config_name, $config_value, $this->mSystem );
+				$this->setActivePlugin( PLUGIN_GUID_TIKIWIKI );
 				$gBitSystem->storeConfig( 'default_format', PLUGIN_GUID_TIKIWIKI, $this->mSystem );
 				//make memory match db
 				$this->loadActivePlugins();
 			}
 		}
 
-		// remove any config settings for plugins that were not on disk
-		$active_plugins = $gBitSystem->getConfigMatch("/^{$this->mSystem}_plugin_status_/i");
-		foreach( $active_plugins as $key=>$value ) {
-			$plugin_guid = preg_replace( "/^{$this->mSystem}_plugin_status_/", '', $key,1 );
-			if( !isset( $this->mPlugins[$plugin_guid] ) ) {
-				$config_name = "{$this->mSystem}_plugin_status_" . $guid;
-				$gBitSystem->storeConfig( $config_name, NULL, $this->mSystem );
-				$config_name = "{$this->mSystem}_plugin_file_" . $guid;
-				$gBitSystem->storeConfig( $config_name, NULL, $this->mSystem );
+		// remove any config settings for plugin files that have been removed
+		$plugins = $gBitSystem->getConfigMatch( "/^{$this->mSystem}_plugin_path_/" );
+		foreach( $plugins as $config => $path ) {
+			if( !is_file( BIT_ROOT_PATH.$path )) {
+				$guid = str_replace( "{$this->mSystem}_plugin_path_", '', $config );
+				$gBitSystem->storeConfigMatch( "/^{$this->mSystem}_plugin_\w+_$guid/i", NULL );
 			}
 		}
+
+		// TODO: we can remove this at some point since it's not really important - it just clears out stuff from the database that we don't use anymore
+		$gBitSystem->storeConfigMatch( "/^{$this->mSystem}_plugin_file_/", NULL );
 	}
 
 	/**
@@ -219,7 +236,7 @@ class LibertySystem extends LibertyBase {
 	 * @return TRUE if the plugin is active, FALSE if it's not
 	 **/
 	function isPluginActive( $pPluginGuid ) {
-		return( isset( $this->mPlugins[$pPluginGuid] ) && ( $this->mPlugins[$pPluginGuid]['is_active'] == 'y' ) );
+		return( !empty( $this->mPlugins[$pPluginGuid]['is_active'] ) && ( $this->mPlugins[$pPluginGuid]['is_active'] == 'y' ));
 	}
 
 	/**
@@ -231,7 +248,7 @@ class LibertySystem extends LibertyBase {
 	 * @return void
 	 */
 	function registerDataTag( $pTag, $pPluginGuid ) {
-		$this->mDataTags[strtolower($pTag)] = $pPluginGuid;
+		$this->mDataTags[strtolower( $pTag )] = $pPluginGuid;
 	}
 
 	/**
@@ -244,20 +261,22 @@ class LibertySystem extends LibertyBase {
 	 **/
 	function registerPlugin( $pGuid, $pPluginParams ) {
 		global $gBitSystem;
-		#save the plugin_guid <=> filename mapping
-		$config_name = "{$this->mSystem}_plugin_file_".$pGuid;
-		$gBitSystem->storeConfig( $config_name, $this->mPluginFileName, LIBERTY_PKG_NAME );
-		$config_name = "{$this->mSystem}_plugin_status_".$pGuid;
-		$plugin_status = $gBitSystem->getConfig( $config_name );
-		if( empty( $plugin_status ) && isset( $pPluginParams['auto_activate'] ) && $pPluginParams['auto_activate'] == TRUE ) {
-			$plugin_status = 'y';
-			$gBitSystem->storeConfig( $config_name, $plugin_status, LIBERTY_PKG_NAME );
+		// plugins can set their own file_name. this is not mandatory but makes sure we store the path to the correct file
+		// this is useful for files that are included by other plugins such as mime.default.php
+		if( !empty( $pPluginParams['file_name'] )) {
+			$this->mPluginFilePath = dirname( $this->mPluginFilePath )."/".$pPluginParams['file_name'];
 		}
-		$this->mPlugins[$pGuid]['is_active'] = $plugin_status;
-		$this->mPlugins[$pGuid]['filename'] = $this->mPluginFileName;
-		$this->mPlugins[$pGuid]['plugin_guid'] = $pGuid;
-		$this->mPlugins[$pGuid]['verified'] = TRUE;
-		$this->mPlugins[$pGuid] = array_merge( $this->mPlugins[$pGuid], $pPluginParams );
+
+		if( !empty( $pGuid ) && !empty( $this->mPluginFilePath ) && is_file( $this->mPluginFilePath )) {
+			// store the relative path - we need to store the path to all plugins and not just active ones since we don't have access to this information when we use setActivePlugins()
+			$gBitSystem->storeConfig( "{$this->mSystem}_plugin_path_".$pGuid, str_replace( BIT_ROOT_PATH, "", $this->mPluginFilePath ), LIBERTY_PKG_NAME );
+			$settings['is_active'] = $gBitSystem->getConfig( "{$this->mSystem}_plugin_status_".$pGuid );
+			if( empty( $settings['is_active'] ) && !empty( $pPluginParams['auto_activate'] )) {
+				$this->setActivePlugin( $pGuid );
+			}
+			$settings['plugin_guid'] = $pGuid;
+			$this->mPlugins[$pGuid]  = array_merge( $settings, $pPluginParams );
+		}
 	}
 
 	/**
@@ -412,12 +431,7 @@ class LibertySystem extends LibertyBase {
 	 */
 	function resetAllPluginSettings() {
 		global $gBitSystem;
-		//$this->mPlugins = array();
-		$confs = $gBitSystem->getConfigMatch( "/^{$this->mSystem}_plugin_/i" );
-		foreach( array_keys( $confs ) as $config ) {
-			$gBitSystem->storeConfig( $config, NULL, $this->mSystem );
-		}
-
+		$gBitSystem->storeConfigMatch( "/^{$this->mSystem}_plugin_/", NULL );
 		if( $this->mSystem == LIBERTY_PKG_NAME ) {
 			// also remove the default format
 			$gBitSystem->storeConfig( 'default_format', NULL, $this->mSystem );
