@@ -16,6 +16,8 @@
 						{legend legend=Plugins}
 							{if $plugin_type eq 'format'}
 								{formfeedback warning="If you disable a format, content pages using that format can no longer be edited."}
+							{elseif $plugin_type eq 'storage'}
+								{formfeedback warning="These plugins have been replaced by the mime plugins. We are working on removing these."}
 							{elseif $plugin_type eq 'data'}
 								{formfeedback warning="Disabling plugins will also disable them in content pages, even if they are already in use."}
 							{/if}
