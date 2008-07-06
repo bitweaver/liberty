@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.29 $
+ * @version  $Revision: 1.30 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.29 2008/07/03 05:42:25 squareing Exp $
+// $Id: data.attachment.php,v 1.30 2008/07/06 09:33:29 squareing Exp $
 
 /**
  * definitions
@@ -120,7 +120,7 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 		// convert parameters into display properties
 		$wrapper = liberty_plugins_wrapper_style( $pParams );
 
-		// work out custom URL if there is one
+		// work out custom display_url if there is one
 		if( @BitBase::verifyId( $pParams['page_id'] )) {
 			// link to page by page_id
 			// avoid endless loops
@@ -156,6 +156,7 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 		}
 
 		// pass stuff to the template
+		$gBitSmarty->assign( 'display_type', 'attachment_plugin' );
 		$gBitSmarty->assign( 'attachment', $att );
 		$gBitSmarty->assign( 'wrapper', $wrapper );
 		$gBitSmarty->assign( 'thumbsize', (( !empty( $pParams['size'] ) && !empty( $att['thumbnail_url'][$pParams['size']] )) ? $pParams['size'] : 'medium' ));
