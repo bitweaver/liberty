@@ -186,8 +186,8 @@ $tables = array(
 	log_message XL,
 	processor C(250),
 	processor_parameters XL
-	CONSTRAINT ' , CONSTRAINT `liberty_process_queue` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
 ",
+//	CONSTRAINT ' , CONSTRAINT `liberty_process_queue` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
 
 'liberty_content_permissions' => "
 	group_id I4 PRIMARY,
@@ -256,6 +256,8 @@ foreach( array_keys( $tables ) AS $tableName ) {
 // Constraints which must be installed after table creation
 $constraints = array(
 	'liberty_content_permissions' => array('liberty_content_perm_group_ref' => 'FOREIGN KEY (`group_id`) REFERENCES `'.BIT_DB_PREFIX.'users_groups` (`group_id`)'),
+	'liberty_process_queue' => array('liberty_process_queue_ref' => 'FOREIGN KEY (`content_id`) REFERENCES `'.BIT_DB_PREFIX.'liberty_content`( `content_id` )')
+
 );
 foreach( array_keys($constraints) AS $tableName ) {
 	$gBitInstaller->registerSchemaConstraints( LIBERTY_PKG_NAME, $tableName, $constraints[$tableName]);
