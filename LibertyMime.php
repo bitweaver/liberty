@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.26 2008/07/04 13:51:50 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.27 2008/07/06 06:15:39 squareing Exp $
  */
 
 /**
@@ -421,8 +421,10 @@ class LibertyMime extends LibertyAttachable {
 					INNER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON (la.`attachment_id` = lap.`attachment_id`)
 				WHERE la.`content_id` = ?";
 			$result = $gBitSystem->mDb->query( $sql, array( $pContentId ));
-			while( $aux = $result->fetchRow() ) {
-				$ret[$aux['attachment_id']][$aux['pref_name']] = $aux['pref_value'];
+			if( !empty( $result )) {
+				while( $aux = $result->fetchRow() ) {
+					$ret[$aux['attachment_id']][$aux['pref_name']] = $aux['pref_value'];
+				}
 			}
 		}
 
