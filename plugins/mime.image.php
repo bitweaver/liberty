@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.7 2008/07/03 09:43:32 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.8 2008/07/07 21:44:27 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.7 $
+ * @version		$Revision: 1.8 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -307,14 +307,17 @@ function liberty_magickwand_panorama_image( &$pFileHash, $pOptions = array() ) {
 					} else {
 						$bwidth = round((( $iheight / 2 ) - $iwidth ) / 2 );
 					}
-					$pixelWand = NewPixelWand();
-					PixelSetColor( $pixelWand, ( !empty( $pOptions['background'] ) ? $pOptions['background'] : 'black' ));
-					if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickBorderImage( $magickWand, $pixelWand, $bwidth, $bheight ), $magickWand )) {
-						if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickWriteImage( $magickWand, $pFileHash['source_file'] ), $magickWand )) {
-							// yay!
+					// if the ratio has nothing to do with a panorama image - i.e. gives us a negative number here, we won't generate a panorama image
+					if( $bheight > 0 ) {
+						$pixelWand = NewPixelWand();
+						PixelSetColor( $pixelWand, ( !empty( $pOptions['background'] ) ? $pOptions['background'] : 'black' ));
+						if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickBorderImage( $magickWand, $pixelWand, $bwidth, $bheight ), $magickWand )) {
+							if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickWriteImage( $magickWand, $pFileHash['source_file'] ), $magickWand )) {
+								// yay!
+							}
 						}
+						DestroyPixelWand( $pixelWand );
 					}
-					DestroyPixelWand( $pixelWand );
 				}
 			}
 		}
