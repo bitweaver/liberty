@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.8 2008/07/07 21:44:27 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.9 2008/07/10 11:29:35 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.8 $
+ * @version		$Revision: 1.9 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -127,10 +127,30 @@ function mime_image_update( &$pStoreRow, $pParams = NULL ) {
  * @return TRUE on success, FALSE on failure - $pStoreRow[errors] will contain reason
  */
 function mime_image_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
+	global $gBitSystem;
 	// don't load a mime image if we don't have an image for this file
 	if( $ret = mime_default_load( $pFileHash, $pPrefs, $pParams )) {
 		// fetch meta data from the db
 		$ret['meta'] = LibertyMime::getMetaData( $ret['attachment_id'], "EXIF" );
+
+		// if we have GPS data and geo is active, we calculate geo stuff
+		if(( $ret['gps'] = LibertyMime::getMetaData( $ret['attachment_id'], "GPS" )) && $gBitSystem->isPackageActive( 'geo' )) {
+			$ret['geo']['lng'] = $ret['gps']['gpslongitude'];
+			$ret['geo']['lat'] = $ret['gps']['gpslatitude'];
+			if( !empty( $ret['gps']['gpslongituderef'] ) && $ret['gps']['gpslongituderef'] == 'W' ) {
+				$ret['geo']['lng'] = 0 - $ret['geo']['lng'];
+			}
+			if( !empty( $ret['gps']['gpslatituderef'] ) && $ret['gps']['gpslatituderef'] == 'S' ) {
+				$ret['geo']['lat'] = 0 - $ret['geo']['lat'];
+			}
+			// set sea level data when available
+			if( !empty( $ret['gps']['gpsaltitude'] )) {
+				list( $dividend, $divisor ) = explode( "/", $ret['gps']['gpsaltitude'] );
+				$ret['geo']['amsl'] = $dividend / $divisor;
+				$ret['geo']['amsl_unit'] = 'm';
+			}
+		}
+
 		// check for panorama image
 		if( is_file( BIT_ROOT_PATH.dirname( $ret['storage_path'] )."/panorama.jpg" )) {
 			$ret['thumbnail_url']['panorama'] = storage_path_to_url( dirname( $ret['storage_path'] )."/panorama.jpg" );
@@ -191,28 +211,15 @@ function mime_image_store_exif_data( $pFileHash ) {
 		}
 
 		// only makes sense to store the GPS data if we at least have latitude and longitude
-		if( !empty( $exifHash['GPS']['GPSLongitude'] ) && !empty( $exifHash['GPS']['GPSLatitude'] )) {
-			$store['geo']['lng'] = mime_image_convert_exifgps( $exifHash['GPS']['GPSLongitude'] );
-			$store['geo']['lat'] = mime_image_convert_exifgps( $exifHash['GPS']['GPSLatitude'] );
-			if( !empty( $exifHash['GPS']['GPSLongitudeRef'] ) && $exifHash['GPS']['GPSLongitudeRef'] == 'W' ) {
-				$store['geo']['lng'] = 0 - $store['geo']['lng'];
+		if( !empty( $exifHash['GPS'] )) {
+			// store GPS coordinates as deg decimal float
+			$gpsConv = array( 'GPSLatitude', 'GPSDestLatitude', 'GPSLongitude', 'GPSDestLongitude' );
+			foreach( $gpsConv as $conv ) {
+				if( !empty( $exifHash['GPS'][$conv] ) && is_array( $exifHash['GPS'][$conv] )) {
+					$exifHash['GPS'][$conv] = mime_image_convert_exifgps( $exifHash['GPS'][$conv] );
+				}
 			}
-			if( !empty( $exifHash['GPS']['GPSLatitudeRef'] ) && $exifHash['GPS']['GPSLatitudeRef'] == 'S' ) {
-				$store['geo']['lat'] = 0 - $store['geo']['lat'];
-			}
-			// set sea level data when available
-			if( !empty( $exifHash['GPS']['GPSAltitude'] )) {
-				list( $dividend, $divisor ) = explode( "/", $exifHash['GPS']['GPSAltitude'] );
-				$store['geo']['amsl'] = $dividend / $divisor;
-				$store['geo']['amsl_unit'] = 'm';
-			}
-			$exifHash['EXIF'] = array_merge( $exifHash['EXIF'], $store['geo'] );
-			/* would be nice to store this as geo data, but we can't since we're an attachment
-			if( $gBitSystem->isPackageActive( 'geo' )) {
-				$geo = new LibertyGeo( $pFileHash['content_id'] );
-				$geo->store( $store );
-			}
-			*/
+			LibertyMime::storeMetaData( $pFileHash['attachment_id'], 'GPS', $exifHash['GPS'] );
 		}
 
 		if( !empty( $exifHash['EXIF'] )) {
@@ -224,7 +231,7 @@ function mime_image_store_exif_data( $pFileHash ) {
 }
 
 /**
- * mime_image_convert_exifgps
+ * mime_image_convert_exifgps GPS EIXF data is stored as fractions in an array. here we convert this to a degree decimal float value for easy storing
  * 
  * @param array $pParams array of positional data in fractions form EXIF tag
  * @access public
