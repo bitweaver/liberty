@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.9 2008/07/10 11:29:35 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.10 2008/07/11 17:41:42 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.9 $
+ * @version		$Revision: 1.10 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -135,19 +135,30 @@ function mime_image_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 
 		// if we have GPS data and geo is active, we calculate geo stuff
 		if(( $ret['gps'] = LibertyMime::getMetaData( $ret['attachment_id'], "GPS" )) && $gBitSystem->isPackageActive( 'geo' )) {
-			$ret['geo']['lng'] = $ret['gps']['gpslongitude'];
-			$ret['geo']['lat'] = $ret['gps']['gpslatitude'];
-			if( !empty( $ret['gps']['gpslongituderef'] ) && $ret['gps']['gpslongituderef'] == 'W' ) {
-				$ret['geo']['lng'] = 0 - $ret['geo']['lng'];
+			// longitude
+			if( !empty( $ret['gps']['gpslongitude'] )) {
+				$ret['geo']['lng'] = $ret['gps']['gpslongitude'];
+				if( !empty( $ret['gps']['gpslongituderef'] ) && $ret['gps']['gpslongituderef'] == 'W' ) {
+					$ret['geo']['lng'] = 0 - $ret['geo']['lng'];
+				}
 			}
-			if( !empty( $ret['gps']['gpslatituderef'] ) && $ret['gps']['gpslatituderef'] == 'S' ) {
-				$ret['geo']['lat'] = 0 - $ret['geo']['lat'];
+			// latitude
+			if( !empty( $ret['gps']['gpslatitude'] )) {
+				$ret['geo']['lat'] = $ret['gps']['gpslatitude'];
+				if( !empty( $ret['gps']['gpslatituderef'] ) && $ret['gps']['gpslatituderef'] == 'S' ) {
+					$ret['geo']['lat'] = 0 - $ret['geo']['lat'];
+				}
 			}
 			// set sea level data when available
 			if( !empty( $ret['gps']['gpsaltitude'] )) {
 				list( $dividend, $divisor ) = explode( "/", $ret['gps']['gpsaltitude'] );
 				$ret['geo']['amsl'] = $dividend / $divisor;
 				$ret['geo']['amsl_unit'] = 'm';
+			}
+
+			// final check to see if we have enough data
+			if( empty( $ret['gps']['lng'] ) || empty( $ret['gps']['lat'] )) {
+				unset( $ret['gps'] );
 			}
 		}
 
