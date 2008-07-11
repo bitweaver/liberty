@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.27 2008/07/06 06:15:39 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.28 2008/07/11 18:22:14 squareing Exp $
  */
 
 /**
@@ -86,8 +86,23 @@ class LibertyMime extends LibertyAttachable {
 				$this->mDb->StartTrans();
 
 				foreach( $pStoreHash['upload_store']['files'] as $key => $upload ) {
-					// exit if $upload is empty
+					// if we don't have an upload, we'll simply update the file settings using the mime plugins
 					if( empty( $upload['tmp_name'] )) {
+						if( @BitBase::verifyId( $upload['attachment_id'] )) {
+							// since the form might have all options unchecked, we need to call the update function regardless
+							// currently i can't think of a better way to get the plugin guid back when $pStoreHash[plugin] is
+							// empty. - xing - Friday Jul 11, 2008   20:21:18 CEST
+							if( !empty( $this->mStorage[$upload['attachment_id']] )) {
+								$attachment = $this->mStorage[$upload['attachment_id']];
+								$data = array();
+								if( !empty( $pStoreHash['plugin'][$upload['attachment_id']][$attachment['attachment_plugin_guid']] )) {
+									$data = $pStoreHash['plugin'][$upload['attachment_id']][$attachment['attachment_plugin_guid']];
+								}
+								if( !$this->updateAttachmentParams( $upload['attachment_id'], $attachment['attachment_plugin_guid'], $data )) {
+									$this->mErrors['attachment_update'] = "There was a problem updating the file settings.";
+								}
+							}
+						}
 						break;
 					}
 
