@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.17 2008/07/03 07:43:23 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.18 2008/07/12 08:18:46 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.17 $
+ * @version		$Revision: 1.18 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -471,16 +471,17 @@ function mime_flv_create_thumbnail( $pFile, $pOffset = 60 ) {
 
 		if( !empty( $thumbnailer )) {
 			shell_exec( "$thumbnailer -i '$pFile' -o '$dest_path/thumb.jpg' -s 1024" );
-			if( is_file( "$dest_path/thumb.jpg" )) {
-				$fileHash['type']            = 'image/jpg';
-				$fileHash['source_file']     = "$dest_path/thumb.jpg";
-				$fileHash['dest_path']       = str_replace( BIT_ROOT_PATH, '', "$dest_path/" );
-				liberty_generate_thumbnails( $fileHash );
-				$ret = TRUE;
+		}
 
-				// remove temp file
-				@unlink( "$dest_path/thumb.jpg" );
-			}
+		if( is_file( "$dest_path/thumb.jpg" ) && filesize( "$dest_path/thumb.jpg" ) > 1 ) {
+			$fileHash['type']            = 'image/jpg';
+			$fileHash['source_file']     = "$dest_path/thumb.jpg";
+			$fileHash['dest_path']       = str_replace( BIT_ROOT_PATH, '', "$dest_path/" );
+			liberty_generate_thumbnails( $fileHash );
+			$ret = TRUE;
+
+			// remove temp file
+			@unlink( "$dest_path/thumb.jpg" );
 		} else {
 			// fall back to using ffmepg
 			$ffmpeg    = trim( $gBitSystem->getConfig( 'mime_flv_ffmpeg_path', shell_exec( 'which ffmpeg' )));
