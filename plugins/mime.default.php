@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.33 2008/07/05 20:27:15 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.34 2008/07/12 06:10:19 lsces Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.33 $
+ * @version     $Revision: 1.34 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -91,7 +91,7 @@ function mime_default_verify( &$pStoreRow ) {
 			//$pStoreRow['upload']['thumbnail'] = !$gBitSystem->isFeatureActive( 'liberty_offline_thumbnailer' );
 			$pStoreRow['upload']['thumbnail'] = TRUE;
 			if( defined( 'LINKED_ATTACHMENTS' )) {
-				// Little cluge - unattached fiels create an empty ['upload']['attachment_id'] attached ones do not
+				// Little cluge - unattached files create an empty ['upload']['attachment_id'] attached ones do not
 				// Really need core liberty to be consistent on identifying these - ideally adding flag for linked files
 				if( $pStoreRow['upload']['attachment_id'] ) {
 					$pStoreRow['attachment_id'] = $gBitSystem->mDb->GenID( 'liberty_content_id_seq' );
