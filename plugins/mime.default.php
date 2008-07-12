@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.34 2008/07/12 06:10:19 lsces Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.35 2008/07/12 07:31:57 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.34 $
+ * @version     $Revision: 1.35 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -184,7 +184,7 @@ function mime_default_store( &$pStoreRow ) {
 	global $gBitSystem, $gLibertySystem;
 	$ret = FALSE;
 	// take care of the uploaded file and insert it into the liberty_files and liberty_attachments tables
-	if( $storagePath = liberty_process_upload( $pStoreRow )) {
+	if( $storagePath = liberty_process_upload( $pStoreRow, empty( $pStoreRow['copy_file'] ))) {
 		// add row to liberty_files
 		$storeHash = array(
 			"storage_path" => $pStoreRow['upload']['dest_path'].$pStoreRow['upload']['name'],
