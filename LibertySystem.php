@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.113 2008/07/05 20:25:37 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.114 2008/07/12 11:56:15 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -28,6 +28,10 @@ define( 'FORMAT_PLUGIN', 'format' );
 define( 'DATA_PLUGIN', 'data' );
 define( 'MIME_PLUGIN', 'mime' );
 define( 'FILTER_PLUGIN', 'filter' );
+
+if( !defined( 'LIBERTY_DEFAULT_MIME_HANDLER' )) {
+	define( 'LIBERTY_DEFAULT_MIME_HANDLER', 'mimedefault' );
+}
 
 // Service Definitions
 define( 'LIBERTY_SERVICE_ACCESS_CONTROL', 'access_control' );
@@ -116,7 +120,18 @@ class LibertySystem extends LibertyBase {
 	 **/
 	function loadActivePlugins() {
 		global $gBitSystem;
-		foreach( array_keys( $gBitSystem->getConfigMatch( "/^{$this->mSystem}_plugin_status_/i", 'y' )) as $config ) {
+		// all active plugins
+		$configs = array_keys( $gBitSystem->getConfigMatch( "/^{$this->mSystem}_plugin_status_/i", 'y' ));
+
+		// first we include the default one - this allows other plugins to make use of default functions
+		if( $this->mSystem == LIBERTY_PKG_NAME ) {
+			if( $key = array_search( 'liberty_plugin_status_'.LIBERTY_DEFAULT_MIME_HANDLER , $configs )) {
+				unset( $configs[$key] );
+			}
+			array_unshift( $configs, 'liberty_plugin_status_'.LIBERTY_DEFAULT_MIME_HANDLER );
+		}
+
+		foreach( $configs as $config ) {
 			$pluginGuid = preg_replace( "/^{$this->mSystem}_plugin_status_/", '', $config, 1 );
 			if( $pluginFile = $gBitSystem->getConfig( "{$this->mSystem}_plugin_path_$pluginGuid" ) ) {
 				if( is_file( BIT_ROOT_PATH.$pluginFile )) {
@@ -127,6 +142,7 @@ class LibertySystem extends LibertyBase {
 				// TODO: all this is deprecated and doesn't really rock bitweavers boat anymore - we use the _plugin_path_ setting now.
 				// this code here is only relevant if a user has updated bitweaver and scanAllPlugins() hasn't been called yet.
 				// scanAllPlugins() is called during the upgrade in the installer so we really are only keeping this here for CVS users
+				// and people who use nexus since it makes use of this plugin system as well.
 				// - xing - Saturday Jul 05, 2008   20:47:29 CEST
 
 				// check for the plugin in the default location - in case bitweaver root path changed.
@@ -262,7 +278,7 @@ class LibertySystem extends LibertyBase {
 	function registerPlugin( $pGuid, $pPluginParams ) {
 		global $gBitSystem;
 		// plugins can set their own file_name. this is not mandatory but makes sure we store the path to the correct file
-		// this is useful for files that are included by other plugins such as mime.default.php
+		// this is useful for files that are included by other plugins
 		if( !empty( $pPluginParams['file_name'] )) {
 			$this->mPluginFilePath = dirname( $this->mPluginFilePath )."/".$pPluginParams['file_name'];
 		}
