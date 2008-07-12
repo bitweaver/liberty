@@ -3,16 +3,13 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.28 2008/07/11 18:22:14 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.29 2008/07/12 11:58:23 squareing Exp $
  */
 
 /**
  * required setup
  */
 require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
-if( !defined( 'LIBERTY_DEFAULT_MIME_HANDLER' )) {
-	define( 'LIBERTY_DEFAULT_MIME_HANDLER', 'mimedefault' );
-}
 
 /**
  * LibertyMime class
