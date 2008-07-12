@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.30 $
+ * @version  $Revision: 1.31 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.30 2008/07/06 09:33:29 squareing Exp $
+// $Id: data.attachment.php,v 1.31 2008/07/12 07:28:01 squareing Exp $
 
 /**
  * definitions
@@ -124,18 +124,14 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 		if( @BitBase::verifyId( $pParams['page_id'] )) {
 			// link to page by page_id
 			// avoid endless loops
-			static $wp;
-			if( empty( $wp )) {
-				require_once( WIKI_PKG_PATH.'BitPage.php');
-				$wp = new BitPage( $pParams['page_id'] );
-				if( $wp->load() ) {
-					$wrapper['display_url'] = $wp->getDisplayUrl();
-				}
+			require_once( WIKI_PKG_PATH.'BitPage.php');
+			$wp = new BitPage( $pParams['page_id'] );
+			if( $wp->load() ) {
+				$wrapper['display_url'] = $wp->getDisplayUrl();
 			}
 		} elseif( @BitBase::verifyId( $pParams['content_id'] )) {
 			// link to any content by content_id
-			static $obj;
-			if( empty( $obj ) && $obj = LibertyBase::getLibertyObject( $pParams['content_id'] )) {
+			if( $obj = LibertyBase::getLibertyObject( $pParams['content_id'] )) {
 				$wrapper['display_url'] = $obj->getDisplayUrl();
 			}
 		} elseif( !empty( $pParams['page_name'] )) {
