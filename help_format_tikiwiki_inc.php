@@ -3,7 +3,7 @@
  * help_format_tikiwiki_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage functions
  */
@@ -72,11 +72,18 @@ if( $cache->isCached( $cacheFile, filemtime( __FILE__ ))) {
 				'data' => "((Wiki Page|Page Description))",
 				'result' => '<a href="#">Page Description</a>',
 			),
+			'Wiki Links + Anchor + Description' => array(
+				'data' => "((Wiki Page#Anchor|Page Description))",
+				'result' => '<a href="#">Page Description</a>',
+			),
 			'External Link' => array(
 				'data' => "[http://www.example.com]",
 			),
 			'External Link + Description' => array(
 				'data' => "[http://www.example.com|Description]",
+			),
+			'External Link + Anchor + Description' => array(
+				'data' => "[http://www.example.com/Page#Anchor|Description]",
 			),
 		),
 		'Miscellaneous' => array(
