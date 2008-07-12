@@ -1,6 +1,6 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/Attic/admin_mime_image.tpl,v 1.2 2008/07/02 10:47:30 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/Attic/admin_mime_image.tpl,v 1.3 2008/07/12 08:37:31 squareing Exp $ *}
 {strip}
-<div class="display liberty">
+<div class="admin liberty">
 	<div class="header">
 		<h1>{tr}Image Plugin Settings{/tr}</h1>
 	</div>

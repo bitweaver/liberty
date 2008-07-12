@@ -1,5 +1,5 @@
 {strip}
-<div class="display liberty">
+<div class="admin liberty">
 	<div class="header">
 		<h1>{tr}Flashvideo Plugin Settings{/tr}</h1>
 	</div>
