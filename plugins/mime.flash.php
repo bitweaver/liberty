@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.flash.php,v 1.2 2008/06/10 19:34:31 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.flash.php,v 1.3 2008/07/12 11:59:45 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.2 $
+ * @version		$Revision: 1.3 $
  * created		Sunday Jul 02, 2006   14:42:13 CEST
  * @package		liberty	
  * @subpackage	liberty_mime_handler
@@ -13,11 +13,6 @@
  * setup
  */
 global $gLibertySystem;
-
-/**
- * depending on the scan the default file might not be included yet. we need get it manually
- */ 
-require_once( 'mime.default.php' );
 
 /**
  *  This is the name of the plugin - max char length is 16

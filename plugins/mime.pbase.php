@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.pbase.php,v 1.3 2008/07/03 20:46:02 lsces Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.pbase.php,v 1.4 2008/07/12 11:59:45 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.3 $
+ * @version		$Revision: 1.4 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -45,9 +45,6 @@ $pluginParams = array (
 	//'help_page'           => 'LibertyMime+PBase+Plugin',
 );
 $gLibertySystem->registerPlugin( PLUGIN_MIME_GUID_PBASE, $pluginParams );
-
-// depending on the scan the default file might not be included yet. we need to get it manually - simply use the relative path
-require_once( 'mime.default.php' );
 
 function mime_pbase_verify( &$pStoreRow ) {
 	global $gBitSystem, $gBitUser;

@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.18 2008/07/12 08:18:46 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.19 2008/07/12 11:59:45 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.18 $
+ * @version		$Revision: 1.19 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -51,9 +51,6 @@ $pluginParams = array (
 	),
 );
 $gLibertySystem->registerPlugin( PLUGIN_MIME_GUID_FLV, $pluginParams );
-
-// depending on the scan the default file might not be included yet. we need to get it manually - simply use the relative path
-require_once( 'mime.default.php' );
 
 /**
  * Store the data in the database
