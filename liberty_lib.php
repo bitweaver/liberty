@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.39 2008/07/01 08:38:09 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.40 2008/07/12 07:29:18 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -421,7 +421,7 @@ function liberty_content_edit( &$pObject ) {
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function liberty_process_upload( &$pFileHash ) {
+function liberty_process_upload( &$pFileHash, $pMoveFile = TRUE ) {
 	// Check for evil file extensions that could be execed on the server
 	if( preg_match( '/(.htaccess|.pl|.php|.php3|.php4|.phtml|.py|.cgi|.asp|.jsp|.sh|.shtml)$/', $pFileHash['upload']['name'] ) ) {
 		$pFileHash['upload']['type'] = 'text/plain';
@@ -430,9 +430,9 @@ function liberty_process_upload( &$pFileHash ) {
 	// Thumbs.db is a windows My Photos/ folder file, and seems to really piss off imagick
 	$canThumbFunc = liberty_get_function( 'can_thumbnail' );
 	if( !empty( $canThumbFunc ) && $canThumbFunc( $pFileHash['upload']['type'] ) && $pFileHash['upload']['name'] != 'Thumbs.db' ) {
-		$ret = liberty_process_image( $pFileHash['upload'] );
+		$ret = liberty_process_image( $pFileHash['upload'], $pMoveFile );
 	} else {
-		$ret = liberty_process_generic( $pFileHash['upload'] );
+		$ret = liberty_process_generic( $pFileHash['upload'], $pMoveFile );
 	}
 	return $ret;
 }
@@ -543,7 +543,7 @@ function liberty_process_archive( &$pFileHash ) {
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function liberty_process_generic( &$pFileHash, $pMoveFile=TRUE ) {
+function liberty_process_generic( &$pFileHash, $pMoveFile = TRUE ) {
 	$ret = NULL;
 	$destBase = $pFileHash['dest_path'].$pFileHash['name'];
 	$actualPath = BIT_ROOT_PATH.$destBase;
@@ -574,13 +574,13 @@ function liberty_process_generic( &$pFileHash, $pMoveFile=TRUE ) {
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function liberty_process_image( &$pFileHash ) {
+function liberty_process_image( &$pFileHash, $pMoveFile = TRUE ) {
 	global $gBitSystem;
 	$ret = NULL;
 
 	list($type, $ext) = split( '/', strtolower( $pFileHash['type'] ) );
 	mkdir_p( BIT_ROOT_PATH.$pFileHash['dest_path'] );
-	if( $resizePath = liberty_process_generic( $pFileHash ) ) {
+	if( $resizePath = liberty_process_generic( $pFileHash, $pMoveFile )) {
 		$pFileHash['source_file'] = BIT_ROOT_PATH.$resizePath;
 		//set permissions if possible - necessary for some wonky shared hosting environments
 		if(chmod($pFileHash['source_file'], 0644)){
