@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.36 2008/07/13 09:39:13 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.37 2008/07/13 09:58:51 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.36 $
+ * @version     $Revision: 1.37 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -90,17 +90,7 @@ function mime_default_verify( &$pStoreRow ) {
 			// try to generate thumbnails for the upload
 			//$pStoreRow['upload']['thumbnail'] = !$gBitSystem->isFeatureActive( 'liberty_offline_thumbnailer' );
 			$pStoreRow['upload']['thumbnail'] = TRUE;
-			if( defined( 'LINKED_ATTACHMENTS' )) {
-				// Little cluge - unattached files create an empty ['upload']['attachment_id'] attached ones do not
-				// Really need core liberty to be consistent on identifying these - ideally adding flag for linked files
-				if( $pStoreRow['upload']['attachment_id'] ) {
-					$pStoreRow['attachment_id'] = $gBitSystem->mDb->GenID( 'liberty_content_id_seq' );
-				} else {
-					$pStoreRow['attachment_id'] = $pStoreRow['content_id'];
-				}
-			} else {
-				$pStoreRow['attachment_id'] =  $gBitSystem->mDb->GenID( 'liberty_attachments_id_seq' );
-			}
+			$pStoreRow['attachment_id'] = $gBitSystem->mDb->GenID( 'liberty_attachments_id_seq' );
 		}
 
 		// Generic values needed by the storing mechanism
@@ -188,7 +178,7 @@ function mime_default_store( &$pStoreRow ) {
 		// add row to liberty_files
 		$storeHash = array(
 			"storage_path" => $pStoreRow['upload']['dest_path'].$pStoreRow['upload']['name'],
-			"file_id"      => defined( 'LINKED_ATTACHMENTS' ) ? $pStoreRow['attachment_id'] : $gBitSystem->mDb->GenID( 'liberty_files_id_seq' ),
+			"file_id"      => $gBitSystem->mDb->GenID( 'liberty_files_id_seq' ),
 			"mime_type"    => $pStoreRow['upload']['type'],
 			"file_size"    => $pStoreRow['upload']['size'],
 			"user_id"      => $pStoreRow['user_id'],
@@ -197,9 +187,9 @@ function mime_default_store( &$pStoreRow ) {
 
 		// add the data into liberty_attachments to make this file available as attachment
 		$storeHash = array(
+			"attachment_plugin_guid" => !empty( $pStoreRow['attachment_plugin_guid'] ) ? $pStoreRow['attachment_plugin_guid'] : PLUGIN_MIME_GUID_DEFAULT,
 			"attachment_id"          => $pStoreRow['attachment_id'],
 			"content_id"             => $pStoreRow['content_id'],
-			"attachment_plugin_guid" => !empty( $pStoreRow['attachment_plugin_guid'] ) ? $pStoreRow['attachment_plugin_guid'] : PLUGIN_MIME_GUID_DEFAULT,
 			"foreign_id"             => $storeHash['file_id'],
 			"user_id"                => $pStoreRow['user_id'],
 		);
