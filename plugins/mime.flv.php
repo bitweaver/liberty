@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.19 2008/07/12 11:59:45 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.20 2008/07/13 11:45:14 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.19 $
+ * @version		$Revision: 1.20 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -250,7 +250,7 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 			}
 
 			// our player supports flv and h264 so we might as well use the default
-			if( !$gBitSystem->isFeatureActive( 'mime_flv_force_encode' ) && !empty( $info ) && ( $info['vcodec'] == 'h264' || $info['vcodec'] == 'flv' ) && $info['acodec'] == 'mp3' ) {
+			if( !$gBitSystem->isFeatureActive( 'mime_flv_force_encode' ) && !empty( $info ) && ( $info['vcodec'] == 'h264' || $info['vcodec'] == 'flv' ) && ( $info['acodec'] == 'mp3' || $info['acodec'] == 'mpeg4aac' )) {
 				// work out what the target filename is
 				$extension = (( $info['vcodec'] == "flv" ) ? "flv" : "mp4" );
 				$dest_file = $dest_path."/flick.$extension";
