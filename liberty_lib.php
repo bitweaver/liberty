@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.40 2008/07/12 07:29:18 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.41 2008/07/14 09:37:55 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -423,7 +423,7 @@ function liberty_content_edit( &$pObject ) {
  */
 function liberty_process_upload( &$pFileHash, $pMoveFile = TRUE ) {
 	// Check for evil file extensions that could be execed on the server
-	if( preg_match( '/(.htaccess|.pl|.php|.php3|.php4|.phtml|.py|.cgi|.asp|.jsp|.sh|.shtml)$/', $pFileHash['upload']['name'] ) ) {
+	if( preg_match( EVIL_EXTENSION_PATTERN, $pFileHash['upload']['name'] )) {
 		$pFileHash['upload']['type'] = 'text/plain';
 		$pFileHash['upload']['name'] = $pFileHash['upload']['name'].'.txt';
 	}
