@@ -13,7 +13,7 @@ LibertyAttachment = {
 		}else{
 			if ( LibertyAttachment.preflightCheck( cform ) ){
 				LibertyAttachment.uploader_under_way = 1;
-				BitAjax.showSpinner();
+				BitBase.showSpinner();
 				var old_target = file.form.target;
 				file.form.target = frmid;
 				var old_action = file.form.action;
@@ -38,7 +38,7 @@ LibertyAttachment = {
 
 	"uploaderComplete": function(frmid, divid, fileid, cform) {
 		if (LibertyAttachment.uploader_under_way){
-			BitAjax.hideSpinner();
+			BitBase.hideSpinner();
 			var ifrm = document.getElementById(frmid);
 			if (ifrm.contentDocument) {
 				var d = ifrm.contentDocument;
