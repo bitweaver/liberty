@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.29 2008/07/12 11:58:23 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.30 2008/07/15 09:21:14 squareing Exp $
  */
 
 /**
@@ -288,21 +288,6 @@ class LibertyMime extends LibertyAttachable {
 		if( !empty( $pFile['tmp_name'] ) && is_file( $pFile['tmp_name'] ) && empty( $pFile['error'] ) || !empty( $pFile['attachment_id'] )) {
 			return $pFile;
 		}
-	}
-
-	/**
-	 * Get the function of the plugin responsible for dealing with a given upload
-	 * 
-	 * @param string $pGuid GUID of plugin used
-	 * @param string $pFunctionName Function type we want to use
-	 * @param boolean $pGetDefault Get default function if we can't find the specified one
-	 * @access public
-	 * @return function name
-	 */
-	function getPluginFunction( $pGuid, $pFunctionName, $pGetDefault = 'mime' ) {
-		deprecated( 'Please call $gLibertySystem->getMimePluginFunction() directly' );
-		global $gLibertySystem;
-		return $gLibertySystem->getPluginFunction( LIBERTY_DEFAULT_MIME_HANDLER, $pFunctionName, $pGetDefault );
 	}
 
 	/**
