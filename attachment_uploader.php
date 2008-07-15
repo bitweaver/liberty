@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.14 2008/06/25 22:47:56 spiderr Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.15 2008/07/15 18:57:49 wjames5 Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -95,6 +95,10 @@ if ( !is_null( $error ) ){
 $gBitSmarty->assign( 'gContent', $gContent );
 $gBitSmarty->assign( 'libertyUploader', TRUE );
 $gBitSmarty->assign( 'uploadTab', TRUE );
+
+if( isset( $_REQUEST['liberty_attachments']['form_id'] ) ){
+	$gBitSmarty->assign( 'form_id', $_REQUEST['liberty_attachments']['form_id'] );
+}
 
 echo $gBitSystem->display( 'bitpackage:liberty/attachment_uploader.tpl', NULL, array( 'format'=>'none', 'display_mode' => 'display' ));
 ?>

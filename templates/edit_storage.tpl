@@ -1,4 +1,11 @@
 {strip}
+{* in some ajax cases we need to uniquely identify portions of a form so we get an id if we dont already have one *}
+{if !$form_id}
+	{capture name=form_id}
+		{form_id}
+	{/capture}
+	{assign var=form_id value=$smarty.capture.form_id}
+{/if}
 {* we will use the LibertyMime method if available *}
 {if $gLibertySystem->isPluginActive( $smarty.const.LIBERTY_DEFAULT_MIME_HANDLER )}
 	{foreach from=$gLibertySystem->getAllMimeTemplates('upload') item=tpl}
