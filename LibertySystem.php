@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.114 2008/07/12 11:56:15 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.115 2008/07/15 08:44:40 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -366,13 +366,13 @@ class LibertySystem extends LibertyBase {
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
 	function getPluginFunction( $pGuid, $pFunctionName, $pGetDefault = FALSE ) {
-		$ret = NULL;
-		if( !empty( $pGuid )
-			&& !empty( $this->mPlugins[$pGuid] )
-			&& ( empty( $this->mPlugins[$pGuid]['is_active'] ) || $this->mPlugins[$pGuid]['is_active'] != 'n' || $pGuid = 'bitfile' )
-			&& !empty( $this->mPlugins[$pGuid][$pFunctionName] )
-			&& function_exists( $this->mPlugins[$pGuid][$pFunctionName] )
-		) {
+		if( empty( $pGuid )) {
+			foreach( $this->mPlugins as $guid => $plugin ) {
+				if( $this->isPluginActive( $guid ) && !empty( $plugin[$pFunctionName] ) && function_exists( $plugin[$pFunctionName] )) {
+					$ret[$guid] = $plugin[$pFunctionName];
+				}
+			}
+		} elseif( $this->isPluginActive( $pGuid ) && !empty( $this->mPlugins[$pGuid][$pFunctionName] ) && function_exists( $this->mPlugins[$pGuid][$pFunctionName] )) {
 			$ret = $this->mPlugins[$pGuid][$pFunctionName];
 		}
 
@@ -381,7 +381,7 @@ class LibertySystem extends LibertyBase {
 			$ret = $this->getPluginFunction( LIBERTY_DEFAULT_MIME_HANDLER, $pFunctionName );
 		}
 
-		return $ret;
+		return( !empty( $ret ) ? $ret : NULL );
 	}
 
 	/**
