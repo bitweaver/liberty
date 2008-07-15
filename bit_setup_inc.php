@@ -3,7 +3,7 @@
  * base package include
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.23 $
+ * @version  $Revision: 1.24 $
  * @package  liberty
  * @subpackage functions
  */
@@ -33,16 +33,6 @@ $gLibertySystem->registerService( 'liberty', LIBERTY_PKG_NAME, array(
 	'content_list_sql_function'  => 'liberty_content_list_sql',
 	'content_preview_function'   => 'liberty_content_preview',
 ));
-
-// load only the active plugins unless this is the first run after an install
-$current_default_format_guid = $gBitSystem->getConfig( 'default_format' );
-$plugin_status = $gBitSystem->getConfig( 'liberty_plugin_status_'.$current_default_format_guid );
-if( empty( $current_default_format_guid ) || empty( $plugin_status ) || $plugin_status != 'y' ) {
-	$gLibertySystem->scanAllPlugins();
-} else {
-	$gLibertySystem->loadActivePlugins();
-}
-$gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
 
 // delete cache file if requested
 if( @BitBase::verifyId( $_REQUEST['refresh_liberty_cache'] )) {
