@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.20 2008/07/13 11:45:14 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.21 2008/07/15 09:26:51 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.20 $
+ * @version		$Revision: 1.21 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -24,6 +24,7 @@ define( 'PLUGIN_MIME_GUID_FLV', 'mimeflv' );
 $pluginParams = array (
 	// Set of functions and what they are called in this paricular plugin
 	// Use the GUID as your namespace
+	'preload_function'    => 'mime_flv_preload',
 	'verify_function'     => 'mime_default_verify',
 	'store_function'      => 'mime_flv_store',
 	'update_function'     => 'mime_flv_update',
@@ -51,6 +52,17 @@ $pluginParams = array (
 	),
 );
 $gLibertySystem->registerPlugin( PLUGIN_MIME_GUID_FLV, $pluginParams );
+
+/**
+ * mime_flv_preload This function is loaded on every page load before anything happens and is used to load required scripts.
+ * 
+ * @access public
+ * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+ */
+function mime_flv_preload() {
+	global $gBitThemes;
+	$gBitThemes->loadJavascript( UTIL_PKG_PATH."javascript/flv_player/swfobject.js", FALSE, 25 );
+}
 
 /**
  * Store the data in the database
