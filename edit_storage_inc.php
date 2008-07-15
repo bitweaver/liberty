@@ -1,13 +1,20 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/edit_storage_inc.php,v 1.34 2008/07/03 15:20:37 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/edit_storage_inc.php,v 1.35 2008/07/15 09:16:10 squareing Exp $
  *
  * edit_storage_inc
  * @author   spider <spider@steelsun.com>
  * @package  liberty
  * @subpackage functions
  */
-global $gBitSmarty, $gContent, $gBitUser, $gBitSystem, $gBitThemes;
+global $gBitSmarty, $gContent, $gBitUser, $gBitSystem, $gBitThemes, $gLibertySystem;
+
+// if we have active plugins with an upload function, we call them:
+if( $funcs = $gLibertySystem->getPluginFunction( NULL, 'upload_function' )) {
+	foreach( $funcs as $guid => $func ) {
+		$func( &$gContent );
+	}
+}
 
 // set up base arguments
 $getArgs = split( '&', $_SERVER['QUERY_STRING'] );
