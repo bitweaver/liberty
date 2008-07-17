@@ -7,7 +7,9 @@
 	{else}
 		<{$wrapper.wrapper|default:'div'} class="{$wrapper.class|default:'att-plugin'}"{if $wrapper.style} style="{$wrapper.style}{/if}">
 			{if $wrapper.display_url}<a {$wrapper.href_class} href="{$wrapper.display_url}">{/if}
-				{if $attachment.thumbnail_url.$thumbsize}
+				{if $thumbsize == 'original'}
+					<img class="thumb" src="{$attachment.source_url}" alt="{$attachment.filename}" title="{$attachment.filename}"/>
+				{elseif $attachment.thumbnail_url.$thumbsize}
 					<img class="thumb" src="{$attachment.thumbnail_url.$thumbsize}" alt="{$attachment.filename}" title="{$attachment.filename}"/>
 				{/if}
 				<br />{$wrapper.description|escape}
