@@ -33,12 +33,18 @@ if( isset( $_REQUEST['pluginsave'] ) && !empty( $_REQUEST['pluginsave'] ) ) {
 
 
 // Sort the plugins to avoild splitting tables
-foreach( $gLibertySystem->mPlugins as $key => $row ) {
-	$types[ucfirst( $row['plugin_type'] )]  = $row['plugin_type'];
-	$type[$key]  = $row['plugin_type'];
-	$guid[$key] = $row['plugin_guid'];
+foreach( $gLibertySystem->mPlugins as $guid => $plugin ) {
+// since plugins can be in other packages, they can't use package constants. here we re-interpret URLs
+	if( !empty( $plugin['plugin_settings_url'] ) && strpos( $plugin['plugin_settings_url'], "/" ) !== 0 ) {
+		$parts = explode( "/", $plugin['plugin_settings_url'] );
+		$gLibertySystem->mPlugins[$guid]['plugin_settings_url'] = constant( strtoupper( $parts[0] )."_PKG_URL" ).str_replace( $parts[0]."/", "", $plugin['plugin_settings_url'] );
+	}
+
+	$types[ucfirst( $plugin['plugin_type'] )] = $plugin['plugin_type'];
+	$typeSort[$guid] = $plugin['plugin_type'];
+	$guidSort[$guid] = $plugin['plugin_guid'];
 }
-array_multisort( $type, SORT_ASC, $guid, SORT_ASC, $gLibertySystem->mPlugins );
+array_multisort( $typeSort, SORT_ASC, $guidSort, SORT_ASC, $gLibertySystem->mPlugins );
 $gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
 ksort( $types );
 $gBitSmarty->assign_by_ref( 'pluginTypes', $types );
