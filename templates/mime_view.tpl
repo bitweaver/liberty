@@ -37,6 +37,16 @@
 			</div>
 		{/legend}
 
+		{if $usage}
+			{legend legend="Content this attachment is used in"}
+				<ul>
+					{foreach from=$usage item=use}
+						<li><a href="{$smarty.const.BIT_ROOT_URL}index.php?content_id={$use.content_id}">{$use.title}</a></li>
+					{/foreach}
+				</ul>
+			{/legend}
+		{/if}
+
 	</div><!-- end .body -->
 </div><!-- end .attachment -->
 {/strip}

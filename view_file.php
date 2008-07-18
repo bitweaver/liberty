@@ -1,6 +1,6 @@
 <?php
 /**
- * @version      $Header: /cvsroot/bitweaver/_bit_liberty/view_file.php,v 1.4 2008/07/01 09:04:10 squareing Exp $
+ * @version      $Header: /cvsroot/bitweaver/_bit_liberty/view_file.php,v 1.5 2008/07/18 12:39:38 squareing Exp $
  *
  * @author       xing  <xing@synapse.plus.com>
  * @package      treasury
@@ -35,6 +35,11 @@ if( !empty( $_REQUEST['plugin_submit'] )) {
 	}
 	// reload the attachment
 	$attachment = LibertyMime::getAttachment( $_REQUEST['attachment_id'] );
+}
+
+// attachment usage filter stuff is hardcoded for now - ugly as hell but we'll survive it as long as there's no demand for more of these.
+if( $gLibertySystem->isPluginActive( 'filterattachment' )) {
+	$gBitSmarty->assign( 'usage', attachment_filter_get_usage( $attachment['attachment_id'] ));
 }
 
 $gBitSmarty->assign( 'attachment', $attachment );
