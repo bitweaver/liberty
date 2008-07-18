@@ -48,6 +48,9 @@
 													</h3>
 												{/if}
 												<label for="{$guid}">{$plugin.description}</label>
+												{if $plugin.requirements.output}
+													{formfeedback hash=$plugin.requirements.output}
+												{/if}
 											</td>
 											{if $plugin_type eq 'format'}
 												<td align="center">

@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.115 2008/07/15 08:44:40 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.116 2008/07/18 12:38:55 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -209,6 +209,11 @@ class LibertySystem extends LibertyBase {
 			$format_plugin_count = $default_format_found = 0;
 			$current_default_format_guid = $gBitSystem->getConfig( 'default_format' );
 			foreach( $this->mPlugins as $guid => $plugin ) {
+				// load all the requirements that we can display them on the plugin page
+				if( $requirement_func = $this->getPluginFunction( $guid, 'requirement_function', FALSE, TRUE )) {
+					$this->mPlugins[$guid]['requirements'] = $requirement_func();
+				}
+
 				if( $this->isPluginActive( $guid )) {
 					if( $plugin['plugin_type'] == FORMAT_PLUGIN ) {
 						$format_plugin_count++;
@@ -339,6 +344,101 @@ class LibertySystem extends LibertyBase {
 		if( isset( $this->mPlugins[$pPluginGuid] )) {
 			$this->mPlugins[$pPluginGuid]['is_active'] = 'y';
 		}
+
+		// the requirement function can return a set of tables, indexes and sequences that need to be created for the plugin to work.
+		if( $requirement_func = $this->getPluginFunction( $pPluginGuid, 'requirement_function' )) {
+			$reqs = $requirement_func( TRUE );
+			if( !empty( $reqs['schema']['tables'] )) {
+				// fetch a list of tables in the database that we know if we need to insert any plugin ones
+				if( strlen( BIT_DB_PREFIX ) > 0 ) {
+					$lastQuote = strrpos( BIT_DB_PREFIX, '`' );
+					if( $lastQuote != FALSE ) {
+						$lastQuote++;
+					}
+					$prefix = substr( BIT_DB_PREFIX, $lastQuote );
+				} else {
+					$prefix = '';
+				}
+
+				global $gBitDbType, $gBitDbHost, $gBitDbUser, $gBitDbPassword, $gBitDbName;
+				$db = &ADONewConnection( $gBitDbType );
+				if( $db->Connect( $gBitDbHost, $gBitDbUser, $gBitDbPassword, $gBitDbName )) {
+					$dict = NewDataDictionary( $db );
+
+					if( !$gBitSystem->mDb->getCaseSensitivity() ) {
+						$dict->connection->nameQuote = '';
+					}
+
+					if( $dbTables = $gBitSystem->mDb->MetaTables( 'TABLES', FALSE, ( $prefix ? $prefix.'%' : NULL ))) {
+						// If we use MySql check which storage engine to use
+						if( isset( $_SESSION['use_innodb'] )) {
+							if( $_SESSION['use_innodb'] == TRUE ) {
+								$build = array( 'NEW', 'MYSQL' => 'ENGINE=INNODB' );
+							} else {
+								$build = array( 'NEW', 'MYSQL' => 'ENGINE=MYISAM' );
+							}
+						} else {
+							$build = 'NEW';
+						}
+
+						// create tables
+						foreach( $reqs['schema']['tables'] as $table => $tableDict ) {
+							$fullTable = $prefix.$table;
+							if( !in_array( $fullTable, $dbTables )) {
+								if( $sql = $dict->CreateTableSQL( $fullTable, $tableDict, $build )) {
+									//vd( preg_replace( array( "/[\t ]+/", "/\n+/" ), array( " ", "\n" ), $sql ));
+									$ret = $dict->ExecuteSQLArray( $sql );
+									if( $ret === FALSE ) {
+										$errors[] = 'Failed to create table '.$completeTableName;
+										$tablesInstalled = TRUE;
+									}
+								}
+							}
+						}
+
+						// only continue if we installed at least one table
+						if( !empty( $tablesInstalled )) {
+							$schemaQuote = strrpos( BIT_DB_PREFIX, '`' );
+							$sequencePrefix = ( $schemaQuote ? substr( BIT_DB_PREFIX,  $schemaQuote + 1 ) : BIT_DB_PREFIX );
+
+							// create indexes
+							if( !empty( $reqs['schema']['indexes'] )) {
+								foreach( $reqs['schema']['indexes'] as $idx => $idxDict ) {
+									$completeTableName = $sequencePrefix.$reqs['schema']['indexes'][$idx]['table'];
+									if( $sql = $dict->CreateIndexSQL( $idx, $completeTableName, $reqs['schema']['indexes'][$idx]['cols'], $reqs['schema']['indexes'][$idx]['opts'] )) {
+										//vd( preg_replace( array( "/[\t ]+/", "/\n+/" ), array( " ", "\n" ), $sql ));
+										$ret = $dict->ExecuteSQLArray( $sql );
+										if( $ret === FALSE ) {
+											$errors[] = 'Failed to create index '.$completeTableName;
+										}
+									}
+								}
+							}
+
+							// create sequences
+							if( !empty( $reqs['schema']['sequences'] )) {
+								// If we use InnoDB for MySql we need this to get sequence tables created correctly.
+								if( isset( $_SESSION['use_innodb'] ) ) {
+									if( $_SESSION['use_innodb'] == TRUE ) {
+										$gBitInstallDb->_genSeqSQL = "create table %s (id int not null) ENGINE=INNODB";
+									} else {
+										$gBitInstallDb->_genSeqSQL = "create table %s (id int not null) ENGINE=MYISAM";
+									}
+								}
+
+								foreach( array_keys( $reqs['schema']['sequences'] ) as $sequenceIdx ) {
+									if( !$gBitInstallDb->CreateSequence( $sequencePrefix.$sequenceIdx, $reqs['schema']['sequences'][$sequenceIdx]['start'] )) {
+										$errors[] = 'Failed to create sequence '.$sequencePrefix.$sequenceIdx;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return( !empty( $errors ) ? $errors : NULL );
 	}
 
 	/**
@@ -359,20 +459,20 @@ class LibertySystem extends LibertyBase {
 	/**
 	 * getPluginFunction 
 	 * 
-	 * @param string $pGuid GUID of plugin used
+	 * @param string $pGuid GUID of plugin used - if empty, we get all available functions of that type in all active plugins
 	 * @param string $pFunctionName Function type we want to use
 	 * @param string $pGetDefault Get default function for a given plugin type such as 'mime'
 	 * @access public
-	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 * @return function name on success, NULL on failure
 	 */
-	function getPluginFunction( $pGuid, $pFunctionName, $pGetDefault = FALSE ) {
+	function getPluginFunction( $pGuid, $pFunctionName, $pGetDefault = FALSE, $pGetInactive = FALSE ) {
 		if( empty( $pGuid )) {
 			foreach( $this->mPlugins as $guid => $plugin ) {
 				if( $this->isPluginActive( $guid ) && !empty( $plugin[$pFunctionName] ) && function_exists( $plugin[$pFunctionName] )) {
 					$ret[$guid] = $plugin[$pFunctionName];
 				}
 			}
-		} elseif( $this->isPluginActive( $pGuid ) && !empty( $this->mPlugins[$pGuid][$pFunctionName] ) && function_exists( $this->mPlugins[$pGuid][$pFunctionName] )) {
+		} elseif(( $this->isPluginActive( $pGuid ) || $pGetInactive ) && !empty( $this->mPlugins[$pGuid][$pFunctionName] ) && function_exists( $this->mPlugins[$pGuid][$pFunctionName] )) {
 			$ret = $this->mPlugins[$pGuid][$pFunctionName];
 		}
 
