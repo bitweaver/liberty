@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.364 2008/06/13 16:36:25 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.365 2008/07/18 13:05:00 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2998,7 +2998,10 @@ class LibertyContent extends LibertyBase {
 			$bindVars[] = '%'.strtoupper( $pListHash['find_log'] ).'%';
 		}
 
-		if( !empty( $pListHash['sort_mode'] ) ) {
+		if( !empty( $pListHash['sort_mode'] )) {
+			if( preg_match( "/^last_modified|^title/", $pListHash['sort_mode'] )) {
+				$pListHash['sort_mode'] = "lal.".$pListHash['sort_mode'];
+			}
 			$orderSql = " ORDER BY ".$this->mDb->convertSortmode( $pListHash['sort_mode'] )." ";
 		}
 
