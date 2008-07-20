@@ -89,6 +89,9 @@ $gBitSmarty->assign( 'imageProcessors', $imageProcessors );
 
 $cacheTimes = array(
 	0       => tra( "(no cache)" ),
+	60      => "1 ".tra( "minute" ),
+	300      => "5 ".tra( "minutes" ),
+	1800      => "30 ".tra( "minutes" ),
 	3600    => "1 ".tra( "hour" ),
 	14400   => "4 ".tra( "hours" ),
 	28800   => "8 ".tra( "hours" ),
