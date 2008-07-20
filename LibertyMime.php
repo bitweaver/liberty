@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.31 2008/07/20 10:44:40 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.32 2008/07/20 13:55:29 lsces Exp $
  */
 
 /**
@@ -77,10 +77,10 @@ class LibertyMime extends LibertyAttachable {
 	function store( &$pStoreHash ) {
 		global $gLibertySystem;
 		// make sure all the data is in order
-		$this->mDb->StartTrans();
 		if( LibertyMime::verify( $pStoreHash ) && ( !empty( $pStoreHash['skip_content_store'] ) || LibertyContent::store( $pStoreHash ) ) ) {
 			// files have been uploaded
 			if( !empty( $pStoreHash['upload_store']['files'] ) && is_array( $pStoreHash['upload_store']['files'] )) {
+				$this->mDb->StartTrans();
 
 				foreach( $pStoreHash['upload_store']['files'] as $key => $upload ) {
 					// if we don't have an upload, we'll simply update the file settings using the mime plugins
@@ -147,12 +147,12 @@ class LibertyMime extends LibertyAttachable {
 				empty( $pStoreHash['liberty_attachments']['auto_primary'] ) || $pStoreHash['liberty_attachments']['auto_primary'] ? TRUE : FALSE
 			);
 
-		}
-		// Roll back if something went wrong
-		if( empty( $this->mErrors )) {
-			$this->mDb->CompleteTrans();
-		} else {
-			$this->mDb->RollbackTrans();
+			// Roll back if something went wrong
+			if( empty( $this->mErrors )) {
+				$this->mDb->CompleteTrans();
+			} else {
+				$this->mDb->RollbackTrans();
+			}
 		}
 
 		return( count( $this->mErrors ) == 0 );
