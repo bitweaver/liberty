@@ -1,10 +1,10 @@
 {strip}
-{math equation="x/y" x=4  y=3  assign=tv}
-{math equation="x/y" x=14 y=9  assign=ana}
-{math equation="x/y" x=16 y=9  assign=wide}
-{math equation="x/y" x=16 y=10 assign=puter}
-{math equation="x/y" x=1.85 y=1 assign=cin1}
-{math equation="x/y" x=2.39 y=1 assign=cin2}
+{assign var=tv    value=1.33333333333}
+{assign var=ana   value=1.55555555556}
+{assign var=wide  value=1.77777777778}
+{assign var=puter value=1.6}
+{assign var=cin1  value=1.85}
+{assign var=cin2  value=2.39}
 
 <div class="row">
 	{formlabel label="Set Aspect Ratio" for="aspect"}
