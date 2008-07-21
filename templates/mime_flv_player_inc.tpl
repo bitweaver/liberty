@@ -14,6 +14,7 @@
 		so.addVariable("file","{$attachment.media_url}");
 		so.addVariable("image","{$attachment.thumbnail_url.medium}");
 		so.addVariable("overstretch","fit");
+		so.addVariable("usefullscreen","false");
 		so.addVariable("frontcolor","0x{$gBitSystem->getConfig('mime_flv_frontcolor','FFFFFF')}");
 		so.addVariable("backcolor","0x{$gBitSystem->getConfig('mime_flv_backcolor','000000')}");
 		so.write('{$id}');
