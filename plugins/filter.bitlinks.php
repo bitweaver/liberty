@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.15 2008/06/21 04:12:55 jht001 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.16 2008/07/21 08:47:23 squareing Exp $
  * @package  liberty
  */
 
@@ -238,8 +238,8 @@ class BitLinks extends BitBase {
 		global $gBitSystem;
 		// we need to remove text that might contain unexpected wiki words
 		$protect = array(
-            "!<a\b[^>]*>.*?</a>!si", // links
-            "!<[^>]*>!",             // any html tags
+			"!<a\b[^>]*>.*?</a>!si", // links
+			"!<[^>]*>!",             // any html tags
 		);
 		$tmpData = preg_replace( $protect, "", $pData );
 
