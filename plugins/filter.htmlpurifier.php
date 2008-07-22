@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.21 2008/06/15 14:51:00 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.22 2008/07/22 16:05:50 wjames5 Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -151,6 +151,14 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 		//		$pee = $pString;
 		//		$pString = html_entity_decode( $pString );
 		$pString = $gHtmlPurifier->purify( $pString );
+
+		// If we have another parse step they may be escaping
+		// entities so change quotes back.
+		if (empty($pFilterHash['format_guid']) || 
+		    $pFilterHash['format_guid'] != 'bithtml') {
+		  $pString = preg_replace('|&quot;|', '"', $pString);
+		  $pString = preg_replace('|&#039;|', "'", $pString);
+		}
 
 		/*
 		echo "<br/><hr/><br/>".$start;
