@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.365 2008/07/18 13:05:00 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.366 2008/07/23 12:39:27 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -3221,7 +3221,7 @@ class LibertyContent extends LibertyBase {
 	function getPreview() {
 		global $gBitSystem, $gContent, $gBitSmarty;
 		// Tell gBitSystem not to do modules and such
-		$gBitSystem->setFormatHeader( "center_only" );
+		$gBitThemes->setFormatHeader( "center_only" );
 		// Tell the content we are previewing (in case they care)
 		$gBitSmarty->assign('liberty_preview', true);
 		// Save current gContent
@@ -3232,7 +3232,7 @@ class LibertyContent extends LibertyBase {
 		$ret = get_include_contents($this->getRenderFile());
 
 		// Return gBitSystem to full render mode
-		$gBitSystem->setFormatHeader( "html" );
+		$gBitThemes->setFormatHeader( "html" );
 		// Clear the preview flag
 		$gBitSmarty->assign('liberty_preview', false);
 		// Restore gContent
