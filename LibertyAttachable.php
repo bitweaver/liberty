@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.163 2008/07/24 08:28:38 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.164 2008/07/24 08:31:01 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -530,8 +530,7 @@ class LibertyAttachable extends LibertyContent {
 	}
 
 	/**
-	 * Expunges the content deleting attachments if asked to do so, otherwise just detaching them
-	 * TODO: this hasn't been updated yet since the liberty_attachments update
+	 * Expunges the content deleting attached attachments
 	 */
 	function expunge() {
 		if( !empty( $this->mStorage ) && count( $this->mStorage )) {
@@ -547,7 +546,7 @@ class LibertyAttachable extends LibertyContent {
 	 *
 	 * @param numeric $pAttachmentId attachment id of the item that should be deleted
 	 * @access public
-	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 * @return TRUE on success, FALSE on failure
 	 */
 	function expungeAttachment( $pAttachmentId ) {
 		global $gLibertySystem, $gBitUser;
