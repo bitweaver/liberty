@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.162 2008/06/29 08:24:44 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.163 2008/07/24 08:28:38 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -293,6 +293,11 @@ class LibertyAttachable extends LibertyContent {
 	 * @param $pParamHash
 	 * @return FALSE if errors were present, TRUE meaning object is ready to store
 	 */
+
+	/**
+	 * TODO: This code is old and is not used by any package in the bitweaver CVS anymore.
+	 * We will clean up this code as soon as we migrated all legacy code
+	 */
 	function verify( &$pParamHash ) {
 		global $gBitSystem, $gBitUser;
 		// check to see if we have any files to upload
@@ -366,6 +371,11 @@ class LibertyAttachable extends LibertyContent {
 	 *
 	 * @param hash $pParamHash The hash of arguments
 	 *
+	 */
+
+	/**
+	 * TODO: This code is old and is not used by any package in the bitweaver CVS anymore.
+	 * We will clean up this code as soon as we migrated all legacy code
 	 */
 	function store( &$pParamHash ) {
 		global $gLibertySystem, $gBitSystem, $gBitUser;
@@ -587,6 +597,11 @@ class LibertyAttachable extends LibertyContent {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
+
+	/**
+	 * TODO: This code is old and is not used by any package in the bitweaver CVS anymore.
+	 * We will clean up this code as soon as we migrated all legacy code
+	 */
 	function load( $pContentId=NULL ) {
 		// assume a derived class has joined on the liberty_content table, and loaded it's columns already.
 		global $gLibertySystem;
@@ -700,7 +715,7 @@ class LibertyAttachable extends LibertyContent {
 		return $ret;
 	}
 
-	/*
+	/**
 	 * clearPrimaryAttachment will remove the primary flag for all attachments
 	 * with the given content_id
 	 *
