@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_top_authors.php,v 1.5 2006/02/04 10:10:51 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_top_authors.php,v 1.6 2008/07/25 08:20:37 bitweaver Exp $
 /**
  * Params:
  * - content_type_guid : if set, show only those content_type_guid's
@@ -7,9 +7,8 @@
  * @subpackage modules
  */
 
-
-global $gQueryUser, $gBitUser, $module_rows, $module_params, $module_title, $gLibertySystem;
-
+global $gQueryUser, $gBitUser, $gLibertySystem, $moduleParams;
+extract( $moduleParams );
 
 if( empty( $module_title ) ) {
 	if( !empty( $module_params['content_type_guid'] ) && !empty( $gLibertySystem->mContentTypes[$module_params['content_type_guid']] ) ) {
@@ -26,7 +25,7 @@ $listHash = $_REQUEST;
 if( !empty( $module_params['content_type_guid'] ) ) {
 	$listHash['content_type_guid'] = $module_params['content_type_guid'];
 }
-$listHash['max_request'] = $module_rows;
+$listHash['max_records'] = $module_rows;
 
 $modAuthors = $gBitUser->getAuthorList( $listHash );
 $gBitSmarty->assign_by_ref( 'modAuthors', $modAuthors );
