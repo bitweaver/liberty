@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.php,v 1.11 2007/04/02 18:55:00 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.php,v 1.12 2008/07/29 18:04:23 lsces Exp $
  * @package liberty
  * @subpackage modules
  * Params:
@@ -42,5 +42,5 @@ $listHash = array(
 	'user_id' => $userId,
 );
 $modLastContent = $gBitUser->getContentList( $listHash );
-$gBitSmarty->assign_by_ref( 'modLastContent', $modLastContent['data'] );
+$gBitSmarty->assign_by_ref( 'modLastContent', $modLastContent );
 ?>
