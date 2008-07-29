@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.368 2008/07/29 18:03:36 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.369 2008/07/29 18:27:17 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -93,7 +93,7 @@ class LibertyContent extends LibertyBase {
 	*/
 	var $mViewContentPerm;
 	var $mEditContentPerm;
-	var $mDeleteContentPerm;
+	var $mExpungeContentPerm;
 	var $mAdminContentPerm;
 
 	/**
@@ -109,8 +109,8 @@ class LibertyContent extends LibertyBase {
 			$this->mEditContentPerm = 'p_admin_content';
 		}
 
-		if( empty( $this->mDeleteContentPerm )) {
-			$this->mDeleteContentPerm = 'p_admin_content';
+		if( empty( $this->mExpungeContentPerm )) {
+			$this->mExpungeContentPerm = 'p_admin_content';
 		}
 
 		if( empty( $this->mAdminContentPerm )) {
@@ -1324,12 +1324,12 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	* Determine if current user has the ability to edit this type of content
+	* Determine if current user has the ability to delete/expunge this type of content
 	*
-	* @return bool True if user has this type of content administration permission
+	* @return bool True if user has this type of content expunge permission
 	*/
-	function hasDeletePermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
-		return( $this->hasUserPermission( $this->mDeleteContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ) );
+	function hasExpungePermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
+		return( $this->hasUserPermission( $this->mExpungeContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ) );
 	}
 
 	/**
