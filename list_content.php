@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.27 $
+ * @version  $Revision: 1.28 $
  * @package  liberty
  * @subpackage functions
  */
@@ -39,10 +39,12 @@ include_once( LIBERTY_PKG_PATH.'get_content_list_inc.php' );
 
 $gBitSmarty->assign( 'contentSelect', $contentSelect );
 $gBitSmarty->assign( 'contentTypes', $contentTypes );
-$gBitSmarty->assign( 'contentList', $contentList['data'] );
+$gBitSmarty->assign( 'contentList', $contentList );
 $contentList['listInfo']['ihash']['content_type_guid'] = $contentSelect[0];
 $contentList['listInfo']['ihash']['user_id'] = @BitBase::verifyId( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : NULL;
-$contentList['listInfo']['ihash']['find_objects'] = $contentList['listInfo']['find'];
+if ( isset( $contentList['listInfo']['find'] ) ) {
+	$contentList['listInfo']['ihash']['find_objects'] = $contentList['listInfo']['find'];
+}
 $gBitSmarty->assign( 'listInfo', $contentList['listInfo'] );
 $gBitSmarty->assign( 'content_type_guids', ( isset( $_REQUEST['content_type_guid'] ) ? $_REQUEST['content_type_guid'] : NULL ));
 
@@ -55,7 +57,7 @@ if( !empty( $_REQUEST['ajax_xml'] )) {
 if( !empty( $_REQUEST['output'] )) {
 	switch( $_REQUEST['output'] ) {
 	case 'json':
-		$gBitSmarty->assign_by_ref( 'listcontent', $contentList['data'] );
+		$gBitSmarty->assign_by_ref( 'listcontent', $contentList );
 		header( 'Content-type:application/json' );
 		$gBitSmarty->display( 'bitpackage:liberty/list_content_json.tpl' );
 		break;
@@ -67,8 +69,8 @@ if( !empty( $_REQUEST['output'] )) {
 		 * a package dependency somewhere is likely an issue
 		 */
 		require_once( UTIL_PKG_PATH.'javascript/libs/suggest/suggest_lib.php' );
-		foreach( array_keys( $contentList['data'] ) as $row ) {
-			$xmlList[$contentList['data'][$row]['content_id']] = $contentList['data'][$row]['title'];
+		foreach( array_keys( $contentList ) as $row ) {
+			$xmlList[$contentList[$row]['content_id']] = $contentList[$row]['title'];
 		}
 		$xml = SuggestLib::exportXml( $xmlList, $_REQUEST['id'] );
 		header( "Content-Type: text/xml\n\n" );

@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.367 2008/07/23 12:41:47 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.368 2008/07/29 18:03:36 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -93,6 +93,7 @@ class LibertyContent extends LibertyBase {
 	*/
 	var $mViewContentPerm;
 	var $mEditContentPerm;
+	var $mDeleteContentPerm;
 	var $mAdminContentPerm;
 
 	/**
@@ -106,6 +107,10 @@ class LibertyContent extends LibertyBase {
 		// NOTE: we are not assigning anything to mViewContentPerm. if this is empty, we will return TRUE in hasViewPermission()
 		if( empty( $this->mEditContentPerm )) {
 			$this->mEditContentPerm = 'p_admin_content';
+		}
+
+		if( empty( $this->mDeleteContentPerm )) {
+			$this->mDeleteContentPerm = 'p_admin_content';
 		}
 
 		if( empty( $this->mAdminContentPerm )) {
@@ -1323,6 +1328,15 @@ class LibertyContent extends LibertyBase {
 	*
 	* @return bool True if user has this type of content administration permission
 	*/
+	function hasDeletePermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
+		return( $this->hasUserPermission( $this->mDeleteContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ) );
+	}
+
+	/**
+	* Determine if current user has the ability to edit this type of content
+	*
+	* @return bool True if user has this type of content administration permission
+	*/
 	function hasEditPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
 		return( $this->hasUserPermission( $this->mEditContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ) );
 	}
@@ -2041,7 +2055,7 @@ class LibertyContent extends LibertyBase {
 		} else {
 			include_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
 			$libertyContent = new LibertyContent();
-			$ret = $libertyContent->getContentList( $pListHash );
+			$ret['data'] = $libertyContent->getContentList( $pListHash );
 		}
 
 		$ret['title']     = !empty( $pListHash['title'] ) ? $pListHash['title'] : tra( "Content Ranking" );
@@ -2063,7 +2077,7 @@ class LibertyContent extends LibertyBase {
 	* $pListHash['end_date'] date - modified before
 	* @return array An array of mInfo type arrays of content objects
 	**/
-	function getContentList( $pListHash ) {
+	function getContentList( &$pListHash ) {
 		global $gLibertySystem, $gBitSystem, $gBitUser, $gBitSmarty;
 
 		$this->prepGetList( $pListHash );
@@ -2360,9 +2374,8 @@ class LibertyContent extends LibertyBase {
 			$ret = array_slice($ret, $old_offset, $old_max_records);
 		}
 
-		$pListHash["data"] = $ret;
 		LibertyContent::postGetList( $pListHash );
-		return $pListHash;
+		return $ret;
 	}
 
 

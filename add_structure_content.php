@@ -1,9 +1,9 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/add_structure_content.php,v 1.6 2008/06/25 22:21:12 spiderr Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/add_structure_content.php,v 1.7 2008/07/29 18:03:36 lsces Exp $
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage functions
  */
@@ -39,7 +39,7 @@ if( $gBitThemes->isAjaxRequest() ) {
 
 	$_REQUEST['thumbnail_size'] = 'icon';
 	include_once( LIBERTY_PKG_PATH.'get_content_list_inc.php' );
-	foreach( $contentList['data'] as $cItem ) {
+	foreach( $contentList as $cItem ) {
 		$cList[$contentTypes[$cItem['content_type_guid']]][$cItem['content_id']] = $cItem['title'].' [id: '.$cItem['content_id'].']';
 	}
 	$gBitSmarty->assign_by_ref( 'contentListHash', $contentList['data'] );

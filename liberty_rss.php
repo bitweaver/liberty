@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_rss.php,v 1.10 2007/07/08 08:27:55 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_rss.php,v 1.11 2008/07/29 18:03:36 lsces Exp $
  * @package wiki
  * @subpackage functions
  */
@@ -29,7 +29,6 @@ $listHash = array(
 	'include_data' => TRUE,
 );
 $feeds = $liberty->getContentList( $listHash );
-$feeds = $feeds['data'];
 
 // set the rss link
 $rss->link = 'http://'.$_SERVER['HTTP_HOST'].LIBERTY_PKG_DIR.'/list_content.php';
