@@ -7,6 +7,7 @@ $gBitSystem->verifyPermission( 'p_admin' );
 // this will clear out all plugin settings in the database. scanAllPlugins 
 // below will then reload all plugins and set them to their default setup.
 if( !empty( $_REQUEST['reset_all_plugins'] ) ) {
+	$gBitUser->verifyTicket();
 	//$gBitSystem->storeConfig( 'default_format', PLUGIN_GUID_TIKIWIKI, LIBERTY_PKG_NAME );
 	$gLibertySystem->resetAllPluginSettings();
 
