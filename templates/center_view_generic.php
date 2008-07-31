@@ -1,13 +1,17 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/templates/center_view_generic.php,v 1.1 2008/03/28 21:09:48 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/templates/center_view_generic.php,v 1.2 2008/07/31 21:23:50 laetzer Exp $
  * @package bitweaver
  */
 global $moduleParams, $gContent, $gBitSmarty;
 
 $gContent = NULL;
 
-$lookupHash['content_id'] = ( !empty( $moduleParams['content_id'] ) ? $moduleParams['content_id'] : NULL );
+if( !empty( $moduleParams ) ) {
+	extract( $moduleParams );
+}
+
+$lookupHash['content_id'] = ( !empty( $module_params['content_id'] ) ? $module_params['content_id'] : NULL );
 
 if( $gContent = LibertyBase::getLibertyObject( $lookupHash['content_id'] ) ) {
 	if( !$gContent->hasViewPermission() ){
