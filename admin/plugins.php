@@ -7,13 +7,18 @@ $gBitSystem->verifyPermission( 'p_admin' );
 // this will clear out all plugin settings in the database. scanAllPlugins 
 // below will then reload all plugins and set them to their default setup.
 if( !empty( $_REQUEST['reset_all_plugins'] ) ) {
-	$gBitUser->verifyTicket();
-	//$gBitSystem->storeConfig( 'default_format', PLUGIN_GUID_TIKIWIKI, LIBERTY_PKG_NAME );
-	$gLibertySystem->resetAllPluginSettings();
+	// because of include_once scenarios in scanAllPlugins, you need two complete page refreshes afternuking the plugin settings
+	if( $_REQUEST['reset_all_plugins'] == 'refresh' ) {
+		bit_redirect( LIBERTY_PKG_URL."admin/plugins.php" );
+	} else {
+		$gBitUser->verifyTicket();
+		//$gBitSystem->storeConfig( 'default_format', PLUGIN_GUID_TIKIWIKI, LIBERTY_PKG_NAME );
+		$gLibertySystem->resetAllPluginSettings();
 
-	// this scanAllPlugins is required. who knows why this stuff is so resilient
-	$gLibertySystem->scanAllPlugins();
-	bit_redirect( LIBERTY_PKG_URL."admin/plugins.php" );
+		// this scanAllPlugins is required. who knows why this stuff is so resilient
+		$gLibertySystem->scanAllPlugins();
+		bit_redirect( LIBERTY_PKG_URL."admin/plugins.php?reset_all_plugins=refresh" );
+	}
 }
 
 // Since the normal startup only loads the plugins marked active
