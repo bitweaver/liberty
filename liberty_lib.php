@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.42 2008/07/31 23:27:42 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.43 2008/08/01 05:58:08 wjames5 Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -364,10 +364,10 @@ function liberty_content_list_sql(  &$pObject, $pParamHash=NULL ) {
  */
 function liberty_content_preview( &$pObject ) {
 	global $gBitSystem, $gBitUser;
-	if( $gBitSystem->isFeatureActive( 'liberty_display_status' ) && ( $gBitUser->hasPermission('p_liberty_edit_content_status' ) || $gBitUser->hasPermission( 'p_libert_edit_all_status' )) && isset( $_REQUEST['content_status_id'] ) ) {
+	if( $gBitSystem->isFeatureActive( 'liberty_display_status' ) && ( $gBitUser->hasPermission('p_liberty_edit_content_status' ) || $gBitUser->hasPermission( 'p_libert_edit_all_status' )) && @BitBase::verifyId( $_REQUEST['content_status_id'] ) ) {
 		$pObject->mInfo['content_status_id'] = $_REQUEST['content_status_id'];
 	}
-	if( $gBitSystem->isFeatureActive( 'liberty_allow_change_owner' ) && $gBitUser->hasPermission( 'p_liberty_edit_content_owner' ) && isset( $_REQUEST['owner_id'] ) ) {
+	if( $gBitSystem->isFeatureActive( 'liberty_allow_change_owner' ) && $gBitUser->hasPermission( 'p_liberty_edit_content_owner' ) && @BitBase::verifyId( $_REQUEST['owner_id'] ) ) {
 		$pObject->mInfo['owner_id'] = $_REQUEST['owner_id'];
 	}
 	include_once( LIBERTY_PKG_PATH.'edit_help_inc.php' );
