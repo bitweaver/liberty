@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.28 $
+ * @version  $Revision: 1.29 $
  * @package  liberty
  * @subpackage functions
  */
@@ -40,12 +40,12 @@ include_once( LIBERTY_PKG_PATH.'get_content_list_inc.php' );
 $gBitSmarty->assign( 'contentSelect', $contentSelect );
 $gBitSmarty->assign( 'contentTypes', $contentTypes );
 $gBitSmarty->assign( 'contentList', $contentList );
-$contentList['listInfo']['ihash']['content_type_guid'] = $contentSelect[0];
-$contentList['listInfo']['ihash']['user_id'] = @BitBase::verifyId( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : NULL;
-if ( isset( $contentList['listInfo']['find'] ) ) {
-	$contentList['listInfo']['ihash']['find_objects'] = $contentList['listInfo']['find'];
+$contentListHash['listInfo']['ihash']['content_type_guid'] = $contentSelect[0];
+$contentListHash['listInfo']['ihash']['user_id'] = @BitBase::verifyId( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : NULL;
+if ( isset( $contentListHash['listInfo']['find'] ) ) {
+	$contentListHash['listInfo']['ihash']['find_objects'] = $contentList['listInfo']['find'];
 }
-$gBitSmarty->assign( 'listInfo', $contentList['listInfo'] );
+$gBitSmarty->assign( 'listInfo', $contentListHash['listInfo'] );
 $gBitSmarty->assign( 'content_type_guids', ( isset( $_REQUEST['content_type_guid'] ) ? $_REQUEST['content_type_guid'] : NULL ));
 
 //depricate 'ajax_xml', use 'output'
