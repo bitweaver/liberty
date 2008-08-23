@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.369 2008/07/29 18:27:17 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.370 2008/08/23 19:36:27 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -416,7 +416,7 @@ class LibertyContent extends LibertyBase {
 
 			// services, filters and cache
 			$this->invokeServices( 'content_expunge_function', $this );
-			if( $func = $gLibertySystem->getPluginFunction( $this->getField( 'format_guid' ), 'expunge_function' ) ) {
+			if(  $this->getField( 'format_guid' ) && $func = $gLibertySystem->getPluginFunction( $this->getField( 'format_guid' ), 'expunge_function' ) ) {
 				$func( $this->mContentId );
 			}
 			$this->filterData( $this->mInfo['data'], $this->mInfo, 'expunge' );
