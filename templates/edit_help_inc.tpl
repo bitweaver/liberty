@@ -1,5 +1,5 @@
 {strip}
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.29 2008/06/26 16:59:27 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.30 2008/08/31 22:42:04 laetzer Exp $ *}
 
 {if $dataplugins}
 	{jstab title="Data Plugins"}
@@ -30,8 +30,8 @@
 	{/jstab}
 {/if}
 
-{jstab title="Wiki Help"}
-	<h2>{tr}Syntax Help{/tr}</h2>
+{jstab title="Format Help"}
+	<h2>{tr}Syntax and input format help{/tr}</h2>
 	{foreach from=$formatplugins item=p}
 		<h3>{if $p.format_help}<a href="#{$p.plugin_guid}">{/if}{$p.edit_label} Help{if $p.format_help}</a>{/if}</h3>
 		{$p.description} {if $p.help_page}{tr}To view syntax help, please visit {jspopup href="http://www.bitweaver.org/wiki/index.php?page=`$p.help_page`" title=$p.help_page class=external}.{/tr}{/if}
