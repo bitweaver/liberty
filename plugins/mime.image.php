@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.12 2008/07/18 14:57:48 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.13 2008/09/02 08:31:51 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.12 $
+ * @version		$Revision: 1.13 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -131,7 +131,7 @@ function mime_image_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 		$ret['meta'] = LibertyMime::getMetaData( $ret['attachment_id'], "EXIF" );
 
 		// if we have GPS data and geo is active, we calculate geo stuff
-		if(( $ret['gps'] = LibertyMime::getMetaData( $ret['attachment_id'], "GPS" )) && $gBitSystem->isPackageActive( 'geo' )) {
+		if( $gBitSystem->isPackageActive( 'geo' ) && ( $ret['gps'] = LibertyMime::getMetaData( $ret['attachment_id'], "GPS" ))) {
 			// longitude
 			if( !empty( $ret['gps']['gpslongitude'] )) {
 				$ret['geo']['lng'] = $ret['gps']['gpslongitude'];
