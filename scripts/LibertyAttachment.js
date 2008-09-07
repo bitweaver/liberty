@@ -7,11 +7,11 @@ LibertyAttachment = {
 		LibertyAttachment.fileInputClones[fileid] = $(fileid).cloneNode(true);
 	},
 	
-	"uploader": function(file, action, waitmsg, frmid, cform) {
+	"uploader": function(file, action, waitmsg, frmid, cformid ) {
 		if (LibertyAttachment.uploader_under_way) {
 			alert(waitmsg);
 		}else{
-			if ( LibertyAttachment.preflightCheck( cform ) ){
+			if ( LibertyAttachment.preflightCheck( cformid ) ){
 				LibertyAttachment.uploader_under_way = 1;
 				BitBase.showSpinner();
 				var old_target = file.form.target;
@@ -21,22 +21,28 @@ LibertyAttachment = {
 				file.form.submit();
 				file.form.target = old_target;
 				file.form.action = old_action;
+			}else{
+				var fileid = file.id;
+				LibertyAttachment.fileInputClones[fileid].id = fileid;
+				MochiKit.DOM.swapDOM(file, LibertyAttachment.fileInputClones[fileid]);
+				LibertyAttachment.uploaderSetup( fileid );
 			}
 		}
 	},
 
-	"preflightCheck": function( cform ){
-		var t = $(cform).title.value;
+	"preflightCheck": function( cformid ){
+		var f = $(cformid);
+		var t = f.title.value;
 		if ( MochiKit.Base.isEmpty(t) ){
 			alert( "Please enter a title for your new content before attempting to upload a file." );
 			return false;
 		}else{
-			$('la_title').value = t;
+			f['liberty_attachments[title]'].value = t;
 			return true;
 		}
 	},
 
-	"uploaderComplete": function(frmid, divid, fileid, cform) {
+	"uploaderComplete": function(frmid, divid, fileid, cformid) {
 		if (LibertyAttachment.uploader_under_way){
 			BitBase.hideSpinner();
 			var ifrm = document.getElementById(frmid);
@@ -51,7 +57,7 @@ LibertyAttachment = {
 				return;
 			}
 			
-			LibertyAttachment.postflightCheck( cform, d );
+			LibertyAttachment.postflightCheck( cformid, d );
 
 			var errMsg = "<div>Sorry, there was a problem retrieving results.</div>";
 			var divO = document.getElementById(divid);
@@ -74,8 +80,8 @@ LibertyAttachment = {
 		}
 	},
 	
-	"postflightCheck": function( cform, d ){
-		var form = $(cform);
+	"postflightCheck": function( cformid, d ){
+		var form = $(cformid);
 		var cid = d.getElementById("upload_content_id").value;
 		if ( typeof( form.content_id ) == "undefined" ){
 			var i = INPUT( {'name':'content_id', 'type':'hidden', 'value':cid}, null );
@@ -83,6 +89,6 @@ LibertyAttachment = {
 		}else{
 			form.content_id.value = cid;
 		}
-		$('la_content_id').value = cid;
+		form['liberty_attachments[content_id]'].value = cid;
 	}
 }
