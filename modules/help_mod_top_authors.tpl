@@ -1,13 +1,10 @@
-{tr}<strong>Summary</strong>: Display the most popular authors based on page hits.{/tr}<br />
-<table class="data">
-	<tr>
-		<th style="width:20%;">{tr}Parameter{/tr}</th>
-		<th style="width:20%;">{tr}Value{/tr}</th>
-		<th style="width:60%;">{tr}Description{/tr}</th>
-	</tr>
-	<tr class="odd">
-		<td>content_type_guid</td>
-		<td>bitpage<br />bitblogpost<br />...</td>
-		<td>{tr}Specify what content the statistics should be based on. 'bituser' will give you ranking based on whose homepage has been hit most frequently.{/tr}</td>
-	</tr>
-</table>
+<p class="note">
+	{tr}Display the most popular authors based on page hits. If <kbd>content_type_guid</kbd> is set to <em>bituser</em>, the ranking is based on whose homepage has been hit most frequently.{/tr}
+	<br />
+	<span class="example">{tr}Example:{/tr} <kbd>content_type_guid=bitblogpost</kbd></span>
+</p>
+
+<dl>
+	<dt class="param"><kbd>content_type_guid</kbd></dt>
+	<dd>{tr}bitpage, bituser, &hellip;{/tr}</dd>
+</dl>

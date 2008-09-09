@@ -1,18 +1,13 @@
-{tr}<strong>Summary</strong>: Display the most recent comments.{/tr}<br />
-<table class="data">
-	<tr>
-		<th style="width:20%;">{tr}Parameter{/tr}</th>
-		<th style="width:20%;">{tr}Value{/tr}</th>
-		<th style="width:60%;">{tr}Description{/tr}</th>
-	</tr>
-	<tr class="odd">
-		<td>parent_content_type_guid</td>
-		<td>bitpage<br />bituser<br />...</td>
-		<td>{tr}You can limit the comments submitted to a given content type. Please note that applying this limit will only display comments that have been submitted directly to that content item - replies will not show up.{/tr}</td>
-	</tr>
-	<tr class="even">
-		<td>show_date</td>
-		<td>( {tr}boolean{/tr} )</td>
-		<td>{tr}Specify if you want to display the date of the last modification.{/tr}</td>
-	</tr>
-</table>
+<p class="note">
+	{tr}Display the most recent comments. If you limit the comments to a given content type, only comments that have been submitted directly to that content item will show up - replies will not.{/tr}
+	<br />
+	<span class="example">{tr}Example:{/tr} <kbd>parent_content_type_guid=bitpage&show_date=1</kbd></span>
+</p>
+
+<dl>
+	<dt class="param"><kbd>parent_content_type_guid</kbd></dt>
+	<dd>{tr}bitpage, bituser, &hellip;{/tr}</dd>
+	
+	<dt class="param"><kbd>show_date</kbd></dt>
+	<dd><em>{tr}Boolean{/tr}</em></dd>
+</dl>
