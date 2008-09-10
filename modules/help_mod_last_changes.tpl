@@ -6,8 +6,9 @@
 
 <dl>
 	<dt class="param"><kbd>content_type_guid</kbd></dt>
-	<dd>{tr}bitpage, bituser, &hellip;{/tr}</dd>
-	
+	<dd><em>{tr}bitweaver content type GUID{/tr}</em></dd>
+	<dd>bitpage, bituser&hellip;</dd>
+
 	<dt class="param"><kbd>show_date</kbd></dt>
 	<dd><em>{tr}Boolean{/tr}</em></dd>
 </dl>
