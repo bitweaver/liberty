@@ -4,7 +4,7 @@
 		<h2>{tr}Comments{/tr}</h2>
 	</div>
 
-	<div class="body"{if !( $smarty.request.post_comment_request || $post_comment_preview )} id="editcomments"{/if}>>
+	<div class="body"{if !( $smarty.request.post_comment_request || $post_comment_preview )} id="editcomments"{/if}>
 		<div id="edit_comments" {if $comments_ajax}style="display:none"{/if}>
 			{include file="bitpackage:liberty/comments_post_inc.tpl" post_title="Post Comment"}
 		</div>
