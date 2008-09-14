@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.116 2008/07/18 12:38:55 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.117 2008/09/14 17:23:19 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -493,13 +493,13 @@ class LibertySystem extends LibertyBase {
 	 * @return resource path to template
 	 */
 	function getMimeTemplate( $pTemplate, $pGuid = LIBERTY_DEFAULT_MIME_HANDLER ) {
+		$ret = NULL;
 		if( $this->isPluginActive( $pGuid ) && ( $plugin = $this->getPluginInfo( $pGuid )) && !empty( $plugin[$pTemplate.'_tpl'] )) {
-			return $plugin[$pTemplate.'_tpl'];
+			$ret = $plugin[$pTemplate.'_tpl'];
 		} elseif( $pGuid != LIBERTY_DEFAULT_MIME_HANDLER ) {
-			return $this->getMimeTemplate( $pTemplate );
-		} else {
-			return NULL;
+			$ret = $this->getMimeTemplate( $pTemplate );
 		}
+		return $ret;
 	}
 
 	/**
