@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/header_inc.tpl,v 1.15 2008/07/01 15:02:11 wjames5 Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/header_inc.tpl,v 1.16 2008/09/14 19:23:39 wjames5 Exp $ *}
 {strip}
 {if $structureInfo}
 	<link rel="index" title="{tr}Contents{/tr}" href="index.php?structure_id={$structureInfo.root_structure_id}" />
@@ -29,6 +29,14 @@ $gBitThemes->loadJavascript(); *}
 		LibertyContent = {ldelim}{rdelim};
 		LibertyContent.CONTENT_TYPE_GUID = "{$gContent->mContentTypeGuid}";
 	</script>
+{/if}
+
+{* This is only kept here for legacy code and will be removed once we've fully
+   weened bitweaver off the old storage plugins. this is required by the old
+   bitstorage plugin. users with regular installs of bitweaver > 2.1 can remove
+   this. *}
+{if $loadMultiFile}
+	{jspack ifile=libs/multifile.js defer='defer'}
 {/if}
 
 {if $loadDynamicTree || $attachments_ajax}
