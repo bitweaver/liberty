@@ -362,6 +362,7 @@ $gBitInstaller->registerUserPermissions( LIBERTY_PKG_NAME, array(
 	array('p_liberty_edit_content_owner', 'Can edit the owner of content', 'editors', LIBERTY_PKG_NAME),
 	array('p_liberty_edit_content_alias', 'Can edit the alternate titles of content', 'editors', LIBERTY_PKG_NAME),
 	array('p_liberty_assign_content_perms', 'Can assign individual content permissions', 'editors', LIBERTY_PKG_NAME),
+	array('p_liberty_trusted_editor', 'Can make edits to content as a trusted editor', LIBERTY_PKG_NAME ),
 ) );
 
 ?>

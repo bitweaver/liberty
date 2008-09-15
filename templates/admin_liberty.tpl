@@ -52,7 +52,7 @@
 				{/foreach}
 			{/legend}
 
-			{legend legend="Captcha Settings"}
+			{legend legend="Spam and Captcha Settings"}
 				{foreach from=$formCaptcha key=item item=output}
 					<div class="row">
 						{formlabel label=`$output.label` for=$item}
@@ -63,6 +63,15 @@
 								<p>{tr}If you can see the image below, you can use freecap{/tr}</p>
 								<img src="{$smarty.const.UTIL_PKG_URL}freecap/freecap.php" alt="{tr}Random Image{/tr}" title="{tr}Random Image{/tr}" />
 							{/if}
+						{/forminput}
+					</div>
+				{/foreach}
+				{foreach from=$formCaptchaTextareaFeatures key=item item=output}
+					<div class="row">
+						{formlabel label=`$output.label` for=$item}
+						{forminput}
+							<input type="text" name="{$item}" value="{$gBitSystem->getConfig($item, $output.default)}" />
+							{formhelp note=`$output.note` page=`$output.page`}
 						{/forminput}
 					</div>
 				{/foreach}

@@ -115,6 +115,15 @@ $formCaptcha = array(
 );
 $gBitSmarty->assign( 'formCaptcha', $formCaptcha );
 
+$formCaptchaTextareaFeatures = array(
+	"liberty_unstrusted_max_http_in_content" => array(
+		'label' => 'Limit Comment Links',
+		'note' => 'Do not allow edits from users without p_liberty_trusted_editor that has more than this many http links. (Currently only enforced in comments)',
+		'default' => '1',
+	),
+);
+$gBitSmarty->assign( 'formCaptchaTextareaFeatures', $formCaptchaTextareaFeatures );
+
 $formImageFeatures = array(
 	"liberty_thumbnail_pdf" => array(
 		'label' => 'Create PDF Thumbnails',
@@ -145,6 +154,9 @@ if( !empty( $_REQUEST['change_prefs'] )) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
 	foreach( $formLibertyTextareaFeatures as $item => $data ) {
+		simple_set_value( $item, LIBERTY_PKG_NAME );
+	}
+	foreach( $formCaptchaTextareaFeatures as $item => $data ) {
 		simple_set_value( $item, LIBERTY_PKG_NAME );
 	}
 	simple_set_value( 'liberty_thumbnail_format', LIBERTY_PKG_NAME );

@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.70 2008/06/15 09:45:45 jht001 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.71 2008/09/15 06:12:06 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -76,7 +76,7 @@ class LibertyComment extends LibertyContent {
 	}
 
 	function verifyComment(&$pParamHash) {
-		global $gBitUser;
+		global $gBitUser, $gBitSystem;
 
 		if (!$pParamHash['parent_id']) {
 			$this->mErrors['parent_id'] = "Missing parent id for comment";
@@ -96,6 +96,8 @@ class LibertyComment extends LibertyContent {
 
 		if( empty( $pParamHash['edit'] ) ) {
 			$this->mErrors['store'] = tra( 'Your comment was empty.' );
+		} elseif( !$gBitUser->hasPermission( 'p_liberty_trusted_editor' ) && ($linkCount = preg_match_all( '/http\:\/\//', $pParamHash['edit'], $links )) > $gBitSystem->getConfig( 'liberty_unstrusted_max_http_in_content', 0 ) ) {
+			$this->mErrors['store'] = tra( 'Links are not allowed.' );
 		} else {
 			$dupeQuery = "SELECT `data` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `user_id`=? AND `content_type_guid`='".BITCOMMENT_CONTENT_TYPE_GUID."' AND `ip`=? ORDER BY `last_modified` DESC";
 			if( $lastPostData = $this->mDb->getOne( $dupeQuery, array( $gBitUser->mUserId, $_SERVER['REMOTE_ADDR'] ) ) ) {
@@ -104,7 +106,6 @@ class LibertyComment extends LibertyContent {
 				}
 			}
 		}
-
 		return (count($this->mErrors) == 0);
 	}
 
