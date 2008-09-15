@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.24 2008/07/15 09:26:51 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.25 2008/09/15 10:32:07 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.24 $
+ * @version		$Revision: 1.25 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -35,9 +35,9 @@ $pluginParams = array (
 	'title'               => 'Listen to uploaded Audio files',
 	'description'         => 'This plugin will extract as much information about an uploaded audio file as possible and allow you to listen to it on the website using a streaming player.',
 	// Templates to display the files
-	'view_tpl'            => 'bitpackage:liberty/mime_audio_view_inc.tpl',
-	'inline_tpl'          => 'bitpackage:liberty/mime_audio_inline_inc.tpl',
-	'edit_tpl'            => 'bitpackage:liberty/mime_audio_edit_inc.tpl',
+	'view_tpl'            => 'bitpackage:liberty/mime/audio/view.tpl',
+	'inline_tpl'          => 'bitpackage:liberty/mime/audio/inline.tpl',
+	'edit_tpl'            => 'bitpackage:liberty/mime/audio/edit.tpl',
 	// url to page with options for this plugin
 	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/mime_audio.php',
 	// This should be the same for all mime plugins

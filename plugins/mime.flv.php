@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.21 2008/07/15 09:26:51 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.22 2008/09/15 10:32:07 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.21 $
+ * @version		$Revision: 1.22 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -35,9 +35,9 @@ $pluginParams = array (
 	'title'               => 'Convert Video to Flash Video',
 	'description'         => 'This plugin will use ffmpeg to convert any compatible uploaded video to flash video. It will also make the video available for viewing if you have flash installed. Please consult the README on how to use this plugin.',
 	// Templates to display the files
-	'view_tpl'            => 'bitpackage:liberty/mime_flv_view_inc.tpl',
-	'inline_tpl'          => 'bitpackage:liberty/mime_flv_inline_inc.tpl',
-	'edit_tpl'            => 'bitpackage:liberty/mime_flv_edit_inc.tpl',
+	'view_tpl'            => 'bitpackage:liberty/mime/flv/view.tpl',
+	'inline_tpl'          => 'bitpackage:liberty/mime/flv/inline.tpl',
+	'edit_tpl'            => 'bitpackage:liberty/mime/flv/edit.tpl',
 	// url to page with options for this plugin
 	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/mime_flv.php',
 	// This should be the same for all mime plugins

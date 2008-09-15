@@ -47,6 +47,6 @@
 		</div>
 	{/if}
 {else}
-	{include file="bitpackage:liberty/mime_default_inline_inc.tpl"}
+	{include file=$gLibertySystem->getMimeTemplate('inline', $smarty.const.LIBERTY_DEFAULT_MIME_HANDLER)}
 {/if}
 {/strip}

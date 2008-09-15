@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.pbase.php,v 1.5 2008/07/24 08:33:08 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.pbase.php,v 1.6 2008/09/15 10:32:07 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.5 $
+ * @version		$Revision: 1.6 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -34,7 +34,7 @@ $pluginParams = array (
 	'title'               => 'Display image from PBase',
 	'description'         => 'Use a PBase image ID to display it on your website.',
 	// Templates to display the files
-	'upload_tpl'          => 'bitpackage:liberty/mime_pbase_upload_inc.tpl',
+	'upload_tpl'          => 'bitpackage:liberty/mime/pbase/upload.tpl',
 	// url to page with options for this plugin
 	//'plugin_settings_url' => LIBERTY_PKG_URL.'admin/mime_pbase.php',
 	// This should be the same for all mime plugins

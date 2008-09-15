@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.flash.php,v 1.3 2008/07/12 11:59:45 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.flash.php,v 1.4 2008/09/15 10:32:07 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.3 $
+ * @version		$Revision: 1.4 $
  * created		Sunday Jul 02, 2006   14:42:13 CEST
  * @package		liberty	
  * @subpackage	liberty_mime_handler
@@ -33,8 +33,8 @@ $pluginParams = array(
 	'title'              => 'Macromedia Flash',
 	'description'        => 'Allow upload and viewing of flash files.',
 	// Template used when viewing the item
-	'view_tpl'           => 'bitpackage:liberty/mime_flash_view_inc.tpl',
-	'inline_tpl'         => 'bitpackage:liberty/mime_flash_inline_inc.tpl',
+	'view_tpl'           => 'bitpackage:liberty/mime/flash/view.tpl',
+	'inline_tpl'         => 'bitpackage:liberty/mime/flash/inline.tpl',
 	// This should be the same for all mime plugins
 	'plugin_type'        => MIME_PLUGIN,
 	// Set this to TRUE if you want the plugin active right after installation

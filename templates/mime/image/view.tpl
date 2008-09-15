@@ -32,5 +32,5 @@
 		{/forminput}
 	</div>
 {else}
-	{include file="bitpackage:liberty/mime_default_view_inc.tpl"}
+	{include file=$gLibertySystem->getMimeTemplate('view', $smarty.const.LIBERTY_DEFAULT_MIME_HANDLER)}
 {/if}
