@@ -73,7 +73,11 @@ function data_quote_help() {
 
 // Executable Routine
 function data_quote($data, $params) {
-	global $gLibertySystem, $gBitSmarty;
+	global $gLibertySystem, $gBitSmarty, $gBitSystem;
+
+	if( empty( $params['format_guid'] ) ) {
+		$params['format_guid'] = $gBitSystem->getConfig( 'default_format', PLUGIN_GUID_TIKIWIKI );
+	}
 
 	$rendererHash=array();
 	$rendererHash['content_id']=0;
