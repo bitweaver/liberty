@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.24 $
+ * @version  $Revision: 1.25 $
  * @package  liberty
  * @subpackage functions
  */
@@ -78,14 +78,14 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 				error_log( "Error removing structure: " . vc($gStructure->mErrors ) );
 			}
 		} elseif( $_REQUEST["action"] == 'remove' ) {
-			$gBitSystem->setBrowserTitle( 'Confirm removal of '.$gContent->getTitle() );
+			$gBitSystem->setBrowserTitle( tra('Confirm removal of ').$gContent->getTitle() );
 			$formHash['action'] = 'remove';
 			$formHash['remove'] = TRUE;
 			$formHash['structure_id'] = $_REQUEST['structure_id'];
 			$msgHash = array(
-				'label' => 'Remove content from Structure',
-				'confirm_item' => $gContent->getTitle().'<br />and any subitems',
-				'warning' => 'This will remove the content from the structure but will <strong>not</strong> modify or remove the content itself.',
+				'label' => tra('Remove content from Structure'),
+				'confirm_item' => $gContent->getTitle().tra('and any subitems'),
+				'warning' => tra('This will remove the content from the structure but will <strong>not</strong> modify or remove the content itself.'),
 			);
 			$gBitSystem->confirmDialog( $formHash,$msgHash );
 		}
