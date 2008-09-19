@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.32 $
+ * @version  $Revision: 1.33 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.32 2008/07/17 23:03:21 squareing Exp $
+// $Id: data.attachment.php,v 1.33 2008/09/19 23:36:40 laetzer Exp $
 
 /**
  * definitions
@@ -90,8 +90,15 @@ function data_attachment_help() {
 				.'<td>'.tra( "string").'<br />'.tra("(optional)").'</td>'
 				.'<td>'.tra( "Multiple styling options available: padding, margin, background, border, text-align, color, font, font-size, font-weight, font-family, align. Please view CSS guidelines on what values these settings take.").'</td>'
 			.'</tr>'
+			.'<tr class="even">'
+				.'<td>desc</td>'
+				.'<td>'.tra( "string").'<br />'.tra("(optional)").'</td>'
+				.'<td>'.tra( "The text that will be the link." ).'</td>'
+			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . "{ATTACHMENT id='13' size='small' text-align='center' link='http://www.google.com'}";
+		. tra("Example: ") . ' ' . "{ATTACHMENT id='13' size='small' text-align='center' link='http://www.google.com'}"
+		. '<br />'
+		. tra("Example: ") . ' ' . "{ATTACHMENT id='11' desc='Text, the link will be wrapped around' output=desc}";
 	return $help;
 }
 
