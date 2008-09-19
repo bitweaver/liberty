@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.33 $
+ * @version  $Revision: 1.34 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.33 2008/09/19 23:36:40 laetzer Exp $
+// $Id: data.attachment.php,v 1.34 2008/09/19 23:42:07 laetzer Exp $
 
 /**
  * definitions
@@ -77,8 +77,8 @@ function data_attachment_help() {
 			<tr class="odd">
 				<td>content_id</td>
 				<td>'.tra( 'numeric (optional)' ).'</td>
-				<td>'.tra( 'To include any content from bitweaver insert the apprpropriate numeric content id. This can include blog posts, images, wiki texts...<br />
-					Avaliable content can be viewed <a href="'.LIBERTY_PKG_URL.'list_content.php">here</a>' ).'</td>
+				<td>'.tra( 'To include any content from bitweaver insert the appropriate numeric content id. This can include blog posts, images, wiki texts...<br />
+					Available content can be viewed <a href="'.LIBERTY_PKG_URL.'list_content.php">here</a>' ).'</td>
 			</tr>
 			<tr class="even">
 				<td>output</td>
