@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.125 $
+ * @version  $Revision: 1.126 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -48,7 +48,7 @@ function tikiwiki_parse_data( &$pParseHash, &$pCommonObject ) {
 
 	static $parser;
 	if( empty( $parser ) ) {
-	    $parser = new TikiWikiParser();
+		$parser = new TikiWikiParser();
 	}
 	$ret = $parser->parseData( $pParseHash, $pCommonObject );
 
@@ -749,85 +749,6 @@ class TikiWikiParser extends BitBase {
 
 		return $data;
 	}
-
-
-	/* the following doesn't seem to be in use anywhere -- will be removed at some point - xing - Monday Jul 23, 2007   07:27:05 CEST
-
-	function parse_comment_data( $pData ) {
-		// rel=\"nofollow\" is support for Google's Preventing comment spam
-		// http://www.google.com/googleblog/2005/01/preventing-comment-spam.html
-		$pData = preg_replace("/\[([^\|\]]+)\|([^\]]+)\]/", "<a rel=\"nofollow\" href=\"$1\">$2</a>", $pData);
-
-		// Segundo intento reemplazar los [link] comunes
-		$pData = preg_replace("/\[([^\]\|]+)\]/", "<a rel=\"nofollow\" href=\"$1\">$1</a>", $pData);
-
-		// Llamar aqui a parse smileys
-		$pData = preg_replace("/---/", "<hr/>", $pData);
-
-		// Reemplazar --- por <hr/>
-		return $pData;
-	}
-
-	function get_links_nocache($data) {
-		$links = array();
-
-		if (preg_match_all("/\[([^\]]+)/", $data, $r1)) {
-		$res = array();
-
-		foreach ($r1[1] as $alink) {
-			$parts = explode('|', $alink);
-
-			if (isset($parts[1]) && $parts[1] == 'nocache') {
-			$res[] = $parts[0];
-			} else {
-			if (isset($parts[2]) && $parts[2] == 'nocache') {
-				$res[] = $parts[0];
-			}
-			}
-			// avoid caching URLs with common binary file extensions
-			$extension = substr($parts[0], -4);
-			$binary = array(
-				'.arj',
-				'.asf',
-				'.avi',
-				'.bz2',
-				'.dat',
-				'.doc',
-				'.exe',
-				'.hqx',
-				'.mov',
-				'.mp3',
-				'.mpg',
-				'.ogg',
-				'.pdf',
-				'.ram',
-				'.rar',
-				'.rpm',
-				'.rtf',
-				'.sea',
-				'.sit',
-				'.tar',
-				'.tgz',
-				'.wav',
-				'.wmv',
-				'.xls',
-				'.zip',
-				'ar.Z', // .tar.Z
-				'r.gz'  // .tar.gz
-				);
-				if (in_array($extension, $binary)) {
-				$res[] = $parts[0];
-				}
-
-		}
-
-		$links = array_unique($res);
-		}
-
-		return $links;
-	}
-	 */
-
 }
 
 ?>
