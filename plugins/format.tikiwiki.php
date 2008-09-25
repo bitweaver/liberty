@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.126 $
+ * @version  $Revision: 1.127 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -347,15 +347,6 @@ class TikiWikiParser extends BitBase {
 		// Line breaks
 		$data = preg_replace('/%%%/', '<br />', $data);
 
-		// the hotwords stuff should go in a filter
-		if ($gBitSystem->isPackageActive( 'hotwords' ) ) {
-			if( empty( $hotwordlib ) ) {
-				include_once(HOTWORDS_PKG_PATH."hotword_lib.php");
-				global $hotwordlib;
-				$words = $hotwordlib->get_hotwords();
-			}
-		}
-
 		// reinsert hash-replaced links into page
 		foreach ($noparsedlinks as $np) {
 			$data = str_replace($np["key"], $np["data"], $data);
@@ -505,16 +496,6 @@ class TikiWikiParser extends BitBase {
 			}
 		}
 
-		// 08-Jul-2003, by zaufi
-		// HotWords will be replace only in ordinal text
-		// It looks __realy__ goofy in Headers or Titles
-
-		// Get list of HotWords
-		if ( isset($hotwordlib) ) {
-			$words = $hotwordlib->get_hotwords();
-		} else {
-			$words = '';
-		}
 		// Now tokenize the expression and process the tokens
 		// Use tab and newline as tokenizing characters as well  ////
 		$lines = explode("\n", $data);
@@ -548,11 +529,6 @@ class TikiWikiParser extends BitBase {
 				// If the first character is space then
 				// change spaces for &nbsp;
 				$line = '<span style="font-family:monospace;">' . str_replace(' ', '&nbsp;', substr($line, 1)). '</span>';
-			}
-
-			// Replace Hotwords before begin
-			if ($gBitSystem->isPackageActive( 'hotwords' ) ) {
-				$line = $hotwordlib->replace_hotwords($line, $words);
 			}
 
 			// Title bars
@@ -664,12 +640,6 @@ class TikiWikiParser extends BitBase {
 
 					// If 1st char on line is '!' and its count less than 6 (max in HTML)
 					if ($litype == '!' && $hdrlevel > 0 && $hdrlevel <= 6) {
-						// Remove possible hotwords replaced :)
-						//   Umm, *why*?  Taking this out lets page
-						//   links in headers work, which can be nice.
-						//   -rlpowell
-						// $line = strip_tags($line);
-
 						// OK. Parse headers here...
 						$aclose = '';
 						$edit_link = '';
