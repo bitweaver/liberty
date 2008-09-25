@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.16 2008/07/21 08:47:23 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.17 2008/09/25 22:05:41 squareing Exp $
  * @package  liberty
  */
 
@@ -43,7 +43,7 @@ function bitlinks_prefilter( &$pData, &$pFilterHash, $pObject ) {
 	if( !empty( $protected )) {
 		foreach( $protected[0] as $i => $prot ) {
 			$key = md5( mt_rand() );
-			$pFilterHash['bitlinks']['replacements'][$key] = $protected[0][$i];;
+			$pFilterHash['bitlinks']['replacements'][$key] = $protected[0][$i];
 			$pData = str_replace( $prot, $key, $pData );
 		}
 	}
@@ -283,7 +283,7 @@ class BitLinks extends BitBase {
 		if( !empty( $protected )) {
 			foreach( $protected[0] as $i => $prot ) {
 				$key = md5( mt_rand() );
-				$replacements[$key] = $protected[1][$i];;
+				$replacements[$key] = $protected[1][$i];
 				$pData = str_replace( $prot, $key, $pData );
 			}
 		}
