@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.32 2008/07/20 13:55:29 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.33 2008/09/27 18:12:47 spiderr Exp $
  */
 
 /**
@@ -229,7 +229,7 @@ class LibertyMime extends LibertyAttachable {
 
 		// check for the required permissions to upload a file to the liberty attachments area
 		if( !empty( $uploads ) && empty( $pParamHash['no_perm_check'] )) {
-			if( !$gBitUser->hasPermission( 'p_liberty_attach_attachments' )) {
+			if( !$this->hasUserPermission( 'p_liberty_attach_attachments' )) {
 				$this->mErrors['permission'] = tra( 'You do not have permission to upload attachments.' );
 			}
 		}
