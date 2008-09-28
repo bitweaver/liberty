@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.simplepurifier.php,v 1.2 2007/07/23 20:17:34 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.simplepurifier.php,v 1.3 2008/09/28 08:45:39 laetzer Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -23,7 +23,7 @@ $pluginParams = array (
 	// help page on bitweaver org that explains this plugin
 	'help_page'                => 'Simple Purifier',
 	// brief description of the plugin
-	'description'              => 'Uses some very nieve methods to try to protect against cross site scripting (XSS) attacks. It is known not to pass XSS smoke tests but is less invasive than HTMLPurifier.',
+	'description'              => 'Uses some very niece methods to try to protect against cross site scripting (XSS) attacks. It is known not to pass XSS smoke tests but is less invasive than HTMLPurifier.',
 	// should this plugin be active or not when loaded for the first time
 	'auto_activate'            => FALSE,
 	// absolute path to this plugin
