@@ -13,7 +13,7 @@
 			{jstabs}
 				{foreach from=$pluginTypes item=plugin_type key=plugin_type_label}
 					{jstab title="$plugin_type_label"}
-						{legend legend=Plugins}
+						{legend legend=$plugin_type|capitalize|cat:" Plugins"}
 							{if $plugin_type eq 'format'}
 								{formfeedback warning="If you disable a format, content pages using that format can no longer be edited."}
 							{elseif $plugin_type eq 'storage'}
