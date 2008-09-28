@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.application.php,v 1.6 2008/09/15 10:32:07 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.application.php,v 1.7 2008/09/28 09:15:55 laetzer Exp $
  *
  * @author      xing  <xing@synapse.plus.com> 
- * @version     $Revision: 1.6 $
+ * @version     $Revision: 1.7 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -39,7 +39,7 @@ $pluginParams = array (
 	'expunge_function'   => 'mime_default_expunge',
 	// Brief description of what the plugin does
 	'title'              => 'Default App File Handler',
-	'description'        => 'This mime handler can handle any file type, creates thumbnails when possible and will make the file available as an attachment.',
+	'description'        => 'This mime handler can handle any application file type, creates thumbnails when possible and will make the file available as an attachment.',
 	// Templates to display the files
 	'view_tpl'           => 'bitpackage:liberty/mime/application/view.tpl',
 	// This should be the same for all mime plugins
