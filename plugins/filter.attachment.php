@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.attachment.php,v 1.3 2008/09/29 11:59:18 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.attachment.php,v 1.4 2008/09/29 12:18:29 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -18,7 +18,7 @@ $pluginParams = array (
 	// help page on bitweaver org that explains this plugin
 	'help_page'                => 'Attachment Tracker Filter',
 	// brief description of the plugin
-	'description'              => 'Track attachment usage in content pages. As soon as you enable it, this plugin will install a new table in your database.',
+	'description'              => 'Track attachment usage in content pages.',
 	// should this plugin be active or not when loaded for the first time
 	'auto_activate'            => FALSE,
 	// absolute path to this plugin
@@ -78,7 +78,7 @@ function attachment_filter_reqirements( $pInstall = FALSE ) {
 		);
 	}
 
-	$ret['output']['important'][] = "This plugin will install a new table in your database as soon as you enable it.<br />If you don't want to use this plugin anymore, we recommend that you remove the 'liberty_attachment_usage' table from your database after you have disabled the plugin. You need to do this manually.";
+//	$ret['output']['important'][] = "This plugin will install a new table in your database as soon as you enable it.<br />If you don't want to use this plugin anymore, we recommend that you remove the 'liberty_attachment_usage' table from your database after you have disabled the plugin. You need to do this manually.";
 	return $ret;
 }
 
