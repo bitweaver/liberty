@@ -82,7 +82,7 @@
 				<tr class="{cycle values="even,odd"}">
 					<td>{$perm.group_name}</td>
 					<td>{$perm.perm_desc} <em>({$perm.perm_name})</em></td>
-					<td align="right">
+					<td class="alignright">
 						{smartlink ititle="Remove Permission" ibiticon="icons/edit-delete" iforce="icon" action=remove content_id=$gContent->mContentId perm=$perm.perm_name group_id=$perm.group_id}
 					</td>
 				</tr>

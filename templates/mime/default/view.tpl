@@ -1,5 +1,5 @@
 {strip}
-<div class="row" style="text-align:center;">
+<div class="row aligncenter">
 	{assign var=size value=$smarty.request.size|default:medium}
 	<img title="" alt="" src="{$attachment.thumbnail_url.$size}" />
 </div>

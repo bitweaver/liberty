@@ -30,7 +30,7 @@
 <table class="data">
 	<caption>{tr}Available Content{/tr} <span class="total">[ {$listInfo.total_records} ]</span></caption>
 	<tr>
-		<th style="width:2%;">{smartlink ititle="ID" isort=content_id list_page=$listInfo.current_page ihash=$listInfo.ihash}</th>
+		<th class="width2p">{smartlink ititle="ID" isort=content_id list_page=$listInfo.current_page ihash=$listInfo.ihash}</th>
 		<th>{smartlink ititle="Title" isort=title list_page=$listInfo.current_page idefault=1 ihash=$listInfo.ihash}</th>
 		<th>{smartlink ititle="Content Type" isort=content_type_guid list_page=$listInfo.current_page ihash=$listInfo.ihash}</th>
 		<th>{smartlink ititle="Author" isort=$isort_author list_page=$listInfo.current_page ihash=$listInfo.ihash}</th>
@@ -42,12 +42,12 @@
 	</tr>
 	{foreach from=$contentList item=item}
 		<tr class="{cycle values='odd,even'}">
-			<td style="text-align:right;">{$item.content_id}</td>
+			<td class="alignright">{$item.content_id}</td>
 			<td>{$item.display_link}</td>
 			<td>{assign var=content_type_guid value=`$item.content_type_guid`}{$contentTypes.$content_type_guid}</td>
 			<td>{displayname real_name=$item.creator_real_name user=$item.creator_user}</td>
-			<td style="text-align:right;">{displayname real_name=$item.modifier_real_name user=$item.modifier_user}</td>
-			<td style="text-align:right;">{$item.last_modified|bit_short_date}</td>
+			<td class="alignright">{displayname real_name=$item.modifier_real_name user=$item.modifier_user}</td>
+			<td class="alignright">{$item.last_modified|bit_short_date}</td>
 			{if $gBitUser->hasPermission('p_liberty_view_all_status')}
 				<td>{$item.ip}</td>
 			{/if}

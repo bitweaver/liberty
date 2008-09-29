@@ -8,9 +8,9 @@
 		<table class="data" summary="List of attached files">
 			<caption>{tr}Items {if $libertyUploader && empty($gContent->mContentId)}That Will Be{/if} Attached Directly to this Content{/tr}</caption>
 			<tr>
-				<th scope="col" style="width:30%;" title="{tr}Thumbnail{/tr}">{tr}Thumbnail{/tr}</th>
-				<th scope="col" style="width:40%;" title="{tr}Inclusion Code{/tr}">{tr}Inclusion Code{/tr}</th>
-				<th scope="col" style="width:30%;" title="{tr}Actions{/tr}">{tr}Actions{/tr}</th>
+				<th scope="col" class="width30p" title="{tr}Thumbnail{/tr}">{tr}Thumbnail{/tr}</th>
+				<th scope="col" class="width40p" title="{tr}Inclusion Code{/tr}">{tr}Inclusion Code{/tr}</th>
+				<th scope="col" class="width30p" title="{tr}Actions{/tr}">{tr}Actions{/tr}</th>
 			</tr>
 
 			<tr>
@@ -27,7 +27,7 @@
 
 			{foreach from=$gContent->mStorage item=storage key=attachmentId name=atts}
 				<tr class="{cycle values="odd,even"}">
-					<td style="text-align:center;">
+					<td class="aligncenter">
 						{if $storage.is_mime}
 							{include file=$gLibertySystem->getMimeTemplate('inline',$storage.attachment_plugin_guid) display_type=storage_thumbs thumbsize=small preferences=$gContent->mStoragePrefs.$attachmentId attachment=$storage}
 						{else}
@@ -38,7 +38,7 @@
 							{/if}
 						{/if}
 					</td>
-					<td style="text-align:center;">
+					<td class="aligncenter">
 						{$storage.wiki_plugin_link}
 						{if $smarty.foreach.atts.first}
 							{formhelp note="copy this code into your edit window to embed the file into your text"}

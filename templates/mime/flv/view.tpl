@@ -1,6 +1,6 @@
 {strip}
 {if $attachment.media_url}
-	<div class="row" style="text-align:center;">
+	<div class="row aligncenter">
 		{include file="bitpackage:liberty/mime_flv_player_inc.tpl"}
 	</div>
 
@@ -14,7 +14,7 @@
 		<a href="{$attachment.display_url}&size=original">{tr}Original{/tr}</a>&nbsp;&bull;&nbsp;
 	</div>
 {elseif $attachment.status.processing}
-	<div class="row" style="text-align:center;">
+	<div class="row aligncenter">
 		<a href="{$attachment.download_url}">
 			{assign var=size value=$gBitSystem->getConfig('treasury_item_view_thumb')}
 			<img src="{$attachment.thumbnail_url.$size}{$refresh}" alt="{$gContent->getTitle()}" title="{$gContent->getTitle()}" />
@@ -23,7 +23,7 @@
 	</div>
 	{formfeedback warning="{tr}The video is being processed. please try to reload in a couple of minutes.{/tr}"}
 {elseif $attachment.status.error}
-	<div class="row" style="text-align:center;">
+	<div class="row aligncenter">
 		<a href="{$attachment.download_url}">
 			{assign var=size value=$gBitSystem->getConfig('treasury_item_view_thumb')}
 			<img src="{$attachment.thumbnail_url.$size}{$refresh}" alt="{$gContent->getTitle()}" title="{$gContent->getTitle()}" />

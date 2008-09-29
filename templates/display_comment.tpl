@@ -1,8 +1,8 @@
 {strip}
 {if $comments_style eq 'threaded' && $comment.level}
-	<div style="margin-left:20px">
+	<div class="marginleft20px">
 {else}
-	<div style="margin-left:0px">
+	<div class="marginleft0">
 {/if}
 	<div class="post" id="comment_{$comment.content_id}">
 		<div class="floaticon">

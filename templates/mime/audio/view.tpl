@@ -1,6 +1,6 @@
 {strip}
 {if $attachment.media_url}
-	<div class="row" style="text-align:center;">
+	<div class="row aligncenter">
 		{include file="bitpackage:liberty/mime_audio_player_inc.tpl"}
 	</div>
 {/if}

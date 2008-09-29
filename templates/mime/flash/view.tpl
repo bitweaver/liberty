@@ -1,5 +1,5 @@
 {strip}
-<div class="row" style="text-align:center;">
+<div class="row aligncenter">
 	{* this should really get a max h or w and base size on the bounding box *}
 	{assign var=height value=$attachment.preferences.height}
 	{assign var=width value=$attachment.preferences.width}

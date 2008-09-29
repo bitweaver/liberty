@@ -25,12 +25,12 @@
 							<table class="panel">
 								<caption>{tr}Plugin Type: {$plugin_type_label}{/tr}</caption>
 								<tr>
-									<th style="width:85%;">{tr}Plugin{/tr} <small>[guid]</small></th>
+									<th class="width85p">{tr}Plugin{/tr} <small>[guid]</small></th>
 									{if $plugin_type eq 'format'}
-										<th style="width:5%;">{tr}Default{/tr}</th>
-										<th style="width:10%;">{tr}Active{/tr}</th>
+										<th class="width5p">{tr}Default{/tr}</th>
+										<th class="width10p">{tr}Active{/tr}</th>
 									{else}
-										<th style="width:15%;">{tr}Active{/tr}</th>
+										<th class="width15p">{tr}Active{/tr}</th>
 									{/if}
 								</tr>
 
@@ -53,7 +53,7 @@
 												{/if}
 											</td>
 											{if $plugin_type eq 'format'}
-												<td align="center">
+												<td class="aligncenter">
 													{if $plugin.is_active == 'y'}{html_radios values=$guid name="default_format" checked=$gBitSystem->getConfig('default_format')}{/if}
 												</td>
 											{/if}

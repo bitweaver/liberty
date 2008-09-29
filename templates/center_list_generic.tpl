@@ -40,7 +40,7 @@
 				<caption>{tr}{if $contentType}{$contentType}s{else}Content{/if} Listing{/tr} <span class="total">[ {$listInfo.total_records} ]</span></caption>
 				<tr>
 				{counter name=cols start=-1 print=false}
-					<th style="width:2%;">{smartlink ititle="ID" isort=content_id list_page=$listInfo.current_page ihash=$listInfo.ihash}</th>
+					<th class="width2p">{smartlink ititle="ID" isort=content_id list_page=$listInfo.current_page ihash=$listInfo.ihash}</th>
 					{counter name=cols assign=cols print=false}
 					<th>{smartlink ititle="Title" isort=title list_page=$listInfo.current_page idefault=1 ihash=$listInfo.ihash}</th>
 					{counter name=cols assign=cols print=false}
@@ -59,20 +59,22 @@
 				</tr>
 				{foreach from=$contentList item=item}
 					<tr class="{cycle values='odd,even'}">
-						<td style="text-align:center;">{$item.content_id}</td>
+						<td class="aligncenter">{$item.content_id}</td>
 						<td>{$item.display_link}</td>
 						<td>{assign var=content_type_guid value=`$item.content_type_guid`}{$contentTypes.$content_type_guid}</td>
 						<td>{displayname real_name=$item.creator_real_name user=$item.creator_user}</td>
 						<td>{displayname real_name=$item.modifier_real_name user=$item.modifier_user}</td>
 						<td>{$item.last_modified|bit_short_date}</td>
 						{if $gBitUser->hasPermission('p_liberty_view_all_status')}
-							<td style="text-align:center;">{$item.ip}</td>
+							<td class="aligncenter">{$item.ip}</td>
 						{/if}
 					</tr>
 				{foreachelse}
-					<tr class="norecords"><td style="text-align:center;" colspan="{$cols}">
-						{tr}No records found{/tr}
-					</td></tr>
+					<tr class="norecords">
+						<td class="aligncenter" colspan="{$cols}">
+							{tr}No records found{/tr}
+						</td>
+					</tr>
 				{/foreach}
 			</table>
 		{/form}
