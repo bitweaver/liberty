@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.attachment.php,v 1.2 2008/09/28 09:00:30 laetzer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.attachment.php,v 1.3 2008/09/29 11:59:18 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -78,11 +78,7 @@ function attachment_filter_reqirements( $pInstall = FALSE ) {
 		);
 	}
 
-//	if( $gLibertySystem->isPluginActive( PLUGIN_GUID_FILTERATTACHMENT )) {
-//			$ret['output']['warning'][] = "If you don't want to use this plugin anymore, we recommend that you remove the 'liberty_attachment_usage' table from your database. You need to do this manually.";
-//	} else {
-//		$ret['output']['important'][] = "This plugin will install a new table in your database as soon as you enable it.";
-//	}
+	$ret['output']['important'][] = "This plugin will install a new table in your database as soon as you enable it.<br />If you don't want to use this plugin anymore, we recommend that you remove the 'liberty_attachment_usage' table from your database after you have disabled the plugin. You need to do this manually.";
 	return $ret;
 }
 
