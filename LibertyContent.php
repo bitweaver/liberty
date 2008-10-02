@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.370 2008/08/23 19:36:27 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.371 2008/10/02 15:30:25 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1357,6 +1357,34 @@ class LibertyContent extends LibertyBase {
 			$gBitSystem->fatalPermission( $this->mEditContentPerm );
 		}
 	}
+
+
+	/**
+	* Determine if current user has the ability to craete this type of content
+	*
+	* @return bool True if user has this type of content administration permission
+	*/
+	function hasCreatePermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
+		return( $this->hasUserPermission( $this->mCreateContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ) );
+	}
+
+
+	// === verifyCreatePermission
+	/**
+	* Determine if current user has the ability to create this type of content
+	* Note this will always return FALSEif the content isValid
+	*
+	* @return bool True if user has this type of content administration permission
+	**/
+	function verifyCreatePermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
+		global $gBitSystem;
+		if( !$this->isValid() && $this->hasCreatePermission( $pVerifyAccessControl, $pCheckGlobalPerm ) ) {
+			return TRUE;
+		} else {
+			$gBitSystem->fatalPermission( $this->mCreateContentPerm );
+		}
+	}
+
 
 	/**
 	* Determine if current user has the ability to view this type of content
