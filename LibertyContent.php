@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.372 2008/10/02 15:51:00 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.373 2008/10/02 16:17:15 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1249,13 +1249,17 @@ class LibertyContent extends LibertyBase {
 	 * @param string Name of the permission to check
 	 * @param string Message if permission denigned
 	 */
-	function verifyPermission( $pPermName, $pFatalMessage = NULL ) {
+	function verifyUserPermission( $pPermName, $pFatalMessage = NULL ) {
 		$ret = TRUE;
 		if( $this->isValid() && !$this->hasUserPermission( $pPermName ) ) {
 			global $gBitSystem;
 			$gBitSystem->fatalPermission( $pPermName, $pFatalMessage );
 		}
 		return $ret;
+	}
+
+	function verifyPermission($pPermName, $pFatalMessage = NULL ) {
+		deprecated( 'You package is calling the deprecated LibertyContent::verifyPermission() method. Please update your code to use LibertyContent::verifyUserPermission' );
 	}
 
 	/**
