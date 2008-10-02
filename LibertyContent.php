@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.373 2008/10/02 16:17:15 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.374 2008/10/02 20:32:55 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1258,8 +1258,9 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
-	function verifyPermission($pPermName, $pFatalMessage = NULL ) {
+	function verifyPermission( $pPermName, $pFatalMessage = NULL ) {
 		deprecated( 'You package is calling the deprecated LibertyContent::verifyPermission() method. Please update your code to use LibertyContent::verifyUserPermission' );
+		return $this->verifyUserPermission( $pPermName, $pFatalMessage );
 	}
 
 	/**
