@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.374 2008/10/02 20:32:55 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.375 2008/10/03 16:34:49 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -763,7 +763,7 @@ class LibertyContent extends LibertyBase {
 		} elseif( $this->isValid() && @$this->verifyId( $this->mInfo['user_id'] ) ) {
 			$user_id = $this->mInfo['user_id'];
 		}
-		return( @BitBase::verifyId( $user_id ) && $user_id == $gBitUser->mUserId );
+		return( @BitBase::verifyId( $user_id ) && $user_id != ANONYMOUS_USER_ID && $user_id == $gBitUser->mUserId );
 	}
 
 
