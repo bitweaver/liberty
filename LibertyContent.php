@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.375 2008/10/03 16:34:49 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.376 2008/10/03 17:20:16 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1359,7 +1359,7 @@ class LibertyContent extends LibertyBase {
 	*
 	* @return bool True if user has this type of content administration permission
 	*/
-	function hasEditPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
+	function hasEditPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
 		return( $this->hasUserPermission( $this->mEditContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ) );
 	}
 
@@ -1371,7 +1371,7 @@ class LibertyContent extends LibertyBase {
 	* @return TRUE if permitted, method will fatal out if not
 	* @access public
 	*/
-	function verifyEditPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
+	function verifyEditPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
 		global $gBitSystem;
 		if( $this->hasEditPermission( $pVerifyAccessControl, $pCheckGlobalPerm ) ) {
 			return TRUE;
