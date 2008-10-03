@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.376 2008/10/03 17:20:16 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.377 2008/10/03 20:22:34 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -52,47 +52,48 @@ define( 'LIBERTY_SPLIT_REGEX', "!\.{3}split\.{3}[\t ]*\n?!" );
  */
 class LibertyContent extends LibertyBase {
 	/**
-	* Content Id if an object has been loaded
-	* @public
-	*/
+	 * Content Id if an object has been loaded
+	 * @public
+	 */
 	var $mContentId;
+
 	/**
-	* If this content is being viewed within a structure
-	* @public
-	*/
+	 * If this content is being viewed within a structure
+	 * @public
+	 */
 	var $mStructureId;
+
 	/**
-	* Content type GUID for this LibertyContent object
-	* @public
-	*/
+	 * Content type GUID for this LibertyContent object
+	 * @public
+	 */
 	var $mContentTypeGuid;
+
 	/**
-	* Content type hash for this LibertyContent object
-	* @public
-	*/
+	 * Content type hash for this LibertyContent object
+	 * @public
+	 */
 	var $mType;
-	/**
-	* Permissions hash specific to this LibertyContent object
-	* initialize to null, loadPermissions will set to empty array if nothing present, and this is used to prevent subsequent SQL statements
-	* @public
-	*/
-	var $mPerms = NULL;
+
 	/**
 	 *Permissions hash specific to the user accessing this LibertyContetn object
 	 * @public
 	 */
 	var $mUserContentPerms;
+
 	/**
-	* Preferences hash specific to this LibertyContent object - accessed via getPreference/storePreference
-	* @private
-	*/
+	 * Preferences hash specific to this LibertyContent object - accessed via getPreference/storePreference
+	 * @private
+	 */
 	var $mPrefs = NULL;
+
 	/**
-	* Control permission specific to this LibertyContent type
-	* @private
-	*/
+	 * Control permission specific to this LibertyContent type
+	 * @private
+	 */
 	var $mViewContentPerm;
 	var $mEditContentPerm;
+	var $mCreateContentPerm;
 	var $mExpungeContentPerm;
 	var $mAdminContentPerm;
 
@@ -102,11 +103,14 @@ class LibertyContent extends LibertyBase {
 	function LibertyContent () {
 		LibertyBase::LibertyBase();
 		$this->mPrefs = NULL; // init to NULL so getPreference can determine if a load is necessary
-		$this->mPerms = NULL; // init to NULL so loadPermissions can determine if a sql call is necessary
 
 		// NOTE: we are not assigning anything to mViewContentPerm. if this is empty, we will return TRUE in hasViewPermission()
 		if( empty( $this->mEditContentPerm )) {
 			$this->mEditContentPerm = 'p_admin_content';
+		}
+
+		if( empty( $this->mCreateContentPerm )) {
+			$this->mCreateContentPerm = 'p_admin_content';
 		}
 
 		if( empty( $this->mExpungeContentPerm )) {
@@ -119,15 +123,17 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	* Assume a derived class has joined on the liberty_content table, and loaded it's columns already.
-	*/
-	function load($pContentId = NULL) {
-		if( !empty( $this->mInfo['content_type_guid'] ) ) {
+	 * load Assume a derived class has joined on the liberty_content table, and loaded it's columns already.
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	function load() {
+		if( !empty( $this->mInfo['content_type_guid'] )) {
 			global $gLibertySystem, $gBitSystem, $gBitUser;
 			$this->loadPreferences();
-			$this->loadPermissions();
 			$this->mInfo['content_type'] = $gLibertySystem->mContentTypes[$this->mInfo['content_type_guid']];
-			$this->invokeServices('content_load_function', $this);
+			$this->invokeServices( 'content_load_function', $this );
 		}
 	}
 
@@ -465,7 +471,7 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	 * storeHistory will store the previous data into the history table for reference
+	 * storeAliases will store aliases to a given content item
 	 * 
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
@@ -512,7 +518,7 @@ class LibertyContent extends LibertyBase {
 		}
 		return( $ret );
 	}
-	
+
 	/**
 	* Get count of the number of historic records for the page
 	* @return count
@@ -1068,17 +1074,53 @@ class LibertyContent extends LibertyBase {
 
 	// -------------------------------- Content Permission Funtions
 
+	/**
+	 * Check to see if the loaded content has individually assigned permissions
+	 * 
+	 * @access public
+	 * @return Number of custom assigned permissions set for the loaded content item
+	 */
+	function hasUserPermissions() {
+		$ret = FALSE;
+		if( $this->isValid() ) {
+			$ret = $this->mDb->getOne( "SELECT COUNT(`perm_name`) FROM `".BIT_DB_PREFIX."liberty_content_permissions` WHERE `content_id` = ?", array( $this->mContentId ));
+		}
+		return $ret;
+	}
+
+	/**
+	 * getContentPermissionsSql 
+	 * 
+	 * @param array $pPermName 
+	 * @param array $pSelectSql 
+	 * @param array $pJoinSql 
+	 * @param array $pWhereSql 
+	 * @param array $pBindVars 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function getContentPermissionsSql( $pPermName, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
 		global $gBitUser;
 		$pJoinSql .= "
 			LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcperm ON (lc.`content_id`=lcperm.`content_id`)
 			LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON (ugm.`group_id`=lcperm.`group_id`) ";
- 		$pWhereSql .= " OR (lcperm.perm_name=? AND (ugm.user_id=? OR ugm.user_id=?)) ";
- 		$pBindVars[] = $pPermName;
- 		$pBindVars[] = $gBitUser->mUserId;
- 		$pBindVars[] = ANONYMOUS_USER_ID;
+		$pWhereSql .= " OR (lcperm.perm_name=? AND (ugm.user_id=? OR ugm.user_id=?)) ";
+		$pBindVars[] = $pPermName;
+		$pBindVars[] = $gBitUser->mUserId;
+		$pBindVars[] = ANONYMOUS_USER_ID;
 	}
 
+	/**
+	 * getContentListPermissionsSql 
+	 * 
+	 * @param array $pPermName 
+	 * @param array $pSelectSql 
+	 * @param array $pJoinSql 
+	 * @param array $pWhereSql 
+	 * @param array $pBindVars 
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
 	function getContentListPermissionsSql( $pPermName, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
 		global $gBitUser;
 		$pJoinSql .= "
@@ -1144,9 +1186,8 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	 * Load all permissions assigned to a given object. This is not for general consumption.
-	 * This funtions sole purpose is for displaying purposes. if you want to get all permissions
-	 * assigned to a given object use LibertyContent::loadPermissions();
+	 * Load all permissions assigned to a given object.
+	 * This function is mainly used to fetch a list of custom permissions of a given content item.
 	 * 
 	 * @access public
 	 */
@@ -1192,7 +1233,7 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	 * Expunge Object Permissions 
+	 * Expunge Content Permissions 
 	 * 
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
@@ -1202,43 +1243,6 @@ class LibertyContent extends LibertyBase {
 		if( $this->isValid() ) {
 			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_permissions` WHERE `content_id` = ?";
 			$ret = $this->mDb->query( $query, array( $this->mContentId ));
-		}
-		return $ret;
-	}
-
-	/**
-	 * Check permissions for the object that has been loaded against the permission database
-	 * 
-	 * @access public
-	 * @return TRUE if permissions were inserted into $this->mPerms
-	 */
-	function loadPermissions( $pForce = FALSE ) {
-		if( $pForce ) {
-			$this->mPerms = NULL;
-		}
-		if( $this->isValid() && is_null( $this->mPerms ) ) {
-			$query = "
-				SELECT lcperm.`perm_name`, lcperm.`is_revoked`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
-				FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
-					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
-					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
-				WHERE lcperm.`content_id` = ?";
-			$bindVars = array( $this->mContentId );
-			$this->mPerms = $this->mDb->getAssoc( $query, $bindVars );
-		}
-		return( count( $this->mPerms ));
-	}
-
-	/**
-	 * Check to see if the loaded content has individually assigned permissions
-	 * 
-	 * @access public
-	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
-	 */
-	function hasAssignedPermissions() {
-		$ret = FALSE;
-		if( $this->isValid() ) {
-			$ret = $this->loadPermissions();
 		}
 		return $ret;
 	}
@@ -1494,7 +1498,7 @@ class LibertyContent extends LibertyBase {
 			}
 
 			$this->mUserContentPerms = array_merge( $defaultPerms, $nonDefaultPerms );
-			
+
 			$this->invokeServices( 'content_user_perms_function' );
 		}
 
@@ -3304,5 +3308,24 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
+	// ==================== deprecated crud - will be removed soon ====================
+	function loadPermissions( $pForce = FALSE ) {
+		deprecated( "This method is deprecated due to it's faulty output. Please use LibertyContent::getContentPermissionsList() if you need a list of content permissions instead." );
+		if( $pForce ) {
+			$this->mPerms = NULL;
+		}
+
+		if( $this->isValid() && is_null( $this->mPerms ) ) {
+			$query = "
+				SELECT lcperm.`perm_name`, lcperm.`is_revoked`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
+				FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
+					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
+				WHERE lcperm.`content_id` = ?";
+			$bindVars = array( $this->mContentId );
+			$this->mPerms = $this->mDb->getAssoc( $query, $bindVars );
+		}
+		return( count( $this->mPerms ));
+	}
 }
 ?>

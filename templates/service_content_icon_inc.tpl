@@ -11,7 +11,7 @@
 	</a>
 {/if}
 {if $gBitUser->hasPermission( 'p_liberty_assign_content_perms' ) and $serviceHash.content_id}
-	{if $gContent->mPerms} {* don't think there is a serviceHash way of working out if there are individual permissions set *}
+	{if $gContent->hasUserPermissions()}
 		{assign var=perm_icon value="icons/emblem-readonly"}
 	{else}
 		{assign var=perm_icon value="icons/emblem-shared"}
