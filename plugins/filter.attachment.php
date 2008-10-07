@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.attachment.php,v 1.4 2008/09/29 12:18:29 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.attachment.php,v 1.5 2008/10/07 20:13:44 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -101,10 +101,11 @@ function attachment_filter( &$pString, &$pFilterHash ) {
 			for( $i = 0; $i < $count; $i++ ) {
 				// if we included this file using {image} or {file} we get the correct attachment_id of the file
 				if( $matches[1][$i] != 'attachment' ) {
-					$attachment_id = $gBitSystem->mDb->getOne( "SELECT `attachment_id` FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `content_id` = ?", array( $matches[2][$i] ));
+					$whereSql = "WHERE `content_id` = ?";
 				} else {
-					$attachment_id = $matches[2][$i];
+					$whereSql = "WHERE `attachment_id` = ?";
 				}
+				$attachment_id = $gBitSystem->mDb->getOne( "SELECT `attachment_id` FROM `".BIT_DB_PREFIX."liberty_attachments` $whereSql", array( $matches[2][$i] ));
 
 				if( @BitBase::verifyId( $attachment_id )) {
 					$store = array(
