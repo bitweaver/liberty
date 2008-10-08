@@ -6,11 +6,18 @@
 	{/forminput}
 </div>
 
-{if $attachment.download_url}
+{if $display && $attachment.display_url}
+	<div class="row">
+		{formlabel label="View" for=""}
+		{forminput}
+			<a href="{$attachment.display_url}">{$attachment.filename}</a>
+		{/forminput}
+	</div>
+{elseif $attachment.download_url}
 	<div class="row">
 		{formlabel label="Download" for=""}
 		{forminput}
-			<a href="{$attachment.download_url}">{$attachment.filename}</a> <small>({$attachment.file_size|display_bytes})</small>
+			<a href="{$attachment.download_url}">{$attachment.filename}</a> <small>({$attachment.mime_type} &bull; {$attachment.file_size|display_bytes})</small>
 		{/forminput}
 	</div>
 {/if}
@@ -22,5 +29,5 @@
 	{/forminput}
 </div>
 
-{attachhelp legend=1 hash=$attachment}
+{attachhelp legend=1 nohelp=$nohelp hash=$attachment}
 {/strip}
