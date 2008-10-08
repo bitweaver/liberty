@@ -3,7 +3,7 @@
  * attachment_browser
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage functions
  */
@@ -36,12 +36,6 @@ if( $gBitUser->isAdmin() ) {
 } else {
 	$listHash['user_id'] = $gBitUser->mUserId;
 }
-
-if( @BitBase::verifyId( $_REQUEST['attachment_id'] )) {
-	$attachmentUsage = $gContent->scanForAttchmentUse( $_REQUEST['attachment_id'] );
-	$gBitSmarty->assign( 'attachmentUsage', $attachmentUsage );
-}
-
 $attachments = $gContent->getAttachmentList( $listHash );
 
 $gBitSmarty->assign( 'listInfo', $listHash['listInfo'] );
