@@ -23,8 +23,6 @@
 			{/form}
 		{/if}
 
-		{formfeedback warning="Checking for attachment usage in content can take a while depending on the amount of content on this site - if there is a lot of content, it might not be possible at all."}
-
 		{if $smarty.request.attachment_id}
 			<ul class="data" id="usage">
 				<li>{tr}Attachment ID {$smarty.request.attachment_id} is used in the following content{/tr}:
@@ -46,28 +44,19 @@
 		<table class="data">
 			<caption>{tr}Liberty Attachments{/tr}</caption>
 			<tr>
-				<th style="width:1px"></th>
+				<th class="width1p"></th>
 				<th>{tr}Details{/tr}</th>
-				<th>{tr}Actions{/tr}</th>
 			</tr>
 			{foreach from=$attachments item=attachment}
 				<tr class="{cycle values="odd,even"}">
 					<td style="text-align:center">
-						<a href="{$attachment.source_url}">
+						<a href="{$attachment.display_url}">
 							<img src="{$attachment.thumbnail_url.small}" alt="{$attachment.filename}" title="{tr}Attachment Thumbnail{/tr}" />
 						</a>
 					</td>
 
 					<td>
-						{tr}Owner{/tr}: {displayname hash=$attachment}
-						<br />
-						{tr}Size{/tr}: {$attachment.file_size|display_bytes}
-						<br />
-						{tr}Wiki plugin link{/tr}: {$attachment.wiki_plugin_link}
-					</td>
-
-					<td class="actionicon">
-						{smartlink ititle="Check Attachment Usage" ibiticon="icons/format-justify-fill" attachment_id=$attachment.attachment_id}
+						{include file="bitpackage:liberty/mime_meta_inc.tpl" display=1 nohelp=1}
 					</td>
 				</tr>
 			{foreachelse}
