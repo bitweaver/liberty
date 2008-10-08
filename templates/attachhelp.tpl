@@ -1,7 +1,9 @@
 {if $gBitUser->hasPermission( 'p_liberty_attach_attachments' )}
 	{capture name=input}
 		<input id="attachhelp" class="attachhelp" size="32" value="{$attachhelp}" />
-		{formhelp note="String to include this file as an attachment in a wiki page, blog post, article etc."}
+		{if !$nohelp}
+			{formhelp note="String to include this file as an attachment in a wiki page, blog post, article etc."}
+		{/if}
 	{/capture}
 
 	{if $legend}
