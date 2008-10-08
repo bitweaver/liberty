@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.33 2008/09/27 18:12:47 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.34 2008/10/08 17:40:47 squareing Exp $
  */
 
 /**
@@ -45,8 +45,10 @@ class LibertyMime extends LibertyAttachable {
 			// load up the content
 			LibertyContent::load( $contentId );
 
-			// load the storage preferences if there are any
-			$this->loadAttachmentPreferences();
+			// don't loadAttachmentPreferences() when we are forcing the installer since it breaks the login process before 2.1.0-beta
+			if( !defined( 'FORCE_INSTALLER' ) && !defined( 'BIT_INSTALL' )) {
+				$this->loadAttachmentPreferences();
+			}
 
 			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` la WHERE la.`content_id`=? ORDER BY la.`pos` ASC, la.`attachment_id` ASC";
 			if( $result = $this->mDb->query( $query,array( (int)$contentId ))) {
