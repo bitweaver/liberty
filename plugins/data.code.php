@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.22 $
+ * @version  $Revision: 1.23 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.22 2008/06/01 09:41:59 squareing Exp $
+// $Id: data.code.php,v 1.23 2008/10/10 11:36:13 squareing Exp $
 
 /**
  * definitions
@@ -25,18 +25,18 @@
 define( 'PLUGIN_GUID_DATACODE', 'datacode' );
 global $gLibertySystem;
 $pluginParams = array (
-	'tag' => 'CODE',
+	'tag'           => 'CODE',
 	'auto_activate' => TRUE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_code',
-	'title' => 'Code',
-	'help_page' => 'DataPluginCode',
-	'description' => tra("Displays the Source Code Snippet between {Code} blocks."),
+	'title'         => 'Code',
+	'help_page'     => 'DataPluginCode',
+	'description'   => tra( "Displays the Source Code Snippet between {code} blocks." ),
 	'help_function' => 'data_code_help',
-	'syntax' => " {CODE source= num= }". tra("Sorce Code Snippet") . "{/code}",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.code.php',
-	'security' => 'registered',
-	'plugin_type' => DATA_PLUGIN
+	'syntax'        => "{code source= num= }". tra( "Sorce Code Snippet" ) . "{/code}",
+	'path'          => LIBERTY_PKG_PATH.'plugins/data.code.php',
+	'security'      => 'registered',
+	'plugin_type'   => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACODE, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATACODE );
