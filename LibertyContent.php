@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.378 2008/10/03 20:46:08 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.379 2008/10/12 07:51:53 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2556,7 +2556,7 @@ class LibertyContent extends LibertyBase {
 	 * @return string Formated data string
 	 */
 	function parseData( $pMixed=NULL, $pFormatGuid=NULL ) {
-		global $gLibertySystem, $gBitSystem;
+		global $gLibertySystem, $gBitSystem, $gBitUser;
 
 		// get the data into place
 		if( empty( $pMixed ) && !empty( $this->mInfo['data'] ) ) {
@@ -2574,6 +2574,7 @@ class LibertyContent extends LibertyBase {
 		$parseHash['content_id']      = !empty( $parseHash['content_id'] )      ? $parseHash['content_id']      : NULL;
 		$parseHash['cache_extension'] = !empty( $parseHash['cache_extension'] ) ? $parseHash['cache_extension'] : NULL;
 		$parseHash['format_guid']     = !empty( $parseHash['format_guid'] )     ? $parseHash['format_guid']     : $pFormatGuid;
+		$parseHash['user_id']         = !empty( $parseHash['user_id'] )         ? $parseHash['user_id']         : $gBitUser->mUserId;
 
 		// Ensure we have a format
 		if( empty( $parseHash['format_guid'] )) {
