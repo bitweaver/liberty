@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.34 2008/10/08 17:40:47 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.35 2008/10/13 18:41:13 squareing Exp $
  */
 
 /**
@@ -46,7 +46,7 @@ class LibertyMime extends LibertyAttachable {
 			LibertyContent::load( $contentId );
 
 			// don't loadAttachmentPreferences() when we are forcing the installer since it breaks the login process before 2.1.0-beta
-			if( !defined( 'FORCE_INSTALLER' ) && !defined( 'BIT_INSTALL' )) {
+			if( !defined( 'INSTALLER_FORCE' ) && !defined( 'LOGIN_VALIDATE' )) {
 				$this->loadAttachmentPreferences();
 			}
 
