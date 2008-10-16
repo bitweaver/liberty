@@ -24,6 +24,11 @@ var structureAddResult = function (response) {
 <div id="structureaddresult"></div>
 
 <div class="structurecontent">
+
+	<div class="header">
+		<h1>{tr}Structure Content{/tr}</h1>
+	</div>
+
 	{form legend="Add Content" id="structureaddform"}
 		<input type="hidden" name="structure_id" value="{$structureInfo.structure_id}" />
 		<input type="hidden" name="tab" value="content" />
@@ -34,10 +39,10 @@ var structureAddResult = function (response) {
 				{forminput}
 					<select name="after_ref_id" id="after_ref_id">
 						{section name=iy loop=$subtree}
-							<option value="{$subtree[iy].structure_id}" {if $insert_after eq $subtree[iy].structure_id}selected="selected"{/if}>{$subtree[iy].pos} - {$subtree[iy].title|escape} {$insert_after} {$subtree[iy].structure_id}</option>
+							<option value="{$subtree[iy].structure_id}" {if $insert_after eq $subtree[iy].structure_id}selected="selected"{/if}>{$subtree[iy].pos} - {$subtree[iy].title|escape}, {$insert_after}, {$subtree[iy].structure_id}</option>
 						{/section}
 					</select>
-					{formhelp note=""}
+					{formhelp note="Format: Position in tree - Title of Content, insert after, structure_id"}
 				{/forminput}
 			</div>
 		{/if}
@@ -53,6 +58,7 @@ var structureAddResult = function (response) {
 		</div>
 
 		<div class="row">
+			{formlabel label="Content type" for="content_type_guid"}
 			{forminput}
 				{html_options onchange="submit();" options=$contentTypes name=content_type_guid selected=$contentSelect}
 			{/forminput}
@@ -62,23 +68,48 @@ var structureAddResult = function (response) {
 			{/forminput *}
 
 			{forminput}
-				<ol class="data" start="{$smarty.request.offset|default:1}">
-					{section loop=$contentListHash name=cx}
-						<li class="item {cycle values="even,odd"}" id="{$contentListHash[cx].content_id}li">
-							<div class="floaticon">
-								<a style="display:none" id="{$contentListHash[cx].content_id}remove" href="#" onclick="submitStructure($('structureaddform'),{$contentListHash[cx].content_id},'remove')">{biticon ipackage="icons" iname="list-add" iexplain="Add"}</a>
-								<a id="{$contentListHash[cx].content_id}add" href="#" onclick="submitStructure($('structureaddform'),{$contentListHash[cx].content_id},'add')">{biticon ipackage="icons" iname="list-add" iexplain="Add"}</a>
-								<a target="_new" href="{$contentListHash[cx].display_url}">{biticon ipackage="icons" iname="zoom-best-fit" iexplain="View"}</a>
-							</div>
-							<h2>{$contentListHash[cx].title}</h2>
-							<div id="{$contentListHash[cx].content_id}item">
-								{$contentListHash[cx].content_description} {tr}by{/tr} {displayname hash=$contentListHash[cx]}
-								{if $contentListHash[cx].thumbnail_url}<div><img src="{$contentListHash[cx].thumbnail_url}" class="thumb" /></div>{/if}
-							</div>
-							<span id="{$contentListHash[cx].content_id}feedback"></span>
-						</li>
-					{/section}
-				</ol>
+				<table class="data">
+					<thead>
+						<tr>
+							<th></th>
+							<th>{tr}Title{/tr}</th>
+							<th>{tr}Type{/tr}</th>
+							<th>{tr}Author{/tr}</th>
+						</tr>
+					</thead>
+					<tbody>
+						{section loop=$contentListHash name=cx}
+							<tr class="item {cycle values="even,odd"}" id="{$contentListHash[cx].content_id}li">
+								<td>
+									<a style="display:none" id="{$contentListHash[cx].content_id}remove" href="#" onclick="submitStructure($('structureaddform'),{$contentListHash[cx].content_id},'remove')">
+										{biticon ipackage="icons" iname="list-add" iexplain="Add"}
+									</a>
+									&nbsp;
+									<a id="{$contentListHash[cx].content_id}add" href="#" onclick="submitStructure($('structureaddform'),{$contentListHash[cx].content_id},'add')">
+										{biticon ipackage="icons" iname="list-add" iexplain="Add to structure"}
+									</a>
+									&nbsp;
+									<a target="_new" href="{$contentListHash[cx].display_url}">
+										{biticon ipackage="icons" iname="zoom-best-fit" iexplain="View (in new window)"}
+									</a>
+								</td>
+								<td class="title">
+									{if $contentListHash[cx].thumbnail_url}
+										<img class="thumb" src="{$contentListHash[cx].thumbnail_url}" alt="{tr}Thumbnail{/tr}" />
+									{/if}
+									{$contentListHash[cx].title}
+									<span id="{$contentListHash[cx].content_id}feedback"></span>
+								</td>
+								<td class="description" id="{$contentListHash[cx].content_id}item">
+									{$contentListHash[cx].content_description}
+								</td>
+								<td class="author">
+								 	{displayname hash=$contentListHash[cx]}
+								</td>
+							</tr>
+						{/section}
+					</tbody>
+				</table>
 			{/forminput}
 		</div>
 

@@ -1,9 +1,9 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/add_structure_content.php,v 1.7 2008/07/29 18:03:36 lsces Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/add_structure_content.php,v 1.8 2008/10/16 10:31:12 laetzer Exp $
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage functions
  */
@@ -42,7 +42,7 @@ if( $gBitThemes->isAjaxRequest() ) {
 	foreach( $contentList as $cItem ) {
 		$cList[$contentTypes[$cItem['content_type_guid']]][$cItem['content_id']] = $cItem['title'].' [id: '.$cItem['content_id'].']';
 	}
-	$gBitSmarty->assign_by_ref( 'contentListHash', $contentList['data'] );
+	$gBitSmarty->assign_by_ref( 'contentListHash', $contentList );
 	$gBitSmarty->assign( 'contentList', $cList );
 	$gBitSmarty->assign( 'contentSelect', $contentSelect );
 	$gBitSmarty->assign( 'contentTypes', $contentTypes );
