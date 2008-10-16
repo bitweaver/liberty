@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.14 2008/09/15 10:32:07 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.15 2008/10/16 09:47:51 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.14 $
+ * @version		$Revision: 1.15 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -181,7 +181,7 @@ function mime_image_store_exif_data( $pFileHash ) {
 		$upload = &$pFileHash['upload'];
 	}
 
-	if( @BitBase::verifyId( $pFileHash['attachment_id'] ) && function_exists( 'exif_read_data' ) && !empty( $upload['source_file'] ) && is_file( $upload['source_file'] ) && preg_match( "#/(jpeg|tiff)#i", $upload['type'] )) {
+	if( @BitBase::verifyId( $pFileHash['attachment_id'] ) && function_exists( 'exif_read_data' ) && !empty( $upload['source_file'] ) && is_file( $upload['source_file'] ) && preg_match( "#/(jpe?g|tiff)#i", $upload['type'] )) {
 		$exifHash = exif_read_data( $upload['source_file'], 0, TRUE );
 
 		// extract more information if we can find it
