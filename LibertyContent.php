@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.379 2008/10/12 07:51:53 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.380 2008/10/18 16:45:28 nickpalmer Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -181,9 +181,11 @@ class LibertyContent extends LibertyBase {
 				$pParamHash['content_store']['created'] = !empty( $pParamHash['created'] ) ? $pParamHash['created'] : $gBitSystem->getUTCTime();
 				// This may get overridden by owner set
 				$pParamHash['content_store']['user_id'] = $pParamHash['user_id'];
-				// Set a default status when creating
+				// Set a default status when creating if none is set
 				// This may get overwritten below
-				$pParamHash['content_store']['content_status_id'] = $gBitSystem->getConfig('liberty_default_status', BIT_CONTENT_DEFAULT_STATUS);
+				if( empty($pParamHash['content_store']['content_status_id'] ) ){
+						$pParamHash['content_store']['content_status_id'] = $gBitSystem->getConfig('liberty_default_status', BIT_CONTENT_DEFAULT_STATUS);
+				}
 			} else {
 				$pParamHash['content_id'] = $this->mContentId;
 			}
