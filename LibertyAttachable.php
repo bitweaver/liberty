@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.165 2008/10/08 07:04:35 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.166 2008/10/19 08:14:21 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -401,6 +401,7 @@ class LibertyAttachable extends LibertyContent {
 	 * @param array $pContentId
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 * @deprecated deprecated since version 2.1.0-beta
 	 */
 
 	/**
@@ -449,6 +450,7 @@ class LibertyAttachable extends LibertyContent {
 	 *
 	 * @param hash $pParamHash The hash of arguments
 	 *
+	 * @deprecated deprecated since version 2.1.0-beta
 	 */
 
 	/**
@@ -554,6 +556,7 @@ class LibertyAttachable extends LibertyContent {
 	 * @param array $pKey 
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 * @deprecated deprecated since version 2.1.0-beta
 	 */
 	function verifyAttachment( &$pParamHash, $pFile, $pKey ) {
 		//deprecated( "This method has been replaced by a method in LibertyMime. Please try to migrate your code." );
@@ -616,6 +619,7 @@ class LibertyAttachable extends LibertyContent {
 	 * @author Christian Fowler<spider@steelsun.com>
 	 * @param $pParamHash
 	 * @return FALSE if errors were present, TRUE meaning object is ready to store
+	 * @deprecated deprecated since version 2.1.0-beta
 	 */
 	function verify( &$pParamHash ) {
 		//deprecated( "This method has been replaced by a method in LibertyMime. Please try to migrate your code." );
@@ -685,6 +689,7 @@ class LibertyAttachable extends LibertyContent {
 	 * @param array $pFile 
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 * @deprecated deprecated since version 2.1.0-beta
 	 */
 	function extractMetaData( &$pParamHash, &$pFile ) {
 		//deprecated( "This method has been replaced by a method in LibertyMime. Please try to migrate your code." );

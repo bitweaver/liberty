@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.39 2007/07/16 18:35:02 nickpalmer Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.40 2008/10/19 08:14:21 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -1004,13 +1004,37 @@ class LibertyStructure extends LibertyBase {
 
 
 	// {{{ the following is just for the transition phase...
+	/**
+	 * @deprecated deprecated since version 2.1.0-beta
+	 */
 	function s_remove_page()     { deprecated( 'Please use removeStructureNode() instead' ); }
+	/**
+	 * @deprecated deprecated since version 2.1.0-beta
+	 */
 	function s_get_pages()       { deprecated( 'Please use getStructureNodes() instead' ); }
+	/**
+	 * @deprecated deprecated since version 2.1.0-beta
+	 */
 	function get_prev_page()     { deprecated( 'Please use getPrevStructureNode() instead' ); }
+	/**
+	 * @deprecated deprecated since version 2.1.0-beta
+	 */
 	function get_next_page()     { deprecated( 'Please use getNextStructureNode() instead' ); }
+	/**
+	 * @deprecated deprecated since version 2.1.0-beta
+	 */
 	function get_toc()           { deprecated( 'Please use getToc() instead' ); }
+	/**
+	 * @deprecated deprecated since version 2.1.0-beta
+	 */
 	function fetch_toc()         { deprecated( 'Please use fetchToc() instead' ); }
+	/**
+	 * @deprecated deprecated since version 2.1.0-beta
+	 */
 	function s_get_parent_info() { deprecated( 'Please use getStructureParentInfo() instead' ); }
+	/**
+	 * @deprecated deprecated since version 2.1.0-beta
+	 */
 	function build_subtree_toc() { deprecated( 'Please use buildSubtreeToc() instead' ); }
 	// }}}
 }

@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.380 2008/10/18 16:45:28 nickpalmer Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.381 2008/10/19 08:14:21 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1280,11 +1280,6 @@ class LibertyContent extends LibertyBase {
 			$gBitSystem->fatalPermission( $pPermName, $pFatalMessage );
 		}
 		return $ret;
-	}
-
-	function verifyPermission( $pPermName, $pFatalMessage = NULL ) {
-		deprecated( 'You package is calling the deprecated LibertyContent::verifyPermission() method. Please update your code to use LibertyContent::verifyUserPermission' );
-		return $this->verifyUserPermission( $pPermName, $pFatalMessage );
 	}
 
 	/**
@@ -3348,6 +3343,9 @@ class LibertyContent extends LibertyBase {
 	}
 
 	// ==================== deprecated crud - will be removed soon ====================
+	/**
+	 * @deprecated deprecated since version 2.1.0-beta
+	 */
 	function loadPermissions( $pForce = FALSE ) {
 		deprecated( "This method is deprecated due to it's faulty output. Please use LibertyContent::getContentPermissionsList() if you need a list of content permissions instead." );
 		if( $pForce ) {
@@ -3365,6 +3363,13 @@ class LibertyContent extends LibertyBase {
 			$this->mPerms = $this->mDb->getAssoc( $query, $bindVars );
 		}
 		return( count( $this->mPerms ));
+	}
+	/**
+	 * @deprecated deprecated since version 2.1.0-beta
+	 */
+	function verifyPermission( $pPermName, $pFatalMessage = NULL ) {
+		deprecated( 'You package is calling the deprecated LibertyContent::verifyPermission() method. Please update your code to use LibertyContent::verifyUserPermission' );
+		return $this->verifyUserPermission( $pPermName, $pFatalMessage );
 	}
 }
 ?>
