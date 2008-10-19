@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.34 $
+ * @version  $Revision: 1.35 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.34 2008/09/19 23:42:07 laetzer Exp $
+// $Id: data.attachment.php,v 1.35 2008/10/19 10:08:33 nickpalmer Exp $
 
 /**
  * definitions
@@ -38,7 +38,7 @@ $pluginParams = array (
 	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN,
 	'biticon'       => '{biticon ilocation=quicktag iname=mail-attachment iexplain="Attachment"}',
-	'taginsert'     => '{attachment id= align= size= description=}',
+	'taginsert'     => '{attachment id= align= size= description= alt=}',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAATTACHMENT, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAATTACHMENT );
@@ -62,6 +62,23 @@ function data_attachment_help() {
 				.'<td>' . tra( "key-words") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "If the Attachment is an image, you can specify the size of the thumbnail displayed. Possible values are:") . ' <strong>avatar, small, medium, large, original</strong> '
 				. tra( "(Default = " ) . '<strong>medium</strong>)</td>'
+			.'</tr>'
+			.'<tr class="odd">'
+			.'<td>description</td>'
+				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "The text to use in the title attribute or as the link text if output=desc. Will also be used for the alt attribute if no alt is specified.")
+				. tra("(Default = ") . '<strong>'.tra( 'Image' ).'</strong>)</td>'
+			.'</tr>'
+			.'<td>alt</td>'
+				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "The text to use in the alt tag. Will also be used for the title attribute if no description is specified.")
+				. tra("(Default = ") . '<strong>'.tra( 'Image' ).'</strong>)</td>'
+			.'</tr>'
+			.'<tr class="odd">'
+			.'<td>description '.tra('or').' alt</td>'
+				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
+				.'<td>' . tra( "The text to use in the image alt tag or as the link text if output=desc. description or alt may be used but description takes precidence over alt.")
+				. tra("(Default = ") . '<strong>'.tra( 'Image' ).'</strong>)</td>'
 			.'</tr>'
 			.'<tr class="odd">'
 				.'<td>link</td>'
@@ -90,15 +107,10 @@ function data_attachment_help() {
 				.'<td>'.tra( "string").'<br />'.tra("(optional)").'</td>'
 				.'<td>'.tra( "Multiple styling options available: padding, margin, background, border, text-align, color, font, font-size, font-weight, font-family, align. Please view CSS guidelines on what values these settings take.").'</td>'
 			.'</tr>'
-			.'<tr class="even">'
-				.'<td>desc</td>'
-				.'<td>'.tra( "string").'<br />'.tra("(optional)").'</td>'
-				.'<td>'.tra( "The text that will be the link." ).'</td>'
-			.'</tr>'
 		.'</table>'
 		. tra("Example: ") . ' ' . "{ATTACHMENT id='13' size='small' text-align='center' link='http://www.google.com'}"
 		. '<br />'
-		. tra("Example: ") . ' ' . "{ATTACHMENT id='11' desc='Text, the link will be wrapped around' output=desc}";
+		. tra("Example: ") . ' ' . "{ATTACHMENT id='11' description='Text, the link will be wrapped around' output=desc}";
 	return $help;
 }
 
@@ -131,6 +143,7 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 		if( @BitBase::verifyId( $pParams['page_id'] )) {
 			// link to page by page_id
 			// avoid endless loops
+
 			require_once( WIKI_PKG_PATH.'BitPage.php');
 			$wp = new BitPage( $pParams['page_id'] );
 			if( $wp->load() ) {
@@ -176,14 +189,25 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 			$thumburl = ( !empty( $pParams['size'] ) && !empty( $att['thumbnail_url'][$pParams['size']] ) ? $att['thumbnail_url'][$pParams['size']] : $att['thumbnail_url']['medium'] );
 		}
 
+		// Figure out alt attribute.
+		if( empty($wrapper['alt']) ) {
+			if ( empty($wrapper['description']) ) {
+				$alt = tra('Image');
+			} else {
+				$alt = $wrapper['description'];
+			}
+		} else {
+			$alt = $wrapper['alt'];
+		}
+
 		// check if we have a valid thumbnail
 		if( !empty( $thumburl ) ) {
 			$wrapper = liberty_plugins_wrapper_style( $pParams );
 
 			// set up image first
 			$ret = '<img'.
-				' alt="'.  ( !empty( $wrapper['description'] ) ? $wrapper['description'] : tra( 'Image' ) ).'"'.
-				' title="'.( !empty( $wrapper['description'] ) ? $wrapper['description'] : tra( 'Image' ) ).'"'.
+				' alt="'.  $alt .'"'.
+				' title="'. ( empty($wrapper['description']) ? $alt : $wrapper['description'] ). '"'.
 				' src="'  .$thumburl.'"'.
 				' />';
 
