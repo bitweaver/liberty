@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.381 2008/10/19 08:14:21 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.382 2008/10/20 21:40:10 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -92,7 +92,7 @@ class LibertyContent extends LibertyBase {
 	 * @private
 	 */
 	var $mViewContentPerm;
-	var $mEditContentPerm;
+	var $mUpdateContentPerm;
 	var $mCreateContentPerm;
 	var $mExpungeContentPerm;
 	var $mAdminContentPerm;
@@ -105,8 +105,8 @@ class LibertyContent extends LibertyBase {
 		$this->mPrefs = NULL; // init to NULL so getPreference can determine if a load is necessary
 
 		// NOTE: we are not assigning anything to mViewContentPerm. if this is empty, we will return TRUE in hasViewPermission()
-		if( empty( $this->mEditContentPerm )) {
-			$this->mEditContentPerm = 'p_admin_content';
+		if( empty( $this->mUpdateContentPerm )) {
+			$this->mUpdateContentPerm = 'p_admin_content';
 		}
 
 		if( empty( $this->mCreateContentPerm )) {
@@ -1291,7 +1291,7 @@ class LibertyContent extends LibertyBase {
 	 * @param string return default user permission setting when no content perms are set
 	 * @return bool true if user has permission to access file
 	 */
-	function hasUserPermission( $pPermName, $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=FALSE ) {
+	function hasUserPermission( $pPermName, $pVerifyAccessControl=TRUE ) {
 		global $gBitUser;
 		$ret = FALSE;
 		if( !$this->isValid() ) {
@@ -1307,12 +1307,12 @@ class LibertyContent extends LibertyBase {
 				$checkPerms = $this->getUserPermissions();
 				if ( !empty( $checkPerms ) ) {
 					// Do they have the admin permission or the one we want?
-					if ( !empty( $checkPerms[$this->mAdminContentPerm] ) && ( $pCheckGlobalPerm || empty( $checkPerms[$this->mAdminContentPerm]['default_perm'] ) ) ) {
+					if ( !empty( $checkPerms[$this->mAdminContentPerm] ) ) {
 						$ret = TRUE;
-					} elseif ( !empty( $checkPerms[$pPermName] ) && ( $pCheckGlobalPerm || empty( $checkPerms[$pPermName]['default_perm'] ) ) ) {
+					} elseif ( !empty( $checkPerms[$pPermName] ) ) {
 						$ret = TRUE;
 					}
-				} elseif( $pCheckGlobalPerm ) {
+				} else {
 					// return default user permission setting when no content perms are set
 					$ret = $gBitUser->hasPermission( $pPermName );
 				}
@@ -1377,11 +1377,21 @@ class LibertyContent extends LibertyBase {
 	 *
 	 * @return bool True if user has this type of content administration permission
 	 */
-	function hasEditPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
-		return( $this->hasUserPermission( $this->mEditContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ) );
+	function hasUpdatePermission( $pVerifyAccessControl=TRUE ) {
+		return( $this->hasUserPermission( $this->mUpdateContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ) );
 	}
 
-	// === verifyEditPermission
+	/**
+	 * Deprecated, use hasUpdatePermission
+	 *
+	 * @return bool True if user has this type of content administration permission
+	 */
+	function hasEditPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
+		deprecated( "LibertyContent::hasEditPermission has been replaced with LibertyContent::hasUpdatePermission and pCheckGlobal has been change to always be the case" );
+		return( $this->hasUpdatePermission( $pVerifyAccessControl ) );
+	}
+
+	// === verifyUpdatePermission
 	/**
 	 * This code was duplicated _EVERYWHERE_ so here is an easy template to cut that down.
 	 * It will verify if a given user has a given $permission and if not, it will display the error template and die()
@@ -1389,13 +1399,22 @@ class LibertyContent extends LibertyBase {
 	 * @return TRUE if permitted, method will fatal out if not
 	 * @access public
 	 */
-	function verifyEditPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
+	function verifyUpdatePermission( $pVerifyAccessControl=TRUE ) {
 		global $gBitSystem;
-		if( $this->hasEditPermission( $pVerifyAccessControl, $pCheckGlobalPerm ) ) {
+		if( $this->hasUpdatePermission( $pVerifyAccessControl ) ) {
 			return TRUE;
 		} else {
-			$gBitSystem->fatalPermission( $this->mEditContentPerm );
+			$gBitSystem->fatalPermission( $this->mUpdateContentPerm );
 		}
+	}
+
+	// === verifyEditPermission
+	/**
+	 * Deprecated, use verifyUpdatePermission
+	 */
+	function verifyEditPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
+		deprecated( "LibertyContent::verifyEditPermission has been replaced with LibertyContent::verifyUpdatePermission and pCheckGlobal has been change to always be the case" );
+		$this->verifyUpdatePermission( $pVerifyAccessControl );
 	}
 
 	/**
@@ -1403,8 +1422,8 @@ class LibertyContent extends LibertyBase {
 	 *
 	 * @return bool True if user has this type of content administration permission
 	 */
-	function hasCreatePermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
-		return( $this->hasUserPermission( $this->mCreateContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ) );
+	function hasCreatePermission( $pVerifyAccessControl=TRUE ) {
+		return( $this->hasUserPermission( $this->mCreateContentPerm, $pVerifyAccessControl ) );
 	}
 
 	// === verifyCreatePermission
@@ -1414,9 +1433,9 @@ class LibertyContent extends LibertyBase {
 	 *
 	 * @return bool True if user has this type of content administration permission
 	 **/
-	function verifyCreatePermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
+	function verifyCreatePermission( $pVerifyAccessControl=TRUE ) {
 		global $gBitSystem;
-		if( !$this->isValid() && $this->hasCreatePermission( $pVerifyAccessControl, $pCheckGlobalPerm ) ) {
+		if( !$this->isValid() && $this->hasCreatePermission( $pVerifyAccessControl ) ) {
 			return TRUE;
 		} else {
 			$gBitSystem->fatalPermission( $this->mCreateContentPerm );
@@ -1429,8 +1448,8 @@ class LibertyContent extends LibertyBase {
 	 *
 	 * @return bool True if user has this type of content administration permission
 	 */
-	function hasViewPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
-		return( $this->hasEditPermission( $pVerifyAccessControl ) || empty( $this->mViewContentPerm ) || $this->hasUserPermission( $this->mViewContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ));
+	function hasViewPermission( $pVerifyAccessControl=TRUE ) {
+		return( $this->hasUpdatePermission( $pVerifyAccessControl ) || empty( $this->mViewContentPerm ) || $this->hasUserPermission( $this->mViewContentPerm, $pVerifyAccessControl ));
 	}
 
 	// === verifyViewPermission
@@ -1441,9 +1460,9 @@ class LibertyContent extends LibertyBase {
 	 * @return TRUE if permitted, method will fatal out if not
 	 * @access public
 	 */
-	function verifyViewPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
+	function verifyViewPermission( $pVerifyAccessControl=TRUE ) {
 		global $gBitSystem;
-		if( $this->hasViewPermission( $pVerifyAccessControl, $pCheckGlobalPerm ) ) {
+		if( $this->hasViewPermission( $pVerifyAccessControl ) ) {
 			return TRUE;
 		} else {
 			$gBitSystem->fatalPermission( $this->mViewContentPerm );
@@ -1455,8 +1474,8 @@ class LibertyContent extends LibertyBase {
 	 *
 	 * @return bool True if user has this type of content administration permission
 	 */
-	function hasPostCommentsPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
-		return( $this->hasUserPermission( 'p_liberty_post_comments', $pVerifyAccessControl, $pCheckGlobalPerm ));
+	function hasPostCommentsPermission( $pVerifyAccessControl=TRUE ) {
+		return( $this->hasUserPermission( 'p_liberty_post_comments', $pVerifyAccessControl ));
 	}
 
 	// === verifyPostCommentsPermission
@@ -1466,9 +1485,9 @@ class LibertyContent extends LibertyBase {
 	 * @return TRUE if permitted, method will fatal out if not
 	 * @access public
 	 */
-	function verifyPostCommentsPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
+	function verifyPostCommentsPermission( $pVerifyAccessControl=TRUE ) {
 		global $gBitSystem;
-		if( $this->hasPostCommentPermission( $pVerifyAccessControl, $pCheckGlobalPerm ) ) {
+		if( $this->hasPostCommentPermission( $pVerifyAccessControl ) ) {
 			return TRUE;
 		} else {
 			$gBitSystem->fatalPermission( 'p_liberty_post_comments' );
@@ -1492,7 +1511,7 @@ class LibertyContent extends LibertyBase {
 		if( !isset( $this->mUserContentPerms )) {
 			// get the default permissions for specified user
 			$query = "
-				SELECT ugp.`perm_name` as `hash_key`, 1 as `default_perm`, ugp.`perm_name`, ugp.`perm_value`, ugp.`group_id`
+				SELECT ugp.`perm_name` as `hash_key`, 1 as `group_perm`, ugp.`perm_name`, ugp.`perm_value`, ugp.`group_id`
 				FROM `".BIT_DB_PREFIX."users_groups_map` ugm
 					LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.`group_id`=ugp.`group_id`)
 					LEFT JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcp ON(lcp.`group_id`=ugm.`group_id` AND lcp.`content_id`=? AND ugp.`perm_name`=lcp.`perm_name`)
@@ -2056,7 +2075,7 @@ class LibertyContent extends LibertyBase {
 			$pListHash['min_content_status_id'] = -9999;
 		} elseif( !empty( $this ) && is_object( $this ) && $this->hasAdminPermission() ) {
 			$pListHash['min_content_status_id'] = -999;
-		} elseif( !empty( $this ) && is_object( $this ) && $this->hasEditPermission() ) {
+		} elseif( !empty( $this ) && is_object( $this ) && $this->hasUpdatePermission() ) {
 			$pListHash['min_content_status_id'] = -99;
 		} else {
 			$pListHash['min_content_status_id'] = 1;

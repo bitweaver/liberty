@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.19 $
+ * @version  $Revision: 1.20 $
  * @package  liberty
  * @subpackage functions
  */
@@ -75,7 +75,7 @@ if( isset( $_REQUEST["delete"] ) && isset( $_REQUEST["hist"] )) {
 	$gBitSmarty->assign_by_ref( 'version_from', $from_version );
 
 } elseif( @BitBase::verifyId( $_REQUEST["rollback"] )) {
-	$gContent->verifyUserPermission( !empty( $rollbackPerm ) ? $rollbackPerm : $gContent->mEditContentPerm );
+	$gContent->verifyUserPermission( !empty( $rollbackPerm ) ? $rollbackPerm : $gContent->mUpdateContentPerm );
 	if( !isset( $_REQUEST["rollback_comment"] )) {
 		$_REQUEST["rollback_comment"] = '';
 	}
