@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.383 2008/10/21 02:16:03 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.384 2008/10/21 02:46:02 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1326,8 +1326,8 @@ class LibertyContent extends LibertyBase {
 	 *
 	 * @return bool True if user has this type of content administration permission
 	 */
-	function hasAdminPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
-		return( $this->hasUserPermission( $this->mAdminContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ) );
+	function hasAdminPermission( $pVerifyAccessControl=TRUE ) {
+		return( $this->hasUserPermission( $this->mAdminContentPerm, $pVerifyAccessControl ) );
 	}
 
 	// === verifyAdminPermission
@@ -1338,9 +1338,9 @@ class LibertyContent extends LibertyBase {
 	 * @return TRUE if permitted, method will fatal out if not
 	 * @access public
 	 */
-	function verifyAdminPermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
+	function verifyAdminPermission( $pVerifyAccessControl=TRUE ) {
 		global $gBitSystem;
-		if( $this->hasAdminPermission( $pVerifyAccessControl, $pCheckGlobalPerm ) ) {
+		if( $this->hasAdminPermission( $pVerifyAccessControl ) ) {
 			return TRUE;
 		} else {
 			$gBitSystem->fatalPermission( $this->mAdminContentPerm );
@@ -1352,8 +1352,8 @@ class LibertyContent extends LibertyBase {
 	 *
 	 * @return bool True if user has this type of content expunge permission
 	 */
-	function hasExpungePermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
-		return( $this->hasUserPermission( $this->mExpungeContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ) );
+	function hasExpungePermission( $pVerifyAccessControl=TRUE ) {
+		return( $this->hasUserPermission( $this->mExpungeContentPerm, $pVerifyAccessControl ) );
 	}
 
 	// === verifyExpungePermission
@@ -1363,9 +1363,9 @@ class LibertyContent extends LibertyBase {
 	 * @return TRUE if permitted, method will fatal out if not
 	 * @access public
 	 */
-	function verifyExpungePermission( $pVerifyAccessControl=TRUE, $pCheckGlobalPerm=TRUE ) {
+	function verifyExpungePermission( $pVerifyAccessControl=TRUE ) {
 		global $gBitSystem;
-		if( $this->hasExpungePermission( $pVerifyAccessControl, $pCheckGlobalPerm ) ) {
+		if( $this->hasExpungePermission( $pVerifyAccessControl ) ) {
 			return TRUE;
 		} else {
 			$gBitSystem->fatalPermission( $this->mExpungeContentPerm );
