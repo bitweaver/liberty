@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.382 2008/10/20 21:40:10 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.383 2008/10/21 02:16:03 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1378,7 +1378,7 @@ class LibertyContent extends LibertyBase {
 	 * @return bool True if user has this type of content administration permission
 	 */
 	function hasUpdatePermission( $pVerifyAccessControl=TRUE ) {
-		return( $this->hasUserPermission( $this->mUpdateContentPerm, $pVerifyAccessControl, $pCheckGlobalPerm ) );
+		return( $this->hasUserPermission( $this->mUpdateContentPerm, $pVerifyAccessControl ) );
 	}
 
 	/**
