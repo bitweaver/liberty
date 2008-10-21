@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.128 $
+ * @version  $Revision: 1.129 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -160,7 +160,7 @@ class TikiWikiParser extends BitBase {
 			}
 			$content = "<table $table_params>";
 
-			$lines = explode( "\n", $table_data );
+			$lines = explode( "\n", str_replace( "\\n", "<br />", $table_data ));
 			$row = 0;
 			foreach( $lines as $line ) {
 				if(( substr( $line, 0, 1 ) == '|' ) || ( substr( $line, 0, 1 ) == '!' )) {
