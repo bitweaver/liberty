@@ -7,7 +7,7 @@
 	{else}
 		<{$wrapper.wrapper|default:'div'} class="mimeaudio {$wrapper.class|default:'att-plugin'}"{if $wrapper.style} style="{$wrapper.style}{/if}">
 			{if $attachment.media_url}
-				{include file="bitpackage:liberty/mime_audio_player_inc.tpl"}
+				{include file="bitpackage:liberty/mime/audio/player.tpl"}
 			{/if}
 			{if $wrapper.display_url}<a {$wrapper.href_class} href="{$wrapper.display_url}">{/if}
 				{$wrapper.description|escape|default:$attachment.meta.title|default:"{tr}Full Details{/tr}"}
@@ -17,7 +17,7 @@
 {else}
 	<div class="item">
 		{if $attachment.media_url}
-			{include file="bitpackage:liberty/mime_audio_player_inc.tpl"}
+			{include file="bitpackage:liberty/mime/audio/player.tpl"}
 		{/if}
 
 		{if $display_type eq "storage_thumbs"}
