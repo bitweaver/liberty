@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.127 $
+ * @version  $Revision: 1.128 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -663,7 +663,7 @@ class TikiWikiParser extends BitBase {
 							$addremove = 1;
 						}
 
-						if( $gBitSystem->isFeatureActive( 'wiki_section_edit' ) && $gBitUser->hasPermission( 'p_wiki_edit_page' ) ) {
+						if( $gBitSystem->isFeatureActive( 'wiki_section_edit' ) && $gBitUser->hasPermission( 'p_wiki_update_page' ) ) {
 							if( $hdrlevel == $gBitSystem->getConfig( 'wiki_section_edit' ) ) {
 								$edit_url = WIKI_PKG_URL."edit.php?content_id=".$contentId."&amp;section=".$section_count++;
 								$edit_link = '<span class="editsection" style="float:right;margin-left:5px;">[<a href="'.$edit_url.'">'.tra( "edit" ).'</a>]</span>';
