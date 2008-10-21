@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.44 2008/10/12 08:05:05 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.45 2008/10/21 09:47:31 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -624,19 +624,13 @@ function liberty_clear_thumbnails( &$pFileHash ) {
 		if( $thumbs = liberty_fetch_thumbnails( $thumbHash )) {
 			foreach( $thumbs as $thumb ) {
 				$thumb = BIT_ROOT_PATH.$thumb;
-				if( is_writable( $thumb ) ) {
+				if( is_writable( $thumb )) {
 					unlink( $thumb );
 				}
 			}
-
-			// just to make sure that we have all thumbnails cleared, we run through another round
-			if( $thumbs = liberty_fetch_thumbnails( $thumbHash )) {
-				foreach( $thumbs as $thumb ) {
-					$thumb = BIT_ROOT_PATH.$thumb;
-					if( is_writable( $thumb ) ) {
-						unlink( $thumb );
-					}
-				}
+			// if this was the thumbs subdirectory, we'll remove it if it's empty
+			if( basename( dirname( $thumb )) == 'thumbs' ) {
+				@rmdir( dirname( $thumb ));
 			}
 		}
 	}
@@ -704,6 +698,12 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$destExt = '.jpg';
 	}
 
+	// create a subdirectory for the thumbs
+	$pFileHash['dest_path'] .= 'thumbs/';
+	if( !is_dir( BIT_ROOT_PATH.$pFileHash['dest_path'] )) {
+		mkdir( BIT_ROOT_PATH.$pFileHash['dest_path'] );
+	}
+
 	foreach( $pFileHash['thumbnail_sizes'] as $thumbSize ) {
 		if( isset( $gThumbSizes[$thumbSize] )) {
 			$pFileHash['dest_base_name'] = $thumbSize;
@@ -727,6 +727,9 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 			}
 		}
 	}
+
+	// to keep everything in bitweaver working smoothly, we need to remove the thumbs/ subdir again
+	$pFileHash['dest_path'] = preg_replace( '!thumbs/$!', '', $pFileHash['dest_path'] );
 
 	return $ret;
 }
@@ -763,7 +766,7 @@ function liberty_fetch_thumbnails( $pParamHash, $pAltImageUrl = NULL, $pThumbSiz
 		}
 
 		// liberty file processors automatically pick the best format for us. we can force a format though.
-		// using array_unique on the array will give us the best order to look for the thumbnails
+		// using array_unique will give us the best order in which to look for the thumbnails
 		$exts = array_unique( array( $gBitSystem->getConfig( 'liberty_thumbnail_format', 'jpg' ), 'jpg', 'png', 'gif' ));
 
 		// short hand
@@ -774,17 +777,16 @@ function liberty_fetch_thumbnails( $pParamHash, $pAltImageUrl = NULL, $pThumbSiz
 			$path = preg_replace( "!^".preg_quote( BIT_ROOT_URL, "!" )."!", "", $path );
 		}
 
-		// if the filepath ends with a traling / we know it's a dir. we just assume that the original file is a jpg
-		// this has no outcome on the following code unless we don't find anythig and we need to get the mime type thumb
-		if( preg_match( "!/$!", $path )) {
-			$path .= 'dummy.jpg';
-		}
+		// remove the filename if there is one (we can't just use dirname() becuase we might only have the path to the dir)
+		$dir = substr( $path, 0, strrpos( $path, '/' ) + 1 );
 
 		foreach( $pParamHash['thumbnail_sizes'] as $size ) {
 			foreach( $exts as $ext ) {
-				$image = str_replace( "//", "/", dirname( $path ).'/'.$size.'.'.$ext );
-				if( empty( $ret[$size] ) && is_readable( BIT_ROOT_PATH.$image )) {
-					$ret[$size] = storage_path_to_url( $image );
+				$image = $size.'.'.$ext;
+				if( is_readable( BIT_ROOT_PATH.$dir.'thumbs/'.$image )) {
+					$ret[$size] = storage_path_to_url( $dir.'thumbs/'.$image );
+				} elseif( is_readable( BIT_ROOT_PATH.$dir.$image )) {
+					$ret[$size] = storage_path_to_url( $dir.$image );
 				}
 			}
 
@@ -793,6 +795,8 @@ function liberty_fetch_thumbnails( $pParamHash, $pAltImageUrl = NULL, $pThumbSiz
 				if( !empty( $pParamHash['default_image'] )) {
 					$ret[$size] = $pParamHash['default_image'];
 				} else {
+					// we need to make sure we have an image name that we can look up the mime type
+					$path .= ( strrpos( $dir, '/' ) == strlen( $path ) ? 'dummy.jpg' : basename( $path ));
 					$ret[$size] = LibertySystem::getMimeThumbnailURL( $gBitSystem->lookupMimeType( $path ), substr( $path, strrpos( $path, '.' ) + 1 ));
 				}
 			}
