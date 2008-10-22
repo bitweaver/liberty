@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.129 $
+ * @version  $Revision: 1.130 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -124,13 +124,12 @@ class TikiWikiParser extends BitBase {
 		return $cant;
 	}
 
-	function parseMediawikiTables( $data ) {
-		//$data = "\n<!-- parseMediawikiTables() called. -->\n" . $data;
-		/* Find all matches to {|...|} with no {| inside. */
-		while( preg_match( '/\n?\{\|(.*?)\n\|\}/sm', $data, $matches )) {
+	function parseMediawikiTables( $pData ) {
+		// Find all matches to {|...|} with no {| inside.
+		while( preg_match( '/\n?\{\|(.*?)\n\|\}/sm', $pData, $matches )) {
 			//vd($matches);
-			$table_data = str_replace("\r", "", $matches[1]);
-			$table_data = str_replace('||', "\n|", $table_data);
+			$table_data = str_replace( "\r", "", $matches[1] );
+			$table_data = str_replace( '||', "\n|", $table_data );
 
 			// get all instances where put in info like: background=blue and convert it to background="blue"
 			$xhtmlfix['pattern'] = "!=([^'\"][^\s]*)!";
@@ -142,7 +141,7 @@ class TikiWikiParser extends BitBase {
 			}
 
 			if( substr( $table_data, 0, 1 ) != "\n" ) {
-				/* We have table parameters. */
+				// We have table parameters.
 				list( $table_params, $table_data ) = explode( "\n", $table_data, 2 );
 				$table_params = preg_replace( $xhtmlfix['pattern'], $xhtmlfix['replace'], trim( $table_params ));
 				/* TODO: This attempt to support foo:bar table params needs help!
@@ -181,7 +180,7 @@ class TikiWikiParser extends BitBase {
 							$content .= '<tr>';
 						}
 					} elseif( preg_match( '/^([\|!])\s*([^\|]+\s*\|)?\s*(.*)$/', $line, $row_matches )) {
-						if (! $row) {
+						if( !$row ) {
 							$content .= '<tr>';
 							$row = 1;
 						}
@@ -200,10 +199,9 @@ class TikiWikiParser extends BitBase {
 				}
 			}
 			$content .= '</tr></table>';
-			$data = str_replace($matches[0], $content, $data);
+			$pData = str_replace( $matches[0], $content, $pData );
 		}
-		//$data .= "\n<!-- parseMediawikiTables() done. -->\n";
-		return $data;
+		return $pData;
 	}
 
 	function parseData( $pParseHash, &$pCommonObject ) {
