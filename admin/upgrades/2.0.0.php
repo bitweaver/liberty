@@ -1,4 +1,7 @@
 <?php
+/**
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/Attic/2.0.0.php,v 1.4 2008/10/25 09:37:34 squareing Exp $
+ */
 global $gBitInstaller;
 
 $infoHash = array(
