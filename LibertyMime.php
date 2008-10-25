@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.35 2008/10/13 18:41:13 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.36 2008/10/25 01:24:04 wjames5 Exp $
  */
 
 /**
@@ -239,6 +239,12 @@ class LibertyMime extends LibertyAttachable {
 		// primary attachment. Allow 'none' to clear the primary.
 		if( !@BitBase::verifyId( $pParamHash['liberty_attachments']['primary'] ) && ( empty( $pParamHash['liberty_attachments']['primary'] ) || $pParamHash['liberty_attachments']['primary'] != 'none' ) ) {
 			$pParamHash['liberty_attachments']['primary'] = NULL;
+		}
+
+		// if we have an error we get them all by checking parent classes for additional errors
+		if( count( $this->mErrors ) > 0 ){
+			// check errors of LibertyContent since LibertyMime means to override the parent verify
+			LibertyContent::verify( $pParamHash );
 		}
 
 		return ( count( $this->mErrors ) == 0 );

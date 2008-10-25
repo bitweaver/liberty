@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.384 2008/10/21 02:46:02 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.385 2008/10/25 01:24:04 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -317,6 +317,9 @@ class LibertyContent extends LibertyBase {
 		}
 
 		$pParamHash['data_store']['summary'] = !empty( $pParamHash['summary'] ) ? $pParamHash['summary'] : NULL ;
+
+		// call verify service to see if any services have errors
+		$this->invokeServices( 'content_verify_function', $pParamHash );
 
 		return( count( $this->mErrors ) == 0 );
 	}

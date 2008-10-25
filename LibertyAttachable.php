@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.166 2008/10/19 08:14:21 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.167 2008/10/25 01:24:04 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -677,6 +677,11 @@ class LibertyAttachable extends LibertyContent {
 		// primary attachment. Allow 'none' to clear the primary.
 		if( !@BitBase::verifyId( $pParamHash['liberty_attachments']['primary'] ) && ( empty( $pParamHash['liberty_attachments']['primary'] ) || $pParamHash['liberty_attachments']['primary'] != 'none' ) ) {
 			$pParamHash['liberty_attachments']['primary'] = NULL;
+		}
+
+		// if we have an error we get them all by checking parent classes for additional errors
+		if( count( $this->mErrors ) > 0 ){
+			parent::verify( $pParamHash );
 		}
 
 		return ( count( $this->mErrors ) == 0 );
