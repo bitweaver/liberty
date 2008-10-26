@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/Attic/2.0.0.php,v 1.4 2008/10/25 09:37:34 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/Attic/2.0.0.php,v 1.5 2008/10/26 11:03:27 squareing Exp $
  */
 global $gBitInstaller;
 
@@ -67,7 +67,4 @@ array( 'PHP' => '
 
 ));
 
-//$gBitInstaller->registerPackageDependencies( WIKI_PKG_NAME, '1.0.3', array(
-//	'kernel'  => '2.1.0',
-//));
 ?>
