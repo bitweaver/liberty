@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.15 2008/10/16 09:47:51 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.16 2008/10/27 03:39:27 spiderr Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.15 $
+ * @version		$Revision: 1.16 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -181,8 +181,24 @@ function mime_image_store_exif_data( $pFileHash ) {
 		$upload = &$pFileHash['upload'];
 	}
 
-	if( @BitBase::verifyId( $pFileHash['attachment_id'] ) && function_exists( 'exif_read_data' ) && !empty( $upload['source_file'] ) && is_file( $upload['source_file'] ) && preg_match( "#/(jpe?g|tiff)#i", $upload['type'] )) {
-		$exifHash = exif_read_data( $upload['source_file'], 0, TRUE );
+	if( @BitBase::verifyId( $pFileHash['attachment_id'] ) && $exifHash = mime_image_get_exif_data( $upload ) ) {
+		// only makes sense to store the GPS data if we at least have latitude and longitude
+		if( !empty( $exifHash['GPS'] )) {
+			LibertyMime::storeMetaData( $pFileHash['attachment_id'], 'GPS', $exifHash['GPS'] );
+		}
+
+		if( !empty( $exifHash['EXIF'] )) {
+			LibertyMime::storeMetaData( $pFileHash['attachment_id'], 'EXIF', $exifHash['EXIF'] );
+		}
+	}
+
+	return TRUE;
+}
+
+function mime_image_get_exif_data( $pUpload ) {
+	$exifHash = array();
+	if( function_exists( 'exif_read_data' ) && !empty( $pUpload['source_file'] ) && is_file( $pUpload['source_file'] ) && preg_match( "#/(jpe?g|tiff)#i", $pUpload['type'] )) {
+		$exifHash = exif_read_data( $pUpload['source_file'], 0, TRUE );
 
 		// extract more information if we can find it
 		if( ini_get( 'short_open_tag' )) {
@@ -193,10 +209,10 @@ function mime_image_store_exif_data( $pFileHash ) {
 			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/EXIF.php';
 
 			// Retrieve the header information from the JPEG file
-			$jpeg_header_data = get_jpeg_header_data( $upload['source_file'] );
+			$jpeg_header_data = get_jpeg_header_data( $pUpload['source_file'] );
 
 			// Retrieve EXIF information from the JPEG file
-			$Exif_array = get_EXIF_JPEG( $upload['source_file'] );
+			$Exif_array = get_EXIF_JPEG( $pUpload['source_file'] );
 
 			// Retrieve XMP information from the JPEG file
 			$XMP_array = read_XMP_array_from_text( get_XMP_text( $jpeg_header_data ) );
@@ -227,15 +243,10 @@ function mime_image_store_exif_data( $pFileHash ) {
 					$exifHash['GPS'][$conv] = mime_image_convert_exifgps( $exifHash['GPS'][$conv] );
 				}
 			}
-			LibertyMime::storeMetaData( $pFileHash['attachment_id'], 'GPS', $exifHash['GPS'] );
-		}
-
-		if( !empty( $exifHash['EXIF'] )) {
-			LibertyMime::storeMetaData( $pFileHash['attachment_id'], 'EXIF', $exifHash['EXIF'] );
 		}
 	}
 
-	return TRUE;
+	return $exifHash;
 }
 
 /**
