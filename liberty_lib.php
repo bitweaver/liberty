@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.45 2008/10/21 09:47:31 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.46 2008/10/27 03:46:25 spiderr Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -429,11 +429,27 @@ function liberty_content_edit( &$pObject ) {
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
 function liberty_process_upload( &$pFileHash, $pMoveFile = TRUE ) {
+	global $gBitSystem;
+
 	// Check for evil file extensions that could be execed on the server
 	if( preg_match( EVIL_EXTENSION_PATTERN, $pFileHash['upload']['name'] )) {
 		$pFileHash['upload']['type'] = 'text/plain';
 		$pFileHash['upload']['name'] = $pFileHash['upload']['name'].'.txt';
 	}
+
+	if ( !is_windows() ) {
+		list( $pFileHash['upload']['name'], $pFileHash['upload']['type'] ) = $gBitSystem->verifyFileExtension( $pFileHash['upload']['tmp_name'], $pFileHash['upload']['name'] );
+	} else {
+		//$pFile['type'] = $gBitSystem->verifyMimeType( $pFile['tmp_name'] );
+	}
+
+	// clean out crap that can make life difficult in server maintenance
+	$cleanedBaseName = preg_replace( '/[&\%:\/\\\]/', '', substr( $pFileHash['upload']['name'], 0, strrpos( $pFileHash['upload']['name'], '.' ) ) );
+	$pFileHash['upload']['dest_base_name'] = $cleanedBaseName;
+	$pFileHash['upload']['source_file'] = $pFileHash['upload']['tmp_name'];
+	// lowercase all file extensions
+	$pFileHash['upload']['name'] = $cleanedBaseName.strtolower( substr( $pFileHash['upload']['name'], strrpos( $pFileHash['upload']['name'], '.' ) ) );
+
 	// Thumbs.db is a windows My Photos/ folder file, and seems to really piss off imagick
 	$canThumbFunc = liberty_get_function( 'can_thumbnail' );
 	if( !empty( $canThumbFunc ) && $canThumbFunc( $pFileHash['upload']['type'] ) && $pFileHash['upload']['name'] != 'Thumbs.db' ) {
@@ -441,6 +457,7 @@ function liberty_process_upload( &$pFileHash, $pMoveFile = TRUE ) {
 	} else {
 		$ret = liberty_process_generic( $pFileHash['upload'], $pMoveFile );
 	}
+
 	return $ret;
 }
 
