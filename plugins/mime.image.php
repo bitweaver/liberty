@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.17 2008/10/27 06:33:38 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.18 2008/10/27 06:40:41 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.17 $
+ * @version		$Revision: 1.18 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -154,14 +154,14 @@ function mime_image_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 			}
 
 			// final check to see if we have enough data
-			if( empty( $ret['gps']['lng'] ) || empty( $ret['gps']['lat'] )) {
-				unset( $ret['gps'] );
+			if( empty( $ret['geo']['lng'] ) || empty( $ret['geo']['lat'] )) {
+				unset( $ret['geo'] );
 			}
 		}
 
 		// check for panorama image
-		if( is_file( BIT_ROOT_PATH.dirname( $ret['storage_path'] )."/panorama.jpg" )) {
-			$ret['thumbnail_url']['panorama'] = storage_path_to_url( dirname( $ret['storage_path'] )."/panorama.jpg" );
+		if( is_file( BIT_ROOT_PATH.dirname( $ret['storage_path'] )."/thumbs/panorama.jpg" )) {
+			$ret['thumbnail_url']['panorama'] = storage_path_to_url( dirname( $ret['storage_path'] )."/thumbs/panorama.jpg" );
 		}
 	}
 	return $ret;
