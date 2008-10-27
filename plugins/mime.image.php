@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.16 2008/10/27 03:39:27 spiderr Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.17 2008/10/27 06:33:38 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.16 $
+ * @version		$Revision: 1.17 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -51,7 +51,7 @@ $pluginParams = array (
 );
 // currently, there's only one option in the image edit file - panorama image setting
 if( $gBitSystem->isFeatureActive( 'mime_image_panoramas' )) {
-	$pluginParams['edit_tpl'] =  'bitpackage:liberty/mime_image_edit_inc.tpl';
+	$pluginParams['edit_tpl'] =  'bitpackage:liberty/mime/image/edit.tpl';
 }
 $gLibertySystem->registerPlugin( PLUGIN_MIME_GUID_IMAGE, $pluginParams );
 
@@ -195,6 +195,13 @@ function mime_image_store_exif_data( $pFileHash ) {
 	return TRUE;
 }
 
+/**
+ * mime_image_get_exif_data fetch meta data from uploaded image
+ * 
+ * @param array $pUpload uploaded file data
+ * @access public
+ * @return array filled with exif goodies
+ */
 function mime_image_get_exif_data( $pUpload ) {
 	$exifHash = array();
 	if( function_exists( 'exif_read_data' ) && !empty( $pUpload['source_file'] ) && is_file( $pUpload['source_file'] ) && preg_match( "#/(jpe?g|tiff)#i", $pUpload['type'] )) {
