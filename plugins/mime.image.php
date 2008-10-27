@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.18 2008/10/27 06:40:41 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.19 2008/10/27 07:12:37 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.18 $
+ * @version		$Revision: 1.19 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -294,7 +294,8 @@ function mime_image_create_panorama( &$pStoreRow ) {
 	if(( $panoramaFunc = liberty_get_function( 'panorama' )) && !empty( $pStoreRow['storage_path'] ) && !empty( $pStoreRow['source_file'] ) && is_file( $pStoreRow['source_file'] )) {
 		// the panorama has to be a jpg
 		$gBitSystem->setConfig( 'liberty_thumbnail_format', 'jpg' );
-		$gThumbSizes['panorama'] = array( 'width' => 3000, 'height' => 1500 );
+		$width = $gBitSystem->getConfig( 'mime_image_panorama_width', 3000 );
+		$gThumbSizes['panorama'] = array( $width, $width / 2 );
 		$genHash = array(
 			'dest_path'       => dirname( $pStoreRow['storage_path'] )."/",
 			'source_file'     => $pStoreRow['source_file'],

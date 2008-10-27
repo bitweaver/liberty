@@ -13,6 +13,18 @@ $settings = array(
 );
 $gBitSmarty->assign( 'settings', $settings );
 
+$panWidth = array(
+	1500 => '1500 x 750',
+	2000 => '2000 x 1000 (about 1MB)',
+	2500 => '2500 x 1250',
+	3000 => '3000 x 1500 (about 2MB)',
+	3500 => '3500 x 1750',
+	4000 => '4000 x 2000 (about 3-4MB)',
+	4500 => '4500 x 2250',
+	5000 => '5000 x 2500 (about 5-6MB)',
+);
+$gBitSmarty->assign( 'panWidth', $panWidth );
+
 if( $gBitSystem->getConfig( 'image_processor' ) != 'magickwand' ) {
 	$gBitSmarty->assign( 'image_processor_warning', TRUE );
 }
@@ -28,6 +40,7 @@ if( !empty( $_REQUEST['settings_store'] )) {
 			$gBitSystem->storeConfig( $item, ( !empty( $_REQUEST[$item] ) ? $_REQUEST[$item] : NULL ), TREASURY_PKG_NAME );
 		}
 	}
+	simple_set_int( 'mime_image_panorama_width', $_REQUEST['mime_image_panorama_width'] );
 }
 $gBitSmarty->assign( 'feedback', $feedback );
 $gBitSystem->display( 'bitpackage:liberty/admin_mime_image.tpl', tra( 'Image Plugin Settings' ), array( 'display_mode' => 'admin' ));

@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/Attic/admin_mime_image.tpl,v 1.3 2008/07/12 08:37:31 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/Attic/admin_mime_image.tpl,v 1.4 2008/10/27 07:12:37 squareing Exp $ *}
 {strip}
 <div class="admin liberty">
 	<div class="header">
@@ -27,6 +27,14 @@
 					{/forminput}
 				</div>
 			{/foreach}
+
+			<div class="row">
+				{formlabel label="Panorama Size" for="mime_image_panorama_width"}
+				{forminput}
+					{html_options values=$panWidth options=$panWidth name="mime_image_panorama_width" id="mime_image_panorama_width" selected=$gBitSystem->getConfig('mime_image_panorama_width')|default:3000} {tr}pixels{/tr}
+					{formhelp note="Set the maximum panorama image size. The larger the image size, the better it will be for zooming but it will also take longer to download the image for viewing."}
+				{/forminput}
+			</div>
 
 			<div class="row submit">
 				<input type="submit" name="settings_store" value="{tr}Change preferences{/tr}" />
