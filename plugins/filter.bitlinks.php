@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.17 2008/09/25 22:05:41 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.18 2008/10/28 21:10:52 squareing Exp $
  * @package  liberty
  */
 
@@ -495,16 +495,16 @@ class BitLinks extends BitBase {
 			// All arguments to MySQL in() function have to be passed as strings or it doesn't work correctly
 			// code above was updating the incorrect rows for totally numeric page names like 97834
 			$bindVars = array();
-			foreach (array_keys($unique_new_wiki_links) as $v) {
-				$bindVars[] = "$v";
-				}
+			foreach( array_keys( $unique_new_wiki_links ) as $var ) {
+				$bindVars[] = "$var";
+			}
 			$bindVars[] = BITPAGE_CONTENT_TYPE_GUID;
 
 			$new_link_pointing_to_existing_content = array();
 			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_content` WHERE `title` IN( $inSql ) AND `content_type_guid` = ?";
 			if( $result = $gBitSystem->mDb->query( $query, $bindVars )) {
 				while( $row = $result->fetchRow() ) {
-					$new_link_pointing_to_existing_content[strtolower($row['title'])] = $row['content_id'];
+					$new_link_pointing_to_existing_content[strtolower( $row['title'] )] = $row['content_id'];
 				}
 			}
 
@@ -514,9 +514,9 @@ class BitLinks extends BitBase {
 				// All arguments to MySQL in() function have to be passed as strings or it doesn't work correctly
 				// code above was updating the incorrect rows for totally numeric page names like 97834
 				$bindVars = array();
-				foreach (array_keys($new_link_pointing_to_existing_content) as $v) {
-					$bindVars[] = "$v";
-					}
+				foreach( array_keys( $new_link_pointing_to_existing_content ) as $var ) {
+					$bindVars[] = "$var";
+				}
 				$bindVars[] = BITPAGE_CONTENT_TYPE_GUID;
 				$inSql      = '?' . str_repeat( ',?', count( $new_link_pointing_to_existing_content ) - 1 );
 				$query      = "
@@ -531,7 +531,7 @@ class BitLinks extends BitBase {
 
 		// insert all new links pointing to non-existing content and that are not in the db yet
 		foreach( $unique_new_wiki_links as $to_title ) {
-			if( isset( $new_link_pointing_to_existing_content[strtolower($to_title)] ) || in_array( strtolower($to_title), array_keys( $old_links_in_db ))) {
+			if( isset( $new_link_pointing_to_existing_content[strtolower( $to_title )] ) || in_array( strtolower( $to_title ), array_keys( $old_links_in_db ))) {
 				continue;
 			}
 			$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_links` (`from_content_id`,`to_title`) VALUES(?, ?)";
@@ -540,7 +540,7 @@ class BitLinks extends BitBase {
 
 		// now delete any links no longer on page
 		foreach( $wiki_links_in_content as $to_title ) {
-			$wiki_links_in_content_table[strtolower($to_title)] = 1;
+			$wiki_links_in_content_table[strtolower( $to_title )] = 1;
 		}
 
 		foreach( array_keys( $old_links_in_db ) as $to_title ) {
