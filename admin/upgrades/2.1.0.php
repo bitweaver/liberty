@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.0.php,v 1.2 2008/10/29 22:05:19 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.0.php,v 1.3 2008/10/30 09:57:49 squareing Exp $
  */
 global $gBitInstaller;
 
@@ -72,6 +72,7 @@ $gBitInstaller->registerPackageDependencies( $infoHash, array(
 	'kernel'    => array( 'min' => '2.0.0' ),
 	'themes'    => array( 'min' => '2.0.0' ),
 	'languages' => array( 'min' => '2.0.0' ),
+	'storage'   => array( 'min' => '0.0.0' ),
 ));
 
 ?>
