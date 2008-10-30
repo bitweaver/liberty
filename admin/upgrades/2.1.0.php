@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.0.php,v 1.3 2008/10/30 09:57:49 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.0.php,v 1.4 2008/10/30 22:02:20 squareing Exp $
  */
 global $gBitInstaller;
 
@@ -10,7 +10,6 @@ $infoHash = array(
 	'description'  => "This upgrade replaces unused meta tables with new ones. These meta tables are used to store meta data of uploaded files.",
 	'post_upgrade' => NULL,
 );
-
 $gBitInstaller->registerPackageUpgrade( $infoHash, array(
 
 array( 'DATADICT' => array(
@@ -66,13 +65,4 @@ array( 'PHP' => '
 )
 
 ));
-
-$gBitInstaller->registerPackageDependencies( $infoHash, array(
-	'users'     => array( 'min' => '2.1.0' ),
-	'kernel'    => array( 'min' => '2.0.0' ),
-	'themes'    => array( 'min' => '2.0.0' ),
-	'languages' => array( 'min' => '2.0.0' ),
-	'storage'   => array( 'min' => '0.0.0' ),
-));
-
 ?>
