@@ -365,8 +365,8 @@ $gBitInstaller->registerUserPermissions( LIBERTY_PKG_NAME, array(
 	array('p_liberty_trusted_editor', 'Can make edits to content as a trusted editor', 'editors', LIBERTY_PKG_NAME ),
 ));
 
-// Package dependencies
-$gBitInstaller->registerDependencies( LIBERTY_PKG_NAME, array(
+// Package Requirements
+$gBitInstaller->registerRequirements( LIBERTY_PKG_NAME, array(
 	'users'     => array( 'min' => '2.1.0' ),
 	'kernel'    => array( 'min' => '2.0.0' ),
 	'themes'    => array( 'min' => '2.0.0' ),
