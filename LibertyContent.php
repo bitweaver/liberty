@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.385 2008/10/25 01:24:04 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.386 2008/11/02 01:29:08 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -204,7 +204,7 @@ class LibertyContent extends LibertyBase {
 		}
 
 		// Do we need to change the status
-		if ($gBitSystem->isFeatureActive('liberty_display_status') && ($gBitUser->hasPermission('p_liberty_edit_content_status') || $gBitUser->hasPermission('p_liberty_edit_all_status'))) {
+		if( $this->hasUserPermission( 'p_liberty_edit_content_status' ) || $gBitUser->hasUserPermission( 'p_liberty_edit_all_status') ) {
 			$allStatus = $this->getAvailableContentStatuses();
 			if (!empty($pParamHash['content_status_id'])) {
 				if (empty($allStatus[$pParamHash['content_status_id']])) {
