@@ -88,8 +88,8 @@ function data_quote($data, $params) {
 	if( $func = $gLibertySystem->getPluginFunction( $formatGuid, 'load_function' ) ) {
 		$ret = $func( $rendererHash, $this );
 	}
-
-	$extra = $cite = '';
+	
+	$quote = array();
 	$user = empty($params['user']) ? null : $params['user'];
 
 	if (!empty($params['comment_id'])) {
@@ -103,41 +103,30 @@ function data_quote($data, $params) {
 			$c->mInfo['title']="#".$c->mCommentId;
 		}
 
-		$citeurl = $c->getDisplayUrl();
-		$cite = ' cite="'.$citeurl.'"';
+		$quote['cite_url'] = $c->getDisplayUrl();
+		$quote['title'] = $c->mInfo['title'];
+		$quote['created'] = $c->mInfo['created'];
 
-		require_once $gBitSmarty->_get_plugin_filepath( 'modifier','reltime' );
-
-		$extra.="<a href=\"";
-		$extra.=$citeurl;
-		$extra.="\" title=\"";
-		$extra.=$c->mInfo['title'];
-		$extra.="\">";
-		$extra.=$c->mInfo['title'];
-		$extra.="</a>";
-		$extra.=" (";
-		$extra.=smarty_modifier_reltime($c->mInfo['created'],'short');
-		$extra.=") ";
 		if (empty($user)) {
 			$user = $c->mInfo['login'];
 		}
 	}
 
-	$display_user=$user;
+	$quote['login'] = $user;
+	
 	if (!empty($user)) {
 		$u = new BitUser();
 		$u->load(true,$user);
-		$display_user = "<a href=\"".$u->getDisplayUrl()."\" title=\"".$u->mInfo['display_name']."\">".$u->mInfo['display_name']."</a>";
+			
+		$quote['user_url'] = $u->getDisplayUrl();
+		$quote['user_display_name'] = $u->mInfo['display_name'];
 	}
+	
+	$quote['ret'] = $ret;
+	
+	$gBitSmarty->assign( "quote", $quote );
+    $repl = $gBitSmarty->fetch( "bitpackage:liberty/display_quote_inc.tpl" );
 
-	$display_result = "";
-
-	if (!empty($display_user)) {
-		$display_result .="<p class=\"quotetitle\">{$extra}{$display_user} ".tra( "wrote" ).":</p>";
-	}
-
-	$display_result .="<blockquote{$cite}><div>$ret</div></blockquote>";
-
-	return $display_result;
+    return $repl;
 }
 ?>
