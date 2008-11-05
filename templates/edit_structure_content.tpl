@@ -1,4 +1,9 @@
 {strip}
+
+<div class="header">
+	<h1>{tr}Structure Content{/tr}</h1>
+</div>
+
 <div class="structurecontent">
 	{form legend="Add Content"}
 		<input type="hidden" name="structure_id" value="{$structureInfo.structure_id}" />
