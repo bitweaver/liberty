@@ -1,47 +1,36 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2004, bitweaver.org
-// +----------------------------------------------------------------------+
-// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
-// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details
-// |
-// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
-// | -> see http://phpdocu.sourceforge.net/
-// +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@sourceforge.net>
-// +----------------------------------------------------------------------+
-// $Id: data.comment.php,v 1.9 2007/06/09 18:09:39 squareing Exp $
 
-/******************
- * Initialization *
- ******************/
 global $gLibertySystem;
 define( 'PLUGIN_GUID_DATACOMMENT', 'datacomment' );
 global $gLibertySystem;
 $pluginParams = array (
-	'tag' => 'COMMENT',
+	'tag'           => 'COMMENT',
 	'auto_activate' => FALSE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_comment',
-	'title' => 'Comment',
-	'help_page' => 'DataPluginComment',
-	'description' => tra("This plugin allows Comments (Text that will not be displayed) to be added to a page."),
+	'title'         => 'Comment',
+	'help_page'     => 'DataPluginComment',
+	'description'   => tra("This plugin allows Comments (Text that will not be displayed) to be added to a page."),
 	'help_function' => 'data__comment_help',
-	'syntax' => "{COMMENT}Data Not Displayed{/COMMENT}",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.comment.php',
-	'security' => 'registered',
-	'plugin_type' => DATA_PLUGIN
+	'syntax'        => "{comment}Data Not Displayed{/comment}",
+	'path'          => LIBERTY_PKG_PATH.'plugins/data.comment.php',
+	'security'      => 'registered',
+	'plugin_type'   => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACOMMENT, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATACOMMENT );
-/*****************
- * Help Function *
- *****************/
+
+/**
+ * data_comment_help 
+ * 
+ * @access public
+ * @return string help
+ */
 function data_comment_help() {
 	$help =
 		'<table class="data help">'
@@ -58,10 +47,14 @@ function data_comment_help() {
 		. tra("Example: ") . "{COMMENT}" . tra("Everything in here is not displayed.") . "{/COMMENT}";
 	return $help;
 }
-/****************
-* Load Function *
- ****************/
-function data_comment($data, $params) {
+
+/**
+ * data_comment 
+ * 
+ * @access public
+ * @return string ' '
+ */
+function data_comment( $pData, $pParams ) {
 	return ' ';
 }
 ?>
