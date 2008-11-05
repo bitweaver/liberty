@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.15 $
+ * @version  $Revision: 1.16 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.15 2008/01/12 20:09:08 lsces Exp $
+// $Id: data.toc.php,v 1.16 2008/11/05 07:20:13 squareing Exp $
 
 /**
  * definitions
@@ -67,16 +67,14 @@ function data_toc_help() {
 /**
  * Load Function
  */
-function data_toc( $data, $params ) {
+function data_toc( $pData, $pParams ) {
 	include_once( LIBERTY_PKG_PATH.'LibertyStructure.php' );
 	global $gStructure, $gContent, $gBitSmarty;
-	extract( $params );
-	$struct = NULL;
 
 	if( is_object( $gStructure ) && $gStructure->isValid() ) {
 		$struct = &$gStructure;
-	} elseif( @BitBase::verifyId( $params['structure_id'] ) ) {
-			$struct = new LibertyStructure( $params['structure_id'] );
+	} elseif( @BitBase::verifyId( $pParams['structure_id'] ) ) {
+			$struct = new LibertyStructure( $pParams['structure_id'] );
 			$struct->load();
 	} elseif( is_object( $gContent ) ) {
 		$structures = $gContent->getStructures();
@@ -88,20 +86,17 @@ function data_toc( $data, $params ) {
 		}
 	}
 
-	$repl = '';
-	if( is_object( $struct ) && count( $struct->isValid() ) ) {
+	$repl = ' ';
+	if( !empty( $struct) && is_object( $struct ) && $struct->isValid()) {
 		if( @BitBase::verifyId( $structure_id ) ) {
 			$get_structure = $structure_id;
 		} else {
 			$get_structure = $struct->mStructureId;
 		}
-		$tree = $struct->getSubTree( $get_structure, ( @$display == 'full_toc' ) );
+
+		$tree = $struct->getSubTree( $get_structure, ( !empty( $pParams['display'] ) && $pParams['display'] == 'full_toc' ));
 		$gBitSmarty->assign( "subtree", $tree );
-		$repl = $gBitSmarty->fetch( "bitpackage:liberty/display_toc_inc.tpl" );
-		if( empty( $repl ) ) {
-			// return blank, *not* empty, so the {toc} tag gets replaced
-			$repl = ' ';
-		}
+		$repl = $gBitSmarty->fetch( "bitpackage:liberty/plugins/data_toc.tpl" );
 	}
 
 	return $repl;

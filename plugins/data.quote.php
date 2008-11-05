@@ -128,7 +128,7 @@ function data_quote( $pData, $pParams ) {
 	$quote['ret'] = $ret;
 
 	$gBitSmarty->assign( "quote", $quote );
-	$repl = $gBitSmarty->fetch( "bitpackage:liberty/display_quote_inc.tpl" );
+	$repl = $gBitSmarty->fetch( "bitpackage:liberty/plugins/data_quote.tpl" );
 
 	return $repl;
 }
