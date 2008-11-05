@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.167 2008/10/25 01:24:04 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.168 2008/11/05 17:50:53 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -385,6 +385,7 @@ class LibertyAttachable extends LibertyContent {
 
 		return $ret;
 	}
+	// }}}
 
 
 	// {{{ =================== Deprecated Methods ====================
@@ -756,7 +757,6 @@ class LibertyAttachable extends LibertyContent {
 		}
 	}
 
-	// }}}
 	// }}}
 
 
