@@ -27,18 +27,18 @@ global $gBitSystem, $gBitSmarty;
 define( 'PLUGIN_GUID_DATAQUOTE', 'dataquote' );
 global $gLibertySystem;
 $pluginParams = array (
-	'tag' => 'quote',
+	'tag'           => 'quote',
 	'auto_activate' => FALSE,
 	'requires_pair' => TRUE,
 	'load_function' => 'data_quote',
 	'help_function' => 'data_quote_help',
-	'title' => 'Quote',
-	'help_page' => 'DataPluginQuote',
-	'description' => tra( "This plugin will render the given content as discribed by the content_type given" ),
-	'syntax' => "{quote format_guid= user= comment_id= }.. content ..{/quote}",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.quote.php',
-	'security' => 'registered',
-	'plugin_type' => DATA_PLUGIN
+	'title'         => 'Quote',
+	'help_page'     => 'DataPluginQuote',
+	'description'   => tra( "This plugin will render the given content as discribed by the content_type given" ),
+	'syntax'        => "{quote format_guid= user= comment_id= }.. content ..{/quote}",
+	'path'          => LIBERTY_PKG_PATH.'plugins/data.quote.php',
+	'security'      => 'registered',
+	'plugin_type'   => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAQUOTE, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAQUOTE );
@@ -72,61 +72,64 @@ function data_quote_help() {
 }
 
 // Executable Routine
-function data_quote($data, $params) {
+function data_quote( $pData, $pParams ) {
 	global $gLibertySystem, $gBitSmarty, $gBitSystem;
 
-	if( empty( $params['format_guid'] ) ) {
-		$params['format_guid'] = $gBitSystem->getConfig( 'default_format', PLUGIN_GUID_TIKIWIKI );
+	if( empty( $pParams['format_guid'] )) {
+		// default should be set - if not, we'll use tikiwiki - can't use PLUGIN_GUID_TIKIWIKI since it might not be defined.
+		$pParams['format_guid'] = $gBitSystem->getConfig( 'default_format', 'tikiwiki' );
 	}
 
-	$rendererHash=array();
-	$rendererHash['content_id']=0;
-	$rendererHash['format_guid']=$params['format_guid'];
-	$rendererHash['data'] = trim($data);
-	$formatGuid=$rendererHash['format_guid'];
+	$rendererHash = array();
+	$rendererHash['content_id'] = 0;
+	$rendererHash['format_guid'] = $pParams['format_guid'];
+	$rendererHash['data'] = trim( $pData );
+	$formatGuid = $rendererHash['format_guid'];
 	$ret = "";
+
 	if( $func = $gLibertySystem->getPluginFunction( $formatGuid, 'load_function' ) ) {
 		$ret = $func( $rendererHash, $this );
 	}
-	
-	$quote = array();
-	$user = empty($params['user']) ? null : $params['user'];
 
-	if (!empty($params['comment_id'])) {
+	$quote = array();
+	$user = empty( $pParams['user'] ) ? NULL : $pParams['user'];
+
+	if( !empty( $pParams['comment_id'] )) {
 		$extra.="In ";
-		if (ACTIVE_PACKAGE == 'boards') {
-			$c = new BitBoardPost( preg_replace( '/[^0-9]/', '', $params['comment_id'] ) );
+		if( ACTIVE_PACKAGE == 'boards' ) {
+			$c = new BitBoardPost( preg_replace( '/[^0-9]/', '', $pParams['comment_id'] ) );
 		} else {
-			$c = new LibertyComment( preg_replace( '/[^0-9]/', '', $params['comment_id'] ) );
+			$c = new LibertyComment( preg_replace( '/[^0-9]/', '', $pParams['comment_id'] ) );
 		}
-		if (empty($c->mInfo['title'])) {
-			$c->mInfo['title']="#".$c->mCommentId;
+
+		if( empty( $c->mInfo['title'] )) {
+			$c->mInfo['title'] = "#".$c->mCommentId;
 		}
 
 		$quote['cite_url'] = $c->getDisplayUrl();
 		$quote['title'] = $c->mInfo['title'];
 		$quote['created'] = $c->mInfo['created'];
 
-		if (empty($user)) {
+		if( empty( $user )) {
 			$user = $c->mInfo['login'];
 		}
 	}
 
 	$quote['login'] = $user;
-	
-	if (!empty($user)) {
+
+	if( !empty( $user )) {
 		$u = new BitUser();
-		$u->load(true,$user);
-			
+		$u->load( TRUE, $user );
+
 		$quote['user_url'] = $u->getDisplayUrl();
 		$quote['user_display_name'] = $u->mInfo['display_name'];
 	}
-	
-	$quote['ret'] = $ret;
-	
-	$gBitSmarty->assign( "quote", $quote );
-    $repl = $gBitSmarty->fetch( "bitpackage:liberty/display_quote_inc.tpl" );
 
-    return $repl;
+	$quote['ret'] = $ret;
+
+	$gBitSmarty->assign( "quote", $quote );
+	$repl = $gBitSmarty->fetch( "bitpackage:liberty/display_quote_inc.tpl" );
+
+	return $repl;
 }
 ?>
