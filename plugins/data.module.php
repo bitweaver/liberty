@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.12 $
+ * @version  $Revision: 1.13 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -16,7 +16,7 @@
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
 // | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.module.php,v 1.12 2007/05/20 19:00:04 nickpalmer Exp $
+// $Id: data.module.php,v 1.13 2008/11/05 07:02:48 squareing Exp $
 
 /**
  * definitions
@@ -25,18 +25,18 @@ define( 'PLUGIN_GUID_DATAMODULE', 'datamodule' );
 
 global $gLibertySystem;
 $pluginParams = array (
-	'tag' => 'MODULE',
+	'tag'           => 'MODULE',
 	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
 	'load_function' => 'data_datamodule',
-	'title' => 'Module',
-	'help_page' => 'DataPluginModule',
-	'description' => tra("Display a module block in content"),
+	'title'         => 'Module',
+	'help_page'     => 'DataPluginModule',
+	'description'   => tra("Display a module block in content"),
 	'help_function' => 'datamodule_help',
-	'syntax' => '{MODULE module= align="right"}',
-	'path' => LIBERTY_PKG_PATH.'plugins/data.module.php',
-	'security' => 'registered',
-	'plugin_type' => DATA_PLUGIN
+	'syntax'        => '{module module= align="right"}',
+	'path'          => LIBERTY_PKG_PATH.'plugins/data.module.php',
+	'security'      => 'registered',
+	'plugin_type'   => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAMODULE, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAMODULE );
@@ -72,18 +72,18 @@ function datamodule_help() {
 	return $help;
 }
 
-function data_datamodule( $data, $params ) {
+function data_datamodule( $pData, $pParams ) {
 	global $gBitThemes, $gBitSmarty;
 
 	$out = '';
 	$ret = ' ';
 
-	extract( $params , EXTR_SKIP);
+	extract( $pParams , EXTR_SKIP );
 
-	if( !empty( $module ) && !empty( $package ) ) {
+	if( !empty( $module ) && !empty( $package )) {
 		$modules_dir = constant( strtoupper( $package ).'_PKG_PATH' ).'modules/';
-		if( is_file( $modules_dir.'mod_'.$module.'.tpl' ) ) {
-			$tpl = 'bitpackage:'.$package.'/mod_'.$module.'.tpl';			
+		if( is_file( $modules_dir.'mod_'.$module.'.tpl' )) {
+			$tpl = 'bitpackage:'.$package.'/mod_'.$module.'.tpl';
 		} else {
 			return '<div class="error">'.tra( "The module / package combination you entered is not valid" ).'</div>';
 		}
@@ -93,17 +93,17 @@ function data_datamodule( $data, $params ) {
 
 	// Setup moduleParams the best we can.
 	$moduleParams = array();
-	$moduleParams['module_params'] = $params;
-	if (isset($params['rows'])) {
-	    $moduleParams['module_rows'] = $params['rows'];
+	$moduleParams['module_params'] = $pParams;
+	if( isset( $pParams['rows'] )) {
+		$moduleParams['module_rows'] = $pParams['rows'];
+	} else {
+		$moduleParams['module_rows'] = 10;
 	}
-	else {
-	    $moduleParams['module_rows'] = 10;
+
+	if( isset( $pParams['title'] )) {
+		$moduleParams['title'] = $pParams['title'];
 	}
-	if (isset($params['title'])) {
-	    $moduleParams['title'] = $params['title'];
-	}
-	$gBitSmarty->assign('moduleParams', $moduleParams);
+	$gBitSmarty->assign( 'moduleParams', $moduleParams );
 
 	if( !$out = $gBitSmarty->fetch( $tpl ) ) {
 		if( $gBitThemes->isCustomModule( $module ) ) {
@@ -118,7 +118,7 @@ function data_datamodule( $data, $params ) {
 	// deal with custom styling
 	$style = '';
 	$style_options = array( 'float', 'width', 'background', 'color' );
-	foreach( $params as $param => $value ) {
+	foreach( $pParams as $param => $value ) {
 		if( in_array( $param, $style_options ) ) {
 			$style .= $param.':'.$value.';';
 		}
