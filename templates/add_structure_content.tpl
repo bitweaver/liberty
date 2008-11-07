@@ -23,7 +23,7 @@ var structureAddResult = function (response) {
 
 <div id="structureaddresult"></div>
 
-<div class="structurecontent">
+<div class="edit structurecontent">
 
 	<div class="header">
 		<h1>{tr}Structure Content{/tr}</h1>
