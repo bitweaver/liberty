@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.23 $
+ * @version  $Revision: 1.24 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.23 2008/10/10 11:36:13 squareing Exp $
+// $Id: data.code.php,v 1.24 2008/11/07 20:59:44 spiderr Exp $
 
 /**
  * definitions
@@ -154,15 +154,23 @@ if( !function_exists( 'deCodeHTML' )) { // avoid name collisions
 
 // Load Function
 function data_code( $data, $params ) { // Pre-Clyde Changes
+	global $gBitSystem;
 // Parameters were $In & $Colors
 // Added testing to maintain Pre-Clyde compatability
 //	$num = NULL;
 	extract ($params, EXTR_SKIP);
 	// This maintains Pre-Clyde Parameters
-	if (isset($colors) and ($colors == 'php') ) $source = 'php';
-	if (isset($in) ) $source = $in;
-	$source = isset($source) ? strtolower($source) : 'php'; // if not specified the default is HTML
-	if (isset($in)) $num = $in; // This maintains Pre-Clyde Parameters
+	if (isset($colors) and ($colors == 'php') ) {
+		$source = 'php';
+	}
+	if (isset($in) ) {
+		$source = $in;
+	}
+	// There is no UI for liberty_plugin_code_default_source, just have to smash it into kernel_config by hand
+	$source = isset($source) ? strtolower($source) : $gBitSystem->getConfig( 'liberty_plugin_code_default_source', 'php' ); // if not specified the default is HTML
+	if (isset($in)) {
+		 $num = $in; // This maintains Pre-Clyde Parameters
+	}
 	if (isset($num) && (!is_numeric ($num))) {
 		switch (strtoupper($num)) {
 		case 'TRUE': case 'ON': case 'YES':
