@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.11 2008/07/01 08:35:35 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.12 2008/11/07 10:57:53 nickpalmer Exp $
  *
  * Image processor - extension: php-gd
  * @package  liberty
@@ -75,7 +75,7 @@ function liberty_gd_resize_image( &$pFileHash ) {
 			list( $type, $mimeExt ) = split( '/', strtolower( image_type_to_mime_type( $itype )));
 		}
 
-		if( preg_match( "!(png|gif)!", $mimeExt )) {
+		if( preg_match( "!^(x-)?(png|gif)$!", "$2", $mimeExt )) {
 			$targetType = $mimeExt;
 			$destExt = '.'.$mimeExt;
 		} else {
