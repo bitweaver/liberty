@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.15 2008/07/15 18:57:49 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.16 2008/11/09 20:16:00 nickpalmer Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -52,6 +52,8 @@ if ( !isset($_FILES['upload'] ) ) {
 
 if( isset( $gContent ) ){
 	$storeHash = $_REQUEST['liberty_attachments'];
+	// Keep a copy in the right place as well so primary works.
+	$storeHash['liberty_attachments'] = $_REQUEST['liberty_attachments'];
 
 	if ( !$gContent->isValid() ){
 		// if we dont have a content object for this attachment yet, lets create a draft.
@@ -66,8 +68,8 @@ if( isset( $gContent ) ){
 		$error = $gContent->mErrors;
 	}else{
 		// Load up the new attachment.
-		if ( !empty($storeHash['STORAGE'] ) ) {
-			foreach ( $storeHash['STORAGE'] as $id => $file ) {
+		if ( !empty($storeHash['upload_store'] ) ) {
+			foreach ( $storeHash['upload_store'] as $id => $file ) {
 				if ( $id != 'existing' ) {
 					foreach ( $file as $key => $data ) {
 						$gContent->mStorage[$data['attachment_id']] = $gContent->getAttachment( $data['attachment_id'] );
@@ -95,6 +97,10 @@ if ( !is_null( $error ) ){
 $gBitSmarty->assign( 'gContent', $gContent );
 $gBitSmarty->assign( 'libertyUploader', TRUE );
 $gBitSmarty->assign( 'uploadTab', TRUE );
+
+if( !empty( $_REQUEST['liberty_attachments']['primary_label'] ) ) {
+	$gBitSmarty->assign('primary_label', $_REQUEST['liberty_attachments']['primary_label']);
+}
 
 if( isset( $_REQUEST['liberty_attachments']['form_id'] ) ){
 	$gBitSmarty->assign( 'form_id', $_REQUEST['liberty_attachments']['form_id'] );
