@@ -3,7 +3,7 @@
  * assigned_modules
  *
  * @author     xing
- * @version    $Revision: 1.13 $
+ * @version    $Revision: 1.14 $
  * @package    liberty
  * @subpackage plugins_data
  * @copyright  Copyright (c) 2004, bitweaver.org
@@ -24,8 +24,6 @@ $pluginParams = array (
 	'description'   => tra( "This plugin allows you to easily create a div with a number of optional CSS parameters." ),
 	'help_function' => 'data_div_help',
 	'syntax'        => "{div border='3px solid blue'}",
-	'path'          => LIBERTY_PKG_PATH.'plugins/data.div.php',
-	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATADIV, $pluginParams );

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author:  xing
 // +----------------------------------------------------------------------+
-// $Id: data.adsense.php,v 1.4 2006/08/08 07:31:15 squareing Exp $
+// $Id: data.adsense.php,v 1.5 2008/11/09 09:08:55 squareing Exp $
 
 /**
  * definitions
@@ -36,8 +36,6 @@ $pluginParams = array (
 	'description' => tra("This plugin adds Adsense Code to page."),
 	'help_function' => 'data_adsense_help',
 	'syntax' => "{ADSENSE}",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.adsense.php',
-	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAADSENSE, $pluginParams );

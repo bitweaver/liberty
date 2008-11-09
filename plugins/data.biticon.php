@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -20,7 +20,6 @@ $pluginParams = array (
 	'description'   => tra( "Display any bitweaver icon" ),
 	'help_function' => 'data_biticon_help',
 	'syntax'        => '{biticon ipackage= iname= iexplain=}',
-	'path'          => LIBERTY_PKG_PATH.'plugins/data.biticon.php',
 	'plugin_type'   => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATABITICON, $pluginParams );

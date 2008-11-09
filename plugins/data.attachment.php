@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.35 $
+ * @version  $Revision: 1.36 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.35 2008/10/19 10:08:33 nickpalmer Exp $
+// $Id: data.attachment.php,v 1.36 2008/11/09 09:08:55 squareing Exp $
 
 /**
  * definitions
@@ -34,8 +34,6 @@ $pluginParams = array (
 	'description'   => tra("Display attachment in content"),
 	'help_function' => 'data_attachment_help',
 	'syntax'        => '{attachment id= size= align= }',
-	'path'          => LIBERTY_PKG_PATH.'plugins/data.attachment.php',
-	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN,
 	'biticon'       => '{biticon ilocation=quicktag iname=mail-attachment iexplain="Attachment"}',
 	'taginsert'     => '{attachment id= align= size= description= alt=}',

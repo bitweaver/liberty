@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.25 $
+ * @version  $Revision: 1.26 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.25 2008/11/09 08:53:52 squareing Exp $
+// $Id: data.code.php,v 1.26 2008/11/09 09:08:55 squareing Exp $
 
 /**
  * definitions
@@ -34,7 +34,6 @@ $pluginParams = array (
 	'description'         => tra( "Displays the Source Code Snippet between {code} blocks." ),
 	'help_function'       => 'data_code_help',
 	'syntax'              => "{code source= num= }". tra( "Sorce Code Snippet" ) . "{/code}",
-	'security'            => 'registered',
 	'plugin_type'         => DATA_PLUGIN,
 	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/plugins/data_code.php',
 );

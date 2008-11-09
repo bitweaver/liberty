@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -32,8 +32,6 @@ $pluginParams = array ( 'tag' => 'GRAPHVIZ',
 	'description' => tra("This plugin renders it's content as a graphviz image (dot or neato). It requies the Image_GraphViz pear plugin and graphviz to be installed: pear install Image_GraphViz"),
 	'help_function' => 'data_graphviz_help',
 	'syntax' => "{GRAPHVIZ}digraph  ... {/GRAPHVIZ}",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.graphviz.php',
-	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAGRAPHVIZ, $pluginParams );

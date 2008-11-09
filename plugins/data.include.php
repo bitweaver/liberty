@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.include.php,v 1.11 2007/06/03 18:10:55 squareing Exp $
+// $Id: data.include.php,v 1.12 2008/11/09 09:08:55 squareing Exp $
 
 /**
  * definitions
@@ -34,8 +34,6 @@ $pluginParams = array (
 	'description' => tra("This plugin is used to include the contents of one Wiki page in another Wiki page."),
 	'help_function' => 'data_include_help',
 	'syntax' => "{INCLUDE content_id= }",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.include.php',
-	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAINCLUDE, $pluginParams );

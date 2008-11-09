@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.23 2008/11/09 08:53:52 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.24 2008/11/09 09:08:55 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -21,8 +21,6 @@ $pluginParams = array (
 	'description'              => 'Uses <a href="http://htmlpurifier.org">HTMLPurifier</a> to cleanup the HTML submitted to your site and ensure that it is standards compliant and does not contain anything malicious. It is also used to ensure that the various places that input is split for previews does not cause bad markup to break the page. This filter is <strong>highly</strong> recommended if you are allowing HTML but is still good for sites that are not using thse formats for the ability to cleanup markup which has been split for preview properly though this may disable certain plugins that insert non standards compliant code.',
 	// should this plugin be active or not when loaded for the first time
 	'auto_activate'            => FALSE,
-	// absolute path to this plugin
-	'path'                     => LIBERTY_PKG_PATH.'plugins/filter.htmlpurifier.php',
 	// type of plugin
 	'plugin_type'              => FILTER_PLUGIN,
 	// url to page with options for this plugin

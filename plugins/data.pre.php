@@ -3,7 +3,7 @@
  * assigned_modules
  *
  * @author     xing
- * @version    $Revision: 1.1 $
+ * @version    $Revision: 1.2 $
  * @package    liberty
  * @subpackage plugins_data
  * @copyright  Copyright (c) 2004, bitweaver.org
@@ -24,8 +24,6 @@ $pluginParams = array (
 	'description'   => tra( "This plugin allows you to easily create a preformatted text block with a number of optional CSS parameters." ),
 	'help_function' => 'data_pre_help',
 	'syntax'        => "{pre border='3px solid blue'}",
-	'path'          => LIBERTY_PKG_PATH.'plugins/data.pre.php',
-	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAPRE, $pluginParams );

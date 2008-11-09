@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.7 2007/11/09 20:24:50 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.8 2008/11/09 09:08:55 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -16,7 +16,6 @@ $pluginParams = array (
 	'title'              => 'Table of Contents',
 	'description'        => 'When you insert {maketoc} into a wiki page, it will create a nested table of contents based on the headings in that page.',
 	'auto_activate'      => TRUE,
-	'path'               => LIBERTY_PKG_PATH.'plugins/filter.maketoc.php',
 	'plugin_type'        => FILTER_PLUGIN,
 
 	// filter functions

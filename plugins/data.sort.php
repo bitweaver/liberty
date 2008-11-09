@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -20,7 +20,6 @@ $pluginParams = array (
 	'description'   => tra( "This plugin will sort the lines within a {sort} block." ),
 	'help_function' => 'data_sort_help',
 	'syntax'        => "{sort sort= }".tra( "Lines to be sorted" )."{sort}",
-	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATASORT, $pluginParams );

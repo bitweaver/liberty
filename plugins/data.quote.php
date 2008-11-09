@@ -36,8 +36,6 @@ $pluginParams = array (
 	'help_page'     => 'DataPluginQuote',
 	'description'   => tra( "This plugin will render the given content as discribed by the content_type given" ),
 	'syntax'        => "{quote format_guid= user= comment_id= }.. content ..{/quote}",
-	'path'          => LIBERTY_PKG_PATH.'plugins/data.quote.php',
-	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAQUOTE, $pluginParams );

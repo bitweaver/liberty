@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.16 $
+ * @version  $Revision: 1.17 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.16 2008/11/05 07:20:13 squareing Exp $
+// $Id: data.toc.php,v 1.17 2008/11/09 09:08:55 squareing Exp $
 
 /**
  * definitions
@@ -35,8 +35,6 @@ $pluginParams = array (
 	'description'   => tra("Display a Table Of Contents for Structures"),
 	'help_function' => 'data_toc_help',
 	'syntax'        => '{toc structure_id= }',
-	'path'          => LIBERTY_PKG_PATH.'plugins/data.toc.php',
-	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN,
 	'biticon'       => '{biticon ilocation=quicktag ipackage=quicktags iname=toc iexplain="Structure Table of Contents"}',
 	'taginsert'     => '{toc}',

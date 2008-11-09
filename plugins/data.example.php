@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -31,8 +31,6 @@ $pluginParams = array ( 'tag' => 'EXAM',
 	'description' => tra("This Plugin is an Example that does nothing. It functions as a template for the creation of new plugins."),
 	'help_function' => 'data_example_help',
 	'syntax' => "{EXAM x1= x2= }",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.example.php',
-	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAEXAMPLE, $pluginParams );

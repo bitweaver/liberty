@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.countdown.php,v 1.9 2007/06/26 17:34:36 laetzer Exp $
+// $Id: data.countdown.php,v 1.10 2008/11/09 09:08:55 squareing Exp $
 
 /**
  * definitions
@@ -34,8 +34,6 @@ $pluginParams = array (
 	'description' => tra("Displays a Count-Down until a date:time is reached - then - negative numbers indicate how long it has been since that date. The Count-Down is displayed in the format of (X days, X hours, X minutes and X seconds)."),
 	'help_function' => 'data_countdown_help',
 	'syntax' => "{COUNTDOWN enddate= localtime= class= punct= text=}",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.countdown.php',
-	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACOUNTDOWN, $pluginParams );

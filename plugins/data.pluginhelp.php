@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -16,7 +16,7 @@
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // | Rewritten for bitweaver by Author
 // +----------------------------------------------------------------------+
-// $Id: data.pluginhelp.php,v 1.9 2006/04/12 12:50:05 starrrider Exp $
+// $Id: data.pluginhelp.php,v 1.10 2008/11/09 09:08:55 squareing Exp $
 
 /**
  * definitions
@@ -33,8 +33,6 @@ $pluginParams = array (
 	'description' => tra("This plugin will display the plugin's Help."),
 	'help_function' => 'data_pluginhelp_help',
 	'syntax' => "{PLUGINHELP plugin= }",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.pluginhelp.php',
-	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAPLUGINHELP, $pluginParams );

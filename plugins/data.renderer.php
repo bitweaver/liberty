@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,7 +18,7 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.renderer.php,v 1.6 2007/06/14 23:17:17 nickpalmer Exp $
+// $Id: data.renderer.php,v 1.7 2008/11/09 09:08:55 squareing Exp $
 
 /**
  * definitions
@@ -36,8 +36,6 @@ $pluginParams = array (
 	'help_page' => 'DataPluginRenderer',
 	'description' => tra( "This plugin will render the given content as discribed by the contnet_type given" ),
 	'syntax' => "{renderer class= format_guid= }.. content ..{/renderer}",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.renderer.php',
-	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATARENDERER, $pluginParams );

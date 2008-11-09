@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.addtabs.php,v 1.9 2007/06/14 23:04:57 nickpalmer Exp $
+// $Id: data.addtabs.php,v 1.10 2008/11/09 09:08:55 squareing Exp $
 
 /**
  * definitions
@@ -33,8 +33,6 @@ $pluginParams = array (
 	'description' => tra("Will join the contents from several sources in a Tabbed Interface."),
 	'help_function' => 'data_addtabs_help',
 	'syntax' => "{ADDTABS tab1= tab2= tab3= . . . tab99= }",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.addtabs.php',
-	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAADDTABS, $pluginParams );

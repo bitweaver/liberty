@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -21,7 +21,6 @@ $pluginParams = array (
 	'description'   => tra( "This plugin allows you to simply and safely insert a YouTube video in a page." ),
 	'help_function' => 'data_youtube_help',
 	'syntax'        => "{youtube id=}",
-	'path'          => LIBERTY_PKG_PATH.'plugins/data.youtube.php',
 	'plugin_type'   => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAYOUTUBE, $pluginParams );

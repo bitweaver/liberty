@@ -1,10 +1,10 @@
 <?php
-// $Id: data.ledgertable.php,v 1.5 2007/06/09 18:09:39 squareing Exp $
+// $Id: data.ledgertable.php,v 1.6 2008/11/09 09:08:55 squareing Exp $
 /**
  * assigned_modules
  *
  * @author   KainX <mej@kainx.org>
- * @version  $Revision: 1.5 $
+ * @version  $Revision: 1.6 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -26,8 +26,6 @@ $pluginParams = array (
 	'description' => tra("This Plugin creates a ledger-like table with even/odd row colors, optional top- or left-placed headers, and support for row/column spans."),
 	'help_function' => 'data_ledgertable_help',
 	'syntax' => "{LEDGERTABLE loc= head= }",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.ledgertable.php',
-	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATALEDGERTABLE, $pluginParams );
@@ -55,7 +53,7 @@ function data_ledgertable_help() {
 				.'<td>' . tra( "Header(s) separated by \"~|~\", default <strong>none</strong>")
 				.'</td>'
 			.'</tr>'
- 		.'</table>'
+		.'</table>'
 		. tra("LedgerTable: ") . "{LEDGERTABLE loc=>left head=>Row1~|~Row2~|~Row3}<br />"
 		. tra("This will display")
 		. data_ledgertable('Example', array('loc' => 'left', 'head' => 'Row1~|~Row2~|~Row3'));

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.attachment.php,v 1.5 2008/10/07 20:13:44 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.attachment.php,v 1.6 2008/11/09 09:08:55 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -21,8 +21,6 @@ $pluginParams = array (
 	'description'              => 'Track attachment usage in content pages.',
 	// should this plugin be active or not when loaded for the first time
 	'auto_activate'            => FALSE,
-	// absolute path to this plugin
-	'path'                     => LIBERTY_PKG_PATH.'plugins/filter.attachment.php',
 	// type of plugin
 	'plugin_type'              => FILTER_PLUGIN,
 	// url to page with options for this plugin

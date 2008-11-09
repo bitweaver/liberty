@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.4 $
+ * @version  $Revision: 1.5 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -19,7 +19,7 @@
 // | Rewrote data function so plugin can cover more types of objects than just Flash
 // | by: Jasp (Jared Woodbridge) <jaspp@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.object.php,v 1.4 2007/06/09 18:09:39 squareing Exp $
+// $Id: data.object.php,v 1.5 2008/11/09 09:08:55 squareing Exp $
 
 /**
  * definitions
@@ -39,8 +39,6 @@ $pluginParams = array (
 	'description' => tra("This plugin displays a Flash, Tcl or Java applet/object."),
 	'help_function' => 'data_object_help',
 	'syntax' => "{OBJECT type= src= width= height=}",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.object.php',
-	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAOBJECT, $pluginParams );

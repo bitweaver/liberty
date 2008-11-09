@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.agentinfo.php,v 1.8 2007/06/09 18:09:39 squareing Exp $
+// $Id: data.agentinfo.php,v 1.9 2008/11/09 09:08:55 squareing Exp $
 
 /**
  * definitions
@@ -34,8 +34,6 @@ $pluginParams = array (
 	'description' => tra("This plugin will display the viewer's IP address, the Browser they are using, or the info about the site's Server software."),
 	'help_function' => 'data_agentinfo_help',
 	'syntax' => "{AGENTINFO info= }",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.agentinfo.php',
-	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAAGENTINFO, $pluginParams );

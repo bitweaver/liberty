@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.copyright.php,v 1.7 2007/06/09 18:09:39 squareing Exp $
+// $Id: data.copyright.php,v 1.8 2008/11/09 09:08:55 squareing Exp $
 
 /**
  * definitions
@@ -37,8 +37,6 @@ $pluginParams = array (
 	'description' => tra("This plugin is used to insert CopyRight notices."),
 	'help_function' => 'data_copyright_help',
 	'syntax' => "{COPYRIGHT title= year= authors= }",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.copyright.php',
-	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACOPYRIGHT, $pluginParams );

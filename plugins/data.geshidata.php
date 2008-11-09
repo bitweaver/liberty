@@ -1,10 +1,10 @@
 <?php
-// $Id: data.geshidata.php,v 1.3 2007/06/09 18:09:39 squareing Exp $
+// $Id: data.geshidata.php,v 1.4 2008/11/09 09:08:55 squareing Exp $
 /**
  * assigned_modules
  *
  * @author   StarRider <starrrider@sourceforge.net>
- * @version  $Revision: 1.3 $
+ * @version  $Revision: 1.4 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
@@ -27,8 +27,6 @@ $pluginParams = array (
 	'description' => tra("This plugin is a documentation tool for the bitweaver site. It will display some of information defined in the GeSHi (Generic Syntax Highlighter) package."),
 	'help_function' => 'data_help_GeshiData',
 	'syntax' => "{GESHIDATA doall= lang= info= }",
-	'path' => LIBERTY_PKG_PATH.'plugins/data.geshidata.php',
-	'security' => 'registered',
 	'plugin_type' => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAGESHIDATA, $pluginParams );

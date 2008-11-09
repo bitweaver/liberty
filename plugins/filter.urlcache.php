@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.urlcache.php,v 1.2 2007/07/23 20:17:34 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.urlcache.php,v 1.3 2008/11/09 09:08:55 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -37,7 +37,6 @@ $pluginParams = array (
 	'title'              => 'External Links Cache',
 	'description'        => 'If you insert a link to an external page, this filter will proceede to cache that page to ensure that you can view the page, even if it moves or gets removed from the original location.',
 	'auto_activate'      => FALSE,
-	'path'               => LIBERTY_PKG_PATH.'plugins/filter.urlcache.php',
 	'plugin_type'        => FILTER_PLUGIN,
 
 	// filter functions

@@ -1,7 +1,7 @@
 <?php
 /**
- * @version  $Revision: 1.17 $
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.17 2008/04/23 01:28:19 spiderr Exp $
+ * @version  $Revision: 1.18 $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/data.img.php,v 1.18 2008/11/09 09:08:55 squareing Exp $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -21,8 +21,6 @@ $pluginParams = array (
 	'description'   => tra( "Allows you to insert an image into your page with little effort and a multitude of styling options." ),
 	'help_function' => 'data_img_help',
 	'syntax'        => "{img src=http://www.google.at/logos/olympics06_ski_jump.gif}",
-	'path'          => LIBERTY_PKG_PATH.'plugins/data.img.php',
-	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN,
 	'biticon'       => '{biticon ilocation=quicktag iname=image-x-generic iexplain="Image"}',
 	'taginsert'     => '{img src= width= height= align= description= link=}'

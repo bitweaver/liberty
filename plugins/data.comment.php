@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.10 $
+ * @version  $Revision: 1.11 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -18,8 +18,6 @@ $pluginParams = array (
 	'description'   => tra("This plugin allows Comments (Text that will not be displayed) to be added to a page."),
 	'help_function' => 'data__comment_help',
 	'syntax'        => "{comment}Data Not Displayed{/comment}",
-	'path'          => LIBERTY_PKG_PATH.'plugins/data.comment.php',
-	'security'      => 'registered',
 	'plugin_type'   => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACOMMENT, $pluginParams );
