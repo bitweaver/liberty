@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.22 2008/09/15 10:32:07 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.23 2008/11/09 08:53:52 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.22 $
+ * @version		$Revision: 1.23 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -39,7 +39,7 @@ $pluginParams = array (
 	'inline_tpl'          => 'bitpackage:liberty/mime/flv/inline.tpl',
 	'edit_tpl'            => 'bitpackage:liberty/mime/flv/edit.tpl',
 	// url to page with options for this plugin
-	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/mime_flv.php',
+	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/plugins/mime_flv.php',
 	// This should be the same for all mime plugins
 	'plugin_type'         => MIME_PLUGIN,
 	// Set this to TRUE if you want the plugin active right after installation

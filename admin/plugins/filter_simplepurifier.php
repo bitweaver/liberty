@@ -1,5 +1,5 @@
 <?php
-require_once( '../../bit_setup_inc.php' );
+require_once( '../../../bit_setup_inc.php' );
 include_once( KERNEL_PKG_PATH.'simple_form_functions_lib.php' );
 /* We need DEFAULT_ACCEPTABLE_TAGS from here. */
 include_once( LIBERTY_PKG_PATH.'plugins/filter.simplepurifier.php');
@@ -20,7 +20,7 @@ if( !empty( $_REQUEST['apply'] )) {
 	$gBitSmarty->assign_by_ref( 'errors', $errors );
 
 	if( !empty($_REQUEST['approved_html_tags'] )) {
-	    $tags = preg_replace( '/\s/', '', $_REQUEST['approved_html_tags'] );
+		$tags = preg_replace( '/\s/', '', $_REQUEST['approved_html_tags'] );
 		if( strlen( $tags ) > 250 ) {
 			$tags = substr( $tags, 0, 250 );
 			$errors['blacklist'] = 'The approved tags list has been shortened. You can only have 250 characters for approved tags.';
@@ -33,5 +33,5 @@ $tags = $gBitSystem->getConfig( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
 
 $gBitSmarty->assign( 'approved_html_tags', $tags );
 
-$gBitSystem->display( 'bitpackage:liberty/filter_simplepurifier.tpl', 'Simple HTML Purifier' , array( 'display_mode' => 'admin' ));
+$gBitSystem->display( 'bitpackage:liberty/plugins/filter_simplepurifier_admin.tpl', 'Simple HTML Purifier' , array( 'display_mode' => 'admin' ));
 ?>

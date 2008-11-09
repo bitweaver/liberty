@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.24 $
+ * @version  $Revision: 1.25 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -17,7 +17,7 @@
 // | Reworked for Bitweaver (& Undoubtedly Screwed-Up)
 // | by: StarRider <starrrider@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.code.php,v 1.24 2008/11/07 20:59:44 spiderr Exp $
+// $Id: data.code.php,v 1.25 2008/11/09 08:53:52 squareing Exp $
 
 /**
  * definitions
@@ -25,18 +25,18 @@
 define( 'PLUGIN_GUID_DATACODE', 'datacode' );
 global $gLibertySystem;
 $pluginParams = array (
-	'tag'           => 'CODE',
-	'auto_activate' => TRUE,
-	'requires_pair' => TRUE,
-	'load_function' => 'data_code',
-	'title'         => 'Code',
-	'help_page'     => 'DataPluginCode',
-	'description'   => tra( "Displays the Source Code Snippet between {code} blocks." ),
-	'help_function' => 'data_code_help',
-	'syntax'        => "{code source= num= }". tra( "Sorce Code Snippet" ) . "{/code}",
-	'path'          => LIBERTY_PKG_PATH.'plugins/data.code.php',
-	'security'      => 'registered',
-	'plugin_type'   => DATA_PLUGIN
+	'tag'                 => 'CODE',
+	'auto_activate'       => TRUE,
+	'requires_pair'       => TRUE,
+	'load_function'       => 'data_code',
+	'title'               => 'Code',
+	'help_page'           => 'DataPluginCode',
+	'description'         => tra( "Displays the Source Code Snippet between {code} blocks." ),
+	'help_function'       => 'data_code_help',
+	'syntax'              => "{code source= num= }". tra( "Sorce Code Snippet" ) . "{/code}",
+	'security'            => 'registered',
+	'plugin_type'         => DATA_PLUGIN,
+	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/plugins/data_code.php',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACODE, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATACODE );
@@ -132,126 +132,139 @@ function data_code_help() {
 				.'</td>'
 			.'</tr>'
 		.'</table>'
-		. tra("Example: ") . "{CODE source='php' num='on' }" . tra("Sorce Code Snippet") . "{/code}";
+		. tra("Example: ") . "{code source='php' num='on'}" . tra("Sorce Code Snippet") . "{/code}";
 	return $help;
 }
 
 if( !function_exists( 'unHtmlEntities' )) { // avoid name collisions
-	function unHtmlEntities($str) {
-		$tTbl = get_html_translation_table(HTML_ENTITIES);
-		$tTbl = array_flip($tTbl);
-		return strtr($str, $tTbl);
+	function unHtmlEntities( $pStr ) {
+		$tTbl = get_html_translation_table( HTML_ENTITIES );
+		$tTbl = array_flip( $tTbl );
+		return strtr( $pStr, $tTbl );
 	}
 }
+
 if( !function_exists( 'deCodeHTML' )) { // avoid name collisions
-	function deCodeHTML($str) {
-		$str = strtr($str, array_flip(get_html_translation_table(HTML_ENTITIES)));
-		$str = preg_replace("/&#([0-9]+);/me", "chr('\\1')", $str);
-		return $str;
+	function deCodeHTML( $pStr ) {
+		$pStr = strtr( $pStr, array_flip( get_html_translation_table( HTML_ENTITIES )));
+		$pStr = preg_replace( "/&#([0-9]+);/me", "chr('\\1')", $pStr );
+		return $pStr;
 	}
 }
 
 
 // Load Function
-function data_code( $data, $params ) { // Pre-Clyde Changes
+function data_code( $pData, $pParams ) { // Pre-Clyde Changes
 	global $gBitSystem;
-// Parameters were $In & $Colors
-// Added testing to maintain Pre-Clyde compatability
-//	$num = NULL;
-	extract ($params, EXTR_SKIP);
-	// This maintains Pre-Clyde Parameters
-	if (isset($colors) and ($colors == 'php') ) {
+	extract( $pParams, EXTR_SKIP );
+
+	if( !empty( $colors ) and ( $colors == 'php' )) {
 		$source = 'php';
 	}
-	if (isset($in) ) {
+
+	if( !empty( $in )) {
 		$source = $in;
 	}
-	// There is no UI for liberty_plugin_code_default_source, just have to smash it into kernel_config by hand
-	$source = isset($source) ? strtolower($source) : $gBitSystem->getConfig( 'liberty_plugin_code_default_source', 'php' ); // if not specified the default is HTML
-	if (isset($in)) {
-		 $num = $in; // This maintains Pre-Clyde Parameters
-	}
-	if (isset($num) && (!is_numeric ($num))) {
-		switch (strtoupper($num)) {
+
+	$source = isset( $source ) ? strtolower( $source ) : $gBitSystem->getConfig( 'liberty_plugin_code_default_source', 'php' );
+
+	if( !empty( $num ) && !is_numeric( $num )) {
+		switch( strtoupper( $num )) {
 		case 'TRUE': case 'ON': case 'YES':
 			$num = 1;
 			break;
-		default: // could have done FALSE/OFF/NO but we want any other value to be False
+		default:
 			$num = 0;
 			break;
 		}
 	}
-	$num = (isset($num)) ? $num : FALSE;
+	$num = ( isset( $num )) ? $num : FALSE;
 
 	// trim any trailing spaces
 	$code = '';
-	$lines = explode("\n", $data);
-	foreach ($lines as $line) {
-		$code .=  rtrim($line) . "\n";
+	$lines = explode( "\n", $pData );
+	foreach( $lines as $line ) {
+		$code .=  rtrim( $line )."\n";
 	}
 
 	$code = unHtmlEntities( $code );
 
 	// Trim any leading blank lines
-	$code = preg_replace('/^[\n\r]+/', "",$code);
+	$code = preg_replace( '/^[\n\r]+/', "", $code );
 	// Trim any trailing blank lines
-	if( file_exists( UTIL_PKG_PATH.'geshi/geshi.php' ) ) {
-		$code = preg_replace('/[\n\r]+$/', "",$code);
+	if( file_exists( UTIL_PKG_PATH.'geshi/geshi.php' )) {
+		$code = preg_replace('/[\n\r]+$/', "", $code );
 	} else {
-		$code = preg_replace('/[\n\r]+$/', "\n",$code);
+		$code = preg_replace('/[\n\r]+$/', "\n", $code );
 	}
 
 	if( file_exists( UTIL_PKG_PATH.'geshi/geshi.php' ) ) {
 		// Include the GeSHi library
 		include_once( UTIL_PKG_PATH.'geshi/geshi.php' );
 		$geshi = new GeSHi($code, $source, UTIL_PKG_PATH.'geshi/geshi' );
-		if ($num) { // Line Numbering has been requested
-			$geshi->enable_line_numbers(GESHI_FANCY_LINE_NUMBERS);
-			if (is_numeric($num)) $geshi->start_line_numbers_at($num);
+		if( $num ) { // Line Numbering has been requested
+			$geshi->enable_line_numbers( GESHI_FANCY_LINE_NUMBERS );
+			if( is_numeric( $num )) {
+				$geshi->start_line_numbers_at( $num );
+			}
 		}
-		$code = deCodeHTML(htmlentities($geshi->parse_code()));
+		$code = deCodeHTML( htmlentities( $geshi->parse_code() ));
 	} else {
-		if ($num) { // Line Numbering has been requested
-			$lines = explode("\n", $code);
+		// Line Numbering has been requested
+		if( $num ) {
+			$lines = explode( "\n", $code );
 			$code = '';
-			$i = (is_numeric($num)) ? $num : 1; //Line Number
-			foreach ($lines as $line) {
-				if (strlen($line) > 1) {
-				$code .= sprintf("%3d", $i) . ": " . $line . "\n";
-				$i++;
+			//Line Number
+			$i = ( is_numeric( $num )) ? $num : 1;
+			foreach( $lines as $line ) {
+				if( strlen( $line ) > 1 ) {
+					$code .= sprintf( "%3d", $i ).": ".$line."\n";
+					$i++;
 				}
 			}
 		}
-		switch (strtoupper($source)) { 	// I used a switch here to make it easy to expand this plugin for other kinds of source code
+
+		switch( strtoupper( $source )) {
 			case 'HTML':
-				$code = highlight_string(deCodeHTML($code),true);
-				if (substr($code, 0, 6) == '<code>') { // Remove the first <code>" tags
-					$code = substr($code, 6, (strlen($code) - 13));
+				$code = highlight_string( deCodeHTML( $code ), TRUE );
+				// Remove the first <code>" tags
+				if( substr( $code, 0, 6 ) == '<code>') {
+					$code = substr( $code, 6, ( strlen( $code ) - 13 ));
 				}
 				break;
 			case 'PHP':
-				if(!preg_match( '/^[ 0-9:]*<\?/i', $code ) ) { // Check it if code starts with PHP tags, if not: add 'em.
-					$code = "<?php\n".$code."?>"; // The require these tags to function
+				// Check it if code starts with PHP tags, if not: add 'em.
+				if( !preg_match( '/^[ 0-9:]*<\?/i', $code )) {
+					// The require these tags to function
+					$code = "<?php\n".$code."?>";
 				}
-				$code = highlight_string($code, true);
-				$convmap = array( // Replacement-map to replace Colors
-					'#000000">' => '#004A4A">', // The Default Color
-					'#006600">' => '#2020FF">', // Color for Functions/Variables/Numbers/&/Constants
-					'#0000CC">' => '#209020">', // Color for KeyWords
-					'#FF9900">' => '#BB4040">', // Color for Constants
-					'#CC0000">' => '#903030">' // Color for Strings
-				);// <-- # Assigned by HighLight_String / --> # Color to be Displayed
-	// NOTE: The colors assigned by HighLight_String have changed with different versions of PHP - these are for PHP 4.3.4
-				$code = strtr($code, $convmap); // Change the Colors
+				$code = highlight_string( $code, TRUE );
+				// Replacement-map to replace Colors
+				$convmap = array(
+					// The Default Color
+					'#000000">' => '#004A4A">',
+					// Color for Functions/Variables/Numbers/&/Constants
+					'#006600">' => '#2020FF">',
+					// Color for KeyWords
+					'#0000CC">' => '#209020">',
+					// Color for Constants
+					'#FF9900">' => '#BB4040">',
+					// Color for Strings
+					'#CC0000">' => '#903030">'
+				);
+				// <-- # Assigned by HighLight_String / --> # Color to be Displayed
+				// NOTE: The colors assigned by HighLight_String have changed with different versions of PHP - these are for PHP 4.3.4
+				// Change the Colors
+				$code = strtr( $code, $convmap );
 				break;
 			default:
-				$code = highlight_string( $code, true );
+				$code = highlight_string( $code, TRUE );
 				break;
 		}
 
 		$code = "<pre>$code</pre>";
 	}
 
-	return "<!--~np~-->".( !empty( $title ) ? '<p class="codetitle">'.$title.'</p>' : "" )."<div class='codelisting'>".$code."</div><!--~/np~-->";
+	return ( !empty( $title ) ? '<p class="codetitle">'.$title.'</p>' : "" )."<div class='codelisting'>".$code."</div>";
 }
 ?>

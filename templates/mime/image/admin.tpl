@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/Attic/admin_mime_image.tpl,v 1.4 2008/10/27 07:12:37 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/mime/image/admin.tpl,v 1.1 2008/11/09 08:53:52 squareing Exp $ *}
 {strip}
 <div class="admin liberty">
 	<div class="header">

@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.25 2008/09/15 10:32:07 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.26 2008/11/09 08:53:52 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.25 $
+ * @version		$Revision: 1.26 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -39,7 +39,7 @@ $pluginParams = array (
 	'inline_tpl'          => 'bitpackage:liberty/mime/audio/inline.tpl',
 	'edit_tpl'            => 'bitpackage:liberty/mime/audio/edit.tpl',
 	// url to page with options for this plugin
-	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/mime_audio.php',
+	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/plugins/mime_audio.php',
 	// This should be the same for all mime plugins
 	'plugin_type'         => MIME_PLUGIN,
 	// Set this to TRUE if you want the plugin active right after installation

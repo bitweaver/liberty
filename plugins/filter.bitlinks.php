@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.18 2008/10/28 21:10:52 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.19 2008/11/09 08:53:52 squareing Exp $
  * @package  liberty
  */
 
@@ -12,19 +12,18 @@ define( 'PLUGIN_GUID_FILTERWIKILINKS', 'filterbitlinks' );
 global $gLibertySystem;
 
 $pluginParams = array (
-	'title'              => 'WikiLinks',
-	'description'        => 'If you use links of the format ((Wiki Page)) this filter will convert that to a link to a wiki page entitled <em>Wiki Page</em>',
-	'auto_activate'      => TRUE,
-	'path'               => LIBERTY_PKG_PATH.'plugins/filter.bitlinks.php',
-	'plugin_type'        => FILTER_PLUGIN,
+	'title'               => 'WikiLinks',
+	'description'         => 'If you use links of the format ((Wiki Page)) this filter will convert that to a link to a wiki page entitled <em>Wiki Page</em>',
+	'auto_activate'       => TRUE,
+	'plugin_type'         => FILTER_PLUGIN,
 
 	// filter functions
-	'presplit_function'  => 'bitlinks_prefilter',
-	'preparse_function'  => 'bitlinks_prefilter',
-	'postsplit_function' => 'bitlinks_postfilter',
-	'postparse_function' => 'bitlinks_postfilter',
-	'poststore_function' => 'bitlinks_storefilter',
-	'expunge_function'   => 'bitlinks_expungefilter',
+	'presplit_function'   => 'bitlinks_prefilter',
+	'preparse_function'   => 'bitlinks_prefilter',
+	'postsplit_function'  => 'bitlinks_postfilter',
+	'postparse_function'  => 'bitlinks_postfilter',
+	'poststore_function'  => 'bitlinks_storefilter',
+	'expunge_function'    => 'bitlinks_expungefilter',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERWIKILINKS, $pluginParams );
 

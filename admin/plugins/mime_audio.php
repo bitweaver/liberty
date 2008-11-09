@@ -1,5 +1,5 @@
 <?php
-require_once( '../../bit_setup_inc.php' );
+require_once( '../../../bit_setup_inc.php' );
 include_once( KERNEL_PKG_PATH.'simple_form_functions_lib.php' );
 
 $gBitSystem->verifyPermission( 'p_admin' );
@@ -87,5 +87,5 @@ if( !empty( $_REQUEST['plugin_settings'] )) {
 }
 
 $gBitSmarty->assign( 'feedback', $feedback );
-$gBitSystem->display( 'bitpackage:liberty/admin_mime_audio.tpl', tra( 'Flashvideo Plugin Settings' ), array( 'display_mode' => 'admin' ));
+$gBitSystem->display( 'bitpackage:liberty/mime/audio/admin.tpl', tra( 'Audio Plugin Settings' ), array( 'display_mode' => 'admin' ));
 ?>

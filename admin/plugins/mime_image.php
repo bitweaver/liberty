@@ -1,5 +1,5 @@
 <?php
-require_once( '../../bit_setup_inc.php' );
+require_once( '../../../bit_setup_inc.php' );
 include_once( KERNEL_PKG_PATH.'simple_form_functions_lib.php' );
 
 $gBitSystem->verifyPermission( 'p_admin' );
@@ -43,5 +43,5 @@ if( !empty( $_REQUEST['settings_store'] )) {
 	simple_set_int( 'mime_image_panorama_width', $_REQUEST['mime_image_panorama_width'] );
 }
 $gBitSmarty->assign( 'feedback', $feedback );
-$gBitSystem->display( 'bitpackage:liberty/admin_mime_image.tpl', tra( 'Image Plugin Settings' ), array( 'display_mode' => 'admin' ));
+$gBitSystem->display( 'bitpackage:liberty/mime/image/admin.tpl', tra( 'Image Plugin Settings' ), array( 'display_mode' => 'admin' ));
 ?>

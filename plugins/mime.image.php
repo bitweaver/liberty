@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.19 2008/10/27 07:12:37 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.20 2008/11/09 08:53:52 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.19 $
+ * @version		$Revision: 1.20 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -37,7 +37,7 @@ $pluginParams = array (
 	'view_tpl'            => 'bitpackage:liberty/mime/image/view.tpl',
 	'inline_tpl'          => 'bitpackage:liberty/mime/image/inline.tpl',
 	// url to page with options for this plugin
-	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/mime_image.php',
+	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/plugins/mime_image.php',
 	// This should be the same for all mime plugins
 	'plugin_type'         => MIME_PLUGIN,
 	// Set this to TRUE if you want the plugin active right after installation

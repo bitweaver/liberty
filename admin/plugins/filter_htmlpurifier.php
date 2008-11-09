@@ -1,5 +1,5 @@
 <?php
-require_once( '../../bit_setup_inc.php' );
+require_once( '../../../bit_setup_inc.php' );
 include_once( KERNEL_PKG_PATH.'simple_form_functions_lib.php' );
 
 $gBitSystem->verifyPermission( 'p_admin' );
@@ -67,7 +67,7 @@ if( !empty( $_REQUEST['apply'] )) {
 	}
 	$errors = array();
 	if( !empty($_REQUEST['blacklisted_html_tags'] )) {
-	    $tags = preg_replace( '/\s/', '', $_REQUEST['blacklisted_html_tags'] );
+		$tags = preg_replace( '/\s/', '', $_REQUEST['blacklisted_html_tags'] );
 		if( strlen( $tags ) > 250 ) {
 			$tags = substr( $tags, 0, 250 );
 			$errors['blacklist'] = 'The blacklisted tags list has been shortened. You can only have 250 characters for blacklisted tags.';
@@ -77,5 +77,5 @@ if( !empty( $_REQUEST['apply'] )) {
 	$gBitSmarty->assign($errors);
 }
 
-$gBitSystem->display( 'bitpackage:liberty/filter_htmlpurifier.tpl', 'HTML Purifier' , array( 'display_mode' => 'admin' ));
+$gBitSystem->display( 'bitpackage:liberty/plugins/filter_htmlpurifier_admin.tpl', 'HTML Purifier' , array( 'display_mode' => 'admin' ));
 ?>
