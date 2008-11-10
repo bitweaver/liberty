@@ -65,7 +65,7 @@ $tables = array(
 	last_modified I8 NOTNULL,
 	format_guid C(16) NOTNULL,
 	summary XL,
-	user_id C(40),
+	user_id I4 NOTNULL,
 	ip C(15),
 	history_comment C(200),
 	data XL
