@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.19 2008/11/09 08:53:52 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.20 2008/11/11 09:28:29 squareing Exp $
  * @package  liberty
  */
 
@@ -29,6 +29,15 @@ $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERWIKILINKS, $pluginParams );
 
 define( 'WIKI_WORDS_REGEX', '[A-z0-9]{2}[\w\d_\-]+[A-Z_][\w\d_\-]+[A-z0-9]+' );
 
+/**
+ * bitlinks_prefilter 
+ * 
+ * @param array $pData 
+ * @param array $pFilterHash 
+ * @param array $pObject 
+ * @access public
+ * @return void
+ */
 function bitlinks_prefilter( &$pData, &$pFilterHash, $pObject ) {
 	static $sBitLinks;
 	if( empty( $sBitLinks )) {
@@ -361,7 +370,7 @@ class BitLinks extends BitBase {
 				//$data = preg_replace( "#([\s\,\;])\b$slashed\b([\s\,\;\.])#", "$1 ".$repl."$2", $data);
 
 				// new code
-				// i never understood with the simple stuff never worked but it
+				// i never understood why the simple stuff never worked but it
 				// seems to work now - xing - Sunday Jul 22, 2007   17:37:17 CEST
 				$pData = preg_replace( "/\b".preg_quote( $page, "/" )."\b/", $repl, $pData );
 			}
@@ -442,15 +451,15 @@ class BitLinks extends BitBase {
 
 		// if we don't have a content_id or wiki isn't active, get out of here.
 		if( empty( $pFilterHash['content_id'] ) || !$gBitSystem->isPackageActive( 'wiki' )) {
-			return;
+			return FALSE;
 		}
 
 		$from_content_id = $pFilterHash['content_id'];
 		$from_title = isset( $pFilterHash['title'] ) ? $pFilterHash['title'] : '';
 
 		// we need to remove the cache of any pages pointing to this one
-		$query = "SELECT `from_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE (`to_content_id`=? or `to_content_id` IS NULL ) AND `to_title` = ?";
-		$clearCache = $gBitSystem->mDb->getCol( $query, array( 0, $from_title ));
+		$query = "SELECT `from_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE ( `to_content_id` = ? OR `to_content_id` IS NULL ) AND `to_title` = ?";
+		$clearCache = $gBitSystem->mDb->getCol( $query, array( $from_content_id, $from_title ));
 		if( is_array( $clearCache )) {
 			foreach( $clearCache as $content_id ) {
 				LibertyContent::expungeCacheFile( $content_id );
@@ -458,98 +467,96 @@ class BitLinks extends BitBase {
 		}
 
 		// if this is a new page, fix up any links that may already point to it
-		$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET `to_content_id`=? WHERE (`to_content_id`=? or `to_content_id` IS NULL ) AND `to_title` = ?";
+		$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_links` SET `to_content_id` = ? WHERE ( `to_content_id` = ? OR `to_content_id` IS NULL ) AND `to_title` = ?";
 		$gBitSystem->mDb->query( $query, array( $from_content_id, 0, $from_title ));
 
 		// get all the current links from this page
-		$old_links_in_db = array();
-		$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id` = ?";
-		if( $result = $gBitSystem->mDb->query( $query, array( $from_content_id ))) {
-			while( $row = $result->fetchRow() ) {
-				$old_links_in_db[strtolower($row['to_title'])] = $row['to_content_id'];
-			}
-		}
+		$query = "SELECT LOWER( `to_title` ), `to_content_id` FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id` = ?";
+		$oldLinks = $gBitSystem->mDb->getAssoc( $query, array( $from_content_id ));
 
 		// get list of all wiki links on this page
-		$wiki_links_in_content = $this->extractWikiWords( $pData );
+		$extractedWikiWords = $this->extractWikiWords( $pData );
 
-		// create list of unique new wiki links on this page
-		$unique_new_wiki_links = array();
-		foreach( $wiki_links_in_content as $to_title ) {
-			if( empty( $to_title )) {
-				continue;
+		// wiki links with anchors are pulled out as well. we'll make copies of the wiki pagenames without the anchor to process these correctly as well
+		foreach( $extractedWikiWords as $link ) {
+			if( strstr( $link, '#' ) !== FALSE ) {
+				$extractedWikiWords[] = preg_replace( "!#.*!", "", $link );
 			}
-			if( isset( $old_links_in_db[strtolower($to_title)] )) {
-				// link already in DB - skip rest of processing
-				continue;
-			}
-			$unique_new_wiki_links[$to_title] = $to_title;
 		}
 
+		// create list of unique new wiki links on this page
+		$uniqueNewWikiLinks = array();
+		foreach( $extractedWikiWords as $to_title ) {
+			if( !empty( $to_title ) && !isset( $oldLinks[strtolower($to_title)] )) {
+				$uniqueNewWikiLinks[] = $to_title;
+			}
+		}
+		// remove duplicates
+		array_unique( $uniqueNewWikiLinks );
+
 		// get list of all new links that point to existing content
-		$title_list_count = count( $unique_new_wiki_links );
-		if( $title_list_count > 0 ) {
-			$inSql      = '?'.str_repeat( ',?', $title_list_count - 1 );
-			//$bindVars   = array_keys( $unique_new_wiki_links );
+		if( !empty( $uniqueNewWikiLinks )) {
+			$inSql = '?'.str_repeat( ',?', count( $uniqueNewWikiLinks ) - 1 );
 			// All arguments to MySQL in() function have to be passed as strings or it doesn't work correctly
-			// code above was updating the incorrect rows for totally numeric page names like 97834
 			$bindVars = array();
-			foreach( array_keys( $unique_new_wiki_links ) as $var ) {
-				$bindVars[] = "$var";
+			foreach( $uniqueNewWikiLinks as $var ) {
+				$bindVars[] = ( string )$var;
 			}
 			$bindVars[] = BITPAGE_CONTENT_TYPE_GUID;
 
-			$new_link_pointing_to_existing_content = array();
-			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_content` WHERE `title` IN( $inSql ) AND `content_type_guid` = ?";
-			if( $result = $gBitSystem->mDb->query( $query, $bindVars )) {
-				while( $row = $result->fetchRow() ) {
-					$new_link_pointing_to_existing_content[strtolower( $row['title'] )] = $row['content_id'];
-				}
-			}
+			$query = "SELECT LOWER( `title` ), `title` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `title` IN( $inSql ) AND `content_type_guid` = ?";
+			$newLinksPointingToExistingContent = $gBitSystem->mDb->getAssoc( $query, $bindVars );
 
-			if( count( $new_link_pointing_to_existing_content ) > 0 ) {
-				// insert all new links pointing to existing content
-				//$bindVars   = array_keys( $new_link_pointing_to_existing_content );
+			// insert all new links pointing to existing content
+			if( !empty( $newLinksPointingToExistingContent )) {
 				// All arguments to MySQL in() function have to be passed as strings or it doesn't work correctly
-				// code above was updating the incorrect rows for totally numeric page names like 97834
 				$bindVars = array();
-				foreach( array_keys( $new_link_pointing_to_existing_content ) as $var ) {
-					$bindVars[] = "$var";
+				foreach( $newLinksPointingToExistingContent as $var ) {
+					$bindVars[] = ( string )$var;
 				}
 				$bindVars[] = BITPAGE_CONTENT_TYPE_GUID;
-				$inSql      = '?' . str_repeat( ',?', count( $new_link_pointing_to_existing_content ) - 1 );
+				$inSql      = '?'.str_repeat( ',?', count( $newLinksPointingToExistingContent ) - 1 );
 				$query      = "
-					INSERT INTO `".BIT_DB_PREFIX."liberty_content_links`
-						(`from_content_id`,`to_content_id`,`to_title`)
-					SELECT ?,`content_id`,`title` FROM `".BIT_DB_PREFIX."liberty_content`
-					WHERE `title` IN ( $inSql ) AND `content_type_guid` = ?";
+					INSERT INTO `".BIT_DB_PREFIX."liberty_content_links` ( `from_content_id`, `to_content_id`, `to_title` )
+					SELECT ?, `content_id`, `title` FROM `".BIT_DB_PREFIX."liberty_content`
+					WHERE `title` IN( $inSql ) AND `content_type_guid` = ?";
 				array_unshift( $bindVars, $from_content_id );
 				$result = $gBitSystem->mDb->query( $query, $bindVars );
 			}
-		}
 
-		// insert all new links pointing to non-existing content and that are not in the db yet
-		foreach( $unique_new_wiki_links as $to_title ) {
-			if( isset( $new_link_pointing_to_existing_content[strtolower( $to_title )] ) || in_array( strtolower( $to_title ), array_keys( $old_links_in_db ))) {
-				continue;
+			// insert all new links pointing to non-existing content and that are not in the db yet
+			foreach( $uniqueNewWikiLinks as $to_title ) {
+				if( !isset( $newLinksPointingToExistingContent[strtolower( $to_title )] ) && !in_array( strtolower( $to_title ), array_keys( $oldLinks ))) {
+					$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_links` ( `from_content_id`, `to_title` ) VALUES( ?, ? )";
+					$result = $gBitSystem->mDb->query( $query, array( $from_content_id, $to_title ));
+				}
 			}
-			$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_links` (`from_content_id`,`to_title`) VALUES(?, ?)";
-			$result = $gBitSystem->mDb->query( $query, array( $from_content_id, $to_title ));
 		}
 
 		// now delete any links no longer on page
-		foreach( $wiki_links_in_content as $to_title ) {
-			$wiki_links_in_content_table[strtolower( $to_title )] = 1;
+		foreach( $extractedWikiWords as $to_title ) {
+			$obsoleteLinks[strtolower( $to_title )] = 1;
 		}
 
-		foreach( array_keys( $old_links_in_db ) as $to_title ) {
-			if( !isset( $wiki_links_in_content_table[$to_title] )) {
+		foreach( array_keys( $oldLinks ) as $to_title ) {
+			if( !isset( $obsoleteLinks[$to_title] )) {
 				$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=? and `to_title` = ?";
 				$result = $gBitSystem->mDb->query( $query, array( $from_content_id, $to_title ));
 			}
 		}
+
+		return TRUE;
 	}
 
+	/**
+	 * renameLinks 
+	 * 
+	 * @param array $pContentId 
+	 * @param array $pOldName 
+	 * @param array $pNewName 
+	 * @access public
+	 * @return void
+	 */
 	function renameLinks( $pContentId, $pOldName, $pNewName ) {
 		$query = "
 			SELECT `from_content_id`, `data`
