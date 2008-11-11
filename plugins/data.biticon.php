@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -70,6 +70,7 @@ function data_biticon( $pData, $pParams ) {
 		$biticon['iname']    = $pParams['iname'];
 		$biticon['ipackage'] = !empty( $pParams['ipackage'] ) ? $pParams['ipackage'] : 'icons';
 		$biticon['iexplain'] = !empty( $pParams['iexplain'] ) ? $pParams['iexplain'] : 'icon';
+		$biticon['ipath']    = !empty( $pParams['ipath'] )    ? $pParams['ipath']    : 'small';
 		$ret = smarty_function_biticon( $biticon, $gBitSmarty );
 		$wrapper = liberty_plugins_wrapper_style( $pParams, FALSE );
 		if( !empty( $wrapper['style'] )) {
