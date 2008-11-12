@@ -93,7 +93,7 @@ function data_quote( $pData, $pParams ) {
 	$user = empty( $pParams['user'] ) ? NULL : $pParams['user'];
 
 	if( !empty( $pParams['comment_id'] )) {
-		$extra.="In ";
+		
 		if( ACTIVE_PACKAGE == 'boards' ) {
 			$c = new BitBoardPost( preg_replace( '/[^0-9]/', '', $pParams['comment_id'] ) );
 		} else {
