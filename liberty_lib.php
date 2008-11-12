@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.46 2008/10/27 03:46:25 spiderr Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.47 2008/11/12 07:26:38 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -114,7 +114,7 @@ function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject, $pParseHash )
 				}
 
 				if( $ret = $loadFunc( $plugin_data, $arguments, $pCommonObject, $pParseHash )) {
-					$key = md5( mt_rand() );
+					$key = "parseprotect".md5( mt_rand() );
 					$pReplace[] = array(
 						'key'  => $key,
 						'data' => $ret,
