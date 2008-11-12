@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.0.php,v 1.4 2008/10/30 22:02:20 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.0.php,v 1.5 2008/11/12 18:46:29 pppspoonman Exp $
  */
 global $gBitInstaller;
 
@@ -55,6 +55,10 @@ array( 'DATADICT' => array(
 		'liberty_meta_types_id_seq',
 		'liberty_meta_titles_id_seq',
 	)),
+	array( 'ALTER' => array(
+		'liberty_content_history' => array(
+			'user_id' => array( '`user_id`', 'I4' ), // , 'NOTNULL' ),
+	))),
 )),
 
 array( 'PHP' => '
