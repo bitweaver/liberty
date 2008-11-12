@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.8 2008/11/09 09:08:55 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.9 2008/11/12 07:24:56 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -84,8 +84,9 @@ function maketoc_postparsefilter( &$pData, &$pFilterHash ) {
 
 		// remove any html tags from the output text and generate link ids
 		foreach( $headers[2] as $output ) {
-			$outputs[] = $temp = preg_replace( "/<[^>]*>/", "", $output );
-			$id = substr( preg_replace( "/[^\w|\d]*/", "", $temp ), 0, 40 );
+			$outputs[] = $id = preg_replace( "/<[^>]*>/", "", $output );
+			$id = preg_replace( "@parseprotect[[a-zA-Z0-9]{32}@", "", $id );
+			$id = substr( preg_replace( "/[^\w|\d]*/", "", $id ), 0, 40 );
 			$ids[] = !empty( $id ) ? $id : 'id'.microtime() * 1000000;
 		}
 
