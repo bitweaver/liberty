@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.1.php,v 1.3 2008/11/15 06:03:02 spiderr Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.1.php,v 1.4 2008/11/15 07:13:41 spiderr Exp $
  */
 global $gBitInstaller;
 
@@ -47,13 +47,6 @@ array( 'DATADICT' => array(
 		'liberty_content_history' => array( '`temp_column`' ),
 	)),
 	// reconstruct constraints, sequences and indexes
-)),
-
-array( 'DATADICT' => array(
-	array( 'ALTER' => array(
-		'liberty_content_history' => array(
-			'user_id' => array( '`user_id`', 'I4' ),
-	))),
 )),
 
 ));
