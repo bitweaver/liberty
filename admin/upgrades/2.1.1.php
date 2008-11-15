@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.1.php,v 1.2 2008/11/14 07:20:54 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.1.php,v 1.3 2008/11/15 06:03:02 spiderr Exp $
  */
 global $gBitInstaller;
 
@@ -10,7 +10,6 @@ $infoHash = array(
 	'description'  => "Minor fix to table column type.",
 	'post_upgrade' => NULL,
 );
-$gBitInstaller->registerPackageUpgrade( $infoHash, array(
 
 // all we are doing is change the column type of user_id for liberty_content_history.
 // postgresql < 8.2 doesn't allow easy column type changing
