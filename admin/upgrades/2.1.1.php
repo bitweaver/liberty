@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.1.php,v 1.4 2008/11/15 07:13:41 spiderr Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.1.php,v 1.5 2008/11/15 14:28:23 squareing Exp $
  */
 global $gBitInstaller;
 
@@ -33,12 +33,10 @@ array( 'DATADICT' => array(
 // copy data into new column
 array( 'QUERY' =>
 	// postgres > 8.2 needs to have the type cast
-	array( 'PGSQL' => array(
-		"UPDATE `".BIT_DB_PREFIX."liberty_content_history` SET `user_id` = `temp_column`::integer",
-	)),
-	array( 'SQL92' => array(
-		"UPDATE `".BIT_DB_PREFIX."liberty_content_history` SET `user_id` = `temp_column`",
-	)),
+	array(
+		'PGSQL' => array( "UPDATE `".BIT_DB_PREFIX."liberty_content_history` SET `user_id` = `temp_column`::integer" ),
+		'SQL92' => array( "UPDATE `".BIT_DB_PREFIX."liberty_content_history` SET `user_id` = `temp_column`" ),
+	),
 ),
 
 array( 'DATADICT' => array(
