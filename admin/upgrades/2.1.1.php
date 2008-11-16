@@ -1,13 +1,13 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.1.php,v 1.5 2008/11/15 14:28:23 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.1.php,v 1.6 2008/11/16 10:09:49 squareing Exp $
  */
 global $gBitInstaller;
 
 $infoHash = array(
 	'package'      => LIBERTY_PKG_NAME,
 	'version'      => str_replace( '.php', '', basename( __FILE__ )),
-	'description'  => "Minor fix to table column type.",
+	'description'  => "Minor fix to user_id column type in liberty_content_history.",
 	'post_upgrade' => NULL,
 );
 
