@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.51 $
+ * @version  $Revision: 1.52 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.51 2008/05/07 06:44:59 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.52 2008/11/18 04:21:49 spiderr Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -71,13 +71,13 @@ if( @BitBase::verifyId($_REQUEST['post_comment_id']) && $gContent->hasUserPermis
 		$gBitSmarty->assign('comments_ajax', FALSE);  //even if ajax is on - we force it off in this case
 	}
 	if ($editComment->mInfo['content_id']) {
-		if (!$editComment->userCanEdit()) {
+		if( $editComment->userCanUpdate( $gContent ) ) {
+			$postComment['data'] = $editComment->mInfo['data'];
+			$postComment['title'] = $editComment->mInfo['title'];
+		} else {
 			$formfeedback['error'] = "You do not have permission to edit this comment.";
 			$editComment = NULL;
 			$post_comment_id = NULL;
-		} else {
-			$postComment['data'] = $editComment->mInfo['data'];
-			$postComment['title'] = $editComment->mInfo['title'];
 		}
 	} else {
 		$formfeedback['error'] = "Comment does not exist.";

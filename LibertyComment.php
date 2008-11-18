@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.71 2008/09/15 06:12:06 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.72 2008/11/18 04:21:49 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -245,43 +245,33 @@ class LibertyComment extends LibertyContent {
 		return $ret;
 	}
 
-	function userCanEdit($pUserId = NULL) {
+	function userCanEdit() {
 		global $gBitUser, $gBitSystem;
+		$ret = FALSE;
 
-		if (!empty($pUserId)) {
-			$tmpUser = new BitUser($pUserId);
-			$tmpUser->load();
-		} else {
-			$tmpUser = &$gBitUser;
-		}
-		
 		// check the allowed edit time limit - we'll use it later
 		$withinEditTime = FALSE;
 		if ( $gBitSystem->getConfig( 'comments_edit_minutes', 60 ) * 60 + $this->getField( 'created' ) > time() ) {
 			$withinEditTime = TRUE;
 		}
-		if($tmpUser->isRegistered()) {
+		if( $gBitUser->isRegistered() ) {
 			/* get the hash of the users perms rather than call hasUserPermission which 
 			 * always returns true for owner which interferes with trying to time limit editing
 			 */
-			if ( $this->getRootObj() != NULL ){
-				$root = $this->getRootObj();
-				$checkPerms = $root->getUserPermissions();
-			}else{
-				$checkPerms = array(
-									'p_liberty_edit_comments' => $tmpUser->hasPermission( 'p_liberty_edit_comments' ),
-									'p_liberty_admin_comments' => $tmpUser->hasPermission( 'p_liberty_admin_comments' ),
-								);
-			}
-			return ( !empty( $checkPerms['p_liberty_edit_comments'] ) ||
+			$checkPerms = $this->getUserPermissions();
+			$ret = ( !empty( $checkPerms['p_liberty_edit_comments'] ) ||
 					 !empty( $checkPerms['p_liberty_admin_comments'] ) ||
-					 $tmpUser->isAdmin() ||
-					 ( $tmpUser->mUserId == $this->mInfo['user_id'] && $withinEditTime )
+					 $gBitUser->hasUserPermission( 'p_liberty_admin_comments' ) ||
+					 ( $gBitUser->mUserId == $this->mInfo['user_id'] && $withinEditTime )
 					);
-		} elseif($this->mInfo['user_id']==ANONYMOUS_USER_ID) {
-			return (($_SERVER['REMOTE_ADDR']==$this->mInfo['ip']) && $withinEditTime );
+		} elseif( $this->mInfo['user_id'] == ANONYMOUS_USER_ID ) {
+			$ret = (($_SERVER['REMOTE_ADDR']==$this->mInfo['ip']) && $withinEditTime );
 		}
-		return FALSE;
+		return $ret;
+	}
+
+	function userCanUpdate( $pRootContent ) {
+		return( $this->userCanEdit() || $pRootContent->userHasPermission( 'p_liberty_edit_comments' ) || $pRootContent->userHasPermission( 'p_liberty_admin_comments' ) );
 	}
 
     /**

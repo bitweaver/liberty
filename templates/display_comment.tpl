@@ -14,7 +14,7 @@
 				{/if}
 			{/if}
 			{* if $gBitUser->hasPermission('p_liberty_edit_comments') || ($gBitUser && $comment.user_id == $gBitUser->mInfo.user_id && $comment.user_id!=$smarty.const.ANONYMOUS_USER_ID) *}
-			{if $comment.editable}
+			{if $comment.is_editable || ($gContent && $gContent->hasUserPermission('p_liberty_edit_comments'))}
 				<a href="{$comments_return_url}&amp;post_comment_id={$comment.comment_id}&amp;post_comment_request=1#editcomments" rel="nofollow">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="Edit"}</a>
 			{/if}
 			{if $gBitUser->hasPermission('p_liberty_admin_comments')}
