@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.19 2008/11/07 10:57:53 nickpalmer Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.20 2008/11/18 17:27:17 spiderr Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -82,10 +82,11 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 				list( $type, $mimeExt ) = split( '/', strtolower( $itype ));
 			}
 
-			if( $mimeExt = preg_replace( "!^(x-)?(png|gif)$!", "$2", $mimeExt )) {
+			if( $mimeExt = preg_replace( "!^(x-)?(jpeg|png|gif)$!", "$2", $mimeExt )) {
 				$targetType = $mimeExt;
 				$destExt = '.'.$mimeExt;
-			} else {
+			}
+			if( !$mimeExt || $mimeExt == 'jpeg' ) {
 				$targetType = 'jpeg';
 				$destExt = '.jpg';
 			}
