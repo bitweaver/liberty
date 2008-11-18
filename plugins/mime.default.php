@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.40 2008/10/27 03:40:24 spiderr Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.41 2008/11/18 00:07:36 spiderr Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.40 $
+ * @version     $Revision: 1.41 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -72,7 +72,6 @@ if( !function_exists( 'mime_default_verify' )) {
 	function mime_default_verify( &$pStoreRow ) {
 		global $gBitSystem, $gBitUser;
 		$ret = FALSE;
-
 		// storage is always owned by the user that uploaded it!
 		// er... or at least admin if somehow we have a NULL mUserId - anon uploads maybe?
 		$pStoreRow['user_id'] = @BitBase::verifyId( $gBitUser->mUserId ) ? $gBitUser->mUserId : ROOT_USER_ID;
@@ -88,9 +87,13 @@ if( !function_exists( 'mime_default_verify' )) {
 					WHERE la.`attachment_id` = ?", array( $pStoreRow['upload']['attachment_id'] ));
 				$pStoreRow = array_merge( $pStoreRow, $fileInfo );
 			} else {
-				// try to generate thumbnails for the upload
-				$pStoreRow['upload']['thumbnail'] = !$gBitSystem->isFeatureActive( 'liberty_offline_thumbnailer' );
 				$pStoreRow['attachment_id'] = $gBitSystem->mDb->GenID( 'liberty_attachments_id_seq' );
+			}
+			// try to generate thumbnails for the upload
+			if( isset( $pStoreRow['upload']['thumbnail'] ) ) {
+				$pStoreRow['upload']['thumbnail'] = $pStoreRow['upload']['thumbnail'];
+			} else {
+				$pStoreRow['upload']['thumbnail'] = TRUE;
 			}
 
 			// Generic values needed by the storing mechanism

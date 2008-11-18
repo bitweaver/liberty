@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.47 2008/11/12 07:26:38 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.48 2008/11/18 00:07:36 spiderr Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -784,7 +784,7 @@ function liberty_fetch_thumbnails( $pParamHash, $pAltImageUrl = NULL, $pThumbSiz
 
 		// liberty file processors automatically pick the best format for us. we can force a format though.
 		// using array_unique will give us the best order in which to look for the thumbnails
-		$exts = array_unique( array( $gBitSystem->getConfig( 'liberty_thumbnail_format', 'jpg' ), 'jpg', 'png', 'gif' ));
+		$exts = array_unique( array( $gBitSystem->getConfig( 'liberty_thumbnail_format', 'jpg' ), 'jpg', 'png', 'gif', 'x-jpeg' ));
 
 		// short hand
 		$path = &$pParamHash['storage_path'];
@@ -806,7 +806,6 @@ function liberty_fetch_thumbnails( $pParamHash, $pAltImageUrl = NULL, $pThumbSiz
 					$ret[$size] = storage_path_to_url( $dir.$image );
 				}
 			}
-
 			// fetch mime image unless we set this to FALSE
 			if(( !isset( $pParamHash['mime_image'] ) || $pParamHash['mime_image'] === TRUE ) && empty( $ret[$size] )) {
 				if( !empty( $pParamHash['default_image'] )) {
