@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.72 2008/11/18 04:21:49 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.73 2008/11/19 05:52:48 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -99,7 +99,7 @@ class LibertyComment extends LibertyContent {
 		} elseif( !$gBitUser->hasPermission( 'p_liberty_trusted_editor' ) && ($linkCount = preg_match_all( '/http\:\/\//', $pParamHash['edit'], $links )) > $gBitSystem->getConfig( 'liberty_unstrusted_max_http_in_content', 0 ) ) {
 			$this->mErrors['store'] = tra( 'Links are not allowed.' );
 		} else {
-			$dupeQuery = "SELECT `data` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `user_id`=? AND `content_type_guid`='".BITCOMMENT_CONTENT_TYPE_GUID."' AND `ip`=? ORDER BY `last_modified` DESC";
+			$dupeQuery = "SELECT `data` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `user_id`=? AND `content_type_guid`='".BITCOMMENT_CONTENT_TYPE_GUID."' AND `ip`=? ORDER BY `created` DESC";
 			if( $lastPostData = $this->mDb->getOne( $dupeQuery, array( $gBitUser->mUserId, $_SERVER['REMOTE_ADDR'] ) ) ) {
 				if( trim( $lastPostData ) == trim( $pParamHash['edit'] ) ) {
 					$this->mErrors['store'] = tra( 'Duplicate comment.' );	
@@ -325,7 +325,7 @@ class LibertyComment extends LibertyContent {
 	function getList( $pParamHash ) {
 		global $gBitSystem, $gLibertySystem;
 		if ( !isset( $pParamHash['sort_mode']) or $pParamHash['sort_mode'] == '' ){
-			$pParamHash['sort_mode'] = 'last_modified_desc';
+			$pParamHash['sort_mode'] = 'created_desc';
 		}
 		if( empty( $pParamHash['max_records'] ) ) {
 			$pParamHash['max_records'] = $gBitSystem->getConfig( 'max_records' );
@@ -371,7 +371,7 @@ class LibertyComment extends LibertyContent {
 		}
 
 		if ( !empty( $pParamHash['created_ge'] ) ) {
-			$whereSql .= " AND lc.`last_modified`>=? ";
+			$whereSql .= " AND lc.`created`>=? ";
 			$bindVars[] = $pParamHash['created_ge'];
 		}
 
@@ -508,7 +508,7 @@ class LibertyComment extends LibertyContent {
 
 		#assume flat mode
 		$comment_fields = $comment->mInfo;
-		$last_modified = $comment_fields['last_modified'];
+		$created = $comment_fields['created'];
 		$contentId = $comment_fields['root_id'];
 
 		$commentCount = 0;
@@ -517,8 +517,8 @@ class LibertyComment extends LibertyContent {
 					FROM `".BIT_DB_PREFIX."liberty_comments` tc LEFT OUTER JOIN
 					 `".BIT_DB_PREFIX."liberty_content` tcn
 					 ON (tc.`content_id` = tcn.`content_id`)
-				    where tc.`root_id` =? and `last_modified` < ?";
-			$commentCount = $this->mDb->getOne($sql, array($contentId, $last_modified));
+				    where tc.`root_id` =? and `created` < ?";
+			$commentCount = $this->mDb->getOne($sql, array($contentId, $created));
 		}
 		return $commentCount;
 	}
@@ -544,12 +544,12 @@ class LibertyComment extends LibertyContent {
 		$mid = "";
 
 		$sort_order = "ASC";
-		$mid = 'last_modified ASC';
+		$mid = 'created ASC';
 		if (!empty($pSortOrder)) {
 			if ($pSortOrder == 'commentDate_desc') {
-				$mid = 'last_modified DESC';
+				$mid = 'created DESC';
 			} else if ($pSortOrder == 'commentDate_asc') {
-				$mid = 'last_modified ASC';
+				$mid = 'created ASC';
 			} elseif ($pSortOrder == 'thread_asc') {
 				$mid = 'thread_forward_sequence  ASC';
 			// thread newest first is harder...
