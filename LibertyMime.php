@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.37 2008/11/18 00:05:48 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.38 2008/11/19 08:44:00 squareing Exp $
  */
 
 /**
@@ -102,7 +102,8 @@ class LibertyMime extends LibertyAttachable {
 								}
 							}
 						}
-						break;
+						// skip rest of process
+						continue;
 					}
 
 					$storeRow = $pStoreHash['upload_store'];
