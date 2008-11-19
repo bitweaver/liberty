@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.41 2008/11/18 00:07:36 spiderr Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.42 2008/11/19 08:47:30 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.41 $
+ * @version     $Revision: 1.42 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -72,9 +72,18 @@ if( !function_exists( 'mime_default_verify' )) {
 	function mime_default_verify( &$pStoreRow ) {
 		global $gBitSystem, $gBitUser;
 		$ret = FALSE;
-		// storage is always owned by the user that uploaded it!
-		// er... or at least admin if somehow we have a NULL mUserId - anon uploads maybe?
-		$pStoreRow['user_id'] = @BitBase::verifyId( $gBitUser->mUserId ) ? $gBitUser->mUserId : ROOT_USER_ID;
+
+		// if we have a user_id set, we use that.
+		if( !empty( $pStoreRow['upload']['user_id'] )) {
+			$pStoreRow['user_id'] = $pStoreRow['upload']['user_id'];
+		} else {
+			// storage is always owned by the user that uploaded it!
+			// er... or at least admin if somehow we have a NULL mUserId
+			$pStoreRow['user_id'] = @BitBase::verifyId( $gBitUser->mUserId ) ? $gBitUser->mUserId : ROOT_USER_ID;
+			if( $pStoreRow['user_id'] < 2 ) {
+				bit_log_error( 'The user_id for the upload was not set. Defaulted to user_id = '.$pStoreRow['user_id'].' where 1 = ROOT_USER_ID, -1 = ANONYMOUS_USER_ID, other values = big problem.' );
+			}
+		}
 
 		if( !empty( $pStoreRow['upload']['tmp_name'] ) && is_file( $pStoreRow['upload']['tmp_name'] )) {
 			// attachment_id is only set when we are updating the file
