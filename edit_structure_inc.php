@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.25 $
+ * @version  $Revision: 1.26 $
  * @package  liberty
  * @subpackage functions
  */
@@ -58,10 +58,7 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 		$rootStructure->loadNavigation();
 		$rootStructure->loadPath();
 	}
-
-	if( ( $gBitUser->mUserId != $rootStructure->mInfo['user_id'] ) ) {
-		$gBitSystem->verifyPermission( !empty( $verifyStructurePermission ) ? $verifyStructurePermission : 'p_admin' );
-	}
+	$gContent->verifyUpdatePermission();
 	$gBitSmarty->assign_by_ref( 'gStructure', $gStructure );
 	$gBitSmarty->assign('structureInfo', $gStructure->mInfo);
 
