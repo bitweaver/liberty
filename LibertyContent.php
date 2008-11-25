@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.386 2008/11/02 01:29:08 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.387 2008/11/25 21:46:16 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1511,6 +1511,9 @@ class LibertyContent extends LibertyBase {
 		global $gBitUser;
 
 		$userId = $gBitUser->mUserId;
+		// Prevent null entires when creating database
+		if( !is_numeric( $userId ) ) $userId = 0;
+		if( !is_numeric( $this->mContentId ) ) $this->mContentId = 0;
 		if( !isset( $this->mUserContentPerms )) {
 			// get the default permissions for specified user
 			$query = "
