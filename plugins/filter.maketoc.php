@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.9 2008/11/12 07:24:56 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.10 2008/11/25 11:16:49 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -25,7 +25,7 @@ $pluginParams = array (
 	// these settings are to get the plugin help working on content edit pages
 	'tag'                => 'maketoc',
 	'help_page'          => 'Maketoc Filter',
-	'help_function'      => 'data_maketoc_help',
+	'help_function'      => 'maketoc_help',
 	'syntax'             => '{maketoc}',
 	'biticon'            => '{biticon iclass="quicktag icon" ipackage=quicktags iname=maketoc iexplain="Page Table of Contents"}',
 	'taginsert'          => '{maketoc}',
@@ -38,7 +38,7 @@ function maketoc_presplitfilter( &$pData, &$pFilterHash ) {
 }
 
 function maketoc_postparsefilter( &$pData, &$pFilterHash ) {
-	preg_match_all( "/\{maketoc(.*?)\}/", $pData, $maketocs );
+	preg_match_all( "/\{maketoc(.*?)\}/i", $pData, $maketocs );
 
 	if( !empty( $maketocs[1] )) {
 		// extract the parameters for maketoc
@@ -104,7 +104,7 @@ function maketoc_postparsefilter( &$pData, &$pFilterHash ) {
 			);
 
 			// (<br[ |\/]*>){0,1} removes up to one occurance of <br> | <br > | <br /> | <br/> or similar variants
-			$sections = preg_split( "/\{maketoc.*?\}(<br[ |\/]*>){0,1}/", $pData );
+			$sections = preg_split( "/\{maketoc.*?\}(<br[ |\/]*>){0,1}/i", $pData );
 			// first section is before any {maketoc} entry, so we can ignore it
 			$ret = '';
 
@@ -249,7 +249,7 @@ function maketoc_create_list( $pTocHash, $pParams ) {
 }
 
 // Help Function
-function data_maketoc_help() {
+function maketoc_help() {
 	$help =
 		'<table class="data help">
 			<tr>
