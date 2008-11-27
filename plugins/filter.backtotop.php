@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.backtotop.php,v 1.2 2008/11/27 18:31:32 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.backtotop.php,v 1.3 2008/11/27 20:03:17 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -33,7 +33,7 @@ function backtotop_postparsefilter( &$pData, &$pFilterHash ) {
 	global $gBitSmarty;
 	if( preg_match( "/\{(backtotop[^\}]*)\}/i", $pData, $backtotop )) {
 		// remove {backtotop} from page
-		$pData = preg_replace( '#'.preg_quote( $backtotop[0], '#' ).'\s*<[bB][rR]\s*/?>#', '', $pData );
+		$pData = preg_replace( '#(<p>)?'.preg_quote( $backtotop[0], '#' ).'(</p>)?(\s*<[Bb][Rr]\s*/?>)?#', '', $pData );
 		// default values
 		$params['min'] = 1;
 		$params['max'] = 6;
