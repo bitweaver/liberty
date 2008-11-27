@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.backtotop.php,v 1.1 2008/11/25 11:49:40 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.backtotop.php,v 1.2 2008/11/27 18:31:32 squareing Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -30,6 +30,7 @@ $pluginParams = array (
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERBACKTOTOP, $pluginParams );
 
 function backtotop_postparsefilter( &$pData, &$pFilterHash ) {
+	global $gBitSmarty;
 	if( preg_match( "/\{(backtotop[^\}]*)\}/i", $pData, $backtotop )) {
 		// remove {backtotop} from page
 		$pData = preg_replace( '#'.preg_quote( $backtotop[0], '#' ).'\s*<[bB][rR]\s*/?>#', '', $pData );
@@ -38,9 +39,16 @@ function backtotop_postparsefilter( &$pData, &$pFilterHash ) {
 		$params['max'] = 6;
 		$params = array_merge( $params, parse_xml_attributes( $backtotop[1] ));
 
+		require_once $gBitSmarty->_get_plugin_filepath( 'function', 'biticon' );
+		$biticon = array(
+			'ipackage' => 'icons',
+			'iname'    => 'go-top',
+			'iexplain' => 'Back to top',
+		);
+
 		// get all headers into an array
 		preg_match_all( "/<h(\d[^>]*)>.*?<\/h\d>/i", $pData, $headers );
-		$link = '<a class="backtotop" href="#content">'.tra( "Back to top" ).'</a>';
+		$link = '<a class="backtotop" href="#content">'.smarty_function_biticon( $biticon, $gBitSmarty ).'</a>';
 		foreach( $headers[0] as $key => $header ) {
 			if( $headers[1][$key] >= $params['min'] && $headers[1][$key] <= $params['max'] ) {
 				$pData = str_replace( $header, $link.$header, $pData );
