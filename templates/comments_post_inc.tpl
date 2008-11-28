@@ -1,4 +1,4 @@
-{if !$hide || $smarty.request.post_comment_request || $smarty.request.post_comment_preview}
+{if !$hide || $post_comment_request || $smarty.request.post_comment_preview}
 	<a name="editcomments"></a>
 
 	{if $post_comment_preview && !$preview_override}
@@ -12,7 +12,7 @@
 		{formfeedback hash=$formfeedback}
 		
 		
-		{if $smarty.request.post_comment_request || $smarty.request.post_comment_preview || $comments_ajax}
+		{if $post_comment_request || $smarty.request.post_comment_preview || $comments_ajax}
 			{legend legend=$post_title} 
 				<input type="hidden" name="post_comment_reply_id" value="{$post_comment_reply_id}" />
 				<input type="hidden" name="post_comment_id" value="{$post_comment_id}" />
