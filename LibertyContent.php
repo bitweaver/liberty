@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.387 2008/11/25 21:46:16 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.388 2008/11/29 23:31:41 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -208,7 +208,7 @@ class LibertyContent extends LibertyBase {
 			$allStatus = $this->getAvailableContentStatuses();
 			if (!empty($pParamHash['content_status_id'])) {
 				if (empty($allStatus[$pParamHash['content_status_id']])) {
-					$this->mError['content_status_id'] = "No such status ID or permission denied.";
+					$this->mErrors['content_status_id'] = "No such status ID or permission denied.";
 				} else {
 					$pParamHash['content_store']['content_status_id'] = $pParamHash['content_status_id'];
 				}
