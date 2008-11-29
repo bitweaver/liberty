@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.38 2008/11/19 08:44:00 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.39 2008/11/29 01:54:22 tekimaki_admin Exp $
  */
 
 /**
@@ -80,9 +80,9 @@ class LibertyMime extends LibertyAttachable {
 		global $gLibertySystem;
 		// make sure all the data is in order
 		if( LibertyMime::verify( $pStoreHash ) && ( !empty( $pStoreHash['skip_content_store'] ) || LibertyContent::store( $pStoreHash ) ) ) {
+			$this->mDb->StartTrans();
 			// files have been uploaded
 			if( !empty( $pStoreHash['upload_store']['files'] ) && is_array( $pStoreHash['upload_store']['files'] )) {
-				$this->mDb->StartTrans();
 
 				foreach( $pStoreHash['upload_store']['files'] as $key => $upload ) {
 					// if we don't have an upload, we'll simply update the file settings using the mime plugins
