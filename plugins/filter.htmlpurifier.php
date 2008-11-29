@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.24 2008/11/09 09:08:55 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.25 2008/11/29 05:38:58 wjames5 Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -42,9 +42,6 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 	global $gHtmlPurifier, $gBitSystem;
 
 	if (!isset($gHtmlPurifier)) {
-		$blacklistedTags = $gBitSystem->
-			getConfig('blacklisted_html_tags', '');
-
 		$pear_version = false;
 
 		if (@include_once("PEAR.php")) {		
@@ -59,83 +56,16 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 					$htmlp_version = 3.1;
 				}
 
-				$config = HTMLPurifier_Config::createDefault();
+				$config = htmlpure_getDefaultConfig( $htmlp_version );
 
-				// Set the cache path
-				$config->set('Cache', 'SerializerPath', STORAGE_PKG_PATH );
-
-				if ($gBitSystem->getConfig('htmlpure_escape_bad', 'y') == 'y') {
-					$config->set('Core', 'EscapeInvalidTags', true);
-					$config->set('Core', 'EscapeInvalidChildren', true);
-				}
-				if ($gBitSystem->getConfig('htmlpure_disable_extern') == 'y') {
-					$config->set('URI', 'DisableExternal', true);
-				}
-				if ($gBitSystem->getConfig('htmlpure_disable_extern_res', 'y') == 'y') {
-					$config->set('URI', 'DisableExternalResources', true);
-				}
-				if ($gBitSystem->getConfig('htmlpure_disable_res') == 'y') {
-					$config->set('URI', 'DisableResources', true);
-				}
-				if ($gBitSystem->getConfig('htmlpure_disable_uri') == 'y') {
-					$config->set('URI', 'Disable', true);
-				}
-				if ($gBitSystem->getConfig('htmlpure_use_redirect') == 'y') {
-					$config->set('URI', 'Munge', LIBERTY_PKG_URL.'redirect.php?q=%s');
-				}
-				if ($gBitSystem->getConfig('htmlpure_strict_html', 'y') == 'y') {
-					$config->set('HTML', 'Strict', true);
-				}
-				if ($gBitSystem->getConfig('htmlpure_xhtml', 'n') == 'n') {
-					$config->set('HTML', 'XHTML', true);
-				}
-
-				// Set that we are using a div to wrap things.
-				$config->set('HTML', 'BlockWrapper', 'div');
-
-				$def =& $config->getHTMLDefinition();
-				// HTMLPurifier doesn't have a blacklist feature. Duh guys!
-				// Note that this has to come last since the other configs
-				// may tweak the def.
-				foreach (explode(',',$blacklistedTags) as $tag) {
-					unset($def->info[$tag]);
-				}
-
-				if ($gBitSystem->getConfig('htmlpure_force_nofollow', 'y') == 'y') {
-					class HTMLPurifier_AttrTransform_ForceValue extends HTMLPurifier_AttrTransform
-					{
-						var $name, $value;
-						function HTMLPurifier_AttrTransform_ForceValue($name, $value) {
-							$this->name  = $name;
-							$this->value = $value;
-						}
-						function transform($attr, $config, $context) {
-							$attr[$this->name] = $this->value;
-							return $attr;
-						}
-					}
-					$def->info['a']->attr_transform_post['rel'] = new HTMLPurifier_AttrTransform_ForceValue('rel', 'nofollow');
-				}
-
-				// set plugins
-				// TODO: devise a way to parse plugins dir
-				// and check for the right property here
-				// so new plugins are just drop in place.
-				if ($gBitSystem->isFeatureActive('htmlpure_allow_youtube')) {
-					require_once(UTIL_PKG_PATH.'htmlpure/Filter/YouTube.php');
-
-					if ( $htmlp_version >= 3.1 ){
-						$config->set('Filter', 'YouTube', array(new HTMLPurifier_Filter_YouTube()));
-					}
-				}
 
 				// As suggested here:  http://www.bitweaver.org/forums/index.php?t=8554
 				$gHtmlPurifier = new HTMLPurifier($config);
 
 				// how plugins are registered changed in v3.1 
 				// old way of adding plugins before v3.1
-				if ($gBitSystem->isFeatureActive('htmlpure_allow_youtube') && !( $htmlp_version >= 3.1 ) ) {
-					$gHtmlPurifier->addFilter(new HTMLPurifier_Filter_YouTube());
+				if ( !$htmlp_version >= 3.1 ) {
+					htmlpure_legacyAddFilters();
 				}
 			}
 		}
@@ -148,7 +78,25 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 		$pString = htmlpure_cleanupPeeTags($pString);
 		//		$pee = $pString;
 		//		$pString = html_entity_decode( $pString );
-		$pString = $gHtmlPurifier->purify( $pString );
+		if( empty( $pFilterHash['htmlp_config'] ) ){
+			$pString = $gHtmlPurifier->purify( $pString );
+		}else{
+			$htmlp_version = $gHtmlPurifier->version;
+			$config = htmlpure_getDefaultConfig( $htmlp_version );
+
+			/* if we've received custom configurations for the particular parse then we deal with them
+			   for now were expecting config data that htmlpurfier doesn't really handle in a nice way
+			   so we stuff it into the 'info' hash under a 'bitweaver' name space.
+
+			   @TODO ideally this might also look for native htmlpurifier config values in the keys and
+			   then adjust as necessary which is why $config is passed in here. -wjames5
+			  */
+			foreach( $pFilterHash['htmlp_config'] as $key => $val ){
+				$config->def->info['bitweaver'][$key] = $val;
+			}
+
+			$pString = $gHtmlPurifier->purify( $pString, $config );
+		}
 
 		// If we have another parse step they may be escaping
 		// entities so change quotes back.
@@ -178,6 +126,100 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 	}
 
 	return $pString;
+}
+
+function htmlpure_getDefaultConfig( &$htmlp_version ){
+	global $gBitSystem;
+
+	$config = HTMLPurifier_Config::createDefault();
+
+	// Set the cache path
+	$config->set('Cache', 'SerializerPath', STORAGE_PKG_PATH );
+
+	if ($gBitSystem->getConfig('htmlpure_escape_bad', 'y') == 'y') {
+		$config->set('Core', 'EscapeInvalidTags', true);
+		$config->set('Core', 'EscapeInvalidChildren', true);
+	}
+	if ($gBitSystem->getConfig('htmlpure_disable_extern') == 'y') {
+		$config->set('URI', 'DisableExternal', true);
+	}
+	if ($gBitSystem->getConfig('htmlpure_disable_extern_res', 'y') == 'y') {
+		$config->set('URI', 'DisableExternalResources', true);
+	}
+	if ($gBitSystem->getConfig('htmlpure_disable_res') == 'y') {
+		$config->set('URI', 'DisableResources', true);
+	}
+	if ($gBitSystem->getConfig('htmlpure_disable_uri') == 'y') {
+		$config->set('URI', 'Disable', true);
+	}
+	if ($gBitSystem->getConfig('htmlpure_use_redirect') == 'y') {
+		$config->set('URI', 'Munge', LIBERTY_PKG_URL.'redirect.php?q=%s');
+	}
+	if ($gBitSystem->getConfig('htmlpure_strict_html', 'y') == 'y') {
+		$config->set('HTML', 'Strict', true);
+	}
+	if ($gBitSystem->getConfig('htmlpure_xhtml', 'n') == 'n') {
+		$config->set('HTML', 'XHTML', true);
+	}
+
+	// Set that we are using a div to wrap things.
+	$config->set('HTML', 'BlockWrapper', 'div');
+
+	// Disable included YouTube filter, we have our own
+	$config->set('Filter', 'YouTube', false);
+
+	// set plugins
+	// TODO: devise a way to parse plugins dir
+	// and check for the right property here
+	// so new plugins are just drop in place.
+	if ( $htmlp_version >= 3.1 ){
+		if ($gBitSystem->isFeatureActive('htmlpure_allow_youtube')) {
+			require_once(UTIL_PKG_PATH.'htmlpure/Filter/YouTube.php');
+
+			$config->set('Filter', 'Custom', array(new HTMLPurifier_Filter_YouTube()));
+		}
+	}
+
+	$blacklistedTags = $gBitSystem->
+		getConfig('blacklisted_html_tags', '');
+
+	$def =& $config->getHTMLDefinition();
+	// HTMLPurifier doesn't have a blacklist feature. Duh guys!
+	// Note that this has to come last since the other configs
+	// may tweak the def.
+	foreach (explode(',',$blacklistedTags) as $tag) {
+		unset($def->info[$tag]);
+	}
+
+	if ($gBitSystem->getConfig('htmlpure_force_nofollow', 'y') == 'y') {
+		if( !class_exists("HTMLPurifier_AttrTransform_ForceValue") ){
+			class HTMLPurifier_AttrTransform_ForceValue extends HTMLPurifier_AttrTransform
+			{
+				var $name, $value;
+				function HTMLPurifier_AttrTransform_ForceValue($name, $value) {
+					$this->name  = $name;
+					$this->value = $value;
+				}
+				function transform($attr, $config, $context) {
+					$attr[$this->name] = $this->value;
+					return $attr;
+				}
+			}
+		}
+		$def->info['a']->attr_transform_post['rel'] = new HTMLPurifier_AttrTransform_ForceValue('rel', 'nofollow');
+	}
+
+	return $config;
+}
+
+function htmlpure_legacyAddFilters(){
+	global $gHtmlPurifier, $gBitSystem;
+
+	if ( $gBitSystem->isFeatureActive('htmlpure_allow_youtube') ) {
+		require_once(UTIL_PKG_PATH.'htmlpure/Filter/YouTube.php');
+
+		$gHtmlPurifier->addFilter(new HTMLPurifier_Filter_YouTube());
+	}
 }
 
 function htmlpure_cleanupPeeTags( $pee ) {
