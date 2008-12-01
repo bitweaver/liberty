@@ -1,4 +1,4 @@
-/* Dependencies: MochiKit Base Async, BitAjax.j  */
+/* Dependencies: MochiKit Base Async, BitAjax.js  */
 LibertyAttachment = {
 	"fileInputClones":{},
 	"uploader_under_way":0,
