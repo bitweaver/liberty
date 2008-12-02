@@ -29,5 +29,12 @@
 	{/forminput}
 </div>
 
+<div class="row">
+	{formlabel label="Downloads" for=""}
+	{forminput}
+		{$attachment.downloads|default:"{tr}none{/tr}"}
+	{/forminput}
+</div>
+
 {attachhelp legend=1 nohelp=$nohelp hash=$attachment}
 {/strip}
