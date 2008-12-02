@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.39 2008/11/29 01:54:22 tekimaki_admin Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.40 2008/12/02 15:47:35 squareing Exp $
  */
 
 /**
@@ -300,6 +300,30 @@ class LibertyMime extends LibertyAttachable {
 		if( !empty( $pFile['tmp_name'] ) && is_file( $pFile['tmp_name'] ) && empty( $pFile['error'] ) || !empty( $pFile['attachment_id'] )) {
 			return $pFile;
 		}
+	}
+
+	/**
+	 * Increment the item hit flag by 1
+	 *
+	 * @access public
+	 * @param numeric $pAttachmentId Attachment ID
+	 * @return adodb query result or FALSE
+	 * @note we're abusing the hits column for download count.
+	 */
+	function addDownload( $pAttachmentId = NULL ) {
+		global $gBitUser, $gBitSystem;
+		if( @BitBase::verifyId( $pAttachmentId ) && $attachment = LibertyMime::getAttachment( $pAttachmentId )) {
+			if( !$gBitUser->isRegistered() || ( $gBitUser->isRegistered() && $gBitUser->mUserId != $attachment['user_id'] )) {
+				$bindVars = array( $pAttachmentId );
+				if( $gBitSystem->mDb->getOne( "SELECT `attachment_id` FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id` = ? AND `hits` IS NULL", $bindVars )) {
+					$query = "UPDATE `".BIT_DB_PREFIX."liberty_attachments` SET `hits` = 1 WHERE `attachment_id` = ?";
+				} else {
+					$query = "UPDATE `".BIT_DB_PREFIX."liberty_attachments` SET `hits` = `hits`+1 WHERE `attachment_id` = ?";
+				}
+				return $gBitSystem->mDb->query( $query, $bindVars );
+			}
+		}
+		return FALSE;
 	}
 
 	/**

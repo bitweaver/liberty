@@ -1,6 +1,6 @@
 <?php
 /**
- * @version      $Header: /cvsroot/bitweaver/_bit_liberty/download_file.php,v 1.3 2008/06/30 02:56:55 wjames5 Exp $
+ * @version      $Header: /cvsroot/bitweaver/_bit_liberty/download_file.php,v 1.4 2008/12/02 15:47:35 squareing Exp $
  *
  * @author       xing  <xing@synapse.plus.com>
  * @package      treasury
@@ -25,6 +25,7 @@ $gBitSmarty->assign( 'gContent', $gContent );
 
 if( $download_function = $gLibertySystem->getPluginFunction( $attachment['attachment_plugin_guid'], 'download_function' )) {
 	if( $download_function( $attachment )) {
+		LibertyMime::addDownload( $attachment['attachment_id'] );
 		die;
 	} else {
 		if( !empty( $attachment['errors'] )) {

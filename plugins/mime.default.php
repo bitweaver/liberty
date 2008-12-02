@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.42 2008/11/19 08:47:30 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.43 2008/12/02 15:47:35 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.42 $
+ * @version     $Revision: 1.43 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -232,7 +232,8 @@ if( !function_exists( 'mime_default_load' )) {
 		$ret = FALSE;
 		if( @BitBase::verifyId( $pFileHash['attachment_id'] )) {
 			$query = "
-				SELECT *
+				SELECT la.`attachment_id`, la.`content_id`, la.`attachment_plugin_guid`, la.`foreign_id`, la.`user_id`, la.`is_primary`, la.`pos`, la.`error_code`, la.`caption`, la.`hits` AS `downloads`,
+					lf.`file_id`, lf.`user_id`, lf.`storage_path`, lf.`file_size`, lf.`mime_type`
 				FROM `".BIT_DB_PREFIX."liberty_attachments` la
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON( la.`foreign_id` = lf.`file_id` )
 				WHERE la.`attachment_id`=?";
@@ -332,18 +333,23 @@ if( !function_exists( 'mime_default_download' )) {
 					$pFileHash['mime_type'] = "application/force-download";
 				}
 
-				header( "Cache Control: " );
+				// set up header
+				header( "Cache Control:  no-cache, must-revalidate" );
+				header( "Expires: 0" );
 				header( "Accept-Ranges: bytes" );
-				header( "Content-type: ".$pFileHash['mime_type'] );
+				header( "Pragma: public" );
+				header( "Last-Modified: ".gmdate( "D, d M Y H:i:s", $pFileHash['last_modified'] )." GMT", TRUE, 200 );
 				header( "Content-Disposition: attachment; filename=".$pFileHash['filename'] );
-				header( "Last-Modified: ".gmdate( "D, d M Y H:i:s", $pFileHash['last_modified'] )." GMT", true, 200 );
+				header( "Content-type: ".$pFileHash['mime_type'] );
+				header( "Content-Description: File Transfer" );
 				header( "Content-Length: ".filesize( $pFileHash['source_file'] ));
 				header( "Content-Transfer-Encoding: binary" );
-				header( "Connection: close" );
+				//header( "Connection: close" );
 
+				@ob_clean();
+				flush();
 				readfile( $pFileHash['source_file'] );
 				$ret = TRUE;
-die;
 			}
 		} else {
 			$pFileHash['errors']['no_file'] = tra( 'No matching file found.' );
