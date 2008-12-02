@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.117 2008/09/14 17:23:19 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.118 2008/12/02 18:12:06 bitweaver Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -201,7 +201,9 @@ class LibertySystem extends LibertyBase {
 		}
 
 		// keep plugin list in sorted order
-		asort( $this->mPlugins );
+		if( !empty( $this->mPlugins )) {
+			asort( $this->mPlugins );
+		}
 
 		// only execute the following if this class hasn't been extended
 		if( $this->mSystem == LIBERTY_PKG_NAME ) {
