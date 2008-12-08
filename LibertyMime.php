@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.40 2008/12/02 15:47:35 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.41 2008/12/08 09:02:34 squareing Exp $
  */
 
 /**
@@ -310,7 +310,7 @@ class LibertyMime extends LibertyAttachable {
 	 * @return adodb query result or FALSE
 	 * @note we're abusing the hits column for download count.
 	 */
-	function addDownload( $pAttachmentId = NULL ) {
+	function addDownloadHit( $pAttachmentId = NULL ) {
 		global $gBitUser, $gBitSystem;
 		if( @BitBase::verifyId( $pAttachmentId ) && $attachment = LibertyMime::getAttachment( $pAttachmentId )) {
 			if( !$gBitUser->isRegistered() || ( $gBitUser->isRegistered() && $gBitUser->mUserId != $attachment['user_id'] )) {
