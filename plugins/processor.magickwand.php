@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.20 2008/11/18 17:27:17 spiderr Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.21 2008/12/09 05:29:31 spiderr Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -81,16 +81,16 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 			} else {
 				list( $type, $mimeExt ) = split( '/', strtolower( $itype ));
 			}
-
-			if( $mimeExt = preg_replace( "!^(x-)?(jpeg|png|gif)$!", "$2", $mimeExt )) {
+			$replaced = FALSE;
+			$mimeExt = preg_replace( "!^(x-)?(jpeg|png|gif)$!", "$2", $mimeExt, -1, $replaced );
+			if( $replaced ) {
 				$targetType = $mimeExt;
 				$destExt = '.'.$mimeExt;
 			}
-			if( !$mimeExt || $mimeExt == 'jpeg' ) {
+			if( empty( $destExt ) || $mimeExt == 'jpeg' ) {
 				$targetType = 'jpeg';
 				$destExt = '.jpg';
 			}
-
 			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || $mimeExt != $targetType ) || !empty( $pFileHash['colorspace_conversion'] ) ) {
 				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
 				$destFile = BIT_ROOT_PATH.'/'.$destUrl;
