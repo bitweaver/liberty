@@ -35,33 +35,37 @@ LibertyComment = {
 		form_div.style.display = "none";
 		document.body.appendChild( form_div );
 	},
+	"sendRequest": function(formdata, callback){
+		var url = bitRootUrl+"liberty/ajax_comments.php";
+		var params = queryString(formdata);		
+		var req = getXMLHttpRequest();
+		req.open('POST', url, true);
+		req.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+		req.setRequestHeader('Content-Length',params.length);
+		var post = sendXMLHttpRequest(req,params);
+		post.addCallback(callback);
+	},
 	'previewComment': function(){
-		var f = MochiKit.DOM.formContents( $(LibertyComment.FORM_ID) );
+		var LC = LibertyComment;
+		for( i in LC.prepRequestSrvc ){
+			LC.prepRequestSrvc[i]( LC.FORM_ID );
+		} 
+		var f = MochiKit.DOM.formContents( $(LC.FORM_ID) );
 		for (n in f[0]){
 			if (f[0][n] == 'post_comment_submit' || f[0][n] == 'post_comment_cancel'){ f[1][n] = null; }
 		}
-		var url = bitRootUrl+"liberty/ajax_comments.php";
-		var data = queryString(f);		
-		var req = getXMLHttpRequest();
-		req.open('POST', url, true);
-		req.setRequestHeader('Content-type','application/x-www-form-urlencoded');
-		req.setRequestHeader('Content-Length',data.length);
-		var post = sendXMLHttpRequest(req,data);
-		post.addCallbacks(LibertyComment.displayPreview); 
+		LC.sendRequest(f,LC.displayPreview);
 	},
 	'postComment': function(){
-		var f = MochiKit.DOM.formContents( $(LibertyComment.FORM_ID) );
+		var LC = LibertyComment;
+		for( i in LC.prepRequestSrvc ){
+			LC.prepRequestSrvc[i]( LC.FORM_ID );
+		} 
+		var f = MochiKit.DOM.formContents( $(LC.FORM_ID) );
 		for (n in f[0]){
 			if (f[0][n] == 'post_comment_preview' || f[0][n] == 'post_comment_cancel'){ f[1][n] = null; }
 		}
-		var url = bitRootUrl+"liberty/ajax_comments.php";
-		var data = queryString(f);		
-		var req = getXMLHttpRequest();
-		req.open('POST', url, true);
-		req.setRequestHeader('Content-type','application/x-www-form-urlencoded');
-		req.setRequestHeader('Content-Length',data.length);
-		var post = sendXMLHttpRequest(req,data);
-		post.addCallbacks(LibertyComment.checkRslt); 
+		LC.sendRequest(f,LC.checkRslt);
 	},
 	'cancelComment': function(ani){
 		LibertyComment.cancelPreview(true);
@@ -146,5 +150,11 @@ LibertyComment = {
 				}
 			}});
 		}});
-	}
+	},
+	/* an array of functions that will be called before form is posted
+	 * comment formid is passed to each function
+	 * example: 
+	 * func = function(formid){do something};
+	 * LibertyComment.prepRequestSrvc.push(func);*/
+	"prepRequestSrvc": new Array()
 }
