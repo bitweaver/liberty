@@ -33,6 +33,13 @@
 	{formfeedback error="{tr}The Video could not be processed. You can upload a different version of the film or simply leave as is.{/tr}"}
 {/if}
 
+<div class="row">
+	{formlabel label="Uploaded by" for=""}
+	{forminput}
+		{displayname user_id=$attachment.user_id}
+	{/forminput}
+</div>
+
 {if $attachment.meta.duration}
 	<div class="row">
 		{formlabel label="Duration" for=""}
