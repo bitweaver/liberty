@@ -1,5 +1,5 @@
 {strip}
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.30 2008/08/31 22:42:04 laetzer Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.31 2008/12/20 22:01:11 wjames5 Exp $ *}
 
 {if $dataplugins}
 	{jstab title="Data Plugins"}
@@ -19,7 +19,7 @@
 				<ul>
 					<li class="{cycle values="odd,even"}"><strong>{tr}Description{/tr}:</strong> {$p.description}</li>
 					<li class="{cycle}"><strong>{tr}Syntax{/tr}:</strong>
-						&nbsp;<a href="#" title="{tr}Click to insert syntax into editor{/tr}" onclick="javascript:insertAt('{$textarea_id}','{$p.syntax|@addslashes}');">{$p.syntax}</a>
+						&nbsp;<a href="#" title="{tr}Click to insert syntax into editor{/tr}" onclick="javascript:insertAt('{$textarea_id|default:$smarty.const.LIBERTY_TEXT_AREA}','{$p.syntax|@addslashes}');">{$p.syntax}</a>
 					</li>
 					<li class="{cycle}"><strong>{tr}Online Help{/tr}:</strong> {jspopup href="http://www.bitweaver.org/wiki/`$p.help_page`" title=`$p.help_page` class="external"}</li>
 				</ul>
