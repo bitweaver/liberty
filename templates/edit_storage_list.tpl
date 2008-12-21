@@ -73,59 +73,59 @@
 					</td>
 				</tr>
 				{if $gBitThemes->isJavascriptEnabled()}
-				<tr id="wiki_attachment_code_{$storage.attachment_id}" style="display:none;">
-					<td colspan=3>
-						<table>
-							{if $smarty.foreach.atts.first}
-							<tr>
-								<td colspan=2 style="text-align:center">
-									{formhelp note="copy this code into your edit window to embed the file into your text"}
-								</td>
-							</tr>
-							{/if}
-							<tr>
-								<td style="text-align:center; width:125px">wiki code</td>
-								<td style="text-align:right"><input name="attachment_source_wiki_{$storage.attachment_id}" value="{$storage.wiki_plugin_link}" readonly style="width:305px"/></td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<tr id="html_attachment_code_{$storage.attachment_id}" style="display:none;">
-					<td colspan=3>
-						<table>
-							{if $smarty.foreach.atts.first}
-							<tr>
-								<td colspan=2 style="text-align:center">
-									{formhelp note="copy this code into the html source to embed the file into your text"}
-								</td>
-							</tr>
-							{/if}
-
-							<tr>
-								<th>Size</th><th>Code</th>
-							</tr>
-							{if $storage.attachment_plugin_guid eq 'mimeimage'}
-								{foreach name=size key=size from=$storage.thumbnail_url item=url}
-								<tr>
-									<td style="text-align:center; width:125px">{$size}</td>
-									<td style="text-align:right"><input name="attachment_source_{$size}_{$storage.attachment_id}" value="&lt;img src={$url|escape} /&gt;" readonly style="width:305px"/></td>
-								</tr>
-								{/foreach}
-								{if ( $storage.source_url ) }
-								<tr>
-									<td style="text-align:center">original</td>
-									<td style="text-align:right"><input name="attachment_source_original_{$storage.attachment_id}" value="&lt;img src={$storage.source_url|escape} /&gt;" readonly style="width:305px"/></td>
-								</tr>
+					<tr id="wiki_attachment_code_{$storage.attachment_id}" style="display:none;">
+						<td colspan=3>
+							<table>
+								{if $smarty.foreach.atts.first}
+									<tr>
+										<td colspan=2 style="text-align:center">
+											{formhelp note="copy this code into your edit window to embed the file into your text"}
+										</td>
+									</tr>
 								{/if}
-							{else}
 								<tr>
-									<td style="text-align:center; width:125px">icon</td>
-									<td style="text-align:right"><input name="attachment_source_icon_{$storage.attachment_id}" value='&lt;a href="{$storage.download_url}" &gt;&lt;img src={$storage.thumbnail_url.icon} /&gt;&lt;/a&gt;&lt;br /&gt;{$storage.filename}' readonly style="width:305px"/></td>
+									<td style="text-align:center; width:125px">wiki code</td>
+									<td style="text-align:right"><input name="attachment_source_wiki_{$storage.attachment_id}" value="{$storage.wiki_plugin_link}" readonly style="width:305px"/></td>
 								</tr>
-							{/if}
-						</table>
-					</td>
-				</tr>
+							</table>
+						</td>
+					</tr>
+					<tr id="html_attachment_code_{$storage.attachment_id}" style="display:none;">
+						<td colspan=3>
+							<table>
+								{if $smarty.foreach.atts.first}
+									<tr>
+										<td colspan=2 style="text-align:center">
+											{formhelp note="copy this code into the html source to embed the file into your text"}
+										</td>
+									</tr>
+								{/if}
+
+								<tr>
+									<th>Size</th><th>Code</th>
+								</tr>
+								{if $storage.attachment_plugin_guid eq 'mimeimage'}
+									{foreach name=size key=size from=$storage.thumbnail_url item=url}
+										<tr>
+											<td style="text-align:center; width:125px">{$size}</td>
+											<td style="text-align:right"><input name="attachment_source_{$size}_{$storage.attachment_id}" value="&lt;img src={$url|escape} /&gt;" readonly style="width:305px"/></td>
+										</tr>
+									{/foreach}
+									{if ( $storage.source_url ) }
+										<tr>
+											<td style="text-align:center">original</td>
+											<td style="text-align:right"><input name="attachment_source_original_{$storage.attachment_id}" value="&lt;img src={$storage.source_url|escape} /&gt;" readonly style="width:305px"/></td>
+										</tr>
+									{/if}
+								{else}
+									<tr>
+										<td style="text-align:center; width:125px">icon</td>
+										<td style="text-align:right"><input name="attachment_source_icon_{$storage.attachment_id}" value='&lt;a href="{$storage.download_url}" &gt;&lt;img src={$storage.thumbnail_url.icon} /&gt;&lt;/a&gt;&lt;br /&gt;{$storage.filename}' readonly style="width:305px"/></td>
+									</tr>
+								{/if}
+							</table>
+						</td>
+					</tr>
 				{/if}
 			{/foreach}
 		</table>
