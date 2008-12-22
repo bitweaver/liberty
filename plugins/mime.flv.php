@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.23 2008/11/09 08:53:52 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.24 2008/12/22 13:07:12 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.23 $
+ * @version		$Revision: 1.24 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -311,6 +311,9 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 					$info = $default;
 				}
 
+				// in newer versions of ffmpeg the -me parameter has been renamed to -me_method
+				$me_param = 'me';
+
 				if( $codec == "h264" ) {
 					$parameters =
 						" -i '$source'".
@@ -325,7 +328,7 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 						" -s ".$info['size'].
 						" -aspect ".$info['aspect'].
 						" -flags +loop -cmp +chroma -refs 1 -coder 0 -me_range 16 -g 300 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -maxrate 10M -bufsize 10M -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -level 30".
-						" -partitions +parti4x4+partp8x8+partb8x8 -me umh -subq 5 -trellis 1".
+						" -partitions +parti4x4+partp8x8+partb8x8 -$me_param umh -subq 5 -trellis 1".
 						// output
 						" -y '$dest_file'";
 
@@ -350,7 +353,7 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 						" -s ".$info['size'].
 						" -aspect ".$info['aspect'].
 						" -flags +loop -cmp +chroma -refs 1 -coder 0 -me_range 16 -g 300 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -bf 16 -maxrate 10M -bufsize 10M -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -level 30".
-						" -partitions 0 -me epzs -subq 1 -trellis 0".
+						" -partitions 0 -$me_param epzs -subq 1 -trellis 0".
 						// output
 						" -y '$dest_file'";
 
@@ -370,7 +373,7 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 						" -s ".$info['size'].
 						" -aspect ".$info['aspect'].
 						" -flags +loop -cmp +chroma -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4".
-						" -partitions +parti8x8+parti4x4+partp8x8+partp4x4+partb8x8 -flags2 +brdo+dct8x8+wpred+bpyramid+mixed_refs -me umh -subq 7 -trellis 1 -refs 6 -bf 16 -directpred 3 -b_strategy 1 -bidir_refine 1 -coder 1".
+						" -partitions +parti8x8+parti4x4+partp8x8+partp4x4+partb8x8 -flags2 +brdo+dct8x8+wpred+bpyramid+mixed_refs -$me_param umh -subq 7 -trellis 1 -refs 6 -bf 16 -directpred 3 -b_strategy 1 -bidir_refine 1 -coder 1".
 						// output
 						" -y '$dest_file'";
 
@@ -395,7 +398,8 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 					return $parameters;
 				} else {
 					// we keep the output of this that we can store it to the error file if we need to do so
-					if( $debug = shell_exec( "$ffmpeg $parameters 2>&1" ) && !empty( $parameters2 )) {
+					$debug = shell_exec( "$ffmpeg $parameters 2>&1" );
+					if( !empty( $parameters2 )) {
 						$debug .= shell_exec( "$ffmpeg $parameters2 2>&1" );
 						// change back to whence we came
 						chdir( $cwd );
@@ -426,7 +430,7 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 				} else {
 					// remove unsuccessfully converted file
 					@unlink( $dest_file );
-					$log['message'] = 'ERROR: The video you uploaded could not be converted by ffmpeg. DEBUG OUTPUT: '.nl2br( $debug );
+					$log['message'] = "ERROR: The video you uploaded could not be converted by ffmpeg.\nDEBUG OUTPUT:\n\n".$debug;
 					$actionLog['log_message'] = "Video could not be converted to flashvideo. An error dump was saved to: ".$dest_path.'/error';
 
 					// write error message to error file
