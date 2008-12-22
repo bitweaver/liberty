@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.118 2008/12/02 18:12:06 bitweaver Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.119 2008/12/22 10:03:00 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -464,17 +464,12 @@ class LibertySystem extends LibertyBase {
 	 * @param string $pGuid GUID of plugin used - if empty, we get all available functions of that type in all active plugins
 	 * @param string $pFunctionName Function type we want to use
 	 * @param string $pGetDefault Get default function for a given plugin type such as 'mime'
+	 * @param string $pGetInactive don't worry if plugin is active or not
 	 * @access public
 	 * @return function name on success, NULL on failure
 	 */
 	function getPluginFunction( $pGuid, $pFunctionName, $pGetDefault = FALSE, $pGetInactive = FALSE ) {
-		if( empty( $pGuid )) {
-			foreach( $this->mPlugins as $guid => $plugin ) {
-				if( $this->isPluginActive( $guid ) && !empty( $plugin[$pFunctionName] ) && function_exists( $plugin[$pFunctionName] )) {
-					$ret[$guid] = $plugin[$pFunctionName];
-				}
-			}
-		} elseif(( $this->isPluginActive( $pGuid ) || $pGetInactive ) && !empty( $this->mPlugins[$pGuid][$pFunctionName] ) && function_exists( $this->mPlugins[$pGuid][$pFunctionName] )) {
+		if(( $this->isPluginActive( $pGuid ) || $pGetInactive ) && !empty( $this->mPlugins[$pGuid][$pFunctionName] ) && function_exists( $this->mPlugins[$pGuid][$pFunctionName] )) {
 			$ret = $this->mPlugins[$pGuid][$pFunctionName];
 		}
 
@@ -484,6 +479,23 @@ class LibertySystem extends LibertyBase {
 		}
 
 		return( !empty( $ret ) ? $ret : NULL );
+	}
+
+	/**
+	 * getPluginFunctions Get a list of functions of a given type
+	 * 
+	 * @param string $pFunctionName Function type we want to get
+	 * @access public
+	 * @return array of functions with the GUID as key
+	 */
+	function getPluginFunctions( $pFunctionName ) {
+		foreach( $this->mPlugins as $guid => $plugin ) {
+			if( $this->isPluginActive( $guid ) && !empty( $plugin[$pFunctionName] ) && function_exists( $plugin[$pFunctionName] )) {
+				$ret[$guid] = $plugin[$pFunctionName];
+			}
+		}
+
+		return( !empty( $ret ) ? $ret : array() );
 	}
 
 	/**

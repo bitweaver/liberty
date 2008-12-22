@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/edit_storage_inc.php,v 1.36 2008/08/04 15:04:09 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/edit_storage_inc.php,v 1.37 2008/12/22 10:03:00 squareing Exp $
  *
  * edit_storage_inc
  * @author   spider <spider@steelsun.com>
@@ -10,10 +10,8 @@
 global $gBitSmarty, $gContent, $gBitUser, $gBitSystem, $gBitThemes, $gLibertySystem;
 
 // if we have active plugins with an upload function, we call them:
-if( $funcs = $gLibertySystem->getPluginFunction( NULL, 'upload_function' )) {
-	foreach( $funcs as $guid => $func ) {
-		$func( $gContent );
-	}
+foreach( $gLibertySystem->getPluginFunctions( 'upload_function' ) as $guid => $func ) {
+	$func( $gContent );
 }
 
 // set up base arguments
