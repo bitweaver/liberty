@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.24 2008/12/22 13:07:12 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.25 2008/12/23 20:24:38 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.24 $
+ * @version		$Revision: 1.25 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -311,6 +311,11 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 					$info = $default;
 				}
 
+				// transfer settings to vars for easy manipulation for various APIs of ffmpeg
+				$audio_bitrate    = ( $gBitSystem->getConfig( 'mime_flv_audio_bitrate', 32000 ) / 1000 ).'kb';
+				$audio_samplerate = $gBitSystem->getConfig( 'mime_flv_audio_samplerate', 22050 );
+				$video_bitrate    = ( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ) / 1000 ).'kb';
+
 				// in newer versions of ffmpeg the -me parameter has been renamed to -me_method
 				$me_param = 'me';
 
@@ -319,12 +324,12 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 						" -i '$source'".
 						// audio
 						" -acodec libfaac".
-						" -ab ".trim( $gBitSystem->getConfig( 'mime_flv_audio_bitrate', 32000 ).'b' ).
-						" -ar ".trim( $gBitSystem->getConfig( 'mime_flv_audio_samplerate', 22050 )).
+						" -ab $audio_bitrate".
+						" -ar $audio_samplerate".
 						// video
 						" -vcodec libx264".
-						" -b ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
-						" -bt ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
+						" -b $video_bitrate".
+						" -bt $video_bitrate".
 						" -s ".$info['size'].
 						" -aspect ".$info['aspect'].
 						" -flags +loop -cmp +chroma -refs 1 -coder 0 -me_range 16 -g 300 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -maxrate 10M -bufsize 10M -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -level 30".
@@ -348,8 +353,8 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 						" -pass 1".
 						" -passlogfile $passlogfile".
 						" -vcodec libx264".
-						" -b ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
-						" -bt ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
+						" -b $video_bitrate".
+						" -bt $video_bitrate".
 						" -s ".$info['size'].
 						" -aspect ".$info['aspect'].
 						" -flags +loop -cmp +chroma -refs 1 -coder 0 -me_range 16 -g 300 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -bf 16 -maxrate 10M -bufsize 10M -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -level 30".
@@ -362,14 +367,14 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 						" -i '$source'".
 						// audio
 						" -acodec libfaac".
-						" -ab ".trim( $gBitSystem->getConfig( 'mime_flv_audio_bitrate', 32000 ).'b' ).
-						" -ar ".trim( $gBitSystem->getConfig( 'mime_flv_audio_samplerate', 22050 )).
+						" -ab $audio_bitrate".
+						" -ar $audio_samplerate".
 						// video
 						" -pass 2".
 						" -passlogfile $passlogfile".
 						" -vcodec libx264".
-						" -b ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
-						" -bt ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
+						" -b $video_bitrate".
+						" -bt $video_bitrate".
 						" -s ".$info['size'].
 						" -aspect ".$info['aspect'].
 						" -flags +loop -cmp +chroma -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4".
@@ -381,13 +386,13 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 					$parameters =
 						" -i '$source'".
 						// audio
-						" -acodec ".$gBitSystem->getConfig('ffmpeg_mp3_param', 'libmp3lame').
-						" -ab ".trim( $gBitSystem->getConfig( 'mime_flv_audio_bitrate', 32000 ).'b' ).
-						" -ar ".trim( $gBitSystem->getConfig( 'mime_flv_audio_samplerate', 22050 )).
+						" -acodec ".$gBitSystem->getConfig( 'ffmpeg_mp3_param', 'libmp3lame' ).
+						" -ab $audio_bitrate".
+						" -ar $audio_samplerate".
 						// video
 						" -f flv".
-						" -b ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
-						" -bt ".trim( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ).'b' ).
+						" -b $video_bitrate".
+						" -bt $video_bitrate".
 						" -s ".$info['size'].
 						" -aspect ".$info['aspect'].
 						// output
