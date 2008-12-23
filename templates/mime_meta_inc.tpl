@@ -23,18 +23,27 @@
 {/if}
 
 <div class="row">
+	{formlabel label="Downloads" for=""}
+	{forminput}
+		{$attachment.downloads|default:"{tr}none{/tr}"}
+	{/forminput}
+</div>
+
+<div class="row">
 	{formlabel label="Last Modified" for=""}
 	{forminput}
 		{$attachment.last_modified|bit_long_datetime}
 	{/forminput}
 </div>
 
-<div class="row">
-	{formlabel label="Downloads" for=""}
-	{forminput}
-		{$attachment.downloads|default:"{tr}none{/tr}"}
-	{/forminput}
-</div>
+{if $gContent->mInfo.hits}
+	<div class="row">
+		{formlabel label="Hits" for=""}
+		{forminput}
+			{$gContent->mInfo.hits}
+		{/forminput}
+	</div>
+{/if}
 
 {attachhelp legend=1 nohelp=$nohelp hash=$attachment}
 {/strip}

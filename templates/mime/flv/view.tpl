@@ -33,13 +33,6 @@
 	{formfeedback error="{tr}The Video could not be processed. You can upload a different version of the film or simply leave as is.{/tr}"}
 {/if}
 
-<div class="row">
-	{formlabel label="Uploaded by" for=""}
-	{forminput}
-		{displayname user_id=$attachment.user_id}
-	{/forminput}
-</div>
-
 {if $attachment.meta.duration}
 	<div class="row">
 		{formlabel label="Duration" for=""}
@@ -49,22 +42,5 @@
 	</div>
 {/if}
 
-{if $attachment.download_url}
-	<div class="row">
-		{formlabel label="Filename" for=""}
-		{forminput}
-			<a href="{$attachment.download_url}">{$attachment.filename|escape}</a>
-			&nbsp; <small>({$attachment.mime_type})</small>
-		{/forminput}
-	</div>
-
-	<div class="row">
-		{formlabel label="Filesize" for=""}
-		{forminput}
-			{$attachment.file_size|display_bytes}
-		{/forminput}
-	</div>
-{/if}
-
-{attachhelp legend=1 hash=$attachment}
+{include file=bitpackage:liberty/mime_meta_inc.tpl}
 {/strip}

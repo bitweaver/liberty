@@ -59,21 +59,5 @@
 	</div>
 {/if}
 
-{if $attachment.download_url}
-	<div class="row">
-		{formlabel label="Filename" for=""}
-		{forminput}
-			<a href="{$attachment.download_url}">{$attachment.filename|escape}</a> <small>({$attachment.mime_type})</small>
-		{/forminput}
-	</div>
-
-	<div class="row">
-		{formlabel label="Filesize" for=""}
-		{forminput}
-			{$attachment.file_size|display_bytes}
-		{/forminput}
-	</div>
-{/if}
-
-{attachhelp legend=1 hash=$attachment}
+{include file=bitpackage:liberty/mime_meta_inc.tpl}
 {/strip}

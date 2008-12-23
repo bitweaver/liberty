@@ -16,5 +16,5 @@
 		{/if}
 	</div>
 {/if}
-{/strip}
 {include file="bitpackage:liberty/mime_meta_inc.tpl"}
+{/strip}
