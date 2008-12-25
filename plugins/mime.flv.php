@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.25 2008/12/23 20:24:38 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.26 2008/12/25 19:14:24 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.25 $
+ * @version		$Revision: 1.26 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -528,7 +528,7 @@ function mime_flv_create_thumbnail( $pFile, $pOffset = 60 ) {
  * @return void
  */
 function mime_flv_calculate_videosize( &$pMetaData, $pParams ) {
-	global $gBitSystem;
+	global $gBitSystem, $gThumbSizes;
 
 	// fetch default if width is missing
 	if( empty( $pMetaData['width'] )) {
@@ -539,18 +539,10 @@ function mime_flv_calculate_videosize( &$pMetaData, $pParams ) {
 	$pMetaData['height'] = ( $pMetaData['width'] / ( !empty( $pMetaData['aspect'] ) ? $pMetaData['aspect'] : 4 / 3 ));
 
 	// if we want to display a different size
-	if( !empty( $pParams['size'] )) {
-		if( $pParams['size'] == 'small' ) {
-			$new_width = 160;
-		} elseif( $pParams['size'] == 'medium' ) {
-			$new_width = 320;
-		} elseif( $pParams['size'] == 'large' ) {
-			$new_width = 480;
-		} elseif( $pParams['size'] == 'huge' ) {
-			$new_width = 600;
-		}
-	} else {
-		$new_width = $gBitSystem->getConfig( 'mime_flv_default_size' );
+	if( !empty( $pParams['size'] ) && !empty( $gThumbSizes[$pParams['size']]['width'] )) {
+		$new_width = $gThumbSizes[$pParams['size']]['width'];
+	} elseif( $gBitSystem->isFeatureActive( 'mime_flv_default_size' )) {
+		$new_width = $gThumbSizes[$gBitSystem->getConfig( 'mime_flv_default_size' )]['width'];
 	}
 
 	// if we want to change the video size

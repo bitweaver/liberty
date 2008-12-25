@@ -14,7 +14,7 @@ if( extension_loaded( 'ffmpeg' )) {
 
 $feedback = array();
 
-$rates = array(
+$options = array(
 	'mp3_param' => array(
 		'libmp3lame' => 'libmp3lame',
 		'mp3' => 'mp3',
@@ -39,13 +39,6 @@ $rates = array(
 		480 => 480,
 		640 => 640,
 	),
-	'display_size' => array(
-		0   => tra( 'Same as encoded video' ),
-		240 => tra( 'Small' ),
-		320 => tra( 'Medium' ),
-		480 => tra( 'Large' ),
-		640 => tra( 'Huge' ),
-	),
 	'audio_bitrate' => array(
 		32000  => 32,
 		64000  => 64,
@@ -58,7 +51,8 @@ $rates = array(
 		44100 => 44100,
 	),
 );
-$gBitSmarty->assign( 'rates', $rates );
+$options['display_size'] = get_image_size_options( 'Same as encoded video' );
+$gBitSmarty->assign( 'options', $options );
 
 if( !empty( $_REQUEST['plugin_settings'] )) {
 	$flvSettings = array(
@@ -87,7 +81,7 @@ if( !empty( $_REQUEST['plugin_settings'] )) {
 			'type'  => 'numeric',
 		),
 		'mime_flv_default_size' => array(
-			'type'  => 'numeric',
+			'type'  => 'text',
 		),
 		'mime_flv_backcolor' => array(
 			'type'  => 'text',

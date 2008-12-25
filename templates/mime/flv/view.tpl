@@ -6,12 +6,10 @@
 
 	<div class="pagination">
 		{tr}View other sizes{/tr}<br />
-		&nbsp;&bull;&nbsp;
-		<a href="{$attachment.display_url}&size=small">{tr}Small{/tr}</a>&nbsp;&bull;&nbsp;
-		<a href="{$attachment.display_url}&size=medium">{tr}Medium{/tr}</a>&nbsp;&bull;&nbsp;
-		<a href="{$attachment.display_url}&size=large">{tr}Large{/tr}</a>&nbsp;&bull;&nbsp;
-		<a href="{$attachment.display_url}&size=huge">{tr}Huge{/tr}</a>&nbsp;&bull;&nbsp;
-		<a href="{$attachment.display_url}&size=original">{tr}Original{/tr}</a>&nbsp;&bull;&nbsp;
+		{foreach name=size key=size from=$attachment.thumbnail_url item=url}
+			<a href="{$attachment.display_url|escape}{if strpos($attachment.display_url,'?')}&amp;{else}?{/if}size={$size}">{tr}{$size}{/tr}</a>
+			{if !$smarty.foreach.size.last}&nbsp;&bull;&nbsp;{/if}
+		{/foreach}
 	</div>
 {elseif $attachment.status.processing}
 	<div class="row aligncenter">

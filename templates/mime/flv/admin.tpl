@@ -37,8 +37,8 @@
 				{formlabel label="Video codec" for="mime_flv_video_codec"}
 				{forminput}
 					{html_options
-						options=$rates.video_codec
-						values=$rates.video_codec
+						options=$options.video_codec
+						values=$options.video_codec
 						name=mime_flv_video_codec
 						id=mime_flv_video_codec
 						selected=$gBitSystem->getConfig('mime_flv_video_codec')|default:flv}
@@ -55,8 +55,8 @@
 				{formlabel label="ffmpeg mp3 param" for="ffmpeg_mp3_param"}
 				{forminput}
 					{html_options
-						options=$rates.mp3_param
-						values=$rates.mp3_param
+						options=$options.mp3_param
+						values=$options.mp3_param
 						name=ffmpeg_mp3_param
 						id=ffmpeg_mp3_param
 						selected=$gBitSystem->getConfig('ffmpeg_mp3_param')|default:libmp3lame}
@@ -76,8 +76,8 @@
 				{formlabel label="Video bitrate" for="mime_flv_video_bitrate"}
 				{forminput}
 					{html_options
-						options=$rates.video_bitrate
-						values=$rates.video_bitrate
+						options=$options.video_bitrate
+						values=$options.video_bitrate
 						name=mime_flv_video_bitrate
 						id=mime_flv_video_bitrate
 						selected=$gBitSystem->getConfig('mime_flv_video_bitrate')|default:200000} kbits/s
@@ -89,8 +89,8 @@
 				{formlabel label="Video width" for="mime_flv_width"}
 				{forminput}
 					{html_options
-						options=$rates.video_width
-						values=$rates.video_width
+						options=$options.video_width
+						values=$options.video_width
 						name=mime_flv_width
 						id=mime_flv_width
 						selected=$gBitSystem->getConfig('mime_flv_width')|default:320} pixel
@@ -102,8 +102,8 @@
 				{formlabel label="Audio sample rate" for="mime_flv_audio_samplerate"}
 				{forminput}
 					{html_options
-						options=$rates.audio_samplerate
-						values=$rates.audio_samplerate
+						options=$options.audio_samplerate
+						values=$options.audio_samplerate
 						name=mime_flv_audio_samplerate
 						id=mime_flv_audio_samplerate
 						selected=$gBitSystem->getConfig('mime_flv_audio_samplerate')|default:22050} Hz
@@ -115,8 +115,8 @@
 				{formlabel label="Audio bitrate" for="mime_flv_audio_bitrate"}
 				{forminput}
 					{html_options
-						options=$rates.audio_bitrate
-						values=$rates.audio_bitrate
+						options=$options.audio_bitrate
+						values=$options.audio_bitrate
 						name=mime_flv_audio_bitrate
 						id=mime_flv_audio_bitrate
 						selected=$gBitSystem->getConfig('mime_flv_audio_bitrate')|default:32000} kbits/s
@@ -128,8 +128,8 @@
 				{formlabel label="Default displayed size" for="mime_flv_default_size"}
 				{forminput}
 					{html_options
-						options=$rates.display_size
-						values=$rates.display_size
+						options=$options.display_size
+						values=$options.display_size
 						name=mime_flv_default_size
 						id=mime_flv_default_size
 						selected=$gBitSystem->getConfig('mime_flv_default_size')}
