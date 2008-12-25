@@ -30,7 +30,7 @@
 <table class="data">
 	<caption>{tr}Available Content{/tr} <span class="total">[ {$listInfo.total_records} ]</span></caption>
 	<tr>
-		<th class="width2p">{smartlink ititle="ID" isort=content_id list_page=$listInfo.current_page ihash=$listInfo.ihash}</th>
+		<th class="width2p">{smartlink ititle="ID" isort=lc.content_id list_page=$listInfo.current_page ihash=$listInfo.ihash}</th>
 		<th>{smartlink ititle="Title" isort=title list_page=$listInfo.current_page idefault=1 ihash=$listInfo.ihash}</th>
 		<th>{smartlink ititle="Content Type" isort=content_type_guid list_page=$listInfo.current_page ihash=$listInfo.ihash}</th>
 		<th>{smartlink ititle="Author" isort=$isort_author list_page=$listInfo.current_page ihash=$listInfo.ihash}</th>
