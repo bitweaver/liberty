@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.26 2008/12/25 19:14:24 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.27 2008/12/25 19:33:06 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.26 $
+ * @version		$Revision: 1.27 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -541,7 +541,7 @@ function mime_flv_calculate_videosize( &$pMetaData, $pParams ) {
 	// if we want to display a different size
 	if( !empty( $pParams['size'] ) && !empty( $gThumbSizes[$pParams['size']]['width'] )) {
 		$new_width = $gThumbSizes[$pParams['size']]['width'];
-	} elseif( $gBitSystem->isFeatureActive( 'mime_flv_default_size' )) {
+	} elseif( $gBitSystem->isFeatureActive( 'mime_flv_default_size' ) && !empty( $gThumbSizes[$gBitSystem->getConfig( 'mime_flv_default_size' )]['width'] )) {
 		$new_width = $gThumbSizes[$gBitSystem->getConfig( 'mime_flv_default_size' )]['width'];
 	}
 
