@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.43 2008/12/02 15:47:35 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.44 2008/12/25 10:51:32 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.43 $
+ * @version     $Revision: 1.44 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -372,14 +372,9 @@ if( !function_exists( 'mime_default_expunge' )) {
 		if( @BitBase::verifyId( $pAttachmentId )) {
 			if( $fileHash = LibertyMime::getAttachment( $pAttachmentId )) {
 				if( $gBitUser->isAdmin() || $gBitUser->mUserId == $fileHash['user_id'] && !empty( $fileHash['storage_path'] )) {
-					$absolutePath = BIT_ROOT_PATH.'/'.$fileHash['storage_path'];
-					if( file_exists( $absolutePath )) {
-						// make sure this is a valid storage directory before removing it
-						if( preg_match( '!/users/\d+/\d+/\w+/\d+/.+!', $fileHash['storage_path'] )) {
-							unlink_r( dirname( $absolutePath ));
-						} else {
-							unlink( $absolutePath );
-						}
+					// make sure this is a valid storage directory before removing it
+					if(( $nuke = LibertyMime::validateStoragePath( BIT_ROOT_PATH.'/'.$fileHash['storage_path'] )) && is_file( $nuke )) {
+						unlink_r( dirname( $nuke ));
 					}
 					$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_files` WHERE `file_id` = ?";
 					$gBitSystem->mDb->query( $query, array( $fileHash['foreign_id'] ));
