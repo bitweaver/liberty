@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.168 2008/11/05 17:50:53 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.169 2008/12/25 10:50:46 squareing Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -103,15 +103,10 @@ class LibertyAttachable extends LibertyContent {
 	 */
 	function validateStoragePath( $pPath ) {
 		// file_exists checks for file or directory
-		if( !empty( $pPath ) && file_exists( $pPath )) {
-			// make sure this is a valid storage directory before removing it
-			$pPath = str_replace( "//", "/", $pPath );
-			$store = str_replace( "//", "/", STORAGE_PKG_PATH );
-			// remove the STORAGE_PKG_PATH
-			if( strpos( $pPath, $store ) === 0 && $check = str_replace( $store, "", $pPath )) {
-				if( preg_match( '!^(users|common)/\d+/\d+/\w+/\d+!', $check )) {
-					return $pPath;
-				}
+		if( !empty( $pPath ) && $pPath = realpath( $pPath )) {
+			// ensure path sanity
+			if( preg_match( "!^".realpath( STORAGE_PKG_PATH )."/(users|common)/\d+/\d+/\w+/\d+!", $pPath )) {
+				return $pPath;
 			}
 		}
 	}
