@@ -47,6 +47,6 @@
 		</div>
 	{/if}
 {else}
-	{include file=$gLibertySystem->getMimeTemplate('inline', $smarty.const.LIBERTY_DEFAULT_MIME_HANDLER)}
+	{include file=$gLibertySystem->getMimeTemplate('attachment', $smarty.const.LIBERTY_DEFAULT_MIME_HANDLER)}
 {/if}
 {/strip}
