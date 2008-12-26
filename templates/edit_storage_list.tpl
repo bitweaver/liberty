@@ -14,17 +14,17 @@
 				<th scope="col" class="width30p" title="{tr}Actions{/tr}">{tr}Actions{/tr}</th>
 			</tr>
 
-			<tr>
-				<td></td><td></td>
-				{if $uploadTab}
+			{if $uploadTab}
+				<tr>
+					<td colspan="3">&nbsp;</td>
 					<td class="actionicon">
 						<label>
 							{tr}No {$primary_label|default:"Primary"}{/tr}:&nbsp;
 							<input type="radio" name="liberty_attachments[primary]" value="none" {if empty($gContent->mInfo[primary])}checked="checked"{/if} />
 						</label>
 					</td>
-				{/if}
-			</tr>
+				</tr>
+			{/if}
 
 			{foreach from=$gContent->mStorage item=storage key=attachmentId name=atts}
 				<tr class="{cycle values="odd,even"}">
