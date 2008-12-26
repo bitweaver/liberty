@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.20 2008/11/09 08:53:52 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.21 2008/12/26 08:54:19 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.20 $
+ * @version		$Revision: 1.21 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -35,7 +35,7 @@ $pluginParams = array (
 	'description'         => 'Extract image meta data and display relevant information to the user and pick individual display options for images.',
 	// Templates to display the files
 	'view_tpl'            => 'bitpackage:liberty/mime/image/view.tpl',
-	'inline_tpl'          => 'bitpackage:liberty/mime/image/inline.tpl',
+	'attachment_tpl'      => 'bitpackage:liberty/mime/image/attachment.tpl',
 	// url to page with options for this plugin
 	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/plugins/mime_image.php',
 	// This should be the same for all mime plugins

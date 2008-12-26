@@ -1,5 +1,5 @@
 {strip}
-{if $display_type == "attachment_plugin" && $attachment.thumbnail_url.panorama}
+{if $attachment.thumbnail_url.panorama}
 	{if $wrapper.output == 'desc' || $wrapper.output == 'description'}
 		{if $attachment.display_url}<a {$wrapper.href_class} href="{$wrapper.display_url|default:$attachment.display_url}">{/if}
 			{$wrapper.description|escape|default:$attachment.filename}

@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.flash.php,v 1.4 2008/09/15 10:32:07 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.flash.php,v 1.5 2008/12/26 08:54:19 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.4 $
+ * @version		$Revision: 1.5 $
  * created		Sunday Jul 02, 2006   14:42:13 CEST
  * @package		liberty	
  * @subpackage	liberty_mime_handler
@@ -35,6 +35,8 @@ $pluginParams = array(
 	// Template used when viewing the item
 	'view_tpl'           => 'bitpackage:liberty/mime/flash/view.tpl',
 	'inline_tpl'         => 'bitpackage:liberty/mime/flash/inline.tpl',
+	'storage_tpl'        => 'bitpackage:liberty/mime/flash/inline.tpl',
+	'attachment_tpl'     => 'bitpackage:liberty/mime/flash/inline.tpl',
 	// This should be the same for all mime plugins
 	'plugin_type'        => MIME_PLUGIN,
 	// Set this to TRUE if you want the plugin active right after installation

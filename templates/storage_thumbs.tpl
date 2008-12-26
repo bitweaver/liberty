@@ -12,7 +12,7 @@
 		{foreach from=$gContent->mStorage item=attachment key=id}
 			{* TODO: this should not be necessary anymore as soon as we've faded out old attachment plugins *}
 			{if $attachment.is_mime}
-				{include file=$gLibertySystem->getMimeTemplate('inline',$attachment.attachment_plugin_guid) display_type=storage_thumbs preferences=$gContent->mStoragePrefs.$id}
+				{include file=$gLibertySystem->getMimeTemplate('storage',$attachment.attachment_plugin_guid) preferences=$gContent->mStoragePrefs.$id}
 			{else}
 				{* TODO: get rid of old plugin system *}
 				{capture name="size"}{$attachment.file_size|display_bytes}{/capture}

@@ -1,6 +1,6 @@
 {strip}
 {if $attachment.media_url}
-	{assign var=id value="audio_`$display_type``$attachment.attachment_id`"}
+	{assign var=id value="audio_`$caller``$attachment.attachment_id`"}
 	{if $uploadTab}{assign var=id value="`$id`_tab"}{/if}
 
 	{* album covers are usually square - scrollbar is 20px high *}

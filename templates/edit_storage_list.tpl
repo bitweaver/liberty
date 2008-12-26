@@ -8,7 +8,8 @@
 		<table class="data" summary="List of attached files">
 			<caption>{tr}Items {if $libertyUploader && empty($gContent->mContentId)}That Will Be{/if} Attached Directly to this Content{/tr}</caption>
 			<tr>
-				<th scope="col" class="width30p" title="{tr}Thumbnail{/tr}">{tr}Thumbnail{/tr}</th>
+				<th scope="col" class="width1p"  title="{tr}Attachment ID{/tr}">{tr}Attachment ID{/tr}</th>
+				<th scope="col" class="width29p" title="{tr}Thumbnail{/tr}">{tr}Thumbnail{/tr}</th>
 				<th scope="col" class="width40p" title="{tr}Inclusion Code{/tr}">{tr}Inclusion Code{/tr}</th>
 				<th scope="col" class="width30p" title="{tr}Actions{/tr}">{tr}Actions{/tr}</th>
 			</tr>
@@ -27,9 +28,12 @@
 
 			{foreach from=$gContent->mStorage item=storage key=attachmentId name=atts}
 				<tr class="{cycle values="odd,even"}">
+					<td>
+						{$storage.attachment_id}
+					</td>
 					<td class="aligncenter">
 						{if $storage.is_mime}
-							{include file=$gLibertySystem->getMimeTemplate('inline',$storage.attachment_plugin_guid) display_type=storage_thumbs thumbsize=small preferences=$gContent->mStoragePrefs.$attachmentId attachment=$storage}
+							{include file=$gLibertySystem->getMimeTemplate('storage',$storage.attachment_plugin_guid) thumbsize=small preferences=$gContent->mStoragePrefs.$attachmentId attachment=$storage}
 						{else}
 							{jspopup href=$storage.source_url title=$storage.title|default:$storage.filename notra=1 img=$storage.thumbnail_url.avatar}
 							<br />{$storage.filename} <span class="date">{$storage.file_size|display_bytes}</span>

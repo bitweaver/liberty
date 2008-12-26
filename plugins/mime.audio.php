@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.26 2008/11/09 08:53:52 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.27 2008/12/26 08:54:19 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.26 $
+ * @version		$Revision: 1.27 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -37,6 +37,8 @@ $pluginParams = array (
 	// Templates to display the files
 	'view_tpl'            => 'bitpackage:liberty/mime/audio/view.tpl',
 	'inline_tpl'          => 'bitpackage:liberty/mime/audio/inline.tpl',
+	'storage_tpl'         => 'bitpackage:liberty/mime/audio/storage.tpl',
+	'attachment_tpl'      => 'bitpackage:liberty/mime/audio/attachment.tpl',
 	'edit_tpl'            => 'bitpackage:liberty/mime/audio/edit.tpl',
 	// url to page with options for this plugin
 	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/plugins/mime_audio.php',

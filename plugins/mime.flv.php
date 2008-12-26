@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.27 2008/12/25 19:33:06 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.28 2008/12/26 08:54:19 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.27 $
+ * @version		$Revision: 1.28 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -37,6 +37,8 @@ $pluginParams = array (
 	// Templates to display the files
 	'view_tpl'            => 'bitpackage:liberty/mime/flv/view.tpl',
 	'inline_tpl'          => 'bitpackage:liberty/mime/flv/inline.tpl',
+	'storage_tpl'         => 'bitpackage:liberty/mime/flv/storage.tpl',
+	'attachment_tpl'      => 'bitpackage:liberty/mime/flv/attachment.tpl',
 	'edit_tpl'            => 'bitpackage:liberty/mime/flv/edit.tpl',
 	// url to page with options for this plugin
 	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/plugins/mime_flv.php',

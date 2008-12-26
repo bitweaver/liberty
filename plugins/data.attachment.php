@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.36 $
+ * @version  $Revision: 1.37 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.36 2008/11/09 09:08:55 squareing Exp $
+// $Id: data.attachment.php,v 1.37 2008/12/26 08:54:19 squareing Exp $
 
 /**
  * definitions
@@ -81,8 +81,8 @@ function data_attachment_help() {
 			.'<tr class="odd">'
 				.'<td>link</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Allows you to specify a relative or absolute URL the image will link to if clicked. If set to false, no link is inserted.")
-				. tra("(Default = ") . '<strong>'.tra( 'link to source image' ).'</strong>)</td>'
+				.'<td>' . tra( "Allows you to specify a relative or absolute URL the image will link to if clicked. You can also link to one of the sizes of the image: icon, avatar, small, medium, large and original. If set to false, no link is inserted.")
+				. tra("(Default = ") . '<strong>'.tra( 'link to image details page' ).'</strong>)</td>'
 			.'</tr>'
 			.'<tr class="even">
 				<td>page_id</td>
@@ -160,8 +160,16 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 		} elseif( !empty( $pParams['link'] ) && $pParams['link'] == 'false' ) {
 			// no link
 		} elseif( !empty( $pParams['link'] )) {
-			// custom link that can point anywhere
-			if( !strstr( $pParams['link'], $_SERVER["SERVER_NAME"] ) && strstr( $pParams['link'], '//' )) {
+			// Allow the use of icon, avatar, small, medium and large to link to certain size of image directly
+			if( !empty( $att['thumnail_url'][$pParams['link']] )) {
+				$pParams['link'] = $att['thumnail_url'][$pParams['link']];
+
+			// Allow the use of 'original' to link to original file directly
+			} elseif( $pParams['link'] == 'original' && !empty( $att['source_url'] )) {
+				$pParams['link'] = $att['source_url'];
+
+			// Adjust class name if we are leaving this server
+			} elseif( !strstr( $pParams['link'], $_SERVER["SERVER_NAME"] ) && strstr( $pParams['link'], '//' )) {
 				$wrapper['href_class'] = 'class="external"';
 			}
 			$wrapper['display_url'] = $pParams['link'];
@@ -170,12 +178,11 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 		}
 
 		// pass stuff to the template
-		$gBitSmarty->assign( 'display_type', 'attachment_plugin' );
 		$gBitSmarty->assign( 'attachment', $att );
 		$gBitSmarty->assign( 'wrapper', $wrapper );
 		$gBitSmarty->assign( 'thumbsize', (( !empty( $pParams['size'] ) && ( $pParams['size'] == 'original' || !empty( $att['thumbnail_url'][$pParams['size']] ))) ? $pParams['size'] : 'medium' ));
 
-		$ret = $gBitSmarty->fetch( $gLibertySystem->getMimeTemplate( 'inline', $att['attachment_plugin_guid'] ));
+		$ret = $gBitSmarty->fetch( $gLibertySystem->getMimeTemplate( 'attachment', $att['attachment_plugin_guid'] ));
 	} else {
 		// TODO: legacy code - should be faded out if possible
 

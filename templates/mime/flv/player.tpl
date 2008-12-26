@@ -1,6 +1,6 @@
 {strip}
 {if $attachment.media_url}
-	{assign var=id value="video_`$display_type``$attachment.attachment_id`"}
+	{assign var=id value="video_`$caller``$attachment.attachment_id`"}
 	{if $uploadTab}{assign var=id value="`$id`_tab"}{/if}
 	<div id="{$id}"><a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see this video.</div>
 	<script type="text/javascript">/* <![CDATA[ */

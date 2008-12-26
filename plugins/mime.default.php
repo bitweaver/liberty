@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.44 2008/12/25 10:51:32 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.45 2008/12/26 08:54:19 squareing Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.44 $
+ * @version     $Revision: 1.45 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -44,6 +44,8 @@ $pluginParams = array (
 	'upload_tpl'         => 'bitpackage:liberty/mime/default/upload.tpl',
 	'view_tpl'           => 'bitpackage:liberty/mime/default/view.tpl',
 	'inline_tpl'         => 'bitpackage:liberty/mime/default/inline.tpl',
+	'storage_tpl'        => 'bitpackage:liberty/mime/default/storage.tpl',
+	'attachment_tpl'     => 'bitpackage:liberty/mime/default/attachment.tpl',
 	// This should be the same for all mime plugins
 	'plugin_type'        => MIME_PLUGIN,
 	// This needs to be specified by plugins that are included by other plugins
