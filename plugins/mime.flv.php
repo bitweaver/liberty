@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.29 2008/12/28 09:57:29 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.30 2008/12/28 10:59:46 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.29 $
+ * @version		$Revision: 1.30 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -420,7 +420,7 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 				}
 
 				// make sure the conversion was successfull
-				if( is_file( $dest_file ) && filesize( $dest_file ) > 1 ) {
+				if( is_file( $dest_file ) && filesize( $dest_file ) > 48 ) {
 					// try to work out a reasonable timepoint where to extract a screenshot
 					if( preg_match( '!Duration: ([\d:\.]*)!', $debug, $time )) {
 						list( $h, $m, $s ) = explode( ':', $time[1] );
