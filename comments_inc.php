@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.52 $
+ * @version  $Revision: 1.53 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.52 2008/11/18 04:21:49 spiderr Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.53 2008/12/28 00:15:24 pppspoonman Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -40,6 +40,9 @@ global $commentsLib, $gBitSmarty, $gBitSystem;
 
 if ($gBitSystem->isPackageActive('bitboards')) {
 	require_once(BITBOARDS_PKG_PATH.'BitBoardTopic.php');
+}
+if ($gBitSystem->isPackageActive('tickets')) {
+	require_once(TICKETS_PKG_PATH.'BitTicket.php');
 }
 
 $postComment = array();
@@ -115,8 +118,16 @@ if (!empty($_REQUEST['post_comment_submit']) && $gContent->hasUserPermission( 'p
 	if (!empty( $_REQUEST['format_guid'] ) ) {
 		$storeRow['format_guid'] = $_REQUEST['format_guid'];
 	}
+	$ticketValid = TRUE;
+	if( $gBitSystem->isPackageActive('tickets')) {
+		$ticketValid = $gContent->storeOnlyHeader($_REQUEST['ticket']);
+		if( $ticketValid ) {
+			$gContent->loadTicketHistory();
+			$storeRow['edit'] = "{history id=".$_REQUEST['ticket']['historyIds'][0]."} ".$storeRow['edit'];
+		}
+	}
 	if(!($gBitSystem->isPackageActive('bitboards') && BitBoardTopic::isLockedMsg($storeRow['parent_id']))) {
-		if( $storeComment->storeComment($storeRow) ) {
+		if( $ticketValid && $storeComment->storeComment($storeRow) ) {
 			if($gBitSystem->isPackageActive('bitboards') && $gBitSystem->isFeatureActive('bitboards_thread_track')) {
 				$topic_id = substr($storeComment->mInfo['thread_forward_sequence'],0,10);
 				$data = BitBoardTopic::getNotificationData($topic_id);
