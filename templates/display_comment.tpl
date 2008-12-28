@@ -25,7 +25,7 @@
 		<div class="header">
 			<h3>{$comment.title|escape}</h3>
 			<div class="date">
-				{tr}by{/tr} {if $comment.user_id < 0}{$comment.anon_name|escape}{else}{displayname hash=$comment}{/if}, {$comment.last_modified|bit_long_datetime}
+				{tr}by{/tr} {if $comment.user_id < 0}{$comment.anon_name|escape}{else}{displayname hash=$comment}{/if}, {$comment.last_modified|reltime}
 			</div>
 		</div>
 		<div class="content">
