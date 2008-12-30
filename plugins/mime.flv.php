@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.31 2008/12/30 08:03:46 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.32 2008/12/30 16:13:34 lsces Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.31 $
+ * @version		$Revision: 1.32 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -324,7 +324,7 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 				$audio_samplerate = $gBitSystem->getConfig( 'mime_flv_audio_samplerate', 22050 );
 				$video_bitrate    = ( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ) / 1000 ).'kb';
 				$acodec_mp3       = $gBitSystem->getConfig( 'ffmpeg_mp3_param', 'libmp3lame' );
-				$me_param         = $gBitSystem->getConfig( 'ffmpeg_me_method', 'me' );;
+				$me_param         = $gBitSystem->getConfig( 'ffmpeg_me_method', 'me' );
 
 				if( $codec == "h264" ) {
 					$parameters =
