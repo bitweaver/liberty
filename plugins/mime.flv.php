@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.30 2008/12/28 10:59:46 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/mime.flv.php,v 1.31 2008/12/30 08:03:46 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.30 $
+ * @version		$Revision: 1.31 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -323,9 +323,8 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 				$audio_bitrate    = ( $gBitSystem->getConfig( 'mime_flv_audio_bitrate', 32000 ) / 1000 ).'kb';
 				$audio_samplerate = $gBitSystem->getConfig( 'mime_flv_audio_samplerate', 22050 );
 				$video_bitrate    = ( $gBitSystem->getConfig( 'mime_flv_video_bitrate', 160000 ) / 1000 ).'kb';
-
-				// in newer versions of ffmpeg the -me parameter has been renamed to -me_method
-				$me_param = 'me';
+				$acodec_mp3       = $gBitSystem->getConfig( 'ffmpeg_mp3_param', 'libmp3lame' );
+				$me_param         = $gBitSystem->getConfig( 'ffmpeg_me_method', 'me' );;
 
 				if( $codec == "h264" ) {
 					$parameters =
@@ -394,7 +393,7 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 					$parameters =
 						" -i '$source'".
 						// audio
-						" -acodec ".$gBitSystem->getConfig( 'ffmpeg_mp3_param', 'libmp3lame' ).
+						" -acodec $acodec_mp3".
 						" -ab $audio_bitrate".
 						" -ar $audio_samplerate".
 						// video
@@ -421,6 +420,11 @@ function mime_flv_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 
 				// make sure the conversion was successfull
 				if( is_file( $dest_file ) && filesize( $dest_file ) > 48 ) {
+					if( $extension == 'mp4' && $gBitSystem->isFeatureActive( 'mp4box_path' )) {
+						// for MP4 flicks, we make sure the MOOV atom is at the beginning of the file to enable streaming
+						shell_exec( $gBitSystem->getConfig( 'mp4box_path' )." -add $dest_file -new $dest_file" );
+					}
+
 					// try to work out a reasonable timepoint where to extract a screenshot
 					if( preg_match( '!Duration: ([\d:\.]*)!', $debug, $time )) {
 						list( $h, $m, $s ) = explode( ':', $time[1] );

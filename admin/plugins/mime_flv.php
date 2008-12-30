@@ -6,6 +6,7 @@ $gBitSystem->verifyPermission( 'p_admin' );
 
 if( function_exists( 'shell_exec' )) {
 	$gBitSmarty->assign( 'ffmpeg_path', shell_exec( 'which ffmpeg' ));
+	$gBitSmarty->assign( 'mp4box_path', shell_exec( 'which MP4Box' ));
 }
 
 if( extension_loaded( 'ffmpeg' )) {
@@ -15,6 +16,10 @@ if( extension_loaded( 'ffmpeg' )) {
 $feedback = array();
 
 $options = array(
+	'me_method' => array(
+		'me_method' => 'me_method',
+		'me'        => 'me',
+	),
 	'mp3_param' => array(
 		'libmp3lame' => 'libmp3lame',
 		'mp3' => 'mp3',

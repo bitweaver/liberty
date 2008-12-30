@@ -12,11 +12,11 @@
 
 			{if $ffmpeg_extension}
 				<p class="success">
-					{biticon iname="dialog-ok" iexplain="OK"} {tr}The <a href="http://ffmpeg-php.sourceforge.net/">ffmpeg-php</a> extension is available.{/tr}
+					{biticon iname="dialog-ok" iexplain="OK"} {tr}The <a class="external" href="http://ffmpeg-php.sourceforge.net/">ffmpeg-php</a> extension is available.{/tr}
 				</p>
 			{else}
 				<p class="warning">
-					{biticon iname="dialog-warning" iexplain="Warining"} {tr}If possible, please install the <a href="http://ffmpeg-php.sourceforge.net/">ffmpeg-php</a> php extension. This plugin will work without the extension but many features will not work well such as video recognition and mp4 uploads.{/tr}
+					{biticon iname="dialog-warning" iexplain="Warning"} {tr}If possible, please install the <a class="external" href="http://ffmpeg-php.sourceforge.net/">ffmpeg-php</a> php extension. This plugin will work without the extension but many features will not work well such as video recognition and mp4 uploads.{/tr}
 				</p>
 			{/if}
 
@@ -47,20 +47,7 @@
 							<dt>Flashvideo</dt><dd>Medium filesize, medium quality, fast encoding.</dd>
 							<dt>MP4/AVC</dt><dd>Small filesize, high quality, slow encoding.</dd>
 							<dt>MP4/AVC - 2 passes</dt><dd>Small filesize, very high quality, very slow encoding (this is likey to take at least as long as the video length).</dd>
-						<dl>."}
-				{/forminput}
-			</div>
-
-			<div class="row">
-				{formlabel label="ffmpeg mp3 param" for="ffmpeg_mp3_param"}
-				{forminput}
-					{html_options
-						options=$options.mp3_param
-						values=$options.mp3_param
-						name=ffmpeg_mp3_param
-						id=ffmpeg_mp3_param
-						selected=$gBitSystem->getConfig('ffmpeg_mp3_param')|default:libmp3lame}
-						{formhelp note="Due to differences in versions of ffmpeg you may need to change this setting. If ffmpeg and ffmpeg-php are installed, but uploaded videos are still not processed, try changing this param."}
+						</dl>"}
 				{/forminput}
 			</div>
 
@@ -69,6 +56,14 @@
 				{forminput}
 					<input type='checkbox' name="mime_flv_force_encode" id="mime_flv_force_encode" value="y" {if $gBitSystem->isFeatureActive('mime_flv_force_encode')}checked="checked"{/if} />
 					{formhelp note="The inline player supports videos encoded using the flv or h264 codec with mp3 audio. When users upload such videos, we can use those directly for streaming instead of re-encoding them. In some cases, the uploaded files might be excessively large for streaming and re-encoding takes care of that (requires ffmpeg-php)."}
+				{/forminput}
+			</div>
+
+			<div class="row">
+				{formlabel label="Path to MP4Box" for="mp4box_path"}
+				{forminput}
+					<input type='text' name="mp4box_path" id="mp4box_path" size="40" value="{$gBitSystem->getConfig('mp4box_path')|escape|default:$mp4box_path}" />
+					{formhelp note="This is only necessary, when you upload MP4 videos and don't force that the video is re-encoded. Some video editing software such as <a href='http://fixounet.free.fr/avidemux' class='external'>avidemux</a>, <a href='http://www.adobe.com/' class='external'>Adobe Creative Suite 3 tools</a> (Premiere and After Effects) place the <em>MOOV atom</em> at the end of the MP4 file. This makes it impossible to stream the video and the user has to download the entire file before it can be played. If you have <strong>gpac</strong> installed, you can enter the path to <strong>MP4Box</strong> to reposition the <em>MOOV atom</em>."}
 				{/forminput}
 			</div>
 
@@ -150,6 +145,36 @@
 				{forminput}
 					<input type='text' name="mime_flv_backcolor" id="mime_flv_backcolor" size="10" value="{$gBitSystem->getConfig('mime_flv_backcolor')|default:"000000"}" />
 					{formhelp note="Background colour of the progress bar."}
+				{/forminput}
+			</div>
+
+			<p class="warning">
+				{biticon iname="dialog-warning" iexplain="Warning"} {tr}ffmpeg has a habit of changing the API when releasing new versions. Due to the demand for new features and the tendency to use cutting edge versions of ffmpeg it is very difficult to keep track of these API changes.{/tr}
+			</p>
+
+			<div class="row">
+				{formlabel label="MP3 Library" for="ffmpeg_mp3_param"}
+				{forminput}
+					{html_options
+						options=$options.mp3_param
+						values=$options.mp3_param
+						name=ffmpeg_mp3_param
+						id=ffmpeg_mp3_param
+						selected=$gBitSystem->getConfig('ffmpeg_mp3_param')|default:libmp3lame}
+						{formhelp note="MP3 library name when encoding audio stream. libmp3lame is used in recent versions of ffmpeg."}
+				{/forminput}
+			</div>
+
+			<div class="row">
+				{formlabel label="Motion estimation parameter" for="ffmpeg_me_method"}
+				{forminput}
+					{html_options
+						options=$options.me_method
+						values=$options.me_method
+						name=ffmpeg_me_method
+						id=ffmpeg_me_method
+						selected=$gBitSystem->getConfig('ffmpeg_me_method')|default:me}
+						{formhelp note="Motion estimeation parameter name. me_method is used in recent versions of ffmpeg."}
 				{/forminput}
 			</div>
 
