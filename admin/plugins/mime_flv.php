@@ -70,6 +70,9 @@ if( !empty( $_REQUEST['plugin_settings'] )) {
 		'ffmpeg_mp3_param' => array(
 			'type'  => 'text',
 		),
+		'ffmpeg_me_method' => array(
+			'type'  => 'text',
+		),
 		'mime_flv_video_bitrate' => array(
 			'type'  => 'numeric',
 		),
