@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.30 $
+ * @version  $Revision: 1.31 $
  * @package  liberty
  * @subpackage functions
  */
@@ -19,10 +19,10 @@ if( empty( $gContent ) || !is_object( $gContent ) ) {
 	$gContent = new LibertyContent();
 }
 
-if( !empty($_REQUEST['content_type_guid'])){
-	if (!is_array($_REQUEST['content_type_guid'])){
+if( !empty( $_REQUEST['content_type_guid'] )) {
+	if( !is_array( $_REQUEST['content_type_guid'] )) {
 		$contentTypeGuids = explode( ",", $_REQUEST['content_type_guid'] );
-	}else{
+	} else {
 		$contentTypeGuids = $_REQUEST['content_type_guid'];
 	}
 }
@@ -72,6 +72,13 @@ if( empty( $contentTypes ) ) {
 	foreach( $gLibertySystem->mContentTypes as $cType ) {
 		$contentTypes[$cType['content_type_guid']] = $cType['content_description'];
 	}
-	asort($contentTypes);
+	asort( $contentTypes );
+}
+
+if( $gBitSystem->isFeatureActive( 'liberty_display_status' ) &&  $gBitUser->hasPermission( 'p_liberty_view_all_status' )) {
+	$contentStatuses = $gContent->getAvailableContentStatuses();
+	$contentStatuses[''] = 'All Statuses';
+	$contentStatuses['not_available'] = 'All but Available';
+	$gBitSmarty->assign( 'content_statuses', $contentStatuses );
 }
 ?>

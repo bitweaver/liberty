@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.30 $
+ * @version  $Revision: 1.31 $
  * @package  liberty
  * @subpackage functions
  */
@@ -23,13 +23,12 @@ if( !empty( $_REQUEST['sort_mode'] )) {
 
 #$max_content = ( !empty( $_REQUEST['max_records'] )) ? $_REQUEST['max_records'] : $gBitSystem->getConfig( 'max_records' );
 
-if (!empty($_SESSION['liberty_records_per_page'])) {
+if( !empty( $_SESSION['liberty_records_per_page'] )) {
 	$max_content = $_SESSION['liberty_records_per_page'];
-	}
-else {
+} else {
 	$max_content = $gBitSystem->getConfig( 'max_records', 10 );
-	}
-if (!empty($_REQUEST["max_records"])) {
+}
+if( !empty( $_REQUEST["max_records"] )) {
 	$max_content = $_REQUEST["max_records"];
 	$_SESSION['liberty_records_per_page'] = $max_content;
 }

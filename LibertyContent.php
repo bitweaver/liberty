@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.388 2008/11/29 23:31:41 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.389 2008/12/31 08:57:06 squareing Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2235,8 +2235,8 @@ class LibertyContent extends LibertyBase {
 
 		if( is_array( $pListHash['find'] ) ) { // you can use an array of titles
 			$whereSql .= " AND lc.`title` IN ( ".implode( ',',array_fill( 0,count( $pListHash['find'] ),'?' ) ).") ";
-			$bindVars = array_merge( $pListHash['find'], $pListHash['find']);
-		} elseif( !empty($pListHash['find'] ) && is_string( $pListHash['find'] ) ) { // or a string
+			$bindVars = array_merge( $pListHash['find'], $pListHash['find'] );
+		} elseif( !empty( $pListHash['find'] ) && is_string( $pListHash['find'] ) ) { // or a string
 			$whereSql .= " AND UPPER(lc.`title`) like ? ";
 			$bindVars[] = ( '%' . strtoupper( $pListHash['find'] ) . '%' );
 		}
@@ -2271,6 +2271,20 @@ class LibertyContent extends LibertyBase {
 			$joinSql .= " INNER JOIN `".BIT_DB_PREFIX."liberty_content_links` lclk ON ( lc.`content_id` = lclk.`to_content_id` )";
 			$whereSql .= " AND lclk.`from_content_id` = ? ";
 			$bindVars[] = (int)$pListHash['link_content_id'];
+		}
+
+		if( $gBitSystem->isFeatureActive( 'liberty_display_status' ) &&  $gBitUser->hasPermission( 'p_liberty_view_all_status' )) {
+			$selectSql .= ", lcs.`content_status_id`, lcs.`content_status_name`";
+			$joinSql   .= " LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_status` lcs ON ( lc.`content_status_id` = lcs.`content_status_id` )";
+			if( !empty( $pListHash['content_status_id'] )) {
+				if( $pListHash['content_status_id'] == 'not_available' ) {
+					$whereSql .= " AND lcs.`content_status_id` <> ? ";
+					$bindVars[] = 50;
+				} else {
+					$whereSql .= " AND lcs.`content_status_id` = ? ";
+					$bindVars[] = (int)$pListHash['content_status_id'];
+				}
+			}
 		}
 
 		if( !empty( $pListHash['content_type_guid'] ) && is_string( $pListHash['content_type_guid'] ) ) {
