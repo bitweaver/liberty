@@ -77,5 +77,5 @@
 	{/foreach}
 </table>
 
-{pagination}
+{pagination content_status_id=$smarty.request.content_status_id}
 {/strip}
