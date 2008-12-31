@@ -200,30 +200,6 @@ $tables = array(
                 , CONSTRAINT `liberty_content_perm_perm_ref` FOREIGN KEY (`perm_name`) REFERENCES `".BIT_DB_PREFIX."users_permissions` (`perm_name`)
 */
 
-/* old meta tables - replaced by new ones below
-'liberty_meta_types' => "
-	meta_type_guid C(16) PRIMARY,
-	meta_type_title C(250) NOTNULL
-",
-
-'liberty_meta_data' => "
-	meta_key C(250) PRIMARY,
-	meta_type_guid C(16),
-	meta_title C(250) NOTNULL,
-	meta_value_short C(250),
-	meta_value_long XL
-	CONSTRAINT ' , CONSTRAINT `liberty_meta_guid_ref` FOREIGN KEY (`meta_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_types` (`meta_type_guid`) '
-",
-
-'liberty_meta_attachment_map' => "
-	attachment_id I4 PRIMARY NOTNULL,
-	meta_key C(250) PRIMARY NOTNULL
-	CONSTRAINT '
-		, CONSTRAINT `liberty_meta_map_content_ref` FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`attachment_id`)
-		, CONSTRAINT `liberty_meta_map_meta_key_ref` FOREIGN KEY (`meta_key`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_data` (`meta_key`)'
-",
- */
-
 'liberty_meta_titles' => "
 	meta_title_id I4 PRIMARY,
 	meta_title C(250) NOTNULL
