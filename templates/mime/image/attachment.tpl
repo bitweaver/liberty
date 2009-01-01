@@ -2,7 +2,7 @@
 {if $attachment.thumbnail_url.panorama}
 	{if $wrapper.output == 'desc' || $wrapper.output == 'description'}
 		{if $attachment.display_url}<a {$wrapper.href_class} href="{$wrapper.display_url|default:$attachment.display_url}">{/if}
-			{$wrapper.description|escape|default:$attachment.filename}
+			{$wrapper.description_parsed|default:$attachment.filename}
 		{if $attachment.display_url}</a>{/if}
 	{else}
 		<{$wrapper.wrapper|default:'div'} class="{$wrapper.class|default:'att-plugin'}"{if $wrapper.style} style="{$wrapper.style}{/if}">
@@ -18,7 +18,7 @@
 				</embed>
 			</object>
 			{if $wrapper.display_url}<a {$wrapper.href_class} href="{$wrapper.display_url}">{/if}
-				{$wrapper.description|escape}<br />
+				{$wrapper.description_parsed}<br />
 			{if $wrapper.display_url}</a>{/if}
 		</{$wrapper.wrapper|default:'div'}>
 

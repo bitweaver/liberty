@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.37 $
+ * @version  $Revision: 1.38 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.37 2008/12/26 08:54:19 squareing Exp $
+// $Id: data.attachment.php,v 1.38 2009/01/01 09:22:30 squareing Exp $
 
 /**
  * definitions
@@ -63,19 +63,13 @@ function data_attachment_help() {
 			.'</tr>'
 			.'<tr class="odd">'
 			.'<td>description</td>'
-				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "The text to use in the title attribute or as the link text if output=desc. Will also be used for the alt attribute if no alt is specified.")
-				. tra("(Default = ") . '<strong>'.tra( 'Image' ).'</strong>)</td>'
+				.'<td>' . tra( "string") . '<br />' . tra( "(optional)" ) . '</td>'
+				.'<td>' . tra( "The text to use in the title attribute or as the link text if output=desc. Will also be used for the alt attribute if no alt is specified. This text is parsed." )
+				.tra( "(Default = " ) . '<strong>'.tra( 'Image' ).'</strong>)</td>'
 			.'</tr>'
 			.'<td>alt</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "The text to use in the alt tag. Will also be used for the title attribute if no description is specified.")
-				. tra("(Default = ") . '<strong>'.tra( 'Image' ).'</strong>)</td>'
-			.'</tr>'
-			.'<tr class="odd">'
-			.'<td>description '.tra('or').' alt</td>'
-				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "The text to use in the image alt tag or as the link text if output=desc. description or alt may be used but description takes precidence over alt.")
 				. tra("(Default = ") . '<strong>'.tra( 'Image' ).'</strong>)</td>'
 			.'</tr>'
 			.'<tr class="odd">'
@@ -112,7 +106,7 @@ function data_attachment_help() {
 	return $help;
 }
 
-function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had several parameters that have been dropped
+function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 	require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
 
 	// at a minimum, return blank string (not empty) so we still replace the tag
@@ -177,6 +171,14 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 			$wrapper['display_url'] = $att['display_url'];
 		}
 
+		if( !empty( $wrapper['description'] )) {
+			$parseHash['content_id'] = $pParseHash['content_id'];
+			$parseHash['user_id']    = $pParseHash['user_id'];
+			$parseHash['no_cache']   = TRUE;
+			$parseHash['data']       = $wrapper['description'];
+			$wrapper['description_parsed'] = $pCommonObject->parseData( $parseHash );
+		}
+
 		// pass stuff to the template
 		$gBitSmarty->assign( 'attachment', $att );
 		$gBitSmarty->assign( 'wrapper', $wrapper );
@@ -195,9 +197,9 @@ function data_attachment( $pData, $pParams ) { // NOTE: The original plugin had 
 		}
 
 		// Figure out alt attribute.
-		if( empty($wrapper['alt']) ) {
-			if ( empty($wrapper['description']) ) {
-				$alt = tra('Image');
+		if( empty( $wrapper['alt'] )) {
+			if ( empty( $wrapper['description'] )) {
+				$alt = tra( 'Image' );
 			} else {
 				$alt = $wrapper['description'];
 			}
