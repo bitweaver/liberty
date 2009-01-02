@@ -9,7 +9,7 @@
 <div class="row">
 	{formlabel label="Set Aspect Ratio" for="aspect"}
 	{forminput}
-		<select name="plugin[{$attachment.attachment_id}][mimeflv][meta][aspect]" id="aspect">
+		<select name="plugin[{$attachment.attachment_id}][mimevideo][meta][aspect]" id="aspect">
 			<option value="">{tr}Original{/tr}</option>
 			<option {if $attachment.meta.aspect == $tv    }selected="selected" {/if}value="{$tv}">4:3 ({tr}TV{/tr})</option>
 			<option {if $attachment.meta.aspect == $ana   }selected="selected" {/if}value="{$ana}">14:9 ({tr}Anamorphic{/tr})</option>

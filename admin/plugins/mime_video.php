@@ -20,9 +20,9 @@ $options = array(
 		'me_method' => 'me_method',
 		'me'        => 'me',
 	),
-	'mp3_param' => array(
+	'mp3_lib' => array(
 		'libmp3lame' => 'libmp3lame',
-		'mp3' => 'mp3',
+		'mp3'        => 'mp3',
 	),
 	'video_codec' => array(
 		'flv'        => 'Flashvideo using flv codec',
@@ -60,46 +60,49 @@ $options['display_size'] = get_image_size_options( 'Same as encoded video' );
 $gBitSmarty->assign( 'options', $options );
 
 if( !empty( $_REQUEST['plugin_settings'] )) {
-	$flvSettings = array(
-		'mime_flv_ffmpeg_path' => array(
+	$videoSettings = array(
+		'ffmpeg_path' => array(
 			'type'  => 'text',
 		),
-		'mime_flv_video_codec' => array(
-			'type'  => 'text',
-		),
-		'ffmpeg_mp3_param' => array(
+		'ffmpeg_mp3_lib' => array(
 			'type'  => 'text',
 		),
 		'ffmpeg_me_method' => array(
 			'type'  => 'text',
 		),
-		'mime_flv_video_bitrate' => array(
+		'mp4box_path' => array(
+			'type'  => 'text',
+		),
+		'mime_video_video_codec' => array(
+			'type'  => 'text',
+		),
+		'mime_video_video_bitrate' => array(
 			'type'  => 'numeric',
 		),
-		'mime_flv_force_encode' => array(
+		'mime_video_force_encode' => array(
 			'type'  => 'checkbox',
 		),
-		'mime_flv_audio_samplerate' => array(
+		'mime_video_audio_samplerate' => array(
 			'type'  => 'numeric',
 		),
-		'mime_flv_audio_bitrate' => array(
+		'mime_video_audio_bitrate' => array(
 			'type'  => 'numeric',
 		),
-		'mime_flv_width' => array(
+		'mime_video_width' => array(
 			'type'  => 'numeric',
 		),
-		'mime_flv_default_size' => array(
+		'mime_video_default_size' => array(
 			'type'  => 'text',
 		),
-		'mime_flv_backcolor' => array(
+		'mime_video_backcolor' => array(
 			'type'  => 'text',
 		),
-		'mime_flv_frontcolor' => array(
+		'mime_video_frontcolor' => array(
 			'type'  => 'text',
 		),
 	);
 
-	foreach( $flvSettings as $item => $data ) {
+	foreach( $videoSettings as $item => $data ) {
 		if( $data['type'] == 'checkbox' ) {
 			simple_set_toggle( $item, LIBERTY_PKG_NAME );
 		} elseif( $data['type'] == 'numeric' ) {
@@ -113,5 +116,5 @@ if( !empty( $_REQUEST['plugin_settings'] )) {
 }
 
 $gBitSmarty->assign( 'feedback', $feedback );
-$gBitSystem->display( 'bitpackage:liberty/mime/flv/admin.tpl', tra( 'Flashvideo Plugin Settings' ), array( 'display_mode' => 'admin' ));
+$gBitSystem->display( 'bitpackage:liberty/mime/video/admin.tpl', tra( 'Flashvideo Plugin Settings' ), array( 'display_mode' => 'admin' ));
 ?>

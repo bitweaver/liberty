@@ -12,10 +12,10 @@ if( function_exists( 'shell_exec' )) {
 
 $feedback = array();
 
-$rates = array(
-	'mp3_param' => array(
+$options = array(
+	'mp3_lib' => array(
 		'libmp3lame' => 'libmp3lame',
-		'mp3' => 'mp3',
+		'mp3'        => 'mp3',
 	),
 	'audio_bitrate' => array(
 		32000  => 32,
@@ -31,30 +31,30 @@ $rates = array(
 		44100 => 44100,
 	),
 );
-$gBitSmarty->assign( 'rates', $rates );
+$gBitSmarty->assign( 'options', $options );
 
 if( !empty( $_REQUEST['plugin_settings'] )) {
 	$audioSettings = array(
-		'mime_audio_ffmpeg_path' => array(
+		'ffmpeg_path' => array(
+			'type'  => 'text',
+		),
+		'ffmpeg_mp3_lib' => array(
+			'type'  => 'text',
+		),
+		'mplayer_path' => array(
+			'type'  => 'text',
+		),
+		'lame_path' => array(
 			'type'  => 'text',
 		),
 		'mime_audio_ffmpeg_use' => array(
 			'type'  => 'checkbox',
-		),
-		'ffmpeg_mp3_param' => array(
-			'type'  => 'text',
 		),
 		'mime_audio_samplerate' => array(
 			'type'  => 'numeric',
 		),
 		'mime_audio_bitrate' => array(
 			'type'  => 'numeric',
-		),
-		'mime_audio_mplayer_path' => array(
-			'type'  => 'text',
-		),
-		'mime_audio_lame_path' => array(
-			'type'  => 'text',
 		),
 		'mime_audio_lame_options' => array(
 			'type'  => 'text',

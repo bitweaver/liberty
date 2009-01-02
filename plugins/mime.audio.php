@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.27 2008/12/26 08:54:19 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.28 2009/01/02 20:38:02 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.27 $
+ * @version		$Revision: 1.28 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -164,7 +164,7 @@ function mime_audio_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 		if( !empty( $ret['storage_path'] )) {
 			if( is_file( dirname( BIT_ROOT_PATH.$ret['storage_path'] ).'/bitverted.mp3' )) {
 				$ret['media_url'] = storage_path_to_url( dirname( $ret['storage_path'] )).'/bitverted.mp3';
-				// we need some javascript for the flv player:
+				// we need some javascript for the player:
 			} elseif( is_file( dirname( BIT_ROOT_PATH.$ret['storage_path'] ).'/bitverted.m4a' )) {
 				$ret['media_url'] = storage_path_to_url( dirname( $ret['storage_path'] )).'/bitverted.m4a';
 			}
@@ -303,8 +303,8 @@ function mime_audio_converter_mplayer_lame( &$pParamHash, $pSource, $pDest ) {
 	$log = array();
 
 	if( !empty( $pParamHash ) && !empty( $pSource ) && is_file( $pSource ) && !empty( $pDest )) {
-		$mplayer = trim( $gBitSystem->getConfig( 'mime_audio_mplayer_path', shell_exec( 'which mplayer' )));
-		$lame    = trim( $gBitSystem->getConfig( 'mime_audio_lame_path', shell_exec( 'which lame' )));
+		$mplayer = trim( $gBitSystem->getConfig( 'mplayer_path', shell_exec( 'which mplayer' )));
+		$lame    = trim( $gBitSystem->getConfig( 'lame_path', shell_exec( 'which lame' )));
 
 		// confirm that both applications are available
 		if( $mm = shell_exec( "$mplayer 2>&1" ) && $ll = shell_exec( "$lame 2>&1" )) {
@@ -355,13 +355,13 @@ function mime_audio_converter_ffmpeg( &$pParamHash, $pSource, $pDest ) {
 
 	if( !empty( $pParamHash ) && !empty( $pSource ) && is_file( $pSource ) && !empty( $pDest )) {
 		// these are set in the liberty plugin admin screen
-		$ffmpeg = trim( $gBitSystem->getConfig( 'mime_audio_ffmpeg_path', shell_exec( 'which ffmpeg' )));
+		$ffmpeg = trim( $gBitSystem->getConfig( 'ffmpeg_path', shell_exec( 'which ffmpeg' )));
 
 		if( $ff = shell_exec( "$ffmpeg 2>&1" )) {
 			// set up parameters to convert audio
 			$params =
 				" -i '$pSource'".
-				" -acodec ".$gBitSystem->getConfig('ffmpeg_mp3_param', 'libmp3lame').
+				" -acodec ".$gBitSystem->getConfig( 'ffmpeg_mp3_lib', 'libmp3lame' ).
 				" -ab ".trim( $gBitSystem->getConfig( 'mime_audio_bitrate', 64000 ).'b' ).
 				" -ar ".trim( $gBitSystem->getConfig( 'mime_audio_samplerate', 22050 )).
 				" -y '$pDest'";

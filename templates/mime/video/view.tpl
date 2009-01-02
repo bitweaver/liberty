@@ -1,7 +1,7 @@
 {strip}
 {if $attachment.media_url}
 	<div class="row aligncenter">
-		{include file="bitpackage:liberty/mime/flv/player.tpl"}
+		{include file="bitpackage:liberty/mime/video/player.tpl"}
 	</div>
 
 	<div class="pagination">

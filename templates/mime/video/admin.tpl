@@ -20,28 +20,28 @@
 				</p>
 			{/if}
 
-			{if !$gLibertySystem->isPluginActive( 'mimeflv' )}
+			{if !$gLibertySystem->isPluginActive( 'mimevideo' )}
 				{formfeedback error="This plugins has not been enabled. All settings you change here will have no effect on uploaded videos unless you enable the plugin in the liberty plugins administration screen"}
 			{/if}
 
 			{formfeedback hash=$feedback}
 			<div class="row">
-				{formlabel label="Path to ffmpeg" for="mime_flv_ffmpeg_path"}
+				{formlabel label="Path to ffmpeg" for="ffmpeg_path"}
 				{forminput}
-					<input type='text' name="mime_flv_ffmpeg_path" id="mime_flv_ffmpeg_path" size="40" value="{$gBitSystem->getConfig('mime_flv_ffmpeg_path')|escape|default:$ffmpeg_path}" />
+					<input type='text' name="ffmpeg_path" id="ffmpeg_path" size="40" value="{$gBitSystem->getConfig('ffmpeg_path')|escape|default:$ffmpeg_path}" />
 					{formhelp note="If this path is not correct, please set the correct path to ffmpeg."}
 				{/forminput}
 			</div>
 
 			<div class="row">
-				{formlabel label="Video codec" for="mime_flv_video_codec"}
+				{formlabel label="Video codec" for="mime_video_video_codec"}
 				{forminput}
 					{html_options
 						options=$options.video_codec
 						values=$options.video_codec
-						name=mime_flv_video_codec
-						id=mime_flv_video_codec
-						selected=$gBitSystem->getConfig('mime_flv_video_codec')|default:flv}
+						name=mime_video_video_codec
+						id=mime_video_video_codec
+						selected=$gBitSystem->getConfig('mime_video_video_codec')|default:flv}
 						{formhelp note="You can choose between codecs you wan to use to encode the uploaded video with. We recommend flashvideo if you don't require high quality videos.
 						<dl>
 							<dt>Flashvideo</dt><dd>Medium filesize, medium quality, fast encoding.</dd>
@@ -52,9 +52,9 @@
 			</div>
 
 			<div class="row">
-				{formlabel label="Force encode" for="mime_flv_force_encode"}
+				{formlabel label="Force encode" for="mime_video_force_encode"}
 				{forminput}
-					<input type='checkbox' name="mime_flv_force_encode" id="mime_flv_force_encode" value="y" {if $gBitSystem->isFeatureActive('mime_flv_force_encode')}checked="checked"{/if} />
+					<input type='checkbox' name="mime_video_force_encode" id="mime_video_force_encode" value="y" {if $gBitSystem->isFeatureActive('mime_video_force_encode')}checked="checked"{/if} />
 					{formhelp note="The inline player supports videos encoded using the flv or h264 codec with mp3 audio. When users upload such videos, we can use those directly for streaming instead of re-encoding them. In some cases, the uploaded files might be excessively large for streaming and re-encoding takes care of that (requires ffmpeg-php)."}
 				{/forminput}
 			</div>
@@ -68,82 +68,82 @@
 			</div>
 
 			<div class="row">
-				{formlabel label="Video bitrate" for="mime_flv_video_bitrate"}
+				{formlabel label="Video bitrate" for="mime_video_video_bitrate"}
 				{forminput}
 					{html_options
 						options=$options.video_bitrate
 						values=$options.video_bitrate
-						name=mime_flv_video_bitrate
-						id=mime_flv_video_bitrate
-						selected=$gBitSystem->getConfig('mime_flv_video_bitrate')|default:200000} kbits/s
+						name=mime_video_video_bitrate
+						id=mime_video_video_bitrate
+						selected=$gBitSystem->getConfig('mime_video_video_bitrate')|default:200000} kbits/s
 					{formhelp note="Set the video bitrate. The higher the bitrate the higher the quality but also the larger the file."}
 				{/forminput}
 			</div>
 
 			<div class="row">
-				{formlabel label="Video width" for="mime_flv_width"}
+				{formlabel label="Video width" for="mime_video_width"}
 				{forminput}
 					{html_options
 						options=$options.video_width
 						values=$options.video_width
-						name=mime_flv_width
-						id=mime_flv_width
-						selected=$gBitSystem->getConfig('mime_flv_width')|default:320} pixel
+						name=mime_video_width
+						id=mime_video_width
+						selected=$gBitSystem->getConfig('mime_video_width')|default:320} pixel
 					{formhelp note="Set the video width. We recommend 320 pixels. Height of the video will be adjusted automagically."}
 				{/forminput}
 			</div>
 
 			<div class="row">
-				{formlabel label="Audio sample rate" for="mime_flv_audio_samplerate"}
+				{formlabel label="Audio sample rate" for="mime_video_audio_samplerate"}
 				{forminput}
 					{html_options
 						options=$options.audio_samplerate
 						values=$options.audio_samplerate
-						name=mime_flv_audio_samplerate
-						id=mime_flv_audio_samplerate
-						selected=$gBitSystem->getConfig('mime_flv_audio_samplerate')|default:22050} Hz
+						name=mime_video_audio_samplerate
+						id=mime_video_audio_samplerate
+						selected=$gBitSystem->getConfig('mime_video_audio_samplerate')|default:22050} Hz
 					{formhelp note="Set the audio sample rate. The higher the bitrate the higher the quality but also the larger the file."}
 				{/forminput}
 			</div>
 
 			<div class="row">
-				{formlabel label="Audio bitrate" for="mime_flv_audio_bitrate"}
+				{formlabel label="Audio bitrate" for="mime_video_audio_bitrate"}
 				{forminput}
 					{html_options
 						options=$options.audio_bitrate
 						values=$options.audio_bitrate
-						name=mime_flv_audio_bitrate
-						id=mime_flv_audio_bitrate
-						selected=$gBitSystem->getConfig('mime_flv_audio_bitrate')|default:32000} kbits/s
+						name=mime_video_audio_bitrate
+						id=mime_video_audio_bitrate
+						selected=$gBitSystem->getConfig('mime_video_audio_bitrate')|default:32000} kbits/s
 					{formhelp note="Set the audio bitrate. The higher the bitrate the higher the quality but also the larger the file."}
 				{/forminput}
 			</div>
 
 			<div class="row">
-				{formlabel label="Default displayed size" for="mime_flv_default_size"}
+				{formlabel label="Default displayed size" for="mime_video_default_size"}
 				{forminput}
 					{html_options
 						options=$options.display_size
 						values=$options.display_size
-						name=mime_flv_default_size
-						id=mime_flv_default_size
-						selected=$gBitSystem->getConfig('mime_flv_default_size')}
+						name=mime_video_default_size
+						id=mime_video_default_size
+						selected=$gBitSystem->getConfig('mime_video_default_size')}
 					{formhelp note="If you are encoding small versions of the videos you can display larger versions. This will reduce video quality but make the encoded video smaller."}
 				{/forminput}
 			</div>
 
 			<div class="row">
-				{formlabel label="Foreground Colour" for="mime_flv_frontcolor"}
+				{formlabel label="Foreground Colour" for="mime_video_frontcolor"}
 				{forminput}
-					<input type='text' name="mime_flv_frontcolor" id="mime_flv_frontcolor" size="10" value="{$gBitSystem->getConfig('mime_flv_frontcolor')|default:"FFFFFF"}" />
+					<input type='text' name="mime_video_frontcolor" id="mime_video_frontcolor" size="10" value="{$gBitSystem->getConfig('mime_video_frontcolor')|default:"FFFFFF"}" />
 					{formhelp note="Foreground colour of the progress bar."}
 				{/forminput}
 			</div>
 
 			<div class="row">
-				{formlabel label="Background Colour" for="mime_flv_backcolor"}
+				{formlabel label="Background Colour" for="mime_video_backcolor"}
 				{forminput}
-					<input type='text' name="mime_flv_backcolor" id="mime_flv_backcolor" size="10" value="{$gBitSystem->getConfig('mime_flv_backcolor')|default:"000000"}" />
+					<input type='text' name="mime_video_backcolor" id="mime_video_backcolor" size="10" value="{$gBitSystem->getConfig('mime_video_backcolor')|default:"000000"}" />
 					{formhelp note="Background colour of the progress bar."}
 				{/forminput}
 			</div>
@@ -153,14 +153,14 @@
 			</p>
 
 			<div class="row">
-				{formlabel label="MP3 Library" for="ffmpeg_mp3_param"}
+				{formlabel label="MP3 Library" for="ffmpeg_mp3_lib"}
 				{forminput}
 					{html_options
-						options=$options.mp3_param
-						values=$options.mp3_param
-						name=ffmpeg_mp3_param
-						id=ffmpeg_mp3_param
-						selected=$gBitSystem->getConfig('ffmpeg_mp3_param')|default:libmp3lame}
+						options=$options.mp3_lib
+						values=$options.mp3_lib
+						name=ffmpeg_mp3_lib
+						id=ffmpeg_mp3_lib
+						selected=$gBitSystem->getConfig('ffmpeg_mp3_lib')|default:libmp3lame}
 						{formhelp note="MP3 library name when encoding audio stream. libmp3lame is used in recent versions of ffmpeg."}
 				{/forminput}
 			</div>

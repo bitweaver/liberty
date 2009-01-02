@@ -18,38 +18,38 @@
 			<p class="formhelp">{tr}You can spcify the path to either ffmpeg or mplayer and lame. If you have all applications installed, we will first try to convert audio files using ffmpeg and if that didn't work, we'll use mplayer and lame.{/tr}</p>
 
 			<div class="row">
-				{formlabel label="Path to ffmpeg" for="mime_audio_ffmpeg_path"}
+				{formlabel label="Path to ffmpeg" for="ffmpeg_path"}
 				{forminput}
-					<input type='text' name="mime_audio_ffmpeg_path" id="mime_audio_ffmpeg_path" size="40" value="{$gBitSystem->getConfig('mime_audio_ffmpeg_path')|escape|default:$ffmpeg_path}" />
+					<input type='text' name="ffmpeg_path" id="ffmpeg_path" size="40" value="{$gBitSystem->getConfig('ffmpeg_path')|escape|default:$ffmpeg_path}" />
 					{formhelp note="If this path is not correct, please set the correct path to ffmpeg."}
 				{/forminput}
 			</div>
 
 			<div class="row">
-				{formlabel label="ffmpeg mp3 param" for="ffmpeg_mp3_param"}
+				{formlabel label="MP3 Library" for="ffmpeg_mp3_lib"}
 				{forminput}
 					{html_options
-						options=$rates.mp3_param
-						values=$rates.mp3_param
-						name=ffmpeg_mp3_param
-						id=ffmpeg_mp3_param
-						selected=$gBitSystem->getConfig('ffmpeg_mp3_param')|default:libmp3lame}
-						{formhelp note="Due to differences in versions of ffmpeg you may need to change this setting. If ffmpeg and ffmpeg-php are installed, but uploaded audio is still not processed, try changing this param."}
+						options=$options.mp3_lib
+						values=$options.mp3_lib
+						name=ffmpeg_mp3_lib
+						id=ffmpeg_mp3_lib
+						selected=$gBitSystem->getConfig('ffmpeg_mp3_lib')|default:libmp3lame}
+						{formhelp note="MP3 library name when encoding audio stream. libmp3lame is used in recent versions of ffmpeg."}
 				{/forminput}
 			</div>
 
 			<div class="row">
-				{formlabel label="Path to mplayer" for="mime_audio_mplayer_path"}
+				{formlabel label="Path to mplayer" for="mplayer_path"}
 				{forminput}
-					<input type='text' name="mime_audio_mplayer_path" id="mime_audio_mplayer_path" size="40" value="{$gBitSystem->getConfig('mime_audio_mplayer_path')|escape|default:$mplayer_path}" />
+					<input type='text' name="mplayer_path" id="mplayer_path" size="40" value="{$gBitSystem->getConfig('mplayer_path')|escape|default:$mplayer_path}" />
 					{formhelp note="If this path is not correct, please set the correct path to mplayer."}
 				{/forminput}
 			</div>
 
 			<div class="row">
-				{formlabel label="Path to lame" for="mime_audio_lame_path"}
+				{formlabel label="Path to lame" for="lame_path"}
 				{forminput}
-					<input type='text' name="mime_audio_lame_path" id="mime_audio_lame_path" size="40" value="{$gBitSystem->getConfig('mime_audio_lame_path')|escape|default:$lame_path}" />
+					<input type='text' name="lame_path" id="lame_path" size="40" value="{$gBitSystem->getConfig('lame_path')|escape|default:$lame_path}" />
 					{formhelp note="If this path is not correct, please set the correct path to lame."}
 				{/forminput}
 			</div>
@@ -66,8 +66,8 @@
 				{formlabel label="Audio sample rate" for="mime_audio_samplerate"}
 				{forminput}
 					{html_options
-						options=$rates.audio_samplerate
-						values=$rates.audio_samplerate
+						options=$options.audio_samplerate
+						values=$options.audio_samplerate
 						name=mime_audio_samplerate
 						id=mime_audio_samplerate
 						selected=$gBitSystem->getConfig('mime_audio_samplerate')|default:22050} Hz
@@ -79,8 +79,8 @@
 				{formlabel label="Audio bitrate" for="mime_audio_bitrate"}
 				{forminput}
 					{html_options
-						options=$rates.audio_bitrate
-						values=$rates.audio_bitrate
+						options=$options.audio_bitrate
+						values=$options.audio_bitrate
 						name=mime_audio_bitrate
 						id=mime_audio_bitrate
 						selected=$gBitSystem->getConfig('mime_audio_bitrate')|default:96000} kbits/s
