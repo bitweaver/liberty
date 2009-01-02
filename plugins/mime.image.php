@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.21 2008/12/26 08:54:19 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.22 2009/01/02 09:32:38 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.21 $
+ * @version		$Revision: 1.22 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -327,31 +327,28 @@ function liberty_magickwand_panorama_image( &$pFileHash, $pOptions = array() ) {
 	$pFileHash['error'] = NULL;
 	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] )) {
 		if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand )) {
-			// annoyingly, the panorama viewer flips the image horizontally - this isn't doing anything for some reason...
-			if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickFlopImage( $magickWand ), $magickWand )) {
-				// calculate border width
-				$iwidth  = round( MagickGetImageWidth( $magickWand ));
-				$iheight = round( MagickGetImageHeight( $magickWand ));
-				$aspect  = $iwidth / $iheight;
-				// we need to pad the image if the aspect ratio is not 2:1 (give it a wee bit of leeway that we don't add annoying borders if not really needed)
-				if( $aspect > 2.1 || $aspect < 1.9 ) {
-					$bwidth = $bheight = 0;
-					if( $aspect > 2 ) {
-						$bheight = round((( $iwidth / 2 ) - $iheight ) / 2 );
-					} else {
-						$bwidth = round((( $iheight / 2 ) - $iwidth ) / 2 );
-					}
-					// if the ratio has nothing to do with a panorama image - i.e. gives us a negative number here, we won't generate a panorama image
-					if( $bheight > 0 ) {
-						$pixelWand = NewPixelWand();
-						PixelSetColor( $pixelWand, ( !empty( $pOptions['background'] ) ? $pOptions['background'] : 'black' ));
-						if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickBorderImage( $magickWand, $pixelWand, $bwidth, $bheight ), $magickWand )) {
-							if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickWriteImage( $magickWand, $pFileHash['source_file'] ), $magickWand )) {
-								// yay!
-							}
+			// calculate border width
+			$iwidth  = round( MagickGetImageWidth( $magickWand ));
+			$iheight = round( MagickGetImageHeight( $magickWand ));
+			$aspect  = $iwidth / $iheight;
+			// we need to pad the image if the aspect ratio is not 2:1 (give it a wee bit of leeway that we don't add annoying borders if not really needed)
+			if( $aspect > 2.1 || $aspect < 1.9 ) {
+				$bwidth = $bheight = 0;
+				if( $aspect > 2 ) {
+					$bheight = round((( $iwidth / 2 ) - $iheight ) / 2 );
+				} else {
+					$bwidth = round((( $iheight / 2 ) - $iwidth ) / 2 );
+				}
+				// if the ratio has nothing to do with a panorama image - i.e. gives us a negative number here, we won't generate a panorama image
+				if( $bheight > 0 ) {
+					$pixelWand = NewPixelWand();
+					PixelSetColor( $pixelWand, ( !empty( $pOptions['background'] ) ? $pOptions['background'] : 'black' ));
+					if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickBorderImage( $magickWand, $pixelWand, $bwidth, $bheight ), $magickWand )) {
+						if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickWriteImage( $magickWand, $pFileHash['source_file'] ), $magickWand )) {
+							// yay!
 						}
-						DestroyPixelWand( $pixelWand );
 					}
+					DestroyPixelWand( $pixelWand );
 				}
 			}
 		}
