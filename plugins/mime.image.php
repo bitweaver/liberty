@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.22 2009/01/02 09:32:38 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.23 2009/01/02 12:08:19 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.22 $
+ * @version		$Revision: 1.23 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -161,6 +161,16 @@ function mime_image_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 
 		// check for panorama image
 		if( is_file( BIT_ROOT_PATH.dirname( $ret['storage_path'] )."/thumbs/panorama.jpg" )) {
+			// if the panorama doesn't have 180⁰ vertical field of view we will restrict up / down movement
+			if(( $ret['pano'] = LibertyMime::getMetaData( $ret['attachment_id'], "PANO" )) && !empty( $ret['pano']['aspect'] )) {
+				// calculation based on logarythmic regression curve
+				$ret['pano']['pa'] = round( 40 - 31 * log( $ret['pano']['aspect'] - 1.4 ));
+				if( $ret['pano']['pa'] > 49 ) {
+					$ret['pano']['pa'] = 90;
+				} elseif( $ret['pano']['pa'] < 0 ) {
+					$ret['pano']['pa'] = 0;
+				}
+			}
 			$ret['thumbnail_url']['panorama'] = storage_path_to_url( dirname( $ret['storage_path'] )."/thumbs/panorama.jpg" );
 		}
 	}
@@ -297,6 +307,7 @@ function mime_image_create_panorama( &$pStoreRow ) {
 		$width = $gBitSystem->getConfig( 'mime_image_panorama_width', 3000 );
 		$gThumbSizes['panorama'] = array( $width, $width / 2 );
 		$genHash = array(
+			'attachment_id'   => $pStoreRow['attachment_id'],
 			'dest_path'       => dirname( $pStoreRow['storage_path'] )."/",
 			'source_file'     => $pStoreRow['source_file'],
 			'type'            => $pStoreRow['mime_type'],
@@ -331,6 +342,13 @@ function liberty_magickwand_panorama_image( &$pFileHash, $pOptions = array() ) {
 			$iwidth  = round( MagickGetImageWidth( $magickWand ));
 			$iheight = round( MagickGetImageHeight( $magickWand ));
 			$aspect  = $iwidth / $iheight;
+			$metaHash = array(
+				'width'  => $iwidth,
+				'height' => $iheight,
+				'aspect' => $aspect,
+			);
+			// store original file information that we can adjust the viewer
+			LibertyMime::storeMetaData( $pFileHash['attachment_id'], 'PANO', $metaHash );
 			// we need to pad the image if the aspect ratio is not 2:1 (give it a wee bit of leeway that we don't add annoying borders if not really needed)
 			if( $aspect > 2.1 || $aspect < 1.9 ) {
 				$bwidth = $bheight = 0;
