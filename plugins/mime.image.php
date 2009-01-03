@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.23 2009/01/02 12:08:19 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.24 2009/01/03 09:40:16 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.23 $
+ * @version		$Revision: 1.24 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -30,6 +30,7 @@ $pluginParams = array (
 	'load_function'       => 'mime_image_load',
 	'download_function'   => 'mime_default_download',
 	'expunge_function'    => 'mime_default_expunge',
+	'help_function'       => 'mime_image_help',
 	// Brief description of what the plugin does
 	'title'               => 'Advanced Image Processing',
 	'description'         => 'Extract image meta data and display relevant information to the user and pick individual display options for images.',
@@ -306,6 +307,12 @@ function mime_image_create_panorama( &$pStoreRow ) {
 		$gBitSystem->setConfig( 'liberty_thumbnail_format', 'jpg' );
 		$width = $gBitSystem->getConfig( 'mime_image_panorama_width', 3000 );
 		$gThumbSizes['panorama'] = array( $width, $width / 2 );
+
+		// for the panorama, we will force a quality lower than 75 to reduce image size
+		if( $gBitSystem->getConfig( 'liberty_thumbnail_quality', 85 ) > 75 ) {
+			$gBitSystem->setConfig( 'liberty_thumbnail_quality', 75 );
+		}
+
 		$genHash = array(
 			'attachment_id'   => $pStoreRow['attachment_id'],
 			'dest_path'       => dirname( $pStoreRow['storage_path'] )."/",
@@ -373,5 +380,18 @@ function liberty_magickwand_panorama_image( &$pFileHash, $pOptions = array() ) {
 	}
 	DestroyMagickWand( $magickWand );
 	return( empty( $pFileHash['error'] ));
+}
+
+/**
+ * mime_image_help 
+ * 
+ * @access public
+ * @return string
+ */
+function mime_image_help() {
+	$help =
+		tra( "If you have a panoramic image and you are using <strong>{attachment}</strong> to insert it, you can use <strong>panosize</strong> as you would with the size parameter to specify the size." )."<br />"
+		.tra( "Example:" ).' '."{attachment id='13' panosize='small'}";
+	return $help;
 }
 ?>
