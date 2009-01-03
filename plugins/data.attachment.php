@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.38 $
+ * @version  $Revision: 1.39 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.38 2009/01/01 09:22:30 squareing Exp $
+// $Id: data.attachment.php,v 1.39 2009/01/03 09:39:04 squareing Exp $
 
 /**
  * definitions
@@ -62,12 +62,12 @@ function data_attachment_help() {
 				. tra( "(Default = " ) . '<strong>medium</strong>)</td>'
 			.'</tr>'
 			.'<tr class="odd">'
-			.'<td>description</td>'
+				.'<td>description</td>'
 				.'<td>' . tra( "string") . '<br />' . tra( "(optional)" ) . '</td>'
 				.'<td>' . tra( "The text to use in the title attribute or as the link text if output=desc. Will also be used for the alt attribute if no alt is specified. This text is parsed." )
 				.tra( "(Default = " ) . '<strong>'.tra( 'Image' ).'</strong>)</td>'
 			.'</tr>'
-			.'<td>alt</td>'
+				.'<td>alt</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "The text to use in the alt tag. Will also be used for the title attribute if no description is specified.")
 				. tra("(Default = ") . '<strong>'.tra( 'Image' ).'</strong>)</td>'
@@ -92,7 +92,7 @@ function data_attachment_help() {
 			<tr class="even">
 				<td>output</td>
 				<td>'.tra( 'keyword (optional)' ).'</td>
-				<td>'.tra( "If you are attaching a file and you only want to display the description and not the image that goes with it, use: output=desc" ).'</td>
+				<td>'.tra( "If you are attaching a file and you only want to display the description and not the image that goes with it, use: output=desc. If you want to force the use of a thumbnail, use output=thumbnail." ).'</td>
 			</tr>'
 			.'<tr class="odd">'
 				.'<td>'.tra( "styling" ).'</td>'
@@ -184,7 +184,8 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		$gBitSmarty->assign( 'wrapper', $wrapper );
 		$gBitSmarty->assign( 'thumbsize', (( !empty( $pParams['size'] ) && ( $pParams['size'] == 'original' || !empty( $att['thumbnail_url'][$pParams['size']] ))) ? $pParams['size'] : 'medium' ));
 
-		$ret = $gBitSmarty->fetch( $gLibertySystem->getMimeTemplate( 'attachment', $att['attachment_plugin_guid'] ));
+		$mimehandler = (( !empty( $wrapper['output'] ) && $wrapper['output'] == 'thumbnail' ) ? LIBERTY_DEFAULT_MIME_HANDLER : $att['attachment_plugin_guid'] );
+		$ret = $gBitSmarty->fetch( $gLibertySystem->getMimeTemplate( 'attachment', $mimehandler ));
 	} else {
 		// TODO: legacy code - should be faded out if possible
 
