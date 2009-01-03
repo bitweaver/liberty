@@ -1,10 +1,10 @@
 <?php
 /**
- * $Id: edit_help_inc.php,v 1.19 2007/11/18 12:00:32 lsces Exp $
+ * $Id: edit_help_inc.php,v 1.20 2009/01/03 09:37:44 squareing Exp $
  * edit_help_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.19 $
+ * @version  $Revision: 1.20 $
  * @package  liberty
  * @subpackage functions
  */
@@ -19,6 +19,17 @@ $inEditor = TRUE; // Required by PluginHelp to Determin Executed in an Editor
 
 $dataplugins = array_merge( $gLibertySystem->getPluginsOfType( DATA_PLUGIN ), $gLibertySystem->getPluginsOfType( FILTER_PLUGIN ));
 $formatplugins = $gLibertySystem->getPluginsOfType( FORMAT_PLUGIN );
+$mimeplugins = $gLibertySystem->getPluginsOfType( MIME_PLUGIN );
+
+// allow mime plugins to append help to the attachment plugin
+foreach( $mimeplugins as $guid => $plugin ) {
+	if( $func = $gLibertySystem->getPluginFunction( $guid, 'help_function' )) {
+		$plugin['exthelp'] = $func();
+		$mimeplugins[$guid]= $plugin;
+	} else {
+		unset( $mimeplugins[$guid] );
+	}
+}
 
 // refine data plugins and add help where available
 foreach( $dataplugins as $guid => $plugin ) {
@@ -44,6 +55,11 @@ foreach( array_keys( $formatplugins ) as $guid ) {
 if( !empty( $formatplugins ) ) {
 	usort( $formatplugins, 'usort_by_title' );
 	$gBitSmarty->assign_by_ref( 'formatplugins', $formatplugins );
+}
+
+if( !empty( $mimeplugins ) ) {
+	usort( $mimeplugins, 'usort_by_title' );
+	$gBitSmarty->assign_by_ref( 'mimeplugins', $mimeplugins );
 }
 
 if( !empty( $dataplugins ) ) {
