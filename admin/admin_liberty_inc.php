@@ -124,6 +124,11 @@ $formCaptchaTextareaFeatures = array(
 );
 $gBitSmarty->assign( 'formCaptchaTextareaFeatures', $formCaptchaTextareaFeatures );
 
+for( $i = 25; $i <= 100; $i += 5 ) {
+	$imageCompression[$i] = $i;
+}
+$gBitSmarty->assign( 'imageCompression', $imageCompression );
+
 $formImageFeatures = array(
 	"liberty_thumbnail_pdf" => array(
 		'label' => 'Create PDF Thumbnails',
@@ -159,6 +164,7 @@ if( !empty( $_REQUEST['change_prefs'] )) {
 	foreach( $formCaptchaTextareaFeatures as $item => $data ) {
 		simple_set_value( $item, LIBERTY_PKG_NAME );
 	}
+	simple_set_int( 'liberty_thumbnail_quality', LIBERTY_PKG_NAME );
 	simple_set_value( 'liberty_thumbnail_format', LIBERTY_PKG_NAME );
 	simple_set_value( 'liberty_attachment_style', LIBERTY_PKG_NAME );
 	$gBitSystem->storeConfig( 'liberty_cache', $_REQUEST['liberty_cache'], LIBERTY_PKG_NAME );

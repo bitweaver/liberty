@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.11 2008/11/19 08:49:35 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.12 2009/01/03 09:37:04 squareing Exp $
  *
  * Image processor - extension: php-imagick
  * @package  liberty
@@ -96,7 +96,7 @@ function liberty_imagick0_resize_image( &$pFileHash ) {
 			// $pFileHash['error'] = imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
 			$destUrl = liberty_process_generic( $pFileHash, FALSE );
 		} else {
-			imagick_set_image_quality( $iImg, 85 );
+			imagick_set_image_quality( $iImg, $gBitSystem->getConfig( 'liberty_thumbnail_quality', 85 ));
 			$iwidth = imagick_getwidth( $iImg );
 			$iheight = imagick_getheight( $iImg );
 			if( (($iwidth / $iheight) > 0) && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) ) {
@@ -140,7 +140,7 @@ function liberty_imagick0_resize_image( &$pFileHash ) {
 
 				if( function_exists( 'imagick_set_attribute' ) ) {
 					// this exists in the PECL package, but not php-imagick
-					$imagick_set_attribute($iImg,array("quality"=>1) );
+					$imagick_set_attribute( $iImg, array( "quality"=>1 ));
 				}
 
 				if( !imagick_writeimage( $iImg, $destFile ) ) {
@@ -200,7 +200,7 @@ function liberty_imagick2_resize_image( &$pFileHash ) {
 		if( !$im->valid()) {
 			$destUrl = liberty_process_generic( $pFileHash, FALSE );
 		} else {
-			$im->setCompressionQuality( 85 );
+			$im->setCompressionQuality( $gBitSystem->getConfig( 'liberty_thumbnail_quality', 85 ));
 			$iwidth = $im->getImageWidth();
 			$iheight = $im->getImageHeight();
 			/*

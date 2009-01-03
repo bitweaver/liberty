@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.21 2008/12/09 05:29:31 spiderr Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.22 2009/01/03 09:37:04 squareing Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -38,7 +38,7 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 //				These two lines are a hack needed for version of Ghostscript less that 8.60
 //				MagickRemoveImageProfile( $magickWand, "ICC" );
 //				MagickSetImageProfile( $magickWand, 'ICC', file_get_contents( UTIL_PKG_PATH.'icc/USWebCoatedSWOP.icc' ) );
-				MagickProfileImage($magickWand, 'ICC', file_get_contents( UTIL_PKG_PATH.'icc/srgb.icm' ) ); 
+				MagickProfileImage( $magickWand, 'ICC', file_get_contents( UTIL_PKG_PATH.'icc/srgb.icm' ));
 				MagickSetImageColorspace( $magickWand, MW_RGBColorspace );
 				$pFileHash['colorspace_conversion'] = TRUE;
 			}
@@ -46,7 +46,7 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 				MagickResetIterator( $magickWand );
 				MagickNextImage( $magickWand );
 			}
-			MagickSetImageCompressionQuality( $magickWand, 85 );
+			MagickSetImageCompressionQuality( $magickWand, $gBitSystem->getConfig( 'liberty_thumbnail_quality', 85 ));
 			$iwidth = round( MagickGetImageWidth( $magickWand ) );
 			$iheight = round( MagickGetImageHeight( $magickWand ) );
 
@@ -60,7 +60,7 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 				// we have a portrait image, flip everything
 				$temp = $pFileHash['max_width'];
 				$pFileHash['max_height'] = $pFileHash['max_width'];
-				$pFileHash['max_width'] = round( ($iwidth / $iheight) * $pFileHash['max_height'] );
+				$pFileHash['max_width'] = round(( $iwidth / $iheight ) * $pFileHash['max_height'] );
 			} elseif( !empty( $pFileHash['max_width'] ) ) {
 				$pFileHash['max_height'] = round(( $iheight / $iwidth ) * $pFileHash['max_width'] );
 			} elseif( !empty( $pFileHash['max_height'] ) ) {

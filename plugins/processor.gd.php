@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.13 2008/11/19 08:49:35 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.14 2009/01/03 09:37:04 squareing Exp $
  *
  * Image processor - extension: php-gd
  * @package  liberty
@@ -47,14 +47,14 @@ function liberty_gd_resize_image( &$pFileHash ) {
 
 	if( !empty( $img ) && $size_x && $size_y ) {
 		if( $size_x > $size_y && !empty( $pFileHash['max_width'] ) ) {
-			$tscale = ((int)$size_x / $pFileHash['max_width']);
+			$tscale = ( (int)$size_x / $pFileHash['max_width'] );
 		} elseif( !empty( $pFileHash['max_height'] ) ) {
-			$tscale = ((int)$size_y / $pFileHash['max_height']);
+			$tscale = ( (int)$size_y / $pFileHash['max_height'] );
 		} else {
 			$tscale = 1;
 		}
-		$tw = ((int)($size_x / $tscale));
-		$ty = ((int)($size_y / $tscale));
+		$tw = ( (int)( $size_x / $tscale ));
+		$ty = ( (int)( $size_y / $tscale ));
 		if( get_gd_version() > 1 ) {
 			$t = imagecreatetruecolor( $tw, $ty );
 			imagesavealpha( $t, TRUE );

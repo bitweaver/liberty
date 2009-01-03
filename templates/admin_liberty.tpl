@@ -1,5 +1,5 @@
 {strip}
-{form}	
+{form}
 	{jstabs}
 		{jstab title="General Settings"}
 			{legend legend="Liberty Cache"}
@@ -113,6 +113,14 @@
 						{/forminput}
 					</div>
 				{/foreach}
+
+				<div class="row">
+					{formlabel label="Image Compression" for="liberty_thumbnail_quality"}
+					{forminput}
+						{html_options values=$imageCompression options=$imageCompression id=liberty_thumbnail_quality name=liberty_thumbnail_quality selected=$gBitSystem->getConfig('liberty_thumbnail_quality')|default:85}
+						{formhelp note="Set the quality you want to have your thumbnails generated in. The higher the value, the better the quality but also the larger the filesize. We recommend a value between 75 and 85."}
+					{/forminput}
+				</div>
 
 				<div class="row">
 					{formlabel label="Thumbnail Format" for="thumbformat"}
