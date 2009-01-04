@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.video.php,v 1.1 2009/01/02 20:38:02 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.video.php,v 1.2 2009/01/04 10:52:08 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.1 $
+ * @version		$Revision: 1.2 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -342,7 +342,7 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 						" -s ".$info['size'].
 						" -aspect ".$info['aspect'].
 						" -flags +loop -cmp +chroma -refs 1 -coder 0 -me_range 16 -g 300 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -maxrate 10M -bufsize 10M -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -level 30".
-						" -partitions +parti4x4+partp8x8+partb8x8 -$me_param umh -subq 5 -trellis 1".
+						" -partitions +parti4x4+partp8x8+partb8x8 -$me_param epzs -subq 5 -trellis 1".
 						// output
 						" -y '$dest_file'";
 
@@ -387,7 +387,7 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 						" -s ".$info['size'].
 						" -aspect ".$info['aspect'].
 						" -flags +loop -cmp +chroma -me_range 16 -g 250 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4".
-						" -partitions +parti8x8+parti4x4+partp8x8+partp4x4+partb8x8 -flags2 +brdo+dct8x8+wpred+bpyramid+mixed_refs -$me_param umh -subq 7 -trellis 1 -refs 6 -bf 16 -directpred 3 -b_strategy 1 -bidir_refine 1 -coder 1".
+						" -partitions +parti8x8+parti4x4+partp8x8+partp4x4+partb8x8 -flags2 +brdo+dct8x8+wpred+bpyramid+mixed_refs -$me_param epzs -subq 7 -trellis 1 -refs 6 -bf 16 -directpred 3 -b_strategy 1 -bidir_refine 1 -coder 1".
 						// output
 						" -y '$dest_file'";
 
