@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.video.php,v 1.2 2009/01/04 10:52:08 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.video.php,v 1.3 2009/01/04 18:09:24 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.2 $
+ * @version		$Revision: 1.3 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -248,17 +248,17 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 				$movie = @new ffmpeg_movie( $source );
 				$info = array(
 					'vcodec'           => @$movie->getVideoCodec(),
-					'acodec'           => @$movie->getAudioCodec(),
 					'duration'         => round( @$movie->getDuration() ),
 					'width'            => @$movie->getFrameWidth(),
 					'height'           => @$movie->getFrameHeight(),
 					'video_bitrate'    => @$movie->getVideoBitRate(),
+					'acodec'           => @$movie->getAudioCodec(),
 					'audio_bitrate'    => @$movie->getAudioBitRate(),
 					'audio_samplerate' => @$movie->getAudioSampleRate(),
 				);
 
 				// make sure audio sample rate is valid
-				if( !in_array( $info['audio_samplerate'], array( 11025, 22050, 44100 ))) {
+				if( !empty( $info['audio_samplerate'] ) && !in_array( $info['audio_samplerate'], array( 11025, 22050, 44100 ))) {
 					unset( $info['audio_samplerate'] );
 				}
 			}
@@ -488,7 +488,7 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 function mime_video_create_thumbnail( $pFile, $pOffset = 60 ) {
 	global $gBitSystem;
 	$ret = FALSE;
-	if( !empty( $pFile )) {
+	if( !empty( $pFile ) && is_file( $pFile )) {
 		$dest_path = dirname( $pFile );
 
 		// try to use an app designed specifically to extract a thumbnail
@@ -513,7 +513,7 @@ function mime_video_create_thumbnail( $pFile, $pOffset = 60 ) {
 			@unlink( "$dest_path/thumb.jpg" );
 		} else {
 			// fall back to using ffmepg
-			$ffmpeg    = trim( $gBitSystem->getConfig( 'ffmpeg_path', shell_exec( 'which ffmpeg' )));
+			$ffmpeg = trim( $gBitSystem->getConfig( 'ffmpeg_path', shell_exec( 'which ffmpeg' )));
 			shell_exec( "$ffmpeg -i '$pFile' -an -ss $pOffset -t 00:00:01 -r 1 -y '$dest_path/preview%d.jpg'" );
 			if( is_file( "$dest_path/preview1.jpg" )) {
 				$fileHash['type']            = 'image/jpg';
