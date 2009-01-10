@@ -140,6 +140,11 @@ $formImageFeatures = array(
 		'note' => 'Automatically create JPEG versions of original images named \'original.jpg\' in the attachment directory with other thumbnails.',
 		'page' => '',
 	),
+	"liberty_original_image" => array(
+		'label' => 'Display Original',
+		'note' => 'Display a link to the original image file. This allows users to link to the originally uploaded image file. For some users this might be disorienting, since it will only display the image in the browser window. We can recommend enabling the fancy zoom option as well.',
+		'page' => '',
+	),
 );
 $gBitSmarty->assign( 'formImageFeatures', $formImageFeatures );
 
@@ -150,6 +155,8 @@ $thumbFormats = array(
 	'gif' => tra( 'Force GIF thumbnails' ),
 );
 $gBitSmarty->assign( 'thumbFormats', $thumbFormats );
+
+$gBitSmarty->assign( 'imageSizes', get_image_size_options() );
 
 $formValues = array( 'image_processor', 'liberty_attachment_link_format', 'comments_per_page', 'comments_default_ordering', 'comments_default_display_mode' );
 
@@ -166,6 +173,7 @@ if( !empty( $_REQUEST['change_prefs'] )) {
 	}
 	simple_set_int( 'liberty_thumbnail_quality', LIBERTY_PKG_NAME );
 	simple_set_value( 'liberty_thumbnail_format', LIBERTY_PKG_NAME );
+	simple_set_value( 'liberty_thumbnail_size', LIBERTY_PKG_NAME );
 	simple_set_value( 'liberty_attachment_style', LIBERTY_PKG_NAME );
 	$gBitSystem->storeConfig( 'liberty_cache', $_REQUEST['liberty_cache'], LIBERTY_PKG_NAME );
 	$gBitSystem->storeConfig( 'liberty_auto_display_attachment_thumbs', $_REQUEST['liberty_auto_display_attachment_thumbs'], LIBERTY_PKG_NAME );
@@ -174,11 +182,4 @@ if( !empty( $_REQUEST['change_prefs'] )) {
 		simple_set_value( $item, LIBERTY_PKG_NAME );
 	}
 }
-
-$thumbSizes[''] = tra( 'Off' );
-foreach( array_keys( $gThumbSizes ) as $thumb ) {
-	$thumbSizes[$thumb] = tra( ucfirst( $thumb ));
-}
-$gBitSmarty->assign( 'thumbSizes', $thumbSizes );
-
 ?>

@@ -16,7 +16,7 @@
 				<div class="row">
 					{formlabel label="Auto-Display Attachment Thumbnails" for="liberty_auto_display_attachment_thumbs"}
 					{forminput}
-						{html_options options=$thumbSizes name="liberty_auto_display_attachment_thumbs" id="liberty_auto_display_attachment_thumbs" selected=$gBitSystem->getConfig('liberty_auto_display_attachment_thumbs')}
+						{html_options options=$imageSizes name="liberty_auto_display_attachment_thumbs" id="liberty_auto_display_attachment_thumbs" selected=$gBitSystem->getConfig('liberty_auto_display_attachment_thumbs')}
 						{formhelp note='This will automatically display thumbnails of all attachments of a given page (usually in the top right corner of the page). You can still display the items inline as well.' page=''}
 					{/forminput}
 				</div>
@@ -127,6 +127,14 @@
 					{forminput}
 						{html_options values=$thumbFormats options=$thumbFormats id=thumbformat name=liberty_thumbnail_format selected=$gBitSystem->getConfig('liberty_thumbnail_format')}
 						{formhelp note="Every image-type has its pros and cons: jpgs are usually small in size but don't support transparency, gif transparency is limited and pngs can be large. If you let bitweaver select what format to use, we will do our best to pick a sensible filetype based on the format uploaded."}
+					{/forminput}
+				</div>
+
+				<div class="row">
+					{formlabel label="Thumbnail Size" for="liberty_thumbnail_size"}
+					{forminput}
+						{html_options options=$imageSizes name="liberty_thumbnail_size" id="liberty_thumbnail_size" selected=$gBitSystem->getConfig('liberty_thumbnail_size')|default:medium}
+						{formhelp note='Set the default thumbnail size when viewing image details.'}
 					{/forminput}
 				</div>
 			{/legend}

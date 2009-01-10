@@ -1,6 +1,6 @@
 <?php
 /**
- * @version      $Header: /cvsroot/bitweaver/_bit_liberty/view_file.php,v 1.5 2008/07/18 12:39:38 squareing Exp $
+ * @version      $Header: /cvsroot/bitweaver/_bit_liberty/view_file.php,v 1.6 2009/01/10 07:58:31 squareing Exp $
  *
  * @author       xing  <xing@synapse.plus.com>
  * @package      treasury
@@ -41,6 +41,12 @@ if( !empty( $_REQUEST['plugin_submit'] )) {
 if( $gLibertySystem->isPluginActive( 'filterattachment' )) {
 	$gBitSmarty->assign( 'usage', attachment_filter_get_usage( $attachment['attachment_id'] ));
 }
+
+if( empty( $_REQUEST['size'] )) {
+	$_REQUEST['size'] = $gBitSystem->getConfig( 'liberty_thumbnail_size', 'medium' );
+}
+
+$attachment['original'] = ( $gContent->isOwner( $attachment ) || $gBitSystem->isFeatureActive( 'liberty_original_image' ));
 
 $gBitSmarty->assign( 'attachment', $attachment );
 $gBitSmarty->assign( 'gContent', $gContent );
