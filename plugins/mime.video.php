@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.video.php,v 1.3 2009/01/04 18:09:24 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.video.php,v 1.4 2009/01/15 20:33:02 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.3 $
+ * @version		$Revision: 1.4 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -225,7 +225,7 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 		$begin  = date( 'U' );
 		$log    = $actionLog = array();
 
-		if( !( $ff = shell_exec( "$ffmpeg 2>&1" ))) {
+		if( !is_executable( $ffmpeg )) {
 			$log['time']     = date( 'Y-M-d - H:i:s O' );
 			$log['duration'] = 0;
 			$log['message']  = 'ERROR: ffmpeg does not seem to be available on your system at: '.$ffmpeg.' Please set the path to ffmpeg in the liberty plugin administration screen.';
@@ -498,7 +498,7 @@ function mime_video_create_thumbnail( $pFile, $pOffset = 60 ) {
 			$thumbnailer = trim( shell_exec( 'which ffmpegvideothumbnailer' ));
 		}
 
-		if( !empty( $thumbnailer )) {
+		if( is_executable( $thumbnailer )) {
 			shell_exec( "$thumbnailer -i '$pFile' -o '$dest_path/thumb.jpg' -s 1024" );
 		}
 
