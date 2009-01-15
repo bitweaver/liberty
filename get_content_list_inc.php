@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.31 $
+ * @version  $Revision: 1.32 $
  * @package  liberty
  * @subpackage functions
  */
@@ -74,7 +74,7 @@ if( empty( $contentTypes ) ) {
 	}
 	asort( $contentTypes );
 }
-
+global $gBitSystem, $gBitUser;
 if( $gBitSystem->isFeatureActive( 'liberty_display_status' ) &&  $gBitUser->hasPermission( 'p_liberty_view_all_status' )) {
 	$contentStatuses = $gContent->getAvailableContentStatuses();
 	$contentStatuses[''] = 'All Statuses';
