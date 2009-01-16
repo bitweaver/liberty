@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.video.php,v 1.4 2009/01/15 20:33:02 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.video.php,v 1.5 2009/01/16 13:03:12 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.4 $
+ * @version		$Revision: 1.5 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -498,7 +498,7 @@ function mime_video_create_thumbnail( $pFile, $pOffset = 60 ) {
 			$thumbnailer = trim( shell_exec( 'which ffmpegvideothumbnailer' ));
 		}
 
-		if( is_executable( $thumbnailer )) {
+		if( !empty( $thumbnailer ) && is_executable( $thumbnailer )) {
 			shell_exec( "$thumbnailer -i '$pFile' -o '$dest_path/thumb.jpg' -s 1024" );
 		}
 
