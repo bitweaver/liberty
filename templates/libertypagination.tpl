@@ -39,7 +39,7 @@
 			{foreach from=$pgnHidden key=name item=value}
 				<input type="hidden" name="{$name}" value="{$value}" />
 			{/foreach}
-			{tr}Go to page{/tr} <input class="gotopage" type="text" size="3" maxlength="4" name="{$pgnName}" />
+			{tr}Go to page{/tr} <input class="gotopage" type="text" size="3" maxlength="6" name="{$pgnName}" />
 		{/form}
 	{/if}
 </div><!-- end .pagination -->
