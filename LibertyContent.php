@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.389 2008/12/31 08:57:06 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.390 2009/01/16 20:31:43 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2936,7 +2936,8 @@ class LibertyContent extends LibertyBase {
 	 * @return TRUE on success, FALSE on failure
 	 */
 	function expungeCacheFile( $pContentId = NULL ) {
-		if( @BitBase::verifyId( $pContentId ) ) {
+		global $gBitSystem;
+		if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && @BitBase::verifyId( $pContentId ) ) {
 			// we need to unlink all files with the same id and any extension
 			if( $dh = opendir( $cacheDir = LibertyContent::getCachePath( $pContentId ) ) ) {
 				while( FALSE !== ( $file = readdir( $dh ) ) ) {
