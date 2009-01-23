@@ -29,7 +29,7 @@
 			</div>
 		</div>
 		<div class="content">
-			{include file="bitpackage:liberty/services_inc.tpl" serviceLocation='body' serviceHash=$comment}
+			{include file="bitpackage:liberty/services_inc.tpl" serviceLocation='comment' serviceHash=$comment}
 			{$comment.parsed_data}
 		</div>
 	</div><!-- end .post -->
