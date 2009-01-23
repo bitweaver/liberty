@@ -11,7 +11,9 @@
 			{elseif $attachment.thumbnail_url.$thumbsize}
 				<img class="thumb" src="{$attachment.thumbnail_url.$thumbsize}" alt="{$wrapper.alt|default:$wrapper.description|default:$attachment.filename|replace:"\r":""|replace:"\n":" "|escape}" title="{$wrapper.description|default:$wrapper.alt|default:$attachment.filename|replace:"\r":""|replace:"\n":" "|escape}" />
 			{/if}
-			<br />{$wrapper.description_parsed}
+			{if $wrapper.description_parsed}
+				<br />{$wrapper.description_parsed}
+			{/if}
 		{if $wrapper.display_url}</a>{/if}
 	</{$wrapper.wrapper|default:'div'}>
 {/if}
