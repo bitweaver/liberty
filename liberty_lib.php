@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.48 2008/11/18 00:07:36 spiderr Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.49 2009/01/24 07:50:26 squareing Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -239,19 +239,18 @@ function liberty_plugins_wrapper_style( $pParamHash ) {
 						break;
 					case 'background':
 					case 'background-color':
-					case 'float':
-					case 'padding':
-					case 'margin':
-					case 'background':
 					case 'border':
-					case 'overflow':
-					case 'text-align':
 					case 'color':
+					case 'display':
+					case 'float':
 					case 'font':
+					case 'font-family':
 					case 'font-size':
 					case 'font-weight':
-					case 'font-family':
-					case 'display':
+					case 'margin':
+					case 'overflow':
+					case 'padding':
+					case 'text-align':
 						$ret['style'] .= "{$key}:{$value};";
 						break;
 					// align and float are special
