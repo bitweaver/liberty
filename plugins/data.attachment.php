@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.39 $
+ * @version  $Revision: 1.40 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.39 2009/01/03 09:39:04 squareing Exp $
+// $Id: data.attachment.php,v 1.40 2009/01/24 07:51:34 squareing Exp $
 
 /**
  * definitions
@@ -97,7 +97,7 @@ function data_attachment_help() {
 			.'<tr class="odd">'
 				.'<td>'.tra( "styling" ).'</td>'
 				.'<td>'.tra( "string").'<br />'.tra("(optional)").'</td>'
-				.'<td>'.tra( "Multiple styling options available: padding, margin, background, border, text-align, color, font, font-size, font-weight, font-family, align. Please view CSS guidelines on what values these settings take.").'</td>'
+				.'<td>'.tra( "Multiple styling options available: width, height, background, background-color, border, color, display, float, font, font-family, font-size, font-weight, margin, overflow, padding, text-align, align. Please view <a href='http://www.w3.org/TR/CSS21/indexlist.html'>CSS guidelines</a> on what values these settings take.").'</td>'
 			.'</tr>'
 		.'</table>'
 		. tra("Example: ") . ' ' . "{ATTACHMENT id='13' size='small' text-align='center' link='http://www.google.com'}"
