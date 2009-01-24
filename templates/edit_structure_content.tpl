@@ -34,7 +34,7 @@
 			{/forminput}
 
 			{forminput}
-				<input type="text" name="find_objects" /> 
+				<input type="text" name="find" /> 
 				<input type="submit" value="{tr}Apply filter{/tr}" name="search_objects" />
 				{formhelp note=""}
 			{/forminput}

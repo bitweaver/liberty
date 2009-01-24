@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.31 $
+ * @version  $Revision: 1.32 $
  * @package  liberty
  * @subpackage functions
  */
@@ -41,9 +41,7 @@ $gBitSmarty->assign( 'contentTypes', $contentTypes );
 $gBitSmarty->assign( 'contentList', $contentList );
 $contentListHash['listInfo']['ihash']['content_type_guid'] = $contentSelect[0];
 $contentListHash['listInfo']['ihash']['user_id'] = @BitBase::verifyId( $_REQUEST['user_id'] ) ? $_REQUEST['user_id'] : NULL;
-if ( isset( $contentListHash['listInfo']['find'] ) ) {
-	$contentListHash['listInfo']['ihash']['find_objects'] = $contentListHash['listInfo']['find'];
-}
+$contentListHash['listInfo']['ihash']['find'] = $contentListHash['listInfo']['find'];
 $gBitSmarty->assign( 'listInfo', $contentListHash['listInfo'] );
 $gBitSmarty->assign( 'content_type_guids', ( isset( $_REQUEST['content_type_guid'] ) ? $_REQUEST['content_type_guid'] : NULL ));
 
