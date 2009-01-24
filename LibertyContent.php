@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.390 2009/01/16 20:31:43 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.391 2009/01/24 15:30:57 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -204,9 +204,9 @@ class LibertyContent extends LibertyBase {
 		}
 
 		// Do we need to change the status
-		if( $this->hasUserPermission( 'p_liberty_edit_content_status' ) || $gBitUser->hasUserPermission( 'p_liberty_edit_all_status') ) {
-			$allStatus = $this->getAvailableContentStatuses();
-			if (!empty($pParamHash['content_status_id'])) {
+		if (!empty($pParamHash['content_status_id'])) {
+			if( $this->hasUserPermission( 'p_liberty_edit_content_status' ) || $gBitUser->hasUserPermission( 'p_liberty_edit_all_status') ) {
+				$allStatus = $this->getAvailableContentStatuses();
 				if (empty($allStatus[$pParamHash['content_status_id']])) {
 					$this->mErrors['content_status_id'] = "No such status ID or permission denied.";
 				} else {
@@ -2315,7 +2315,7 @@ class LibertyContent extends LibertyBase {
 				// solution will be available in ReleaseTwo - spiderr
 				if( $this->mDb->isAdvancedPostgresEnabled() ) {
 // 					$joinSql .= " LEFT OUTER JOIN  `".BIT_DB_PREFIX."fisheye_gallery_image_map` fgim ON (fgim.`item_content_id`=lc.`content_id`)";
-					$whereSql .= " AND (SELECT ls.`security_id` FROM connectby('fisheye_gallery_image_map', 'gallery_content_id', 'item_content_id', lc.`content_id`, 0, '/')  AS t(`cb_gallery_content_id` int, `cb_item_content_id` int, level int, branch text), `".BIT_DB_PREFIX."gatekeeper_security_map` cgm,  `".BIT_DB_PREFIX."gatekeeper_security` ls
+					$whereSql .= " AND (SELECT ls.`security_id` FROM connectby('fisheye_gallery_image_map', 'gallery_content_id', 'item_content_id', 'item_content_id', text( lc.`content_id` ), 0, '/')  AS t(`cb_gallery_content_id` int, `cb_item_content_id` int, level int, branch text, pos int), `".BIT_DB_PREFIX."gatekeeper_security_map` cgm,  `".BIT_DB_PREFIX."gatekeeper_security` ls
 							WHERE ls.`security_id`=cgm.`security_id` AND cgm.`content_id`=`cb_gallery_content_id` LIMIT 1) IS NULL";
 				}
 			}
