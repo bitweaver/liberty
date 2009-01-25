@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.54 $
+ * @version  $Revision: 1.55 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.54 2009/01/11 09:00:39 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.55 2009/01/25 05:35:22 spiderr Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -137,7 +137,18 @@ if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 
 	}
 
 	if( !( $gBitSystem->isPackageActive( 'bitboards' ) && BitBoardTopic::isLockedMsg( $storeRow['parent_id'] ))) {
+		$storeComment->mDb->StartTrans();
 		if( $ticketValid && $storeComment->storeComment( $storeRow )) {
+			$storeComment->loadComment();
+			if( empty( $_REQUEST['post_comment_id'] ) && $gBitSystem->isPackageActive( 'switchboard' ) ) {
+				// A new comment, and we have switchboard to send notifications
+				global $gSwitchboardSystem;
+				// Draft the message:
+				$message['subject'] = tra( 'New comment on:' ).' '.$gContent->getTitle().' @ '.$gBitSystem->getConfig( 'site_title' );
+				$message['message'] = tra('A new message was posted to ').' '.$gContent->getDisplayLink().'<br/><br/>'
+						.'/----- '.tra('Here is the message')." -----/<br/>\n<br/>\n".'<h2>'.$storeComment->getTitle()."</h2>\n".'<p>'.$storeComment->parseData().'</p>';
+				$gSwitchboardSystem->sendEvent('My Content', 'new comment', $gContent->mContentId, $message );
+			}
 			if( $gBitSystem->isPackageActive('bitboards') && $gBitSystem->isFeatureActive( 'bitboards_thread_track' )) {
 				$topic_id = substr( $storeComment->mInfo['thread_forward_sequence'], 0, 10 );
 				$data = BitBoardTopic::getNotificationData($topic_id);
@@ -160,6 +171,7 @@ if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 
 			//this is critical and triggers other settings if store fails - do not remove without looking at what preview effects
 			$_REQUEST['post_comment_preview'] = TRUE;
 		}
+		$storeComment->mDb->CompleteTrans();
 	} else {
 		$formfeedback['warning']="The selected Topic is Locked posting is disabled";
 	}
