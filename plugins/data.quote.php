@@ -34,7 +34,7 @@ $pluginParams = array (
 	'help_function' => 'data_quote_help',
 	'title'         => 'Quote',
 	'help_page'     => 'DataPluginQuote',
-	'description'   => tra( "This plugin will render the given content as discribed by the content_type given" ),
+	'description'   => tra( "This plugin allows content to be attributed to other authors and visually indicated." ),
 	'syntax'        => "{quote format_guid= user= comment_id= }.. content ..{/quote}",
 	'plugin_type'   => DATA_PLUGIN
 );
