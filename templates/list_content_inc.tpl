@@ -5,6 +5,7 @@
 		{formlabel label="Restrict listing" for="content_type_guid"}
 		{forminput}
 			{html_options onchange="submit();" options=$contentTypes name=content_type_guid id=content_type selected=$contentSelect}
+			{formhelp note="Limit search by content type"}
 			<noscript>
 				<div><input type="submit" name="content_switch" value="{tr}change content type{/tr}" /></div>
 			</noscript>
