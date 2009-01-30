@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.392 2009/01/28 21:29:10 tekimaki_admin Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.393 2009/01/30 16:11:52 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -351,6 +351,7 @@ class LibertyContent extends LibertyBase {
 
 			if( !empty( $pParamHash['force_history'] ) || ( empty( $pParamHash['minor'] ) && $this->getField( 'version' ) && $pParamHash['field_changed'] )) {
 				if( empty( $pParamHash['has_no_history'] ) ) {
+vd( $pParamHash ); die;
 					$this->storeHistory();
 				}
 				//$action = "Created";
@@ -816,7 +817,7 @@ class LibertyContent extends LibertyBase {
 	/**
 	 * Set up access to services used by the object
 	 */
-	function invokeServices( $pServiceFunction, $pFunctionParam=NULL ) {
+	function invokeServices( $pServiceFunction, &$pFunctionParam=NULL ) {
 		global $gLibertySystem;
 		$errors = array();
 		// Invoke any services store functions such as categorization or access control
