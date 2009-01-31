@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.393 2009/01/30 16:11:52 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.394 2009/01/31 03:45:33 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -351,7 +351,6 @@ class LibertyContent extends LibertyBase {
 
 			if( !empty( $pParamHash['force_history'] ) || ( empty( $pParamHash['minor'] ) && $this->getField( 'version' ) && $pParamHash['field_changed'] )) {
 				if( empty( $pParamHash['has_no_history'] ) ) {
-vd( $pParamHash ); die;
 					$this->storeHistory();
 				}
 				//$action = "Created";
