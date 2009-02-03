@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.73 2008/11/19 05:52:48 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.74 2009/02/03 21:15:36 tekimaki_admin Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -286,6 +286,9 @@ class LibertyComment extends LibertyContent {
 		$ret = NULL;
 		if( @$this->verifyId( $pMixed['parent_id'] ) && $viewContent = LibertyBase::getLibertyObject( $pMixed['parent_id'] ) ) {
 			$ret = $viewContent->getDisplayUrl().( @BitBase::verifyId( $pMixed['content_id'] ) ? "#comment_".$pMixed['content_id'] : '' );
+		}elseif( @BitBase::verifyId( $pMixed['content_id'] )) {
+			$ret = parent::getDisplayUrl( NULL, $pMixed );
+			$ret .= "&view_comment_id=".$pMixed['content_id']."#comment_{$pMixed['content_id']}";
 		}
 		return( $ret );
 	}
