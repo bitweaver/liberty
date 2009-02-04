@@ -59,7 +59,7 @@
 							<label>{tr}{$primary_label|default:"Primary"}{/tr}:&nbsp;<input type="radio" name="liberty_attachments[primary]" value="{$attachmentId}"{if $storage.is_primary eq 'y'} checked="checked"{/if} /></label>
 							<br />
 						{/if}
-						{if $gBitUser->isAdmin() || ($storage.user_id == $gBitUser->mUserId && $gBitUser->hasPermission('p_liberty_delete_attachments') ) }
+						{if $gBitUser->isAdmin() || ($storage.user_id == $gBitUser->mUserId) }
 							{capture name=urlArgs}{$attachmentBaseArgs}content_id={$gContent->mContentId}{if empty($gContent->mContentId)}{foreach from=$gContent->mStorage key=key item=val}&amp;STORAGE[existing][{$val.attachment_id}]={$val.attachment_id}{/foreach}{/if}{/capture}
 							{if $libertyUploader || $gBitSystem->getConfig('liberty_attachment_style') == 'ajax'}
 								<a href="javascript:void(0);" onclick="
