@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.74 2009/02/03 21:15:36 tekimaki_admin Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.75 2009/02/04 19:14:43 tekimaki_admin Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -283,13 +283,18 @@ class LibertyComment extends LibertyContent {
 		if( empty( $pMixed ) ) {
 			$pMixed = &$this->mInfo;
 		}
+
 		$ret = NULL;
-		if( @$this->verifyId( $pMixed['parent_id'] ) && $viewContent = LibertyBase::getLibertyObject( $pMixed['parent_id'] ) ) {
-			$ret = $viewContent->getDisplayUrl().( @BitBase::verifyId( $pMixed['content_id'] ) ? "#comment_".$pMixed['content_id'] : '' );
+
+		if( @$this->verifyId( $pMixed['root_id'] ) && $viewContent = LibertyBase::getLibertyObject( $pMixed['root_id'] ) ) {
+			// pass in cooment hash to the url func incase the root package needs to do something fancy
+			$pUrlHash['comment'] = $pMixed;
+			$ret = $viewContent->getDisplayUrl( NULL, $pUrlHash ).( @BitBase::verifyId( $pMixed['content_id'] ) ? "#comment_".$pMixed['content_id'] : '' );
 		}elseif( @BitBase::verifyId( $pMixed['content_id'] )) {
 			$ret = parent::getDisplayUrl( NULL, $pMixed );
 			$ret .= "&view_comment_id=".$pMixed['content_id']."#comment_{$pMixed['content_id']}";
 		}
+
 		return( $ret );
 	}
 
