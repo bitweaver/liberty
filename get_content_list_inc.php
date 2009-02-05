@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.33 $
+ * @version  $Revision: 1.34 $
  * @package  liberty
  * @subpackage functions
  */
@@ -19,11 +19,20 @@ if( empty( $gContent ) || !is_object( $gContent ) ) {
 	$gContent = new LibertyContent();
 }
 
+$contentTypeGuids = array();
 if( !empty( $_REQUEST['content_type_guid'] )) {
 	if( !is_array( $_REQUEST['content_type_guid'] )) {
-		$contentTypeGuids = explode( ",", $_REQUEST['content_type_guid'] );
+		$guids = explode( ",", $_REQUEST['content_type_guid'] );
 	} else {
-		$contentTypeGuids = $_REQUEST['content_type_guid'];
+		$guids = $_REQUEST['content_type_guid'];
+	}
+	/**
+	 * if an empty string was passed in an array (likely since it is used for ALL) then the user has requested all so return all
+	 * even if they have requested additional content types too - ALL is ALL
+	 * this check is reversed in that if no empty string in the array then we pass the array of content types to be limited on
+	 **/
+	if( !in_array( "", $guids ) ){
+		$contentTypeGuids = $guids;
 	}
 }
 
