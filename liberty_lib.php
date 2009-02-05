@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.49 2009/01/24 07:50:26 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.50 2009/02/05 17:39:33 tekimaki_admin Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -291,7 +291,9 @@ function liberty_content_load_sql( &$pObject, $pParamHash=NULL ) {
 		if(( is_object( $pObject ) && !empty( $pObject->mType['content_type_guid'] ) && $pObject->mType['content_type_guid'] == 'bitcomment' )
 			|| ( !empty( $pParamHash['include_comments'] ) && $pParamHash['include_comments']  == 'y' )) {
 			// if we are getting a list of comments then lets check the owner of the comment root and the owner of the content
-			$ret['join_sql'] = " INNER JOIN `".BIT_DB_PREFIX."liberty_content` rlcs ON( rlcs.`content_id`=lcom.`root_id` )";
+				$ret['join_sql'] = " 
+					INNER JOIN `".BIT_DB_PREFIX."liberty_comments` lcoms ON (lc.`content_id` = lcoms.`content_id`) 
+					INNER JOIN `".BIT_DB_PREFIX."liberty_content` rlcs ON( rlcs.`content_id`=lcoms.`root_id` )";
 			$ret['where_sql'] = " AND lc.`content_status_id` < 100 AND ( ( (rlcs.`user_id` = '".$gBitUser->getUserId()."' OR lc.`user_id` = '".$gBitUser->getUserId()."') AND lc.`content_status_id` > -100) OR lc.`content_status_id` > 0 )";
 		} else {
 			// let owner see any of their own content with a status > -100
@@ -337,7 +339,9 @@ function liberty_content_list_sql( &$pObject, $pParamHash=NULL ) {
 		if(( is_object( $pObject ) && !empty( $pObject->mType['content_type_guid'] ) && $pObject->mType['content_type_guid'] == 'bitcomment' )
 			|| ( !empty( $pParamHash['include_comments'] ) && $pParamHash['include_comments']  == 'y' )) {
 			// if we are getting a list of comments then lets check the owner of the comment root and the owner of the content
-			$ret['join_sql'] = " INNER JOIN `".BIT_DB_PREFIX."liberty_content` rlcs ON( rlcs.`content_id`=lcom.`root_id` )";
+			$ret['join_sql'] = " 
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_comments` lcoms ON (lc.`content_id` = lcoms.`content_id`) 
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` rlcs ON( rlcs.`content_id`=lcoms.`root_id` )";
 			$ret['where_sql'] =
 				" AND lc.`content_status_id` < ".$max_status_id.
 				" AND (
