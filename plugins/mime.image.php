@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.24 2009/01/03 09:40:16 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.image.php,v 1.25 2009/02/06 02:55:21 spiderr Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.24 $
+ * @version		$Revision: 1.25 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -216,7 +216,8 @@ function mime_image_store_exif_data( $pFileHash ) {
 function mime_image_get_exif_data( $pUpload ) {
 	$exifHash = array();
 	if( function_exists( 'exif_read_data' ) && !empty( $pUpload['source_file'] ) && is_file( $pUpload['source_file'] ) && preg_match( "#/(jpe?g|tiff)#i", $pUpload['type'] )) {
-		$exifHash = exif_read_data( $pUpload['source_file'], 0, TRUE );
+		// exif_read_data can be noisy due to crappy files, e.g. "Incorrect APP1 Exif Identifier Code" etc...
+		$exifHash = @exif_read_data( $pUpload['source_file'], 0, TRUE );
 
 		// extract more information if we can find it
 		if( ini_get( 'short_open_tag' )) {
