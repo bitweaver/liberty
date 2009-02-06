@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.75 2009/02/04 19:14:43 tekimaki_admin Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.76 2009/02/06 20:04:40 tekimaki_admin Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -261,7 +261,7 @@ class LibertyComment extends LibertyContent {
 			$checkPerms = $this->getUserPermissions();
 			$ret = ( !empty( $checkPerms['p_liberty_edit_comments'] ) ||
 					 !empty( $checkPerms['p_liberty_admin_comments'] ) ||
-					 $gBitUser->hasUserPermission( 'p_liberty_admin_comments' ) ||
+					 $gBitUser->hasPermission( 'p_liberty_admin_comments' ) ||
 					 ( $gBitUser->mUserId == $this->mInfo['user_id'] && $withinEditTime )
 					);
 		} elseif( $this->mInfo['user_id'] == ANONYMOUS_USER_ID ) {
