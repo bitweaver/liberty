@@ -13,8 +13,9 @@
 					<a href="{$comments_return_url}&amp;post_comment_reply_id={$comment.content_id}&amp;post_comment_request=1#editcomments" rel="nofollow">{biticon ipackage="icons" iname="mail-reply-sender" iexplain="Reply to this comment"}</a>
 				{/if}
 			{/if}
-			{* if $gBitUser->hasPermission('p_liberty_edit_comments') || ($gBitUser && $comment.user_id == $gBitUser->mInfo.user_id && $comment.user_id!=$smarty.const.ANONYMOUS_USER_ID) *}
-			{if $comment.is_editable || ($gContent && $gContent->hasUserPermission('p_liberty_edit_comments'))}
+			{* we can't use gContent->hasUserPermission() here since gContent is the content the comment belongs to, not the comment itself *}
+			{*if $comment.is_editable || ($gContent && $gContent->hasUserPermission('p_liberty_edit_comments'))*}
+			{if $comment.is_editable || ( $gBitUser->hasPermission( 'p_liberty_edit_comments' ) || ( $comment.user_id == $gBitUser->mInfo.user_id && $comment.user_id != $smarty.const.ANONYMOUS_USER_ID ))}
 				<a href="{$comments_return_url}&amp;post_comment_id={$comment.comment_id}&amp;post_comment_request=1#editcomments" rel="nofollow">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="Edit"}</a>
 			{/if}
 			{if $gBitUser->hasPermission('p_liberty_admin_comments')}
