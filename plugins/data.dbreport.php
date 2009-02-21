@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/data.dbreport.php,v 1.1 2009/02/21 18:18:42 lsces Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/data.dbreport.php,v 1.2 2009/02/21 19:19:12 lsces Exp $
  * @package  liberty
  * @subpackage plugins_data
  *
@@ -23,6 +23,7 @@ $pluginParams = array (
 	'requires_pair' => TRUE,
 	'syntax'        => '{dbreport dsn=dsnname  db=dbname  csv=0|1 wiki=0|1 debug=0|1 }',
 	'plugin_type'   => DATA_PLUGIN,
+	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/plugins/data_dbreport.php',
 
 	// display icon in quicktags bar
 	'biticon'       => '{biticon ilocation=quicktag iname=image-x-generic iexplain="DBReport"}',
@@ -31,7 +32,6 @@ $pluginParams = array (
 	// functions
 	'help_function' => 'data_dbreport_help',
 	'load_function' => 'wikiplugin_dbreport',
-	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/plugins/data_dbreport.php',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATADBREPORT, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATADBREPORT );
@@ -1504,14 +1504,11 @@ function wikiplugin_dbreport($data, $params) {
 		}
 	}
 	// translate db name into dsn
-//TODO - convert to bw permissions
 	if (isset($db)) {
-		$perm_name = 'tiki_p_dsn_' . $db;
-		global $$perm_name;
-		// check permissions
-		if ($$perm_name != 'y') {
+		if ( !$gBitSystem->isFeatureActive( 'dbreport_manage' ) ) {
 			return ( tra('You do not have permission to use this DSN') );
 		}
+//TODO - convert to bw managed library
 		// retrieve the dsn string
 		$dsn = $tikilib->get_dsn_by_name($db);
 	} else {
