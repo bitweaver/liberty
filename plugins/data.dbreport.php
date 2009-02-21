@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/data.dbreport.php,v 1.2 2009/02/21 19:19:12 lsces Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/Attic/data.dbreport.php,v 1.3 2009/02/21 19:45:53 lsces Exp $
  * @package  liberty
  * @subpackage plugins_data
  *
@@ -1480,7 +1480,7 @@ function wikiplugin_dbreport($data, $params) {
 	}
 	// we need a dsn or db parameter
 	if (!isset($dsn) && !isset($db)) {
-		return tra('Missing db or dsn parameter');
+		$db = 'local';
 	}
 	// parse the report definition
 //	$parse_fix = ($_REQUEST['preview']);
@@ -1504,13 +1504,19 @@ function wikiplugin_dbreport($data, $params) {
 		}
 	}
 	// translate db name into dsn
-	if (isset($db)) {
-		if ( !$gBitSystem->isFeatureActive( 'dbreport_manage' ) ) {
-			return ( tra('You do not have permission to use this DSN') );
-		}
+	if ( isset($db) ) {
+		if ( $db == 'local' ) {
+			global $gBitDbType, $gBitDbUser, $gBitDbPassword, $gBitDbHost, $gBitDbName;
+			$dsn = "$gBitDbType://$gBitDbUser:$gBitDbPassword@$gBitDbHost/$gBitDbName";
+		} else {
+			if ( !$gBitSystem->isFeatureActive( 'dbreport_manage' ) ) {
+				return ( tra('You do not have permission to use this DSN') );
+			} else {
 //TODO - convert to bw managed library
-		// retrieve the dsn string
-		$dsn = $tikilib->get_dsn_by_name($db);
+				// retrieve the dsn string
+				$dsn = $tikilib->get_dsn_by_name($db);
+			}
+		}
 	} else {
 		if ( !$gBitSystem->isFeatureActive( 'dbreport_direct' ) ) {
 			return ( tra('Direct DSN access for reports is disabled') );
