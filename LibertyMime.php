@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.42 2009/02/22 06:19:18 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.43 2009/02/22 11:30:22 squareing Exp $
  */
 
 /**
@@ -254,6 +254,14 @@ class LibertyMime extends LibertyAttachable {
 		return ( count( $this->mErrors ) == 0 );
 	}
 
+	/**
+	 * getThumbnailUrl will fetch the primary thumbnail for a given content. If nothing has been set, it will fetch the last thumbnail it can find.
+	 * 
+	 * @param string $pSize 
+	 * @param array $pInfoHash 
+	 * @access public
+	 * @return boolean TRUE on success, FALSE on failure - $this->mErrors will contain reason for failure
+	 */
 	function getThumbnailUrl( $pSize='small', $pInfoHash=NULL ) {
 		$ret = NULL;
 		if( !empty( $pInfoHash ) ) {
@@ -264,7 +272,9 @@ class LibertyMime extends LibertyAttachable {
 					break;
 				}
 			}
-			$ret = $this->mStorage[$attachmentId]['thumbnail_url'][$pSize];
+			if( !empty( $this->mStorage[$attachmentId]['thumbnail_url'][$pSize] )) {
+				$ret = $this->mStorage[$attachmentId]['thumbnail_url'][$pSize];
+			}
 		}
 		return $ret;
 	}
