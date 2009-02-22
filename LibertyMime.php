@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.41 2008/12/08 09:02:34 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.42 2009/02/22 06:19:18 spiderr Exp $
  */
 
 /**
@@ -252,6 +252,21 @@ class LibertyMime extends LibertyAttachable {
 		}
 
 		return ( count( $this->mErrors ) == 0 );
+	}
+
+	function getThumbnailUrl( $pSize='small', $pInfoHash=NULL ) {
+		$ret = NULL;
+		if( !empty( $pInfoHash ) ) {
+			// do some stuff if we are given a hash of stuff
+		} elseif( $this->isValid() && !empty( $this->mStorage ) ) {
+			foreach( array_keys( $this->mStorage ) as $attachmentId ) {
+				if( !empty( $this->mStorage[$attachmentId]['is_primary'] ) ) {
+					break;
+				}
+			}
+			$ret = $this->mStorage[$attachmentId]['thumbnail_url'][$pSize];
+		}
+		return $ret;
 	}
 
 	/**
