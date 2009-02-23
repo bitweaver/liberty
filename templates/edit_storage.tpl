@@ -12,9 +12,6 @@
 		{include file=$tpl}
 	{/foreach}
 
-		{if $gBitUser->hasPermission('p_liberty_attach_attachments') }
-			{php} include (LIBERTY_PKG_PATH."edit_storage_inc.php"); {/php}
-		{/if}
 	{include file="bitpackage:liberty/edit_storage_list.tpl" uploadTab=TRUE}
 
 {else}
