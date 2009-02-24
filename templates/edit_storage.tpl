@@ -21,7 +21,6 @@
 	{if $gBitSystem->getConfig('liberty_attachment_style') != 'ajax' || $gContent->isValid()}
 
 		{if $gBitUser->hasPermission('p_liberty_attach_attachments') }
-			{php} include (LIBERTY_PKG_PATH."edit_storage_inc.php"); {/php}
 			{foreach from=$gLibertySystem->mPlugins item=plugin key=guid}
 				{* $no_plugins is set by the including template *}
 				{if $plugin.is_active eq 'y' and $plugin.edit_field and $plugin.plugin_type eq 'storage' and !$no_plugins}
@@ -40,7 +39,6 @@
 	{else}
 
 		{if $gBitUser->hasPermission('p_liberty_attach_attachments') }
-			{php} include (LIBERTY_PKG_PATH."edit_storage_inc.php"); {/php}
 			{foreach from=$gLibertySystem->mPlugins item=plugin key=guid}
 				{* $no_plugins is set by the including template *}
 				{if $plugin.is_active eq 'y' and $plugin.edit_field and $plugin.plugin_type eq 'storage' and !$no_plugins}
