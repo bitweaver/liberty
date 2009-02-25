@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.56 $
+ * @version  $Revision: 1.57 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.56 2009/01/25 06:05:04 spiderr Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.57 2009/02/25 23:40:23 spiderr Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -49,7 +49,7 @@ if( $gBitSystem->isPackageActive( 'tickets' )) {
 }
 
 $postComment = array();
-$formfeedback = array();
+$formfeedback = array( 'error' => array() );
 $gBitSmarty->assign_by_ref( 'formfeedback', $formfeedback );
 
 // make sure that we don't feed ajax comments if we don't have javascript enabled
@@ -100,8 +100,22 @@ $gBitSmarty->assign('post_comment_id', $post_comment_id);
 
 // Store comment posts
 if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE )) {
-	$storeComment = new LibertyComment( @BitBase::verifyId( $editComment->mCommentId ) ? $editComment->mCommentId : NULL );
 	$storeRow = array();
+	if( !empty( $_REQUEST['login_email'] ) && !empty( $_REQUEST['login_password'] ) ) {
+		$gBitUser->login( $_REQUEST['login_email'], $_REQUEST['login_password'] );
+		if( !empty( $gBitUser->mErrors['login'] ) ) {
+			$formfeedback['error'][] = $gBitUser->mErrors['login']; 
+		}
+	} else {
+		if( !empty( $_REQUEST['captcha'] )) {
+			$storeRow['captcha'] = $_REQUEST['captcha'];
+		}
+		if( !empty($_REQUEST['comment_name'] )) {
+			$storeRow['anon_name'] = $_REQUEST['comment_name'];
+		}
+	}
+
+	$storeComment = new LibertyComment( @BitBase::verifyId( $editComment->mCommentId ) ? $editComment->mCommentId : NULL );
 	$storeRow['title'] = $_REQUEST['comment_title'];
 	$storeRow['edit'] = $_REQUEST['comment_data'];
 
@@ -117,12 +131,6 @@ if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 
 	$storeRow['parent_id'] = (@BitBase::verifyId($storeComment->mInfo['parent_id']) ? $storeComment->mInfo['parent_id'] : (!@BitBase::verifyId($_REQUEST['post_comment_reply_id']) ? $commentsParentId : $_REQUEST['post_comment_reply_id']));
 	$storeRow['content_id'] = (@BitBase::verifyId($storeComment->mContentId) ? $storeComment->mContentId : NULL);
 
-	if( !empty( $_REQUEST['captcha'] )) {
-		$storeRow['captcha'] = $_REQUEST['captcha'];
-	}
-	if( !empty($_REQUEST['comment_name'] )) {
-		$storeRow['anon_name'] = $_REQUEST['comment_name'];
-	}
 	if( !empty( $_REQUEST['format_guid'] )) {
 		$storeRow['format_guid'] = $_REQUEST['format_guid'];
 	}
@@ -138,7 +146,7 @@ if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 
 
 	if( !( $gBitSystem->isPackageActive( 'bitboards' ) && BitBoardTopic::isLockedMsg( $storeRow['parent_id'] ))) {
 		$storeComment->mDb->StartTrans();
-		if( $ticketValid && $storeComment->storeComment( $storeRow )) {
+		if( empty( $formfeedback['error'] ) && $ticketValid && $storeComment->storeComment( $storeRow )) {
 			$storeComment->loadComment();
 			if( empty( $_REQUEST['post_comment_id'] ) && $gBitSystem->isPackageActive( 'switchboard' ) ) {
 				// A new comment, and we have switchboard to send notifications
@@ -146,7 +154,7 @@ if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 
 				// Draft the message:
 				$message['subject'] = tra( 'New comment on:' ).' '.$gContent->getTitle().' @ '.$gBitSystem->getConfig( 'site_title' );
 				$message['message'] = tra('A new message was posted to ').' '.$gContent->getTitle()."<br/>\n".$gContent->getDisplayUri()."<br/>\n"
-						.'/----- '.tra('Here is the message')." -----/<br/>\n<br/>\n".'<h2>'.$storeComment->getTitle()."</h2>\n".'<p>'.$storeComment->parseData().'</p>';
+						.'/----- '.tra('Here is the message')." -----/<br/>\n<br/>\n".'<h2>'.$storeComment->getTitle()."</h2>\n".tra('By').' '.$gBitUser->getDisplayName()."\n<p>".$storeComment->parseData().'</p>';
 				$gSwitchboardSystem->sendEvent('My Content', 'new comment', $gContent->mContentId, $message );
 			}
 			if( $gBitSystem->isPackageActive('bitboards') && $gBitSystem->isFeatureActive( 'bitboards_thread_track' )) {
@@ -160,7 +168,7 @@ if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 
 			}
 			$postComment = NULL;
 		} else {
-			$formfeedback['error']=$storeComment->mErrors;
+			$formfeedback['error']=array_merge( $formfeedback['error'], $storeComment->mErrors );
 			$postComment['data'] = $_REQUEST['comment_data'];
 			$postComment['title'] = $_REQUEST['comment_title'];
 			if( !empty( $_REQUEST['comment_name'] ) ) {
@@ -176,7 +184,7 @@ if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 
 		$formfeedback['warning']="The selected Topic is Locked posting is disabled";
 	}
 } elseif(!empty($_REQUEST['post_comment_request']) && !$gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE )) {
-	$formfeedback['warning']="You don't have p_liberty_post_comments";
+	$formfeedback['warning']="You don't have permission to post comments.";
 }
 
 // $post_comment_request is a flag indicating whether or not to display the comment input form
