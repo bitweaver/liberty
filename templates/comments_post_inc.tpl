@@ -55,16 +55,16 @@
 							{formhelp note=""}
 						{/forminput}
 					</div>
+					{captcha variant="row" id="post-captcha" style="display:none"}
 					<div class="row">
 						{forminput}
-							<input type="checkbox" name="anon_post" id="anon-post" value="y" onchange="BitBase.toggleElementDisplay('post-login','block');BitBase.toggleElementDisplay('post-anon','block');" /> {tr}Anonymous Post{/tr}
+							<input type="checkbox" name="anon_post" id="anon-post" value="y" onchange="BitBase.toggleElementDisplay('post-login','block');BitBase.toggleElementDisplay('post-anon','block');BitBase.toggleElementDisplay('post-captcha','block');" /> {tr}Anonymous Post{/tr}
 							{formhelp note=""}
 						{/forminput}
 					</div>
 				{/if}
 
 				{textarea id="commentpost" name="comment_data" rows=$gBitSystem->getConfig('comments_default_post_lines', 6)}{$postComment.data}{/textarea}
-				{captcha variant="row"}
 
 				<div class="row submit"> 
 					<input type="submit" name="post_comment_preview" value="{tr}Preview{/tr}" {if $comments_ajax}onclick="LibertyComment.previewComment(); return false;"{/if}/>&nbsp;
