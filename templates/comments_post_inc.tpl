@@ -33,10 +33,31 @@
 				</div>
 				
 				{if !$gBitUser->isRegistered()}
-					<div class="row">
-						{formlabel label="Name" for="comments-name"}
+					<div class="row" id="post-login">
+						{assign var=loginLabel value=$gBitSystem->mConfig.site_title|default:Site}
+						{formlabel label="`$loginLabel` Login" for="login-email"}
+						{forminput}
+							<div style="display:inline-block">
+								<input type="text" size="20" name="login_email" id="login-email" value="{$smarty.request.login_email|escape:html}" />
+								<div class="date">{tr}Email{/tr}</div>
+							</div>
+							<div style="display:inline-block">
+								<input type="password" size="8" name="login_password" id="login-password" value="{$smarty.request.login_password|escape:html}" />
+								<div class="date">{tr}Password{/tr}</div>
+							</div>
+					
+						{/forminput}
+					</div>
+					<div class="row" style="display:none" id="post-anon">
+						{formlabel label="Your Name" for="comments-name"}
 						{forminput}
 							<input type="text" size="50" name="comment_name" id="comments-name" value="{$postComment.anon_name|escape:html}" />
+							{formhelp note=""}
+						{/forminput}
+					</div>
+					<div class="row">
+						{forminput}
+							<input type="checkbox" name="anon_post" id="anon-post" value="y" onchange="BitBase.toggleElementDisplay('post-login','block');BitBase.toggleElementDisplay('post-anon','block');" /> {tr}Anonymous Post{/tr}
 							{formhelp note=""}
 						{/forminput}
 					</div>
