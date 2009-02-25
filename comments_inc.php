@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.57 $
+ * @version  $Revision: 1.58 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.57 2009/02/25 23:40:23 spiderr Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.58 2009/02/25 23:54:42 spiderr Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -101,7 +101,8 @@ $gBitSmarty->assign('post_comment_id', $post_comment_id);
 // Store comment posts
 if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE )) {
 	$storeRow = array();
-	if( !empty( $_REQUEST['login_email'] ) && !empty( $_REQUEST['login_password'] ) ) {
+	// check for !anon_post before logging in (auto-fill can hork things up)
+	if( empty( $_REQUEST['anon_post'] ) && !empty( $_REQUEST['login_email'] ) && !empty( $_REQUEST['login_password'] ) ) {
 		$gBitUser->login( $_REQUEST['login_email'], $_REQUEST['login_password'] );
 		if( !empty( $gBitUser->mErrors['login'] ) ) {
 			$formfeedback['error'][] = $gBitUser->mErrors['login']; 
