@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.395 2009/02/27 17:50:58 tekimaki_admin Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.396 2009/02/27 17:53:26 tekimaki_admin Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -3334,23 +3334,11 @@ class LibertyContent extends LibertyBase {
 	 * @return TRUE on success, FALSE on failure
 	 */
 	function isCommentable() {
-		if( $this->isValid() ){
-			if( $this->getPreference( 'allow_comments' ) == 'y' ) {
-				return TRUE;
-			} else {
-				$setting = $this->getField( 'allow_comments' );
-				return( $setting == TRUE || $setting == 'y' );
-			}
-		}else{
-			/**
-			 * although comments are opt in, return true for new content 
-			 * since all content can potentially support comments
-			 * this simplifies comment services and minimizes overrides 
-			 * in subclasses which more typically allow comments then never
-			 *
-			 * override in subclass if never want to allow comments
-			 **/
+		if( $this->getPreference( 'allow_comments' ) == 'y' ) {
 			return TRUE;
+		} else {
+			$setting = $this->getField( 'allow_comments' );
+			return( $setting == TRUE || $setting == 'y' );
 		}
 	}
 
