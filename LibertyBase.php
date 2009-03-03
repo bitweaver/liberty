@@ -3,7 +3,7 @@
  * Base class for Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.21 2007/07/10 20:01:09 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.22 2009/03/03 20:52:11 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -78,13 +78,27 @@ class LibertyBase extends BitBase {
 			if( !empty( $pContentGuid ) && isset( $gLibertySystem->mContentTypes[$pContentGuid] ) ) {
 				$type = $gLibertySystem->mContentTypes[$pContentGuid];
 				if( $gLibertySystem->requireHandlerFile( $type )) {
-					$ret = new $type['handler_class']( NULL, $pContentId );
-					if( $pLoadContent ) {
-						$ret->load();
-					}
+					$creator = new $type['handler_class']();
+					$ret = $creator->getNewObject( $type['handler_class'], $pContentId, $pLoadContent );
 				}
 			}
 
+		}
+		return $ret;
+	}
+
+	/**
+	 * Simple method to create a given class with a specified content_id. The purpose of a method is to allow for derived classes to override as necessary.
+	 *
+	 * @param string class to be created
+	 * @param integer content_id of the object to be returned
+	 * @param call load on the content. Defaults to true.
+	 * @returns object of the appropriate content type class
+	 */
+	function getNewObject( $pClass, $pContentId, $pLoadContent=TRUE ) {
+		$ret = new $pClass( NULL, $pContentId );
+		if( $ret && $pLoadContent ) {
+			$ret->load();
 		}
 		return $ret;
 	}
