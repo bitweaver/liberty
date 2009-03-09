@@ -1,5 +1,5 @@
 {strip}
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.32 2009/01/03 09:37:44 squareing Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.33 2009/03/09 16:59:01 dansut Exp $ *}
 
 {if $dataplugins}
 	{jstab title="Plugins"}
@@ -57,19 +57,21 @@
 	{/jstab}
 {/if}
 
-{jstab title="Format Help"}
-	<h2>{tr}Syntax and input format help{/tr}</h2>
-	{foreach from=$formatplugins item=p}
-		<h3>{if $p.format_help}<a href="#{$p.plugin_guid}">{/if}{$p.edit_label} Help{if $p.format_help}</a>{/if}</h3>
-		{$p.description} {if $p.help_page}{tr}To view syntax help, please visit {jspopup href="http://www.bitweaver.org/wiki/index.php?page=`$p.help_page`" title=$p.help_page class=external}.{/tr}{/if}
-	{/foreach}
+{if $formatplugins}
+	{jstab title="Format Help"}
+		<h2>{tr}Syntax and input format help{/tr}</h2>
+		{foreach from=$formatplugins item=p}
+			<h3>{if $p.format_help}<a href="#{$p.plugin_guid}">{/if}{$p.edit_label} Help{if $p.format_help}</a>{/if}</h3>
+			{$p.description} {if $p.help_page}{tr}To view syntax help, please visit {jspopup href="http://www.bitweaver.org/wiki/index.php?page=`$p.help_page`" title=$p.help_page class=external}.{/tr}{/if}
+		{/foreach}
 
-	{foreach from=$formatplugins item=p}
-		{if $p.format_help}
-			<a name="{$p.plugin_guid}"></a>
-			<h1>{$p.edit_label} Help</h1>
-			{include file=$p.format_help}
-		{/if}
-	{/foreach}
-{/jstab}
+		{foreach from=$formatplugins item=p}
+			{if $p.format_help}
+				<a name="{$p.plugin_guid}"></a>
+				<h1>{$p.edit_label} Help</h1>
+				{include file=$p.format_help}
+			{/if}
+		{/foreach}
+	{/jstab}
+{/if}
 {/strip}
