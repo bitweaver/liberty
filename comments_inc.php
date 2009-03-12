@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.58 $
+ * @version  $Revision: 1.59 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.58 2009/02/25 23:54:42 spiderr Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.59 2009/03/12 18:44:27 wjames5 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -41,9 +41,11 @@ require_once( LIBERTY_PKG_PATH.'LibertyComment.php' );
 
 global $commentsLib, $gBitSmarty, $gBitSystem;
 
+// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
 if( $gBitSystem->isPackageActive( 'bitboards' )) {
 	require_once(BITBOARDS_PKG_PATH.'BitBoardTopic.php');
 }
+// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
 if( $gBitSystem->isPackageActive( 'tickets' )) {
 	require_once( TICKETS_PKG_PATH.'BitTicket.php' );
 }
@@ -136,6 +138,8 @@ if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 
 		$storeRow['format_guid'] = $_REQUEST['format_guid'];
 	}
 
+	// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
+	// seriously - this stuff right here can go in a verify service stop mucking up this file
 	$ticketValid = TRUE;
 	if( $gBitSystem->isPackageActive( 'tickets' )) {
 		$ticketValid = $gContent->storeOnlyHeader( $_REQUEST['ticket'] );
@@ -145,6 +149,8 @@ if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 
 		}
 	}
 
+	// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
+	// this locked msg check can go in a verify service, no reason for it to be here
 	if( !( $gBitSystem->isPackageActive( 'bitboards' ) && BitBoardTopic::isLockedMsg( $storeRow['parent_id'] ))) {
 		$storeComment->mDb->StartTrans();
 		if( empty( $formfeedback['error'] ) && $ticketValid && $storeComment->storeComment( $storeRow )) {
@@ -158,6 +164,8 @@ if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 
 						.'/----- '.tra('Here is the message')." -----/<br/>\n<br/>\n".'<h2>'.$storeComment->getTitle()."</h2>\n".tra('By').' '.$gBitUser->getDisplayName()."\n<p>".$storeComment->parseData().'</p>';
 				$gSwitchboardSystem->sendEvent('My Content', 'new comment', $gContent->mContentId, $message );
 			}
+			// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
+			// this can go in a store service no reason to have it here
 			if( $gBitSystem->isPackageActive('bitboards') && $gBitSystem->isFeatureActive( 'bitboards_thread_track' )) {
 				$topic_id = substr( $storeComment->mInfo['thread_forward_sequence'], 0, 10 );
 				$data = BitBoardTopic::getNotificationData($topic_id);
@@ -380,6 +388,8 @@ $gBitSmarty->assign( 'comments_sort_mode', $comments_sort_mode );
 $gBitSmarty->assign( 'textarea_id', 'commentpost' );
 $gBitSmarty->assign( 'comments_count', $numComments );
 
+// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
+// this clearly can go in an edit service.
 if( !empty( $_REQUEST['post_comment_request'] )) {
 	if( $gBitSystem->isPackageActive( 'bitboards' )
 		&& (
