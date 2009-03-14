@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.20 2008/11/11 09:28:29 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.bitlinks.php,v 1.21 2009/03/14 06:39:19 squareing Exp $
  * @package  liberty
  */
 
@@ -540,7 +540,7 @@ class BitLinks extends BitBase {
 
 		foreach( array_keys( $oldLinks ) as $to_title ) {
 			if( !isset( $obsoleteLinks[$to_title] )) {
-				$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=? and `to_title` = ?";
+				$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_links` WHERE `from_content_id`=? AND LOWER( `to_title` ) = ?";
 				$result = $gBitSystem->mDb->query( $query, array( $from_content_id, $to_title ));
 			}
 		}
