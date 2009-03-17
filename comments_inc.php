@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.59 $
+ * @version  $Revision: 1.60 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.59 2009/03/12 18:44:27 wjames5 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.60 2009/03/17 20:23:21 wjames5 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
@@ -40,15 +40,6 @@
 require_once( LIBERTY_PKG_PATH.'LibertyComment.php' );
 
 global $commentsLib, $gBitSmarty, $gBitSystem;
-
-// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
-if( $gBitSystem->isPackageActive( 'bitboards' )) {
-	require_once(BITBOARDS_PKG_PATH.'BitBoardTopic.php');
-}
-// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
-if( $gBitSystem->isPackageActive( 'tickets' )) {
-	require_once( TICKETS_PKG_PATH.'BitTicket.php' );
-}
 
 $postComment = array();
 $formfeedback = array( 'error' => array() );
@@ -102,7 +93,7 @@ $gBitSmarty->assign('post_comment_id', $post_comment_id);
 
 // Store comment posts
 if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE )) {
-	$storeRow = array();
+
 	// check for !anon_post before logging in (auto-fill can hork things up)
 	if( empty( $_REQUEST['anon_post'] ) && !empty( $_REQUEST['login_email'] ) && !empty( $_REQUEST['login_password'] ) ) {
 		$gBitUser->login( $_REQUEST['login_email'], $_REQUEST['login_password'] );
@@ -110,87 +101,42 @@ if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 
 			$formfeedback['error'][] = $gBitUser->mErrors['login']; 
 		}
 	} else {
-		if( !empty( $_REQUEST['captcha'] )) {
-			$storeRow['captcha'] = $_REQUEST['captcha'];
-		}
 		if( !empty($_REQUEST['comment_name'] )) {
-			$storeRow['anon_name'] = $_REQUEST['comment_name'];
+			$_REQUEST['anon_name'] = $_REQUEST['comment_name'];
 		}
 	}
+	
+	// this commentsParentId is some crazy ass business - lets prepare for the day when this can be removed
+	// there are references to it in LibertyComments::verifyComments as well
+	$_REQUEST['comments_parent_id'] = $commentsParentId;
 
 	$storeComment = new LibertyComment( @BitBase::verifyId( $editComment->mCommentId ) ? $editComment->mCommentId : NULL );
-	$storeRow['title'] = $_REQUEST['comment_title'];
-	$storeRow['edit'] = $_REQUEST['comment_data'];
 
-	if( empty( $_REQUEST['post_comment_id'] ) && $gBitSystem->isPackageActive( 'bitboards' )) {
-		$content_type = $gBitUser->getPreference( 'signature_content_type' );
-		$content_data = $gBitUser->getPreference( 'signature_content_data' );
-		if( !empty( $content_type ) && !empty( $content_data )) {
-			$storeRow['edit'] .= "\n{renderer format_guid=$content_type class=mb-signature}$content_data{/renderer}";
+	if( empty( $formfeedback['error'] ) && $storeComment->storeComment( $_REQUEST )) {
+		// store successful
+		$storeComment->loadComment();
+		if( empty( $_REQUEST['post_comment_id'] ) && $gBitSystem->isPackageActive( 'switchboard' ) ) {
+			// A new comment, and we have switchboard to send notifications
+			global $gSwitchboardSystem;
+			// Draft the message:
+			$message['subject'] = tra( 'New comment on:' ).' '.$gContent->getTitle().' @ '.$gBitSystem->getConfig( 'site_title' );
+			$message['message'] = tra('A new message was posted to ').' '.$gContent->getTitle()."<br/>\n".$gContent->getDisplayUri()."<br/>\n"
+					.'/----- '.tra('Here is the message')." -----/<br/>\n<br/>\n".'<h2>'.$storeComment->getTitle()."</h2>\n".tra('By').' '.$gBitUser->getDisplayName()."\n<p>".$storeComment->parseData().'</p>';
+			$gSwitchboardSystem->sendEvent('My Content', 'new comment', $gContent->mContentId, $message );
 		}
-	}
-
-	$storeRow['root_id'] = $commentsParentId;
-	$storeRow['parent_id'] = (@BitBase::verifyId($storeComment->mInfo['parent_id']) ? $storeComment->mInfo['parent_id'] : (!@BitBase::verifyId($_REQUEST['post_comment_reply_id']) ? $commentsParentId : $_REQUEST['post_comment_reply_id']));
-	$storeRow['content_id'] = (@BitBase::verifyId($storeComment->mContentId) ? $storeComment->mContentId : NULL);
-
-	if( !empty( $_REQUEST['format_guid'] )) {
-		$storeRow['format_guid'] = $_REQUEST['format_guid'];
-	}
-
-	// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
-	// seriously - this stuff right here can go in a verify service stop mucking up this file
-	$ticketValid = TRUE;
-	if( $gBitSystem->isPackageActive( 'tickets' )) {
-		$ticketValid = $gContent->storeOnlyHeader( $_REQUEST['ticket'] );
-		if( $ticketValid ) {
-			$gContent->loadTicketHistory();
-			$storeRow['edit'] = "{history id=".$_REQUEST['ticket']['historyIds'][0]."} ".$storeRow['edit'];
-		}
-	}
-
-	// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
-	// this locked msg check can go in a verify service, no reason for it to be here
-	if( !( $gBitSystem->isPackageActive( 'bitboards' ) && BitBoardTopic::isLockedMsg( $storeRow['parent_id'] ))) {
-		$storeComment->mDb->StartTrans();
-		if( empty( $formfeedback['error'] ) && $ticketValid && $storeComment->storeComment( $storeRow )) {
-			$storeComment->loadComment();
-			if( empty( $_REQUEST['post_comment_id'] ) && $gBitSystem->isPackageActive( 'switchboard' ) ) {
-				// A new comment, and we have switchboard to send notifications
-				global $gSwitchboardSystem;
-				// Draft the message:
-				$message['subject'] = tra( 'New comment on:' ).' '.$gContent->getTitle().' @ '.$gBitSystem->getConfig( 'site_title' );
-				$message['message'] = tra('A new message was posted to ').' '.$gContent->getTitle()."<br/>\n".$gContent->getDisplayUri()."<br/>\n"
-						.'/----- '.tra('Here is the message')." -----/<br/>\n<br/>\n".'<h2>'.$storeComment->getTitle()."</h2>\n".tra('By').' '.$gBitUser->getDisplayName()."\n<p>".$storeComment->parseData().'</p>';
-				$gSwitchboardSystem->sendEvent('My Content', 'new comment', $gContent->mContentId, $message );
-			}
-			// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
-			// this can go in a store service no reason to have it here
-			if( $gBitSystem->isPackageActive('bitboards') && $gBitSystem->isFeatureActive( 'bitboards_thread_track' )) {
-				$topic_id = substr( $storeComment->mInfo['thread_forward_sequence'], 0, 10 );
-				$data = BitBoardTopic::getNotificationData($topic_id);
-				foreach( $data['users'] as $login => $user ) {
-					if( $data['topic']->mInfo['llc_last_modified'] > $user['track_date'] && $data['topic']->mInfo['llc_last_modified'] > $user['track_notify_date'] ) {
-						$data['topic']->sendNotification( $user );
-					}
-				}
-			}
-			$postComment = NULL;
-		} else {
-			$formfeedback['error']=array_merge( $formfeedback['error'], $storeComment->mErrors );
-			$postComment['data'] = $_REQUEST['comment_data'];
-			$postComment['title'] = $_REQUEST['comment_title'];
-			if( !empty( $_REQUEST['comment_name'] ) ) {
-				$postComment['anon_name'] = $_REQUEST['comment_name'];
-			}
-
-			$_REQUEST['post_comment_request'] = TRUE;
-			//this is critical and triggers other settings if store fails - do not remove without looking at what preview effects
-			$_REQUEST['post_comment_preview'] = TRUE;
-		}
-		$storeComment->mDb->CompleteTrans();
+		$postComment = NULL;
 	} else {
-		$formfeedback['warning']="The selected Topic is Locked posting is disabled";
+		// store fails handle errors and preview
+		$formfeedback['error']=array_merge( $formfeedback['error'], $storeComment->mErrors );
+		$postComment['data'] = $_REQUEST['comment_data'];
+		$postComment['title'] = $_REQUEST['comment_title'];
+		if( !empty( $_REQUEST['comment_name'] ) ) {
+			$postComment['anon_name'] = $_REQUEST['comment_name'];
+		}
+
+		$_REQUEST['post_comment_request'] = TRUE;
+		//this is critical and triggers other settings if store fails - do not remove without looking at what preview effects
+		$_REQUEST['post_comment_preview'] = TRUE;
 	}
 } elseif(!empty($_REQUEST['post_comment_request']) && !$gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE )) {
 	$formfeedback['warning']="You don't have permission to post comments.";
@@ -201,6 +147,10 @@ if( empty( $_REQUEST['post_comment_request'] ) && !$gBitSystem->isFeatureActive(
 	$post_comment_request = NULL;
 } elseif( $gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE ) ) {
 	$post_comment_request = TRUE;
+	// force off ajax attachments which does not work for comments attachments
+	if( $gBitSystem->isFeatureActive( 'comments_allow_attachments' ) && $gBitSystem->getConfig( 'liberty_attachment_style') == 'ajax' ){
+		$gBitSystem->setConfig( 'liberty_attachment_style', 'standard' );
+	}
 }
 
 if( !empty( $_REQUEST['post_comment_request'] ) && $_REQUEST['post_comment_request'] == 'y' && !$gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE ) ) {
@@ -389,9 +339,14 @@ $gBitSmarty->assign( 'textarea_id', 'commentpost' );
 $gBitSmarty->assign( 'comments_count', $numComments );
 
 // @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
-// this clearly can go in an edit service.
+if( $gBitSystem->isPackageActive( 'boards' )) {
+	require_once(BOARDS_PKG_PATH.'BitBoardTopic.php');
+}
+
+// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
+// this clearly can go in an edit service, but need to be careful since comments currently does not call edit service - have to check what doing so might trigger.
 if( !empty( $_REQUEST['post_comment_request'] )) {
-	if( $gBitSystem->isPackageActive( 'bitboards' )
+	if( $gBitSystem->isPackageActive( 'boards' )
 		&& (
 			BitBoardTopic::isLockedMsg( @BitBase::verifyId( $storeComment->mInfo['parent_id'] )
 			? $storeComment->mInfo['parent_id'] : ( !@BitBase::verifyId( $_REQUEST['post_comment_reply_id'] )

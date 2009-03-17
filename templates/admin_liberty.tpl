@@ -28,6 +28,16 @@
 						{formhelp note=""}
 					{/forminput}
 				</div>
+
+				{foreach from=$attachmentOptions key=item item=output}
+				<div class="row">
+					{formlabel label=`$output.label` for=$item}
+					{forminput}
+						{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
+						{formhelp note=`$output.note` page=`$output.page`}
+					{/forminput}
+				</div>
+				{/foreach}
 			{/legend}
 
 			{legend legend="Miscellaneous"}

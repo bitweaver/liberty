@@ -3,14 +3,15 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.76 2009/02/06 20:04:40 tekimaki_admin Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.77 2009/03/17 20:23:21 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
 /**
  * required setup
  */
-require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
+require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
+require_once( LIBERTY_PKG_PATH.'LibertyMime.php');
 
 define( 'BITCOMMENT_CONTENT_TYPE_GUID', 'bitcomment' );
 
@@ -20,11 +21,11 @@ define( 'BITCOMMENT_CONTENT_TYPE_GUID', 'bitcomment' );
  *
  * @package kernel
  */
-class LibertyComment extends LibertyContent {
+class LibertyComment extends LibertyMime {
 	var $mCommentId;
 
 	function LibertyComment($pCommentId = NULL, $pContentId = NULL, $pInfo = NULL) {
-		LibertyContent::LibertyContent();
+		LibertyMime::LibertyMime();
 		$this->registerContentType( BITCOMMENT_CONTENT_TYPE_GUID, array(
 				'content_type_guid' => BITCOMMENT_CONTENT_TYPE_GUID,
 				'content_description' => 'Comment',
@@ -78,12 +79,26 @@ class LibertyComment extends LibertyContent {
 	function verifyComment(&$pParamHash) {
 		global $gBitUser, $gBitSystem;
 
-		if (!$pParamHash['parent_id']) {
-			$this->mErrors['parent_id'] = "Missing parent id for comment";
+		/* should be unnecessary
+		if( !empty( $_REQUEST['format_guid'] )) {
+			$storeRow['format_guid'] = $_REQUEST['format_guid'];
+		}
+		*/
+
+		$pParamHash['content_id'] = (@BitBase::verifyId($this->mContentId) ? $this->mContentId : NULL);
+
+		if( !empty( $pParamHash['comments_parent_id'] ) ) {
+			 $pParamHash['root_id'] = $pParamHash['comments_parent_id'];
 		}
 
 		if (!$pParamHash['root_id']) {
 			$this->mErrors['root_id'] = "Missing root id for comment";
+		}
+ 
+		$pParamHash['parent_id'] = (@BitBase::verifyId($this->mInfo['parent_id']) ? $this->mInfo['parent_id'] : (!@BitBase::verifyId($pParamHash['post_comment_reply_id']) ? $pParamHash['comments_parent_id'] : $pParamHash['post_comment_reply_id']));
+
+		if (!$pParamHash['parent_id']) {
+			$this->mErrors['parent_id'] = "Missing parent id for comment";
 		}
 
 		if (empty($pParamHash['anon_name'])) {
@@ -92,6 +107,14 @@ class LibertyComment extends LibertyContent {
 
 		if( !@$gBitUser->verifyCaptcha( $pParamHash['captcha'] ) ) {
 			$this->mErrors['store'] = tra( 'Incorrect validation code' );
+		}
+
+		if( !empty( $pParamHash['comment_title'] ) ){
+			$pParamHash['title'] = $pParamHash['comment_title'];
+		}
+		
+		if( !empty( $pParamHash['comment_data'] ) ){
+			$pParamHash['edit'] = $pParamHash['comment_data'];
 		}
 
 		if( empty( $pParamHash['edit'] ) ) {
@@ -106,13 +129,26 @@ class LibertyComment extends LibertyContent {
 				}
 			}
 		}
+
+		// verify attachments are allowed on comments
+		if( ( isset( $pParamHash['_files_override'] ) || !empty( $_FILES ) ) && !$gBitSystem->isFeatureActive( 'comments_allow_attachments' ) ) {
+			$this->mErrors['comment_attachments'] = tra( 'Files can not be uploaded with comments.' );
+		}
+
+        // if we have an error we get them all by checking parent classes for additional errors
+        if( count( $this->mErrors ) > 0 ){
+            parent::verify( $pParamHash );
+        }
+
 		return (count($this->mErrors) == 0);
 	}
 
 	function storeComment( &$pParamHash ) {
 		$pParamHash['content_type_guid'] = BITCOMMENT_CONTENT_TYPE_GUID;
+
+		$this->mDb->StartTrans();
 		if (!$this->mCommentId) {
-			if( $this->verifyComment($pParamHash) && LibertyContent::store( $pParamHash ) ) {
+			if( $this->verifyComment($pParamHash) && LibertyMime::store( $pParamHash ) ) {
 				$this->mCommentId = $this->mDb->GenID( 'liberty_comment_id_seq');
 
 
@@ -145,7 +181,7 @@ class LibertyComment extends LibertyContent {
 				$this->mContentId = $pParamHash['content_id'];
 			}
 		} else {
-			if( $this->verifyComment($pParamHash) && LibertyContent::store($pParamHash) ) {
+			if( $this->verifyComment($pParamHash) && LibertyMime::store($pParamHash) ) {
 				$sql = "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `parent_id` = ?, `content_id`= ? WHERE `comment_id` = ?";
 				$this->mDb->query($sql, array($pParamHash['parent_id'], $pParamHash['content_id'], $this->mCommentId));
 				$this->mInfo['parent_id'] = $pParamHash['parent_id'];
@@ -155,6 +191,8 @@ class LibertyComment extends LibertyContent {
 		}
 
 		$this->invokeServices( 'comment_store_function', $pParamHash );
+
+		$this->mDb->CompleteTrans();
 
 		return (count($this->mErrors) == 0);
 	}
@@ -601,6 +639,28 @@ class LibertyComment extends LibertyContent {
 					$c->mInfo=$row;
 					$c->mRootObj = $this->getRootObj();
 					$row['editable'] = $c->userCanEdit();
+
+					global $gBitSystem;
+					if( $gBitSystem->isFeatureActive( 'comments_allow_attachments' ) ){
+						// get attachments for each comment
+						global $gLibertySystem;
+						$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` la WHERE la.`content_id`=? ORDER BY la.`pos` ASC, la.`attachment_id` ASC";
+						if( $result2 = $this->mDb->query( $query,array( (int)$row['content_id'] ))) {
+							while( $row2 = $result2->fetchRow() ) {
+								if( $func = $gLibertySystem->getPluginFunction( $row2['attachment_plugin_guid'], 'load_function', 'mime' )) {
+									// we will pass the preferences by reference that the plugin can easily update them
+									if( empty( $row['storage'][$row2['attachment_id']] )) {
+										$row['storage'][$row2['attachment_id']] = array();
+									}
+									$row['storage'][$row2['attachment_id']] = $func( $row2, $row['storage'][$row2['attachment_id']] );
+								} else {
+									print "No load_function for ".$row2['attachment_plugin_guid'];
+								}
+							}
+						}
+						// end get attachements for each comment
+					}
+
 					$flat_comments[$row['content_id']] = $row;
 				}
 			}

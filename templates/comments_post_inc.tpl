@@ -8,7 +8,7 @@
 		</div><!-- end .preview -->
 	{/if}
 
-		{form action="`$comments_return_url`#editcomments" id="editcomment-form"}
+		{form enctype="multipart/form-data" action="`$comments_return_url`#editcomments" id="editcomment-form"}
 		{formfeedback hash=$formfeedback}
 		
 		
@@ -65,6 +65,17 @@
 				{/if}
 
 				{textarea id="commentpost" name="comment_data" rows=$gBitSystem->getConfig('comments_default_post_lines', 6)}{$postComment.data}{/textarea}
+
+				{* @TODO perm check more accurately should be on root content object *}
+				{if $gBitSystem->isFeatureActive( 'comments_allow_attachments' ) && $gBitUser->hasPermission('p_liberty_attach_attachments') }
+					{* @TODO make edit_storage_list.tpl work with comments attachments - it is nested in edit_storage.tpl - for now bypass it, remove mime code when edit_storage.tpl can be used directly*}
+					{* include file="bitpackage:liberty/edit_storage.tpl" *}
+					{if $gLibertySystem->isPluginActive( $smarty.const.LIBERTY_DEFAULT_MIME_HANDLER )}
+						{foreach from=$gLibertySystem->getAllMimeTemplates('upload') item=tpl}
+							{include file=$tpl}
+						{/foreach}
+					{/if}
+				{/if}
 
 				<div class="row submit"> 
 					<input type="submit" name="post_comment_preview" value="{tr}Preview{/tr}" {if $comments_ajax}onclick="LibertyComment.previewComment(); return false;"{/if}/>&nbsp;

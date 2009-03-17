@@ -61,6 +61,13 @@ $attachmentStyleOptions = array(
 );
 $gBitSmarty->assign( 'attachmentStyleOptions', $attachmentStyleOptions );
 
+$attachmentOptions = array(
+	'comments_allow_attachments' => array(
+		'label'  => 'Allow Attachments to Comments',
+		'note' => 'Allow users with permission to upload file attachments to add them to comments. This is a new feature and can conflict with ajax attachments and ajax comments.',
+	),
+);
+$gBitSmarty->assign( 'attachmentOptions', $attachmentOptions );
 
 $imageProcessors = array(
 	'gd' => array(
@@ -161,7 +168,7 @@ $gBitSmarty->assign( 'imageSizes', get_image_size_options() );
 $formValues = array( 'image_processor', 'liberty_attachment_link_format', 'comments_per_page', 'comments_default_ordering', 'comments_default_display_mode' );
 
 if( !empty( $_REQUEST['change_prefs'] )) {
-	$formFeatures = array_merge( $formLibertyFeatures, $formImageFeatures, $formCaptcha );
+	$formFeatures = array_merge( $formLibertyFeatures, $formImageFeatures, $formCaptcha, $attachmentOptions );
 	foreach( $formFeatures as $item => $data ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
 	}
