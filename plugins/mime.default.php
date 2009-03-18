@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.45 2008/12/26 08:54:19 squareing Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.46 2009/03/18 20:17:26 spiderr Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.45 $
+ * @version     $Revision: 1.46 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -341,7 +341,7 @@ if( !function_exists( 'mime_default_download' )) {
 				header( "Accept-Ranges: bytes" );
 				header( "Pragma: public" );
 				header( "Last-Modified: ".gmdate( "D, d M Y H:i:s", $pFileHash['last_modified'] )." GMT", TRUE, 200 );
-				header( "Content-Disposition: attachment; filename=".$pFileHash['filename'] );
+				header( 'Content-Disposition: attachment; filename="'.$pFileHash['filename'].'"' );
 				header( "Content-type: ".$pFileHash['mime_type'] );
 				header( "Content-Description: File Transfer" );
 				header( "Content-Length: ".filesize( $pFileHash['source_file'] ));
