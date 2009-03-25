@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.78 2009/03/25 12:11:08 tekimaki_admin Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.79 2009/03/25 12:27:20 tekimaki_admin Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -95,7 +95,7 @@ class LibertyComment extends LibertyMime {
 			$this->mErrors['root_id'] = "Missing root id for comment";
 		}
  
-		if( empty( $pParamHash['parent_id'] ){
+		if( empty( $pParamHash['parent_id'] ) ){
 			$pParamHash['parent_id'] = (@BitBase::verifyId($this->mInfo['parent_id']) ? $this->mInfo['parent_id'] : (!@BitBase::verifyId($pParamHash['post_comment_reply_id']) ? $pParamHash['comments_parent_id'] : $pParamHash['post_comment_reply_id']));
 		}
 
