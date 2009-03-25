@@ -66,7 +66,7 @@ $tables = array(
 	format_guid C(16) NOTNULL,
 	summary XL,
 	user_id I4 NOTNULL,
-	ip C(15),
+	ip C(39),
 	history_comment C(200),
 	data XL
 	CONSTRAINT ', CONSTRAINT `liberty_history_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
@@ -77,7 +77,7 @@ $tables = array(
 	user_id I4 NOTNULL,
 	last_modified I8 NOTNULL,
 	title C(160),
-	ip C(15),
+	ip C(39),
 	log_message C(250) NOTNULL DEFAULT '',
 	error_message C(250) NOTNULL DEFAULT ''
 ",
