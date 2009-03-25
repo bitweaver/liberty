@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.3.php,v 1.1 2009/03/25 02:32:49 spiderr Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.3.php,v 1.2 2009/03/25 08:28:11 squareing Exp $
  */
 global $gBitInstaller;
 
@@ -20,20 +20,20 @@ $gBitInstaller->registerPackageUpgrade( $infoHash, array(
 array( 'QUERY' =>
 	// postgres > 8.2 needs to have the type cast
 	array(
-		'PGSQL' => array(	"ALTER TABLE `".BIT_DB_PREFIX."users_cnxn ALTER `ip` TYPE VARCHAR(39)" ,
-							"ALTER TABLE `".BIT_DB_PREFIX."liberty_content ALTER `ip` TYPE VARCHAR(39)", 
-							"ALTER TABLE `".BIT_DB_PREFIX."liberty_content_history` ALTER `ip` TYPE VARCHAR(39)",
-							"ALTER TABLE `".BIT_DB_PREFIX."liberty_action_log` ALTER `ip` TYPE VARCHAR(39)",
+		'PGSQL' => array(
+			"ALTER TABLE `".BIT_DB_PREFIX."liberty_content` ALTER `ip` TYPE VARCHAR(39)",
+			"ALTER TABLE `".BIT_DB_PREFIX."liberty_content_history` ALTER `ip` TYPE VARCHAR(39)",
+			"ALTER TABLE `".BIT_DB_PREFIX."liberty_action_log` ALTER `ip` TYPE VARCHAR(39)",
 		),
-		'OCI' => array(	"ALTER TABLE `".BIT_DB_PREFIX."users_cnxn MODIFY (`ip` TYPE VARCHAR2(39))" ,
-							"ALTER TABLE `".BIT_DB_PREFIX."liberty_content MODIFY (`ip` TYPE VARCHAR2(39))", 
-							"ALTER TABLE `".BIT_DB_PREFIX."liberty_content_history` MODIFY (`ip` TYPE VARCHAR2(39))",
-							"ALTER TABLE `".BIT_DB_PREFIX."liberty_action_log` MODIFY (`ip` TYPE VARCHAR2(39))",
+		'OCI' => array(
+			"ALTER TABLE `".BIT_DB_PREFIX."liberty_content MODIFY (`ip` TYPE VARCHAR2(39))",
+			"ALTER TABLE `".BIT_DB_PREFIX."liberty_content_history` MODIFY (`ip` TYPE VARCHAR2(39))",
+			"ALTER TABLE `".BIT_DB_PREFIX."liberty_action_log` MODIFY (`ip` TYPE VARCHAR2(39))",
 		),
-		'MYSQL' => array(	"ALTER TABLE `".BIT_DB_PREFIX."users_cnxn MODIFY `ip` TYPE VARCHAR(39)" ,
-							"ALTER TABLE `".BIT_DB_PREFIX."liberty_content MODIFY `ip` TYPE VARCHAR(39)", 
-							"ALTER TABLE `".BIT_DB_PREFIX."liberty_content_history` MODIFY `ip` TYPE VARCHAR(39)",
-							"ALTER TABLE `".BIT_DB_PREFIX."liberty_action_log` MODIFY `ip` TYPE VARCHAR(39)",
+		'MYSQL' => array(
+			"ALTER TABLE `".BIT_DB_PREFIX."liberty_content MODIFY `ip` TYPE VARCHAR(39)",
+			"ALTER TABLE `".BIT_DB_PREFIX."liberty_content_history` MODIFY `ip` TYPE VARCHAR(39)",
+			"ALTER TABLE `".BIT_DB_PREFIX."liberty_action_log` MODIFY `ip` TYPE VARCHAR(39)",
 		),
 	),
 ),
