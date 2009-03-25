@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.46 2009/03/18 20:17:26 spiderr Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.47 2009/03/25 23:38:21 tekimaki_admin Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.46 $
+ * @version     $Revision: 1.47 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -245,7 +245,7 @@ if( !function_exists( 'mime_default_load' )) {
 				// this will fetch the correct thumbnails
 				$thumbHash['storage_path'] = $row['storage_path'];
 				$canThumbFunc = liberty_get_function( 'can_thumbnail' );
-				if( $canThumbFunc( $row['mime_type'] )) {
+				if( $canThumbFunc && $canThumbFunc( $row['mime_type'] )) {
 					$thumbHash['default_image'] = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
 				}
 				$ret['thumbnail_url'] = liberty_fetch_thumbnails( $thumbHash );
