@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.77 2009/03/17 20:23:21 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.78 2009/03/25 12:11:08 tekimaki_admin Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -87,7 +87,7 @@ class LibertyComment extends LibertyMime {
 
 		$pParamHash['content_id'] = (@BitBase::verifyId($this->mContentId) ? $this->mContentId : NULL);
 
-		if( !empty( $pParamHash['comments_parent_id'] ) ) {
+		if( empty( $pParamHash['root_id'] ) && !empty( $pParamHash['comments_parent_id'] ) ) {
 			 $pParamHash['root_id'] = $pParamHash['comments_parent_id'];
 		}
 
@@ -95,7 +95,9 @@ class LibertyComment extends LibertyMime {
 			$this->mErrors['root_id'] = "Missing root id for comment";
 		}
  
-		$pParamHash['parent_id'] = (@BitBase::verifyId($this->mInfo['parent_id']) ? $this->mInfo['parent_id'] : (!@BitBase::verifyId($pParamHash['post_comment_reply_id']) ? $pParamHash['comments_parent_id'] : $pParamHash['post_comment_reply_id']));
+		if( empty( $pParamHash['parent_id'] ){
+			$pParamHash['parent_id'] = (@BitBase::verifyId($this->mInfo['parent_id']) ? $this->mInfo['parent_id'] : (!@BitBase::verifyId($pParamHash['post_comment_reply_id']) ? $pParamHash['comments_parent_id'] : $pParamHash['post_comment_reply_id']));
+		}
 
 		if (!$pParamHash['parent_id']) {
 			$this->mErrors['parent_id'] = "Missing parent id for comment";
