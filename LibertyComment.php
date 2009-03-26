@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.79 2009/03/25 12:27:20 tekimaki_admin Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.80 2009/03/26 20:20:07 tekimaki_admin Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -149,10 +149,9 @@ class LibertyComment extends LibertyMime {
 		$pParamHash['content_type_guid'] = BITCOMMENT_CONTENT_TYPE_GUID;
 
 		$this->mDb->StartTrans();
-		if (!$this->mCommentId) {
-			if( $this->verifyComment($pParamHash) && LibertyMime::store( $pParamHash ) ) {
+		if( $this->verifyComment($pParamHash) && LibertyMime::store( $pParamHash ) ) {
+			if (!$this->mCommentId) {
 				$this->mCommentId = $this->mDb->GenID( 'liberty_comment_id_seq');
-
 
 				if (!empty($pParamHash['parent_id'])) {
 					$parentComment = new LibertyComment(NULL,$pParamHash['parent_id']);
@@ -181,20 +180,17 @@ class LibertyComment extends LibertyMime {
 				$this->mInfo['content_id'] = $pParamHash['content_id'];
 				$this->mInfo['root_id'] = $pParamHash['root_id'];
 				$this->mContentId = $pParamHash['content_id'];
-			}
-		} else {
-			if( $this->verifyComment($pParamHash) && LibertyMime::store($pParamHash) ) {
+			} else {
 				$sql = "UPDATE `".BIT_DB_PREFIX."liberty_comments` SET `parent_id` = ?, `content_id`= ? WHERE `comment_id` = ?";
 				$this->mDb->query($sql, array($pParamHash['parent_id'], $pParamHash['content_id'], $this->mCommentId));
 				$this->mInfo['parent_id'] = $pParamHash['parent_id'];
 				$this->mInfo['content_id'] = $pParamHash['content_id'];
 				$this->mContentId = $pParamHash['content_id'];
 			}
+			$this->invokeServices( 'comment_store_function', $pParamHash );
+
+			$this->mDb->CompleteTrans();
 		}
-
-		$this->invokeServices( 'comment_store_function', $pParamHash );
-
-		$this->mDb->CompleteTrans();
 
 		return (count($this->mErrors) == 0);
 	}
