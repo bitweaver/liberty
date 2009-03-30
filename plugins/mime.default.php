@@ -1,9 +1,9 @@
 <?php
 /**
- * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.47 2009/03/25 23:38:21 tekimaki_admin Exp $
+ * @version     $Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.default.php,v 1.48 2009/03/30 03:26:08 spiderr Exp $
  *
  * @author      xing  <xing@synapse.plus.com>
- * @version     $Revision: 1.47 $
+ * @version     $Revision: 1.48 $
  * created      Thursday May 08, 2008
  * @package     liberty
  * @subpackage  liberty_mime_handler
@@ -112,7 +112,7 @@ if( !function_exists( 'mime_default_verify' )) {
 
 			// Store all uploaded files in the users storage area
 			if( empty( $pStoreRow['upload']['dest_path'] )) {
-				$pStoreRow['upload']['dest_path'] = LibertyMime::getStorageBranch( $pStoreRow['attachment_id'], $pStoreRow['user_id'], LibertyMime::getStorageSubDirName( $pStoreRow['upload'] ));
+				$pStoreRow['upload']['dest_path'] = $pStoreRow['this']->getStorageBranch( $pStoreRow['attachment_id'], $pStoreRow['user_id'], $pStoreRow['this']->getStorageSubDirName( $pStoreRow['upload'] ));
 			}
 
 			$ret = TRUE;

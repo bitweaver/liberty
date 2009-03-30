@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.43 2009/02/22 11:30:22 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.44 2009/03/30 03:26:08 spiderr Exp $
  */
 
 /**
@@ -176,6 +176,8 @@ class LibertyMime extends LibertyAttachable {
 	function pluginStore( &$pStoreHash, $pGuid, $pUpdate = FALSE ) {
 		global $gLibertySystem;
 		if( !empty( $pStoreHash ) && $verify_function = $gLibertySystem->getPluginFunction( $pGuid, 'verify_function' )) {
+			// pass along a pointer to the content object
+			$pStoreHash['this'] = &$this;
 			// verify the uploaded file using the plugin
 			if( $verify_function( $pStoreHash )) {
 				if( $process_function = $gLibertySystem->getPluginFunction( $pGuid, (( $pUpdate ) ? 'update_function' : 'store_function' ))) {
