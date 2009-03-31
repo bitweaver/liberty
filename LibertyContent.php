@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.396 2009/02/27 17:53:26 tekimaki_admin Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.397 2009/03/31 06:35:40 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2982,7 +2982,7 @@ class LibertyContent extends LibertyBase {
 	 * @param array $pHash
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
-	 * @NOTE:
+	 * @todo
 	 * - i think this function is not being used and will hopefully be removed soon - xing - Saturday Jul 07, 2007   19:54:02 CEST
 	 * - it is called in getContentList but I think that services can do what it does now - nick - Sunday Sep 30, 2007
 	 */
