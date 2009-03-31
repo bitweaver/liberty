@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.33 $
+ * @version  $Revision: 1.34 $
  * @package  liberty
  * @subpackage functions
  */
@@ -59,7 +59,7 @@ if( !empty( $_REQUEST['output'] )) {
 		$gBitSmarty->display( 'bitpackage:liberty/list_content_json.tpl' );
 		break;
 	case 'ajax':
-		/* @TODO: the results structure of this are limited and 
+		/* @TODO the results structure of this are limited and 
 		 * seem specific to some package use. It also requires 
 		 * an extra value 'id' which also seems very specific. 
 		 * Recommend that this be standardized, but 

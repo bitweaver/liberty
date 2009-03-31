@@ -1,10 +1,13 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage plugins_data
  */
 
+/**
+ * definitions
+ */
 global $gLibertySystem;
 define( 'PLUGIN_GUID_DATACOMMENT', 'datacomment' );
 global $gLibertySystem;
