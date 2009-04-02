@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.397 2009/03/31 06:35:40 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.398 2009/04/02 16:53:27 tekimaki_admin Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2287,12 +2287,22 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 
+		// join on specific content_type_guids
 		if( !empty( $pListHash['content_type_guid'] ) && is_string( $pListHash['content_type_guid'] ) ) {
 			$whereSql .= ' AND lc.`content_type_guid`=? ';
 			$bindVars[] = $pListHash['content_type_guid'];
 		} elseif( !empty( $pListHash['content_type_guid'] ) && is_array( $pListHash['content_type_guid'] ) ) {
 			$whereSql .= " AND lc.`content_type_guid` IN ( ".implode( ',',array_fill ( 0, count( $pListHash['content_type_guid'] ),'?' ) )." )";
 			$bindVars = array_merge( $bindVars, $pListHash['content_type_guid'] );
+		}
+
+		// exclude by content_type_guids
+		if( !empty( $pListHash['exclude_content_type_guid'] ) && is_string( $pListHash['exclude_content_type_guid'] ) ) {
+			$whereSql .= " AND lc.`content_type_guid` != ?";
+			$bindVars[] = $pListHash['exclude_content_type_guid'];
+		} elseif( !empty( $pListHash['exclude_content_type_guid'] ) && is_array( $pListHash['exclude_content_type_guid'] ) ) {
+			$whereSql .= " AND lc.`content_type_guid` NOT IN ( ".implode( ',',array_fill ( 0, count( $pListHash['exclude_content_type_guid'] ),'?' ) )." )";
+			$bindVars = array_merge( $bindVars, $pListHash['exclude_content_type_guid'] );
 		}
 
 		// only display content modified more recently than this (UTC timestamp)
