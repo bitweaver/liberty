@@ -47,6 +47,9 @@ var structureAddResult = function (response) {
 			</div>
 		{/if}
 
+		{minifind}
+		
+		{* disable until it can be sorted }
 		<div class="row">
 			{formlabel label="Search" for="lib-content"}
 			{forminput}
@@ -56,6 +59,7 @@ var structureAddResult = function (response) {
 				{formhelp note=""}
 			{/forminput}
 		</div>
+		{ *}
 
 		<div class="row">
 			{formlabel label="Content type" for="content_type_guid"}
