@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -16,7 +16,7 @@
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
 // | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.module.php,v 1.14 2008/11/09 09:08:55 squareing Exp $
+// $Id: data.module.php,v 1.15 2009/04/07 15:35:31 spiderr Exp $
 
 /**
  * definitions
@@ -33,7 +33,7 @@ $pluginParams = array (
 	'help_page'     => 'DataPluginModule',
 	'description'   => tra("Display a module block in content"),
 	'help_function' => 'datamodule_help',
-	'syntax'        => '{module module= align="right"}',
+	'syntax'        => "{module module= align='right'}",
 	'plugin_type'   => DATA_PLUGIN
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAMODULE, $pluginParams );
