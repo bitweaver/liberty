@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.398 2009/04/02 16:53:27 tekimaki_admin Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.399 2009/04/07 12:38:16 lsces Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2452,7 +2452,7 @@ class LibertyContent extends LibertyBase {
 
 					if( !empty( $pListHash['thumbnail_size'] ) ) {
 						$aux['content_object'] = new $type['handler_class']( NULL, $aux['content_id'] );
-						if( $aux['content_object']->load() ) {
+						if( $aux['content_object']->load( FALSE ) ) {
 							$aux['thumbnail_url'] = $aux['content_object']->getThumbnailUrl( $pListHash['thumbnail_size'] );
 						}
 					}
