@@ -16,6 +16,6 @@
 	{if $gBitSystem->isPackageActive( 'hotwords' ) }
 		<li><a class="item" href="{$smarty.const.HOTWORDS_PKG_URL}admin/index.php">{tr}Hotwords{/tr}</a></li>
 	{/if}
-	<li><a class="item" href="{$smarty.const.BIT_ROOT_URL}liberty/list_content.php">List all content</a></li>
+	<li><a class="item" href="{$smarty.const.BIT_ROOT_URL}liberty/list_content.php">{tr}List All Content{/tr}</a></li>
 </ul>
 {/strip}
