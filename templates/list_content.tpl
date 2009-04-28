@@ -10,6 +10,9 @@
 			{/foreach}
 			&nbsp;{tr}Listing{/tr}
 		</h1>
+		{if $smarty.request.user_id}
+			{tr}User{/tr}: {displayname user_id=$smarty.request.user_id}
+		{/if}
 	</div>
 
 	<div class="body">
