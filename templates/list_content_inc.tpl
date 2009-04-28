@@ -1,6 +1,7 @@
 {strip}
-{form legend="Select Content Type"}
-	<input type="hidden" name="user_id" value="{$user_id}" />
+{form legend="Select Content Type" action="`$smarty.server.REQUEST_URI`" method="get"}
+	<input type="hidden" name="user_id" value="{$smarty.request.user_id}" />
+	<input type="hidden" name="sort_mode" value="{$smarty.request.sort_mode}" />
 	<div class="row">
 		{formlabel label="Restrict listing" for="content_type_guid"}
 		{forminput}
