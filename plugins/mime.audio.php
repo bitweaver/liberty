@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.28 2009/01/02 20:38:02 squareing Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.audio.php,v 1.29 2009/04/29 14:29:24 wjames5 Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.28 $
+ * @version		$Revision: 1.29 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -16,7 +16,7 @@ global $gLibertySystem;
 
 /**
  *  This is the name of the plugin - max char length is 16
- * As a naming convention, the treasury mime handler definition should start with:
+ * As a naming convention, the liberty mime handler definition should start with:
  * PLUGIN_MIME_GUID_
  */
 define( 'PLUGIN_MIME_GUID_AUDIO', 'mimeaudio' );
