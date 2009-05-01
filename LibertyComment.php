@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.80 2009/03/26 20:20:07 tekimaki_admin Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.81 2009/05/01 14:10:31 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -636,7 +636,7 @@ class LibertyComment extends LibertyMime {
 					$c = new LibertyComment();
 					$c->mInfo=$row;
 					$c->mRootObj = $this->getRootObj();
-					$row['editable'] = $c->userCanEdit();
+					$row['is_editable'] = $c->userCanEdit();
 
 					global $gBitSystem;
 					if( $gBitSystem->isFeatureActive( 'comments_allow_attachments' ) ){
