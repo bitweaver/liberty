@@ -7,52 +7,48 @@
 {/if}
 
 <div class="storage">
-    <table class="data">
+	<table class="data">
 		<caption>
 			{tr}Files attached to this page{/tr}
 		</caption>
 		<thead>
 			<tr>
-				<th></th>
-				<th >{tr}File{/tr}</th>
-				<th >{tr}Type{/tr}</th>
-				<th >{tr}Size{/tr}</th>
-				<th >{tr}Last Modified{/tr}</th>
-				<th >{tr}Uploaded by{/tr}</th>
+				<th colspan="2">{tr}File{/tr}</th>
+				<th>{tr}Type{/tr}</th>
+				<th>{tr}Size{/tr}</th>
+				<th>{tr}Last Modified{/tr}</th>
+				<th>{tr}Uploaded by{/tr}</th>
 			</tr>
 		</thead>
 		<tbody>
-        {foreach from=$gContent->mStorage item=attachment key=id}
-            <tr class="{cycle values="odd,even"}" >
-				<td>
-					{if $attachment.source_url}<a href="{$attachment.source_url}">{/if}
-						<img class="thumb" src="{$attachment.thumbnail_url.$thumbsize}" alt="{$attachment.filename}" title="{$attachment.filename}" {popup fullhtml=1 center=1 text=$smarty.capture.popup|escape:"javascript"|escape:"html"} />
-					{if $attachment.source_url}</a>{/if}
-				</td>
-                <td style="text-align:left;">
-					<h3>
-					{if $attachment.source_url}<a href="{$attachment.source_url}">{/if}
-						{$attachment.filename}
-					{if $attachment.source_url}</a>{/if}
-					</h3>
-
-                </td>
-                <td class="attachmenttype">
-                    {$attachment.mime_type}
-                </td>
-                <td class="attachmentsize">
-                    {$attachment.file_size|display_bytes}
-                </td>
-                <td class="lastmodified">
-                    {$attachment.last_modified|bit_short_datetime}
-                </td>
-                <td class="uploadedby">
-                    {displayname user_id=$attachment.user_id}
-                </td>
-            </tr>
-        {/foreach}
+			{foreach from=$gContent->mStorage item=attachment key=id}
+				<tr class="{cycle values="odd,even"}" >
+					<td>
+						{if $attachment.source_url}<a href="{$attachment.source_url}">{/if}
+							<img class="thumb" src="{$attachment.thumbnail_url.$thumbsize}" alt="{$attachment.filename}" title="{$attachment.filename}" />
+							{if $attachment.source_url}</a>{/if}
+					</td>
+					<td>
+						{if $attachment.source_url}<a href="{$attachment.source_url}">{/if}
+							{$attachment.filename}
+						{if $attachment.source_url}</a>{/if}
+					</td>
+					<td class="attachmenttype">
+						{$attachment.mime_type}
+					</td>
+					<td class="attachmentsize">
+						{$attachment.file_size|display_bytes}
+					</td>
+					<td class="lastmodified">
+						{$attachment.last_modified|bit_short_datetime}
+					</td>
+					<td class="uploadedby">
+						{displayname user_id=$attachment.user_id}
+					</td>
+				</tr>
+			{/foreach}
 		</tbody>
-    </table>
+	</table>
 
 {*
 		{foreach from=$gContent->mStorage item=attachment key=id}
