@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.34 $
+ * @version  $Revision: 1.35 $
  * @package  liberty
  * @subpackage functions
  */
@@ -47,20 +47,6 @@ if( empty( $contentListHash ) ) {
 		// sort by this: <table column>_asc (or _desc)
 		'sort_mode'         => !empty( $content_sort_mode ) ? $content_sort_mode : 'title_asc',
 		// limit the result to this set
-		/**
-		 * NOTE: the use of 'find' here replaces the former value 'find_objects' to standardize the use of 'find' as a 
-		 * search param. 'find' is used commonly in getList methods both in LibertyContent and throughout bitweaver packages
-		 * to search titles for matches. 'find_objects' was perhaps used in the past to distinguish from 'find' as there seemed
-		 * to be collisions with modules that might have used $_REQUEST['find'] in their processes for unknown reasons. Those collisions
-		 * do not appear to exist any longer. Module processes in general should not use $_REQUEST params. Further an investigation
-		 * of the bitweaver code base turned up no obvious instances where the use of find here would collide with other uses.
-		 * Thus there is no anticipation that this change should effect any other processess that are actively maintained. That said, 
-		 * should some conflict be found there are two possible solutions. One is investigating whether the use of $_REQUEST['find']
-		 * is necessary to the process or if find should be passed to the process in another hash. The other is to decease all use of 
-		 * $_REQUEST here and instead pass a hash to this process, which would likely be a more intellegent solution.
-		 *
-		 * This change was made Jan 24 2008. If after 6 months no conflict has been discovered, you may remove this comment bloat. -wjames5
-		 **/
 		'find'              => !empty( $_REQUEST["find"] ) ? $_REQUEST["find"] : NULL,
 		// display this page number - replaces antiquated offset
 		'page'              => !empty( $_REQUEST["list_page"] ) ? $_REQUEST["list_page"] : NULL,
