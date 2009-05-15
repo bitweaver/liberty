@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.82 2009/05/05 15:04:39 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.83 2009/05/15 18:14:56 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -268,6 +268,7 @@ class LibertyComment extends LibertyMime {
 			$rs = $this->mDb->query($sql, array($this->mCommentId));
 
 			if (method_exists($this,'expungeMetaData')) {
+				// TODO: needs to pass in mandatory attachmentId, where does it come from? - spiderr
 				$this->expungeMetaData();
 			}
 
