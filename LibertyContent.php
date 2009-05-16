@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.400 2009/05/16 15:44:49 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.401 2009/05/16 16:36:53 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -815,8 +815,6 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	 * Set up access to services used by the object
-	 *
-	 * @TODO the &$pFunctionParam=NULL really is naughty and should be fixed either by having all invokers pass in something, or a check for the param inside the function
 	 */
 	function invokeServices( $pServiceFunction, &$pFunctionParam=NULL ) {
 		global $gLibertySystem;
