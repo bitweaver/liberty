@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.402 2009/05/20 14:09:29 tekimaki_admin Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.403 2009/05/20 15:47:53 tekimaki_admin Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2246,6 +2246,13 @@ class LibertyContent extends LibertyBase {
 			$selectSql .= ", lc.`data`, lc.`format_guid`";
 		}
 
+		// if we want the primary attachment for each object
+		if(  $gBitSystem->isFeatureActive( 'liberty_display_primary_attach' )  ){ 
+			$selectSql .= ', lfp.storage_path AS `image_attachment_path`'; 
+			$joinSql .= "LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON( la.`content_id` = lc.`content_id` AND la.`is_primary` = 'y' ) 
+						 LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files` lfp ON( lfp.`file_id` = la.`foreign_id` )";
+		}
+
 		// Allow selection based on arbitrary time limits -- used in calendar
 		// TODO: We should replace usages of from_date and until_date with this generic setup and depricate those
 		if( !empty( $pListHash['time_limit_column'] )) {
@@ -2458,7 +2465,20 @@ class LibertyContent extends LibertyBase {
 							$aux['thumbnail_url'] = $aux['content_object']->getThumbnailUrl( $pListHash['thumbnail_size'] );
 						}
 					}
+
 				}
+
+				/**
+				 * @TODO standardize use of thumbnail_url and provision for hash of thumbnail sizes
+				 *
+				 * We have a bit of a mess with the use of thumbnail_url where sometimes it is a hash of sizes, and sometimes it is a single size
+				 * we should standardize the param and what kind of value it returns, and if we need both types then have two params. 
+				 * This ultimately might need to be more sophisticated to deal with different mime types.
+				 **/
+				if(  $gBitSystem->isFeatureActive( 'liberty_display_primary_attach' )  ){ 
+					$aux['thumbnail_urls'] = liberty_fetch_thumbnails( array( "storage_path" => $aux['image_attachment_path'] ) );
+				}
+
 				$ret[] = $aux;
 			}
 		}
