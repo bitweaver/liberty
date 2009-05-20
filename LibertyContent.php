@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.401 2009/05/16 16:36:53 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.402 2009/05/20 14:09:29 tekimaki_admin Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2385,12 +2385,14 @@ class LibertyContent extends LibertyBase {
 				lc.`content_type_guid`,
 				lc.`ip`,
 				lc.`created`,
-				lc.`content_id`
+				lc.`content_id`,
+				lcds.`data` AS `summary` 
 				$selectSql
 			FROM `".BIT_DB_PREFIX."liberty_content` lc
 				INNER JOIN `".BIT_DB_PREFIX."users_users` uuc ON (lc.`user_id`=uuc.`user_id`)
 				INNER JOIN `".BIT_DB_PREFIX."users_users` uue ON (lc.`modifier_user_id`=uue.`user_id`)
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON( lc.`content_id` =  lch.`content_id`)
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`data_type`='summary')
 				$joinSql
 				$whereSql
 			ORDER BY ".$orderTable.$this->mDb->convertSortmode($pListHash['sort_mode']);
