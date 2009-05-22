@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.403 2009/05/20 15:47:53 tekimaki_admin Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.404 2009/05/22 21:00:48 tekimaki_admin Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2456,7 +2456,13 @@ class LibertyContent extends LibertyBase {
 					} else {
 						$aux['title']        = $type['content_object']->getTitle( $aux );
 						$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
-						$aux['display_url']  = $type['content_object']->getDisplayUrl( NULL, $aux );
+						/**
+						 * @TODO standardize getDisplayUrl params
+						 * nice try, but you can't do this because individual classes have gone off the reservation changing the params they accept
+						 * for distributed packages we need to enforce that method overrides all take the same basic params.
+						 **/
+						// $aux['display_url']  = $type['content_object']->getDisplayUrl( NULL, $aux );
+						$aux['display_url'] = BIT_ROOT_URL."index.php?content_id=".$aux['content_id'];
 					}
 
 					if( !empty( $pListHash['thumbnail_size'] ) ) {
