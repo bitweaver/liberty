@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.169 2008/12/25 10:50:46 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.170 2009/05/26 18:52:42 tylerbello Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -57,10 +57,10 @@ class LibertyAttachable extends LibertyContent {
 	 */
 	function getStoragePath( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pRootDir = NULL ) {
 		$ret = null;
-		if( $storageUrl = LibertyAttachable::getStorageBranch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pRootDir ) ) {
-			//$ret = BIT_ROOT_PATH.$storageUrl;
+		
+		if( $storageUrl = LibertyAttachable::getStorageBranch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pRootDir, empty($pRootDir) ) ) {
 			$ret = ( !empty( $pRootDir ) ? $pRootDir : BIT_ROOT_PATH ).$storageUrl;
-			//$ret = $storageUrl;
+			mkdir_p($ret);
 		}
 		return $ret;
 	}
@@ -118,15 +118,15 @@ class LibertyAttachable extends LibertyContent {
 	 * @author Christian Fowler<spider@steelsun.com>
 	 * @param $pSubDir any desired directory below the StoragePath. this will be created if it doesn't exist
 	 * @param $pUserId indicates the 'users/.../<user_id>' branch or use the 'common' branch if null
-	 * @param $pRootDir override BIT_ROOT_DIR with a custom absolute path - useful for areas where no we access should be allowed
+	 * @param $pRootDir **deprecated, unused, will be removed in future relase**. 
 	 * @return string full path on local filsystem to store files.
 	 */
-	function getStorageBranch( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pRootDir = NULL ) {
+	function getStorageBranch( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pRootDir = NULL, $pCreateDir = true ) {
 		// *PRIVATE FUNCTION. GO AWAY! DO NOT CALL DIRECTLY!!!
 		global $gBitSystem;
 		$pathParts = array();
 		$pathParts = split( '/', trim( STORAGE_PKG_PATH, '/\\' ) );
-
+		
 		if( !$pUserId ) {
 			$pathParts[] = 'common';
 		} else {
@@ -139,15 +139,18 @@ class LibertyAttachable extends LibertyContent {
 			$pathParts[] = $pPackage;
 		}
 		// In case $pSubDir is multiple levels deep we'll need to mkdir each directory if they don't exist
-		$pSubDirParts = split('/',$pSubDir);
-		foreach ($pSubDirParts as $subDir) {
-			$pathParts[] = $subDir;
+		if(!empty($pSubDir)){
+			$pSubDirParts = split('/',$pSubDir);
+			foreach ($pSubDirParts as $subDir) {
+				$pathParts[] = $subDir;
+			}
 		}
 
-		$fullPath = implode( $pathParts, '/' ).'/';
-
-		mkdir_p( $fullPath );
-		$ret = substr( $fullPath, strlen( dirname( STORAGE_PKG_PATH ) ) );
+		$fullPath = '/'.implode( $pathParts, '/' ).'/';
+		if($pCreateDir){
+			mkdir_p( $fullPath );
+		}
+		$ret = substr( $fullPath, strlen( dirname( STORAGE_PKG_PATH ) )+ 1 );
 		return $ret;
 	}
 	// }}}
