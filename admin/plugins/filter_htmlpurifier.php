@@ -52,6 +52,11 @@ $htmlPurifier = array(
 		'note' => 'Allow YouTube videos to be passed through.',
 		'default' => 'n'
 	),
+	'htmlpure_allow_cnbc' => array(
+		'label' => 'Allow CNBC',
+		'note' => 'Allow CNBC videos to be passed through.',
+		'default' => 'n'
+	),
 	'htmlpure_force_nofollow' => array(
 		'label' => 'Force No Follow',
 		'note' => 'Force all anchor tags to have rel=nofollow in them. Many search engines respect this in order to give sites a way to try to avoid link spammers.',

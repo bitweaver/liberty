@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.25 2008/11/29 05:38:58 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.26 2009/05/27 17:12:30 wjames5 Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -172,12 +172,22 @@ function htmlpure_getDefaultConfig( &$htmlp_version ){
 	// TODO: devise a way to parse plugins dir
 	// and check for the right property here
 	// so new plugins are just drop in place.
+	$custom_filters = array();
 	if ( $htmlp_version >= 3.1 ){
 		if ($gBitSystem->isFeatureActive('htmlpure_allow_youtube')) {
 			require_once(UTIL_PKG_PATH.'htmlpure/Filter/YouTube.php');
 
-			$config->set('Filter', 'Custom', array(new HTMLPurifier_Filter_YouTube()));
+			$custom_filters[] = new HTMLPurifier_Filter_YouTube();
 		}
+		if ($gBitSystem->isFeatureActive('htmlpure_allow_cnbc')) {
+			require_once(UTIL_PKG_PATH.'htmlpure/Filter/CNBC.php');
+
+			$custom_filters[] = new HTMLPurifier_Filter_CNBC();
+		}
+	}
+
+	if( !empty( $custom_filters ) ){
+		$config->set('Filter', 'Custom', $custom_filters );
 	}
 
 	$blacklistedTags = $gBitSystem->
