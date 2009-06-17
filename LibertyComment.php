@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.83 2009/05/15 18:14:56 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.84 2009/06/17 23:24:52 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -223,11 +223,17 @@ class LibertyComment extends LibertyMime {
 			$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `comment_id` = ?";
 			$rs = $this->mDb->query($sql, array($this->mCommentId));
 
+			/*
+			 * TODO: figureout why this is even here. Mime should handle this and it needs to pass in mandatory attachmentId
+			 * Slated to delete for now  - wjames5
+			 */
+			/*
 			if (method_exists($this,'expungeMetaData')) {
 				$this->expungeMetaData();
 			}
+			*/
 
-			if( LibertyAttachable::expunge() ) {
+			if( LibertyMime::expunge() ) {
 				$ret = TRUE;
 				$this->mDb->CompleteTrans();
 			} else {
@@ -267,12 +273,17 @@ class LibertyComment extends LibertyMime {
 			$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `comment_id` = ?";
 			$rs = $this->mDb->query($sql, array($this->mCommentId));
 
+			/*
+			 * TODO: figureout why this is even here. Mime should handle this and it needs to pass in mandatory attachmentId
+			 * Slated to delete for now  - wjames5
+			 */
+			/*
 			if (method_exists($this,'expungeMetaData')) {
-				// TODO: needs to pass in mandatory attachmentId, where does it come from? - spiderr
 				$this->expungeMetaData();
 			}
+			*/
 
-			if( LibertyAttachable::expunge() ) {
+			if( LibertyMime::expunge() ) {
 				$ret = TRUE;
 				$this->mDb->CompleteTrans();
 			} else {
