@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.84 2009/06/17 23:24:52 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.85 2009/06/18 03:49:20 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -72,6 +72,11 @@ class LibertyComment extends LibertyMime {
 			$this->mInfo = $row;
 			$this->mContentId = $row['content_id'];
 			$this->mCommentId = $row['comment_id'];
+
+			// call parent load for attachment data like other Mime derived classes, only need it if feature is active or admin
+			if( $gBitSystem->isFeatureActive( 'comments_allow_attachments' ) || $gBitUser->isAdmin() ){
+				LibertyMime::load();
+			}
 		}
 		return count($this->mInfo);
 	}
