@@ -4,6 +4,7 @@
 		{formlabel label="Upload File(s)"}
 		{forminput}
 			{if $gBitSystem->getConfig("liberty_attachment_style") == "multiple"}
+				<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/libs/multifile.js"></script>
 				<div id="upload_div"></div>
 				<input type="file" name="upload" size="40" id="uploads" />
 				<script type="text/javascript">
