@@ -12,9 +12,9 @@ function submitStructure(pForm,pContentId,pMode) {
 
 var structureAddResult = function (response) {
 	responseHash = MochiKit.Async.evalJSONRequest(response);
-	MochiKit.Visual.switchOff($(responseHash.content_id+"item"));
-	MochiKit.Visual.fade($(responseHash.content_id+"add"));
-	$(responseHash.content_id+"feedback").innerHTML = responseHash.feedback;
+	MochiKit.Visual.switchOff(document.getElementById(responseHash.content_id+"item"));
+	MochiKit.Visual.fade(document.getElementById(responseHash.content_id+"add"));
+	document.getElementById(responseHash.content_id+"feedback").innerHTML = responseHash.feedback;
 };
 /* ]]> */</script>
 {/literal}
@@ -85,11 +85,11 @@ var structureAddResult = function (response) {
 						{section loop=$contentListHash name=cx}
 							<tr class="item {cycle values="even,odd"}" id="{$contentListHash[cx].content_id}li">
 								<td>
-									<a style="display:none" id="{$contentListHash[cx].content_id}remove" href="#" onclick="submitStructure($('structureaddform'),{$contentListHash[cx].content_id},'remove')">
+									<a style="display:none" id="{$contentListHash[cx].content_id}remove" href="#" onclick="submitStructure(document.getElementById('structureaddform'),{$contentListHash[cx].content_id},'remove')">
 										{biticon ipackage="icons" iname="list-add" iexplain="Add"}
 									</a>
 									&nbsp;
-									<a id="{$contentListHash[cx].content_id}add" href="#" onclick="submitStructure($('structureaddform'),{$contentListHash[cx].content_id},'add')">
+									<a id="{$contentListHash[cx].content_id}add" href="#" onclick="submitStructure(document.getElementById('structureaddform'),{$contentListHash[cx].content_id},'add')">
 										{biticon ipackage="icons" iname="list-add" iexplain="Add to structure"}
 									</a>
 									&nbsp;
