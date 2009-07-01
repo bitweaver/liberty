@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.58 $
+ * @version  $Revision: 1.59 $
  * @package  liberty
  * @subpackage plugins_storage
  */
@@ -31,6 +31,7 @@ if( isset( $gBitSystem )) {
 		$pluginParams['edit_help'] =  'The file(s) will be uploaded to your personal storage area.<br />After selecting the file(s) you want to upload, please return to the edit area and click the save button.';
 		$pluginParams['edit_field'] = '<div id="upload_div"></div><input type="file" name="upload" size="40" id="uploads" />'.
 			'<!-- Multiselect javascript. -->'.
+			'<script type="text/javascript" src="'.UTIL_PKG_URL.'javascript/multifile.js"></script>'.
 			'<script type="text/javascript">'.
 				'var upload_files = document.getElementById( \'upload_div\' );'.
 				'var upload_element = document.getElementById( \'uploads\' );'.
