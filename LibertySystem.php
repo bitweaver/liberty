@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.119 2008/12/22 10:03:00 squareing Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.120 2009/07/03 19:13:57 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -56,6 +56,7 @@ define( 'LIBERTY_SERVICE_TRANSLATION', 'translation' );
 define( 'LIBERTY_SERVICE_TRANSLITERATION', 'transliteration' );
 define( 'LIBERTY_SERVICE_LIBERTYSECURE', 'security' );
 define( 'LIBERTY_SERVICE_MODCOMMENTS', 'comment_moderation' );
+define( 'LIBERTY_SERVICE_UPLOAD', 'upload' );
 
 define( 'LIBERTY_TEXT_AREA', 'editliberty' );
 define( 'LIBERTY_UPLOAD', 'upload' );
