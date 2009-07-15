@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.85 2009/06/18 03:49:20 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.86 2009/07/15 16:16:20 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -47,7 +47,7 @@ class LibertyComment extends LibertyMime {
 
 
 	function loadComment() {
-		global $gBitSystem;
+		global $gBitSystem, $gBitUser;
 		if (!$this->verifyId($this->mCommentId) && !$this->verifyId($this->mContentId)) {
 			return NULL;
 		}
