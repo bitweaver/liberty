@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.404 2009/05/22 21:00:48 tekimaki_admin Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.405 2009/08/04 01:13:09 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2241,6 +2241,11 @@ class LibertyContent extends LibertyBase {
 			$bindVars[] = ( '%' . strtoupper( $pListHash['find'] ) . '%' );
 		}
 
+		if( !empty( $pListHash['content_id_list'] ) ) { // you can use an array of titles
+			$whereSql .= " AND lc.`content_id` IN ( ".implode( ',',array_fill( 0,count( $pListHash['content_id_list'] ),'?' ) ).") ";
+			$bindVars = array_merge( $bindVars, $pListHash['content_id_list'] );
+		}
+
 		// this is necessary to display useful information in the liberty RSS feed
 		if( !empty( $pListHash['include_data'] ) ) {
 			$selectSql .= ", lc.`data`, lc.`format_guid`";
@@ -2324,6 +2329,12 @@ class LibertyContent extends LibertyBase {
 			$bindVars[] = $pListHash['until_date'];
 		}
 
+		// Should results be hashed or sequential indexed
+		$hashKeySql = '';
+		if( !empty( $pListHash['hash_key'] ) ) {
+			$hashKeySql = $pListHash['hash_key'].' AS `hash_key`, ';
+		}
+
 		if( $gBitSystem->isPackageActive( 'gatekeeper' ) ) {
 			if( $gBitSystem->isPackageActive( 'fisheye' ) ) {
 				// This is really ugly to have in here, and really would be better off somewhere else.
@@ -2378,6 +2389,7 @@ class LibertyContent extends LibertyBase {
 		// If sort mode is backlinks then offset is 0, max_records is -1 (again) and sort_mode is nil
 		$query = "
 			SELECT
+				$hashKeySql
 				uue.`login` AS `modifier_user`,
 				uue.`real_name` AS `modifier_real_name`,
 				uue.`user_id` AS `modifier_user_id`,
@@ -2485,7 +2497,11 @@ class LibertyContent extends LibertyBase {
 					$aux['thumbnail_urls'] = liberty_fetch_thumbnails( array( "storage_path" => $aux['image_attachment_path'] ) );
 				}
 
-				$ret[] = $aux;
+				if( isset( $aux['hash_key'] ) ) {
+					$ret[$aux['hash_key']] = $aux;
+				} else {
+					$ret[] = $aux;
+				}
 			}
 		}
 
