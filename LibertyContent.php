@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.406 2009/08/16 21:17:27 ukgrad89 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.407 2009/08/21 18:02:09 tylerbello Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -3130,7 +3130,7 @@ class LibertyContent extends LibertyBase {
 		$log_message = '';
 		if( empty( $pParamHash['action_log']['log_message'] ) && !empty( $this ) && !empty( $this->mLogs ) ) {
 			foreach( $this->mLogs as $key => $msg ) {
-				$log_message .= "$msg\n";
+				$log_message .= "$msg";
 			}
 		} elseif( !empty( $pParamHash['action_log']['log_message'] ) ) {
 			$log_message = $pParamHash['action_log']['log_message'];
