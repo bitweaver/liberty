@@ -87,7 +87,13 @@
 		{/if}
 	</div>
 {else}
-	<input type="hidden" name="{$format_guid_variable|default:"format_guid"}" value="{$gBitSystem->getConfig('default_format','tikiwiki')}" />
+	{* if there was one format in the liberty plugins hash then use it and display a label so user knows what format is being used, otherwise use default and hide it*}
+	{if $numformat eq 1}
+		<div class="row">
+			{formlabel label="Content Format: `$plugin.edit_label`"}
+		</div>
+	{/if}
+	<input type="hidden" name="{$format_guid_variable|default:"format_guid"}" value="{if $numformat eq 1}{$plugin.edit_field}{else}{$gBitSystem->getConfig('default_format','tikiwiki')}{/if}" />
 {/if}
 
 {/strip}
