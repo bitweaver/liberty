@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.87 2009/08/25 21:28:46 tylerbello Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.88 2009/09/15 14:34:57 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -129,8 +129,8 @@ class LibertyComment extends LibertyMime {
 		} elseif( !$gBitUser->hasPermission( 'p_liberty_trusted_editor' ) && ($linkCount = preg_match_all( '/http\:\/\//', $pParamHash['edit'], $links )) > $gBitSystem->getConfig( 'liberty_unstrusted_max_http_in_content', 0 ) ) {
 			$this->mErrors['store'] = tra( 'Links are not allowed.' );
 		} else {
-			$dupeQuery = "SELECT `data` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `user_id`=? AND `content_type_guid`='".BITCOMMENT_CONTENT_TYPE_GUID."' AND `ip`=? ORDER BY `created` DESC";
-			if( $lastPostData = $this->mDb->getOne( $dupeQuery, array( $gBitUser->mUserId, $_SERVER['REMOTE_ADDR'] ) ) ) {
+			$dupeQuery = "SELECT `data` FROM `".BIT_DB_PREFIX."liberty_content` lc INNER JOIN `".BIT_DB_PREFIX."liberty_comments` lcom ON (lc.`content_id`=lcom.`content_id`) WHERE `user_id`=? AND `content_type_guid`='".BITCOMMENT_CONTENT_TYPE_GUID."' AND `ip`=? AND lcom.`root_id`=? ORDER BY `created` DESC";
+			if( $lastPostData = $this->mDb->getOne( $dupeQuery, array( $gBitUser->mUserId, $_SERVER['REMOTE_ADDR'], $pParamHash['root_id'] ) ) ) {
 				if( trim( $lastPostData ) == trim( $pParamHash['edit'] ) ) {
 					$this->mErrors['store'] = tra( 'Duplicate comment.' );	
 				}
