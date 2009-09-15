@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.1 $
+ * @version  $Revision: 1.2 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -15,7 +15,7 @@ $pluginParams = array (
 	'load_function'   => 'simpletext_parse_data',
 	'verify_function' => 'simpletext_verify_data',
 	'description'     => 'Simple Syntax Format Parser',
-	'edit_label'      => 'TEXT',
+	'edit_label'      => 'Plain Text',
 	'edit_field'      => PLUGIN_GUID_SIMPLETEXT,
 	'help_page'       => 'SimpleTextSyntax',
 	'plugin_type'     => FORMAT_PLUGIN,
