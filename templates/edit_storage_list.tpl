@@ -6,31 +6,14 @@
 {if $gContent->mStorage}
 	<div class="row">
 		<table class="data" summary="List of attached files">
-			<caption>{tr}Items {if $libertyUploader && empty($gContent->mContentId)}That Will Be{/if} Attached Directly to this Content{/tr}</caption>
 			<tr>
-				<th scope="col" class="width1p"  title="{tr}Attachment ID{/tr}">{tr}Attachment ID{/tr}</th>
 				<th scope="col" class="width29p" title="{tr}Thumbnail{/tr}">{tr}Thumbnail{/tr}</th>
 				<th scope="col" class="width40p" title="{tr}Inclusion Code{/tr}">{tr}Inclusion Code{/tr}</th>
 				<th scope="col" class="width30p" title="{tr}Actions{/tr}">{tr}Actions{/tr}</th>
 			</tr>
 
-			{if $uploadTab}
-				<tr>
-					<td colspan="3">&nbsp;</td>
-					<td class="actionicon">
-						<label>
-							{tr}No {$primary_label|default:"Primary"}{/tr}:&nbsp;
-							<input type="radio" name="liberty_attachments[primary]" value="none" {if empty($gContent->mInfo[primary])}checked="checked"{/if} />
-						</label>
-					</td>
-				</tr>
-			{/if}
-
 			{foreach from=$gContent->mStorage item=storage key=attachmentId name=atts}
 				<tr class="{cycle values="odd,even"}">
-					<td>
-						{$storage.attachment_id}
-					</td>
 					<td class="aligncenter">
 						{if $storage.is_mime}
 							{include file=$gLibertySystem->getMimeTemplate('storage',$storage.attachment_plugin_guid) thumbsize=small preferences=$gContent->mStoragePrefs.$attachmentId attachment=$storage}
@@ -42,7 +25,8 @@
 							{/if}
 						{/if}
 					</td>
-					<td class="aligncenter">
+					<td>
+						<div>{tr}Attachment ID{/tr}: <strong>{$storage.attachment_id}</strong></div>
 						{if $gBitThemes->isJavascriptEnabled()}
 							<div><a href="javascript:void(0);" onclick="BitBase.toggleElementDisplay('wiki_attachment_code_{$storage.attachment_id}','table-row');">Wiki Code</a></div>
 							<div><a href="javascript:void(0);" onclick="BitBase.toggleElementDisplay('html_attachment_code_{$storage.attachment_id}','table-row');">HTML Code</a></div>
@@ -128,6 +112,18 @@
 					</tr>
 				{/if}
 			{/foreach}
+			{if $uploadTab}
+				<tr>
+					<td colspan="2">&nbsp;</td>
+					<td class="actionicon">
+						<label>
+							{tr}No {$primary_label|default:"Primary"}{/tr}:&nbsp;
+							<input type="radio" name="liberty_attachments[primary]" value="none" {if empty($gContent->mInfo[primary])}checked="checked"{/if} />
+						</label>
+					</td>
+				</tr>
+			{/if}
+
 		</table>
 	</div>
 {/if}
