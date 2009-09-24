@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.88 2009/09/15 14:34:57 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.89 2009/09/24 17:41:08 tylerbello Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -37,6 +37,7 @@ class LibertyComment extends LibertyMime {
 		$this->mCommentId = $pCommentId;
 		$this->mContentId = $pContentId;
 		$this->mInfo = $pInfo;
+		$this->mContentTypeGuid = BITCOMMENT_CONTENT_TYPE_GUID;
 		$this->mAdminContentPerm = 'p_liberty_admin_comments';
 		$this->mRootObj = NULL;
 
@@ -151,7 +152,7 @@ class LibertyComment extends LibertyMime {
 	}
 
 	function storeComment( &$pParamHash ) {
-		$pParamHash['content_type_guid'] = BITCOMMENT_CONTENT_TYPE_GUID;
+		
 
 		$this->mDb->StartTrans();
 		if( $this->verifyComment($pParamHash) && LibertyMime::store( $pParamHash ) ) {
