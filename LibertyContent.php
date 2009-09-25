@@ -3,7 +3,7 @@
 * Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.407 2009/08/21 18:02:09 tylerbello Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.408 2009/09/25 16:17:48 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -2819,6 +2819,17 @@ class LibertyContent extends LibertyBase {
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * convenience function to process a $_REQUEST array
+	 **/
+	function decodeAjaxRequest( &$pParamHash ){
+		foreach( $pParamHash as $key => $value ){
+			if( is_string($value) ){
+				$pParamHash[$key] = htmlspecialchars_decode( $value );
+			}
+		}
 	}
 
 	/**
