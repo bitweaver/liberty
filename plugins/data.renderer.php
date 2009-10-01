@@ -1,13 +1,13 @@
 <?php
 /**
- * @version  $Revision: 1.9 $
+ * @version  $Revision: 1.10 $
  * @package  liberty
  * @subpackage plugins_data
  */
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2005, bitweaver.org
 // +----------------------------------------------------------------------+
-// | All Rights Reserved. See copyright.txt for details and a complete list of authors.
+// | All Rights Reserved. See below for details and a complete list of authors.
 // | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See http://www.gnu.org/copyleft/lesser.html for details
 // |
 // | For comments, please use phpdocu.sourceforge.net documentation standards!!!
@@ -18,7 +18,7 @@
 // | by: wjames5
 // | Reworked from: data.articles.php from wikiplugin_articles.php
 // +----------------------------------------------------------------------+
-// $Id: data.renderer.php,v 1.9 2009/10/01 13:45:43 wjames5 Exp $
+// $Id: data.renderer.php,v 1.10 2009/10/01 14:17:01 wjames5 Exp $
 
 /**
  * definitions
