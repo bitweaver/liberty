@@ -1,15 +1,15 @@
 <?php
-// $Id: data.ledgertable.php,v 1.6 2008/11/09 09:08:55 squareing Exp $
+// $Id: data.ledgertable.php,v 1.7 2009/10/01 13:45:43 wjames5 Exp $
 /**
  * assigned_modules
  *
  * @author   KainX <mej@kainx.org>
- * @version  $Revision: 1.6 $
+ * @version  $Revision: 1.7 $
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org
  * All Rights Reserved. See copyright.txt for details and a complete list of authors.
- * @license Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
+ * @license Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See http://www.gnu.org/copyleft/lesser.html for details.
  */
 /******************
  * Initialization *
