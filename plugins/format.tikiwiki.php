@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.130 $
+ * @version  $Revision: 1.131 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -294,6 +294,7 @@ class TikiWikiParser extends BitBase {
 		// from the page directly, intended for short data, not long text but text
 		// will work too
 		//     Now won't match HTML-style '%nn' letter codes.
+/*
 		if (preg_match_all("/%([^% 0-9][^% 0-9][^% ]*)%/",$data,$dvars)) {
 			// remove repeated elements
 			$dvars = array_unique($dvars[1]);
@@ -331,6 +332,7 @@ class TikiWikiParser extends BitBase {
 			//<br /><div style="text-align:center"><input type="submit" name="dyn_update" value="'.tra('Update variables').'"/></div>
 			$data='<form method="post" name="dyn_vars">'.$data.'<div style="display:none;"><input type="submit" name="_dyn_update" value="'.tra('Update variables').'"/></div></form>';
 		}
+*/
 
 		// Replace boxes - add a new line that we can have something like: ^!heading^ without the need for a \n after the initial ^ - \n will be removed below
 		$data = preg_replace("/\^([^\^]+)\^/", "<div class=\"bitbox\"><!-- bitremovebr -->\n$1</div>", $data);
