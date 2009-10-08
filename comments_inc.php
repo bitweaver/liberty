@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.63 $
+ * @version  $Revision: 1.64 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.63 2009/10/01 14:17:01 wjames5 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.64 2009/10/08 19:42:07 wjames5 Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See below for details and a complete list of authors.
@@ -153,6 +153,12 @@ if( empty( $_REQUEST['post_comment_request'] ) && !$gBitSystem->isFeatureActive(
 	if( $gBitSystem->isFeatureActive( 'comments_allow_attachments' ) && $gBitSystem->getConfig( 'liberty_attachment_style') == 'ajax' ){
 		$gBitSystem->setConfig( 'liberty_attachment_style', 'standard' );
 	}
+	// in anticipation of mainlining LCConfig package - enable comment format configuration
+	// hack because comments does not have edit service -wjames5
+	if( $gBitSystem->isPackageActive( 'lcconfig' ) ){
+		$spoofHash = array();
+		lcconfig_content_edit( new LibertyComment(), $spoofHash  );
+	}
 }
 
 if( !empty( $_REQUEST['post_comment_request'] ) && $_REQUEST['post_comment_request'] == 'y' && !$gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE ) ) {
@@ -253,7 +259,7 @@ if( !empty( $_REQUEST['comment_page'] ) || !empty( $_REQUEST['post_comment_reque
 $commentOffset = !empty( $_REQUEST['comment_page'] ) ? ($_REQUEST['comment_page'] - 1) * $maxComments : 0;
 
 if( empty( $gComment )) {
-	$gComment = new LibertyComment( NULL, $gContent->mContentId );
+	$gComment = new LibertyComment();
 }
 
 $currentPage = !empty( $_REQUEST['comment_page'] ) ? $_REQUEST['comment_page'] : 1;
@@ -362,4 +368,3 @@ if( !empty( $_REQUEST['post_comment_request'] )) {
 	}
 }
 
-?>
