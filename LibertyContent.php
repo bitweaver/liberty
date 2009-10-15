@@ -1,9 +1,9 @@
 <?php
 /**
-* Management of Liberty content
+/* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.410 2009/10/01 14:17:01 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.411 2009/10/15 20:03:57 tylerbello Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -315,7 +315,6 @@ class LibertyContent extends LibertyBase {
 				$pParamHash['preferences_store'][$pref] = NULL;
 			}
 		}
-
 		$pParamHash['data_store']['summary'] = !empty( $pParamHash['summary'] ) ? $pParamHash['summary'] : NULL ;
 
 		// call verify service to see if any services have errors
@@ -388,9 +387,9 @@ class LibertyContent extends LibertyBase {
 			if( !empty( $pParamHash['content_store']['hits'] )  ) {
 				$this->setHits($pParamHash['content_store']['hits'], $pParamHash['content_store']['last_hit']);
 			}
-
 			// store any messages in the logs
 			$this->storeActionLog( $pParamHash );
+
 
 			$this->mDb->CompleteTrans();
 		}
@@ -3077,6 +3076,7 @@ class LibertyContent extends LibertyBase {
 	 */
 	function storeActionLog( $pParamHash = NULL ) {
 		global $gBitSystem;
+		
 		if( $gBitSystem->isFeatureActive( 'liberty_action_log' ) && LibertyContent::verifyActionLog( $pParamHash ) ) {
 			$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_action_log", $pParamHash['action_log_store'] );
 		}
@@ -3113,7 +3113,6 @@ class LibertyContent extends LibertyBase {
 		} else {
 			$pParamHash['action_log_store']['user_id'] = $gBitUser->mUserId;
 		}
-
 		if( !empty( $pParamHash['action_log']['title'] ) ) {
 			$pParamHash['action_log_store']['title'] = $pParamHash['action_log']['title'];
 		} elseif( !empty( $pParamHash['content_store']['title'] ) ) {
@@ -3123,7 +3122,6 @@ class LibertyContent extends LibertyBase {
 		} else {
 			$ret = FALSE;
 		}
-
 		// IP of the user
 		if( empty( $pParamHash['action_log']['ip'] ) ) {
 			if( !empty( $pParamHash['content_store']['ip'] ) ) {
@@ -3151,7 +3149,6 @@ class LibertyContent extends LibertyBase {
 		if( !empty( $log_message ) ) {
 			$pParamHash['action_log_store']['log_message'] = substr( $log_message, 0, 250 );
 		}
-
 		// error message - default is to put in any stuff in mErrors
 		$error_message = '';
 		if( empty( $pParamHash['action_log']['error_message'] ) && !empty( $this ) && !empty( $this->mErrors ) ) {
@@ -3170,7 +3167,6 @@ class LibertyContent extends LibertyBase {
 		if( empty( $pParamHash['action_log_store']['error_message'] ) && empty( $pParamHash['action_log_store']['log_message'] )) {
 			$ret = FALSE;
 		}
-
 		// if we get as far as here, we can
 		return $ret;
 	}

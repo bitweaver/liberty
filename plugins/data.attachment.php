@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.42 $
+ * @version  $Revision: 1.43 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.42 2009/10/01 14:17:01 wjames5 Exp $
+// $Id: data.attachment.php,v 1.43 2009/10/15 20:03:58 tylerbello Exp $
 
 /**
  * definitions
@@ -123,14 +123,11 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		$ret = tra( "The attachment id given is not valid." );
 		return $ret;
 	}
-
 	// we will do slightly different stuff if this is using a mime plugin
 	if( !empty( $att['is_mime'] )) {
 		global $gBitSmarty, $gLibertySystem, $gContent;
-
 		// convert parameters into display properties
 		$wrapper = liberty_plugins_wrapper_style( $pParams );
-
 		// work out custom display_url if there is one
 		if( @BitBase::verifyId( $pParams['page_id'] )) {
 			// link to page by page_id
@@ -184,6 +181,14 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		$gBitSmarty->assign( 'wrapper', $wrapper );
 		$gBitSmarty->assign( 'thumbsize', (( !empty( $pParams['size'] ) && ( $pParams['size'] == 'original' || !empty( $att['thumbnail_url'][$pParams['size']] ))) ? $pParams['size'] : 'medium' ));
 
+		//Carry only these attributes to the image tags	
+		if( !empty($pParams['width']) ){
+			$gBitSmarty->assign( 'width', $pParams['width'] );
+		}
+		if( !empty($pParams['height']) ){
+			$gBitSmarty->assign( 'height', $pParams['height']);
+		}
+
 		$mimehandler = (( !empty( $wrapper['output'] ) && $wrapper['output'] == 'thumbnail' ) ? LIBERTY_DEFAULT_MIME_HANDLER : $att['attachment_plugin_guid'] );
 		$ret = $gBitSmarty->fetch( $gLibertySystem->getMimeTemplate( 'attachment', $mimehandler ));
 	} else {
@@ -207,11 +212,9 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		} else {
 			$alt = $wrapper['alt'];
 		}
-
 		// check if we have a valid thumbnail
 		if( !empty( $thumburl ) ) {
 			$wrapper = liberty_plugins_wrapper_style( $pParams );
-
 			// set up image first
 			$ret = '<img'.
 				' alt="'.  $alt .'"'.
@@ -274,7 +277,6 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 			$ret = tra( "The attachment id given is not valid." );
 		}
 	}
-
 	return $ret;
 }
 ?>
