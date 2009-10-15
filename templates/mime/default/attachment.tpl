@@ -12,7 +12,7 @@
 				<img class="thumb" src="{$attachment.thumbnail_url.$thumbsize}" alt="{$wrapper.alt|default:$wrapper.description|default:$attachment.filename|replace:"\r":""|replace:"\n":" "|escape}" title="{$wrapper.description|default:$wrapper.alt|default:$attachment.filename|replace:"\r":""|replace:"\n":" "|escape}" {if !empty($height) || !empty($width)} style="{if !empty($height)}height:{$height};{/if}{if !empty($width)}width:{$width}{/if}"{/if}/>
 			{/if}
 			{if $wrapper.description_parsed}
-				<p>{$wrapper.description_parsed}</p>
+				<div class="caption">{$wrapper.description_parsed}</div>
 
 			{/if}
 		{if $wrapper.display_url}</a>{/if}
