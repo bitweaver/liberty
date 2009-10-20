@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.11 $
+ * @version  $Revision: 1.12 $
  * @package  liberty
  * @subpackage functions
  */
@@ -47,8 +47,8 @@ if( !empty( $_REQUEST['action'] ) && @BitBase::verifyId( $gContent->mContentId )
 	}
 }
 
-// Get a list of groups
-$listHash = array( 'sort_mode' => 'group_id_asc' );
+// Get a list of groups owned by the user (and thus able to be administered by this user) OR public groups
+$listHash = array( 'sort_mode' => 'group_id_asc', 'visible' => 1);
 $contentPerms['groups'] = $gBitUser->getAllGroups( $listHash );
 
 if( !empty( $gContent->mType['handler_package'] )) {
