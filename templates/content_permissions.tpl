@@ -32,7 +32,7 @@
 
 			{foreach from=$contentPerms.assignable key=perm item=permInfo name=perms}
 				<tr class="{cycle values="odd,even"}">
-					<td>{$permInfo.perm_desc}<br /><em>({$permInfo.perm_name})</em></td>
+					<td>{$permInfo.perm_desc}{if $gBitUser->isAdmin()}<br /><em>({$permInfo.perm_name})</em>{/if}</td>
 					{foreach from=$contentPerms.groups key=groupId item=groupInfo}
 						{assign var=icon value="media-playback-stop"}                      {* default icon *}
 						{assign var=action value="assign"}                                 {* default action *}
