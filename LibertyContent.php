@@ -3,7 +3,7 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.411 2009/10/15 20:03:57 tylerbello Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.412 2009/10/20 15:19:32 ukgrad89 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -3194,6 +3194,18 @@ class LibertyContent extends LibertyBase {
 			$whereSql .= empty( $whereSql ) ? ' WHERE ' : ' AND ';
 			$whereSql .= " UPPER( lal.`title` ) LIKE ? ";
 			$bindVars[] = '%'.strtoupper( $pListHash['find_log'] ).'%';
+		}
+
+		if( !empty( $pListHash['user_id'] ) ) {
+			$whereSql .= empty( $whereSql ) ? ' WHERE ' : ' AND ';
+			$whereSql .= " lal.`user_id` = ? ";
+			$bindVars[] = $pListHash['user_id'];
+		}
+
+		if( !empty( $pListHash['content_id'] ) ) {
+			$whereSql .= empty( $whereSql ) ? ' WHERE ' : ' AND ';
+			$whereSql .= " lal.`content_id` = ? ";
+			$bindVars[] = $pListHash['content_id'];
 		}
 
 		if( !empty( $pListHash['sort_mode'] )) {
