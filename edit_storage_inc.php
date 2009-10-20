@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/edit_storage_inc.php,v 1.38 2009/04/01 14:32:19 tekimaki_admin Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/edit_storage_inc.php,v 1.39 2009/10/20 18:01:48 ukgrad89 Exp $
  *
  * edit_storage_inc
  * @author   spider <spider@steelsun.com>
@@ -15,10 +15,10 @@ foreach( $gLibertySystem->getPluginFunctions( 'upload_function' ) as $guid => $f
 }
 
 // set up base arguments
-$getArgs = split( '&', $_SERVER['QUERY_STRING'] );
+$getArgs = explode( '&', $_SERVER['QUERY_STRING'] );
 $attachmentBaseArgs = '';
 foreach( $getArgs as $arg ) {
-	$parts = split( '=', $arg );
+	$parts = explode( '=', $arg );
 	if( $parts[0] != 'deleteAttachment' ) {
 		$attachmentBaseArgs .= $arg."&amp;";
 	}

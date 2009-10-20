@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.122 2009/10/01 14:17:01 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.123 2009/10/20 18:01:48 ukgrad89 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -714,7 +714,7 @@ class LibertySystem extends LibertyBase {
 	 */
 	function getMimeThumbnailURL($pMimeType, $pExt=NULL) {
 		$ret = NULL;
-		$parts = split( '/',$pMimeType );
+		$parts = explode( '/',$pMimeType );
 		if( count( $parts ) > 1 ) {
 			global $gBitSmarty;
 			require_once $gBitSmarty->_get_plugin_filepath( 'function','biticon' );
