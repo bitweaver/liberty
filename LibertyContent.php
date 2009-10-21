@@ -3,7 +3,7 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.412 2009/10/20 15:19:32 ukgrad89 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.413 2009/10/21 15:08:34 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -707,6 +707,7 @@ class LibertyContent extends LibertyBase {
 	 * @return TRUE if completed successfully
 	 */
 	function expungeVersion( $pVersion=NULL, $pComment = '' ) {
+		global $gBitUser;
 		$ret = FALSE;
 		if( $this->isValid() ) {
 			$this->mDb->StartTrans();
@@ -717,14 +718,14 @@ class LibertyContent extends LibertyBase {
 				array_push( $bindVars, $pVersion );
 			}
 			$hasRows = $this->mDb->getOne( "SELECT COUNT(`version`) FROM `".BIT_DB_PREFIX."liberty_content_history` WHERE `content_id`=? $versionSql ", $bindVars );
-			$query = "delete from `".BIT_DB_PREFIX."liberty_content_history` where `content_id`=? $versionSql ";
+			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_history` WHERE `content_id`=? $versionSql ";
 			$result = $this->mDb->query( $query, $bindVars );
 			if( $hasRows ) {
 				global $gBitSystem;
 				$action = "Removed version $pVersion";
 				$t = $gBitSystem->getUTCTime();
-				$query = "insert into `".BIT_DB_PREFIX."liberty_action_log`(`log_message`,`content_id`,`last_modified`,`user_id`,`ip`,`error_message`) values(?,?,?,?,?,?)";
-				$result = $this->mDb->query($query,array($action,$this->mContentId,$t,ROOT_USER_ID,$_SERVER["REMOTE_ADDR"],$pComment));
+				$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_action_log` (`log_message`,`content_id`,`last_modified`,`user_id`,`ip`,`error_message`) VALUES (?,?,?,?,?,?)";
+				$result = $this->mDb->query($query,array($action,$this->mContentId,$t,$gBitUser->mUserId,$_SERVER["REMOTE_ADDR"],$pComment));
 				$ret = TRUE;
 			}
 			$this->mDb->CompleteTrans();
