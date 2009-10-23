@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.44 $
+ * @version  $Revision: 1.45 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.44 2009/10/23 21:33:14 spiderr Exp $
+// $Id: data.attachment.php,v 1.45 2009/10/23 21:34:34 spiderr Exp $
 
 /**
  * definitions
@@ -182,9 +182,9 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		$gBitSmarty->assign( 'thumbsize', (( !empty( $pParams['size'] ) && ( $pParams['size'] == 'original' || !empty( $att['thumbnail_url'][$pParams['size']] ))) ? $pParams['size'] : 'medium' ));
 
 		//Carry only these attributes to the image tags	
-		if( !empty($pParams['width']) ){
-			$gBitSmarty->assign( 'width', $pParams['width'] );
-		}
+		$width = !empty( $pParams['width'] ) ? $pParams['width'] : '';
+		$gBitSmarty->assign( 'width', $width );
+		
 		$height = !empty( $pParams['height'] ) ? $pParams['height'] : '';
 		$gBitSmarty->assign( 'height', $height );
 
