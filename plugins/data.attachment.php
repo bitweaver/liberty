@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.43 $
+ * @version  $Revision: 1.44 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.43 2009/10/15 20:03:58 tylerbello Exp $
+// $Id: data.attachment.php,v 1.44 2009/10/23 21:33:14 spiderr Exp $
 
 /**
  * definitions
@@ -185,9 +185,8 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		if( !empty($pParams['width']) ){
 			$gBitSmarty->assign( 'width', $pParams['width'] );
 		}
-		if( !empty($pParams['height']) ){
-			$gBitSmarty->assign( 'height', $pParams['height']);
-		}
+		$height = !empty( $pParams['height'] ) ? $pParams['height'] : '';
+		$gBitSmarty->assign( 'height', $height );
 
 		$mimehandler = (( !empty( $wrapper['output'] ) && $wrapper['output'] == 'thumbnail' ) ? LIBERTY_DEFAULT_MIME_HANDLER : $att['attachment_plugin_guid'] );
 		$ret = $gBitSmarty->fetch( $gLibertySystem->getMimeTemplate( 'attachment', $mimehandler ));
