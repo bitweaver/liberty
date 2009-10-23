@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.50 2009/02/05 17:39:33 tekimaki_admin Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.51 2009/10/23 21:10:49 spiderr Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -214,7 +214,7 @@ function liberty_plugins_wrapper_style( $pParamHash ) {
 
 				// force display:block to the "div" if not specified otherwise
 				if( empty( $pParamHash['display'] )) {
-					$pParamHash['display'] = "block";
+					$pParamHash['display'] = "inline-block";
 				}
 			}
 		}
