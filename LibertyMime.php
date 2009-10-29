@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.44 2009/03/30 03:26:08 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.45 2009/10/29 19:14:19 spiderr Exp $
  */
 
 /**
@@ -54,6 +54,13 @@ class LibertyMime extends LibertyAttachable {
 			if( $result = $this->mDb->query( $query,array( (int)$contentId ))) {
 				$this->mStorage = array();
 				while( $row = $result->fetchRow() ) {
+					if( !empty( $row['is_primary'] ) ) {
+						// used by edit tpl's among other things
+						$this->mInfo['primary_attachment_id'] = $row['attachment_id'];
+					} elseif( !$this->getField( 'primary_attachment_id' ) && !empty( $row['attachment_id'] ) ) {
+						// primary was not set by the above, default to first row. might be reset by later iterations via if is_primary above
+						$this->mInfo['primary_attachment_id'] = $row['attachment_id'];
+					}
 					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function', 'mime' )) {
 						// we will pass the preferences by reference that the plugin can easily update them
 						if( empty( $this->mStoragePrefs[$row['attachment_id']] )) {

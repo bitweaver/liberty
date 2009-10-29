@@ -118,7 +118,7 @@
 					<td class="actionicon">
 						<label>
 							{tr}No {$primary_label|default:"Primary"}{/tr}:&nbsp;
-							<input type="radio" name="liberty_attachments[primary]" value="none" {if empty($gContent->mInfo[primary])}checked="checked"{/if} />
+							<input type="radio" name="liberty_attachments[primary]" value="none" {if !$gContent->getField('primary_attachment_id')}checked="checked"{/if} />
 						</label>
 					</td>
 				</tr>
