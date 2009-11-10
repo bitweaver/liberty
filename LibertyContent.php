@@ -3,7 +3,7 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.414 2009/11/10 17:02:46 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.415 2009/11/10 17:07:46 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -797,7 +797,7 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	 * Check user_id to establish if the object that has been loaded was created by the current user
+	 * Check if content matches content type GUID - must also be a valid content object, it will not work for generic content class 
 	 */
 	function isContentType( $pContentGuid ) {
 		global $gBitUser;
