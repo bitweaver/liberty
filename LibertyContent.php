@@ -3,7 +3,7 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.415 2009/11/10 17:07:46 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.416 2009/11/10 17:10:40 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1865,7 +1865,7 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	 * Access a content item type GUID
+	 * Access a content item content_id
 	 *
 	 * @return string content_type_guid for the object
 	 */
