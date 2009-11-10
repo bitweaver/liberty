@@ -3,7 +3,7 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.413 2009/10/21 15:08:34 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.414 2009/11/10 17:02:46 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -449,7 +449,7 @@ class LibertyContent extends LibertyBase {
 //			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `content_id` = ?";
 //			$result = $this->mDb->query( $query, array( $this->mContentId ) );
 
-			// Remove hits
+			// Remove data
 			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_data` WHERE `content_id` = ?";
 			$result = $this->mDb->query( $query, array( $this->mContentId ) );
 
