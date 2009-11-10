@@ -3,7 +3,7 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.416 2009/11/10 17:10:40 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.417 2009/11/10 17:21:26 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1691,7 +1691,7 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	 * Copy current permissions to another content
+	 * Register the content type for reference
 	 *
 	 * @param string Content Type GUID
 	 * @param array Array of content type data
