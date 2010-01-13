@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.66 $
+ * @version  $Revision: 1.67 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.66 2009/10/29 04:41:30 wjames5 Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.67 2010/01/13 14:03:24 spiderr Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See below for details and a complete list of authors.
@@ -60,7 +60,8 @@ if( @BitBase::verifyId( $_REQUEST['delete_comment_id'] )) {
 	// make sure we're loaded up before we delete
 	$deleteComment->loadComment();
 	if( $deleteComment->isValid() && $gContent->hasUserPermission( 'p_liberty_admin_comments' )) {
-		$deleteComment->deleteComment();
+		// delete entire thread
+		$deleteComment->expunge();
 	}
 }
 
