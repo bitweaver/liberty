@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.89 2009/09/24 17:41:08 tylerbello Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.90 2010/01/29 15:39:10 tylerbello Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -404,21 +404,20 @@ class LibertyComment extends LibertyMime {
 		if ( !empty( $pParamHash['root_content_type_guid'] ) ) {
 			if( is_string( $pParamHash['root_content_type_guid'] ) ) {
 				$pParamHash['root_content_type_guid'] = array( $pParamHash['root_content_type_guid'] );
-			}
-			if( is_array( $pParamHash['root_content_type_guid'] ) ) {
+			} elseif( is_array( $pParamHash['root_content_type_guid'] ) ) {
 				$contentTypes = array_keys( $gLibertySystem->mContentTypes );
 				$max = count( $pParamHash['root_content_type_guid'] );
-				$whereSql .= " AND (";
+				$guidSql = '';
 				for( $i = 0; $i < $max; $i++ ) {
 					if( in_array( $pParamHash['root_content_type_guid'][$i], $contentTypes ) ) {
-						$whereSql .= " rlc.`content_type_guid`=? ";
-						$bindVars[] = $pParamHash['root_content_type_guid'][$i];
-						if( $max > 1 && $i < $max - 1 ) {
-							$whereSql .= ' OR ';
+						if( strlen( $guidSql ) ) {
+							$guidSql .= ' OR ';
 						}
+						$guidSql .= " rlc.`content_type_guid`=? ";
+						$bindVars[] = $pParamHash['root_content_type_guid'][$i];
 					}
 				}
-				$whereSql .= ')';
+				$whereSql .= " AND ( $guidSql )";
 			}
 		}
 
