@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.90 2010/01/29 15:39:10 tylerbello Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.91 2010/01/30 21:54:39 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -168,7 +168,7 @@ class LibertyComment extends LibertyMime {
 					$parent_sequence_forward = $parentComment->mInfo['thread_forward_sequence'];
 					$parent_sequence_reverse = $parentComment->mInfo['thread_reverse_sequence'];
 				}
-				# if nesting level > 25 deep, put it on level 25
+				// if nesting level > 25 deep, put it on level 25
 				if (strlen($parent_sequence_forward) > 10*24) {
 					$parent_sequence_forward = substr($parent_sequence_forward,0,10*24);
 				}
@@ -346,7 +346,7 @@ class LibertyComment extends LibertyMime {
 			$ret = $viewContent->getDisplayUrl( NULL, $pUrlHash ).( @BitBase::verifyId( $pMixed['content_id'] ) ? "#comment_".$pMixed['content_id'] : '' );
 		}elseif( @BitBase::verifyId( $pMixed['content_id'] )) {
 			$ret = parent::getDisplayUrl( NULL, $pMixed );
-			$ret .= "&view_comment_id=".$pMixed['content_id']."#comment_{$pMixed['content_id']}";
+			$ret .= "#comment_{$pMixed['content_id']}";
 		}
 
 		return( $ret );
@@ -366,8 +366,7 @@ class LibertyComment extends LibertyMime {
 					else {
 						$ret .= "?";
 					}
-					$ret .= "view_comment_id=" . $pMixed['content_id'] .
-						"#comment_".$pMixed['content_id'];
+					$ret .= "view_comment_id=" . $pMixed['content_id'] .  "#comment_".$pMixed['content_id'];
 			}
 			return ( $ret );
 	}
@@ -468,7 +467,8 @@ class LibertyComment extends LibertyMime {
 		if( $result = $this->mDb->query( $query, $bindVars, $pParamHash['max_records'], $pParamHash['offset'] )) {
 			while( $row = $result->FetchRow() ) {
 				$row['display_link'] = $this->getDisplayLink( $row['content_title'], $row );
-				$row['display_url'] = $this->getDisplayUrl2( $row['content_title'], $row );
+				$row['display_url'] = $this->getDisplayUrl( $row['content_title'], $row );
+				$row['direct_url'] = $this->getDisplayUrl2( $row['content_title'], $row );
 				if (!empty($pParamHash['parse'])) {
 					$row['parsed_data'] = $this->parseData($row);
 				}
