@@ -3,7 +3,7 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.418 2010/01/27 21:48:05 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.419 2010/01/30 21:53:52 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -693,7 +693,6 @@ class LibertyContent extends LibertyBase {
 				if( $this->store( $res ) ) {
 					$ret = TRUE;
 				}
-				//vd( $this->mErrors );
 				$this->mDb->CompleteTrans();
 			} else {
 				$this->mDb->RollbackTrans();
@@ -2059,7 +2058,16 @@ class LibertyContent extends LibertyBase {
 	 * @return string Formated URL address to display the page.
 	 */
 	function getThumbnailUrl( $pSize='small', $pContentId=NULL, $pSecondaryId=NULL ) {
-		return '';
+		$ret = '';
+		if( !empty( $this->mInfo['content_type']['handler_package'] ) ) {
+			$pkgName = $this->mInfo['content_type']['handler_package'];
+			if( $pkgPath = constant( strtoupper( $pkgName ).'_PKG_PATH' ) ) {
+				if( file_exists( $pkgPath.'icons/pkg_'.$pkgName.'.png' ) ) {
+					$ret = constant( strtoupper( $pkgName ).'_PKG_URL' ).'icons/pkg_'.$pkgName.'.png';
+				}
+			}
+		}
+		return $ret;
 	}
 
 
