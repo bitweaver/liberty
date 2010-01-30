@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.45 2009/10/29 19:14:19 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.46 2010/01/30 21:53:24 spiderr Exp $
  */
 
 /**
@@ -271,7 +271,7 @@ class LibertyMime extends LibertyAttachable {
 	 * @access public
 	 * @return boolean TRUE on success, FALSE on failure - $this->mErrors will contain reason for failure
 	 */
-	function getThumbnailUrl( $pSize='small', $pInfoHash=NULL ) {
+	function getThumbnailUrl( $pSize='small', $pInfoHash=NULL, $pSecondary=NULL ) {
 		$ret = NULL;
 		if( !empty( $pInfoHash ) ) {
 			// do some stuff if we are given a hash of stuff
@@ -284,6 +284,9 @@ class LibertyMime extends LibertyAttachable {
 			if( !empty( $this->mStorage[$attachmentId]['thumbnail_url'][$pSize] )) {
 				$ret = $this->mStorage[$attachmentId]['thumbnail_url'][$pSize];
 			}
+		} 
+		if( empty( $ret ) ) {
+			$ret = parent::getThumbnailUrl( $pSize, $pInfoHash, $pSecondary );
 		}
 		return $ret;
 	}
