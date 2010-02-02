@@ -3,7 +3,7 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.419 2010/01/30 21:53:52 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.420 2010/02/02 22:01:40 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1806,14 +1806,14 @@ class LibertyContent extends LibertyBase {
 	 * @param array mInfo type hash of data to be used to provide base data
 	 * @return string Descriptive title for the page
 	 */
-	function getTitle( $pHash=NULL ) {
+	function getTitle( $pHash=NULL, $pDefault=TRUE ) {
 		$ret = NULL;
 		if( empty( $pHash ) ) {
 			$pHash = &$this->mInfo;
 		}
 		if( !empty( $pHash['title'] ) ) {
 			$ret = $pHash['title'];
-		} elseif( !empty( $pHash['content_description'] ) ) {
+		} elseif( $pDefault && !empty( $pHash['content_description'] ) ) {
 			$ret = $pHash['content_description'];
 		}
 		return $ret;
