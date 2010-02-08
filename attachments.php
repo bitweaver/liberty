@@ -3,7 +3,7 @@
  * attachment_browser
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.7 $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage functions
  */
@@ -11,7 +11,7 @@
 /**
  * bit setup
  */
-require_once("../bit_setup_inc.php");
+require_once("../kernel/setup_inc.php");
 
 $gContent = new LibertyMime();
 

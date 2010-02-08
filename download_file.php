@@ -1,6 +1,6 @@
 <?php
 /**
- * @version      $Header: /cvsroot/bitweaver/_bit_liberty/download_file.php,v 1.6 2008/12/08 09:02:34 squareing Exp $
+ * @version      $Header: /cvsroot/bitweaver/_bit_liberty/download_file.php,v 1.7 2010/02/08 21:27:23 wjames5 Exp $
  *
  * @author       xing  <xing@synapse.plus.com>
  * @package      treasury
@@ -11,7 +11,7 @@
 /**
  * Setup
  */ 
-require_once( '../bit_setup_inc.php' );
+require_once( '../kernel/setup_inc.php' );
 require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
 
 // fetch the attachment details

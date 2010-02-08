@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/redirect.php,v 1.4 2008/11/11 09:50:36 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/redirect.php,v 1.5 2010/02/08 21:27:23 wjames5 Exp $
  * lookup_content_inc
  *
  * @author   spider <spider@steelsun.com>
@@ -11,7 +11,7 @@
 /**
  * Required setup
  */
-require_once( '../bit_setup_inc.php' );
+require_once( '../kernel/setup_inc.php' );
 if( !empty( $_REQUEST['q'] )) {
 	bit_redirect( $_REQUEST['q'] );
 } else {

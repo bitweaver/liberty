@@ -3,7 +3,7 @@
  * list_content
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.34 $
+ * @version  $Revision: 1.35 $
  * @package  liberty
  * @subpackage functions
  */
@@ -11,7 +11,7 @@
 /**
  * required setup
  */
-require_once("../bit_setup_inc.php");
+require_once("../kernel/setup_inc.php");
 
 $gBitSystem->verifyPermission( 'p_liberty_list_content' );
 

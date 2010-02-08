@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/ajax_comments.php,v 1.9 2009/01/11 08:40:00 squareing Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/ajax_comments.php,v 1.10 2010/02/08 21:27:23 wjames5 Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -8,7 +8,7 @@
 /**
  * required setup
  */
-require_once( '../bit_setup_inc.php' );
+require_once( '../kernel/setup_inc.php' );
 
 $staticContent = new LibertyContent();
 $gContent = $staticContent->getLibertyObject( $_REQUEST['parent_id'], ( !empty( $_REQUEST['parent_guid'] ) ? $_REQUEST['parent_guid'] : NULL ));

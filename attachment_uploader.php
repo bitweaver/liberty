@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.16 2008/11/09 20:16:00 nickpalmer Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/attachment_uploader.php,v 1.17 2010/02/08 21:27:23 wjames5 Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -8,7 +8,7 @@
 /**
  * required setup
  */
-require_once( '../bit_setup_inc.php' );
+require_once( '../kernel/setup_inc.php' );
 global $gBitSmarty, $gContent;
 
 $error = NULL;

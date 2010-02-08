@@ -1,5 +1,5 @@
 <?php
-require_once( '../../../bit_setup_inc.php' );
+require_once( '../../../kernel/setup_inc.php' );
 include_once( KERNEL_PKG_PATH.'simple_form_functions_lib.php' );
 /* We need DEFAULT_ACCEPTABLE_TAGS from here. */
 include_once( LIBERTY_PKG_PATH.'plugins/filter.simplepurifier.php');

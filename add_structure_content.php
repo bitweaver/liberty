@@ -1,9 +1,9 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/add_structure_content.php,v 1.8 2008/10/16 10:31:12 laetzer Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/add_structure_content.php,v 1.9 2010/02/08 21:27:23 wjames5 Exp $
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.8 $
+ * @version  $Revision: 1.9 $
  * @package  liberty
  * @subpackage functions
  */
@@ -12,7 +12,7 @@
  * required setup
  */
 $gLiteweightScan = TRUE;
-require_once( '../bit_setup_inc.php' );
+require_once( '../kernel/setup_inc.php' );
 
 if( !empty( $_REQUEST['modal'] ) ) {
 	$gBitSystem->mConfig['site_top_bar'] = FALSE;

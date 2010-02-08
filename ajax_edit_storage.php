@@ -1,7 +1,7 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/ajax_edit_storage.php,v 1.7 2008/07/15 18:57:49 wjames5 Exp $
- * @version  $Revision: 1.7 $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/ajax_edit_storage.php,v 1.8 2010/02/08 21:27:23 wjames5 Exp $
+ * @version  $Revision: 1.8 $
  * @package  liberty
  * @subpackage functions
  */
@@ -10,7 +10,7 @@
  * required setup
  */
 global $gContent;
-include_once( '../bit_setup_inc.php' );
+include_once( '../kernel/setup_inc.php' );
 
 // load the content
 include_once( LIBERTY_PKG_PATH.'lookup_content_inc.php' );

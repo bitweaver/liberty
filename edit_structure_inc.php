@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.28 $
+ * @version  $Revision: 1.29 $
  * @package  liberty
  * @subpackage functions
  */
@@ -15,7 +15,7 @@
 /**
  * required setup
  */
-require_once( '../bit_setup_inc.php' );
+require_once( '../kernel/setup_inc.php' );
 include_once( LIBERTY_PKG_PATH.'LibertyStructure.php');
 $gBitSmarty->assign_by_ref( 'feedback', $feedback = array() );
 

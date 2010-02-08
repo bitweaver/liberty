@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/preview.php,v 1.3 2007/06/22 09:17:13 lsces Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/preview.php,v 1.4 2010/02/08 21:27:23 wjames5 Exp $
  * lookup_content_inc
  *
  * @author   spider <spider@steelsun.com>
@@ -13,7 +13,7 @@
  */
 global $gLightweightScan;
 $gLightwieightScan = TRUE;
-require_once( '../bit_setup_inc.php' );
+require_once( '../kernel/setup_inc.php' );
 
 global $gContent, $gBitSystem, $gBitSmarty;
 include_once( LIBERTY_PKG_PATH.'lookup_content_inc.php' );

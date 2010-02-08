@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/ajax_attachment_browser.php,v 1.9 2008/06/04 21:23:54 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/ajax_attachment_browser.php,v 1.10 2010/02/08 21:27:23 wjames5 Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -8,7 +8,7 @@
 /**
  * required setup
  */
-require_once( '../bit_setup_inc.php' );
+require_once( '../kernel/setup_inc.php' );
 global $gContent, $gBitSmarty;
 
 $gContent = new LibertyMime();

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_rss.php,v 1.11 2008/07/29 18:03:36 lsces Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_rss.php,v 1.12 2010/02/08 21:27:23 wjames5 Exp $
  * @package wiki
  * @subpackage functions
  */
@@ -8,7 +8,7 @@
 /**
  * Initialization
  */
-require_once( "../bit_setup_inc.php" );
+require_once( "../kernel/setup_inc.php" );
 require_once( RSS_PKG_PATH."rss_inc.php" );
 require_once( LIBERTY_PKG_PATH."LibertyContent.php" );
 
