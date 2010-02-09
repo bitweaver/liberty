@@ -3,7 +3,7 @@
  * help_format_tikiwiki_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.14 $
+ * @version  $Revision: 1.15 $
  * @package  liberty
  * @subpackage functions
  */
@@ -12,7 +12,6 @@
  * required setup
  */
 global $gBitSystem, $gBitSmarty;
-require_once( BIT_ROOT_PATH.'bit_setup_inc.php' );
 require_once( KERNEL_PKG_PATH.'BitCache.php' );
 $cache = new BitCache( 'liberty/help' );
 

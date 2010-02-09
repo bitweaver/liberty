@@ -1,10 +1,10 @@
 <?php
 /**
- * $Id: edit_help_inc.php,v 1.21 2009/10/20 17:20:56 tylerbello Exp $
+ * $Id: edit_help_inc.php,v 1.22 2010/02/09 18:57:07 wjames5 Exp $
  * edit_help_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.21 $
+ * @version  $Revision: 1.22 $
  * @package  liberty
  * @subpackage functions
  */
@@ -13,7 +13,6 @@
  * required setup
  */
 global $gLibertySystem, $gBitSmarty;
-require_once( BIT_ROOT_PATH.'/bit_setup_inc.php' );
 
 $inEditor = TRUE; // Required by PluginHelp to Determin Executed in an Editor
 
