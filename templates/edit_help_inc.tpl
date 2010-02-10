@@ -1,5 +1,5 @@
 {strip}
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.33 2009/03/09 16:59:01 dansut Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.34 2010/02/10 19:33:06 spiderr Exp $ *}
 
 {if $dataplugins}
 	{jstab title="Plugins"}
@@ -7,7 +7,7 @@
 			<h2>{tr}Data Plugin Help{/tr}</h2>
 			<div {if !$gBitThemes->isJavascriptEnabled()}style="display:none;"{/if}>
 				{tr}Click on the plugin you need help for{/tr}:<br />
-				<select size="10" onchange="javascript:flipMulti(this.options[this.selectedIndex].value,1,1);">
+				<select size="10" onchange="javascript:BitBase.flipMulti(this.options[this.selectedIndex].value,1,1);">
 					{foreach from=$dataplugins item=p}
 						<option value="{$p.plugin_guid}">{$p.title|escape|default:"{tr}No Title{/tr}"} &bull; {ldelim}{$p.tag|lower}{rdelim}</option>
 					{/foreach}
@@ -20,7 +20,7 @@
 					<ul>
 						<li class="{cycle values="odd,even"}"><strong>{tr}Description{/tr}:</strong> {$p.description}</li>
 						<li class="{cycle}"><strong>{tr}Syntax{/tr}:</strong>
-							&nbsp;<a href="#" title="{tr}Click to insert syntax into editor{/tr}" onclick="javascript:insertAt('{$textarea_id|default:$smarty.const.LIBERTY_TEXT_AREA}','{$p.syntax|@addslashes}');">{$p.syntax}</a>
+							&nbsp;<a href="#" title="{tr}Click to insert syntax into editor{/tr}" onclick="javascript:BitBase.insertAt('{$textarea_id|default:$smarty.const.LIBERTY_TEXT_AREA}','{$p.syntax|@addslashes}');">{$p.syntax}</a>
 						</li>
 						<li class="{cycle}"><strong>{tr}Online Help{/tr}:</strong> {jspopup href="http://www.bitweaver.org/wiki/`$p.help_page`" title=`$p.help_page` class="external"}</li>
 					</ul>
@@ -35,7 +35,7 @@
 			<h2>{tr}Mime Plugin Help{/tr}</h2>
 			<div {if !$gBitThemes->isJavascriptEnabled()}style="display:none;"{/if}>
 				{tr}Click on the plugin you need help for{/tr}:<br />
-				<select size="10" onchange="javascript:flipMulti(this.options[this.selectedIndex].value,1,1);">
+				<select size="10" onchange="javascript:BitBase.flipMulti(this.options[this.selectedIndex].value,1,1);">
 					{foreach from=$mimeplugins item=p}
 						<option value="{$p.plugin_guid}">{$p.title|escape|default:"{tr}No Title{/tr}"}</option>
 					{/foreach}
