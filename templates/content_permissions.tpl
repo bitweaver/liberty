@@ -23,7 +23,7 @@
 			<tr>
 				<th>{tr}Permission{/tr}</th>
 				{foreach from=$contentPerms.groups item=group}
-				<th onmouseover="showById('f{$group.group_id}');hideById('a{$group.group_id}')">
+				<th onmouseover="BitBase.showById('f{$group.group_id}');BitBase.hideById('a{$group.group_id}')">
 					<abbr id="a{$group.group_id}" title="{$group.group_name}">{if count($contentPerms.groups) gt 10}{$group.group_name|truncate:4:false}{else}{$group.group_name}{/if}</abbr>
 					<span id="f{$group.group_id}" style="display:none">{$group.group_name}</span>
 				</th>

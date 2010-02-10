@@ -56,9 +56,9 @@
 									{foreach from=$gLibertySystem->mPlugins item=tag key=guid}
 										{if $tag.is_active eq 'y' and $tag.edit_field and $tag.plugin_type eq 'format'}
 											{if $tag.plugin_guid eq $plugin.plugin_guid}
-												showById
+												BitBase.showById
 											{else}
-												hideById
+												BitBase.hideById
 											{/if}
 											('qt{$textarea_id}{$tag.plugin_guid}'); 
 										{/if}
