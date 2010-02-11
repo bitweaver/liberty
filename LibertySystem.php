@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.123 2009/10/20 18:01:48 ukgrad89 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.124 2010/02/11 03:46:22 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -42,7 +42,6 @@ define( 'LIBERTY_SERVICE_CONTENT_TEMPLATES', 'content_templates' );
 define( 'LIBERTY_SERVICE_DOCUMENT_GENERATION', 'document_generation' );
 define( 'LIBERTY_SERVICE_FORUMS', 'forums' );
 define( 'LIBERTY_SERVICE_GROUP', 'groups' );
-define( 'LIBERTY_SERVICE_GEO', 'global_positioning' );
 define( 'LIBERTY_SERVICE_MAPS', 'map_display' );
 define( 'LIBERTY_SERVICE_METADATA', 'metadata' );
 define( 'LIBERTY_SERVICE_MENU', 'menu' );
@@ -50,7 +49,6 @@ define( 'LIBERTY_SERVICE_RATING', 'rating' );
 define( 'LIBERTY_SERVICE_REBLOG', 'reblogging_rss_feeds' );
 define( 'LIBERTY_SERVICE_SEARCH', 'search' );
 define( 'LIBERTY_SERVICE_THEMES', 'themes' );
-define( 'LIBERTY_SERVICE_TAGS', 'tags' );
 define( 'LIBERTY_SERVICE_TOPICA', 'topica' );
 define( 'LIBERTY_SERVICE_TRANSLATION', 'translation' );
 define( 'LIBERTY_SERVICE_TRANSLITERATION', 'transliteration' );
