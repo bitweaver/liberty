@@ -14,6 +14,7 @@
 	<div class="row rt-edit">
 		{formlabel label=$textarea_label for=$textarea_id}
 		{forminput}
+			{formfeedback error=$textarea_error}
 			<textarea {$textarea_class} {$textarea_attributes} {spellchecker width=$cols height=$rows} id="{$textarea_id|default:$smarty.const.LIBERTY_TEXT_AREA}" name="{$textarea_name|default:edit}" {$textarea_style}>{$textarea_data|escape:html}</textarea>
 			{formhelp note=$textarea_help}
 			{if $gBitSystem->isPackageActive('fckeditor') &&
