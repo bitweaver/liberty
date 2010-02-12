@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.36 $
+ * @version  $Revision: 1.37 $
  * @package  liberty
  * @subpackage functions
  */
@@ -43,7 +43,7 @@ if( empty( $contentListHash ) ) {
 		// pagination offset
 		'offset'            => !empty( $offset_content ) ? $offset_content : NULL,
 		// maximum number of records displayed on a page
-		'max_records'       => !empty( $max_content ) ? $max_content : !empty( $_REQUEST['max_records'] ) ? $_REQUEST['max_records'] : 100,
+		'max_records'       => !empty( $max_content ) ? $max_content : ( !empty( $_REQUEST['max_records'] ) ? $_REQUEST['max_records'] : 100 ),
 		// sort by this: <table column>_asc (or _desc)
 		'sort_mode'         => !empty( $content_sort_mode ) ? $content_sort_mode : 'title_asc',
 		// limit the result to this set
