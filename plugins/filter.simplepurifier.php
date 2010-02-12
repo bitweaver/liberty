@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.simplepurifier.php,v 1.5 2008/11/09 09:08:55 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.simplepurifier.php,v 1.6 2010/02/12 17:27:08 wjames5 Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -13,8 +13,8 @@ define( 'PLUGIN_GUID_FILTERSIMPLEPURIFIER', 'filtersimplepure' );
 global $gLibertySystem;
 
 // Set of default acceptable HTML tags
-define( 'DEFAULT_ACCEPTABLE_TAGS', '<a><br><b><blockquote><cite><code><div><dd><dl><dt><em><h1><h2><h3><h4><hr>'
-		.'<i><it><img><li><ol><p><pre><span><strong><table><tbody><div><tr><td><th><u><ul>'
+define( 'DEFAULT_ACCEPTABLE_TAGS', '<a><br><blockquote><cite><code><div><dd><dl><dt><em><h1><h2><h3><h4><hr>'
+		.'<it><img><li><ol><p><pre><span><strong><table><tbody><div><tr><td><th><u><ul>'
 		.'<button><fieldset><form><label><input><option><select><textarea>' );
 
 $pluginParams = array (
