@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.27 2009/05/27 21:01:55 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.28 2010/02/12 17:42:45 wjames5 Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -134,36 +134,36 @@ function htmlpure_getDefaultConfig( &$htmlp_version ){
 	$config = HTMLPurifier_Config::createDefault();
 
 	// Set the cache path
-	$config->set('Cache', 'SerializerPath', STORAGE_PKG_PATH );
+	$config->set('Cache.SerializerPath', STORAGE_PKG_PATH );
 
 	if ($gBitSystem->getConfig('htmlpure_escape_bad', 'y') == 'y') {
-		$config->set('Core', 'EscapeInvalidTags', true);
-		$config->set('Core', 'EscapeInvalidChildren', true);
+		$config->set('Core.EscapeInvalidTags', true);
+		$config->set('Core.EscapeInvalidChildren', true);
 	}
 	if ($gBitSystem->getConfig('htmlpure_disable_extern') == 'y') {
-		$config->set('URI', 'DisableExternal', true);
+		$config->set('URI.DisableExternal', true);
 	}
 	if ($gBitSystem->getConfig('htmlpure_disable_extern_res', 'y') == 'y') {
-		$config->set('URI', 'DisableExternalResources', true);
+		$config->set('URI.DisableExternalResources', true);
 	}
 	if ($gBitSystem->getConfig('htmlpure_disable_res') == 'y') {
-		$config->set('URI', 'DisableResources', true);
+		$config->set('URI.DisableResources', true);
 	}
 	if ($gBitSystem->getConfig('htmlpure_disable_uri') == 'y') {
-		$config->set('URI', 'Disable', true);
+		$config->set('URI.Disable', true);
 	}
 	if ($gBitSystem->getConfig('htmlpure_use_redirect') == 'y') {
-		$config->set('URI', 'Munge', LIBERTY_PKG_URL.'redirect.php?q=%s');
+		$config->set('URI.Munge', LIBERTY_PKG_URL.'redirect.php?q=%s');
 	}
 	if ($gBitSystem->getConfig('htmlpure_strict_html', 'y') == 'y') {
-		$config->set('HTML', 'Strict', true);
+		$config->set('HTML.Strict', true);
 	}
 	if ($gBitSystem->getConfig('htmlpure_xhtml', 'n') == 'n') {
-		$config->set('HTML', 'XHTML', true);
+		$config->set('HTML.XHTML', true);
 	}
 
 	// Set that we are using a div to wrap things.
-	$config->set('HTML', 'BlockWrapper', 'div');
+	$config->set('HTML.BlockWrapper', 'div');
 
 	// set plugins
 	// TODO: devise a way to parse plugins dir
@@ -173,7 +173,7 @@ function htmlpure_getDefaultConfig( &$htmlp_version ){
 		$custom_filters = array();
 
 		// Disable included YouTube filter, we have our own
-		$config->set('Filter', 'YouTube', false);
+		$config->set('Filter.YouTube', false);
 
 		if ($gBitSystem->isFeatureActive('htmlpure_allow_youtube')) {
 			require_once(UTIL_PKG_PATH.'htmlpure/Filter/YouTube.php');
@@ -185,7 +185,7 @@ function htmlpure_getDefaultConfig( &$htmlp_version ){
 		}
 
 		if( !empty( $custom_filters ) ){
-			$config->set('Filter', 'Custom', $custom_filters );
+			$config->set('Filter.Custom', $custom_filters );
 		}
 	}
 
