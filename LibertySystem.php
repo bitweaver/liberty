@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.124 2010/02/11 03:46:22 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.125 2010/02/12 14:53:29 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -35,7 +35,6 @@ if( !defined( 'LIBERTY_DEFAULT_MIME_HANDLER' )) {
 
 // Service Definitions
 define( 'LIBERTY_SERVICE_ACCESS_CONTROL', 'access_control' );
-define( 'LIBERTY_SERVICE_BLOGS', 'blogs' );
 define( 'LIBERTY_SERVICE_CATEGORIZATION', 'categorization' );
 define( 'LIBERTY_SERVICE_COMMERCE', 'commerce' );
 define( 'LIBERTY_SERVICE_CONTENT_TEMPLATES', 'content_templates' );
@@ -659,8 +658,13 @@ class LibertySystem extends LibertyBase {
 	 * @return none
 	 * @access public
 	 **/
-	function registerService( $pServiceName, $pPackageName, $pServiceHash ) {
-		$this->mServices[$pServiceName][$pPackageName] = $pServiceHash;
+	function registerService( $pServiceName, $pPackageName, $pServiceHash, $pOptions = array()  ) {
+		$this->mServices[$pServiceName] = array(
+		   										'package' => $pPackageName,
+		   										'services'	=> $pServiceHash,
+												'description' => !empty( $pOptions['description'] ) ? $pOptions['description'] : NULL,
+												'required' => !empty( $pOptions['required'] ) ? $pOptions['required'] : FALSE,
+											 );
 	}
 
 	/**
@@ -686,11 +690,19 @@ class LibertySystem extends LibertyBase {
 		if( !empty( $this->mServices ) ) {
 			foreach( array_keys( $this->mServices ) as $service ) {
 				if( $this->hasService( $service ) ) {
+					// DEPRECATED - this is mostly circular logic - getting the package name from itself to look itself up
+					// Service names are key values - regardless of package
+					// Accessing services directly by name infact allows multiple packages to provide the same kind of service
+					/*
 					if( !($package = $gBitSystem->getConfig( 'liberty_service_'.$service )) ) {
 						$package = key( $this->mServices[$service] );
 					}
 					if( !empty( $this->mServices[$service][$package][$pServiceValue] ) ) {
 						$ret[$service] = $this->mServices[$service][$package][$pServiceValue];
+					}
+					*/
+					if( !empty( $this->mServices[$service]['services'][$pServiceValue] ) ) {
+						$ret[$service] = $this->mServices[$service]['services'][$pServiceValue];
 					}
 				}
 			}

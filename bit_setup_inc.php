@@ -3,7 +3,7 @@
  * base package include
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.26 $
+ * @version  $Revision: 1.27 $
  * @package  liberty
  * @subpackage functions
  */
@@ -32,19 +32,26 @@ if( empty( $current_default_format_guid ) || empty( $plugin_status ) || $plugin_
 	$gLibertySystem->loadActivePlugins();
 }
 
-$gLibertySystem->registerService( 'liberty', LIBERTY_PKG_NAME, array(
-	'content_edit_mini_tpl'      => 'bitpackage:liberty/service_content_edit_mini_inc.tpl',
-	'content_edit_tab_tpl'       => 'bitpackage:liberty/service_content_edit_tab_inc.tpl',
-	'content_icon_tpl'           => 'bitpackage:liberty/service_content_icon_inc.tpl',
-	'content_body_tpl'           => 'bitpackage:liberty/service_content_body_inc.tpl',
-	'content_display_function'   => 'liberty_content_display',
-	//'content_load_function'      => 'liberty_content_load',
-	'content_edit_function'      => 'liberty_content_edit',
-	//'content_store_function'     => 'liberty_content_store',
-	'content_load_sql_function'  => 'liberty_content_load_sql',
-	'content_list_sql_function'  => 'liberty_content_list_sql',
-	'content_preview_function'   => 'liberty_content_preview',
-));
+$gLibertySystem->registerService( 'liberty', 
+	LIBERTY_PKG_NAME, 
+	array(
+		'content_edit_mini_tpl'      => 'bitpackage:liberty/service_content_edit_mini_inc.tpl',
+		'content_edit_tab_tpl'       => 'bitpackage:liberty/service_content_edit_tab_inc.tpl',
+		'content_icon_tpl'           => 'bitpackage:liberty/service_content_icon_inc.tpl',
+		'content_body_tpl'           => 'bitpackage:liberty/service_content_body_inc.tpl',
+		'content_display_function'   => 'liberty_content_display',
+		//'content_load_function'      => 'liberty_content_load',
+		'content_edit_function'      => 'liberty_content_edit',
+		//'content_store_function'     => 'liberty_content_store',
+		'content_load_sql_function'  => 'liberty_content_load_sql',
+		'content_list_sql_function'  => 'liberty_content_list_sql',
+		'content_preview_function'   => 'liberty_content_preview',
+	),
+	array( 
+		'description' => tra( 'Provides core functionality, including enforcing some access control and dynamic layout components.' ),
+		'required' => TRUE,
+	)
+);
 
 // delete cache file if requested
 if( @BitBase::verifyId( $_REQUEST['refresh_liberty_cache'] )) {
