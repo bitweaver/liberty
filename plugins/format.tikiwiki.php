@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.131 $
+ * @version  $Revision: 1.132 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -210,13 +210,6 @@ class TikiWikiParser extends BitBase {
 		$data      = $pParseHash['data'];
 		$contentId = $pParseHash['content_id'];
 
-		// get the userId if available
-		if( !empty( $pParseHash['user_id'] )) {
-			$userId = $pParseHash['user_id'];
-		} elseif( !empty( $pCommonObject ) && !empty ( $pCommonObject->mInfo['user_id'] )) {
-			$userId = $pCommonObject->mInfo['user_id'];
-		}
-
 		// this is used for setting the links when section editing is enabled
 		$section_count = 1;
 
@@ -234,19 +227,8 @@ class TikiWikiParser extends BitBase {
 		// only strip out html if needed
 		if( $gBitSystem->isFeatureActive( 'content_allow_html' ) || $gBitSystem->isFeatureActive( 'content_force_allow_html' )) {
 			// we allow html unconditionally with this parser
-		} elseif( !empty( $contentPrefs['content_enter_html'] ) && @BitBase::verifyId( $userId )) {
-			// we need to load up the user who wrote this page to check their permissions
-			if( $gBitUser->mUserId != $userId ) {
-				$tmpUser = new BitPermUser( $userId );
-				$tmpUser->loadPermissions();
-			} else {
-				$tmpUser = &$gBitUser;
-			}
-
-			// check required permission to allow html
-			if( !$tmpUser->hasPermission( 'p_liberty_enter_html' )) {
-				$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
-			}
+		} elseif( !empty( $contentPrefs['content_enter_html'] )) {
+			// we allow html on a per page basis
 		} else {
 			// we are parsing this page and we either have no way of checking permissions or we have no need for html
 			$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
