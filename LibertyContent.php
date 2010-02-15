@@ -3,7 +3,7 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.420 2010/02/02 22:01:40 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.421 2010/02/15 15:57:07 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -833,6 +833,29 @@ class LibertyContent extends LibertyBase {
 		}
 		return $errors;
 	}
+
+	/**
+	 * check if a service is active for this content type
+	 * requires package LCConfig 
+	 * provisional method until LCConfig package is integrated into the core 
+	 */
+	function hasService( $pServiceGuid ){
+		global $gBitSystem;
+		$ret = TRUE; // we return true by default to preserve legacy service opperation which has no content type preferences
+
+		if( $gBitSystem->isPackageActive( 'lcconfig' ) ){
+			// LCConfig is a singlton class
+			$LCConfig = LCConfig::getInstance();
+			// LCConfig negates services by content type
+			// if result is not 'n' then service should apply to this content type
+			if( $LCConfig->getConfig( 'service_'.$pServiceGuid, $this->mContentTypeGuid ) == 'n' ){	
+				$ret = FALSE;
+			}
+		}
+
+		return $ret;
+	}
+
 
 	/**
 	 * Default liberty sql for joining a content object table to liberty.
