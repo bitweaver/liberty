@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.91 2010/01/30 21:54:39 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.92 2010/02/25 19:08:41 dansut Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -11,7 +11,6 @@
  * required setup
  */
 require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
-require_once( LIBERTY_PKG_PATH.'LibertyMime.php');
 
 define( 'BITCOMMENT_CONTENT_TYPE_GUID', 'bitcomment' );
 
