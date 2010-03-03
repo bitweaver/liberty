@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.172 2009/10/01 14:17:01 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.173 2010/03/03 21:38:21 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+
@@ -125,7 +125,7 @@ class LibertyAttachable extends LibertyContent {
 		// *PRIVATE FUNCTION. GO AWAY! DO NOT CALL DIRECTLY!!!
 		global $gBitSystem;
 		$pathParts = array();
-		$pathParts = split( '/', trim( STORAGE_PKG_PATH, '/\\' ) );
+		$pathParts = preg_split( '#/#', trim( STORAGE_PKG_PATH, '/\\' ) );
 		
 		if( !$pUserId ) {
 			$pathParts[] = 'common';
@@ -140,7 +140,7 @@ class LibertyAttachable extends LibertyContent {
 		}
 		// In case $pSubDir is multiple levels deep we'll need to mkdir each directory if they don't exist
 		if(!empty($pSubDir)){
-			$pSubDirParts = split('/',$pSubDir);
+			$pSubDirParts = preg_split('#/#',$pSubDir);
 			foreach ($pSubDirParts as $subDir) {
 				$pathParts[] = $subDir;
 			}
@@ -581,7 +581,7 @@ class LibertyAttachable extends LibertyContent {
 					if( preg_match( '/^[A-Z]:\\\/', $pFile['name'] ) ) {
 						// MSIE shit file names if passthrough via gigaupload, etc.
 						// basename will not work - see http://us3.php.net/manual/en/function.basename.php
-						$tmp = preg_split("[\\\]",$pFile['name']);
+						$tmp = preg_split("#[\\\]#",$pFile['name']);
 						$defaultName = $tmp[count($tmp) - 1];
 					} elseif( strpos( '.', $pFile['name'] ) ) {
 						list( $defaultName, $ext ) = explode( '.', $pFile['name'] );
