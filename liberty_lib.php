@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.51 2009/10/23 21:10:49 spiderr Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.52 2010/03/04 20:55:15 spiderr Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -709,7 +709,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 	if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
 		$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
 	} else {
-		list( $type, $mimeExt ) = split( '/', strtolower( $pFileHash['type'] ));
+		list( $type, $mimeExt ) = preg_split( '#/#', strtolower( $pFileHash['type'] ));
 	}
 
 	if( preg_match( "!(png|gif)!", $mimeExt )) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.22 2009/01/03 09:37:04 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.23 2010/03/04 20:55:15 spiderr Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -79,7 +79,7 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 			if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
 				$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
 			} else {
-				list( $type, $mimeExt ) = split( '/', strtolower( $itype ));
+				list( $type, $mimeExt ) = preg_split( '#/#', strtolower( $itype ));
 			}
 			$replaced = FALSE;
 			$mimeExt = preg_replace( "!^(x-)?(jpeg|png|gif)$!", "$2", $mimeExt, -1, $replaced );
