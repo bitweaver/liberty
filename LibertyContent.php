@@ -3,7 +3,7 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.421 2010/02/15 15:57:07 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.422 2010/03/06 23:47:39 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -844,13 +844,32 @@ class LibertyContent extends LibertyBase {
 		$ret = TRUE; // we return true by default to preserve legacy service opperation which has no content type preferences
 
 		if( $gBitSystem->isPackageActive( 'lcconfig' ) ){
-			// LCConfig is a singlton class
+			// LCConfig is a singleton class
 			$LCConfig = LCConfig::getInstance();
 			// LCConfig negates services by content type
 			// if result is not 'n' then service should apply to this content type
 			if( $LCConfig->getConfig( 'service_'.$pServiceGuid, $this->mContentTypeGuid ) == 'n' ){	
 				$ret = FALSE;
 			}
+		}
+
+		return $ret;
+	}
+
+
+	/**
+	 * check if a service is required for this content type
+	 * requires package LCConfig 
+	 * provisional method until LCConfig package is integrated into the core 
+	 */
+	function isServiceRequired( $pServiceGuid ){
+		global $gBitSystem;
+		$ret = TRUE; // we return true by default to preserve legacy service opperation which has no content type preferences
+
+		if( $gBitSystem->isPackageActive( 'lcconfig' ) ){
+			// LCConfig is a singleton class
+			$LCConfig = LCConfig::getInstance();
+			return ( $LCConfig->getConfig( 'service_'.$pServiceGuid, $this->mContentTypeGuid ) == 'required' );	
 		}
 
 		return $ret;
