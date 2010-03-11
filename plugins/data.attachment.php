@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.45 $
+ * @version  $Revision: 1.46 $
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.45 2009/10/23 21:34:34 spiderr Exp $
+// $Id: data.attachment.php,v 1.46 2010/03/11 07:10:42 squareing Exp $
 
 /**
  * definitions
@@ -75,7 +75,7 @@ function data_attachment_help() {
 			.'<tr class="odd">'
 				.'<td>link</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Allows you to specify a relative or absolute URL the image will link to if clicked. You can also link to one of the sizes of the image: icon, avatar, small, medium, large and original. If set to false, no link is inserted.")
+				.'<td>' . tra( "Allows you to specify a relative or absolute URL the image will link to if clicked. You can also link to one of the sizes of the image: icon, avatar, small, medium, large, original and download (insert download link, which will activate the download counter). If set to false, no link is inserted.")
 				. tra("(Default = ") . '<strong>'.tra( 'link to image details page' ).'</strong>)</td>'
 			.'</tr>'
 			.'<tr class="even">
@@ -159,6 +159,10 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 			} elseif( $pParams['link'] == 'original' && !empty( $att['source_url'] )) {
 				$pParams['link'] = $att['source_url'];
 
+			// Allow the use of 'download' to link to download link. this will allow us to count downloads
+			} elseif( $pParams['link'] == 'download' && !empty( $att['download_url'] )) {
+				$pParams['link'] = $att['download_url'];
+
 			// Adjust class name if we are leaving this server
 			} elseif( !strstr( $pParams['link'], $_SERVER["SERVER_NAME"] ) && strstr( $pParams['link'], '//' )) {
 				$wrapper['href_class'] = 'class="external"';
@@ -181,10 +185,10 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		$gBitSmarty->assign( 'wrapper', $wrapper );
 		$gBitSmarty->assign( 'thumbsize', (( !empty( $pParams['size'] ) && ( $pParams['size'] == 'original' || !empty( $att['thumbnail_url'][$pParams['size']] ))) ? $pParams['size'] : 'medium' ));
 
-		//Carry only these attributes to the image tags	
+		//Carry only these attributes to the image tags
 		$width = !empty( $pParams['width'] ) ? $pParams['width'] : '';
 		$gBitSmarty->assign( 'width', $width );
-		
+
 		$height = !empty( $pParams['height'] ) ? $pParams['height'] : '';
 		$gBitSmarty->assign( 'height', $height );
 
