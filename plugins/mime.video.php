@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.video.php,v 1.6 2009/04/29 14:29:24 wjames5 Exp $
+ * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.video.php,v 1.7 2010/03/13 08:20:09 squareing Exp $
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.6 $
+ * @version		$Revision: 1.7 $
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler
@@ -260,6 +260,18 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 				// make sure audio sample rate is valid
 				if( !empty( $info['audio_samplerate'] ) && !in_array( $info['audio_samplerate'], array( 11025, 22050, 44100 ))) {
 					unset( $info['audio_samplerate'] );
+				}
+			} else {
+				// alternative method using ffmpeg to fetch source dimensions
+				$command = "$ffmpeg -i ".escapeshellarg( $source ).' 2>&1';
+				exec( $command, $output, $status );
+				if( !preg_match( '/Stream #(?:[0-9\.]+)(?:.*)\: Video: (?P<videocodec>.*) (?P<width>[0-9]*)x(?P<height>[0-9]*)/', implode( '\n', $output ), $matches )) {
+					preg_match( '/Could not find codec parameters \(Video: (?P<videocodec>.*) (?P<width>[0-9]*)x(?P<height>[0-9]*)\)/', implode( '\n', $output ), $matches );
+				}
+
+				if( !empty( $matches['width'] ) && !empty( $matches['height'] )) {
+					$info['width'] = $matches['width'];
+					$info['height'] = $matches['height'];
 				}
 			}
 
