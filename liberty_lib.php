@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.52 2010/03/04 20:55:15 spiderr Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.53 2010/03/16 00:42:52 spiderr Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -95,12 +95,12 @@ function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject, $pParseHash )
 				if( preg_match( '/^\(.*=>.*\)$/', $paramString ) ) {
 					$paramString = preg_replace( '/[\(\)]/', '', $paramString );
 					//we have the old style parms like {CODE (in=>1)}
-					$params = split( ',', trim( $paramString ) );
+					$params = explode( ',', trim( $paramString ) );
 
 					foreach( $params as $param ) {
 						// the following str_replace line is to decode the &gt; char when html is turned off
 						// perhaps the plugin syntax should be changed in 1.8 not to use any html special chars
-						$parts = split( '=>?', $param );
+						$parts = preg_split( '/=>?/', $param );
 
 						if( isset( $parts[0] ) && isset( $parts[1] ) ) {
 							$name = trim( $parts[0] );
@@ -502,7 +502,7 @@ function liberty_process_archive( &$pFileHash ) {
 	if( ( is_dir( $baseDir ) || mkdir( $baseDir ) ) && @mkdir( $destDir ) ) {
 		// Some commands don't nicely support extracting to other directories
 		chdir( $destDir );
-		list( $mimeType, $mimeExt ) = split( '/', strtolower( $pFileHash['type'] ) );
+		list( $mimeType, $mimeExt ) = explode( '/', strtolower( $pFileHash['type'] ) );
 		switch( $mimeExt ) {
 			case 'x-rar-compressed':
 			case 'x-rar':
@@ -605,7 +605,7 @@ function liberty_process_image( &$pFileHash, $pMoveFile = TRUE ) {
 	global $gBitSystem;
 	$ret = NULL;
 
-	list($type, $ext) = split( '/', strtolower( $pFileHash['type'] ) );
+	list($type, $ext) = explode( '/', strtolower( $pFileHash['type'] ) );
 	mkdir_p( BIT_ROOT_PATH.$pFileHash['dest_path'] );
 	if( $resizePath = liberty_process_generic( $pFileHash, $pMoveFile )) {
 		$pFileHash['source_file'] = BIT_ROOT_PATH.$resizePath;
