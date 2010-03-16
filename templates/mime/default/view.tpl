@@ -1,4 +1,4 @@
-{strip}
+{if $attachment}{strip}
 <div class="row aligncenter">
 	{assign var=size value=$smarty.request.size|default:medium}
 	{if $gBitSystem->isFeatureActive( 'site_fancy_zoom' )}
@@ -27,4 +27,4 @@
 	</div>
 {/if}
 {include file="bitpackage:liberty/mime_meta_inc.tpl"}
-{/strip}
+{/strip}{/if}
