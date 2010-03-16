@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.132 $
+ * @version  $Revision: 1.133 $
  * @package  liberty
  * @subpackage plugins_format
  */
@@ -424,7 +424,7 @@ class TikiWikiParser extends BitBase {
 				$cols = array();
 
 				for( $i = 0; $i < count( $tables[0] ); $i++ ) {
-					$rows = split( "\n|\<br\/\>", $tables[0][$i] );
+					$rows = preg_split( "/(\n|\<br\/\>)/", $tables[0][$i] );
 					$col[$i] = array();
 
 					for( $j = 0; $j < count( $rows ); $j++ ) {
