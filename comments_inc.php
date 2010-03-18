@@ -3,12 +3,12 @@
  * comment_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.67 $
+ * @version  $Revision: 1.68 $
  * @package  liberty
  * @subpackage functions
  */
 
-// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.67 2010/01/13 14:03:24 spiderr Exp $
+// $Header: /cvsroot/bitweaver/_bit_liberty/comments_inc.php,v 1.68 2010/03/18 17:59:42 dansut Exp $
 
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See below for details and a complete list of authors.
@@ -219,153 +219,157 @@ if( @BitBase::verifyId( $_REQUEST['post_comment_reply_id'] )) {
 	$gBitSmarty->assign( 'post_comment_reply_id', $post_comment_reply_id );
 }
 
-if( !empty( $_SESSION['liberty_comments_per_page'] )) {
-	$maxComments = $_SESSION['liberty_comments_per_page'];
-} else {
-	$maxComments = $gBitSystem->getConfig( 'comments_per_page', 10 );
-}
+if( $gContent->hasUserPermission( 'p_liberty_read_comments' )) {
 
-if( !empty( $_REQUEST["comments_maxComments"] )) {
-	$maxComments = $_REQUEST["comments_maxComments"];
-	$comments_at_top_of_page = 'y';
-	$_SESSION['liberty_comments_per_page'] = $maxComments;
-}
-
-if( !empty( $_SESSION['liberty_comments_ordering'] )) {
-	$comments_sort_mode = $_SESSION['liberty_comments_ordering'];
-} else {
-	$comments_sort_mode = $gBitSystem->getConfig( 'comments_default_ordering', 'commentDate_desc' );
-}
-
-if( !empty( $_REQUEST["comments_sort_mode"] )) {
-	$comments_sort_mode = $_REQUEST["comments_sort_mode"];
-	$comments_at_top_of_page = 'y';
-	$_SESSION['liberty_comments_ordering'] = $comments_sort_mode;
-}
-
-if( !empty( $_SESSION['liberty_comments_display_mode'] )) {
-	$comments_display_style = $_SESSION['liberty_comments_display_mode'];
-} else {
-	$comments_display_style = $gBitSystem->getConfig( 'comments_default_display_mode', 'threaded' );
-}
-
-if( !empty( $_REQUEST["comments_style"] ) ) {
-	$comments_display_style = $_REQUEST["comments_style"];
-	$comments_at_top_of_page = 'y';
-	$_SESSION['liberty_comments_display_mode'] = $comments_display_style;
-}
-
-if( !empty( $_REQUEST['comment_page'] ) || !empty( $_REQUEST['post_comment_request'] ) ) {
-	$comments_at_top_of_page = 'y';
-}
-$commentOffset = !empty( $_REQUEST['comment_page'] ) ? ($_REQUEST['comment_page'] - 1) * $maxComments : 0;
-
-if( empty( $gComment )) {
-	$gComment = new LibertyComment();
-}
-
-$currentPage = !empty( $_REQUEST['comment_page'] ) ? $_REQUEST['comment_page'] : 1;
-if( $currentPage < 1 ) {
-	$currentPage = 1;
-}
-
-# logic to support displaying a single comment -- used when we need a URL pointing to a comment
-if( !empty( $_REQUEST['view_comment_id'] )) {
-	$commentOffset = $gComment->getNumComments_upto( $_REQUEST['view_comment_id'] );
-	#       echo "commentOffset =$commentOffset= maxComments=$maxComments=\n";
-	$comments_sort_mode = 'commentDate_asc';
-	$comments_display_style = 'flat';
-	$comments_at_top_of_page = 'y';
-	$maxComments = 1;
-	$currentPage = ceil( $commentOffset + 1 / $maxComments );
-} else {
-	$commentOffset = ( $currentPage - 1 ) * $maxComments;
-}
-
-
-// $commentsParentId is the content_id which the comment tree is attached to
-if( !@BitBase::verifyId( $commentsParentId ) ) {
-	$comments = array();
-	$numComments = 0;
-} else {
-	if( @BitBase::verifyId( $commentsParentIds ) ) {
-		$parents = $commentsParentIds;
+	if( !empty( $_SESSION['liberty_comments_per_page'] )) {
+		$maxComments = $_SESSION['liberty_comments_per_page'];
 	} else {
-		$parents = $commentsParentId;
+		$maxComments = $gBitSystem->getConfig( 'comments_per_page', 10 );
 	}
-	// pass in a reference to the root object so that we can do proper permissions checks
-	if ( is_object( $gContent )) {
-		$gComment->mRootObj = $gContent;
-	}
-	$numComments = $gComment->getNumComments( $commentsParentId );
-	if ($commentOffset > $numComments) {
-		$commentOffset = $numComments / $maxComments;
-		$currentPage = ceil( $commentOffset+1 / $maxComments );
-	}
-	$comments = $gComment->getComments( $parents, $maxComments, $commentOffset, $comments_sort_mode, $comments_display_style );
-}
 
-if( $comments_display_style == 'flat' ) {
-	$commentsTree = $comments;
-} else {
-	$commentsTree = array();
-	foreach( $comments as $id => $node ){
-		if( !empty( $comments[ $node['parent_id'] ] )) {
-			$comments[ $node['parent_id'] ]['children'][$id] = &$comments[$id];
+	if( !empty( $_REQUEST["comments_maxComments"] )) {
+		$maxComments = $_REQUEST["comments_maxComments"];
+		$comments_at_top_of_page = 'y';
+		$_SESSION['liberty_comments_per_page'] = $maxComments;
+	}
+
+	if( !empty( $_SESSION['liberty_comments_ordering'] )) {
+		$comments_sort_mode = $_SESSION['liberty_comments_ordering'];
+	} else {
+		$comments_sort_mode = $gBitSystem->getConfig( 'comments_default_ordering', 'commentDate_desc' );
+	}
+
+	if( !empty( $_REQUEST["comments_sort_mode"] )) {
+		$comments_sort_mode = $_REQUEST["comments_sort_mode"];
+		$comments_at_top_of_page = 'y';
+		$_SESSION['liberty_comments_ordering'] = $comments_sort_mode;
+	}
+
+	if( !empty( $_SESSION['liberty_comments_display_mode'] )) {
+		$comments_display_style = $_SESSION['liberty_comments_display_mode'];
+	} else {
+		$comments_display_style = $gBitSystem->getConfig( 'comments_default_display_mode', 'threaded' );
+	}
+
+	if( !empty( $_REQUEST["comments_style"] ) ) {
+		$comments_display_style = $_REQUEST["comments_style"];
+		$comments_at_top_of_page = 'y';
+		$_SESSION['liberty_comments_display_mode'] = $comments_display_style;
+	}
+
+	if( !empty( $_REQUEST['comment_page'] ) || !empty( $_REQUEST['post_comment_request'] ) ) {
+		$comments_at_top_of_page = 'y';
+	}
+	$commentOffset = !empty( $_REQUEST['comment_page'] ) ? ($_REQUEST['comment_page'] - 1) * $maxComments : 0;
+
+	if( empty( $gComment )) {
+		$gComment = new LibertyComment();
+	}
+
+	$currentPage = !empty( $_REQUEST['comment_page'] ) ? $_REQUEST['comment_page'] : 1;
+	if( $currentPage < 1 ) {
+		$currentPage = 1;
+	}
+
+	# logic to support displaying a single comment -- used when we need a URL pointing to a comment
+	if( !empty( $_REQUEST['view_comment_id'] )) {
+		$commentOffset = $gComment->getNumComments_upto( $_REQUEST['view_comment_id'] );
+#       echo "commentOffset =$commentOffset= maxComments=$maxComments=\n";
+		$comments_sort_mode = 'commentDate_asc';
+		$comments_display_style = 'flat';
+		$comments_at_top_of_page = 'y';
+		$maxComments = 1;
+		$currentPage = ceil( $commentOffset + 1 / $maxComments );
+	} else {
+		$commentOffset = ( $currentPage - 1 ) * $maxComments;
+	}
+
+
+	// $commentsParentId is the content_id which the comment tree is attached to
+	if( !@BitBase::verifyId( $commentsParentId ) ) {
+		$comments = array();
+		$numComments = 0;
+	} else {
+		if( @BitBase::verifyId( $commentsParentIds ) ) {
+			$parents = $commentsParentIds;
+		} else {
+			$parents = $commentsParentId;
 		}
-		if( $node['parent_id'] == $node['root_id'] || empty( $comments[ $node['parent_id'] ] )) {
-			$comments[$id]['level'] = 0;
-			$commentsTree[$id] = &$comments[$id];
+		// pass in a reference to the root object so that we can do proper permissions checks
+		if ( is_object( $gContent )) {
+			$gComment->mRootObj = $gContent;
+		}
+		$numComments = $gComment->getNumComments( $commentsParentId );
+		if ($commentOffset > $numComments) {
+			$commentOffset = $numComments / $maxComments;
+			$currentPage = ceil( $commentOffset+1 / $maxComments );
+		}
+		$comments = $gComment->getComments( $parents, $maxComments, $commentOffset, $comments_sort_mode, $comments_display_style );
+	}
+
+	if( $comments_display_style == 'flat' ) {
+		$commentsTree = $comments;
+	} else {
+		$commentsTree = array();
+		foreach( $comments as $id => $node ){
+			if( !empty( $comments[ $node['parent_id'] ] )) {
+				$comments[ $node['parent_id'] ]['children'][$id] = &$comments[$id];
+			}
+			if( $node['parent_id'] == $node['root_id'] || empty( $comments[ $node['parent_id'] ] )) {
+				$comments[$id]['level'] = 0;
+				$commentsTree[$id] = &$comments[$id];
+			}
 		}
 	}
-}
 
-$gBitSmarty->assign_by_ref( 'comments', $commentsTree );
-$gBitSmarty->assign( 'maxComments', $maxComments );
+	$gBitSmarty->assign_by_ref( 'comments', $commentsTree );
+	$gBitSmarty->assign( 'maxComments', $maxComments );
 
-$numCommentPages = ceil( $numComments / $maxComments );
-$comments_return_url = $comments_return_url.( !strpos( $comments_return_url, '?' ) ? '?' : '' );
+	$numCommentPages = ceil( $numComments / $maxComments );
+	$comments_return_url = $comments_return_url.( !strpos( $comments_return_url, '?' ) ? '?' : '' );
 
-// libertypagination smarty function setup
-$commentsPgnHash = array(
-	'numPages'      => $numCommentPages,
-	'pgnName'       => 'comment_page',
-	'page'          => $currentPage,
-	'comment_page'  => $currentPage,
-	'url'           => $comments_return_url,
-	'comments_page' => ( empty( $comments_on_separate_page ) ? FALSE : $comments_on_separate_page ),
-	'ianchor'       => 'editcomments',
-);
-$gBitSmarty->assign_by_ref( 'commentsPgnHash', $commentsPgnHash );
-$gBitSmarty->assign_by_ref( 'postComment', $postComment );
-$gBitSmarty->assign_by_ref( 'gComment', $gComment );
+	// libertypagination smarty function setup
+	$commentsPgnHash = array(
+			'numPages'      => $numCommentPages,
+			'pgnName'       => 'comment_page',
+			'page'          => $currentPage,
+			'comment_page'  => $currentPage,
+			'url'           => $comments_return_url,
+			'comments_page' => ( empty( $comments_on_separate_page ) ? FALSE : $comments_on_separate_page ),
+			'ianchor'       => 'editcomments',
+			);
+	$gBitSmarty->assign_by_ref( 'commentsPgnHash', $commentsPgnHash );
+	$gBitSmarty->assign_by_ref( 'postComment', $postComment );
+	$gBitSmarty->assign_by_ref( 'gComment', $gComment );
 
-$gBitSmarty->assign( 'currentTimestamp', time() );
-$gBitSmarty->assign( 'comments_return_url', $comments_return_url );
-$gBitSmarty->assign( 'comments_at_top_of_page', ( isset( $comments_at_top_of_page ) && $gBitSystem->getConfig( 'comments_reorganise_page_layout', 'n' ) == 'y' ) ? $comments_at_top_of_page : NULL );
-$gBitSmarty->assign( 'comments_style', $comments_display_style );
-$gBitSmarty->assign( 'comments_sort_mode', $comments_sort_mode );
-$gBitSmarty->assign( 'textarea_id', 'commentpost' );
-$gBitSmarty->assign( 'comments_count', $numComments );
+	$gBitSmarty->assign( 'currentTimestamp', time() );
+	$gBitSmarty->assign( 'comments_return_url', $comments_return_url );
+	$gBitSmarty->assign( 'comments_at_top_of_page', ( isset( $comments_at_top_of_page ) && $gBitSystem->getConfig( 'comments_reorganise_page_layout', 'n' ) == 'y' ) ? $comments_at_top_of_page : NULL );
+	$gBitSmarty->assign( 'comments_style', $comments_display_style );
+	$gBitSmarty->assign( 'comments_sort_mode', $comments_sort_mode );
+	$gBitSmarty->assign( 'textarea_id', 'commentpost' );
+	$gBitSmarty->assign( 'comments_count', $numComments );
 
-// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
-if( $gBitSystem->isPackageActive( 'boards' )) {
-	require_once(BOARDS_PKG_PATH.'BitBoardTopic.php');
-}
-
-// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
-// this clearly can go in an edit service, but need to be careful since comments currently does not call edit service - have to check what doing so might trigger.
-if( !empty( $_REQUEST['post_comment_request'] )) {
-	if( $gBitSystem->isPackageActive( 'boards' )
-		&& (
-			BitBoardTopic::isLockedMsg( @BitBase::verifyId( $storeComment->mInfo['parent_id'] )
-			? $storeComment->mInfo['parent_id'] : ( !@BitBase::verifyId( $_REQUEST['post_comment_reply_id'] )
-			? $commentsParentId : $_REQUEST['post_comment_reply_id'] ))
-		)
-	) {
-		unset( $_REQUEST['post_comment_request'] );
-		unset( $_GET['post_comment_request'] );
-		unset( $_POST['post_comment_request'] );
-		$formfeedback['warning']="The selected Topic is Locked posting is disabled";
+	// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
+	if( $gBitSystem->isPackageActive( 'boards' )) {
+		require_once(BOARDS_PKG_PATH.'BitBoardTopic.php');
 	}
+
+	// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
+	// this clearly can go in an edit service, but need to be careful since comments currently does not call edit service - have to check what doing so might trigger.
+	if( !empty( $_REQUEST['post_comment_request'] )) {
+		if( $gBitSystem->isPackageActive( 'boards' )
+				&& (
+					BitBoardTopic::isLockedMsg( @BitBase::verifyId( $storeComment->mInfo['parent_id'] )
+						? $storeComment->mInfo['parent_id'] : ( !@BitBase::verifyId( $_REQUEST['post_comment_reply_id'] )
+							? $commentsParentId : $_REQUEST['post_comment_reply_id'] ))
+				   )
+		  ) {
+			unset( $_REQUEST['post_comment_request'] );
+			unset( $_GET['post_comment_request'] );
+			unset( $_POST['post_comment_request'] );
+			$formfeedback['warning']="The selected Topic is Locked posting is disabled";
+		}
+	}
+
 }
