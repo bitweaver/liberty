@@ -16,6 +16,7 @@
 		{forminput}
 			{formfeedback error=$textarea_error}
 			<textarea {$textarea_class} {$textarea_attributes} {spellchecker width=$cols height=$rows} id="{$textarea_id|default:$smarty.const.LIBERTY_TEXT_AREA}" name="{$textarea_name|default:edit}" {$textarea_style}>{$textarea_data|escape:html}</textarea>
+			{if $textarea_required}{required}{/if}
 			{formhelp note=$textarea_help}
 			{if $gBitSystem->isPackageActive('fckeditor') &&
 				($gBitSystem->isFeatureActive("fckeditor_ask") || 
