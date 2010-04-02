@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.28 2010/02/12 17:42:45 wjames5 Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.29 2010/04/02 19:22:02 spiderr Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -38,7 +38,7 @@ $pluginParams = array (
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERHTMLPURIFIER, $pluginParams );
 
-function htmlpure_filter( &$pString, &$pFilterHash ) {
+function htmlpure_filter( &$pString, &$pFilterHash, $pObject ) {
 	global $gHtmlPurifier, $gBitSystem;
 
 	if (!isset($gHtmlPurifier)) {
@@ -56,7 +56,7 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 					$htmlp_version = 3.1;
 				}
 
-				$config = htmlpure_getDefaultConfig( $htmlp_version );
+				$config = htmlpure_getDefaultConfig( $htmlp_version, $pObject );
 
 
 				// As suggested here:  http://www.bitweaver.org/forums/index.php?t=8554
@@ -82,7 +82,7 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 			$pString = $gHtmlPurifier->purify( $pString );
 		}else{
 			$htmlp_version = $gHtmlPurifier->version;
-			$config = htmlpure_getDefaultConfig( $htmlp_version );
+			$config = htmlpure_getDefaultConfig( $htmlp_version, $pObject );
 
 			/* if we've received custom configurations for the particular parse then we deal with them
 			   for now were expecting config data that htmlpurfier doesn't really handle in a nice way
@@ -128,7 +128,7 @@ function htmlpure_filter( &$pString, &$pFilterHash ) {
 	return $pString;
 }
 
-function htmlpure_getDefaultConfig( &$htmlp_version ){
+function htmlpure_getDefaultConfig( &$htmlp_version, $pObject=NULL ){
 	global $gBitSystem;
 
 	$config = HTMLPurifier_Config::createDefault();
@@ -140,18 +140,6 @@ function htmlpure_getDefaultConfig( &$htmlp_version ){
 		$config->set('Core.EscapeInvalidTags', true);
 		$config->set('Core.EscapeInvalidChildren', true);
 	}
-	if ($gBitSystem->getConfig('htmlpure_disable_extern') == 'y') {
-		$config->set('URI.DisableExternal', true);
-	}
-	if ($gBitSystem->getConfig('htmlpure_disable_extern_res', 'y') == 'y') {
-		$config->set('URI.DisableExternalResources', true);
-	}
-	if ($gBitSystem->getConfig('htmlpure_disable_res') == 'y') {
-		$config->set('URI.DisableResources', true);
-	}
-	if ($gBitSystem->getConfig('htmlpure_disable_uri') == 'y') {
-		$config->set('URI.Disable', true);
-	}
 	if ($gBitSystem->getConfig('htmlpure_use_redirect') == 'y') {
 		$config->set('URI.Munge', LIBERTY_PKG_URL.'redirect.php?q=%s');
 	}
@@ -162,60 +150,95 @@ function htmlpure_getDefaultConfig( &$htmlp_version ){
 		$config->set('HTML.XHTML', true);
 	}
 
-	// Set that we are using a div to wrap things.
-	$config->set('HTML.BlockWrapper', 'div');
-
-	// set plugins
-	// TODO: devise a way to parse plugins dir
-	// and check for the right property here
-	// so new plugins are just drop in place.
-	if ( $htmlp_version >= 3.1 ){
-		$custom_filters = array();
-
-		// Disable included YouTube filter, we have our own
-		$config->set('Filter.YouTube', false);
-
-		if ($gBitSystem->isFeatureActive('htmlpure_allow_youtube')) {
-			require_once(UTIL_PKG_PATH.'htmlpure/Filter/YouTube.php');
-			$custom_filters[] = new HTMLPurifier_Filter_YouTube();
-		}
-		if ($gBitSystem->isFeatureActive('htmlpure_allow_cnbc')) {
-			require_once(UTIL_PKG_PATH.'htmlpure/Filter/CNBC.php');
-			$custom_filters[] = new HTMLPurifier_Filter_CNBC();
-		}
-
-		if( !empty( $custom_filters ) ){
-			$config->set('Filter.Custom', $custom_filters );
-		}
+	$hasAdmin = FALSE;
+	if( is_a( $pObject, 'LibertyContent' ) ) {
+		// check to see if last editor has ability to admin content, if so, ease up on the purification restraints
+		$query = "SELECT ugp.`group_id` 
+				  FROM `".BIT_DB_PREFIX."users_groups_map` ugm 
+					INNER JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON (ugp.`group_id`=ugm.`group_id`) 
+				  WHERE ugm.`user_id`=? AND (ugp.`perm_name`=? OR ugp.`perm_name`='p_admin')";
+		$hasAdmin = $pObject->mDb->getOne( $query, array( $pObject->getField( 'modifier_user_id' ), $pObject->mAdminContentPerm ) );
 	}
 
-	$blacklistedTags = $gBitSystem->
-		getConfig('blacklisted_html_tags', '');
+	if( $hasAdmin ) {
+		// Last person to edit this file has admin permission for this entire class of content, let freedom ring
+		$config->set( 'CSS.AllowTricky', true );
 
-	$def =& $config->getHTMLDefinition();
-	// HTMLPurifier doesn't have a blacklist feature. Duh guys!
-	// Note that this has to come last since the other configs
-	// may tweak the def.
-	foreach (explode(',',$blacklistedTags) as $tag) {
-		unset($def->info[$tag]);
-	}
+		$css =& $config->getCSSDefinition();
+        $css->info['position'] = new HTMLPurifier_AttrDef_CSS_Composite(array( new HTMLPurifier_AttrDef_Enum(array('absolute', 'fixed', 'relative', 'static', 'inherit')) ) );
+        $css->info['top'] = new HTMLPurifier_AttrDef_CSS_Composite(array( new HTMLPurifier_AttrDef_CSS_Length()));
+        $css->info['left'] = new HTMLPurifier_AttrDef_CSS_Composite(array( new HTMLPurifier_AttrDef_CSS_Length()));
+        $css->info['bottom'] = new HTMLPurifier_AttrDef_CSS_Composite(array( new HTMLPurifier_AttrDef_CSS_Length()));
+        $css->info['right'] = new HTMLPurifier_AttrDef_CSS_Composite(array( new HTMLPurifier_AttrDef_CSS_Length()));
+	} else {
+		if ($gBitSystem->getConfig('htmlpure_disable_extern') == 'y') {
+			$config->set('URI.DisableExternal', true);
+		}
+		if ($gBitSystem->getConfig('htmlpure_disable_extern_res', 'y') == 'y') {
+			$config->set('URI.DisableExternalResources', true);
+		}
+		if ($gBitSystem->getConfig('htmlpure_disable_res') == 'y') {
+			$config->set('URI.DisableResources', true);
+		}
+		if ($gBitSystem->getConfig('htmlpure_disable_uri') == 'y') {
+			$config->set('URI.Disable', true);
+		}
 
-	if ($gBitSystem->getConfig('htmlpure_force_nofollow', 'y') == 'y') {
-		if( !class_exists("HTMLPurifier_AttrTransform_ForceValue") ){
-			class HTMLPurifier_AttrTransform_ForceValue extends HTMLPurifier_AttrTransform
-			{
-				var $name, $value;
-				function HTMLPurifier_AttrTransform_ForceValue($name, $value) {
-					$this->name  = $name;
-					$this->value = $value;
-				}
-				function transform($attr, $config, $context) {
-					$attr[$this->name] = $this->value;
-					return $attr;
-				}
+		// Set that we are using a div to wrap things.
+		$config->set('HTML.BlockWrapper', 'div');
+
+		// set plugins
+		// TODO: devise a way to parse plugins dir
+		// and check for the right property here
+		// so new plugins are just drop in place.
+		if ( $htmlp_version >= 3.1 ){
+			$custom_filters = array();
+
+			// Disable included YouTube filter, we have our own
+			$config->set('Filter.YouTube', false);
+
+			if ($gBitSystem->isFeatureActive('htmlpure_allow_youtube')) {
+				require_once(UTIL_PKG_PATH.'htmlpure/Filter/YouTube.php');
+				$custom_filters[] = new HTMLPurifier_Filter_YouTube();
+			}
+			if ($gBitSystem->isFeatureActive('htmlpure_allow_cnbc')) {
+				require_once(UTIL_PKG_PATH.'htmlpure/Filter/CNBC.php');
+				$custom_filters[] = new HTMLPurifier_Filter_CNBC();
+			}
+
+			if( !empty( $custom_filters ) ){
+				$config->set('Filter.Custom', $custom_filters );
 			}
 		}
-		$def->info['a']->attr_transform_post['rel'] = new HTMLPurifier_AttrTransform_ForceValue('rel', 'nofollow');
+
+		$blacklistedTags = $gBitSystem->
+			getConfig('blacklisted_html_tags', '');
+
+		$def =& $config->getHTMLDefinition();
+		// HTMLPurifier doesn't have a blacklist feature. Duh guys!
+		// Note that this has to come last since the other configs
+		// may tweak the def.
+		foreach (explode(',',$blacklistedTags) as $tag) {
+			unset($def->info[$tag]);
+		}
+
+		if ($gBitSystem->getConfig('htmlpure_force_nofollow', 'y') == 'y') {
+			if( !class_exists("HTMLPurifier_AttrTransform_ForceValue") ){
+				class HTMLPurifier_AttrTransform_ForceValue extends HTMLPurifier_AttrTransform
+				{
+					var $name, $value;
+					function HTMLPurifier_AttrTransform_ForceValue($name, $value) {
+						$this->name  = $name;
+						$this->value = $value;
+					}
+					function transform($attr, $config, $context) {
+						$attr[$this->name] = $this->value;
+						return $attr;
+					}
+				}
+			}
+			$def->info['a']->attr_transform_post['rel'] = new HTMLPurifier_AttrTransform_ForceValue('rel', 'nofollow');
+		}
 	}
 
 	return $config;
