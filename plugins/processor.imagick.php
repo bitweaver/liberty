@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.12 2009/01/03 09:37:04 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.13 2010/04/03 10:57:54 lsces Exp $
  *
  * Image processor - extension: php-imagick
  * @package  liberty
@@ -112,7 +112,7 @@ function liberty_imagick0_resize_image( &$pFileHash ) {
 			if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
 				$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
 			} else {
-				list( $type, $mimeExt ) = split( '/', strtolower( $itype ));
+				list( $type, $mimeExt ) = explode( '/', strtolower( $itype ));
 			}
 
 			if( $mimeExt = preg_replace( "!^(x-)?(jpeg|png|gif)$!", "$2", $mimeExt )) {
@@ -223,7 +223,7 @@ function liberty_imagick2_resize_image( &$pFileHash ) {
 			if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
 				$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
 			} else {
-				list( $type, $mimeExt ) = split( '/', strtolower( $pFileHash['type'] ));
+				list( $type, $mimeExt ) = explode( '/', strtolower( $pFileHash['type'] ));
 			}
 
 			if( preg_match( "!(png|gif)!", $mimeExt )) {

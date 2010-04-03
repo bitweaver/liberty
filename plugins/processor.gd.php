@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.14 2009/01/03 09:37:04 squareing Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.15 2010/04/03 10:57:54 lsces Exp $
  *
  * Image processor - extension: php-gd
  * @package  liberty
@@ -19,7 +19,7 @@ function liberty_gd_resize_image( &$pFileHash ) {
 	global $gBitSystem;
 	$ret = NULL;
 	list($iwidth, $iheight, $itype, $iattr) = @getimagesize( $pFileHash['source_file'] );
-	list($type, $ext) = split( '/', strtolower( $pFileHash['type'] ) );
+	list($type, $ext) = explode( '/', strtolower( $pFileHash['type'] ) );
 	$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'];
 	if( ( empty( $pFileHash['max_width'] ) || empty( $pFileHash['max_height'] ) ) || ( $iwidth <= $pFileHash['max_width'] && $iheight <= $pFileHash['max_height'] && ( $ext == 'gif' || $ext == 'png'  || $ext == 'jpg'   || $ext == 'jpeg' ) ) ) {
 		// Keep the same dimensions as input file
@@ -72,7 +72,7 @@ function liberty_gd_resize_image( &$pFileHash ) {
 		} else {
 			// make sure we have image_type_to_extension available
 			include_once( UTIL_PKG_PATH.'PHP_Compat/Compat/Function/image_type_to_mime_type.php' );
-			list( $type, $mimeExt ) = split( '/', strtolower( image_type_to_mime_type( $itype )));
+			list( $type, $mimeExt ) = explode( '/', strtolower( image_type_to_mime_type( $itype )));
 		}
 
 		if( $mimeExt = preg_replace( "!^(x-)?(jpeg|png|gif)$!", "$2", $mimeExt )) {
