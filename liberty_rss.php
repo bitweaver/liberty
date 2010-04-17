@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_rss.php,v 1.12 2010/02/08 21:27:23 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_rss.php,v 1.13 2010/04/17 04:56:46 wjames5 Exp $
  * @package wiki
  * @subpackage functions
  */
@@ -42,7 +42,7 @@ foreach( $feeds as $feed ) {
 	// create a page header that we know what type of data we're looking at
 	$description =
 		tra( 'Package' ).     ': '.ucfirst( $gLibertySystem->mContentTypes[$feed['content_type_guid']]['handler_package'] ).'<br />'.
-		tra( 'Content Type' ).': '.$gLibertySystem->mContentTypes[$feed['content_type_guid']]['content_description'].'<br />';
+		tra( 'Content Type' ).': '.$gLibertySystem->getContentTypeName( $feed['content_type_guid'] ).'<br />';
 
 	// add the parsed data, if there is any
 	if( !empty( $feed['data'] ) ) {

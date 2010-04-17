@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_comments.php,v 1.6 2008/02/02 19:03:41 nickpalmer Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_comments.php,v 1.7 2010/04/17 04:56:46 wjames5 Exp $
  * @package liberty
  * @subpackage modules
  */
@@ -37,7 +37,7 @@ if (!empty($params['pigeonholes'])) {
 
 if( !empty( $params['root_content_type_guid'] ) ) {
 	if( empty($moduleTitle) && is_string( $params['root_content_type_guid'] ) ) {
-		$moduleTitle = $gLibertySystem->mContentTypes[$params['root_content_type_guid']]['content_description'].' '.tra( 'Comments' );
+		$moduleTitle = $gLibertySystem->getContentTypeName( $params['root_content_type_guid'] ).' '.tra( 'Comments' );
 	}
 	$listHash['root_content_type_guid'] = $params['root_content_type_guid'];
 }

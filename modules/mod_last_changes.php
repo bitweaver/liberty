@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.php,v 1.12 2008/07/29 18:04:23 lsces Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.php,v 1.13 2010/04/17 04:56:46 wjames5 Exp $
  * @package liberty
  * @subpackage modules
  * Params:
@@ -21,7 +21,7 @@ if( !empty( $gQueryUser->mUserId ) ) {
 
 if( empty( $module_title ) ) {
 	if( !empty( $module_params['content_type_guid'] ) && !empty( $gLibertySystem->mContentTypes[$module_params['content_type_guid']] ) ) {
-		$title = tra( "Last Changes" ).': '.tra( $gLibertySystem->mContentTypes[$module_params['content_type_guid']]['content_description'] );
+		$title = tra( "Last Changes" ).': '.$gLibertySystem->getContentTypeName( $module_params['content_type_guid'] );
 	} else {
 		$title = tra( "Last Changes" );
 	}
