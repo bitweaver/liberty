@@ -3,7 +3,7 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.424 2010/04/17 03:45:08 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.425 2010/04/17 04:10:05 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1955,6 +1955,7 @@ class LibertyContent extends LibertyBase {
 			}
 		}
 		return $ret;
+ 		*/
 	}
 
 
