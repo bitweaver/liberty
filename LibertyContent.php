@@ -3,7 +3,7 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.422 2010/03/06 23:47:39 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.423 2010/04/17 02:25:42 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -3508,35 +3508,4 @@ class LibertyContent extends LibertyBase {
 
 		return $ret;
 	}
-
-	// ==================== deprecated crud - will be removed soon ====================
-	/**
-	 * @deprecated deprecated since version 2.1.0-beta
-	 */
-	function loadPermissions( $pForce = FALSE ) {
-		deprecated( "This method is deprecated due to it's faulty output. Please use LibertyContent::getContentPermissionsList() if you need a list of content permissions instead." );
-		if( $pForce ) {
-			$this->mPerms = NULL;
-		}
-
-		if( $this->isValid() && is_null( $this->mPerms ) ) {
-			$query = "
-				SELECT lcperm.`perm_name`, lcperm.`is_revoked`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
-				FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
-					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
-					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
-				WHERE lcperm.`content_id` = ?";
-			$bindVars = array( $this->mContentId );
-			$this->mPerms = $this->mDb->getAssoc( $query, $bindVars );
-		}
-		return( count( $this->mPerms ));
-	}
-	/**
-	 * @deprecated deprecated since version 2.1.0-beta
-	 */
-	function verifyPermission( $pPermName, $pFatalMessage = NULL ) {
-		deprecated( 'You package is calling the deprecated LibertyContent::verifyPermission() method. Please update your code to use LibertyContent::verifyUserPermission' );
-		return $this->verifyUserPermission( $pPermName, $pFatalMessage );
-	}
 }
-?>
