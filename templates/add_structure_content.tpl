@@ -105,7 +105,7 @@ var structureAddResult = function (response) {
 									<span id="{$contentListHash[cx].content_id}feedback"></span>
 								</td>
 								<td class="description" id="{$contentListHash[cx].content_id}item">
-									{$contentListHash[cx].content_description}
+									{$contentListHash[cx].content_name}
 								</td>
 								<td class="author">
 								 	{displayname hash=$contentListHash[cx]}

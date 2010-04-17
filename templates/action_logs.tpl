@@ -54,7 +54,7 @@
 				<th>{smartlink ititle="ID" isort=content_id page=$listInfo.page}</th>
 				<th>{smartlink ititle="Title" isort=title page=$listInfo.page}</th>
 				<th>{smartlink ititle="Log Entry" isort=action_log page=$listInfo.page}</th>
-				<th>{smartlink ititle="Content Type" isort=content_description page=$listInfo.page}</th>
+				<th>{smartlink ititle="Content Type" isort=content_name page=$listInfo.page}</th>
 				<th>{smartlink ititle="Log time" isort=last_modified page=$listInfo.page idefault=1}</th>
 				<th>{smartlink ititle="Modified by" isort=user_id page=$listInfo.page} [{smartlink ititle="IP" isort=ip page=$listInfo.page}]</th>
 			</tr>
@@ -73,7 +73,7 @@
 						{$log.log_message|nl2br}
 						{$log.error_message|nl2br}
 					</td>
-					<td>{tr}{$log.content_description}{/tr}</td>
+					<td>{tr}{$log.content_name}{/tr}</td>
 					<td>{$log.last_modified|bit_short_datetime}</td>
 					<td>{displayname hash=$log} [{$log.ip}]</td>
 				</tr>

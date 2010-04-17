@@ -5,7 +5,8 @@ $tables = array(
 
 'liberty_content_types' => "
 	content_type_guid C(16) PRIMARY,
-	content_description C(250) NOTNULL,
+	content_name C(250) NOTNULL,
+	content_name_plural C(250),
 	maintainer_url C(250),
 	handler_class C(128),
 	handler_package C(128),

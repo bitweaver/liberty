@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.126 2010/04/17 03:45:08 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.127 2010/04/17 22:46:09 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -575,8 +575,12 @@ class LibertySystem extends LibertyBase {
 	function loadContentTypes( $pCacheTime=BIT_QUERY_CACHE_TIME ) {
 		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."liberty_content_types`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
 			while( $row = $rs->fetchRow() ) {
-				// translate the content description
-				$row['content_description'] = tra( $row['content_description'] );
+				// translate name
+				// content_description backward compatibility for now
+				$row['content_description'] = $row['content_name'] = tra( $row['content_name'] );
+				if( !empty( $row['content_name_plural'] ) ){
+					$row['content_name_plural'] = tra( $row['content_name_plural'] );
+				}
 				$this->mContentTypes[$row['content_type_guid']] = $row;
 			}
 		}
@@ -589,17 +593,28 @@ class LibertySystem extends LibertyBase {
 	 * @access public
 	 **/
 	function registerContentType( $pGuid, $pTypeParams ) {
+		global $gBitSystem;
 		if( !isset( $this->mContentTypes ) ) {
 			$this->loadContentTypes();
 		}
 		$pTypeParams['content_type_guid'] = $pGuid;
+		// automagically populate plural name value if none is set using most comment english of appending 's'
+		if( empty( $pTypeParams['content_name_plural'] ) ){
+			$pTypeParams['content_name_plural'] = $pTypeParams['content_name'].'s';
+		}
 		if( empty( $this->mContentTypes[$pGuid] ) && !empty( $pTypeParams ) ) {
 			$result = $this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_types", $pTypeParams );
 			// we just ran some SQL - let's flush the loadContentTypes query cache
 			$this->loadContentTypes( 0 );
 		} else {
-			if( $pTypeParams['handler_package'] != $this->mContentTypes[$pGuid]['handler_package'] || $pTypeParams['handler_file'] != $this->mContentTypes[$pGuid]['handler_file'] || $pTypeParams['handler_class'] != $this->mContentTypes[$pGuid]['handler_class'] ) {
+			if( $pTypeParams['handler_package'] != $this->mContentTypes[$pGuid]['handler_package'] || 
+				$pTypeParams['handler_file'] != $this->mContentTypes[$pGuid]['handler_file'] || 
+				$pTypeParams['handler_class'] != $this->mContentTypes[$pGuid]['handler_class'] || 
+				( empty( $this->mContentTypes[$pGuid]['content_name_plural'] ) && version_compare( $gBitSystem->getVersion( LIBERTY_PKG_NAME ), '2.1.4', '>=' ) ) // temporary update condition during migration of content_description to content_name remove after april 20 2011
+				) {
 				$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."liberty_content_types", $pTypeParams, array( 'content_type_guid'=>$pGuid ) );
+				// we just ran some SQL - let's flush the loadContentTypes query cache
+				$this->loadContentTypes( 0 );
 			}
 		}
 	}
@@ -630,8 +645,7 @@ class LibertySystem extends LibertyBase {
 		if( $pPlural && isset( $this->mContentTypes[$pContentTypeGuid]['content_name_plural'] ) )
 			$ret = tra( $this->mContentTypes[$pContentTypeGuid]['content_name_plural'] );
 		else
-			$ret = tra( $this->mContentTypes[$pContentTypeGuid]['content_description'] );
-			// $ret = tra( $this->mContentTypes[$pContentTypeGuid]['content_name'] );
+		 	$ret = tra( $this->mContentTypes[$pContentTypeGuid]['content_name'] );
 		return $ret;
 	}
 

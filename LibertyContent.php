@@ -3,7 +3,7 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.425 2010/04/17 04:10:05 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.426 2010/04/17 22:46:09 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1844,8 +1844,8 @@ class LibertyContent extends LibertyBase {
 	 * Create the generic title for a content item
 	 *
 	 * This will normally be overwriten by extended classes to provide
-	 * an appropriate title title string
-	 * @param array mInfo type hash of data to be used to provide base data
+	 * an appropriate title string
+	 * @param array pHash type hash of data to be used to provide base data
 	 * @return string Descriptive title for the page
 	 */
 	function getTitle( $pHash=NULL, $pDefault=TRUE ) {
@@ -1855,8 +1855,8 @@ class LibertyContent extends LibertyBase {
 		}
 		if( !empty( $pHash['title'] ) ) {
 			$ret = $pHash['title'];
-		} elseif( $pDefault && !empty( $pHash['content_description'] ) ) {
-			$ret = $pHash['content_description'];
+		} elseif( $pDefault && !empty( $pHash['content_name'] ) ) {
+			$ret = $pHash['content_name'];
 		}
 		return $ret;
 	}
@@ -2002,8 +2002,8 @@ class LibertyContent extends LibertyBase {
 		if( empty( $pLinkText )) {
 			if( !empty( $pMixed['title'] )) {
 				$pLinkText = $pMixed['title'];
-			} elseif( !empty( $pMixed['content_description'] ) ) {
-				$pLinkText = "[ ".$pMixed['content_description']." ]";
+			} elseif( !empty( $pMixed['content_name'] ) ) {
+				$pLinkText = "[ ".$pMixed['content_name']." ]";
 			}
 		}
 
@@ -2519,7 +2519,7 @@ class LibertyContent extends LibertyBase {
 			if( !empty( $contentTypes[$aux['content_type_guid']] ) ) {
 				// quick alias for code readability
 				$type                       = &$contentTypes[$aux['content_type_guid']];
-				$aux['content_description'] = $type['content_description'];
+				$aux['content_name'] 		= $type['content_name'];
 				$aux['creator']             = (isset( $aux['creator_real_name'] ) ? $aux['creator_real_name'] : $aux['creator_user'] );
 				$aux['real_name']           = (isset( $aux['creator_real_name'] ) ? $aux['creator_real_name'] : $aux['creator_user'] );
 				$aux['editor']              = (isset( $aux['modifier_real_name'] ) ? $aux['modifier_real_name'] : $aux['modifier_user'] );
@@ -3290,7 +3290,7 @@ class LibertyContent extends LibertyBase {
 
 		$query = "
 			SELECT lal.*,
-				lc.`content_type_guid`, lc.`created`, lct.`content_description`,
+				lc.`content_type_guid`, lc.`created`, lct.`content_name`, lct.`content_name_plural`
 				uue.`login` AS modifier_user, uue.`real_name` AS modifier_real_name
 			FROM `".BIT_DB_PREFIX."liberty_action_log` lal
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( lc.`content_id` = lal.`content_id` )

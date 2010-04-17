@@ -8,7 +8,7 @@
     {ldelim}
 		  "content_id":{if $icontent.content_id}{$icontent.content_id}{else}null{/if},
 		  "content_type_guid":'{$icontent.content_type_guid}',
-		  "content_description":'{$icontent.content_description}',
+		  "content_name":'{$icontent.content_name}',
 		  "lat":{if $icontent.lat|is_numeric}{$icontent.lat}{else}null{/if},
 		  "lng":{if $icontent.lng|is_numeric}{$icontent.lng}{else}null{/if},
 		  "title":'{$icontent.title|addslashes}',

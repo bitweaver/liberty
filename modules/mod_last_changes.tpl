@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.tpl,v 1.7 2007/09/30 22:25:43 laetzer Exp $ *}
+{* $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.tpl,v 1.8 2010/04/17 22:46:09 wjames5 Exp $ *}
 {strip}
 {if $modLastContent}
 	{bitmodule title="$moduleTitle" name="last_changes"}
@@ -6,7 +6,7 @@
 			{section name=ix loop=$modLastContent}
 				<li>
 					{if !$contentType }
-						<strong>{tr}{$modLastContent[ix].content_description}{/tr}: </strong>
+						<strong>{tr}{$modLastContent[ix].content_name}{/tr}: </strong>
 					{/if}
 					{$modLastContent[ix].display_link}
 					{if $showDate}

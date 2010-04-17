@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.92 2010/02/25 19:08:41 dansut Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyComment.php,v 1.93 2010/04/17 22:46:08 wjames5 Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -27,7 +27,7 @@ class LibertyComment extends LibertyMime {
 		LibertyMime::LibertyMime();
 		$this->registerContentType( BITCOMMENT_CONTENT_TYPE_GUID, array(
 				'content_type_guid' => BITCOMMENT_CONTENT_TYPE_GUID,
-				'content_description' => 'Comment',
+				'content_name' => 'Comment',
 				'handler_class' => 'LibertyComment',
 				'handler_package' => 'liberty',
 				'handler_file' => 'LibertyComment.php',
@@ -497,8 +497,8 @@ class LibertyComment extends LibertyMime {
 		} elseif( !empty( $pHash['created'] ) ) {
 			require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'bit_short_date' );
 			$ret = smarty_modifier_bit_short_date( $pHash['created'] );
-		} elseif( !empty( $pHash['content_description'] ) ) {
-			$ret = $pHash['content_description'];
+		} elseif( !empty( $pHash['content_name'] ) ) {
+			$ret = $pHash['content_name'];
 		}
 		return $ret;
 	}
