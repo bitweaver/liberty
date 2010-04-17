@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/templates/center_view_generic.php,v 1.2 2008/07/31 21:23:50 laetzer Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/templates/center_view_generic.php,v 1.3 2010/04/17 13:47:48 wjames5 Exp $
  * @package bitweaver
  */
 global $moduleParams, $gContent, $gBitSmarty;
@@ -30,7 +30,7 @@ if( $gContent = LibertyBase::getLibertyObject( $lookupHash['content_id'] ) ) {
 		}
 
 		if ( isset($moduleParams['content_type_guid'] )){
-			$gBitSmarty->assign( "contentType", $gContent->mType['content_description'] );
+			$gBitSmarty->assign( "contentType", $gContent->getContentTypeName() );
 		}
 	}
 }
