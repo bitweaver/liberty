@@ -32,7 +32,7 @@
 			<div class="row">
 				{formlabel label="Content Type"}
 				{forminput}
-					{$gContent->mType.content_description}
+					{$gContent->getContentTypeName()}
 				{/forminput}
 			</div>
 		{/legend}
