@@ -10,7 +10,7 @@
 
 	<div class="row">
 		<div class="formlabel">
-			{$gContent->getContentTypeDescription()} {tr}Structure{/tr}
+			{$gContent->getContentTypeName()} {tr}Structure{/tr}
 			<br/>
 			<a href="{$smarty.const.LIBERTY_PKG_URL}add_structure_content.php?structure_id={$smarty.request.structure_id}&amp;content_type_guid={$smarty.request.content_type_guid}" title="Add Content to {$gContent->getTitle()}" title="Add Content">Add Content</a>
 		</div>

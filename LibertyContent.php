@@ -3,7 +3,7 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.423 2010/04/17 02:25:42 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.424 2010/04/17 03:45:08 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1894,6 +1894,17 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
+	 * Get the display name of the content type
+	 * @param boolean $pPlural true will return the plural form of the content type display name
+	 * @return string the display name of the content type
+ 	 */
+	function getContentTypeName( $pPlural=FALSE ){
+		global $gLibertySystem;
+		return $gLibertySystem->getContentTypeName( $this->getContentType(), $pPlural );
+	}
+
+
+	/**
 	 * getContentTypeDescription
 	 *
 	 * @param array $pContentType
@@ -1901,11 +1912,15 @@ class LibertyContent extends LibertyBase {
 	 * @return TRUE on success, FALSE on failure
 	 */
 	function getContentTypeDescription( $pContentType=NULL ) {
+		deprecated( 'You are calling the deprecated method getContentTypeDescription, use getContentTypeName( $pPlural )' );
+		return $this->getContentTypeName();
+		/*
 		global $gLibertySystem;
 		if( is_null( $pContentType ) ) {
 			$pContentType = $this->getContentType();
 		}
 		return $gLibertySystem->getContentTypeDescription( $pContentType );
+ 		*/
 	}
 
 	/**
@@ -1927,6 +1942,9 @@ class LibertyContent extends LibertyBase {
 	 * @return string content_type_guid description for the object
 	 */
 	function getContentDescription() {
+		deprecated( 'You are calling the deprecated method getContentDescription, use getContentTypeName( $pPlural )' );
+		return $this->getContentTypeName();
+		/*
 		$ret = NULL;
 		if( isset( $this->mInfo['content_type_guid'] ) ) {
 			global $gLibertySystem;

@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.125 2010/02/12 14:53:29 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.126 2010/04/17 03:45:08 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -621,6 +621,21 @@ class LibertySystem extends LibertyBase {
 	}
 
 	/**
+	 * Get the display name of the content type
+	 * @param boolean $pPlural true will return the plural form of the content type display name
+	 * @return string the display name of the content type
+ 	 */
+	function getContentTypeName( $pContentTypeGuid, $pPlural=FALSE ){
+		$ret = NULL;
+		if( $pPlural && isset( $this->mContentTypes[$pContentTypeGuid]['content_name_plural'] ) )
+			$ret = tra( $this->mContentTypes[$pContentTypeGuid]['content_name_plural'] );
+		else
+			$ret = tra( $this->mContentTypes[$pContentTypeGuid]['content_description'] );
+			// $ret = tra( $this->mContentTypes[$pContentTypeGuid]['content_name'] );
+		return $ret;
+	}
+
+	/**
 	 * Get the description of a given content type
 	 *
 	 * @param $pContentType Content type GUID you want the description for
@@ -628,11 +643,15 @@ class LibertySystem extends LibertyBase {
 	 * @access public
 	 **/
 	function getContentTypeDescription( $pContentType ) {
+		deprecated( 'You are calling the deprecated method getContentTypeDescription, use getContentTypeName( $pPlural )' );
+		return $this->getContentTypeName( $pContentType );
+		/*
 		$ret = NULL;
 		if( !empty( $this->mContentTypes[$pContentType]['content_description'] ) ) {
 			$ret = $this->mContentTypes[$pContentType]['content_description'];
 		}
 		return $ret;
+		*/
 	}
 
 

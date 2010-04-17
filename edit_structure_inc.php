@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.29 $
+ * @version  $Revision: 1.30 $
  * @package  liberty
  * @subpackage functions
  */
@@ -123,7 +123,7 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 				$structureHash['content_id'] = $conId;
 				if( $new_structure_id = $gStructure->storeNode( $structureHash ) ) {
 					$structureHash['after_ref_id'] = $new_structure_id;
-					$feedback['success'] = tra( "added to" ).' '.$gContent->getContentTypeDescription();
+					$feedback['success'] = tra( "added to" ).' '.$gContent->getContentTypeName();
 				} else {
 					$feedback['failure'] = $gStructure->mErrors;
 				}
