@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.4.php,v 1.1 2010/04/17 22:46:09 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.4.php,v 1.2 2010/04/18 08:18:02 lsces Exp $
  */
 global $gBitInstaller;
 
@@ -17,7 +17,7 @@ array( 'DATADICT' => array(
 	// insert new column
 	array( 'ALTER' => array(
 		'liberty_content_types' => array(
-			'content_name' => array( '`content_name`', 'VARCHAR(250) NOTNULL' ),
+			'content_name' => array( '`content_name`', 'VARCHAR(250) NOT NULL' ),
 			'content_name_plural' => array( '`content_name_plural`', 'VARCHAR(250)' ),
 	))),
 )),
