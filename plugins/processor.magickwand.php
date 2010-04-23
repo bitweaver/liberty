@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.24 2010/03/19 02:26:08 spiderr Exp $
+ * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.25 2010/04/23 22:29:52 spiderr Exp $
  *
  * Image processor - extension: php-magickwand
  * @package  liberty
@@ -26,9 +26,15 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
 		// This has to come BEFORE the MagickReadImage
 		if( $isPdf ) {
-			MagickSetImageUnits( $magickWand, MW_PixelsPerInchResolution );
-			$rez =  empty( $pFileHash['max_width'] ) || $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION ? 250 : 72;
-			MagickSetResolution( $magickWand, 300, 300 );
+			// has a customer pdf rasterization function been defined?
+			if( function_exists( 'liberty_rasterize_pdf' ) && $rasteredFile = liberty_rasterize_pdf( $pFileHash['source_file'] ) ) {
+				$pFileHash['source_file'] = $rasteredFile;
+				$isPdf = FALSE;
+			} else {
+				MagickSetImageUnits( $magickWand, MW_PixelsPerInchResolution );
+				$rez =  empty( $pFileHash['max_width'] ) || $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION ? 250 : 72;
+				MagickSetResolution( $magickWand, 300, 300 );
+			}
 		}
 		if( $error = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand ) ) {
 			// $pFileHash['error'] = $error;
