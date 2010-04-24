@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.4.php,v 1.3 2010/04/19 15:01:35 nickpalmer Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.4.php,v 1.4 2010/04/24 19:00:42 wjames5 Exp $
  */
 global $gBitInstaller;
 
@@ -30,14 +30,12 @@ array( 'QUERY' =>
 	),
 ),
 
-/* when we're read we can drop the old content_description column 
+//drop the old content_description column 
 array( 'DATADICT' => array(
 	// drop old column
 	array( 'DROPCOLUMN' => array(
 		'liberty_content_types' => array( '`content_description`' ),
 	)),
-	// reconstruct constraints, sequences and indexes
 )),
-*/
 
 ));
