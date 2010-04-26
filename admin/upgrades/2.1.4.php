@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.4.php,v 1.4 2010/04/24 19:00:42 wjames5 Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.4.php,v 1.5 2010/04/26 18:00:08 dansut Exp $
  */
 global $gBitInstaller;
 
@@ -26,7 +26,7 @@ array( 'DATADICT' => array(
 array( 'QUERY' =>
 	array(
 		'SQL92' => array( "UPDATE `".BIT_DB_PREFIX."liberty_content_types` SET `content_name` = `content_description`",
-				  "ALTER TABLE `".BIT_DB_PREFIX."liberty_content_types ADD CONSTRAINT content_name_not_null CHECK(content_name IS NOT NULL)" ),
+				  "ALTER TABLE `".BIT_DB_PREFIX."liberty_content_types` ADD CONSTRAINT content_name_not_null CHECK(content_name IS NOT NULL)" ),
 	),
 ),
 
