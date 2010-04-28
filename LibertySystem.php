@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.127 2010/04/17 22:46:09 wjames5 Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.128 2010/04/28 02:51:45 spiderr Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -642,10 +642,11 @@ class LibertySystem extends LibertyBase {
  	 */
 	function getContentTypeName( $pContentTypeGuid, $pPlural=FALSE ){
 		$ret = NULL;
-		if( $pPlural && isset( $this->mContentTypes[$pContentTypeGuid]['content_name_plural'] ) )
+		if( $pPlural && isset( $this->mContentTypes[$pContentTypeGuid]['content_name_plural'] ) ) {
 			$ret = tra( $this->mContentTypes[$pContentTypeGuid]['content_name_plural'] );
-		else
+		} elseif( !empty( $this->mContentTypes[$pContentTypeGuid]['content_name'] ) ) {
 		 	$ret = tra( $this->mContentTypes[$pContentTypeGuid]['content_name'] );
+		}
 		return $ret;
 	}
 
