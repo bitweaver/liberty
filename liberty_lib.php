@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.54 2010/04/30 08:04:01 lsces Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.55 2010/04/30 09:26:18 lsces Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -589,9 +589,6 @@ function liberty_process_generic( &$pFileHash, $pMoveFile = TRUE ) {
 				rename( $pFileHash['source_file'], $actualPath );
 			}
 		} else {
-			if ( is_windows() ) {
-				
-			}
 			copy( $pFileHash['source_file'], $actualPath );
 		}
 		$ret = $destBase;
