@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.53 2010/03/16 00:42:52 spiderr Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.54 2010/04/30 08:04:01 lsces Exp $
  * @package liberty
  * @subpackage functions
  */
@@ -574,6 +574,11 @@ function liberty_process_generic( &$pFileHash, $pMoveFile = TRUE ) {
 	$ret = NULL;
 	$destBase = $pFileHash['dest_path'].$pFileHash['name'];
 	$actualPath = BIT_ROOT_PATH.$destBase;
+	if ( is_windows() ) {
+		$destBase = str_replace( '/', "\\", str_replace( "\\", '/', $destBase ) );
+		$actualPath = str_replace( '//', '\\', str_replace( "\\", '\\', $actualPath ) );
+		mkdir_p(str_replace('/','',BIT_ROOT_PATH).$pFileHash['dest_path']);
+	}	
 	if( is_file( $pFileHash['source_file']) ) {
 		if( $pFileHash['source_file'] == $actualPath ) {
 			// do nothing if source and dest are the same
@@ -584,6 +589,9 @@ function liberty_process_generic( &$pFileHash, $pMoveFile = TRUE ) {
 				rename( $pFileHash['source_file'], $actualPath );
 			}
 		} else {
+			if ( is_windows() ) {
+				
+			}
 			copy( $pFileHash['source_file'], $actualPath );
 		}
 		$ret = $destBase;
