@@ -3,7 +3,7 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.427 2010/04/24 08:09:22 lsces Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.428 2010/04/30 13:42:22 dansut Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -3292,7 +3292,7 @@ class LibertyContent extends LibertyBase {
 
 		$query = "
 			SELECT lal.*,
-				lc.`content_type_guid`, lc.`created`, lct.`content_name`, lct.`content_name_plural`
+				lc.`content_type_guid`, lc.`created`, lct.`content_name`, lct.`content_name_plural`,
 				uue.`login` AS modifier_user, uue.`real_name` AS modifier_real_name
 			FROM `".BIT_DB_PREFIX."liberty_action_log` lal
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( lc.`content_id` = lal.`content_id` )
