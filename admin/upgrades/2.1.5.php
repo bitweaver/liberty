@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/Attic/2.1.5.php,v 1.1 2010/05/13 13:14:36 lsces Exp $
+ * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/Attic/2.1.5.php,v 1.2 2010/05/18 18:41:05 spiderr Exp $
  */
 global $gBitInstaller;
 
@@ -20,10 +20,10 @@ array( 'DATADICT' => array(
 			tag_top I4 DEFAULT 0 NOTNULL ,
 			tag_left I4 DEFAULT 0 NOTNULL ,
 			tag_width I4 DEFAULT 100 NOTNULL ,
-			tag_height I4 DEFAULT 100 NOTNULL ,
+			tag_height I4 DEFAULT 100 NOTNULL 
 			CONSTRAINT '
 				, CONSTRAINT `lib_attachment_tag_id_ref`    FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments` (`attachment_id`)
-				, CONSTRAINT `lib_attachment_tag_cid_ref`  FOREIGN KEY (`comment_id`)  REFERENCES `".BIT_DB_PREFIX."liberty_comments`  (`comment_id`)
+				, CONSTRAINT `lib_attachment_tag_cid_ref`  FOREIGN KEY (`comment_id`)  REFERENCES `".BIT_DB_PREFIX."liberty_comments`  (`comment_id`) '
 		",
 	)),
 )),
