@@ -3,7 +3,7 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.428 2010/04/30 13:42:22 dansut Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyContent.php,v 1.429 2010/05/29 15:55:45 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1946,18 +1946,6 @@ class LibertyContent extends LibertyBase {
 	function getContentDescription() {
 		deprecated( 'You are calling the deprecated method getContentDescription, use getContentTypeName( $pPlural )' );
 		return $this->getContentTypeName();
-		/*
-		$ret = NULL;
-		if( isset( $this->mInfo['content_type_guid'] ) ) {
-			global $gLibertySystem;
-			if( !empty( $gLibertySystem->mContentTypes[$this->mInfo['content_type_guid']]['content_description'] ) ) {
-				$ret = $gLibertySystem->mContentTypes[$this->mInfo['content_type_guid']]['content_description'];
-			} else {
-				$ret = $this->mInfo['content_type_guid'];
-			}
-		}
-		return $ret;
- 		*/
 	}
 
 

@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.128 2010/04/28 02:51:45 spiderr Exp $
+* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.129 2010/05/29 15:57:35 wjames5 Exp $
 * @author   spider <spider@steelsun.com>
 */
 
@@ -660,13 +660,6 @@ class LibertySystem extends LibertyBase {
 	function getContentTypeDescription( $pContentType ) {
 		deprecated( 'You are calling the deprecated method getContentTypeDescription, use getContentTypeName( $pPlural )' );
 		return $this->getContentTypeName( $pContentType );
-		/*
-		$ret = NULL;
-		if( !empty( $this->mContentTypes[$pContentType]['content_description'] ) ) {
-			$ret = $this->mContentTypes[$pContentType]['content_description'];
-		}
-		return $ret;
-		*/
 	}
 
 
