@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.29 2010/04/02 19:22:02 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.30 2010/05/31 14:16:42 spiderr Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -132,6 +132,10 @@ function htmlpure_getDefaultConfig( &$htmlp_version, $pObject=NULL ){
 	global $gBitSystem;
 
 	$config = HTMLPurifier_Config::createDefault();
+$config->set( 'HTML.DefinitionID', BIT_ROOT_PATH );
+$config->set('HTML.DefinitionRev', 1);
+$config->set('Cache.DefinitionImpl', null); // remove this later!
+
 
 	// Set the cache path
 	$config->set('Cache.SerializerPath', STORAGE_PKG_PATH );
@@ -157,7 +161,8 @@ function htmlpure_getDefaultConfig( &$htmlp_version, $pObject=NULL ){
 				  FROM `".BIT_DB_PREFIX."users_groups_map` ugm 
 					INNER JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON (ugp.`group_id`=ugm.`group_id`) 
 				  WHERE ugm.`user_id`=? AND (ugp.`perm_name`=? OR ugp.`perm_name`='p_admin')";
-		$hasAdmin = $pObject->mDb->getOne( $query, array( $pObject->getField( 'modifier_user_id' ), $pObject->mAdminContentPerm ) );
+		// cache for 15 minutes
+		$hasAdmin = $pObject->mDb->getOne( $query, array( $pObject->getField( 'modifier_user_id' ), $pObject->mAdminContentPerm ), NULL, NULL, 900 );
 	}
 
 	if( $hasAdmin ) {
@@ -170,6 +175,8 @@ function htmlpure_getDefaultConfig( &$htmlp_version, $pObject=NULL ){
         $css->info['left'] = new HTMLPurifier_AttrDef_CSS_Composite(array( new HTMLPurifier_AttrDef_CSS_Length()));
         $css->info['bottom'] = new HTMLPurifier_AttrDef_CSS_Composite(array( new HTMLPurifier_AttrDef_CSS_Length()));
         $css->info['right'] = new HTMLPurifier_AttrDef_CSS_Composite(array( new HTMLPurifier_AttrDef_CSS_Length()));
+$def =& $config->getHTMLDefinition();
+$def->addAttribute('a', 'target', 'Enum#_blank,_self,_target,_top');
 	} else {
 		if ($gBitSystem->getConfig('htmlpure_disable_extern') == 'y') {
 			$config->set('URI.DisableExternal', true);

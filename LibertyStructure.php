@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.41 2008/11/06 06:39:43 squareing Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.42 2010/05/31 14:16:38 spiderr Exp $
  * @author   spider <spider@steelsun.com>
  */
 
@@ -783,6 +783,23 @@ class LibertyStructure extends LibertyBase {
 		return $ret;
 	}
 
+	function isInStructure( $pContentId ) {
+		$ret = FALSE;
+		if( $this->isValid() ) {
+			$ret = $this->mDb->getOne( "SELECT structure_id FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `root_structure_id`=? AND `content_id`=?", array( $this->mStructureId, $pContentId ) );
+		}
+		return $ret;
+	}
+
+	function loadStructure() {
+		if( $this->isValid() ) {
+			if( empty( $this->mTree ) ) {
+				$this->mTree = $this->buildSubtreeToc();
+			}
+		}
+		return( !empty( $this->mTree ) );
+	}
+
 	/**
 	 * buildSubtreeToc 
 	 * 
@@ -798,7 +815,7 @@ class LibertyStructure extends LibertyBase {
 		$back = array();
 		$cant = $this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."liberty_structures` where `parent_id`=?",array((int)$id));
 		if ($cant) {
-			$query = "SELECT `structure_id`, `page_alias`, lc.`user_id`, lc.`title`, lc.`content_type_guid`, uu.`login`, uu.`real_name`
+			$query = "SELECT `structure_id`, `page_alias`, lc.`user_id`, lc.`title`, lc.`content_type_guid`, uu.`login`, uu.`real_name`, lc.`content_id`
 					  FROM `".BIT_DB_PREFIX."liberty_structures` ls INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( lc.`content_id`=ls.`content_id` )
 					  LEFT JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = lc.`user_id` )
 					  WHERE `parent_id`=?

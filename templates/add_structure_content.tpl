@@ -3,19 +3,26 @@
 function submitStructure(pForm,pContentId,pMode) {
 	var req = getXMLHttpRequest();
 	req.open("POST", {/literal}'{$smarty.const.LIBERTY_PKG_URL}add_structure_content.php'{literal}, true);
-	req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	var data = queryString(pForm)+"&content[]="+pContentId+"&ajax_xml=1";
-	var d = sendXMLHttpRequest(req, data);
-	d.addBoth( structureAddResult );
+	
+	var ajax = new BitBase.SimpleAjax();
+	var donefn = function (r) {
+		var responseHash = BitBase.evalJSON( r.responseText );
+//		document.getElementById(responseHash.content_id+"item");
+//		MochiKit.Visual.fade(document.getElementById(responseHash.content_id+"add"));
+
+		var row = document.getElementById( responseHash.content_id+"feedback" );
+		row.innerHTML = responseHash.feedback;
+
+		BitBase.showById( responseHash.content_id+"remove" );
+		BitBase.fade( responseHash.content_id+"add" );
+	};
+
+	ajax.connect( "{/literal}{$smarty.const.LIBERTY_PKG_URL}add_structure_content.php{literal}", data, donefn, "GET" );
+
 	return false;
 }
 
-var structureAddResult = function (response) {
-	responseHash = MochiKit.Async.evalJSONRequest(response);
-	MochiKit.Visual.switchOff(document.getElementById(responseHash.content_id+"item"));
-	MochiKit.Visual.fade(document.getElementById(responseHash.content_id+"add"));
-	document.getElementById(responseHash.content_id+"feedback").innerHTML = responseHash.feedback;
-};
 /* ]]> */</script>
 {/literal}
 
@@ -39,7 +46,7 @@ var structureAddResult = function (response) {
 				{forminput}
 					<select name="after_ref_id" id="after_ref_id">
 						{section name=iy loop=$subtree}
-							<option value="{$subtree[iy].structure_id}" {if $insert_after eq $subtree[iy].structure_id}selected="selected"{/if}>{$subtree[iy].pos} - {$subtree[iy].title|escape}, {$insert_after}, {$subtree[iy].structure_id}</option>
+							<option value="{$subtree[iy].structure_id}" {if $insert_after eq $subtree[iy].structure_id}selected="selected"{/if}>{$subtree[iy].pos} - {$subtree[iy].title|escape}</option>
 						{/section}
 					</select>
 					{formhelp note="Format: Position in tree - Title of Content, insert after, structure_id"}
@@ -85,14 +92,16 @@ var structureAddResult = function (response) {
 						{section loop=$contentListHash name=cx}
 							<tr class="item {cycle values="even,odd"}" id="{$contentListHash[cx].content_id}li">
 								<td>
-									<a style="display:none" id="{$contentListHash[cx].content_id}remove" href="#" onclick="submitStructure(document.getElementById('structureaddform'),{$contentListHash[cx].content_id},'remove')">
-										{biticon ipackage="icons" iname="list-add" iexplain="Add"}
-									</a>
-									&nbsp;
-									<a id="{$contentListHash[cx].content_id}add" href="#" onclick="submitStructure(document.getElementById('structureaddform'),{$contentListHash[cx].content_id},'add')">
+									
+									{assign var=inStructure value=$gStructure->isInStructure($contentListHash[cx].content_id)}
+									<div class="icon" {if $inStructure}style="display:none"{/if} id="{$contentListHash[cx].content_id}remove" onclick="submitStructure(document.getElementById('structureaddform'),{$contentListHash[cx].content_id},'remove')">
+										{biticon ipackage="icons" iname="list-remove" iexplain="Remove"}
+									</div>
+									
+									<div class="icon" {if empty($inStructure)}style="display:none"{/if} id="{$contentListHash[cx].content_id}add" onclick="submitStructure(document.getElementById('structureaddform'),{$contentListHash[cx].content_id},'add')">
 										{biticon ipackage="icons" iname="list-add" iexplain="Add to structure"}
-									</a>
-									&nbsp;
+									</div>
+									
 									<a target="_new" href="{$contentListHash[cx].display_url}">
 										{biticon ipackage="icons" iname="zoom-best-fit" iexplain="View (in new window)"}
 									</a>
