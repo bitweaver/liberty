@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.30 2010/05/31 14:16:42 spiderr Exp $
+ * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.31 2010/06/02 14:50:52 spiderr Exp $
  * @package  liberty
  * @subpackage plugins_filter
  */
@@ -132,9 +132,10 @@ function htmlpure_getDefaultConfig( &$htmlp_version, $pObject=NULL ){
 	global $gBitSystem;
 
 	$config = HTMLPurifier_Config::createDefault();
-$config->set( 'HTML.DefinitionID', BIT_ROOT_PATH );
-$config->set('HTML.DefinitionRev', 1);
-$config->set('Cache.DefinitionImpl', null); // remove this later!
+	// Necessary setup for custom configuration I think. http://htmlpurifier.org/docs/enduser-customize.html
+	//$config->set( 'HTML.DefinitionID', BIT_ROOT_PATH );
+	//$config->set('HTML.DefinitionRev', 1);
+	//$config->set('Cache.DefinitionImpl', null); // remove this later!
 
 
 	// Set the cache path
@@ -175,8 +176,8 @@ $config->set('Cache.DefinitionImpl', null); // remove this later!
         $css->info['left'] = new HTMLPurifier_AttrDef_CSS_Composite(array( new HTMLPurifier_AttrDef_CSS_Length()));
         $css->info['bottom'] = new HTMLPurifier_AttrDef_CSS_Composite(array( new HTMLPurifier_AttrDef_CSS_Length()));
         $css->info['right'] = new HTMLPurifier_AttrDef_CSS_Composite(array( new HTMLPurifier_AttrDef_CSS_Length()));
-$def =& $config->getHTMLDefinition();
-$def->addAttribute('a', 'target', 'Enum#_blank,_self,_target,_top');
+//$def =& $config->getHTMLDefinition();
+//$def->addAttribute('a', 'target', 'Enum#_blank,_self,_target,_top');
 	} else {
 		if ($gBitSystem->getConfig('htmlpure_disable_extern') == 'y') {
 			$config->set('URI.DisableExternal', true);
