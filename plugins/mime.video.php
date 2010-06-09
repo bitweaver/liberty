@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.video.php,v 1.7 2010/03/13 08:20:09 squareing Exp $
+ * @version		$Header$
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.7 $
+ * @version		$Revision$
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler

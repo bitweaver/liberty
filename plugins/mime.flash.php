@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.flash.php,v 1.5 2008/12/26 08:54:19 squareing Exp $
+ * @version		$Header$
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.5 $
+ * @version		$Revision$
  * created		Sunday Jul 02, 2006   14:42:13 CEST
  * @package		liberty	
  * @subpackage	liberty_mime_handler

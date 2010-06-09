@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_comments.tpl,v 1.2 2007/09/22 15:07:31 nickpalmer Exp $ *}
+{* $Header$ *}
 {strip}
 {if $modLastComments}
 	{bitmodule title="$moduleTitle" name="last_comments"}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.htmlpurifier.php,v 1.31 2010/06/02 14:50:52 spiderr Exp $
+ * @version  $Header$
  * @package  liberty
  * @subpackage plugins_filter
  */

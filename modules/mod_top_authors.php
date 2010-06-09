@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_top_authors.php,v 1.8 2010/04/17 04:56:46 wjames5 Exp $
+// $Header$
 /**
  * Params:
  * - content_type_guid : if set, show only those content_type_guid's

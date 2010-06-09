@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision$
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -19,7 +19,7 @@
 // | Rewrote data function so plugin can cover more types of objects than just Flash
 // | by: Jasp (Jared Woodbridge) <jaspp@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.object.php,v 1.7 2009/10/01 14:17:01 wjames5 Exp $
+// $Id$
 
 /**
  * definitions

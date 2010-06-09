@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.7 $
+ * @version  $Revision$
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author:  xing
 // +----------------------------------------------------------------------+
-// $Id: data.adsense.php,v 1.7 2009/10/01 14:17:01 wjames5 Exp $
+// $Id$
 
 /**
  * definitions

@@ -1,10 +1,10 @@
 <?php
-// $Id: data.geshidata.php,v 1.6 2009/10/01 14:17:01 wjames5 Exp $
+// $Id$
 /**
  * assigned_modules
  *
  * @author   StarRider <starrrider@sourceforge.net>
- * @version  $Revision: 1.6 $
+ * @version  $Revision$
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org

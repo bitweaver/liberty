@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.backtotop.php,v 1.3 2008/11/27 20:03:17 squareing Exp $
+ * @version  $Header$
  * @package  liberty
  * @subpackage plugins_filter
  */

@@ -1,5 +1,5 @@
 {strip}
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/edit_help_inc.tpl,v 1.34 2010/02/10 19:33:06 spiderr Exp $ *}
+{* $Header$ *}
 
 {if $dataplugins}
 	{jstab title="Plugins"}

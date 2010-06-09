@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/liberty_lib.php,v 1.55 2010/04/30 09:26:18 lsces Exp $
+ * @version $Header$
  * @package liberty
  * @subpackage functions
  */

@@ -3,7 +3,7 @@
 * System class for handling the liberty package
 *
 * @package  liberty
-* @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertySystem.php,v 1.129 2010/05/29 15:57:35 wjames5 Exp $
+* @version  $Header$
 * @author   spider <spider@steelsun.com>
 */
 

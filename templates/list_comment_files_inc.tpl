@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/list_comment_files_inc.tpl,v 1.1 2009/03/17 20:23:21 wjames5 Exp $ *}
+{* $Header$ *}
 {strip}
 {if $storageHash}
 	<h4 class="table">

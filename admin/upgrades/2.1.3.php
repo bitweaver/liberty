@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/admin/upgrades/2.1.3.php,v 1.3 2009/03/31 16:05:43 dansut Exp $
+ * @version $Header$
  */
 global $gBitInstaller;
 

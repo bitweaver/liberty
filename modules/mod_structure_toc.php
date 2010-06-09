@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_structure_toc.php,v 1.7 2007/09/26 19:32:14 spiderr Exp $
+ * @version $Header$
  * 
  * @package liberty
  * @subpackage modules

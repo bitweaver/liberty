@@ -3,7 +3,7 @@
  * get_content_list
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.39 $
+ * @version  $Revision$
  * @package  liberty
  * @subpackage functions
  */

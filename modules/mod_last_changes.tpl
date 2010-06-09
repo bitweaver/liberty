@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_changes.tpl,v 1.8 2010/04/17 22:46:09 wjames5 Exp $ *}
+{* $Header$ *}
 {strip}
 {if $modLastContent}
 	{bitmodule title="$moduleTitle" name="last_changes"}

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.19 $
+ * @version  $Revision$
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Author: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.toc.php,v 1.19 2009/10/01 14:17:01 wjames5 Exp $
+// $Id$
 
 /**
  * definitions

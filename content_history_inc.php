@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.20 $
+ * @version  $Revision$
  * @package  liberty
  * @subpackage functions
  */

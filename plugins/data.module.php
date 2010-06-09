@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.17 $
+ * @version  $Revision$
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -16,7 +16,7 @@
 // | Author (TikiWiki): Mose <mose@users.sourceforge.net>
 // | Reworked for Bitweaver  by: Christian Fowler <spiderr@users.sourceforge.net>
 // +----------------------------------------------------------------------+
-// $Id: data.module.php,v 1.17 2009/10/01 14:17:01 wjames5 Exp $
+// $Id$
 
 /**
  * definitions

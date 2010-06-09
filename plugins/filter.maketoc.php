@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.maketoc.php,v 1.10 2008/11/25 11:16:49 squareing Exp $
+ * @version  $Header$
  * @package  liberty
  * @subpackage plugins_filter
  */

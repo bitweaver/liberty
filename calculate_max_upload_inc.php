@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/calculate_max_upload_inc.php,v 1.5 2008/06/19 07:28:49 lsces Exp $
+ * @version  $Header$
  * 
  * settings that are useful to know about at upload time
  * 

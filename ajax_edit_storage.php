@@ -1,7 +1,7 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/ajax_edit_storage.php,v 1.8 2010/02/08 21:27:23 wjames5 Exp $
- * @version  $Revision: 1.8 $
+ * $Header$
+ * @version  $Revision$
  * @package  liberty
  * @subpackage functions
  */

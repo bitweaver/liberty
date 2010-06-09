@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_last_comments.php,v 1.7 2010/04/17 04:56:46 wjames5 Exp $
+ * @version $Header$
  * @package liberty
  * @subpackage modules
  */

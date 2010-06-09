@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Revision: 1.46 $
+ * @version  $Revision$
  * @package  liberty
  * @subpackage plugins_data
  */
@@ -15,7 +15,7 @@
 // +----------------------------------------------------------------------+
 // | Authors: drewslater <andrew@andrewslater.com>
 // +----------------------------------------------------------------------+
-// $Id: data.attachment.php,v 1.46 2010/03/11 07:10:42 squareing Exp $
+// $Id$
 
 /**
  * definitions

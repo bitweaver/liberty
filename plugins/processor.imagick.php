@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.imagick.php,v 1.13 2010/04/03 10:57:54 lsces Exp $
+ * $Header$
  *
  * Image processor - extension: php-imagick
  * @package  liberty

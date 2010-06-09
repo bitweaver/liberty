@@ -1,10 +1,10 @@
 <?php
-// $Id: data.ledgertable.php,v 1.8 2009/10/01 14:17:01 wjames5 Exp $
+// $Id$
 /**
  * assigned_modules
  *
  * @author   KainX <mej@kainx.org>
- * @version  $Revision: 1.8 $
+ * @version  $Revision$
  * @package  liberty
  * @subpackage plugins_data
  * @copyright Copyright (c) 2004, bitweaver.org

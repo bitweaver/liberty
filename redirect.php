@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/redirect.php,v 1.5 2010/02/08 21:27:23 wjames5 Exp $
+ * @version  $Header$
  * lookup_content_inc
  *
  * @author   spider <spider@steelsun.com>

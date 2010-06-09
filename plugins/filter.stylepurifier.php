@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/plugins/filter.stylepurifier.php,v 1.5 2007/07/23 20:17:34 squareing Exp $
+ * @version  $Header$
  * @package  liberty
  * @subpackage plugins_filter
  */

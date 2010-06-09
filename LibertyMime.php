@@ -3,7 +3,7 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyMime.php,v 1.46 2010/01/30 21:53:24 spiderr Exp $
+ * @version  $Header$
  */
 
 /**

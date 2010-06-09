@@ -1,9 +1,9 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/add_structure_content.php,v 1.10 2010/05/31 14:16:41 spiderr Exp $
+ * @version $Header$
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.10 $
+ * @version  $Revision$
  * @package  liberty
  * @subpackage functions
  */

@@ -3,7 +3,7 @@
  * edit_structure_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.30 $
+ * @version  $Revision$
  * @package  liberty
  * @subpackage functions
  */

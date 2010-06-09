@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/templates/mime/pdf/admin.tpl,v 1.1 2009/01/15 20:34:41 squareing Exp $ *}
+{* $Header$ *}
 {strip}
 <div class="admin liberty">
 	<div class="header">

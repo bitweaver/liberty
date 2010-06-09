@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.magickwand.php,v 1.25 2010/04/23 22:29:52 spiderr Exp $
+ * $Header$
  *
  * Image processor - extension: php-magickwand
  * @package  liberty

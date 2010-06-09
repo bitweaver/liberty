@@ -3,7 +3,7 @@
  * help_format_tikiwiki_inc
  *
  * @author   Christian Fowler>
- * @version  $Revision: 1.15 $
+ * @version  $Revision$
  * @package  liberty
  * @subpackage functions
  */

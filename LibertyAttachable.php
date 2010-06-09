@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyAttachable.php,v 1.173 2010/03/03 21:38:21 spiderr Exp $
+ * @version  $Header$
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+

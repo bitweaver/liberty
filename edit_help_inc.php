@@ -1,10 +1,10 @@
 <?php
 /**
- * $Id: edit_help_inc.php,v 1.22 2010/02/09 18:57:07 wjames5 Exp $
+ * $Id$
  * edit_help_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.22 $
+ * @version  $Revision$
  * @package  liberty
  * @subpackage functions
  */

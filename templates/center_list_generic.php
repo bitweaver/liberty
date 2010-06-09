@@ -1,6 +1,6 @@
 <?php
 /**
- * @version $Header: /cvsroot/bitweaver/_bit_liberty/templates/center_list_generic.php,v 1.2 2010/04/17 04:56:46 wjames5 Exp $
+ * @version $Header$
  * @package bitweaver
  */
 global $gBitSmarty, $gBitSystem, $gQueryUserId, $moduleParams, $gBitUser, $gLibertySystem, $gContent;

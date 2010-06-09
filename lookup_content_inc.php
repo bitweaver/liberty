@@ -3,7 +3,7 @@
  * lookup_content_inc
  *
  * @author   spider <spider@steelsun.com>
- * @version  $Revision: 1.8 $
+ * @version  $Revision$
  * @package  liberty
  * @subpackage functions
  */

@@ -3,7 +3,7 @@
  * Base class for Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyBase.php,v 1.24 2009/10/01 14:17:01 wjames5 Exp $
+ * @version  $Header$
  * @author   spider <spider@steelsun.com>
  */
 // +----------------------------------------------------------------------+

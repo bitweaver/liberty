@@ -1,6 +1,6 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_liberty/plugins/processor.gd.php,v 1.15 2010/04/03 10:57:54 lsces Exp $
+ * $Header$
  *
  * Image processor - extension: php-gd
  * @package  liberty

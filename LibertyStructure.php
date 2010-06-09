@@ -3,7 +3,7 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/LibertyStructure.php,v 1.42 2010/05/31 14:16:38 spiderr Exp $
+ * @version  $Header$
  * @author   spider <spider@steelsun.com>
  */
 

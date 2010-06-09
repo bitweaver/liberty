@@ -1,4 +1,4 @@
-{* $Header: /cvsroot/bitweaver/_bit_liberty/modules/mod_top_authors.tpl,v 1.3 2008/08/05 01:10:30 laetzer Exp $ *}
+{* $Header$ *}
 {strip}
 {if $modAuthors}
 	{bitmodule title="$moduleTitle" name="top_authors"}

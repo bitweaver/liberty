@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		$Header: /cvsroot/bitweaver/_bit_liberty/plugins/mime.pbase.php,v 1.7 2009/04/29 14:29:24 wjames5 Exp $
+ * @version		$Header$
  *
  * @author		xing  <xing@synapse.plus.com>
- * @version		$Revision: 1.7 $
+ * @version		$Revision$
  * created		Thursday May 08, 2008
  * @package		liberty
  * @subpackage	liberty_mime_handler

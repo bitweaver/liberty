@@ -1,6 +1,6 @@
 <?php
 /**
- * @version  $Header: /cvsroot/bitweaver/_bit_liberty/edit_storage_inc.php,v 1.39 2009/10/20 18:01:48 ukgrad89 Exp $
+ * @version  $Header$
  *
  * edit_storage_inc
  * @author   spider <spider@steelsun.com>
