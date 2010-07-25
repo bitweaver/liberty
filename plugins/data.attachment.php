@@ -67,6 +67,7 @@ function data_attachment_help() {
 				.'<td>' . tra( "The text to use in the title attribute or as the link text if output=desc. Will also be used for the alt attribute if no alt is specified. This text is parsed." )
 				.tra( "(Default = " ) . '<strong>'.tra( 'Image' ).'</strong>)</td>'
 			.'</tr>'
+			.'<tr class="even">'
 				.'<td>alt</td>'
 				.'<td>' . tra( "string") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "The text to use in the alt tag. Will also be used for the title attribute if no description is specified.")
