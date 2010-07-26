@@ -1864,6 +1864,36 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
+	 * Attempt to create a brief description of this object, most useful for <meta name="description" />
+	 *
+	 * @return array list of aliases
+	 */
+	function generateDescription() {
+		$ret = NULL;
+		if( $this->isValid() ) {
+			if( $this->getField('summary') ) {
+				$ret = $this->getField('summary');
+			} elseif( $this->getField('data') ) {
+				// 250 to 300 is max description
+				$ret = truncate( $this->parseData(), 250 );
+			}
+		}
+		return $ret;
+	}
+
+	/**
+	 * Attempt to create a collection of relevant words about this object, most useful for <meta name="keywords" />
+	 *
+	 * @return array list of aliases
+	 */
+	function generateKeywords() {
+		$ret = array();
+		if( $this->isValid() ) {
+		}
+		return $ret;
+	}
+
+	/**
 	 * Get array of aliases for this content object
 	 *
 	 * @return array list of aliases
