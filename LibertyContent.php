@@ -3,7 +3,6 @@
 /* Management of Liberty content
 *
 * @package  liberty
-* @version  $Header$
 * @author   spider <spider@steelsun.com>
 */
 
@@ -1875,7 +1874,7 @@ class LibertyContent extends LibertyBase {
 				$ret = $this->getField('summary');
 			} elseif( $this->getField('data') ) {
 				// 250 to 300 is max description
-				$ret = truncate( $this->parseData(), 250 );
+				$ret = substr( $this->parseData(), 0, 250 );
 			}
 		}
 		return $ret;
