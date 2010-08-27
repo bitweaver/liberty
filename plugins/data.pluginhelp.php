@@ -120,7 +120,7 @@ function data_pluginhelp($data, $params) {
 	if ($thisGuid != 'datalibrary') $ret .= // This button is not needed by the Plugin Library {LIB}
 			'<tr class="even">'
 				.'<td colspan="4" style="text-align: center;" title="'.tra('Click to Visit the Help Page on bitweaver.org in a new window.').'">'
-					.'<input type="button" value="Visit the Help Page" onclick="javascript:popUpWin(\'http://bitweaver.org/wiki/index.php?page='.$pluginParams['help_page'].'\',\'standard\',800,800)"></input>'
+					.'<input type="button" value="Visit the Help Page" onclick="javascript:BitBase.popUpWin(\'http://bitweaver.org/wiki/index.php?page='.$pluginParams['help_page'].'\',\'standard\',800,800)"></input>'
 				.'</td>'
 			.'</tr>';
 	$ret .= '</table>'

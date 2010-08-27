@@ -54,7 +54,7 @@ function data_addtabs_help() {
 				.'<td>' . tra( "numeric") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "Will create a Tab interface on a page. The name on each tab is the name given to the imported page.The value sent with the TabX parameter is a Numeric Content Id. This allows blog posts, images, wiki pages . . . (and more) to be added.")
 				. tra("<br /><strong>Note 1:</strong> A listing of Content Id's can be found ")
-				. '<a href="'.LIBERTY_PKG_URL.'list_content.php" title="Launch BitWeaver Content Browser in New Window" onkeypress="popUpWin(this.href,\'standard\',800,800);" onclick="popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "Here" ) . '</a>'
+				. '<a href="'.LIBERTY_PKG_URL.'list_content.php" title="Launch BitWeaver Content Browser in New Window" onkeypress="javascript:BitBase.popUpWin(this.href,\'standard\',800,800);" onclick="javascript:BitBase.popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "Here" ) . '</a>'
 				. tra("<br /><strong>Note 2:</strong> The order used when the tabs are specified does not matter. The Tabname does - Tab1 is always first and Tab99 will always be last.</td>")
 			.'</tr>'
 		.'</table>'
