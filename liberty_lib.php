@@ -1,6 +1,5 @@
 <?php
 /**
- * @version $Header$
  * @package liberty
  * @subpackage functions
  */
@@ -692,7 +691,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		if( !empty( $gThumbSizes ) && is_array( $gThumbSizes )) {
 			$pFileHash['thumbnail_sizes'] = array_keys( $gThumbSizes );
 		} else {
-			$pFileHash['thumbnail_sizes'] = array( 'icon', 'avatar', 'small', 'medium', 'large' );
+			$pFileHash['thumbnail_sizes'] = array( 'large', 'medium', 'small', 'avatar', 'icon' );
 		}
 	}
 
@@ -749,6 +748,8 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 
 			if( $pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash )) {
 				$ret = TRUE;
+				// use the previous thumb as the source for the next, decreasingly smaller thumb as this GREATLY increases speed
+				$pFileHash['source_file'] = $pFileHash['icon_thumb_path'];
 			}
 		}
 	}
