@@ -3,7 +3,6 @@
  * Management of Liberty Content
  *
  * @package  liberty
- * @version  $Header$
  * @author   spider <spider@steelsun.com>
  */
 
@@ -810,22 +809,27 @@ class LibertyStructure extends LibertyBase {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function buildSubtreeToc($id,$slide=false,$order='asc',$tocPrefix='') {
+	function buildSubtreeToc( $id, $order='asc', $tocPrefix='', $pPrefixDepth=1, $pDepth=1 ) {
 		global $gLibertySystem, $gBitSystem;
 		$back = array();
 		$cant = $this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."liberty_structures` where `parent_id`=?",array((int)$id));
 		if ($cant) {
-			$query = "SELECT `structure_id`, `page_alias`, lc.`user_id`, lc.`title`, lc.`content_type_guid`, uu.`login`, uu.`real_name`, lc.`content_id`
-					  FROM `".BIT_DB_PREFIX."liberty_structures` ls INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( lc.`content_id`=ls.`content_id` )
-					  LEFT JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = lc.`user_id` )
+			$query = "SELECT `structure_id`, `page_alias`, lc.`user_id`, lc.`title`, lc.`content_type_guid`, uu.`login`, uu.`real_name`, lc.`content_id`, lct.*
+					  FROM `".BIT_DB_PREFIX."liberty_structures` ls 
+						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( lc.`content_id`=ls.`content_id` )
+						INNER JOIN `".BIT_DB_PREFIX."liberty_content_types` lct ON ( lc.`content_type_guid`=lct.`content_type_guid` )
+						LEFT JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = lc.`user_id` )
 					  WHERE `parent_id`=?
 					  ORDER BY ".$this->mDb->convertSortmode("pos_".$order);
 			$result = $this->mDb->query($query,array((int)$id));
-			$prefix=1;
+			$prefix = 1;
 			$contentTypes = $gLibertySystem->mContentTypes;
 			while ($res = $result->fetchRow()) {
-				$res['prefix']=($tocPrefix=='')?'':"$tocPrefix.";
-				$res['prefix'].=$prefix;
+				$res['prefix']='';
+				if( $pDepth >= $pPrefixDepth ) {
+					$res['prefix']=($tocPrefix=='')?'':"$tocPrefix.";
+					$res['prefix'].=$prefix;
+				}
 				$prefix++;
 				if( !empty( $contentTypes[$res['content_type_guid']] ) ) {
 					// quick alias for code readability
@@ -837,10 +841,17 @@ class LibertyStructure extends LibertyBase {
 					}
 					$res['title'] = $type['content_object']->getTitle( $res );
 					if ($res['structure_id'] != $id) {
-						$sub = $this->buildSubtreeToc($res['structure_id'],$slide,$order,$res['prefix']);
+						$sub = $this->buildSubtreeToc( $res['structure_id'],$order,$res['prefix'], $pPrefixDepth, ($pDepth + 1) );
 						if (is_array($sub)) {
 							$res['sub'] = $sub;
 						}
+					}
+				}
+				$classFile = BIT_ROOT_PATH.$res['handler_package'].'/'.$res['handler_file'];
+				if( file_exists( $classFile ) ) {
+					require_once( $classFile );
+					if( class_exists( $res['handler_class'] ) ) {
+						$res['display_url'] = call_user_func( array( $res['handler_class'], 'getDisplayUrl' ), $res['title'], $res );
 					}
 				}
 				$back[] = $res;
@@ -862,12 +873,12 @@ class LibertyStructure extends LibertyBase {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function getToc($pStructureId=NULL,$order='asc',$showdesc=false,$numbering=true,$numberPrefix='') {
+	function getToc($pStructureId=NULL,$order='asc',$showdesc=false,$pNumberDepth=true,$numberPrefix='') {
 		if( !@$this->verifyId( $pStructureId ) ) {
 			$pStructureId = $this->mStructureId;
 		}
-		$structure_tree = $this->buildSubtreeToc($pStructureId,false,$order,$numberPrefix);
-		return $this->fetchToc($structure_tree,$showdesc,$numbering);
+		$structure_tree = $this->buildSubtreeToc( $pStructureId, $order, $numberPrefix, $pNumberDepth );
+		return $this->fetchToc( $structure_tree,$showdesc,$pNumberDepth );
 	}
 
 	/**
