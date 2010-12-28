@@ -3,7 +3,6 @@
  * Manages liberty Uploads
  *
  * @package  liberty
- * @version  $Header$
  */
 
 /**
@@ -271,7 +270,7 @@ class LibertyMime extends LibertyAttachable {
 	 * @access public
 	 * @return boolean TRUE on success, FALSE on failure - $this->mErrors will contain reason for failure
 	 */
-	function getThumbnailUrl( $pSize='small', $pInfoHash=NULL, $pSecondary=NULL ) {
+	function getThumbnailUrl( $pSize='small', $pInfoHash=NULL, $pSecondary=NULL, $pDefault=TRUE ) {
 		$ret = NULL;
 		if( !empty( $pInfoHash ) ) {
 			// do some stuff if we are given a hash of stuff
@@ -285,7 +284,7 @@ class LibertyMime extends LibertyAttachable {
 				$ret = $this->mStorage[$attachmentId]['thumbnail_url'][$pSize];
 			}
 		} 
-		if( empty( $ret ) ) {
+		if( $pDefault && empty( $ret ) ) {
 			$ret = parent::getThumbnailUrl( $pSize, $pInfoHash, $pSecondary );
 		}
 		return $ret;
