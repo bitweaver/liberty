@@ -127,7 +127,7 @@ function liberty_imagick0_resize_image( &$pFileHash ) {
 			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || $mimeExt != $targetType )) {
 				// We have to resize. *ALL* resizes are converted to jpeg or png
 				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
-				$destFile = BIT_ROOT_PATH.'/'.$destUrl;
+				$destFile = STORAGE_PKG_PATH.'/'.$destUrl;
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 				// print "			if ( !imagick_resize( $iImg, $pFileHash[max_width], $pFileHash[max_height], IMAGICK_FILTER_LANCZOS, 0.5, $pFileHash[max_width] x $pFileHash[max_height] > ) ) {";
 
@@ -236,7 +236,7 @@ function liberty_imagick2_resize_image( &$pFileHash ) {
 
 			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && (( $pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || $mimeExt != $targetType )) {
 				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
-				$destFile = BIT_ROOT_PATH.'/'.$destUrl;
+				$destFile = STORAGE_PKG_PATH.'/'.$destUrl;
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 
 				// create thumb and write

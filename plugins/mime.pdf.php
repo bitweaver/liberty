@@ -111,7 +111,7 @@ function mime_pdf_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 	// don't load a mime image if we don't have an image for this file
 	if( $ret = mime_default_load( $pFileHash, $pPrefs, $pParams )) {
 		if( !empty( $ret['storage_path'] )) {
-			$source_path = BIT_ROOT_PATH.dirname( $ret['storage_path'] ).'/';
+			$source_path = STORAGE_PKG_PATH.dirname( $ret['storage_path'] ).'/';
 			// if the swf file exists, we pass it back that it can be viewed.
 			if( is_file( $source_path.'pdf.swf' )) {
 				$ret['media_url'] = storage_path_to_url( dirname( $ret['storage_path'] ).'/pdf.swf' );
@@ -137,7 +137,7 @@ function mime_pdf_convert_pdf2swf( $pFileHash ) {
 		$swfcombine = trim( $gBitSystem->getConfig( 'swfcombine_path', shell_exec( 'which swfcombine' )));
 
 		if( is_executable( $pdf2swf ) && is_executable( $swfcombine )) {
-			$source    = BIT_ROOT_PATH.$pFileHash['upload']['dest_path'].$pFileHash['upload']['name'];
+			$source    = STORAGE_PKG_PATH.$pFileHash['upload']['dest_path'].$pFileHash['upload']['name'];
 			$dest_path = dirname( $source );
 
 			$tmp_file  = "$dest_path/tmp.swf";

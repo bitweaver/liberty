@@ -101,7 +101,7 @@ function mime_flash_store_preferences( &$pFileHash ) {
 	$ret = FALSE;
 
 	if( @BitBase::verifyId( $pFileHash['attachment_id'] )) {
-		list( $pFileHash['preferences']['width'], $pFileHash['preferences']['height'], $type, $attr) = getimagesize( BIT_ROOT_PATH.$pFileHash['upload']['dest_path'].$pFileHash['upload']['name'] );
+		list( $pFileHash['preferences']['width'], $pFileHash['preferences']['height'], $type, $attr) = getimagesize( STORAGE_PKG_PATH.$pFileHash['upload']['dest_path'].$pFileHash['upload']['name'] );
 
 		// store width of video
 		if( !empty( $pFileHash['preferences']['width'] )) {

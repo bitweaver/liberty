@@ -572,12 +572,13 @@ function liberty_process_archive( &$pFileHash ) {
 function liberty_process_generic( &$pFileHash, $pMoveFile = TRUE ) {
 	$ret = NULL;
 	$destBase = $pFileHash['dest_path'].$pFileHash['name'];
-	$actualPath = BIT_ROOT_PATH.$destBase;
+	$actualPath = STORAGE_PKG_PATH.$destBase;
 	if ( is_windows() ) {
 		$destBase = str_replace( '/', "\\", str_replace( "\\", '/', $destBase ) );
 		$actualPath = str_replace( '//', '\\', str_replace( "\\", '\\', $actualPath ) );
-		mkdir_p(str_replace('/','',BIT_ROOT_PATH).$pFileHash['dest_path']);
+		mkdir_p(str_replace('/','',STORAGE_PKG_PATH).$pFileHash['dest_path']);
 	}	
+
 	if( is_file( $pFileHash['source_file']) ) {
 		if( $pFileHash['source_file'] == $actualPath ) {
 			// do nothing if source and dest are the same
@@ -610,9 +611,9 @@ function liberty_process_image( &$pFileHash, $pMoveFile = TRUE ) {
 	$ret = NULL;
 
 	list($type, $ext) = explode( '/', strtolower( $pFileHash['type'] ) );
-	mkdir_p( BIT_ROOT_PATH.$pFileHash['dest_path'] );
+	mkdir_p( STORAGE_PKG_PATH.$pFileHash['dest_path'] );
 	if( $resizePath = liberty_process_generic( $pFileHash, $pMoveFile )) {
-		$pFileHash['source_file'] = BIT_ROOT_PATH.$resizePath;
+		$pFileHash['source_file'] = STORAGE_PKG_PATH.$resizePath;
 		//set permissions if possible - necessary for some wonky shared hosting environments
 		if(chmod($pFileHash['source_file'], 0644)){
 			//does nothing, but fails elegantly
@@ -647,7 +648,7 @@ function liberty_clear_thumbnails( &$pFileHash ) {
 		// get thumbnails we want to remove
 		if( $thumbs = liberty_fetch_thumbnails( $thumbHash )) {
 			foreach( $thumbs as $thumb ) {
-				$thumb = BIT_ROOT_PATH.$thumb;
+				$thumb = STORAGE_PKG_PATH.$thumb;
 				if( is_writable( $thumb )) {
 					unlink( $thumb );
 				}
@@ -704,7 +705,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$pFileHash['name'] = 'original.jpg';
 		$pFileHash['max_width'] = MAX_THUMBNAIL_DIMENSION;
 		$pFileHash['max_height'] = MAX_THUMBNAIL_DIMENSION;
-		if( $pFileHash['original_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash )) {
+		if( $pFileHash['original_path'] = STORAGE_PKG_PATH.$resizeFunc( $pFileHash )) {
 			$ret = TRUE;
 		}
 	}
@@ -724,8 +725,8 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 
 	// create a subdirectory for the thumbs
 	$pFileHash['dest_path'] .= 'thumbs/';
-	if( !is_dir( BIT_ROOT_PATH.$pFileHash['dest_path'] )) {
-		mkdir( BIT_ROOT_PATH.$pFileHash['dest_path'] );
+	if( !is_dir( STORAGE_PKG_PATH.$pFileHash['dest_path'] )) {
+		mkdir( STORAGE_PKG_PATH.$pFileHash['dest_path'] );
 	}
 
 	foreach( $pFileHash['thumbnail_sizes'] as $thumbSize ) {
@@ -746,7 +747,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 				unset( $pFileHash['max_height'] );
 			}
 
-			if( $pFileHash['icon_thumb_path'] = BIT_ROOT_PATH.$resizeFunc( $pFileHash )) {
+			if( $pFileHash['icon_thumb_path'] = STORAGE_PKG_PATH.$resizeFunc( $pFileHash )) {
 				$ret = TRUE;
 				// use the previous thumb as the source for the next, decreasingly smaller thumb as this GREATLY increases speed
 				$pFileHash['source_file'] = $pFileHash['icon_thumb_path'];
@@ -799,8 +800,8 @@ function liberty_fetch_thumbnails( $pParamHash, $pAltImageUrl = NULL, $pThumbSiz
 		$path = &$pParamHash['storage_path'];
 
 		// $path might already be the absolute path or it might already contain BIT_ROOT_URL
-		if( !( $path = preg_replace( "!^".preg_quote( BIT_ROOT_PATH, "!" )."!", "", $path ))) {
-			$path = preg_replace( "!^".preg_quote( BIT_ROOT_URL, "!" )."!", "", $path );
+		if( !( $path = preg_replace( "!^".preg_quote( STORAGE_PKG_PATH, "!" )."!", "", $path ))) {
+			$path = preg_replace( "!^".preg_quote( STORAGE_PKG_URL, "!" )."!", "", $path );
 		}
 
 		// remove the filename if there is one (we can't just use dirname() becuase we might only have the path to the dir)
@@ -809,9 +810,9 @@ function liberty_fetch_thumbnails( $pParamHash, $pAltImageUrl = NULL, $pThumbSiz
 		foreach( $pParamHash['thumbnail_sizes'] as $size ) {
 			foreach( $exts as $ext ) {
 				$image = $size.'.'.$ext;
-				if( is_readable( BIT_ROOT_PATH.$dir.'thumbs/'.$image )) {
+				if( is_readable( STORAGE_PKG_PATH.$dir.'thumbs/'.$image )) {
 					$ret[$size] = storage_path_to_url( $dir.'thumbs/'.$image );
-				} elseif( is_readable( BIT_ROOT_PATH.$dir.$image )) {
+				} elseif( is_readable( STORAGE_PKG_PATH.$dir.$image )) {
 					$ret[$size] = storage_path_to_url( $dir.$image );
 				}
 			}

@@ -133,7 +133,7 @@ function htmlpure_getDefaultConfig( &$htmlp_version, $pObject=NULL ){
 
 	$config = HTMLPurifier_Config::createDefault();
 	// Necessary setup for custom configuration I think. http://htmlpurifier.org/docs/enduser-customize.html
-	//$config->set( 'HTML.DefinitionID', BIT_ROOT_PATH );
+	//$config->set( 'HTML.DefinitionID', STORAGE_PKG_PATH );
 	//$config->set('HTML.DefinitionRev', 1);
 	//$config->set('Cache.DefinitionImpl', null); // remove this later!
 

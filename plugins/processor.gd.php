@@ -84,7 +84,7 @@ function liberty_gd_resize_image( &$pFileHash ) {
 			$destExt = '.jpg';
 		}
 
-		$destFile = BIT_ROOT_PATH.'/'.$destUrl.$destExt;
+		$destFile = STORAGE_PKG_PATH.'/'.$destUrl.$destExt;
 
 		switch( $targetType ) {
 			case 'png':

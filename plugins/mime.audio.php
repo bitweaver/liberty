@@ -118,7 +118,7 @@ function mime_audio_update( &$pStoreRow, $pParams = NULL ) {
 		// if there was no upload we'll process the file parameters
 		if( empty( $pStoreRow['upload'] ) && !empty( $pParams['meta'] )) {
 			// update our local version of the file
-			$file = BIT_ROOT_PATH.$pStoreRow['storage_path'];
+			$file = STORAGE_PKG_PATH.$pStoreRow['storage_path'];
 			if( is_file( dirname( $file ).'/bitverted.mp3' )) {
 				$verted = dirname( $file ).'/bitverted.mp3';
 			} elseif( is_file( dirname( $file ).'/bitverted.m4a' )) {
@@ -162,10 +162,10 @@ function mime_audio_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 		$ret['meta'] = LibertyMime::getMetaData( $pFileHash['attachment_id'], "ID3" );
 
 		if( !empty( $ret['storage_path'] )) {
-			if( is_file( dirname( BIT_ROOT_PATH.$ret['storage_path'] ).'/bitverted.mp3' )) {
+			if( is_file( dirname( STORAGE_PKG_PATH.$ret['storage_path'] ).'/bitverted.mp3' )) {
 				$ret['media_url'] = storage_path_to_url( dirname( $ret['storage_path'] )).'/bitverted.mp3';
 				// we need some javascript for the player:
-			} elseif( is_file( dirname( BIT_ROOT_PATH.$ret['storage_path'] ).'/bitverted.m4a' )) {
+			} elseif( is_file( dirname( STORAGE_PKG_PATH.$ret['storage_path'] ).'/bitverted.m4a' )) {
 				$ret['media_url'] = storage_path_to_url( dirname( $ret['storage_path'] )).'/bitverted.m4a';
 			}
 		}
@@ -189,7 +189,7 @@ function mime_audio_converter( &$pParamHash ) {
 	$ret = FALSE;
 	$log = array();
 
-	$source = BIT_ROOT_PATH.$pParamHash['upload']['dest_path'].$pParamHash['upload']['name'];
+	$source = STORAGE_PKG_PATH.$pParamHash['upload']['dest_path'].$pParamHash['upload']['name'];
 	$dest_path = dirname( $source );
 
 	if( @BitBase::verifyId( $pParamHash['attachment_id'] )) {

@@ -151,7 +151,7 @@ function mime_video_load( $pFileHash, &$pPrefs, $pParams = NULL ) {
 	if( $ret = mime_default_load( $pFileHash, $pParams )) {
 		// check for status of conversion
 		if( !empty( $ret['storage_path'] )) {
-			$source_path = BIT_ROOT_PATH.dirname( $ret['storage_path'] ).'/';
+			$source_path = STORAGE_PKG_PATH.dirname( $ret['storage_path'] ).'/';
 			if( is_file( $source_path.'error' )) {
 				$ret['status']['error'] = TRUE;
 			} elseif( is_file( $source_path.'processing' )) {
@@ -233,7 +233,7 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 		} else {
 			// this is the codec we'll use - currently this might be: flv, h264, h264-2pass
 			$codec = $gBitSystem->getConfig( "mime_video_video_codec", "flv" );
-			$source = BIT_ROOT_PATH.$pParamHash['upload']['dest_path'].$pParamHash['upload']['name'];
+			$source = STORAGE_PKG_PATH.$pParamHash['upload']['dest_path'].$pParamHash['upload']['name'];
 			$dest_path = dirname( $source );
 
 			// set some default values if ffpeg-php isn't available or fails
@@ -517,7 +517,7 @@ function mime_video_create_thumbnail( $pFile, $pOffset = 60 ) {
 		if( is_file( "$dest_path/thumb.jpg" ) && filesize( "$dest_path/thumb.jpg" ) > 1 ) {
 			$fileHash['type']            = 'image/jpg';
 			$fileHash['source_file']     = "$dest_path/thumb.jpg";
-			$fileHash['dest_path']       = str_replace( BIT_ROOT_PATH, '', "$dest_path/" );
+			$fileHash['dest_path']       = str_replace( STORAGE_PKG_PATH, '', "$dest_path/" );
 			liberty_generate_thumbnails( $fileHash );
 			$ret = TRUE;
 
@@ -530,7 +530,7 @@ function mime_video_create_thumbnail( $pFile, $pOffset = 60 ) {
 			if( is_file( "$dest_path/preview1.jpg" )) {
 				$fileHash['type']            = 'image/jpg';
 				$fileHash['source_file']     = "$dest_path/preview1.jpg";
-				$fileHash['dest_path']       = str_replace( BIT_ROOT_PATH, '', "$dest_path/" );
+				$fileHash['dest_path']       = str_replace( STORAGE_PKG_PATH, '', "$dest_path/" );
 				liberty_generate_thumbnails( $fileHash );
 				$ret = TRUE;
 

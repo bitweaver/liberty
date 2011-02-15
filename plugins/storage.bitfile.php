@@ -121,7 +121,7 @@ function bit_files_expunge( $pStorageId ) {
 		if( $row = $gBitSystem->mDb->getRow( $sql, array( $pStorageId ))) {
 			$sql = "SELECT * FROM `".BIT_DB_PREFIX."liberty_files` WHERE `file_id` = ?";
 			if( $fileRow = $gBitSystem->mDb->getRow( $sql, array( $row['foreign_id'] ))) {
-				$absolutePath = BIT_ROOT_PATH.'/'.$fileRow['storage_path'];
+				$absolutePath = STORAGE_PKG_PATH.'/'.$fileRow['storage_path'];
 
 				if( $gBitUser->isAdmin() || $gBitUser->mUserId == $row['user_id'] ) {
 					if( file_exists( $absolutePath )) {

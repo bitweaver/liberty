@@ -107,8 +107,8 @@ function mime_image_update( &$pStoreRow, $pParams = NULL ) {
 		}
 	} elseif( empty( $pParams['preference']['is_panorama'] ) && !empty( $pStoreRow['thumbnail_url']['panorama'] )) {
 		// we remove the panorama setting in the database and the panorama thumb
-		if( LibertyAttachable::validateStoragePath( BIT_ROOT_PATH.$pStoreRow['thumbnail_url']['panorama'] )) {
-			@unlink( BIT_ROOT_PATH.$pStoreRow['thumbnail_url']['panorama'] );
+		if( LibertyAttachable::validateStoragePath( STORAGE_PKG_PATH.$pStoreRow['thumbnail_url']['panorama'] )) {
+			@unlink( STORAGE_PKG_PATH.$pStoreRow['thumbnail_url']['panorama'] );
 		}
 	}
 
@@ -161,7 +161,7 @@ function mime_image_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 		}
 
 		// check for panorama image
-		if( is_file( BIT_ROOT_PATH.dirname( $ret['storage_path'] )."/thumbs/panorama.jpg" )) {
+		if( is_file( STORAGE_PKG_PATH.dirname( $ret['storage_path'] )."/thumbs/panorama.jpg" )) {
 			// if the panorama doesn't have 180⁰ vertical field of view we will restrict up / down movement
 			if(( $ret['pano'] = LibertyMime::getMetaData( $ret['attachment_id'], "PANO" )) && !empty( $ret['pano']['aspect'] )) {
 				// calculation based on logarythmic regression curve
