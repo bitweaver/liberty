@@ -451,6 +451,10 @@ class LibertyContent extends LibertyBase {
 //			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `content_id` = ?";
 //			$result = $this->mDb->query( $query, array( $this->mContentId ) );
 
+			// Remove any queued data processing (images, movies, etc.)
+			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_process_queue` WHERE `content_id` = ?";
+			$result = $this->mDb->query( $query, array( $this->mContentId ) );
+
 			// Remove data
 			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_data` WHERE `content_id` = ?";
 			$result = $this->mDb->query( $query, array( $this->mContentId ) );
