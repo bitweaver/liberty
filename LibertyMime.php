@@ -8,14 +8,22 @@
 /**
  * required setup
  */
-require_once( LIBERTY_PKG_PATH.'LibertyAttachable.php' );
+require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
+
+// load the image processor plugin, check for loaded 'gd' since that is the default processor, and config might not be set.
+if( $gBitSystem->isFeatureActive( 'image_processor' ) || extension_loaded( 'gd' ) ) {
+	require_once( LIBERTY_PKG_PATH."plugins/processor.".$gBitSystem->getConfig( 'image_processor','gd' ).".php" );
+}
+
+// maximum size of the 'original' image when converted to jpg
+define( 'MAX_THUMBNAIL_DIMENSION', 99999 );
 
 /**
  * LibertyMime class
  *
  * @package liberty
  */
-class LibertyMime extends LibertyAttachable {
+class LibertyMime extends LibertyContent {
 	var $mStoragePrefs = NULL;
 
 	/**
@@ -25,7 +33,7 @@ class LibertyMime extends LibertyAttachable {
 	 * @return void
 	 */
 	function LibertyMime() {
-		LibertyAttachable::LibertyAttachable();
+		parent::LibertyContent();
 	}
 
 	/**
@@ -362,6 +370,319 @@ class LibertyMime extends LibertyAttachable {
 		return FALSE;
 	}
 
+	// {{{ =================== Storage Directory Methods ====================
+	/**
+	 * getStoragePath - get path to store files for the feature site_upload_dir. It creates a calculable hierarchy of directories
+	 *
+	 * @access public
+	 * @author Christian Fowler<spider@steelsun.com>
+	 * @param $pSubDir any desired directory below the StoragePath. this will be created if it doesn't exist
+	 * @param $pCommon indicates not to use the 'common' branch, and not the 'users/.../<user_id>' branch
+	 * @param $pRootDir override BIT_ROOT_DIR with a custom absolute path - useful for areas where no we access should be allowed
+	 * @return string full path on local filsystem to store files.
+	 */
+	function getStoragePath( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pRootDir = NULL ) {
+		$ret = null;
+		
+		if( $branch = STORAGE_PKG_PATH.liberty_mime_get_storage_branch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pRootDir, empty($pRootDir) ) ) {
+			$ret = ( !empty( $pRootDir ) ? $pRootDir : STORAGE_PKG_PATH ).$branch;
+			mkdir_p($ret);
+		}
+		return $ret;
+	}
+
+
+	function getStorageUrl( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755 ) {
+		return STORAGE_PKG_URL.liberty_mime_get_storage_branch( $pSubDir, $pUserId, $pPackage, $pPermissions );
+	}
+
+	/**
+	 * getStorageSubDirName get a filename based on the uploaded file
+	 * 
+	 * @param array $pFileHash File information provided in $_FILES
+	 * @access public
+	 * @return appropriate sub dir name
+	 */
+	function getStorageSubDirName( $pFileHash = NULL ) {
+		if( !empty( $pFileHash['type'] ) && strstr( $pFileHash['type'], "/" )) {
+			$ret = strtolower( preg_replace( "!/.*$!", "", $pFileHash['type'] ));
+			// if we only got 'application' we will use the file extenstion
+			if( $ret == 'application' && !empty( $pFileHash['name'] ) && ( $pos = strrpos( $pFileHash['name'], "." )) !== FALSE ) {
+				$ret = strtolower( substr( $pFileHash['name'], $pos + 1 ));
+			}
+		}
+
+		// append an 's' to not create an image and images dir side by side (legacy reasons)
+		if( empty( $ret ) || $ret == 'image' ) {
+			$ret = 'images';
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * validateStoragePath make sure that the file/dir you are trying to delete is valid
+	 * 
+	 * @param array $pPath absolute path to the file/dir we want to validate
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function validateStoragePath( $pPath ) {
+		// file_exists checks for file or directory
+		if( !empty( $pPath ) && $pPath = realpath( $pPath )) {
+			// ensure path sanity
+			if( preg_match( "!^".realpath( STORAGE_PKG_PATH )."/(users|common)/\d+/\d+/\w+/\d+!", $pPath )) {
+				return $pPath;
+			}
+		}
+	}
+
+	/**
+	 * getStorageBranch - get url to store files for the feature site_upload_dir. It creates a calculable hierarchy of directories
+	 *
+	 * @access public
+	 * @author Christian Fowler<spider@steelsun.com>
+	 * @param $pSubDir any desired directory below the StoragePath. this will be created if it doesn't exist
+	 * @param $pUserId indicates the 'users/.../<user_id>' branch or use the 'common' branch if null
+	 * @param $pRootDir **deprecated, unused, will be removed in future relase**. 
+	 * @return string full path on local filsystem to store files.
+	 */
+	function getStorageBranch( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
+		return liberty_mime_get_storage_branch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pCreateDir );
+	}
+	// }}}
+
+
+	// {{{ =================== Attachment Methods ====================
+	/**
+	 * Get a list of all available attachments
+	 *
+	 * @param array $pListHash
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function getAttachmentList( &$pListHash ) {
+		global $gLibertySystem, $gBitUser, $gBitSystem;
+
+		$this->prepGetList( $pListHash );
+
+		// initialise some variables
+		$attachments = $ret = $bindVars = array();
+		$whereSql = $joinSql = $selectSql = '';
+
+		// only admin may view attachments from other users
+		if( !$gBitUser->isAdmin() ) {
+			$pListHash['user_id'] = $gBitUser->mUserId;
+		}
+
+		if( !empty( $pListHash['user_id'] ) ) {
+			$whereSql .= empty( $whereSql ) ? ' WHERE ' : ' AND ';
+			$whereSql .= " la.user_id = ? ";
+			$bindVars[] = $pListHash['user_id'];
+		}
+
+		if( !empty( $pListHash['content_id'] ) ) {
+			$whereSql .= empty( $whereSql ) ? ' WHERE ' : ' AND ';
+			$whereSql .= " la.`content_id` = ? ";
+			$selectSql .= " , la.`content_id` ";
+			$bindVars[] = $pListHash['content_id'];
+		}
+		$query = "SELECT la.* $selectSql FROM `".BIT_DB_PREFIX."liberty_attachments` la INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(la.`user_id` = uu.`user_id`) $joinSql $whereSql";
+		$result = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
+		while( $res = $result->fetchRow() ) {
+			$attachments[] = $res;
+		}
+
+		foreach( $attachments as $attachment ) {
+			if( $loadFunc = $gLibertySystem->getPluginFunction( $attachment['attachment_plugin_guid'], 'load_function', 'mime' )) {
+				/* @$prefs - quick hack to stop LibertyMime plugins from breaking until migration to LibertyMime is complete
+				 * see expected arguments of liberty/plugins/mime.default.php::mime_default_load -wjames5 
+				 */
+				$prefs = array();
+				$ret[$attachment['attachment_id']] = $loadFunc( $attachment, $prefs );
+			}
+		}
+
+		// count all entries
+		$query = "SELECT COUNT(*)
+			FROM `".BIT_DB_PREFIX."liberty_attachments` la
+			INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON(la.`user_id` = uu.`user_id`)
+			$joinSql $whereSql
+		";
+
+		$pListHash['cant'] = $this->mDb->getOne( $query, $bindVars );
+		$this->postGetList( $pListHash );
+
+		return $ret;
+	}
+
+	/**
+	 * Expunges the content deleting attached attachments
+	 */
+	function expunge() {
+		if( !empty( $this->mStorage ) && count( $this->mStorage )) {
+			foreach( array_keys( $this->mStorage ) as $i ) {
+				$this->expungeAttachment( $this->mStorage[$i]['attachment_id'] );
+			}
+		}
+		return LibertyContent::expunge();
+	}
+
+	/**
+	 * expunge attachment from the database (and file system via the plugin if required)
+	 *
+	 * @param numeric $pAttachmentId attachment id of the item that should be deleted
+	 * @access public
+	 * @return TRUE on success, FALSE on failure
+	 */
+	function expungeAttachment( $pAttachmentId ) {
+		global $gLibertySystem, $gBitUser;
+		$ret = NULL;
+		if( @$this->verifyId( $pAttachmentId ) ) {
+			$sql = "SELECT `attachment_plugin_guid`, `user_id` FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id` = ?";
+			if(( $row = $this->mDb->getRow( $sql, array( $pAttachmentId ))) && ( $this->isOwner( $row ) || $gBitUser->isAdmin() )) {
+				// check if we have the means available to remove this attachment
+				if(( $guid = $row['attachment_plugin_guid'] ) && $expungeFunc = $gLibertySystem->getPluginFunction( $guid, 'expunge_function', 'mime' )) {
+					// --- Do the final cleanup of liberty related tables ---
+
+					// there might be situations where we remove user images including portrait, avatar or logo
+					// This needs to happen before the plugin can do it's work due to constraints
+					$types = array( 'portrait', 'avatar', 'logo' );
+					foreach( $types as $type ) {
+						$sql = "UPDATE `".BIT_DB_PREFIX."users_users` SET `{$type}_attachment_id` = NULL WHERE `{$type}_attachment_id` = ?";
+						$this->mDb->query( $sql, array( $pAttachmentId ));
+					}
+
+					if( $expungeFunc( $pAttachmentId )) {
+						// Delete the attachment meta data, prefs and record.
+						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` WHERE `attachment_id` = ?";
+						$this->mDb->query( $sql, array( $pAttachmentId ));
+						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachment_prefs` WHERE `attachment_id` = ?";
+						$this->mDb->query( $sql, array( $pAttachmentId ));
+						$sql = "DELETE FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id`=?";
+						$this->mDb->query( $sql, array( $pAttachmentId ));
+
+						// Remove attachment from memory
+						unset( $this->mStorage[$pAttachmentId] );
+						$ret = TRUE;
+					}
+				} else {
+					print( "Expunge function not found for this content!" );
+				}
+			}
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * getAttachment will load details of a given attachment
+	 * 
+	 * @param numeric $pAttachmentId Attachment ID of the attachment
+	 * @param array $pParams optional parameters that might contain information like display thumbnail size
+	 * @access public
+	 * @return attachment details
+	 */
+	function getAttachment( $pAttachmentId, $pParams = NULL ) {
+		global $gLibertySystem, $gBitSystem;
+		$ret = NULL;
+
+		if( @BitBase::verifyId( $pAttachmentId )) {
+			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` la WHERE la.`attachment_id`=?";
+			if( $result = $gBitSystem->mDb->query( $query, array( (int)$pAttachmentId ))) {
+				if( $row = $result->fetchRow() ) {
+					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function', 'mime' )) {
+						$prefs = array();
+						// if the object is available, we'll copy the preferences by reference to allow the plugin to update them as needed
+						if( !empty( $this ) && !empty( $this->mStoragePrefs[$pAttachmentId] )) {
+							$prefs = &$this->mStoragePrefs[$pAttachmentId];
+						} else {
+							$prefs = LibertyMime::getAttachmentPreferences( $pAttachmentId );
+						}
+						$ret = $func( $row, $prefs, $pParams );
+					}
+				}
+			}
+		}
+		return $ret;
+	}
+
+	/**
+	 * setPrimaryAttachment will set is_primary 'y' for the specified
+	 * attachment and will ensure that all others are set to 'n'
+	 * 
+	 * @param mixed   $pAttachmentId attachment id of the item we want to
+	 *				  set as the primary attachment. Use 'none' to clear.
+	 * @param numeric $pContentId content id we are working with.
+	 * @param boolean $pAutoPrimary automatically set primary if there is only
+	 *				  one attachment. Defaults to true.
+	 * @access public
+	 * @return TRUE on success, FALSE on failure
+	 */
+	function setPrimaryAttachment( $pAttachmentId = NULL, $pContentId = NULL, $pAutoPrimary = TRUE ) {
+		global $gBitSystem;
+
+		$ret = FALSE;
+
+		// If we are not given an attachment id but we where told the
+		// content_id and we are supposed to auto set the primary then
+		// figure out which one it is
+		if( !@BitBase::verifyId( $pAttachmentId ) && ( empty( $pAttachmentId ) || $pAttachmentId != 'none' ) && @BitBase::verifyId( $pContentId ) && $pAutoPrimary ) {
+			$query = "
+				SELECT `attachment_id`
+				FROM `".BIT_DB_PREFIX."liberty_content` lc
+				INNER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON( lc.`content_id` = la.`content_id` )
+				WHERE lc.`content_id` = ?";
+			$pAttachmentId = $this->mDb->getOne( $query, array( $pContentId ));
+		}
+
+		// If we have an attachment_id we'll set it to this
+		if( @BitBase::verifyId( $pAttachmentId )) {
+			// get attachment we want to set primary
+			$attachment = $this->getAttachment( $pAttachmentId );
+
+			// Clear old primary. There can only be one!
+			$this->clearPrimaryAttachment( $attachment['content_id'] );
+
+			// now update the attachment to is_primary
+			$query = "
+				UPDATE `".BIT_DB_PREFIX."liberty_attachments`
+				SET `is_primary` = ? WHERE `attachment_id` = ?";
+			$this->mDb->query( $query, array( 'y', $pAttachmentId ));
+
+			$ret = TRUE;
+		// Otherwise, are we supposed to clear the primary entirely?
+		} elseif( @BitBase::verifyId( $pContentId ) && !empty( $pAttachmentId ) && $pAttachmentId == 'none' ) {
+			// Okay then do the job
+			$this->clearPrimaryAttachment( $pContentId );
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * clearPrimaryAttachment will remove the primary flag for all attachments
+	 * with the given content_id
+	 *
+	 * @param numeric the content_id for which primary should be unset.
+	 * @return TRUE on succes
+	 */
+	function clearPrimaryAttachment( $pContentId ) {
+		$ret = FALSE;
+
+		if( @BitBase::verifyId( $pContentId )) {
+			$query = "
+				UPDATE `".BIT_DB_PREFIX."liberty_attachments`
+				SET `is_primary` = ? WHERE `content_id` = ?";
+			$this->mDb->query( $query, array( NULL, $pContentId ));
+			$ret = TRUE;
+		}
+
+		return $ret;
+	}
+	// }}}
+
+
 	/**
 	 * === Attachment Preferences ===
 	 */
@@ -522,5 +843,294 @@ class LibertyMime extends LibertyAttachable {
 		}
 		return $ret;
 	}
+
+
+	// {{{ =================== Meta Methods ====================
+	/**
+	 * storeMetaData 
+	 *
+	 * @param numeric $pAttachmentId AttachmentID the data belongs to
+	 * @param string $pType Type of data. e.g.: EXIF, ID3. This will default to "Meta Data"
+	 * @param array $pStoreHash Data that needs to be stored in the database in an array. The key will be used as the meta_title.
+	 * @access public
+	 * @return TRUE on success, FALSE on failure
+	 */
+	function storeMetaData( $pAttachmentId, $pType = "Meta Data", $pStoreHash ) {
+		global $gBitSystem;
+		$ret = FALSE;
+		if( @BitBase::verifyId( $pAttachmentId ) && !empty( $pType ) && !empty( $pStoreHash )) {
+			if( is_array( $pStoreHash )) {
+				foreach( $pStoreHash as $key => $data ) {
+					if( !is_array( $data )) {
+						// store the data in the meta table
+						$meta = array(
+							'attachment_id' => $pAttachmentId,
+							'meta_type_id'  => LibertyMime::storeMetaId( $pType, 'type' ),
+							'meta_title_id' => LibertyMime::storeMetaId( $key, 'title' ),
+						);
+
+						// remove this entry from the database if it already exists
+						$gBitSystem->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` WHERE `attachment_id` = ? AND `meta_type_id` = ? AND `meta_title_id` = ?", $meta );
+
+						// don't insert empty lines
+						if( !empty( $data )) {
+							$meta['meta_value'] = $data;
+							$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_attachment_meta_data", $meta );
+						}
+
+						$ret = TRUE;
+					} else {
+						// should we recurse?
+					}
+				}
+			}
+		}
+		return $ret;
+	}
+
+	/**
+	 * storeMetaId 
+	 * 
+	 * @param string $pDescription Description of meta key. e.g.: Exif, ID3, Album, Artist
+	 * @param string $pTable Table data is stored in - either 'type' or 'title'
+	 * @access public
+	 * @return newly stored ID on success, FALSE on failure
+	 */
+	function storeMetaId( $pDescription, $pTable = 'type' ) {
+		global $gBitSystem;
+		$ret = FALSE;
+		if( !empty( $pDescription )) {
+			if( !( $ret = LibertyMime::getMetaId( $pDescription, $pTable ))) {
+				$store = array(
+					"meta_{$pTable}_id" => $gBitSystem->mDb->GenID( "liberty_meta_{$pTable}s_id_seq" ),
+					"meta_{$pTable}"    => LibertyMime::normalizeMetaDescription( $pDescription ),
+				);
+				$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_meta_{$pTable}s", $store );
+				$ret = $store["meta_{$pTable}_id"];
+			}
+		}
+		return $ret;
+	}
+
+	/**
+	 * getMetaData 
+	 * 
+	 * @param numeric $pAttachmentId AttachmentID the data belongs to
+	 * @param string $pType Type of data. e.g.: EXIF, ID3.
+	 * @param string $pTitle Title of data. e.g.: Artist, Album.
+	 * @access public
+	 * @return array with meta data on success, FALSE on failure
+	 * $note: Output format varies depending on requested data
+	 */
+	function getMetaData( $pAttachmentId, $pType = NULL, $pTitle = NULL ) {
+		global $gBitSystem;
+		$ret = array();
+		if( @BitBase::verifyId( $pAttachmentId )) {
+			$bindVars = array( $pAttachmentId );
+			$whereSql = "";
+			if( !empty( $pType ) && !empty( $pTitle )) {
+
+				// we have a type and title - only one entry will be returned
+				$bindVars[] = LibertyMime::normalizeMetaDescription( $pType );
+				$bindVars[] = LibertyMime::normalizeMetaDescription( $pTitle );
+
+				$sql = "
+					SELECT lmd.`meta_value`
+					FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` lmd
+						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_types` lmtype ON( lmd.`meta_type_id` = lmtype.`meta_type_id` )
+						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_titles` lmtitle ON( lmd.`meta_title_id` = lmtitle.`meta_title_id` )
+					WHERE lmd.`attachment_id` = ? AND lmtype.`meta_type` = ? AND lmtitle.`meta_title` = ?";
+				$ret = $gBitSystem->mDb->getOne( $sql, $bindVars );
+
+			} elseif( !empty( $pType )) {
+
+				// only type given - return array with all vlues of this type
+				$bindVars[] = LibertyMime::normalizeMetaDescription( $pType );
+
+				$sql = "
+					SELECT lmtitle.`meta_title`, lmd.`meta_value`
+					FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` lmd
+						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_types` lmtype ON( lmd.`meta_type_id` = lmtype.`meta_type_id` )
+						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_titles` lmtitle ON( lmd.`meta_title_id` = lmtitle.`meta_title_id` )
+					WHERE lmd.`attachment_id` = ? AND lmtype.`meta_type` = ?";
+				$ret = $gBitSystem->mDb->getAssoc( $sql, $bindVars );
+
+			} elseif( !empty( $pTitle )) {
+
+				// only title given - return array with all vlues with this title
+				$bindVars[] = LibertyMime::normalizeMetaDescription( $pTitle );
+
+				$sql = "
+					SELECT lmtype.`meta_type`, lmd.`meta_value`
+					FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` lmd
+						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_types` lmtype ON( lmd.`meta_type_id` = lmtype.`meta_type_id` )
+						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_titles` lmtitle ON( lmd.`meta_title_id` = lmtitle.`meta_title_id` )
+					WHERE lmd.`attachment_id` = ? AND lmtitle.`meta_title` = ?";
+				$ret = $gBitSystem->mDb->getAssoc( $sql, $bindVars );
+
+			} else {
+
+				// nothing given - return nested array based on type and title
+				$sql = "
+					SELECT lmd.`attachment_id`, lmd.`meta_value`, lmtype.`meta_type`, lmtitle.`meta_title`
+					FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` lmd
+						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_types` lmtype ON( lmd.`meta_type_id` = lmtype.`meta_type_id` )
+						INNER JOIN `".BIT_DB_PREFIX."liberty_meta_titles` lmtitle ON( lmd.`meta_title_id` = lmtitle.`meta_title_id` )
+					WHERE lmd.`attachment_id` = ?";
+
+				$result = $gBitSystem->mDb->query( $sql, $bindVars );
+				while( $aux = $result->fetchRow() ) {
+					$ret[$aux['meta_type']][$aux['meta_title']] = $aux['meta_value'];
+				}
+			}
+		}
+		return $ret;
+	}
+
+	/**
+	 * expungeMetaData will remove the meta data for a given attachment
+	 * 
+	 * @param array $pAttachmentId Attachment ID of attachment
+	 * @access public
+	 * @return query result
+	 */
+	function expungeMetaData( $pAttachmentId ) {
+		global $gBitSystem;
+		if( @BitBase::verifyId( $pAttachmentId )) {
+			return $gBitSystem->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_attachment_meta_data` WHERE `attachment_id` = ?", array( $pAttachmentId ));
+		}
+	}
+
+	/**
+	 * getMetaId 
+	 * 
+	 * @param string $pDescription Description of meta key. e.g.: Exif, ID3, Album, Artist
+	 * @param string $pTable Table data is stored in - either 'type' or 'title'
+	 * @access public
+	 * @return meta type or title id on sucess, FALSE on failure
+	 */
+	function getMetaId( $pDescription, $pTable = 'type' ) {
+		global $gBitSystem;
+		$ret = FALSE;
+		if( !empty( $pDescription ) && ( $pTable == 'type' || $pTable == 'title' )) {
+			$ret = $gBitSystem->mDb->getOne( "SELECT `meta_{$pTable}_id` FROM `".BIT_DB_PREFIX."liberty_meta_{$pTable}s` WHERE `meta_{$pTable}` = ?", array( LibertyMime::normalizeMetaDescription( $pDescription )));
+		}
+		return $ret;
+	}
+
+	/**
+	 * getMetaDescription 
+	 * 
+	 * @param string $pId ID of type or title we want the description for
+	 * @param string $pTable Table data is stored in - either 'type' or 'title'
+	 * @access public
+	 * @return description on sucess, FALSE on failure
+	 */
+	function getMetaDescription( $pId, $pTable = 'type' ) {
+		global $gBitSystem;
+		$ret = FALSE;
+		if( @BitBase::verifyId( $pId )) {
+			$ret = $gBitSystem->mDb->getOne( "SELECT `meta_{$pTable}` FROM `".BIT_DB_PREFIX."liberty_meta_{$pTable}s` WHERE `meta_{$pTable}_id` = ?", array( $pId ));
+		}
+		return $ret;
+	}
+
+	/**
+	 * normalizeMetaDescription 
+	 * 
+	 * @param string $pDescription Description of meta key. e.g.: Exif, ID3, Album, Artist
+	 * @access public
+	 * @return normalized meta description that can be used as a guid
+	 */
+	function normalizeMetaDescription( $pDescription ) {
+		return strtolower( substr( preg_replace( "![^a-zA-Z0-9]!", "", trim( $pDescription )), 0, 250 ));
+	}
+	// }}}
 }
+
+/**
+ * mime_get_storage_sub_dir_name get a filename based on the uploaded file
+ * 
+ * @param array $pFileHash File information provided in $_FILES
+ * @access public
+ * @return appropriate sub dir name
+ */
+if( !function_exists( 'liberty_mime_get_storage_sub_dir_name' )) {
+	function liberty_mime_get_storage_sub_dir_name( $pFileHash = NULL ) {
+		if( !empty( $pFileHash['type'] ) && strstr( $pFileHash['type'], "/" )) {
+			$ret = strtolower( preg_replace( "!/.*$!", "", $pFileHash['type'] ));
+			// if we only got 'application' we will use the file extenstion
+			if( $ret == 'application' && !empty( $pFileHash['name'] ) && ( $pos = strrpos( $pFileHash['name'], "." )) !== FALSE ) {
+				$ret = strtolower( substr( $pFileHash['name'], $pos + 1 ));
+			}
+		}
+
+		// append an 's' to not create an image and images dir side by side (legacy reasons)
+		if( empty( $ret ) || $ret == 'image' ) {
+			$ret = 'images';
+		}
+
+		return $ret;
+	}
+}
+
+/**
+ * liberty_mime_get_storage_branch - get url to store files for the feature site_upload_dir. It creates a calculable hierarchy of directories
+ *
+ * @access public
+ * @author Christian Fowler<spider@steelsun.com>
+ * @param $pSubDir any desired directory below the StoragePath. this will be created if it doesn't exist
+ * @param $pUserId indicates the 'users/.../<user_id>' branch or use the 'common' branch if null
+ * @param $pRootDir **deprecated, unused, will be removed in future relase**. 
+ * @return string full path on local filsystem to store files.
+ */
+if( !function_exists( 'liberty_mime_get_storage_branch' )) {
+	function liberty_mime_get_storage_branch( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
+		// *PRIVATE FUNCTION. GO AWAY! DO NOT CALL DIRECTLY!!!
+		global $gBitSystem;
+		$pathParts = array();
+
+
+		if( !$pUserId ) {
+			$pathParts[] = 'common';
+		} else {
+			$pathParts[] = 'users';
+			$pathParts[] = (int)($pUserId % 1000);
+			$pathParts[] = $pUserId;
+		}
+
+		if( $pPackage ) {
+			$pathParts[] = $pPackage;
+		}
+		// In case $pSubDir is multiple levels deep we'll need to mkdir each directory if they don't exist
+		if(!empty($pSubDir)){
+			$pSubDirParts = preg_split('#/#',$pSubDir);
+			foreach ($pSubDirParts as $subDir) {
+				$pathParts[] = $subDir;
+			}
+		}
+
+		$fullPath = implode( $pathParts, '/' ).'/';
+		if($pCreateDir){
+			mkdir_p( $fullPath );
+		}
+
+		return $fullPath;
+	}
+}
+
+if( !function_exists( 'liberty_mime_get_storage_url' )) {
+	function liberty_mime_get_storage_url( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
+		return STORAGE_PKG_URL.liberty_mime_get_storage_branch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pCreateDir );
+	}
+}
+
+if( !function_exists( 'liberty_mime_get_storage_path' )) {
+	function liberty_mime_get_storage_path( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
+		return STORAGE_PKG_PATH.liberty_mime_get_storage_branch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pCreateDir );
+	}
+}
+
+/* vim: :set fdm=marker : */
+
 ?>
