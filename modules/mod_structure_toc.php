@@ -30,10 +30,5 @@ if( is_object( $gStructure ) && $gStructure->isValid() ) {
 }
 
 if( is_object( $struct ) && count( $struct->isValid() ) ) {
-	$gBitSmarty->assign( 'modStructureTOC', $struct->getToc(
-$struct->mInfo['root_structure_id'], 'asc', FALSE, 2 ) );
+	$gBitSmarty->assign( 'modStructureTOC', $struct->getToc( $struct->mInfo['root_structure_id'], 'asc', FALSE, 2 ) );
 }
-?>
-
-
-
