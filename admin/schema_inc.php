@@ -168,6 +168,7 @@ $tables = array(
 	pos I4,
 	page_alias C(240),
 	parent_id I4
+	CONSTRAINT ', CONSTRAINT `liberty_structures_content_id_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
 ",
 //	CONSTRAINT ', CONSTRAINT `liberty_root_structure_id_ref` FOREIGN KEY (`root_structure_id`) REFERENCES `".BIT_DB_PREFIX."liberty_structures`( `structure_id` )'
 
