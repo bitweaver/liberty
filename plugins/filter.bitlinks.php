@@ -211,6 +211,8 @@ class BitLinks extends BitBase {
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
 	function pageExists( $pTitle, $pObject, $pContentId ) {
+		global $gBitSystem;
+
 		// only update this hash once - this is initiated as NULL and will be set to at least array after first call
 		if( $this->mLinks === NULL ) {
 			$this->mLinks = $this->getAllPages( $pContentId );
@@ -224,8 +226,9 @@ class BitLinks extends BitBase {
 		}
 
 		// final attempt to get page details
-		if( empty( $ret ) && !empty( $pObject )) {
-			if( $ret = $pObject->pageExists( $pTitle, FALSE, $pContentId )) {
+		if( empty( $ret ) && !empty( $pObject ) && $gBitSystem->isPackageActive( 'wiki' ) ) {
+			require_once( WIKI_PKG_PATH.'BitPage.php' );
+			if( $ret = BitPage::pageExists( $pTitle, FALSE, $pContentId )) {
 				if( count( $ret ) > 1 ) {
 					$ret[0]['description'] = tra( 'Multiple pages with this name' );
 				}
