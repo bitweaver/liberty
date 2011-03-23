@@ -20,7 +20,6 @@ function liberty_gd_resize_image( &$pFileHash ) {
 	$ret = NULL;
 	list($iwidth, $iheight, $itype, $iattr) = @getimagesize( $pFileHash['source_file'] );
 	list($type, $ext) = explode( '/', strtolower( $pFileHash['type'] ) );
-	$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'];
 	if( ( empty( $pFileHash['max_width'] ) || empty( $pFileHash['max_height'] ) ) || ( $iwidth <= $pFileHash['max_width'] && $iheight <= $pFileHash['max_height'] && ( $ext == 'gif' || $ext == 'png'  || $ext == 'jpg'   || $ext == 'jpeg' ) ) ) {
 		// Keep the same dimensions as input file
 		$pFileHash['max_width'] = $iwidth;
@@ -84,7 +83,11 @@ function liberty_gd_resize_image( &$pFileHash ) {
 			$destExt = '.jpg';
 		}
 
-		$destFile = STORAGE_PKG_PATH.'/'.$destUrl.$destExt;
+		if( !empty( $pFileHash['dest_file'] ) ) {
+			$destFile = $pFileHash['dest_file'];
+		} else {
+			$destFile = STORAGE_PKG_PATH.$pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
+		}
 
 		switch( $targetType ) {
 			case 'png':
@@ -116,7 +119,7 @@ function liberty_gd_resize_image( &$pFileHash ) {
 
 		$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 		$pFileHash['size'] = filesize( $destFile );
-		$ret = $destUrl.$destExt;
+		$ret = $destFile;
 	} elseif( $iwidth && $iheight ) {
 		$ret = liberty_process_generic( $pFileHash, FALSE );
 	}

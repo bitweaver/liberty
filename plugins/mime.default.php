@@ -242,6 +242,9 @@ if( !function_exists( 'mime_default_load' )) {
 			if( $row = $gBitSystem->mDb->getRow( $query, array( $pFileHash['attachment_id'] ))) {
 				$ret = array_merge( $pFileHash, $row );
 				$storageName = basename( $row['storage_path'] );
+				// compatibility with _FILES hash
+				$row['name'] = $storageName;
+				$row['type'] = $row['mime_type'];
 				$storageBranch = liberty_mime_get_storage_branch( $row['attachment_id'], $row['user_id'], liberty_mime_get_storage_sub_dir_name( $row ) ).$storageName;
 				// this will fetch the correct thumbnails
 				$thumbHash['storage_path'] = STORAGE_PKG_PATH.$storageBranch;
@@ -250,7 +253,6 @@ if( !function_exists( 'mime_default_load' )) {
 				if( $canThumbFunc && $canThumbFunc( $row['mime_type'] )) {
 					$thumbHash['default_image'] = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
 				}
-
 				$ret['thumbnail_url'] = liberty_fetch_thumbnails( $thumbHash );
 				// indicate that this is a mime thumbnail
 				if( !empty( $ret['thumbnail_url']['medium'] ) && strpos( $ret['thumbnail_url']['medium'], '/mime/' )) {

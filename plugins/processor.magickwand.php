@@ -38,7 +38,7 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 		}
 		if( $error = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand ) ) {
 			// $pFileHash['error'] = $error;
-			$destUrl = liberty_process_generic( $pFileHash, FALSE );
+			$destFile = liberty_process_generic( $pFileHash, FALSE );
 		} else {
 			if( MagickGetImageColorspace( $magickWand ) == MW_CMYKColorspace ) {
 //				These two lines are a hack needed for version of Ghostscript less that 8.60
@@ -98,8 +98,11 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 				$destExt = '.jpg';
 			}
 			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || $mimeExt != $targetType ) || !empty( $pFileHash['colorspace_conversion'] ) ) {
-				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
-				$destFile = STORAGE_PKG_PATH.'/'.$destUrl;
+				if( !empty( $pFileHash['dest_file'] ) ) {
+					$destFile = $pFileHash['dest_file'];
+				} else {
+					$destFile = STORAGE_PKG_PATH.'/'.$pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
+				}
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 				// Alternate Filter settings can seen here http://www.dylanbeattie.net/magick/filters/result.html
 				if ( $error = liberty_magickwand_check_error( MagickResizeImage( $magickWand, $pFileHash['max_width'], $pFileHash['max_height'], MW_CatromFilter, 1.00 ), $magickWand ) ) {
@@ -110,10 +113,10 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 				}
 				$pFileHash['size'] = filesize( $destFile );
 			} else {
-				$destUrl = liberty_process_generic( $pFileHash, FALSE );
+				$destFile = liberty_process_generic( $pFileHash, FALSE );
 			}
 		}
-		$ret = $destUrl;
+		$ret = $destFile;
 	} else {
 		$pFileHash['error'] = "No source file to resize";
 	}

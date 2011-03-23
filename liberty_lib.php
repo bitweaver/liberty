@@ -571,29 +571,32 @@ function liberty_process_archive( &$pFileHash ) {
  */
 function liberty_process_generic( &$pFileHash, $pMoveFile = TRUE ) {
 	$ret = NULL;
-	$destBase = $pFileHash['dest_path'].$pFileHash['name'];
-	$actualPath = STORAGE_PKG_PATH.$destBase;
-	if ( is_windows() ) {
-		$destBase = str_replace( '/', "\\", str_replace( "\\", '/', $destBase ) );
-		$actualPath = str_replace( '//', '\\', str_replace( "\\", '\\', $actualPath ) );
-		mkdir_p(str_replace('/','',STORAGE_PKG_PATH).$pFileHash['dest_path']);
-	}	
+	if( !empty( $pFileHash['dest_file'] ) ) {
+		$destFile = $pFileHash['dest_file'];
+	} else {
+		$destFile = STORAGE_PKG_PATH.$pFileHash['dest_path'].$pFileHash['name'];;
+		if ( is_windows() ) {
+			$destFile = str_replace( '//', '\\', str_replace( "\\", '\\', $destFile ) );
+		}
+	}
+	mkdir_p( dirname( $destFile ) );
 
 	if( is_file( $pFileHash['source_file']) ) {
-		if( $pFileHash['source_file'] == $actualPath ) {
+		if( $pFileHash['source_file'] == $destFile ) {
 			// do nothing if source and dest are the same
 		} elseif( $pMoveFile ) {
 			if( is_uploaded_file( $pFileHash['source_file'] ) ) {
-				move_uploaded_file( $pFileHash['source_file'], $actualPath );
+				print "move_uploaded_file( $pFileHash[source_file], $destFile )";
+				move_uploaded_file( $pFileHash['source_file'], $destFile );
 			} else {
-				rename( $pFileHash['source_file'], $actualPath );
+				rename( $pFileHash['source_file'], $destFile );
 			}
 		} else {
-			copy( $pFileHash['source_file'], $actualPath );
+			copy( $pFileHash['source_file'], $destFile );
 		}
-		$ret = $destBase;
+		$ret = $destFile;
 	}
-	$pFileHash['size'] = filesize( $actualPath );
+	$pFileHash['size'] = filesize( $destFile );
 
 	return $ret;
 }
@@ -611,9 +614,9 @@ function liberty_process_image( &$pFileHash, $pMoveFile = TRUE ) {
 	$ret = NULL;
 
 	list($type, $ext) = explode( '/', strtolower( $pFileHash['type'] ) );
-	mkdir_p( STORAGE_PKG_PATH.$pFileHash['dest_path'] );
 	if( $resizePath = liberty_process_generic( $pFileHash, $pMoveFile )) {
-		$pFileHash['source_file'] = STORAGE_PKG_PATH.$resizePath;
+		$pFileHash['source_file'] = $resizePath;
+		
 		//set permissions if possible - necessary for some wonky shared hosting environments
 		if(chmod($pFileHash['source_file'], 0644)){
 			//does nothing, but fails elegantly
@@ -621,6 +624,7 @@ function liberty_process_image( &$pFileHash, $pMoveFile = TRUE ) {
 		$nameHold = $pFileHash['name'];
 		$sizeHold = $pFileHash['size'];
 		$ret = $pFileHash['source_file'];
+
 		// do not thumbnail only if intentionally set to FALSE
 		if( !isset( $pFileHash['thumbnail'] ) || $pFileHash['thumbnail']==TRUE ) {
 			liberty_generate_thumbnails( $pFileHash );
@@ -696,16 +700,15 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		}
 	}
 
-	if(
-		( !preg_match( '#image/(gif|jpe?g|png)#i', $pFileHash['type'] ) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ))
-		|| in_array( 'original', $pFileHash['thumbnail_sizes'] )
-	) {
+	if( ( !preg_match( '#image/(gif|jpe?g|png)#i', $pFileHash['type'] ) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' )) || in_array( 'original', $pFileHash['thumbnail_sizes'] ) ) {
 		// jpeg version of original
 		$pFileHash['dest_base_name'] = 'original';
 		$pFileHash['name'] = 'original.jpg';
 		$pFileHash['max_width'] = MAX_THUMBNAIL_DIMENSION;
 		$pFileHash['max_height'] = MAX_THUMBNAIL_DIMENSION;
-		if( $pFileHash['original_path'] = STORAGE_PKG_PATH.$resizeFunc( $pFileHash )) {
+		if( $convertedFile = $resizeFunc( $pFileHash )) {
+			$pFileHash['source_file'] = $convertedFile;
+			$pFileHash['type'] = $gBitSystem->verifyMimeType( $convertedFile );
 			$ret = TRUE;
 		}
 	}
@@ -723,11 +726,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$destExt = '.jpg';
 	}
 
-	// create a subdirectory for the thumbs
-	$pFileHash['dest_path'] .= 'thumbs/';
-	if( !is_dir( STORAGE_PKG_PATH.$pFileHash['dest_path'] )) {
-		mkdir( STORAGE_PKG_PATH.$pFileHash['dest_path'] );
-	}
+	$initialDestPath = $pFileHash['dest_path'];
 
 	foreach( $pFileHash['thumbnail_sizes'] as $thumbSize ) {
 		if( isset( $gThumbSizes[$thumbSize] )) {
@@ -740,6 +739,17 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 				unset( $pFileHash['max_width'] );
 			}
 
+			// reset dest_path for created thumbs
+			if( !empty( $pFileHash['thumb_path'] ) ) {
+				$pFileHash['dest_file'] = $pFileHash['thumb_path'].$pFileHash['name'];
+			} else {
+				// create a subdirectory for the thumbs
+				$pFileHash['dest_path'] = $initialDestPath.'thumbs/';
+				if( !is_dir( STORAGE_PKG_PATH.$pFileHash['dest_path'] )) {
+					mkdir( STORAGE_PKG_PATH.$pFileHash['dest_path'] );
+				}
+			}
+
 			if( !empty( $gThumbSizes[$thumbSize]['height'] )) {
 				$pFileHash['max_height'] = $gThumbSizes[$thumbSize]['height'];
 			} else {
@@ -747,7 +757,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 				unset( $pFileHash['max_height'] );
 			}
 
-			if( $pFileHash['icon_thumb_path'] = STORAGE_PKG_PATH.$resizeFunc( $pFileHash )) {
+			if( $pFileHash['icon_thumb_path'] = $resizeFunc( $pFileHash )) {
 				$ret = TRUE;
 				// use the previous thumb as the source for the next, decreasingly smaller thumb as this GREATLY increases speed
 				$pFileHash['source_file'] = $pFileHash['icon_thumb_path'];
@@ -756,7 +766,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 	}
 
 	// to keep everything in bitweaver working smoothly, we need to remove the thumbs/ subdir again
-	$pFileHash['dest_path'] = preg_replace( '!thumbs/$!', '', $pFileHash['dest_path'] );
+	$pFileHash['dest_path'] = $initialDestPath;
 
 	return $ret;
 }

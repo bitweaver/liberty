@@ -91,10 +91,10 @@ function liberty_imagick0_resize_image( &$pFileHash ) {
 		$iImg = imagick_readimage( $pFileHash['source_file'] );
 		if( !$iImg ) {
 			// $pFileHash['error'] = $pFileHash['name'].' '.tra ( "is not a known image file" );
-			$destUrl = liberty_process_generic( $pFileHash, FALSE );
+			$destFile = liberty_process_generic( $pFileHash, FALSE );
 		} elseif( imagick_iserror( $iImg ) ) {
 			// $pFileHash['error'] = imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
-			$destUrl = liberty_process_generic( $pFileHash, FALSE );
+			$destFile = liberty_process_generic( $pFileHash, FALSE );
 		} else {
 			imagick_set_image_quality( $iImg, $gBitSystem->getConfig( 'liberty_thumbnail_quality', 85 ));
 			$iwidth = imagick_getwidth( $iImg );
@@ -126,8 +126,11 @@ function liberty_imagick0_resize_image( &$pFileHash ) {
 
 			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || $mimeExt != $targetType )) {
 				// We have to resize. *ALL* resizes are converted to jpeg or png
-				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
-				$destFile = STORAGE_PKG_PATH.'/'.$destUrl;
+				if( !empty( $pFileHash['dest_file'] ) ) {
+					$destFile = $pFileHash['dest_file'];
+				} else {
+					$destFile = STORAGE_PKG_PATH.$pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
+				}
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 				// print "			if ( !imagick_resize( $iImg, $pFileHash[max_width], $pFileHash[max_height], IMAGICK_FILTER_LANCZOS, 0.5, $pFileHash[max_width] x $pFileHash[max_height] > ) ) {";
 
@@ -136,7 +139,6 @@ function liberty_imagick0_resize_image( &$pFileHash ) {
 				if ( !imagick_resize( $iImg, $pFileHash['max_width'], $pFileHash['max_height'], IMAGICK_FILTER_CATROM, 1.00, '>' ) ) {
 					$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
 				}
-				// print "2YOYOYOYO $iwidth x $iheight $destUrl <br/>"; flush();
 
 				if( function_exists( 'imagick_set_attribute' ) ) {
 					// this exists in the PECL package, but not php-imagick
@@ -149,10 +151,10 @@ function liberty_imagick0_resize_image( &$pFileHash ) {
 				$pFileHash['size'] = filesize( $destFile );
 			} else {
 				// print "GENERIC";
-				$destUrl = liberty_process_generic( $pFileHash, FALSE );
+				$destFile = liberty_process_generic( $pFileHash, FALSE );
 			}
 		}
-		$ret = $destUrl;
+		$ret = $destFile;
 	} else {
 		$pFileHash['error'] = "No source file to resize";
 	}
@@ -198,7 +200,7 @@ function liberty_imagick2_resize_image( &$pFileHash ) {
 		$im = new Imagick();
 		$im->readImage( $pFileHash['source_file'] );
 		if( !$im->valid()) {
-			$destUrl = liberty_process_generic( $pFileHash, FALSE );
+			$destFile = liberty_process_generic( $pFileHash, FALSE );
 		} else {
 			$im->setCompressionQuality( $gBitSystem->getConfig( 'liberty_thumbnail_quality', 85 ));
 			$iwidth = $im->getImageWidth();
@@ -235,8 +237,11 @@ function liberty_imagick2_resize_image( &$pFileHash ) {
 			}
 
 			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && (( $pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || $mimeExt != $targetType )) {
-				$destUrl = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
-				$destFile = STORAGE_PKG_PATH.'/'.$destUrl;
+				if( !empty( $pFileHash['dest_file'] ) ) {
+					$destFile = $pFileHash['dest_file'];
+				} else {
+					$destFile = STORAGE_PKG_PATH.$pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
+				}
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 
 				// create thumb and write
@@ -245,14 +250,14 @@ function liberty_imagick2_resize_image( &$pFileHash ) {
 
 				$pFileHash['size'] = filesize( $destFile );
 			} else {
-				$destUrl = liberty_process_generic( $pFileHash, FALSE );
+				$destFile = liberty_process_generic( $pFileHash, FALSE );
 			}
 		}
 
 		// destroy object
 		$im->destroy();
 
-		$ret = $destUrl;
+		$ret = $destFile;
 	} else {
 		$pFileHash['error'] = "No source file to resize";
 	}
@@ -266,7 +271,7 @@ function liberty_imagick2_rotate_image( &$pFileHash ) {
 		$im = new Imagick();
 		$im->readImage( $pFileHash['source_file'] );
 		if( !$im->valid()) {
-			$destUrl = liberty_process_generic( $pFileHash, FALSE );
+			$destFile = liberty_process_generic( $pFileHash, FALSE );
 		} elseif( empty( $pFileHash['degrees'] ) || !is_numeric( $pFileHash['degrees'] )) {
 			$pFileHash['error'] = tra( 'Invalid rotation amount' );
 		} else {
@@ -279,4 +284,4 @@ function liberty_imagick2_rotate_image( &$pFileHash ) {
 
 	return( empty( $pFileHash['error'] ));
 }
-?>
+
