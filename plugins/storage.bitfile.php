@@ -105,7 +105,7 @@ function bit_files_load( $pRow ) {
 			}
 			$ret['thumbnail_url'] = liberty_fetch_thumbnails( $thumbHash );
 			$ret['filename'] = str_replace('//', '/', substr( $ret['storage_path'], strrpos($ret['storage_path'], '/')+1) );
-			$ret['source_url'] = str_replace('//', '/', BIT_ROOT_URL.str_replace( '+', '%20', str_replace( '%2F', '/', urlencode( $ret['storage_path'] ) ) ) );
+			$ret['source_url'] = storage_path_to_url( $ret['storage_path'] );
 			$ret['wiki_plugin_link'] = "{attachment id=".$ret['attachment_id']."}";
 		}
 	}
