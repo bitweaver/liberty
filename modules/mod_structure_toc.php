@@ -10,6 +10,8 @@
  * Initial Setup
  */
 global $gStructure, $gContent, $moduleParams;
+require_once( LIBERTY_PKG_PATH.'LibertyStructure.php' );
+
 extract( $moduleParams );
 
 $struct = NULL;
