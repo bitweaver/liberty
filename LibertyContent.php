@@ -435,6 +435,8 @@ class LibertyContent extends LibertyBase {
 			$this->filterData( $this->mInfo['data'], $this->mInfo, 'expunge' );
 			LibertyContent::expungeCacheFile( $this->mContentId );
 
+			// remove favorites - this probably should be a content_expunge_function in users
+			$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."users_favorites_map` WHERE `favorite_content_id`=?", array( $this->mContentId ) );
 
 			// remove entries in the history
 			$this->expungeVersion();
