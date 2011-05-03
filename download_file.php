@@ -15,7 +15,10 @@ require_once( '../kernel/setup_inc.php' );
 require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
 
 // fetch the attachment details
-$attachment = LibertyMime::getAttachment( $_REQUEST['attachment_id'] );
+if( @!BitBase::verifyId( $_REQUEST['attachment_id'] ) || !( $attachment = LibertyMime::getAttachment( $_REQUEST['attachment_id'], $_REQUEST ))) {
+	$gBitSystem->fatalError( tra( "The Attachment ID given is not valid" ));
+}
+
 $gBitSmarty->assign( 'attachment', $attachment );
 
 // first we need to check the permissions of the content the attachment belongs to since they inherit them
