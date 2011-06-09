@@ -586,7 +586,6 @@ function liberty_process_generic( &$pFileHash, $pMoveFile = TRUE ) {
 			// do nothing if source and dest are the same
 		} elseif( $pMoveFile ) {
 			if( is_uploaded_file( $pFileHash['source_file'] ) ) {
-				print "move_uploaded_file( $pFileHash[source_file], $destFile )";
 				move_uploaded_file( $pFileHash['source_file'], $destFile );
 			} else {
 				rename( $pFileHash['source_file'], $destFile );
