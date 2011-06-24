@@ -545,7 +545,7 @@ function liberty_process_archive( &$pFileHash ) {
 				break;
 		}
 	}
-	//vd($shellResult);
+
 	chdir( $cwd );
 
 	// if we created a copy of the original, we remove it
@@ -649,9 +649,9 @@ function liberty_clear_thumbnails( &$pFileHash ) {
 		);
 
 		// get thumbnails we want to remove
-		if( $thumbs = liberty_fetch_thumbnails( $thumbHash )) {
+		if( $thumbs = liberty_fetch_thumbnails( $thumbHash, NULL, NULL, TRUE, FALSE  )) {
 			foreach( $thumbs as $thumb ) {
-				$thumb = STORAGE_PKG_PATH.$thumb;
+				$thumb = BIT_ROOT_PATH.$thumb;
 				if( is_writable( $thumb )) {
 					unlink( $thumb );
 				}
@@ -726,7 +726,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 	}
 
 	$initialDestPath = $pFileHash['dest_path'];
-
+vd( $pFileHash );
 	foreach( $pFileHash['thumbnail_sizes'] as $thumbSize ) {
 		if( isset( $gThumbSizes[$thumbSize] )) {
 			$pFileHash['dest_base_name'] = $thumbSize;
@@ -820,9 +820,9 @@ function liberty_fetch_thumbnails( $pParamHash, $pAltImageUrl = NULL, $pThumbSiz
 			foreach( $exts as $ext ) {
 				$image = $size.'.'.$ext;
 				if( is_readable( STORAGE_PKG_PATH.$dir.'thumbs/'.$image )) {
-					$ret[$size] = storage_path_to_url( $dir.'thumbs/'.$image );
+					$ret[$size] = ( $pReturnUri ? storage_path_to_url( $dir.'thumbs/'.$image ) : STORAGE_PKG_URL.$dir.'thumbs/'.$image );
 				} elseif( is_readable( STORAGE_PKG_PATH.$dir.$image )) {
-					$ret[$size] = storage_path_to_url( $dir.$image );
+					$ret[$size] = ( $pReturnUri ? storage_path_to_url( $dir.$image ) : STORAGE_PKG_URL.$dir.'thumbs/'.$image );
 				}
 			}
 			// fetch mime image unless we set this to FALSE

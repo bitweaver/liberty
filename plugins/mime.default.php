@@ -137,20 +137,26 @@ if( !function_exists( 'mime_default_update' )) {
 
 		// this will reset the uploaded file
 		if( BitBase::verifyId( $pStoreRow['attachment_id'] ) && !empty( $pStoreRow['upload'] )) {
-			if( !empty( $pStoreRow['storage_path'] )) {
+			// Store all uploaded files in the users storage area
+			if( empty( $pStoreRow['dest_path'] )) {
+				$pStoreRow['dest_path'] = liberty_mime_get_storage_branch( $pStoreRow['attachment_id'], $pStoreRow['user_id'], liberty_mime_get_storage_sub_dir_name( $pStoreRow['upload'] ));
+			}
+
+			if( !empty( $pStoreRow['dest_path'] ) && !empty( $pStoreRow['storage_path'] ) ) {
 				// First we remove the old file
-				$file = STORAGE_PKG_PATH.$pStoreRow['storage_path'];
-				if(( $nuke = LibertyMime::validateStoragePath( $file )) && is_file( $nuke )) {
+				$path = STORAGE_PKG_PATH.$pStoreRow['dest_path'];
+				$file = $path.$pStoreRow['storage_path'];
+				if(( $nuke = LibertyMime::validateStoragePath( $path )) && is_dir( $nuke )) {
 					if( !empty( $pStoreRow['unlink_dir'] )) {
-						@unlink_r( dirname( STORAGE_PKG_PATH.$pStoreRow['storage_path'] ));
-						mkdir( dirname( STORAGE_PKG_PATH.$pStoreRow['storage_path'] ));
+						@unlink_r( $path );
+						mkdir( $path );
 					} else {
-						@unlink( STORAGE_PKG_PATH.$pStoreRow['storage_path'] );
+						@unlink( $file );
 					}
 				}
 
 				// make sure we store the new file in the same place as before
-				$pStoreRow['upload']['dest_path'] = dirname( $pStoreRow['storage_path'] ).'/';
+				$pStoreRow['upload']['dest_path'] = $pStoreRow['dest_path'];
 
 				// if we can create new thumbnails for this file, we remove the old ones first
 				$canThumbFunc = liberty_get_function( 'can_thumbnail' );
@@ -195,7 +201,7 @@ if( !function_exists( 'mime_default_store' )) {
 		if( $storagePath = liberty_process_upload( $pStoreRow, empty( $pStoreRow['upload']['copy_file'] ))) {
 			// add row to liberty_files
 			$storeHash = array(
-				"storage_path" => $pStoreRow['upload']['dest_path'].$pStoreRow['upload']['name'],
+				"storage_path" => $pStoreRow['upload']['name'],
 				"file_id"      => $gBitSystem->mDb->GenID( 'liberty_files_id_seq' ),
 				"mime_type"    => $pStoreRow['upload']['type'],
 				"file_size"    => $pStoreRow['upload']['size'],

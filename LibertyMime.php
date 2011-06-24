@@ -384,7 +384,7 @@ class LibertyMime extends LibertyContent {
 	function getStoragePath( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pRootDir = NULL ) {
 		$ret = null;
 		
-		if( $branch = STORAGE_PKG_PATH.liberty_mime_get_storage_branch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pRootDir, empty($pRootDir) ) ) {
+		if( $branch = liberty_mime_get_storage_branch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pRootDir, empty($pRootDir) ) ) {
 			$ret = ( !empty( $pRootDir ) ? $pRootDir : STORAGE_PKG_PATH ).$branch;
 			mkdir_p($ret);
 		}
@@ -431,7 +431,7 @@ class LibertyMime extends LibertyContent {
 		// file_exists checks for file or directory
 		if( !empty( $pPath ) && $pPath = realpath( $pPath )) {
 			// ensure path sanity
-			if( preg_match( "!^".realpath( STORAGE_PKG_PATH )."/(users|common)/\d+/\d+/\w+/\d+!", $pPath )) {
+			if( preg_match( "#^".realpath( STORAGE_PKG_PATH )."/(users|common)/\d+/\d+/\w+/\d+#", $pPath )) {
 				return $pPath;
 			}
 		}
