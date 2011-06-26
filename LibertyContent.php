@@ -914,13 +914,13 @@ class LibertyContent extends LibertyBase {
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uue ON( uue.`user_id` = lc.`modifier_user_id` )";
 		}
 		if( empty( $pJoins ) || in_array( 'avatar', $pJoins )) {
-			$pQueryHash['select']['sql'][] = "ulf.`storage_path` AS `avatar`, ulf.`storage_path` AS `avatar_attachment_path`";
+			$pQueryHash['select']['sql'][] = "ulf.`file_name` AS `avatar_file_name`, ulf.`mime_type` AS `avatar_mime_type`, ula.`attachment_id` AS `avatar_attachment_id`";
 			$pQueryHash['join']['sql'][] = "
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments` ula ON( uu.`user_id` = ula.`user_id` AND ula.`attachment_id` = uu.`avatar_attachment_id` )
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files` ulf ON( ulf.`file_id` = ula.`foreign_id` )";
 		}
 		if( empty( $pJoins ) || in_array( 'primary', $pJoins )) {
-			$pQueryHash['select']['sql'][] = "pla.`attachment_id` AS `primary_attachment_id`, plf.`storage_path` AS `primary_attachment_path`";
+			$pQueryHash['select']['sql'][] = "pla.`attachment_id` AS `primary_attachment_id`, plf.`file_name` AS `primary_file_name`, plf.`mime_type` AS `primary_mime_type`";
 			$pQueryHash['join']['sql'][] = "
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments` pla ON( pla.`content_id` = lc.`content_id` AND pla.`is_primary` = 'y' )
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files` plf ON( plf.`file_id` = pla.`foreign_id` )";
@@ -2318,7 +2318,7 @@ class LibertyContent extends LibertyBase {
 
 		// if we want the primary attachment for each object
 		if(  $gBitSystem->isFeatureActive( 'liberty_display_primary_attach' )  ){ 
-			$selectSql .= ', lfp.storage_path AS `image_attachment_path`'; 
+			$selectSql .= ', lfp.`file_name`, lfp.`mime_type`, la.`attachment_id`, '; 
 			$joinSql .= "LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON( la.`content_id` = lc.`content_id` AND la.`is_primary` = 'y' ) 
 						 LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files` lfp ON( lfp.`file_id` = la.`foreign_id` )";
 		}
@@ -2559,7 +2559,7 @@ class LibertyContent extends LibertyBase {
 				 * This ultimately might need to be more sophisticated to deal with different mime types.
 				 **/
 				if(  $gBitSystem->isFeatureActive( 'liberty_display_primary_attach' )  ){ 
-					$aux['thumbnail_urls'] = liberty_fetch_thumbnails( array( "storage_path" => $aux['image_attachment_path'] ) );
+					$aux['thumbnail_urls'] = liberty_fetch_thumbnails( $aux );
 				}
 
 				if( isset( $aux['hash_key'] ) ) {

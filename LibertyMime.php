@@ -371,6 +371,23 @@ class LibertyMime extends LibertyContent {
 	}
 
 	// {{{ =================== Storage Directory Methods ====================
+	function getSourceUrl( $pParamHash=array() ) {
+		$ret = NULL;
+		if( $fileName = $this->getParameter( $pParamHash, 'file_name', $this->getField( 'file_name' ) ) ) {
+			 $ret = $this->getStorageUrl( $pParamHash ).basename( $fileName );
+		}
+		return $ret;
+	}
+
+	function getSourceFile( $pParamHash=array() ) {
+		$ret = NULL;
+		if( $fileName = $this->getParameter( $pParamHash, 'file_name', $this->getField( 'file_name' ) ) ) {
+			 $ret = $this->getStoragePath( $pParamHash ).basename( $fileName );
+		}
+		return $ret;
+	}
+
+
 	/**
 	 * getStoragePath - get path to store files for the feature site_upload_dir. It creates a calculable hierarchy of directories
 	 *
@@ -381,10 +398,10 @@ class LibertyMime extends LibertyContent {
 	 * @param $pRootDir override BIT_ROOT_DIR with a custom absolute path - useful for areas where no we access should be allowed
 	 * @return string full path on local filsystem to store files.
 	 */
-	function getStoragePath( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pRootDir = NULL ) {
+	function getStoragePath( $pParamHash ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pRootDir = NULL ) {
 		$ret = null;
-		
-		if( $branch = liberty_mime_get_storage_branch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pRootDir, empty($pRootDir) ) ) {
+
+		if( $branch = liberty_mime_get_storage_branch( $pParamHash ) ) {
 			$ret = ( !empty( $pRootDir ) ? $pRootDir : STORAGE_PKG_PATH ).$branch;
 			mkdir_p($ret);
 		}
@@ -392,8 +409,22 @@ class LibertyMime extends LibertyContent {
 	}
 
 
-	function getStorageUrl( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755 ) {
-		return STORAGE_PKG_URL.liberty_mime_get_storage_branch( $pSubDir, $pUserId, $pPackage, $pPermissions );
+	function getStorageUrl( $pParamHash ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755 ) {
+		return STORAGE_PKG_URL.liberty_mime_get_storage_branch( $pParamHash );
+	}
+
+	/**
+	 * getStorageBranch - get url to store files for the feature site_upload_dir. It creates a calculable hierarchy of directories
+	 *
+	 * @access public
+	 * @author Christian Fowler<spider@steelsun.com>
+	 * @param $pSubDir any desired directory below the StoragePath. this will be created if it doesn't exist
+	 * @param $pUserId indicates the 'users/.../<user_id>' branch or use the 'common' branch if null
+	 * @param $pRootDir **deprecated, unused, will be removed in future relase**. 
+	 * @return string full path on local filsystem to store files.
+	 */
+	function getStorageBranch( $pParamHash ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
+		return liberty_mime_get_storage_branch( $pParamHash );
 	}
 
 	/**
@@ -437,19 +468,6 @@ class LibertyMime extends LibertyContent {
 		}
 	}
 
-	/**
-	 * getStorageBranch - get url to store files for the feature site_upload_dir. It creates a calculable hierarchy of directories
-	 *
-	 * @access public
-	 * @author Christian Fowler<spider@steelsun.com>
-	 * @param $pSubDir any desired directory below the StoragePath. this will be created if it doesn't exist
-	 * @param $pUserId indicates the 'users/.../<user_id>' branch or use the 'common' branch if null
-	 * @param $pRootDir **deprecated, unused, will be removed in future relase**. 
-	 * @return string full path on local filsystem to store files.
-	 */
-	function getStorageBranch( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
-		return liberty_mime_get_storage_branch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pCreateDir );
-	}
 	// }}}
 
 
@@ -1085,13 +1103,13 @@ if( !function_exists( 'liberty_mime_get_storage_sub_dir_name' )) {
  * @return string full path on local filsystem to store files.
  */
 if( !function_exists( 'liberty_mime_get_storage_branch' )) {
-	function liberty_mime_get_storage_branch( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
+	function liberty_mime_get_storage_branch( $pParamHash ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
 		// *PRIVATE FUNCTION. GO AWAY! DO NOT CALL DIRECTLY!!!
 		global $gBitSystem;
 		$pathParts = array();
 
 
-		if( !$pUserId ) {
+		if( !$pUserId = BitBase::getParameter( $pParamHash, 'user_id' ) ) {
 			$pathParts[] = 'common';
 		} else {
 			$pathParts[] = 'users';
@@ -1099,11 +1117,11 @@ if( !function_exists( 'liberty_mime_get_storage_branch' )) {
 			$pathParts[] = $pUserId;
 		}
 
-		if( $pPackage ) {
+		if( $pPackage = BitBase::getParameter( $pParamHash, 'package' ) ) {
 			$pathParts[] = $pPackage;
 		}
 		// In case $pSubDir is multiple levels deep we'll need to mkdir each directory if they don't exist
-		if(!empty($pSubDir)){
+		if( $pSubDir = BitBase::getParameter( $pParamHash, 'sub_dir' ) ){
 			$pSubDirParts = preg_split('#/#',$pSubDir);
 			foreach ($pSubDirParts as $subDir) {
 				$pathParts[] = $subDir;
@@ -1111,7 +1129,7 @@ if( !function_exists( 'liberty_mime_get_storage_branch' )) {
 		}
 
 		$fullPath = implode( $pathParts, '/' ).'/';
-		if($pCreateDir){
+		if( BitBase::getParameter( $pParamHash, 'create_dir', TRUE ) ){
 			mkdir_p( $fullPath );
 		}
 
@@ -1120,14 +1138,26 @@ if( !function_exists( 'liberty_mime_get_storage_branch' )) {
 }
 
 if( !function_exists( 'liberty_mime_get_storage_url' )) {
-	function liberty_mime_get_storage_url( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
-		return STORAGE_PKG_URL.liberty_mime_get_storage_branch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pCreateDir );
+	function liberty_mime_get_storage_url( $pParamHash ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
+		return STORAGE_PKG_URL.liberty_mime_get_storage_branch( $pParamHash );
 	}
 }
 
 if( !function_exists( 'liberty_mime_get_storage_path' )) {
-	function liberty_mime_get_storage_path( $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
-		return STORAGE_PKG_PATH.liberty_mime_get_storage_branch( $pSubDir, $pUserId, $pPackage, $pPermissions, $pCreateDir );
+	function liberty_mime_get_storage_path( $pParamHash ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
+		return STORAGE_PKG_PATH.liberty_mime_get_storage_branch( $pParamHash );
+	}
+}
+
+if( !function_exists( 'liberty_mime_get_source_file' )) {
+	function liberty_mime_get_source_file( $pParamHash ) { 
+		if( empty( $pParamHash['package'] ) ) {
+			$pParamHash['package'] = liberty_mime_get_storage_sub_dir_name( array( 'type' => BitBase::getParameter( $pParamHash, 'mime_type' ), 'name' => BitBase::getParameter( $pParamHash, 'file_name' ) ) );
+		}
+		if( empty( $pParamHash['sub_dir'] ) ) {
+			$pParamHash['sub_dir'] = BitBase::getParameter( $pParamHash, 'attachment_id' );
+		}
+		return STORAGE_PKG_PATH.liberty_mime_get_storage_branch( $pParamHash ).basename( BitBase::getParameter( $pParamHash, 'file_name' ) );
 	}
 }
 

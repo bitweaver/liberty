@@ -644,12 +644,12 @@ function liberty_process_image( &$pFileHash, $pMoveFile = TRUE ) {
 function liberty_clear_thumbnails( &$pFileHash ) {
 	if( !empty( $pFileHash['dest_path'] )) {
 		$thumbHash = array(
-			'storage_path' => $pFileHash['dest_path'],
+			'source_file' => $pFileHash['dest_path'],
 			'mime_image'   => FALSE,
 		);
 
 		// get thumbnails we want to remove
-		if( $thumbs = liberty_fetch_thumbnails( $thumbHash, NULL, NULL, TRUE, FALSE  )) {
+		if( $thumbs = liberty_fetch_thumbnails( $thumbHash )) {
 			foreach( $thumbs as $thumb ) {
 				$thumb = BIT_ROOT_PATH.$thumb;
 				if( is_writable( $thumb )) {
@@ -726,7 +726,6 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 	}
 
 	$initialDestPath = $pFileHash['dest_path'];
-vd( $pFileHash );
 	foreach( $pFileHash['thumbnail_sizes'] as $thumbSize ) {
 		if( isset( $gThumbSizes[$thumbSize] )) {
 			$pFileHash['dest_base_name'] = $thumbSize;
@@ -773,30 +772,16 @@ vd( $pFileHash );
 /**
  * fetch all available thumbnails for a given item. if no thumbnails are present, get thumbnailing image or the appropriate mime type icon
  *
- * @param array   $pParamHash Hash of all settings used to fetch thumbnails
- * @param string  $pParamHash['storage_path'] Relative path to file we want to get thumbnails for (needs to include file name for mime icons)
- * @param string  $pParamHash['default_image'] URL to an alternative fallback image such as a background thumbnailer image
- * @param array   $pParamHash['thumbnail_sizes'] array of images to search for in the pFilePath
- * @param boolean $pParamHash['mime_image specify if you want to fetch an alternative image or not (default TRUE)
+ * @param array   $pParamHash Hash of all settings used to fetch thumbnails, including source_file, default_image, thumbnail_sizes, and mime_image
  * @access public
  * @return array of available thumbnails or mime icons
  * TODO: individual options are only for legacy reasons - remove options and deprecated() soon - xing - Monday Jun 23, 2008   22:36:53 CEST
  */
-function liberty_fetch_thumbnails( $pParamHash, $pAltImageUrl = NULL, $pThumbSizes = NULL, $pMimeImage = TRUE, $pReturnUri = TRUE ) {
+function liberty_fetch_thumbnails( $pParamHash ) {
 	global $gBitSystem, $gThumbSizes;
 	$ret = array();
 
-	if( !empty( $pParamHash['storage_path'] )) {
-		if( !is_array( $pParamHash )) {
-			$pParamHash = array(
-				'storage_path'    => $pParamHash,
-				'default_image'   => $pAltImageUrl,
-				'thumbnail_sizes' => $pThumbSizes,
-				'mime_image'      => $pMimeImage,
-			);
-			deprecated( "Please use an array of parameters to fetch thumbnails.\nUse something like this:\n\$thumbHash = ".var_export( $pParamHash, 1 ));
-		}
-
+	if( !empty( $pParamHash['source_file'] )) {
 		if( empty( $pParamHash['thumbnail_sizes'] )) {
 			$pParamHash['thumbnail_sizes'] = array_keys( $gThumbSizes );
 		}
@@ -806,7 +791,7 @@ function liberty_fetch_thumbnails( $pParamHash, $pAltImageUrl = NULL, $pThumbSiz
 		$exts = array_unique( array( $gBitSystem->getConfig( 'liberty_thumbnail_format', 'jpg' ), 'jpg', 'png', 'gif', 'x-jpeg' ));
 
 		// short hand
-		$path = &$pParamHash['storage_path'];
+		$path = &$pParamHash['source_file'];
 
 		// $path might already be the absolute path or it might already contain BIT_ROOT_URL
 		if( !( $path = preg_replace( "!^".preg_quote( STORAGE_PKG_PATH, "!" )."!", "", $path ))) {
@@ -819,10 +804,9 @@ function liberty_fetch_thumbnails( $pParamHash, $pAltImageUrl = NULL, $pThumbSiz
 		foreach( $pParamHash['thumbnail_sizes'] as $size ) {
 			foreach( $exts as $ext ) {
 				$image = $size.'.'.$ext;
-				if( is_readable( STORAGE_PKG_PATH.$dir.'thumbs/'.$image )) {
-					$ret[$size] = ( $pReturnUri ? storage_path_to_url( $dir.'thumbs/'.$image ) : STORAGE_PKG_URL.$dir.'thumbs/'.$image );
-				} elseif( is_readable( STORAGE_PKG_PATH.$dir.$image )) {
-					$ret[$size] = ( $pReturnUri ? storage_path_to_url( $dir.$image ) : STORAGE_PKG_URL.$dir.'thumbs/'.$image );
+				$thumbDir = is_dir( STORAGE_PKG_PATH.$dir.'thumbs/' ) ?  $dir.'thumbs/' :  $dir;
+				if( is_readable( STORAGE_PKG_PATH.$thumbDir.$image )) {
+					$ret[$size] = STORAGE_PKG_URL.$thumbDir.$image;
 				}
 			}
 			// fetch mime image unless we set this to FALSE
@@ -844,27 +828,13 @@ function liberty_fetch_thumbnails( $pParamHash, $pAltImageUrl = NULL, $pThumbSiz
 /**
  * fetch a single available thumbnail for a given item. if no thumbnail is present, return NULL
  *
- * @param array   $pParamHash Hash of all settings used to fetch thumbnails
- * @param string  $pParamHash['size'] Size of the desired thumbnail (needs to be key value of $gThumbSizes) (default 'small')
- * @param string  $pParamHash['storage_path'] Relative path to file we want to get thumbnails for (needs to include file name for mime icons)
- * @param string  $pParamHash['default_image'] URL to an alternative fallback image such as a background thumbnailer image
- * @param boolean $pParamHash['mime_image specify if you want to fetch an alternative image or not (default TRUE)
+ * @param array   $pParamHash Hash of all settings used to fetch thumbnails including: size, source_file, default_image, and mime_image
  * @access public
  * @return string url
  * TODO: individual options are only for legacy reasons - remove options and deprecated() soon - xing - Monday Jun 23, 2008   22:36:53 CEST
  */
-function liberty_fetch_thumbnail_url( $pParamHash, $pThumbSize = 'small', $pAltImageUrl = NULL, $pMimeImage = FALSE ) {
-	if( !is_array( $pParamHash )) {
-		$pParamHash = array(
-			'storage_path'  => $pParamHash,
-			'size'          => $pThumbSize,
-			'default_image' => $pAltImageUrl,
-			'mime_image'    => $pMimeImage,
-		);
-		deprecated( "Please use an array of parameters to fetch the thumbnail.\nUse something like this:\n\$thumbHash = ".var_export( $pParamHash, 1 ));
-	}
-
-	if( !empty( $pParamHash['storage_path'] )) {
+function liberty_fetch_thumbnail_url( $pParamHash ) {
+	if( !empty( $pParamHash['source_file'] )) {
 		if( empty( $pParamHash['size'] )) {
 			$pParamHash['size'] = 'small';
 		}

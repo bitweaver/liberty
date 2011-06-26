@@ -155,7 +155,7 @@ $tables = array(
 'liberty_files' => "
 	file_id I4 PRIMARY,
 	user_id I4 NOTNULL,
-	storage_path C(250),
+	file_name C(250),
 	file_size I4,
 	mime_type C(64)
 ",

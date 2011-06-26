@@ -92,7 +92,7 @@ if( !function_exists( 'mime_default_verify' )) {
 			if( @BitBase::verifyId( $pStoreRow['upload']['attachment_id'] )) {
 				// if a new file has been uploaded, we need to get some information from the database for the file update
 				$fileInfo = $gBitSystem->mDb->getRow( "
-					SELECT la.`attachment_id`, lf.`file_id`, lf.`storage_path`
+					SELECT la.`attachment_id`, lf.`file_id`, lf.`file_name`
 					FROM `".BIT_DB_PREFIX."liberty_attachments` la
 					INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON ( lf.`file_id` = la.`foreign_id` )
 					WHERE la.`attachment_id` = ?", array( $pStoreRow['upload']['attachment_id'] ));
@@ -142,10 +142,10 @@ if( !function_exists( 'mime_default_update' )) {
 				$pStoreRow['dest_path'] = liberty_mime_get_storage_branch( $pStoreRow['attachment_id'], $pStoreRow['user_id'], liberty_mime_get_storage_sub_dir_name( $pStoreRow['upload'] ));
 			}
 
-			if( !empty( $pStoreRow['dest_path'] ) && !empty( $pStoreRow['storage_path'] ) ) {
+			if( !empty( $pStoreRow['dest_path'] ) && !empty( $pStoreRow['file_name'] ) ) {
 				// First we remove the old file
 				$path = STORAGE_PKG_PATH.$pStoreRow['dest_path'];
-				$file = $path.$pStoreRow['storage_path'];
+				$file = $path.$pStoreRow['file_name'];
 				if(( $nuke = LibertyMime::validateStoragePath( $path )) && is_dir( $nuke )) {
 					if( !empty( $pStoreRow['unlink_dir'] )) {
 						@unlink_r( $path );
@@ -166,7 +166,7 @@ if( !function_exists( 'mime_default_update' )) {
 
 				// Now we process the uploaded file
 				if( $storagePath = liberty_process_upload( $pStoreRow )) {
-					$sql = "UPDATE `".BIT_DB_PREFIX."liberty_files` SET `storage_path` = ?, `mime_type` = ?, `file_size` = ?, `user_id` = ? WHERE `file_id` = ?";
+					$sql = "UPDATE `".BIT_DB_PREFIX."liberty_files` SET `file_name` = ?, `mime_type` = ?, `file_size` = ?, `user_id` = ? WHERE `file_id` = ?";
 					$gBitSystem->mDb->query( $sql, array( $pStoreRow['upload']['name'], $pStoreRow['upload']['type'], $pStoreRow['upload']['size'], $pStoreRow['user_id'], $pStoreRow['file_id'] ));
 				}
 
@@ -201,7 +201,7 @@ if( !function_exists( 'mime_default_store' )) {
 		if( $storagePath = liberty_process_upload( $pStoreRow, empty( $pStoreRow['upload']['copy_file'] ))) {
 			// add row to liberty_files
 			$storeHash = array(
-				"storage_path" => $pStoreRow['upload']['name'],
+				"file_name" => $pStoreRow['upload']['name'],
 				"file_id"      => $gBitSystem->mDb->GenID( 'liberty_files_id_seq' ),
 				"mime_type"    => $pStoreRow['upload']['type'],
 				"file_size"    => $pStoreRow['upload']['size'],
@@ -241,20 +241,20 @@ if( !function_exists( 'mime_default_load' )) {
 		if( @BitBase::verifyId( $pFileHash['attachment_id'] )) {
 			$query = "
 				SELECT la.`attachment_id`, la.`content_id`, la.`attachment_plugin_guid`, la.`foreign_id`, la.`user_id`, la.`is_primary`, la.`pos`, la.`error_code`, la.`caption`, la.`hits` AS `downloads`,
-					lf.`file_id`, lf.`user_id`, lf.`storage_path`, lf.`file_size`, lf.`mime_type`
+					lf.`file_id`, lf.`user_id`, lf.`file_name`, lf.`file_size`, lf.`mime_type`
 				FROM `".BIT_DB_PREFIX."liberty_attachments` la
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON( la.`foreign_id` = lf.`file_id` )
 				WHERE la.`attachment_id`=?";
 			if( $row = $gBitSystem->mDb->getRow( $query, array( $pFileHash['attachment_id'] ))) {
 				$ret = array_merge( $pFileHash, $row );
-				$storageName = basename( $row['storage_path'] );
+				$storageName = basename( $row['file_name'] );
 				// compatibility with _FILES hash
 				$row['name'] = $storageName;
 				$row['type'] = $row['mime_type'];
-				$storageBranch = liberty_mime_get_storage_branch( $row['attachment_id'], $row['user_id'], liberty_mime_get_storage_sub_dir_name( $row ) ).$storageName;
+				$storageBranch = liberty_mime_get_storage_branch( array( 'sub_dir' => $row['attachment_id'], 'user_id' =>$row['user_id'], 'package' => liberty_mime_get_storage_sub_dir_name( $row ) ) ).$storageName;
 				// this will fetch the correct thumbnails
-				$thumbHash['storage_path'] = STORAGE_PKG_PATH.$storageBranch;
-				$row['storage_path'] = $storageBranch;
+				$thumbHash['source_file'] = STORAGE_PKG_PATH.$storageBranch;
+				$row['source_file'] = STORAGE_PKG_PATH.$storageBranch;
 				$canThumbFunc = liberty_get_function( 'can_thumbnail' );
 				if( $canThumbFunc && $canThumbFunc( $row['mime_type'] )) {
 					$thumbHash['default_image'] = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
@@ -272,15 +272,16 @@ if( !function_exists( 'mime_default_load' )) {
 					$ret['display_url'] = LIBERTY_PKG_URL."view_file.php?attachment_id=".$row['attachment_id'];
 				}
 
-				$ret['filename']    = basename( $row['storage_path'] );
+				// legacy table data was named storage_path and included a partial path. strip out any path just in case
+				$ret['file_name']    = basename( $row['file_name'] );
 				$ret['preferences'] = $pPrefs;
 
 				// some stuff is only available if we have a source file
 				//    make sure to check for these when you use them. frequently the original might not be available
 				//    e.g.: video files are large and the original might be deleted after conversion
-				if( is_file( STORAGE_PKG_PATH.$row['storage_path'] )) {
-					$ret['source_file']   = STORAGE_PKG_PATH.$row['storage_path'];
-					$ret['source_url']    = storage_path_to_url( $row['storage_path'] );
+				if( is_file( STORAGE_PKG_PATH.$storageBranch )) {
+					$ret['source_file']   = STORAGE_PKG_PATH.$storageBranch;
+					$ret['source_url']    = STORAGE_PKG_URL.$storageBranch;
 					$ret['last_modified'] = filemtime( $ret['source_file'] );
 					if( $gBitSystem->isFeatureActive( "pretty_urls" ) || $gBitSystem->isFeatureActive( "pretty_urls_extended" )) {
 						$ret['download_url'] = LIBERTY_PKG_URL."download/file/".$row['attachment_id'];
@@ -293,12 +294,9 @@ if( !function_exists( 'mime_default_load' )) {
 				if( $gLibertySystem->isPluginActive( 'dataattachment' )) {
 					$ret['wiki_plugin_link'] = "{attachment id=".$row['attachment_id']."}";
 				}
-
-				// additionally we'll add this to distinguish between old plugins and new ones
-				// TODO: this should hopefully not be necessary for too long
-				$ret['is_mime'] = TRUE;
 			}
 		}
+
 		return $ret;
 	}
 }
@@ -384,9 +382,9 @@ if( !function_exists( 'mime_default_expunge' )) {
 		$ret = FALSE;
 		if( @BitBase::verifyId( $pAttachmentId )) {
 			if( $fileHash = LibertyMime::getAttachment( $pAttachmentId )) {
-				if( $gBitUser->isAdmin() || $gBitUser->mUserId == $fileHash['user_id'] && !empty( $fileHash['storage_path'] )) {
+				if( $gBitUser->isAdmin() || $gBitUser->mUserId == $fileHash['user_id'] && !empty( $fileHash['source_file'] )) {
 					// make sure this is a valid storage directory before removing it
-					if(( $nuke = LibertyMime::validateStoragePath( STORAGE_PKG_PATH.$fileHash['storage_path'] )) && is_file( $nuke )) {
+					if(( $nuke = LibertyMime::validateStoragePath( $fileHash['source_file'] )) && is_file( $nuke )) {
 						unlink_r( dirname( $nuke ));
 					}
 					$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_files` WHERE `file_id` = ?";

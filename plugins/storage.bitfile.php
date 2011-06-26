@@ -75,11 +75,11 @@ function bit_files_store( &$pStoreRow ) {
 	}
 
 	if( @BitBase::verifyId( $pStoreRow['foreign_id'] ) ) {
-		$sql = "UPDATE `".BIT_DB_PREFIX."liberty_files` SET `storage_path`=?, `mime_type`=?, `file_size`=? WHERE `file_id` = ?";
+		$sql = "UPDATE `".BIT_DB_PREFIX."liberty_files` SET `file_name`=?, `mime_type`=?, `file_size`=? WHERE `file_id` = ?";
 		$gBitSystem->mDb->query( $sql, array( $pStoreRow['upload']['dest_path'].$pStoreRow['upload']['name'], $pStoreRow['upload']['type'], $pStoreRow['upload']['size'], $pStoreRow['foreign_id'] ) );
 	} else {
 		$pStoreRow['foreign_id'] = $gBitSystem->mDb->GenID( 'liberty_files_id_seq' );
-		$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_files` ( `storage_path`, `file_id`, `mime_type`, `file_size`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
+		$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_files` ( `file_name`, `file_id`, `mime_type`, `file_size`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
 		$userId = !empty( $pStoreRow['upload']['user_id'] ) ? $pStoreRow['upload']['user_id'] : $gBitUser->mUserId;
 		$gBitSystem->mDb->query($sql, array( $pStoreRow['upload']['dest_path'].$pStoreRow['upload']['name'], $pStoreRow['foreign_id'],  $pStoreRow['upload']['type'],  $pStoreRow['upload']['size'], $userId ) );
 	}
@@ -98,14 +98,13 @@ function bit_files_load( $pRow ) {
 				INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON (lf.`file_id` = la.`foreign_id`)
 			WHERE la.`foreign_id` = ? AND `attachment_plugin_guid` = ?";
 		if( $ret = $gBitSystem->mDb->getRow( $query, array( $pRow['foreign_id'], PLUGIN_GUID_BIT_FILES ))) {
-			$thumbHash['storage_path'] = $ret['storage_path'];
+			$ret['source_file'] = liberty_mime_get_source_file( $ret );
 			$canThumbFunc = liberty_get_function( 'can_thumbnail' );
 			if( $canThumbFunc( $ret['mime_type'] )) {
 				$thumbHash['default_image'] = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
 			}
-			$ret['thumbnail_url'] = liberty_fetch_thumbnails( $thumbHash );
-			$ret['filename'] = str_replace('//', '/', substr( $ret['storage_path'], strrpos($ret['storage_path'], '/')+1) );
-			$ret['source_url'] = storage_path_to_url( $ret['storage_path'] );
+			$ret['source_url'] = liberty_mime_get_storage_url( $ret ).basename( $ret['file_name'] );
+			$ret['thumbnail_url'] = liberty_fetch_thumbnails( $ret );
 			$ret['wiki_plugin_link'] = "{attachment id=".$ret['attachment_id']."}";
 		}
 	}
@@ -117,25 +116,23 @@ function bit_files_expunge( $pStorageId ) {
 	$ret = FALSE;
 
 	if (is_numeric($pStorageId)) {
-		$sql = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id` = ?";
+		$sql = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` la
+					INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON (lf.`file_id`=la.`foreign_id`)
+				WHERE la.`attachment_id` = ?";
 		if( $row = $gBitSystem->mDb->getRow( $sql, array( $pStorageId ))) {
-			$sql = "SELECT * FROM `".BIT_DB_PREFIX."liberty_files` WHERE `file_id` = ?";
-			if( $fileRow = $gBitSystem->mDb->getRow( $sql, array( $row['foreign_id'] ))) {
-				$absolutePath = STORAGE_PKG_PATH.'/'.$fileRow['storage_path'];
-
-				if( $gBitUser->isAdmin() || $gBitUser->mUserId == $row['user_id'] ) {
-					if( file_exists( $absolutePath )) {
-						// make sure this is a valid storage directory before removing it
-						if( preg_match( '!/users/\d+/\d+/\w+/\d+/.+!', $fileRow['storage_path'] )) {
-							unlink_r( dirname( $absolutePath ));
-						} else {
-							unlink( $absolutePath );
-						}
+			$sourceFile = liberty_mime_get_source_file( $row );
+			if( $gBitUser->isAdmin() || $gBitUser->mUserId == $row['user_id'] ) {
+				if( file_exists( $sourceFile )) {
+					// make sure this is a valid storage directory before removing it
+					if( preg_match( '!/users/\d+/\d+/\w+/\d+/.+!', $sourceFile )) {
+						unlink_r( dirname( $sourceFile ));
+					} else {
+						unlink( $sourceFile );
 					}
-					$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_files` WHERE `file_id` = ?";
-					$gBitSystem->mDb->query($query, array($row['foreign_id']) );
-					$ret = TRUE;
 				}
+				$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_files` WHERE `file_id` = ?";
+				$gBitSystem->mDb->query($query, array($row['foreign_id']) );
+				$ret = TRUE;
 			}
 		}
 	}
