@@ -112,7 +112,7 @@ if( !function_exists( 'mime_default_verify' )) {
 
 			// Store all uploaded files in the users storage area
 			if( empty( $pStoreRow['upload']['dest_path'] )) {
-				$pStoreRow['upload']['dest_path'] = liberty_mime_get_storage_branch( $pStoreRow['attachment_id'], $pStoreRow['user_id'], liberty_mime_get_storage_sub_dir_name( $pStoreRow['upload'] ));
+				$pStoreRow['upload']['dest_path'] = liberty_mime_get_storage_branch( array( 'sub_dir'=>$pStoreRow['attachment_id'], 'user_id'=>$pStoreRow['user_id'], 'package'=>liberty_mime_get_storage_sub_dir_name( $pStoreRow['upload'] ) ) );
 			}
 
 			$ret = TRUE;
@@ -139,7 +139,7 @@ if( !function_exists( 'mime_default_update' )) {
 		if( BitBase::verifyId( $pStoreRow['attachment_id'] ) && !empty( $pStoreRow['upload'] )) {
 			// Store all uploaded files in the users storage area
 			if( empty( $pStoreRow['dest_path'] )) {
-				$pStoreRow['dest_path'] = liberty_mime_get_storage_branch( $pStoreRow['attachment_id'], $pStoreRow['user_id'], liberty_mime_get_storage_sub_dir_name( $pStoreRow['upload'] ));
+				$pStoreRow['dest_path'] = liberty_mime_get_storage_branch( array( 'sub_dir'=>$pStoreRow['attachment_id'], 'user_id'=>$pStoreRow['user_id'], 'package'=>liberty_mime_get_storage_sub_dir_name( $pStoreRow['upload'] ) ) );
 			}
 
 			if( !empty( $pStoreRow['dest_path'] ) && !empty( $pStoreRow['file_name'] ) ) {
@@ -197,6 +197,7 @@ if( !function_exists( 'mime_default_store' )) {
 	function mime_default_store( &$pStoreRow ) {
 		global $gBitSystem, $gLibertySystem;
 		$ret = FALSE;
+
 		// take care of the uploaded file and insert it into the liberty_files and liberty_attachments tables
 		if( $storagePath = liberty_process_upload( $pStoreRow, empty( $pStoreRow['upload']['copy_file'] ))) {
 			// add row to liberty_files
