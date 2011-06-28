@@ -168,7 +168,7 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 			$wrapper['href_class'] = 'class="external"';
 		}
 		$wrapper['display_url'] = $pParams['link'];
-	} else {
+	} elseif( !empty( $att['display_url'] ) )  {
 		$wrapper['display_url'] = $att['display_url'];
 	}
 
