@@ -17,7 +17,6 @@
 		$_REQUEST['structure_id'] = preg_replace( '/[\D]/', '', $_REQUEST['structure_id'] );
 		$gStructure = new LibertyStructure( $_REQUEST['structure_id'] );
 		if( $gStructure->load() ) {
-//	vd( $gStructure->mInfo );
 			$gStructure->loadNavigation();
 			$gStructure->loadPath();
 			$gBitSmarty->assign( 'structureInfo', $gStructure->mInfo );

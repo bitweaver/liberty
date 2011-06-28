@@ -127,7 +127,6 @@ class TikiWikiParser extends BitBase {
 	function parseMediawikiTables( $pData ) {
 		// Find all matches to {|...|} with no {| inside.
 		while( preg_match( '/\n?\{\|(.*?)\n\|\}/sm', $pData, $matches )) {
-			//vd($matches);
 			$table_data = str_replace( "\r", "", $matches[1] );
 			$table_data = str_replace( '||', "\n|", $table_data );
 

@@ -350,7 +350,6 @@ class LibertyAttachable extends LibertyContent {
 		// Process a JPEG , jpeg_metadata_tk REQUIRES short_tags because that is the way it was written. feel free to fix something. XOXO spiderr
 		if( ini_get( 'short_open_tag' ) && function_exists( 'exif_read_data' ) && !empty( $pFile['tmp_name'] ) && strpos( strtolower($pFile['type']), 'jpeg' ) !== FALSE ) {
 			$exifHash = @exif_read_data( $pFile['tmp_name'], 0, true);
-			//vd( $exifHash );
 
 			// Change: Allow this example file to be easily relocatable - as of version 1.11
 			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/JPEG.php';

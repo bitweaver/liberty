@@ -10,7 +10,6 @@
 
 	global $gBitSmarty, $gBitSystem, $gContent;
 
-//	vd( $gContent->mInfo );
 	$gBitSmarty->assign_by_ref( 'pageInfo', $gContent->mInfo );
 
 	$gBitSystem->display( 'bitpackage:liberty/display_content.tpl' , NULL, array( 'display_mode' => 'display' ));

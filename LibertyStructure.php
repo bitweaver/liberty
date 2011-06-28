@@ -518,7 +518,6 @@ class LibertyStructure extends LibertyBase {
 			if( $pParamHash['structure_id'] = $this->mDb->getOne( "SELECT `structure_id` FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `root_structure_id`=? and `content_id`=?", array($pParamHash['root_structure_id'], $pParamHash['content_id'] ) ) ) {
 				$this->mErrors[] = tra( 'Content already exists in structure.' )." ($pParamHash[structure_id])";
 			}
-vd( $pParamHash['structure_id'] );
 		}
 		return( count( $this->mErrors ) == 0 );
 	}

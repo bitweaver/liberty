@@ -80,13 +80,9 @@ function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject, $pParseHash )
 					$plugin_end = '';
 				}
 
-				// vd( "if ( ((($code_first) && ($plugin == 'CODE')) || ((!$code_first) && ($plugin <> 'CODE'))) && ($pos_end > $pos)) { <br/>" );
-
 				// Extract the plugin data
 				$plugin_data_len = $pos_end - $pos - strlen( $curlyTags[0][$i][0] );
 				$plugin_data = substr( $pData, $pos + strlen( $plugin_start ), $plugin_data_len );
-
-				// vd( "$plugin_data_len = $pos_end - $pos - strlen(".$curlyTags[0][$i][0].") substr( $pos + strlen($plugin_start), $plugin_data_len);" );
 
 				$arguments = array();
 				// Construct argument list array

@@ -386,7 +386,6 @@ class LibertySystem extends LibertyBase {
 							$fullTable = $prefix.$table;
 							if( !in_array( $fullTable, $dbTables )) {
 								if( $sql = $dict->CreateTableSQL( $fullTable, $tableDict, $build )) {
-									//vd( preg_replace( array( "/[\t ]+/", "/\n+/" ), array( " ", "\n" ), $sql ));
 									$ret = $dict->ExecuteSQLArray( $sql );
 									if( $ret === FALSE ) {
 										$errors[] = 'Failed to create table '.$completeTableName;
@@ -406,7 +405,6 @@ class LibertySystem extends LibertyBase {
 								foreach( $reqs['schema']['indexes'] as $idx => $idxDict ) {
 									$completeTableName = $sequencePrefix.$reqs['schema']['indexes'][$idx]['table'];
 									if( $sql = $dict->CreateIndexSQL( $idx, $completeTableName, $reqs['schema']['indexes'][$idx]['cols'], $reqs['schema']['indexes'][$idx]['opts'] )) {
-										//vd( preg_replace( array( "/[\t ]+/", "/\n+/" ), array( " ", "\n" ), $sql ));
 										$ret = $dict->ExecuteSQLArray( $sql );
 										if( $ret === FALSE ) {
 											$errors[] = 'Failed to create index '.$completeTableName;

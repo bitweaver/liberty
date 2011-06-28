@@ -35,7 +35,6 @@ function existing_files_verify( &$pStoreRow ) {
 
 		if( $result = $gContent->mDb->query( $query, array( $pStoreRow ))) {
 			$pStoreRow = $result->fetchRow();
-			//vd($pStoreRow);
 			// Tell LA not to do the insert.
 			$pStoreRow['skip_insert'] = TRUE;
 			$pStoreRow['plugin_guid'] = PLUGIN_GUID_EXISTING_FILES;
