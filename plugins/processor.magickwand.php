@@ -101,7 +101,7 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 				if( !empty( $pFileHash['dest_file'] ) ) {
 					$destFile = $pFileHash['dest_file'];
 				} else {
-					$destFile = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
+					$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['dest_base_name'].$destExt;
 				}
 
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
@@ -218,7 +218,7 @@ function liberty_magickwand_convert_colorspace_image( &$pFileHash, $pColorSpace 
 					} else {
 						MagickSetImageColorspace( $magickWand, MW_GRAYColorspace );
 						if( empty( $pFileHash['dest_file'] ) ) {
-							$pFileHash['dest_file'] = $pFileHash['dest_path'].$pFileHash['name'];
+							$pFileHash['dest_file'] = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['name'];
 						}
 						if( $error = liberty_magickwand_check_error( MagickWriteImage( $magickWand, $pFileHash['dest_file'] ), $magickWand ) ) {
 							bit_log_error( "MagickWriteImage Failed:$error ( $pFileHash[source_file] )" );

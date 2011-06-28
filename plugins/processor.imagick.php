@@ -129,7 +129,7 @@ function liberty_imagick0_resize_image( &$pFileHash ) {
 				if( !empty( $pFileHash['dest_file'] ) ) {
 					$destFile = $pFileHash['dest_file'];
 				} else {
-					$destFile = STORAGE_PKG_PATH.$pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
+					$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['dest_base_name'].$destExt;
 				}
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 				// print "			if ( !imagick_resize( $iImg, $pFileHash[max_width], $pFileHash[max_height], IMAGICK_FILTER_LANCZOS, 0.5, $pFileHash[max_width] x $pFileHash[max_height] > ) ) {";
@@ -240,7 +240,7 @@ function liberty_imagick2_resize_image( &$pFileHash ) {
 				if( !empty( $pFileHash['dest_file'] ) ) {
 					$destFile = $pFileHash['dest_file'];
 				} else {
-					$destFile = STORAGE_PKG_PATH.$pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
+					$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['dest_base_name'].$destExt;
 				}
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 

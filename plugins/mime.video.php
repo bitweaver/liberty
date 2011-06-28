@@ -150,16 +150,16 @@ function mime_video_load( $pFileHash, &$pPrefs, $pParams = NULL ) {
 	global $gLibertySystem, $gBitThemes;
 	if( $ret = mime_default_load( $pFileHash, $pParams )) {
 		// check for status of conversion
-		if( !empty( $ret['storage_path'] )) {
-			$source_path = STORAGE_PKG_PATH.dirname( $ret['storage_path'] ).'/';
+		if( !empty( $ret['source_file'] )) {
+			$source_path = STORAGE_PKG_PATH.dirname( $ret['source_file'] ).'/';
 			if( is_file( $source_path.'error' )) {
 				$ret['status']['error'] = TRUE;
 			} elseif( is_file( $source_path.'processing' )) {
 				$ret['status']['processing'] = TRUE;
 			} elseif( is_file( $source_path.'flick.flv' )) {
-				$ret['media_url'] = storage_path_to_url( dirname( $ret['storage_path'] ).'/flick.flv' );
+				$ret['media_url'] = storage_path_to_url( dirname( $ret['source_file'] ).'/flick.flv' );
 			} elseif( is_file( $source_path.'flick.mp4' )) {
-				$ret['media_url'] = storage_path_to_url( dirname( $ret['storage_path'] ).'/flick.mp4' );
+				$ret['media_url'] = storage_path_to_url( dirname( $ret['source_file'] ).'/flick.mp4' );
 			}
 		}
 
@@ -233,8 +233,8 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 		} else {
 			// this is the codec we'll use - currently this might be: flv, h264, h264-2pass
 			$codec = $gBitSystem->getConfig( "mime_video_video_codec", "flv" );
-			$source = STORAGE_PKG_PATH.$pParamHash['upload']['dest_path'].$pParamHash['upload']['name'];
-			$dest_path = dirname( $source );
+			$source = STORAGE_PKG_PATH.$pParamHash['upload']['dest_branch'].$pParamHash['upload']['name'];
+			$destPath = dirname( $source );
 
 			// set some default values if ffpeg-php isn't available or fails
 			$default['aspect']     = 4 / 3;
@@ -285,7 +285,7 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 			) {
 				// work out what the target filename is
 				$extension = (( $info['vcodec'] == "flv" ) ? "flv" : "mp4" );
-				$dest_file = $dest_path."/flick.$extension";
+				$dest_file = $destPath."/flick.$extension";
 
 				// if the video can be processed by ffmpeg-php, width and height are greater than 1
 				if( !empty( $info['width'] ) && $info['width'] > 1 ) {
@@ -310,7 +310,7 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 			} else {
 				// work out what the target filename is
 				$extension = (( $codec == "flv" ) ? "flv" : "mp4" );
-				$dest_file = $dest_path."/flick.$extension";
+				$dest_file = $destPath."/flick.$extension";
 
 				// if the video can be processed by ffmpeg-php, width and height are greater than 1
 				if( !empty( $info['width'] ) && $info['width'] > 1 ) {
@@ -459,14 +459,14 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 					// remove unsuccessfully converted file
 					@unlink( $dest_file );
 					$log['message'] = "ERROR: The video you uploaded could not be converted by ffmpeg.\nDEBUG OUTPUT:\n\n".$debug;
-					$actionLog['log_message'] = "Video could not be converted to flashvideo. An error dump was saved to: ".$dest_path.'/error';
+					$actionLog['log_message'] = "Video could not be converted to flashvideo. An error dump was saved to: ".$destPath.'/error';
 
 					// write error message to error file
-					$h = fopen( $dest_path."/error", 'w' );
+					$h = fopen( $destPath."/error", 'w' );
 					fwrite( $h, "$ffmpeg $parameters\n\n$debug" );
 					fclose( $h );
 				}
-				@unlink( $dest_path.'/processing' );
+				@unlink( $destPath.'/processing' );
 			}
 		}
 
@@ -501,7 +501,7 @@ function mime_video_create_thumbnail( $pFile, $pOffset = 60 ) {
 	global $gBitSystem;
 	$ret = FALSE;
 	if( !empty( $pFile ) && is_file( $pFile )) {
-		$dest_path = dirname( $pFile );
+		$destPath = dirname( $pFile );
 
 		// try to use an app designed specifically to extract a thumbnail
 		if( shell_exec( shell_exec( 'which ffmpegthumbnailer' ).' -h' )) {
@@ -511,31 +511,31 @@ function mime_video_create_thumbnail( $pFile, $pOffset = 60 ) {
 		}
 
 		if( !empty( $thumbnailer ) && is_executable( $thumbnailer )) {
-			shell_exec( "$thumbnailer -i '$pFile' -o '$dest_path/thumb.jpg' -s 1024" );
+			shell_exec( "$thumbnailer -i '$pFile' -o '$destPath/thumb.jpg' -s 1024" );
 		}
 
-		if( is_file( "$dest_path/thumb.jpg" ) && filesize( "$dest_path/thumb.jpg" ) > 1 ) {
+		if( is_file( "$destPath/thumb.jpg" ) && filesize( "$destPath/thumb.jpg" ) > 1 ) {
 			$fileHash['type']            = 'image/jpg';
-			$fileHash['source_file']     = "$dest_path/thumb.jpg";
-			$fileHash['dest_path']       = str_replace( STORAGE_PKG_PATH, '', "$dest_path/" );
+			$fileHash['source_file']     = "$destPath/thumb.jpg";
+			$fileHash['dest_branch']       = str_replace( STORAGE_PKG_PATH, '', "$destPath/" );
 			liberty_generate_thumbnails( $fileHash );
 			$ret = TRUE;
 
 			// remove temp file
-			@unlink( "$dest_path/thumb.jpg" );
+			@unlink( "$destPath/thumb.jpg" );
 		} else {
 			// fall back to using ffmepg
 			$ffmpeg = trim( $gBitSystem->getConfig( 'ffmpeg_path', shell_exec( 'which ffmpeg' )));
-			shell_exec( "$ffmpeg -i '$pFile' -an -ss $pOffset -t 00:00:01 -r 1 -y '$dest_path/preview%d.jpg'" );
-			if( is_file( "$dest_path/preview1.jpg" )) {
+			shell_exec( "$ffmpeg -i '$pFile' -an -ss $pOffset -t 00:00:01 -r 1 -y '$destPath/preview%d.jpg'" );
+			if( is_file( "$destPath/preview1.jpg" )) {
 				$fileHash['type']            = 'image/jpg';
-				$fileHash['source_file']     = "$dest_path/preview1.jpg";
-				$fileHash['dest_path']       = str_replace( STORAGE_PKG_PATH, '', "$dest_path/" );
+				$fileHash['source_file']     = "$destPath/preview1.jpg";
+				$fileHash['dest_branch']       = str_replace( STORAGE_PKG_PATH, '', "$destPath/" );
 				liberty_generate_thumbnails( $fileHash );
 				$ret = TRUE;
 
 				// remove temp file
-				@unlink( "$dest_path/preview1.jpg" );
+				@unlink( "$destPath/preview1.jpg" );
 			}
 		}
 	}

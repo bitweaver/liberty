@@ -156,7 +156,7 @@ class LibertyAttachable extends LibertyContent {
 									$ext = substr( $storeRow['upload']['name'], strrpos( $storeRow['upload']['name'], '.' ) + 1 );
 									$storeRow['upload']['type'] = $gBitSystem->lookupMimeType( $ext );
 								}
-								$storeRow['upload']['dest_path'] = $this->getStorageBranch( $storeRow['attachment_id'], $storeRow['user_id'], $this->getStorageSubDirName() );
+								$storeRow['upload']['dest_branch'] = $this->getStorageBranch( $storeRow['attachment_id'], $storeRow['user_id'], $this->getStorageSubDirName() );
 								if (!empty( $pParamHash['thumbnail_sizes'] ) ) {
 									$storeRow['upload']['thumbnail_sizes'] = $pParamHash['thumbnail_sizes'];
 								}

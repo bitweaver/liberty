@@ -111,8 +111,8 @@ if( !function_exists( 'mime_default_verify' )) {
 			$pStoreRow['upload']['source_file'] = $pStoreRow['upload']['tmp_name'];
 
 			// Store all uploaded files in the users storage area
-			if( empty( $pStoreRow['upload']['dest_path'] )) {
-				$pStoreRow['upload']['dest_path'] = liberty_mime_get_storage_branch( array( 'sub_dir'=>$pStoreRow['attachment_id'], 'user_id'=>$pStoreRow['user_id'], 'package'=>liberty_mime_get_storage_sub_dir_name( $pStoreRow['upload'] ) ) );
+			if( empty( $pStoreRow['upload']['dest_branch'] )) {
+				$pStoreRow['upload']['dest_branch'] = liberty_mime_get_storage_branch( array( 'sub_dir'=>$pStoreRow['attachment_id'], 'user_id'=>$pStoreRow['user_id'], 'package'=>liberty_mime_get_storage_sub_dir_name( $pStoreRow['upload'] ) ) );
 			}
 
 			$ret = TRUE;
@@ -138,13 +138,13 @@ if( !function_exists( 'mime_default_update' )) {
 		// this will reset the uploaded file
 		if( BitBase::verifyId( $pStoreRow['attachment_id'] ) && !empty( $pStoreRow['upload'] )) {
 			// Store all uploaded files in the users storage area
-			if( empty( $pStoreRow['dest_path'] )) {
-				$pStoreRow['dest_path'] = liberty_mime_get_storage_branch( array( 'sub_dir'=>$pStoreRow['attachment_id'], 'user_id'=>$pStoreRow['user_id'], 'package'=>liberty_mime_get_storage_sub_dir_name( $pStoreRow['upload'] ) ) );
+			if( empty( $pStoreRow['dest_branch'] )) {
+				$pStoreRow['dest_branch'] = liberty_mime_get_storage_branch( array( 'sub_dir'=>$pStoreRow['attachment_id'], 'user_id'=>$pStoreRow['user_id'], 'package'=>liberty_mime_get_storage_sub_dir_name( $pStoreRow['upload'] ) ) );
 			}
 
-			if( !empty( $pStoreRow['dest_path'] ) && !empty( $pStoreRow['file_name'] ) ) {
+			if( !empty( $pStoreRow['dest_branch'] ) && !empty( $pStoreRow['file_name'] ) ) {
 				// First we remove the old file
-				$path = STORAGE_PKG_PATH.$pStoreRow['dest_path'];
+				$path = STORAGE_PKG_PATH.$pStoreRow['dest_branch'];
 				$file = $path.$pStoreRow['file_name'];
 				if(( $nuke = LibertyMime::validateStoragePath( $path )) && is_dir( $nuke )) {
 					if( !empty( $pStoreRow['unlink_dir'] )) {
@@ -156,7 +156,7 @@ if( !function_exists( 'mime_default_update' )) {
 				}
 
 				// make sure we store the new file in the same place as before
-				$pStoreRow['upload']['dest_path'] = $pStoreRow['dest_path'];
+				$pStoreRow['upload']['dest_branch'] = $pStoreRow['dest_branch'];
 
 				// if we can create new thumbnails for this file, we remove the old ones first
 				$canThumbFunc = liberty_get_function( 'can_thumbnail' );
@@ -273,7 +273,7 @@ if( !function_exists( 'mime_default_load' )) {
 					$ret['display_url'] = LIBERTY_PKG_URL."view_file.php?attachment_id=".$row['attachment_id'];
 				}
 
-				// legacy table data was named storage_path and included a partial path. strip out any path just in case
+				// legacy table data was named storage path and included a partial path. strip out any path just in case
 				$ret['file_name']    = basename( $row['file_name'] );
 				$ret['preferences'] = $pPrefs;
 

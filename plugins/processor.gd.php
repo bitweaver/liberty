@@ -86,7 +86,7 @@ function liberty_gd_resize_image( &$pFileHash ) {
 		if( !empty( $pFileHash['dest_file'] ) ) {
 			$destFile = $pFileHash['dest_file'];
 		} else {
-			$destFile = STORAGE_PKG_PATH.$pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
+			$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['dest_base_name'].$destExt;
 		}
 
 		switch( $targetType ) {

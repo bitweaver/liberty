@@ -422,7 +422,7 @@ function liberty_content_edit( &$pObject ) {
  * @param array $pFileHash Data require to process the files
  * @param array $pFileHash['upload']['name'] (required) Name of the uploaded file
  * @param array $pFileHash['upload']['type'] (required) Mime type of the file uploaded
- * @param array $pFileHash['upload']['dest_path'] (required) Relative path where you want to store the file (trailing slash required)
+ * @param array $pFileHash['upload']['dest_branch'] (required) Relative path where you want to store the file (trailing slash required)
  * @param array $pFileHash['upload']['source_file'] (required) Absolute path to file including file name
  * @param boolean $pFileHash['upload']['thumbnail'] (optional) Set to FALSE if you don't want to generate thumbnails
  * @param array $pFileHash['upload']['thumbnail_sizes'] (optional) Decide what sizes thumbnails you want to create: icon, avatar, small, medium, large
@@ -574,7 +574,7 @@ function liberty_process_generic( &$pFileHash, $pMoveFile = TRUE ) {
 	if( !empty( $pFileHash['dest_file'] ) ) {
 		$destFile = $pFileHash['dest_file'];
 	} else {
-		$destFile = STORAGE_PKG_PATH.$pFileHash['dest_path'].$pFileHash['name'];;
+		$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['name'];;
 		if ( is_windows() ) {
 			$destFile = str_replace( '//', '\\', str_replace( "\\", '\\', $destFile ) );
 		}
@@ -637,14 +637,14 @@ function liberty_process_image( &$pFileHash, $pMoveFile = TRUE ) {
 /**
  * liberty_clear_thumbnails will clear all thummbnails found in a given directory
  *
- * @param array $pFileHash['dest_path'] should contain the path to the dir where we should remove thumbnails
+ * @param array $pFileHash['dest_branch'] should contain the path to the dir where we should remove thumbnails
  * @access public
  * @return TRUE on success, FALSE on failure
  */
 function liberty_clear_thumbnails( &$pFileHash ) {
-	if( !empty( $pFileHash['dest_path'] )) {
+	if( !empty( $pFileHash['dest_branch'] )) {
 		$thumbHash = array(
-			'source_file' => $pFileHash['dest_path'],
+			'source_file' => $pFileHash['dest_branch'],
 			'mime_image'   => FALSE,
 		);
 
@@ -725,7 +725,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 		$destExt = '.jpg';
 	}
 
-	$initialDestPath = $pFileHash['dest_path'];
+	$initialDestPath = $pFileHash['dest_branch'];
 	foreach( $pFileHash['thumbnail_sizes'] as $thumbSize ) {
 		if( isset( $gThumbSizes[$thumbSize] )) {
 			$pFileHash['dest_base_name'] = $thumbSize;
@@ -737,14 +737,14 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 				unset( $pFileHash['max_width'] );
 			}
 
-			// reset dest_path for created thumbs
+			// reset dest_branch for created thumbs
 			if( !empty( $pFileHash['thumb_path'] ) ) {
 				$pFileHash['dest_file'] = $pFileHash['thumb_path'].$pFileHash['name'];
 			} else {
 				// create a subdirectory for the thumbs
-				$pFileHash['dest_path'] = $initialDestPath.'thumbs/';
-				if( !is_dir( STORAGE_PKG_PATH.$pFileHash['dest_path'] )) {
-					mkdir( STORAGE_PKG_PATH.$pFileHash['dest_path'] );
+				$pFileHash['dest_branch'] = $initialDestPath.'thumbs/';
+				if( !is_dir( STORAGE_PKG_PATH.$pFileHash['dest_branch'] )) {
+					mkdir( STORAGE_PKG_PATH.$pFileHash['dest_branch'] );
 				}
 			}
 
@@ -764,7 +764,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 	}
 
 	// to keep everything in bitweaver working smoothly, we need to remove the thumbs/ subdir again
-	$pFileHash['dest_path'] = $initialDestPath;
+	$pFileHash['dest_branch'] = $initialDestPath;
 
 	return $ret;
 }

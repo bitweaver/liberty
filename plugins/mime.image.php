@@ -161,7 +161,7 @@ function mime_image_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 		}
 
 		// check for panorama image
-		if( is_file( STORAGE_PKG_PATH.dirname( $ret['storage_path'] )."/thumbs/panorama.jpg" )) {
+		if( is_file( dirname( $ret['source_file'] )."/thumbs/panorama.jpg" )) {
 			// if the panorama doesn't have 180⁰ vertical field of view we will restrict up / down movement
 			if(( $ret['pano'] = LibertyMime::getMetaData( $ret['attachment_id'], "PANO" )) && !empty( $ret['pano']['aspect'] )) {
 				// calculation based on logarythmic regression curve
@@ -172,7 +172,7 @@ function mime_image_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 					$ret['pano']['pa'] = 0;
 				}
 			}
-			$ret['thumbnail_url']['panorama'] = storage_path_to_url( dirname( $ret['storage_path'] )."/thumbs/panorama.jpg" );
+			$ret['thumbnail_url']['panorama'] = storage_path_to_url( dirname( $ret['source_file'] )."/thumbs/panorama.jpg" );
 		}
 	}
 	return $ret;
@@ -303,7 +303,7 @@ function mime_image_convert_exifgps( $pParams ) {
 function mime_image_create_panorama( &$pStoreRow ) {
 	global $gBitSystem, $gThumbSizes;
 	// we know the panorama image will be a jpeg, so we don't need the canThumbFunc check here
-	if(( $panoramaFunc = liberty_get_function( 'panorama' )) && !empty( $pStoreRow['storage_path'] ) && !empty( $pStoreRow['source_file'] ) && is_file( $pStoreRow['source_file'] )) {
+	if(( $panoramaFunc = liberty_get_function( 'panorama' )) && !empty( $pStoreRow['source_file'] ) && is_file( $pStoreRow['source_file'] )) {
 		// the panorama has to be a jpg
 		$gBitSystem->setConfig( 'liberty_thumbnail_format', 'jpg' );
 		$width = $gBitSystem->getConfig( 'mime_image_panorama_width', 3000 );
@@ -316,7 +316,8 @@ function mime_image_create_panorama( &$pStoreRow ) {
 
 		$genHash = array(
 			'attachment_id'   => $pStoreRow['attachment_id'],
-			'dest_path'       => dirname( $pStoreRow['storage_path'] )."/",
+			'dest_branch'	  => liberty_mime_get_storage_branch( array( 'sub_dir' => $pStoreRow['attachment_id'], 'user_id' =>$pStoreRow['user_id'], 'package' => liberty_mime_get_storage_sub_dir_name( $pStoreRow ) ) ),
+			'file_name'       => dirname( $pStoreRow['file_name'] )."/",
 			'source_file'     => $pStoreRow['source_file'],
 			'type'            => $pStoreRow['mime_type'],
 			'thumbnail_sizes' => array( 'panorama' ),

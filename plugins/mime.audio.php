@@ -118,7 +118,7 @@ function mime_audio_update( &$pStoreRow, $pParams = NULL ) {
 		// if there was no upload we'll process the file parameters
 		if( empty( $pStoreRow['upload'] ) && !empty( $pParams['meta'] )) {
 			// update our local version of the file
-			$file = STORAGE_PKG_PATH.$pStoreRow['storage_path'];
+			$file = STORAGE_PKG_PATH.$pStoreRow['dest_branch'];
 			if( is_file( dirname( $file ).'/bitverted.mp3' )) {
 				$verted = dirname( $file ).'/bitverted.mp3';
 			} elseif( is_file( dirname( $file ).'/bitverted.m4a' )) {
@@ -189,14 +189,14 @@ function mime_audio_converter( &$pParamHash ) {
 	$ret = FALSE;
 	$log = array();
 
-	$source = STORAGE_PKG_PATH.$pParamHash['upload']['dest_path'].$pParamHash['upload']['name'];
-	$dest_path = dirname( $source );
+	$source = STORAGE_PKG_PATH.$pParamHash['upload']['dest_branch'].$pParamHash['upload']['name'];
+	$destPath = dirname( $source );
 
 	if( @BitBase::verifyId( $pParamHash['attachment_id'] )) {
 		$pattern = "#.*\.(mp3|m4a)$#i";
 		if( !$gBitSystem->isFeatureActive( 'mime_audio_force_encode' ) && preg_match( $pattern, $pParamHash['upload']['name'] )) {
 			// make a copy of the original maintaining the original extension
-			$dest_file = $dest_path.'/bitverted.'.preg_replace( $pattern, "$1", strtolower( $pParamHash['upload']['name'] ));
+			$dest_file = $destPath.'/bitverted.'.preg_replace( $pattern, "$1", strtolower( $pParamHash['upload']['name'] ));
 			if( !is_file( $dest_file ) && !link( $source, $dest_file )) {
 				copy( $source, $dest_file );
 			}
@@ -208,7 +208,7 @@ function mime_audio_converter( &$pParamHash ) {
 			//       also, using mplayer is a 2 step process: decoding and encoding
 
 			// if we convert audio, we always make an mp3
-			$dest_file = $dest_path.'/bitverted.mp3';
+			$dest_file = $destPath.'/bitverted.mp3';
 			if( !( $ret = mime_audio_converter_ffmpeg( $pParamHash, $source, $dest_file ))) {
 				// fall back to using slower mplayer / lame combo
 				$ret = mime_audio_converter_mplayer_lame( $pParamHash, $source, $dest_file );
@@ -262,7 +262,7 @@ function mime_audio_converter( &$pParamHash ) {
 
 					$fileHash['type']            = $image['mime'];
 					$fileHash['source_file']     = $tmpfile;
-					$fileHash['dest_path']       = $pParamHash['upload']['dest_path'];
+					$fileHash['dest_branch']     = $pParamHash['upload']['dest_branch'];
 					liberty_generate_thumbnails( $fileHash );
 
 					// remove temp file
