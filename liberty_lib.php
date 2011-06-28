@@ -802,7 +802,7 @@ function liberty_fetch_thumbnails( $pParamHash ) {
 				$image = $size.'.'.$ext;
 				$thumbDir = is_dir( STORAGE_PKG_PATH.$dir.'thumbs/' ) ?  $dir.'thumbs/' :  $dir;
 				if( is_readable( STORAGE_PKG_PATH.$thumbDir.$image )) {
-					$ret[$size] = STORAGE_PKG_URL.$thumbDir.$image;
+					$ret[$size] = (empty( $_REQUEST['uri_mode'] ) ? STORAGE_PKG_URL : STORAGE_PKG_URI).$thumbDir.$image;
 				}
 			}
 			// fetch mime image unless we set this to FALSE
