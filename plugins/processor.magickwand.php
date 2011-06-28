@@ -101,8 +101,9 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 				if( !empty( $pFileHash['dest_file'] ) ) {
 					$destFile = $pFileHash['dest_file'];
 				} else {
-					$destFile = STORAGE_PKG_PATH.'/'.$pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
+					$destFile = $pFileHash['dest_path'].$pFileHash['dest_base_name'].$destExt;
 				}
+
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 				// Alternate Filter settings can seen here http://www.dylanbeattie.net/magick/filters/result.html
 				if ( $error = liberty_magickwand_check_error( MagickResizeImage( $magickWand, $pFileHash['max_width'], $pFileHash['max_height'], MW_CatromFilter, 1.00 ), $magickWand ) ) {
@@ -120,6 +121,7 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 	} else {
 		$pFileHash['error'] = "No source file to resize";
 	}
+
 	DestroyMagickWand( $magickWand );
 	return $ret;
 }
@@ -216,7 +218,7 @@ function liberty_magickwand_convert_colorspace_image( &$pFileHash, $pColorSpace 
 					} else {
 						MagickSetImageColorspace( $magickWand, MW_GRAYColorspace );
 						if( empty( $pFileHash['dest_file'] ) ) {
-							$pFileHash['dest_file'] = STORAGE_PKG_PATH.'/'.$pFileHash['dest_path'].$pFileHash['name'];
+							$pFileHash['dest_file'] = $pFileHash['dest_path'].$pFileHash['name'];
 						}
 						if( $error = liberty_magickwand_check_error( MagickWriteImage( $magickWand, $pFileHash['dest_file'] ), $magickWand ) ) {
 							bit_log_error( "MagickWriteImage Failed:$error ( $pFileHash[source_file] )" );
