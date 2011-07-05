@@ -1128,7 +1128,9 @@ if( !function_exists( 'liberty_mime_get_storage_branch' )) {
 
 		$fullPath = implode( $pathParts, '/' ).'/';
 		if( BitBase::getParameter( $pParamHash, 'create_dir', TRUE ) ){
-			mkdir_p( $fullPath );
+			if( !file_exists( STORAGE_PKG_PATH.$fullPath ) ) {
+				mkdir_p( STORAGE_PKG_PATH.$fullPath );
+			}
 		}
 
 		return $fullPath;
