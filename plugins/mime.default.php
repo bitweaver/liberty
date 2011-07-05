@@ -274,7 +274,7 @@ if( !function_exists( 'mime_default_load' )) {
 				}
 
 				// legacy table data was named storage path and included a partial path. strip out any path just in case
-				$ret['file_name']    = basename( $row['file_name'] );
+				$ret['file_name']    = $storageName;
 				$ret['preferences'] = $pPrefs;
 
 				// some stuff is only available if we have a source file

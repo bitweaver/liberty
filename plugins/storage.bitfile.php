@@ -98,6 +98,7 @@ function bit_files_load( $pRow ) {
 				INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON (lf.`file_id` = la.`foreign_id`)
 			WHERE la.`foreign_id` = ? AND `attachment_plugin_guid` = ?";
 		if( $ret = $gBitSystem->mDb->getRow( $query, array( $pRow['foreign_id'], PLUGIN_GUID_BIT_FILES ))) {
+			$ret['file_name'] = basename( $ret['file_name'] );
 			$ret['source_file'] = liberty_mime_get_source_file( $ret );
 			$canThumbFunc = liberty_get_function( 'can_thumbnail' );
 			if( $canThumbFunc( $ret['mime_type'] )) {
