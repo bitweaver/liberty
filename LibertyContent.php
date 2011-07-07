@@ -767,7 +767,7 @@ class LibertyContent extends LibertyBase {
 	 * Check permissions to establish if user has permission to view the object
 	 * Should be provided by the decendent package
 	 */
-	function isViewable($pContentId = NULL) {
+	function isViewable() {
 		return( true );
 	}
 
@@ -775,7 +775,7 @@ class LibertyContent extends LibertyBase {
 	 * Check permissions to establish if user has permission to edit the object
 	 * Should be provided by the decendent package
 	 */
-	function isEditable($pContentId = NULL) {
+	function isEditable() {
 		return( false );
 	}
 
@@ -784,7 +784,7 @@ class LibertyContent extends LibertyBase {
 	 * That would include permission to delete an object or change it's permissions
 	 * Should be provided by the decendent package
 	 */
-	function isAdminable($pContentId = NULL) {
+	function isAdminable() {
 		return( false );
 	}
 

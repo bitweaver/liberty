@@ -1097,9 +1097,7 @@ if( !function_exists( 'liberty_mime_get_storage_sub_dir_name' )) {
  *
  * @access public
  * @author Christian Fowler<spider@steelsun.com>
- * @param $pSubDir any desired directory below the StoragePath. this will be created if it doesn't exist
- * @param $pUserId indicates the 'users/.../<user_id>' branch or use the 'common' branch if null
- * @param $pRootDir **deprecated, unused, will be removed in future relase**. 
+ * @param $pParamHash key=>value pairs to determine path. Possible keys in descending directory depth are: 'user_id' indicates the 'users/.../<user_id>' branch or use the 'common' branch if null, 'package' - any desired directory below the StoragePath. this will be created if it doesn't exist, 'sub_dir' -  the sub-directory in the package organization directory, this is often a primary id such as attachment_id
  * @return string full path on local filsystem to store files.
  */
 if( !function_exists( 'liberty_mime_get_storage_branch' )) {
@@ -1130,7 +1128,9 @@ if( !function_exists( 'liberty_mime_get_storage_branch' )) {
 
 		$fullPath = implode( $pathParts, '/' ).'/';
 		if( BitBase::getParameter( $pParamHash, 'create_dir', TRUE ) ){
-			mkdir_p( $fullPath );
+			if( !file_exists( STORAGE_PKG_PATH.$fullPath ) ) {
+				mkdir_p( STORAGE_PKG_PATH.$fullPath );
+			}
 		}
 
 		return $fullPath;
