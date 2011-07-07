@@ -2135,6 +2135,16 @@ class LibertyContent extends LibertyBase {
 	}
 
 
+	function getThumbnailFile( $pSize='small', $pInfoHash=NULL ) {
+		$ret = $this->getThumbnailUrl( $pSize, $pInfoHash );
+		// Check to make sure we don't have an absolute URI already, which could be the case for custom classes
+		if( strpos( $ret, 'http' ) !== 0 ) {
+			$ret = substr( $ret, strlen( BIT_ROOT_URL ) );
+		}
+		return( BIT_ROOT_PATH.$ret );
+	}
+
+
 	/**
 	 * Liberty override to stuff content_status_id and prepares parameters with default values for any getList function
 	 * @param pParamHash hash of parameters for any getList() function
