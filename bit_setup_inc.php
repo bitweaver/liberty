@@ -54,7 +54,7 @@ $gLibertySystem->registerService( 'liberty',
 );
 
 // delete cache file if requested
-if( @BitBase::verifyId( $_REQUEST['refresh_liberty_cache'] )) {
+if( !empty( $_REQUEST['refresh_liberty_cache'] ) && BitBase::verifyId( $_REQUEST['refresh_liberty_cache'] )) {
 	require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
 	LibertyContent::expungeCacheFile( $_REQUEST['refresh_liberty_cache'] );
 }
