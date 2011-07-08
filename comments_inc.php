@@ -131,8 +131,8 @@ if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 
 	} else {
 		// store fails handle errors and preview
 		$formfeedback['error']=array_merge( $formfeedback['error'], $storeComment->mErrors );
-		$postComment['data'] = $_REQUEST['comment_data'];
-		$postComment['title'] = $_REQUEST['comment_title'];
+		$postComment['data'] = !empty( $_REQUEST['comment_data'] ) ? $_REQUEST['comment_data'] : '';
+		$postComment['title'] = !empty( $_REQUEST['comment_title'] ) ? $_REQUEST['comment_title'] : '';
 		if( !empty( $_REQUEST['comment_name'] ) ) {
 			$postComment['anon_name'] = $_REQUEST['comment_name'];
 		}
