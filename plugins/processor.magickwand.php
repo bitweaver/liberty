@@ -79,13 +79,13 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 				$pFileHash['max_height'] = $iheight;
 			}
 
-			$itype = MagickGetImageMimeType( $magickWand );
-
 			// override $mimeExt if we have a custom setting for it
 			if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
 				$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
+			} elseif( $itype = MagickGetImageMimeType( $magickWand ) ) {
+				list( $type, $mimeExt ) = preg_split( '#/#', strtolower( $itype ) );
 			} else {
-				list( $type, $mimeExt ) = preg_split( '#/#', strtolower( $itype ));
+				list( $type, $mimeExt ) = preg_split( '#/#', strtolower( $pFileHash['type'] ) );
 			}
 			$replaced = FALSE;
 			$mimeExt = preg_replace( "!^(x-)?(jpeg|png|gif)$!", "$2", $mimeExt, -1, $replaced );
