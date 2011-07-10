@@ -1124,6 +1124,8 @@ if( !function_exists( 'liberty_mime_get_storage_branch' )) {
 			foreach ($pSubDirParts as $subDir) {
 				$pathParts[] = $subDir;
 			}
+		} else {
+			$pSubDir = liberty_mime_get_storage_sub_dir_name( $pParamHash );
 		}
 
 		$fullPath = implode( $pathParts, '/' ).'/';
