@@ -1151,6 +1151,18 @@ if( !function_exists( 'liberty_mime_get_storage_path' )) {
 	}
 }
 
+if( !function_exists( 'liberty_mime_get_source_url' )) {
+	function liberty_mime_get_source_url( $pParamHash ) { 
+		if( empty( $pParamHash['package'] ) ) {
+			$pParamHash['package'] = liberty_mime_get_storage_sub_dir_name( array( 'type' => BitBase::getParameter( $pParamHash, 'mime_type' ), 'name' => BitBase::getParameter( $pParamHash, 'file_name' ) ) );
+		}
+		if( empty( $pParamHash['sub_dir'] ) ) {
+			$pParamHash['sub_dir'] = BitBase::getParameter( $pParamHash, 'attachment_id' );
+		}
+		return STORAGE_PKG_URL.liberty_mime_get_storage_branch( $pParamHash ).basename( BitBase::getParameter( $pParamHash, 'file_name' ) );
+	}
+}
+
 if( !function_exists( 'liberty_mime_get_source_file' )) {
 	function liberty_mime_get_source_file( $pParamHash ) { 
 		if( empty( $pParamHash['package'] ) ) {
