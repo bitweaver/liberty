@@ -32,31 +32,29 @@ $tables = array(
 	lang_code C(32),
 	title C(160),
 	ip C(39),
-	data XL
-	CONSTRAINT '
-		, CONSTRAINT `liberty_content_status_ref` FOREIGN KEY (`content_status_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content_status`( `content_status_id` )
-		, CONSTRAINT `liberty_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )'
+	data X
+	CONSTRAINTS ', CONSTRAINT `liberty_content_status_ref` FOREIGN KEY (`content_status_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content_status`( `content_status_id` )
+				, CONSTRAINT `liberty_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )'
 ",
 
 'liberty_aliases' => "
 	content_id I4 PRIMARY,
 	alias_title C(190) PRIMARY
-	CONSTRAINT '
-		, CONSTRAINT liberty_aliases_content_fkey FOREIGN KEY( `content_id` ) REFERENCES `".BIT_DB_PREFIX."liberty_content` ( `content_id` )'
+	CONSTRAINTS ', CONSTRAINT liberty_aliases_content_fkey FOREIGN KEY( `content_id` ) REFERENCES `".BIT_DB_PREFIX."liberty_content` ( `content_id` )'
 ",
 
 'liberty_content_data' => "
 	content_id I4 PRIMARY,
 	data XL NOTNULL,
 	data_type C(32) PRIMARY
-	CONSTRAINT ', CONSTRAINT `liberty_content_data_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` ( `content_id` )'
+	CONSTRAINTS ', CONSTRAINT `liberty_content_data_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` ( `content_id` )'
 ",
 
 'liberty_content_hits' => "
 	content_id I4 PRIMARY,
 	hits I4 NOTNULL DEFAULT 1,
 	last_hit I8 NOTNULL DEFAULT 1
-	CONSTRAINT ', CONSTRAINT `liberty_content_hits_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` ( `content_id` )'
+	CONSTRAINTS ', CONSTRAINT `liberty_content_hits_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` ( `content_id` )'
 ",
 
 
@@ -70,7 +68,7 @@ $tables = array(
 	ip C(39),
 	history_comment C(200),
 	data XL
-	CONSTRAINT ', CONSTRAINT `liberty_history_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
+	CONSTRAINTS ', CONSTRAINT `liberty_history_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
 ",
 
 'liberty_action_log' => "
@@ -98,7 +96,7 @@ $tables = array(
 	to_content_id I4,
 	to_title C(160),
 	pos F
-	CONSTRAINT ', CONSTRAINT `lib_content_links_from_ref` FOREIGN KEY (`from_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
+	CONSTRAINTS ', CONSTRAINT `lib_content_links_from_ref` FOREIGN KEY (`from_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)
 				, CONSTRAINT `lib_content_links_to_ref` FOREIGN KEY (`to_content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
 ",
 
@@ -106,7 +104,7 @@ $tables = array(
 	content_id I4 PRIMARY,
 	pref_name C(40) PRIMARY,
 	pref_value C(250)
-	CONSTRAINT ', CONSTRAINT `lib_content_prefs_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
+	CONSTRAINTS ', CONSTRAINT `lib_content_prefs_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`)'
 ",
 
 'liberty_comments' => "
@@ -117,7 +115,7 @@ $tables = array(
 	thread_forward_sequence C(250),
 	thread_reverse_sequence C(250),
 	anon_name C(64)
-	CONSTRAINT ', CONSTRAINT `liberty_comments_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
+	CONSTRAINTS ', CONSTRAINT `liberty_comments_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
 		        , CONSTRAINT `liberty_comments_parent_ref` FOREIGN KEY (`parent_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
 		        , CONSTRAINT `liberty_comments_root_ref` FOREIGN KEY (`root_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
 ",
@@ -140,16 +138,14 @@ $tables = array(
 	hits I4,
 	error_code I4,
 	caption C(250)
-	CONSTRAINT '
-			, CONSTRAINT `liberty_attachments_con_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
-		'
+	CONSTRAINTS ', CONSTRAINT `liberty_attachments_con_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` ) '
 ",
 
 'liberty_attachment_prefs' => "
 	attachment_id I4 PRIMARY,
 	pref_name C(40) PRIMARY,
 	pref_value C(250)
-	CONSTRAINT ', CONSTRAINT `lib_att_prefs_content_ref` FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments` (`attachment_id`)'
+	CONSTRAINTS ', CONSTRAINT `lib_att_prefs_content_ref` FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments` (`attachment_id`)'
 ",
 
 'liberty_files' => "
@@ -168,9 +164,9 @@ $tables = array(
 	pos I4,
 	page_alias C(240),
 	parent_id I4
-	CONSTRAINT ', CONSTRAINT `liberty_structures_content_id_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
+	CONSTRAINTS ', CONSTRAINT `liberty_structures_content_id_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
 ",
-//	CONSTRAINT ', CONSTRAINT `liberty_root_structure_id_ref` FOREIGN KEY (`root_structure_id`) REFERENCES `".BIT_DB_PREFIX."liberty_structures`( `structure_id` )'
+//	CONSTRAINTS ', CONSTRAINT `liberty_root_structure_id_ref` FOREIGN KEY (`root_structure_id`) REFERENCES `".BIT_DB_PREFIX."liberty_structures`( `structure_id` )'
 
 'liberty_dynamic_variables' => "
 	name C(40) PRIMARY,
@@ -196,7 +192,7 @@ $tables = array(
 	perm_name C(30) PRIMARY,
 	content_id I4 PRIMARY,
 	is_revoked C(1)
-	CONSTRAINT   ' , CONSTRAINT `liberty_content_id_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`) '
+	CONSTRAINT   ', CONSTRAINT `liberty_content_id_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`) '
 ",
 /* chicken-and-egg constraint dependencies: Liberty needs user_id, Users needs liberty
                 , CONSTRAINT `liberty_content_perm_perm_ref` FOREIGN KEY (`perm_name`) REFERENCES `".BIT_DB_PREFIX."users_permissions` (`perm_name`)
@@ -217,10 +213,9 @@ $tables = array(
 	meta_type_id I4 PRIMARY NOTNULL,
 	meta_title_id I4 PRIMARY NOTNULL,
 	meta_value XL
-	CONSTRAINT '
-		, CONSTRAINT `lib_attachment_meta_id_ref`    FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments` (`attachment_id`)
-		, CONSTRAINT `lib_attachment_meta_type_ref`  FOREIGN KEY (`meta_type_id`)  REFERENCES `".BIT_DB_PREFIX."liberty_meta_types`  (`meta_type_id`)
-		, CONSTRAINT `lib_attachment_meta_title_ref` FOREIGN KEY (`meta_title_id`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_titles` (`meta_title_id`) '
+	CONSTRAINTS ', CONSTRAINT `lib_attachment_meta_id_ref`    FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments` (`attachment_id`)
+				, CONSTRAINT `lib_attachment_meta_type_ref`  FOREIGN KEY (`meta_type_id`)  REFERENCES `".BIT_DB_PREFIX."liberty_meta_types`  (`meta_type_id`)
+				, CONSTRAINT `lib_attachment_meta_title_ref` FOREIGN KEY (`meta_title_id`) REFERENCES `".BIT_DB_PREFIX."liberty_meta_titles` (`meta_title_id`) '
 ",
 
 );
