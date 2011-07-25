@@ -43,7 +43,7 @@ if( $gLibertySystem->isPluginActive( 'filterattachment' )) {
 }
 
 if( empty( $_REQUEST['size'] )) {
-	$_REQUEST['size'] = $gBitSystem->getConfig( 'liberty_thumbnail_size', 'medium' );
+	$_REQUEST['size'] = 'large';
 }
 
 $attachment['original'] = ( $gContent->isOwner( $attachment ) || $gBitSystem->isFeatureActive( 'liberty_original_image' ));
