@@ -42,7 +42,7 @@ $pluginParams = array (
 	// This should be the same for all mime plugins
 	'plugin_type'         => MIME_PLUGIN,
 	// Set this to TRUE if you want the plugin active right after installation
-	'auto_activate'       => TRUE,
+	'auto_activate'       => FALSE,
 	// Help page on bitweaver.org
 	//'help_page'           => 'LibertyMime+Image+Plugin',
 	// this should pick up all image
