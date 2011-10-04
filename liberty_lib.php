@@ -739,6 +739,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 			} else {
 				// create a subdirectory for the thumbs
 				$pFileHash['dest_branch'] = $initialDestPath.'thumbs/';
+				clearstatcache();
 				if( !is_dir( STORAGE_PKG_PATH.$pFileHash['dest_branch'] )) {
 					mkdir( STORAGE_PKG_PATH.$pFileHash['dest_branch'] );
 					clearstatcache();
