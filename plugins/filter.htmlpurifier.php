@@ -139,7 +139,7 @@ function htmlpure_getDefaultConfig( &$htmlp_version, $pObject=NULL ){
 
 
 	// Set the cache path
-	$config->set('Cache.SerializerPath', STORAGE_PKG_PATH );
+	$config->set('Cache.SerializerPath', rtrim( STORAGE_PKG_PATH, '/' ) );
 
 	if ($gBitSystem->getConfig('htmlpure_escape_bad', 'y') == 'y') {
 		$config->set('Core.EscapeInvalidTags', true);

@@ -398,7 +398,7 @@ class LibertyMime extends LibertyContent {
 	 * @param $pRootDir override BIT_ROOT_DIR with a custom absolute path - useful for areas where no we access should be allowed
 	 * @return string full path on local filsystem to store files.
 	 */
-	function getStoragePath( $pParamHash ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pRootDir = NULL ) {
+	function getStoragePath( $pParamHash, $pRootDir=NULL ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pRootDir = NULL ) {
 		$ret = null;
 
 		if( $branch = liberty_mime_get_storage_branch( $pParamHash ) ) {
