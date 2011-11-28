@@ -412,6 +412,7 @@ function liberty_content_edit( &$pObject ) {
 
 
 // ================== Liberty File Processing Functions ==================
+
 /**
  * Process uploaded files. Will automagically generate thumbnails for images
  *
@@ -441,12 +442,15 @@ function liberty_process_upload( &$pFileHash, $pMoveFile = TRUE ) {
 		//$pFile['type'] = $gBitSystem->verifyMimeType( $pFile['tmp_name'] );
 	}
 
+	$ext = strrpos( $pFileHash['upload']['name'], '.' );
+
 	// clean out crap that can make life difficult in server maintenance
-	$cleanedBaseName = preg_replace( '/[&\%:\/\\\]/', '', substr( $pFileHash['upload']['name'], 0, strrpos( $pFileHash['upload']['name'], '.' ) ) );
+	$cleanedBaseName = preg_replace( '/[&\%:\/\\\]/', '', substr( $pFileHash['upload']['name'], 0, $ext ) );
 	$pFileHash['upload']['dest_base_name'] = $cleanedBaseName;
 	$pFileHash['upload']['source_file'] = $pFileHash['upload']['tmp_name'];
 	// lowercase all file extensions
-	$pFileHash['upload']['name'] = $cleanedBaseName.strtolower( substr( $pFileHash['upload']['name'], strrpos( $pFileHash['upload']['name'], '.' ) ) );
+		
+	$pFileHash['upload']['name'] = $cleanedBaseName.strtolower( substr( $pFileHash['upload']['name'], $ext ) );
 
 	// Thumbs.db is a windows My Photos/ folder file, and seems to really piss off imagick
 	$canThumbFunc = liberty_get_function( 'can_thumbnail' );
