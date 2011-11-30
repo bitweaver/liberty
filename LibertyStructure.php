@@ -81,9 +81,13 @@ class LibertyStructure extends LibertyBase {
 			if( empty( $type['content_object'] ) ) {
 				// create *one* object for each object *type* to  call virtual methods.
 				include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
-				$type['content_object'] = new $type['handler_class']();
+				if( class_exists( $type['handler_class'] ) ) {
+					$type['content_object'] = new $type['handler_class']();
+				}
 			}
-			$ret['title'] = $type['content_object']->getTitle( $ret );
+			if( is_object( $type['content_object'] ) ) {
+				$ret['title'] = $type['content_object']->getTitle( $ret );
+			}
 		}
 
 		$sStructureNodeCache['structure_id'][$ret['structure_id']] = $ret;
@@ -834,7 +838,7 @@ class LibertyStructure extends LibertyBase {
 		$back = array();
 		$cant = $this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."liberty_structures` where `parent_id`=?",array((int)$id));
 		if ($cant) {
-			$query = "SELECT `structure_id`, `root_structure_id`, `parent_id`, `page_alias`, `pos`, `structure_level`, lc.`user_id`, lc.`title`, lc.`content_type_guid`, uu.`login`, uu.`real_name`, lc.`content_id`, lct.*
+			$query = "SELECT `structure_id`, `root_structure_id`, `parent_id`, `page_alias`, `pos`, `structure_level`, lc.`user_id`, lc.`title`, lc.`content_type_guid`, uu.`login`, uu.`real_name`, lc.`content_id`, lc.`last_modified`, lct.*
 					  FROM `".BIT_DB_PREFIX."liberty_structures` ls 
 						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( lc.`content_id`=ls.`content_id` )
 						INNER JOIN `".BIT_DB_PREFIX."liberty_content_types` lct ON ( lc.`content_type_guid`=lct.`content_type_guid` )
@@ -857,9 +861,13 @@ class LibertyStructure extends LibertyBase {
 					if( empty( $type['content_object'] ) ) {
 						// create *one* object for each object *type* to  call virtual methods.
 						include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
-						$type['content_object'] = new $type['handler_class']();
+						if( class_exists( $type['handler_class'] ) ) {
+							$type['content_object'] = new $type['handler_class']();
+						}
 					}
-					$res['title'] = $type['content_object']->getTitle( $res );
+					if( is_object( $type['content_object'] ) ) {
+						$res['title'] = $type['content_object']->getTitle( $res );
+					}
 					if ($res['structure_id'] != $id) {
 						$sub = $this->buildSubtreeToc( $res['structure_id'],$order,$res['prefix'], $pPrefixDepth, ($pDepth + 1) );
 						if (is_array($sub)) {
