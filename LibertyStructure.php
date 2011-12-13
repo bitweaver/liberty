@@ -875,7 +875,7 @@ class LibertyStructure extends LibertyBase {
 						}
 					}
 				}
-				$classFile = BIT_ROOT_PATH.$res['handler_package'].'/'.$res['handler_file'];
+				$classFile = constant( strtoupper( $res['handler_package'] ).'_PKG_PATH' ).$res['handler_file'];
 				if( file_exists( $classFile ) ) {
 					require_once( $classFile );
 					if( class_exists( $res['handler_class'] ) ) {
