@@ -78,14 +78,17 @@ class LibertyStructure extends LibertyBase {
 		if( !empty( $contentTypes[$ret['content_type_guid']] ) ) {
 			// quick alias for code readability
 			$type = &$contentTypes[$ret['content_type_guid']];
-			if( empty( $type['content_object'] ) ) {
+			if( empty( $type['content_object'] ) && !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
 				// create *one* object for each object *type* to  call virtual methods.
-				include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
-				if( class_exists( $type['handler_class'] ) ) {
-					$type['content_object'] = new $type['handler_class']();
+				$handlerFile = $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'];
+				if( file_exists( $handlerFile ) ) {
+					include_once( $handlerFile );
+					if( class_exists( $type['handler_class'] ) ) {
+						$type['content_object'] = new $type['handler_class']();
+					}
 				}
 			}
-			if( is_object( $type['content_object'] ) ) {
+			if( !empty( $type['content_object'] ) && is_object( $type['content_object'] ) ) {
 				$ret['title'] = $type['content_object']->getTitle( $ret );
 			}
 		}
@@ -858,14 +861,17 @@ class LibertyStructure extends LibertyBase {
 				if( !empty( $contentTypes[$res['content_type_guid']] ) ) {
 					// quick alias for code readability
 					$type = &$contentTypes[$res['content_type_guid']];
-					if( empty( $type['content_object'] ) ) {
+					if( empty( $type['content_object'] ) && !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
 						// create *one* object for each object *type* to  call virtual methods.
-						include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
-						if( class_exists( $type['handler_class'] ) ) {
-							$type['content_object'] = new $type['handler_class']();
+						$handlerFile = $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'];
+						if( file_exists( $handlerFile ) ) {
+							include_once( $handlerFile );
+							if( class_exists( $type['handler_class'] ) ) {
+								$type['content_object'] = new $type['handler_class']();
+							}
 						}
 					}
-					if( is_object( $type['content_object'] ) ) {
+					if( !empty( $type['content_object'] ) && is_object( $type['content_object'] ) ) {
 						$res['title'] = $type['content_object']->getTitle( $res );
 					}
 					if ($res['structure_id'] != $id) {
@@ -875,11 +881,14 @@ class LibertyStructure extends LibertyBase {
 						}
 					}
 				}
-				$classFile = constant( strtoupper( $res['handler_package'] ).'_PKG_PATH' ).$res['handler_file'];
-				if( file_exists( $classFile ) ) {
-					require_once( $classFile );
-					if( class_exists( $res['handler_class'] ) ) {
-						$res['display_url'] = call_user_func( array( $res['handler_class'], 'getDisplayUrl' ), $res['title'], $res );
+				$pkgPath = strtoupper( $res['handler_package'] ).'_PKG_PATH';
+				if( defined( $pkgPath ) ) {
+					$classFile = constant( strtoupper( $res['handler_package'] ).'_PKG_PATH' ).$res['handler_file'];
+					if( file_exists( $classFile ) ) {
+						require_once( $classFile );
+						if( class_exists( $res['handler_class'] ) ) {
+							$res['display_url'] = call_user_func( array( $res['handler_class'], 'getDisplayUrl' ), $res['title'], $res );
+						}
 					}
 				}
 				$back[] = $res;
