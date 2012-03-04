@@ -3530,4 +3530,31 @@ class LibertyContent extends LibertyBase {
 
 		return $ret;
 	}
+
+	/**
+	 * getViewableFieldHash -- Return a hash with key value pairs for all object fields based on permissions, and for end user consumption, such as for an API interface.
+	 *
+	 * @access public
+	 * @return the preview string
+	 **/
+	function getViewableFieldHash() {
+		$fields = $this->getViewableFields();
+
+		foreach( $fields as $fieldName ) {
+			$ret[$fieldName] = $this->getField( $fieldName );
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * getViewableFieldHash -- Return a hash with key value pairs for all object fields based on permissions, and for end user consumption, such as for an API interface.
+	 *
+	 * @access public
+	 * @return the preview string
+	 **/
+	function getViewableFields() {
+		return array( 'content_id', 'title' );
+	}
+
 }

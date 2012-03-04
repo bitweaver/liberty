@@ -88,6 +88,22 @@ class LibertyBase extends BitBase {
 	}
 
 	/**
+	 * Simple method to create a given class with a specified primary_id. The purpose of a method is to allow for derived classes to override as necessary.
+	 *
+	 * @param string class to be created
+	 * @param integer id from the secondary table of the object to be returned
+	 * @param call load on the content. Defaults to true.
+	 * @returns object of the appropriate content type class
+	 */
+	public static function getNewObjectById( $pClass, $pPrimaryId, $pLoadContent=TRUE ) {
+		$ret = new $pClass( $pPrimaryId );
+		if( $ret && $pLoadContent ) {
+			$ret->load();
+		}
+		return $ret;
+	}
+
+	/**
 	 * Simple method to create a given class with a specified content_id. The purpose of a method is to allow for derived classes to override as necessary.
 	 *
 	 * @param string class to be created
@@ -95,7 +111,7 @@ class LibertyBase extends BitBase {
 	 * @param call load on the content. Defaults to true.
 	 * @returns object of the appropriate content type class
 	 */
-	function getNewObject( $pClass, $pContentId, $pLoadContent=TRUE ) {
+	public static function getNewObject( $pClass, $pContentId, $pLoadContent=TRUE ) {
 		$ret = new $pClass( NULL, $pContentId );
 		if( $ret && $pLoadContent ) {
 			$ret->load();
