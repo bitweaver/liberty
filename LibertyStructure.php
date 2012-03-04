@@ -239,8 +239,12 @@ class LibertyStructure extends LibertyBase {
 					$type = &$contentTypes[$res['content_type_guid']];
 					if( empty( $type['content_object'] ) ) {
 						// create *one* object for each object *type* to  call virtual methods.
-						include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
-						$type['content_object'] = new $type['handler_class']();
+						if( file_exists( $handlerFile ) ) {
+							include_once( $handlerFile );
+							if( class_exists( $type['handler_class'] ) ) {
+								$type['content_object'] = new $type['handler_class']();
+							}
+						}
 					}
 					if( !empty( $pParamHash['thumbnail_size'] ) ) {
 						$aux['content_object'] = new $type['handler_class']( NULL, $aux['content_id'] );
@@ -248,7 +252,9 @@ class LibertyStructure extends LibertyBase {
 							$aux['thumbnail_url'] = $aux['content_object']->getThumbnailUrl( $pParamHash['thumbnail_size'] );
 						}
 					}
-					$aux['title'] = $type['content_object']->getTitle( $aux );
+					if( !empty( $type['content_object'] ) && is_object( $type['content_object'] ) ) {
+						$aux['title'] = $type['content_object']->getTitle( $aux );
+					}
 					$ret[$aux['structure_id']] = $aux;
 				}
 			}
