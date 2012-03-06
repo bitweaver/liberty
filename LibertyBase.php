@@ -95,7 +95,7 @@ class LibertyBase extends BitBase {
 	 * @param call load on the content. Defaults to true.
 	 * @returns object of the appropriate content type class
 	 */
-	public static function getNewObjectById( $pClass, $pPrimaryId, $pLoadContent=TRUE ) {
+	public function getNewObjectById( $pClass, $pPrimaryId, $pLoadContent=TRUE ) {
 		$ret = new $pClass( $pPrimaryId );
 		if( $ret && $pLoadContent ) {
 			$ret->load();
@@ -111,7 +111,7 @@ class LibertyBase extends BitBase {
 	 * @param call load on the content. Defaults to true.
 	 * @returns object of the appropriate content type class
 	 */
-	public static function getNewObject( $pClass, $pContentId, $pLoadContent=TRUE ) {
+	public function getNewObject( $pClass, $pContentId, $pLoadContent=TRUE ) {
 		$ret = new $pClass( NULL, $pContentId );
 		if( $ret && $pLoadContent ) {
 			$ret->load();
