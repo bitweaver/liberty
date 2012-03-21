@@ -23,7 +23,7 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 	$pFileHash['error'] = NULL;
 	$ret = NULL;
 	$isPdf = preg_match( '/pdf/i', $pFileHash['type'] );
-	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
+	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) && filesize( $pFileHash['source_file'] ) ) {
 		// This has to come BEFORE the MagickReadImage
 		if( $isPdf ) {
 			// has a customer pdf rasterization function been defined?
@@ -62,7 +62,7 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 			if( ( empty( $pFileHash['max_width'] ) && empty( $pFileHash['max_height'] ) ) || ( !empty( $pFileHash['max_width'] ) && $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION ) || ( !empty( $pFileHash['max_height'] ) && $pFileHash['max_height'] == MAX_THUMBNAIL_DIMENSION ) ) {
 				$pFileHash['max_width'] = $iwidth;
 				$pFileHash['max_height'] = $iheight;
-			} elseif(( $iwidth / $iheight ) < 1 && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] )) {
+			} elseif( $iheight && ( $iwidth / $iheight ) < 1 && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] )) {
 				// we have a portrait image, flip everything
 				$temp = $pFileHash['max_width'];
 				$pFileHash['max_height'] = $pFileHash['max_width'];
