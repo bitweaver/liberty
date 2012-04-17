@@ -50,7 +50,7 @@ class LibertyBase extends BitBase {
 	 */
 	function getLibertyClass($pContentGuid) {
 		// We can abuse getLibertyObject to do the work
-		$ret = $this->getLibertyObject('1', $pContentGuid, FALSE);
+		$ret = LibertyBase::getLibertyObject('1', $pContentGuid, FALSE);
 		// Make sure we don't have a content_id set though.
 		unset($ret->mContentId);
 		return $ret;
@@ -64,7 +64,7 @@ class LibertyBase extends BitBase {
 	 * @param call load on the content. Defaults to true.
 	 * @returns object of the appropriate content type class
 	 */
-	function getLibertyObject( $pContentId, $pContentGuid=NULL, $pLoadContent = TRUE ) {
+	public static function getLibertyObject( $pContentId, $pContentGuid=NULL, $pLoadContent = TRUE ) {
 		$ret = NULL;
 		global $gLibertySystem, $gBitUser, $gBitSystem;
 

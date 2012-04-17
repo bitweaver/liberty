@@ -57,7 +57,7 @@ class LibertyAttachable extends LibertyContent {
 	 * TODO: This code is old and is not used by any package in the bitweaver CVS anymore.
 	 * We will clean up this code as soon as we migrated all legacy code
 	 */
-	function load( $pContentId=NULL ) {
+	function load( $pContentId = NULL, $pPluginParams = NULL ) {
 		//deprecated( "This method has been replaced by a method in LibertyMime. Please try to migrate your code." );
 		// assume a derived class has joined on the liberty_content table, and loaded it's columns already.
 		global $gLibertySystem;

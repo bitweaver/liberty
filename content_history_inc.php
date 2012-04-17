@@ -80,7 +80,7 @@ if( isset( $_REQUEST["delete"] ) && isset( $_REQUEST["hist"] )) {
 		$_REQUEST["rollback_comment"] = '';
 	}
 	if( $gContent->rollbackVersion( $_REQUEST["rollback"], $_REQUEST["rollback_comment"] )) {
-		bit_redirect( $gContent->getDisplayUrl() );
+		bit_redirect( $gContent->getContactUrl() );
 	}
 }
 

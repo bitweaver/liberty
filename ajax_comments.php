@@ -11,7 +11,7 @@
 require_once( '../kernel/setup_inc.php' );
 
 $staticContent = new LibertyContent();
-$gContent = $staticContent->getLibertyObject( $_REQUEST['parent_id'], ( !empty( $_REQUEST['parent_guid'] ) ? $_REQUEST['parent_guid'] : NULL ));
+$gContent = LibertyBase::getLibertyObject( $_REQUEST['parent_id'], ( !empty( $_REQUEST['parent_guid'] ) ? $_REQUEST['parent_guid'] : NULL ));
 $XMLContent = "";
 
 if( !$gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE)) {

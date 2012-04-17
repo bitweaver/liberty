@@ -25,7 +25,7 @@
 			<div class="row">
 				{formlabel label="Title"}
 				{forminput}
-					<a href="{$gContent->getDisplayUrl()}">{$gContent->getTitle()}</a>
+					<a href="{$gContent->getContactUrl()}">{$gContent->getTitle()}</a>
 				{/forminput}
 			</div>
 

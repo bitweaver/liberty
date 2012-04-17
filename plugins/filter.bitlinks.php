@@ -309,9 +309,9 @@ class BitLinks extends BitBase {
 
 			// anchor
 			if( !empty( $pages[5][$i] )) {
-				$repl = preg_replace( '!href="([^"]*)"!', "href=\"$1{$pages[5][$i]}\"", BitPage::getDisplayLink( $page, $exists ));
+				$repl = preg_replace( '!href="([^"]*)"!', "href=\"$1{$pages[5][$i]}\"", BitPage::getPageLink( $page, $exists ));
 			} else {
-				$repl = BitPage::getDisplayLink( $page, $exists );
+				$repl = BitPage::getPageLink( $page, $exists );
 			}
 
 			// alternate title
@@ -331,9 +331,9 @@ class BitLinks extends BitBase {
 			$exists = $this->pageExists( $page, $pObject, $pParamHash['content_id'] );
 
 			if( !empty( $pages[5][$i] )) {
-				$repl = preg_replace( '!href="([^"]*)"!', "href=\"$1{$pages[5][$i]}\"", BitPage::getDisplayLink( $page, $exists ));
+				$repl = preg_replace( '!href="([^"]*)"!', "href=\"$1{$pages[5][$i]}\"", BitPage::getPageLink( $page, $exists ));
 			} else {
-				$repl = BitPage::getDisplayLink( $page, $exists );
+				$repl = BitPage::getPageLink( $page, $exists );
 			}
 
 			$key = md5( mt_rand() );
@@ -346,7 +346,7 @@ class BitLinks extends BitBase {
 			$pages = $this->extractWikiWords( $pData );
 			foreach( $pages as $page) {
 				if( $exists = $this->pageExists( $page, $pObject, $pParamHash['content_id'] )) {
-					$repl = BitPage::getDisplayLink( $page, $exists );
+					$repl = BitPage::getPageLink( $page, $exists );
 				} elseif( $gBitSystem->isFeatureActive( 'wiki_plurals' ) && $this->getLocale() == 'en_US' ) {
 					// Link plural topic names to singular topic names if the plural
 					// doesn't exist, and the language is english
@@ -363,9 +363,9 @@ class BitLinks extends BitBase {
 					if( $page != $plural_tmp ) {
 						$exists = $this->pageExists( $plural_tmp, $pObject, $pParamHash['content_id'] );
 					}
-					$repl = BitPage::getDisplayLink( $plural_tmp, $exists );
+					$repl = BitPage::getPageLink( $plural_tmp, $exists );
 				} else {
-					$repl = BitPage::getDisplayLink( $page, $exists );
+					$repl = BitPage::getPageLink( $page, $exists );
 				}
 
 				// old code

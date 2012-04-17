@@ -104,7 +104,7 @@ function data_quote( $pData, $pParams ) {
 			$c->mInfo['title'] = "#".$c->mCommentId;
 		}
 
-		$quote['cite_url'] = $c->getDisplayUrl();
+		$quote['cite_url'] = $c->getContactUrl();
 		$quote['title'] = $c->mInfo['title'];
 		$quote['created'] = $c->mInfo['created'];
 
@@ -119,7 +119,7 @@ function data_quote( $pData, $pParams ) {
 		$u = new BitUser();
 		$u->load( TRUE, $user );
 
-		$quote['user_url'] = $u->getDisplayUrl();
+		$quote['user_url'] = $u->getContactUrl();
 		$quote['user_display_name'] = $u->mInfo['display_name'];
 	}
 

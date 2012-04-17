@@ -127,7 +127,7 @@ class LibertyContent extends LibertyBase {
 	 * @access public
 	 * @return void
 	 */
-	function load() {
+	function load( $pContentId = NULL, $pPluginParams = NULL ) {
 		if( !empty( $this->mInfo['content_type_guid'] )) {
 			global $gLibertySystem, $gBitSystem, $gBitUser;
 			$this->loadPreferences();
@@ -750,7 +750,7 @@ class LibertyContent extends LibertyBase {
 		$ret[] = array(
 			'type'       => $this->mContentTypeGuid,
 			'landscape'  => FALSE,
-			'url'        => $this->getDisplayUrl(),
+			'url'        => $this->getContactUrl(),
 			'content_id' => $this->mContentId,
 		);
 		return $ret;
@@ -767,7 +767,7 @@ class LibertyContent extends LibertyBase {
 	 * Check permissions to establish if user has permission to view the object
 	 * Should be provided by the decendent package
 	 */
-	function isViewable() {
+	function isViewable($pContentId = NULL) {
 		return( true );
 	}
 
@@ -775,7 +775,7 @@ class LibertyContent extends LibertyBase {
 	 * Check permissions to establish if user has permission to edit the object
 	 * Should be provided by the decendent package
 	 */
-	function isEditable() {
+	function isEditable($pContentId = NULL) {
 		return( false );
 	}
 
@@ -784,7 +784,7 @@ class LibertyContent extends LibertyBase {
 	 * That would include permission to delete an object or change it's permissions
 	 * Should be provided by the decendent package
 	 */
-	function isAdminable() {
+	function isAdminable($pContentId = NULL) {
 		return( false );
 	}
 
@@ -2025,8 +2025,8 @@ class LibertyContent extends LibertyBase {
 	 * @param array different possibilities depending on derived class
 	 * @return string Formated URL address to display the page.
 	 */
-	function getDisplayUri( $pContentId=NULL, $pMixed=NULL ) {
-		return BIT_ROOT_URI.substr( $this->getDisplayUrl( $pContentId, $pMixed ), strlen( BIT_ROOT_URL ) );
+	public static function getDisplayUri( $pContentId=NULL, $pMixed=NULL ) {
+		return BIT_ROOT_URI.substr( self::getDisplayUrl( $pContentId, $pMixed ), strlen( BIT_ROOT_URL ) );
 	}
 
 	/**
@@ -2035,19 +2035,29 @@ class LibertyContent extends LibertyBase {
 	 * @param array different possibilities depending on derived class
 	 * @return string Formated URL address to display the page.
 	 */
-	function getDisplayUrl( $pContentId = NULL, $pMixed = NULL ) {
+	public static function getDisplayUrl( $pContentId = NULL, $pMixed = NULL ) {
 		if( @BitBase::verifyId( $pContentId ) ) {
 			$ret = BIT_ROOT_URL.'index.php?content_id='.$pContentId;
 		} elseif( @BitBase::verifyId( $pMixed['content_id'] ) ) {
 			$ret = BIT_ROOT_URL.'index.php?content_id='.$pMixed['content_id'];
-		} elseif( $this->isValid() ) {
-			$ret = BIT_ROOT_URL.'index.php?content_id='.$this->mContentId;
 		} else {
 			$ret = NULL;
 		}
 		return $ret;
 	}
 
+	/**
+	 * Not-so-pure virtual function that returns Request_URI to a piece of content
+	 */
+	public function getContentUrl( $pContentId = NULL ) {
+		if( $pContentId ) {
+			return self::getDisplayUrl( $pContentId );
+		} elseif( !empty( $this ) && $this->isValid() ) {
+			return self::getDisplayUrl( $this->mContentId );
+		} else {
+			return self::getDisplayUrl( 1 );
+		}
+	}
 
 	/**
 	 * Returns the create/edit url to a piece of content
@@ -2111,7 +2121,7 @@ class LibertyContent extends LibertyBase {
 	 * @param int optional secondary id, such as user_id or products_id, etc
 	 * @return string Formated URL address to display the page.
 	 */
-	function getThumbnailUrl( $pSize='small', $pContentId=NULL, $pSecondaryId=NULL ) {
+	function getThumbnailUrl( $pSize = 'small', $pInfoHash = NULL, $pSecondaryId = NULL, $pDefault=TRUE ) {
 		$ret = '';
 		if( !empty( $this->mInfo['content_type']['handler_package'] ) ) {
 			$pkgName = $this->mInfo['content_type']['handler_package'];
@@ -2327,7 +2337,7 @@ class LibertyContent extends LibertyBase {
 		}
 
 		// if we want the primary attachment for each object
-		if(  $gBitSystem->isFeatureActive( 'liberty_display_primary_attach' )  ){ 
+		if(  $gBitSystem->isFeatureActive( 'liberty_display_primary_attach' )  ){
 			$selectSql .= ', lfp.`file_name`, lfp.`mime_type`, la.`attachment_id`, '; 
 			$joinSql .= "LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON( la.`content_id` = lc.`content_id` AND la.`is_primary` = 'y' ) 
 						 LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files` lfp ON( lfp.`file_id` = la.`foreign_id` )";
@@ -2539,7 +2549,7 @@ class LibertyContent extends LibertyBase {
 						$userInfo = $gBitUser->getUserInfo( array( 'content_id' => $aux['content_id'] ));
 						$aux['title']        = $type['content_object']->getTitle( $userInfo );
 						$aux['display_link'] = $type['content_object']->getDisplayLink( $userInfo['login'], $userInfo );
-						$aux['display_url']  = $type['content_object']->getDisplayUrl( $userInfo['login'] );
+						$aux['display_url']  = $type['content_object']->getContentUrl( $userInfo['login'] );
 					} else {
 						$aux['title']        = $type['content_object']->getTitle( $aux );
 						$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
@@ -2548,7 +2558,7 @@ class LibertyContent extends LibertyBase {
 						 * nice try, but you can't do this because individual classes have gone off the reservation changing the params they accept
 						 * for distributed packages we need to enforce that method overrides all take the same basic params.
 						 **/
-						// $aux['display_url']  = $type['content_object']->getDisplayUrl( NULL, $aux );
+						// $aux['display_url']  = $type['content_object']->getContactUrl( NULL, $aux );
 						$aux['display_url'] = BIT_ROOT_URL."index.php?content_id=".$aux['content_id'];
 					}
 
