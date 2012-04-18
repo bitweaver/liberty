@@ -332,7 +332,7 @@ class LibertyComment extends LibertyMime {
     * @param pMixed different possibilities depending on derived class
     * @return the link to display the page.
     */
-	public static function getDisplayUrl( $pLinkText=NULL, $pMixed=NULL ) {
+	public static function getDisplayUrlFromHash( $pLinkText=NULL, $pMixed=NULL ) {
 		if( empty( $pMixed ) ) {
 			$pMixed = &$this->mInfo;
 		}
@@ -344,7 +344,7 @@ class LibertyComment extends LibertyMime {
 			$pUrlHash['comment'] = $pMixed;
 			$ret = $viewContent->getContactUrl( NULL, $pUrlHash ).( @BitBase::verifyId( $pMixed['content_id'] ) ? "#comment_".$pMixed['content_id'] : '' );
 		}elseif( @BitBase::verifyId( $pMixed['content_id'] )) {
-			$ret = parent::getDisplayUrl( NULL, $pMixed );
+			$ret = parent::getDisplayUrlFromHash( NULL, $pMixed );
 			$ret .= "#comment_{$pMixed['content_id']}";
 		}
 

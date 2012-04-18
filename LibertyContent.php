@@ -2014,7 +2014,7 @@ class LibertyContent extends LibertyBase {
 
 		// finally we are ready to create the full link
 		if( !empty( $pMixed['content_id'] )) {
-			$ret = '<a title="'.htmlspecialchars( $linkTitle ).'" href="'.LibertyContent::getDisplayUrl( $pMixed['content_id'], $pMixed ).$pAnchor.'">'.htmlspecialchars( $pLinkText ).'</a>';
+			$ret = '<a title="'.htmlspecialchars( $linkTitle ).'" href="'.LibertyContent::getDisplayUrlFromHash( $pMixed['content_id'], $pMixed ).$pAnchor.'">'.htmlspecialchars( $pLinkText ).'</a>';
 		}
 		return $ret;
 	}
@@ -2026,19 +2026,16 @@ class LibertyContent extends LibertyBase {
 	 * @return string Formated URL address to display the page.
 	 */
 	public static function getDisplayUri( $pContentId=NULL, $pMixed=NULL ) {
-		return BIT_ROOT_URI.substr( self::getDisplayUrl( $pContentId, $pMixed ), strlen( BIT_ROOT_URL ) );
+		return BIT_ROOT_URI.substr( self::getDisplayUrlFromHash( $pContentId, $pMixed ), strlen( BIT_ROOT_URL ) );
 	}
 
 	/**
 	 * Not-so-pure virtual function that returns Request_URI to a piece of content
-	 * @param string Text for DisplayLink function
-	 * @param array different possibilities depending on derived class
+	 * @param array $pMixed a hash of params to add to the url
 	 * @return string Formated URL address to display the page.
 	 */
-	public static function getDisplayUrl( $pContentId = NULL, $pMixed = NULL ) {
-		if( @BitBase::verifyId( $pContentId ) ) {
-			$ret = BIT_ROOT_URL.'index.php?content_id='.$pContentId;
-		} elseif( @BitBase::verifyId( $pMixed['content_id'] ) ) {
+	public static function getDisplayUrlFromHash( $pMixed = NULL ) {
+		if( @BitBase::verifyId( $pMixed['content_id'] ) ) {
 			$ret = BIT_ROOT_URL.'index.php?content_id='.$pMixed['content_id'];
 		} else {
 			$ret = NULL;
@@ -2047,16 +2044,14 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	 * Not-so-pure virtual function that returns Request_URI to a piece of content
+	 * Returns Request URL to a piece of content
 	 */
-	public function getContentUrl( $pContentId = NULL ) {
-		if( $pContentId ) {
-			return self::getDisplayUrl( $pContentId );
-		} elseif( !empty( $this ) && $this->isValid() ) {
-			return self::getDisplayUrl( $this->mContentId );
-		} else {
-			return self::getDisplayUrl( 1 );
+	public function getDisplayUrl() {
+		$ret = NULL;
+		if( !empty( $this ) && $this->isValid() ) {
+			$ret = self::getDisplayUrlFromHash( $this->mInfo );
 		}
+		return $ret;
 	}
 
 	/**
