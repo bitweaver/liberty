@@ -120,7 +120,7 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		return $ret;
 	}
 
-	if( !$att = LibertyMime::getAttachment( $pParams['id'], $pParams )) {
+	if( !$att = $pCommonObject->getAttachment( $pParams['id'], $pParams )) {
 		$ret = tra( "The attachment id given is not valid." );
 		return $ret;
 	}
