@@ -2025,8 +2025,20 @@ class LibertyContent extends LibertyBase {
 	 * @param array different possibilities depending on derived class
 	 * @return string Formated URL address to display the page.
 	 */
-	public static function getDisplayUri( $pContentId=NULL, $pMixed=NULL ) {
-		return BIT_ROOT_URI.substr( self::getDisplayUrlFromHash( $pContentId, $pMixed ), strlen( BIT_ROOT_URL ) );
+	public function getDisplayUri() {
+		if( $this->isValid() ) {
+			return BIT_ROOT_URI.substr( self::getDisplayUrlFromHash( $this->mInfo ), strlen( BIT_ROOT_URL ) );
+		}
+	}
+
+	/**
+	 * Not-so-pure virtual function that returns fully qualified URI to a piece of content
+	 * @param string Text for DisplayLink function
+	 * @param array different possibilities depending on derived class
+	 * @return string Formated URL address to display the page.
+	 */
+	public static function getDisplayUriFromHash( &$pParamHash ) {
+		return BIT_ROOT_URI.substr( self::getDisplayUrlFromHash( $pParamHash ), strlen( BIT_ROOT_URL ) );
 	}
 
 	/**
@@ -2034,11 +2046,10 @@ class LibertyContent extends LibertyBase {
 	 * @param array $pMixed a hash of params to add to the url
 	 * @return string Formated URL address to display the page.
 	 */
-	public static function getDisplayUrlFromHash( $pMixed = NULL ) {
-		if( @BitBase::verifyId( $pMixed['content_id'] ) ) {
-			$ret = BIT_ROOT_URL.'index.php?content_id='.$pMixed['content_id'];
-		} else {
-			$ret = NULL;
+	public static function getDisplayUrlFromHash( &$pParamHash ) {
+		$ret = NULL;
+		if( @BitBase::verifyId( $pParamHash['content_id'] ) ) {
+			$ret = BIT_ROOT_URL.'index.php?content_id='.$pParamHash['content_id'];
 		}
 		return $ret;
 	}
