@@ -329,31 +329,30 @@ class LibertyComment extends LibertyMime {
 
     /**
     * @param pLinkText name of
-    * @param pMixed different possibilities depending on derived class
+    * @param pParamHash different possibilities depending on derived class
     * @return the link to display the page.
     */
-	public static function getDisplayUrlFromHash( $pLinkText=NULL, $pMixed=NULL ) {
+	public static function getDisplayUrlFromHash( $pParamHash ) {
 		$ret = NULL;
-
-		if( @BitBase::verifyId( $pMixed['root_id'] ) && $viewContent = LibertyBase::getLibertyObject( $pMixed['root_id'] ) ) {
+		if( @BitBase::verifyId( $pParamHash['root_id'] ) && $viewContent = LibertyBase::getLibertyObject( $pParamHash['root_id'] ) ) {
 			// pass in cooment hash to the url func incase the root package needs to do something fancy
-			$pUrlHash['comment'] = $pMixed;
-			$ret = $viewContent->getDisplayUrlFromHash( $pUrlHash ).( @BitBase::verifyId( $pMixed['content_id'] ) ? "#comment_".$pMixed['content_id'] : '' );
-		}elseif( @BitBase::verifyId( $pMixed['content_id'] )) {
-			$ret = parent::getDisplayUrlFromHash( NULL, $pMixed );
-			$ret .= "#comment_{$pMixed['content_id']}";
+			$viewContent->mInfo['comment'] = $pParamHash;
+			$ret = $viewContent->getDisplayUrl().( @self::verifyId( $pParamHash['content_id'] ) ? "#comment_".$pParamHash['content_id'] : '' );
+		} elseif( @BitBase::verifyId( $pParamHash['content_id'] ) ) {
+			$ret = parent::getDisplayUrlFromHash( $pParamHash );
+			$ret .= "#comment_{$pParamHash['content_id']}";
 		}
 
 		return( $ret );
 	}
 
 	//generate a URL to directly access and display a single comment and the associated root content
-	public static function getDirectUrlFromHash( $pMixed=NULL ) {
-			if( empty( $pMixed ) ) {
-					$pMixed = &$this->mInfo;
+	public static function getDirectUrlFromHash( $pParamHash=NULL ) {
+			if( empty( $pParamHash ) ) {
+					$pParamHash = &$this->mInfo;
 			}
 			$ret = NULL;
-			if( !empty( $pMixed['root_id'] ) && $viewContent = LibertyBase::getLibertyObject( $pMixed['root_id'] ) ) {
+			if( !empty( $pParamHash['root_id'] ) && $viewContent = LibertyBase::getLibertyObject( $pParamHash['root_id'] ) ) {
 					$ret = $viewContent->getDisplayUrl();
 					if ( strstr($ret, '?') ) {
 						$ret .= "&";
@@ -361,7 +360,7 @@ class LibertyComment extends LibertyMime {
 					else {
 						$ret .= "?";
 					}
-					$ret .= "view_comment_id=" . $pMixed['content_id'] .  "#comment_".$pMixed['content_id'];
+					$ret .= "view_comment_id=" . $pParamHash['content_id'] .  "#comment_".$pParamHash['content_id'];
 			}
 			return ( $ret );
 	}
