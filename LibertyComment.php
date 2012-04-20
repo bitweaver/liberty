@@ -333,16 +333,12 @@ class LibertyComment extends LibertyMime {
     * @return the link to display the page.
     */
 	public static function getDisplayUrlFromHash( $pLinkText=NULL, $pMixed=NULL ) {
-		if( empty( $pMixed ) ) {
-			$pMixed = &$this->mInfo;
-		}
-
 		$ret = NULL;
 
-		if( @$this->verifyId( $pMixed['root_id'] ) && $viewContent = LibertyBase::getLibertyObject( $pMixed['root_id'] ) ) {
+		if( @BitBase::verifyId( $pMixed['root_id'] ) && $viewContent = LibertyBase::getLibertyObject( $pMixed['root_id'] ) ) {
 			// pass in cooment hash to the url func incase the root package needs to do something fancy
 			$pUrlHash['comment'] = $pMixed;
-			$ret = $viewContent->getContactUrl( NULL, $pUrlHash ).( @BitBase::verifyId( $pMixed['content_id'] ) ? "#comment_".$pMixed['content_id'] : '' );
+			$ret = $viewContent->getDisplayUrlFromHash( $pUrlHash ).( @BitBase::verifyId( $pMixed['content_id'] ) ? "#comment_".$pMixed['content_id'] : '' );
 		}elseif( @BitBase::verifyId( $pMixed['content_id'] )) {
 			$ret = parent::getDisplayUrlFromHash( NULL, $pMixed );
 			$ret .= "#comment_{$pMixed['content_id']}";
@@ -352,13 +348,13 @@ class LibertyComment extends LibertyMime {
 	}
 
 	//generate a URL to directly access and display a single comment and the associated root content
-	function getDisplayUrl2( $pLinkText=NULL, $pMixed=NULL ) {
+	public static function getDirectUrlFromHash( $pMixed=NULL ) {
 			if( empty( $pMixed ) ) {
 					$pMixed = &$this->mInfo;
 			}
 			$ret = NULL;
 			if( !empty( $pMixed['root_id'] ) && $viewContent = LibertyBase::getLibertyObject( $pMixed['root_id'] ) ) {
-					$ret = $viewContent->getContactUrl();
+					$ret = $viewContent->getDisplayUrl();
 					if ( strstr($ret, '?') ) {
 						$ret .= "&";
 					}
@@ -466,8 +462,8 @@ class LibertyComment extends LibertyMime {
 		if( $result = $this->mDb->query( $query, $bindVars, $pParamHash['max_records'], $pParamHash['offset'] )) {
 			while( $row = $result->FetchRow() ) {
 				$row['display_link'] = $this->getDisplayLink( $row['content_title'], $row );
-				$row['display_url'] = $this->getContactUrl( $row['content_title'], $row );
-				$row['direct_url'] = $this->getDIsplayUrl2( $row['content_title'], $row );
+				$row['display_url'] = $this->getDisplayUrlFromHash( $row );
+				$row['direct_url'] = $this->getDirectUrlFromHash( $row );
 				if (!empty($pParamHash['parse'])) {
 					$row['parsed_data'] = $this->parseData($row);
 				}
