@@ -2027,7 +2027,7 @@ class LibertyContent extends LibertyBase {
 	 */
 	public function getDisplayUri() {
 		if( $this->isValid() ) {
-			return BIT_ROOT_URI.substr( self::getDisplayUrlFromHash( $this->mInfo ), strlen( BIT_ROOT_URL ) );
+			return BIT_ROOT_URI.substr( static::getDisplayUrlFromHash( $this->mInfo ), strlen( BIT_ROOT_URL ) );
 		}
 	}
 
@@ -2038,7 +2038,7 @@ class LibertyContent extends LibertyBase {
 	 * @return string Formated URL address to display the page.
 	 */
 	public static function getDisplayUriFromHash( &$pParamHash ) {
-		return BIT_ROOT_URI.substr( self::getDisplayUrlFromHash( $pParamHash ), strlen( BIT_ROOT_URL ) );
+		return BIT_ROOT_URI.substr( static::getDisplayUrlFromHash( $pParamHash ), strlen( BIT_ROOT_URL ) );
 	}
 
 	/**
@@ -2048,7 +2048,7 @@ class LibertyContent extends LibertyBase {
 	 */
 	public static function getDisplayUrlFromHash( &$pParamHash ) {
 		$ret = NULL;
-		if( @BitBase::verifyId( $pParamHash['content_id'] ) ) {
+		if( @static::verifyId( $pParamHash['content_id'] ) ) {
 			$ret = BIT_ROOT_URL.'index.php?content_id='.$pParamHash['content_id'];
 		}
 		return $ret;
@@ -2060,7 +2060,7 @@ class LibertyContent extends LibertyBase {
 	public function getDisplayUrl() {
 		$ret = NULL;
 		if( !empty( $this ) && $this->isValid() ) {
-			$ret = self::getDisplayUrlFromHash( $this->mInfo );
+			$ret = static::getDisplayUrlFromHash( $this->mInfo );
 		}
 		return $ret;
 	}
