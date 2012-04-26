@@ -746,13 +746,18 @@ class LibertyContent extends LibertyBase {
 	 * @access public
 	 * @return export data
 	 */
-	function exportHtml() {
-		$ret[] = array(
-			'type'       => $this->mContentTypeGuid,
-			'landscape'  => FALSE,
-			'url'        => $this->getDisplayUrl(),
-			'content_id' => $this->mContentId,
-		);
+	function exportHash() {
+		$ret = array();
+		if( $this->isValid() ) {
+			$ret = array(
+				'type'      => $this->mContentTypeGuid,
+				'title'  	=> $this->getTitle(),
+				'url'        => $this->getDisplayUri(),
+				'content_id' => $this->mContentId,
+				'date_created' => date( DateTime::W3C, $this->getField('created') ),
+				'date_last_modified' => date( DateTime::W3C, $this->getField('last_modified') ),
+			);
+		}
 		return $ret;
 	}
 
@@ -3529,32 +3534,6 @@ class LibertyContent extends LibertyBase {
 		$gContent = $oldGContent;
 
 		return $ret;
-	}
-
-	/**
-	 * getViewableFieldHash -- Return a hash with key value pairs for all object fields based on permissions, and for end user consumption, such as for an API interface.
-	 *
-	 * @access public
-	 * @return the preview string
-	 **/
-	function getViewableFieldHash() {
-		$fields = $this->getViewableFields();
-
-		foreach( $fields as $fieldName ) {
-			$ret[$fieldName] = $this->getField( $fieldName );
-		}
-
-		return $ret;
-	}
-
-	/**
-	 * getViewableFieldHash -- Return a hash with key value pairs for all object fields based on permissions, and for end user consumption, such as for an API interface.
-	 *
-	 * @access public
-	 * @return the preview string
-	 **/
-	function getViewableFields() {
-		return array( 'content_id', 'title' );
 	}
 
 }
