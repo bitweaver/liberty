@@ -332,7 +332,7 @@ class LibertyComment extends LibertyMime {
     * @param pParamHash different possibilities depending on derived class
     * @return the link to display the page.
     */
-	public static function getDisplayUrlFromHash( $pParamHash ) {
+	public static function getDisplayUrlFromHash( &$pParamHash ) {
 		$ret = NULL;
 		if( @BitBase::verifyId( $pParamHash['root_id'] ) && $viewContent = LibertyBase::getLibertyObject( $pParamHash['root_id'] ) ) {
 			// pass in cooment hash to the url func incase the root package needs to do something fancy

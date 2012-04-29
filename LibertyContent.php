@@ -2038,7 +2038,7 @@ class LibertyContent extends LibertyBase {
 	 * @return string Formated URL address to display the page.
 	 */
 	public static function getDisplayUriFromHash( &$pParamHash ) {
-		return BIT_ROOT_URI.substr( static::getDisplayUrlFromHash( $pParamHash ), strlen( BIT_ROOT_URL ) );
+		return BIT_ROOT_URI.substr( self::getDisplayUrlFromHash( $pParamHash ), strlen( BIT_ROOT_URL ) );
 	}
 
 	/**
@@ -2048,7 +2048,7 @@ class LibertyContent extends LibertyBase {
 	 */
 	public static function getDisplayUrlFromHash( &$pParamHash ) {
 		$ret = NULL;
-		if( @static::verifyId( $pParamHash['content_id'] ) ) {
+		if( @self::verifyId( $pParamHash['content_id'] ) ) {
 			$ret = BIT_ROOT_URL.'index.php?content_id='.$pParamHash['content_id'];
 		}
 		return $ret;
@@ -2060,7 +2060,7 @@ class LibertyContent extends LibertyBase {
 	public function getDisplayUrl() {
 		$ret = NULL;
 		if( !empty( $this ) && $this->isValid() ) {
-			$ret = static::getDisplayUrlFromHash( $this->mInfo );
+			$ret = self::getDisplayUrlFromHash( $this->mInfo );
 		}
 		return $ret;
 	}
@@ -2344,8 +2344,8 @@ class LibertyContent extends LibertyBase {
 
 		// if we want the primary attachment for each object
 		if(  $gBitSystem->isFeatureActive( 'liberty_display_primary_attach' )  ){
-			$selectSql .= ', lfp.`file_name`, lfp.`mime_type`, la.`attachment_id`, '; 
-			$joinSql .= "LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON( la.`content_id` = lc.`content_id` AND la.`is_primary` = 'y' ) 
+			$selectSql .= ', lfp.`file_name`, lfp.`mime_type`, la.`attachment_id`, ';
+			$joinSql .= "LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON( la.`content_id` = lc.`content_id` AND la.`is_primary` = 'y' )
 						 LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files` lfp ON( lfp.`file_id` = la.`foreign_id` )";
 		}
 
@@ -2555,7 +2555,7 @@ class LibertyContent extends LibertyBase {
 						$userInfo = $gBitUser->getUserInfo( array( 'content_id' => $aux['content_id'] ));
 						$aux['title']        = $type['content_object']->getTitle( $userInfo );
 						$aux['display_link'] = $type['content_object']->getDisplayLink( $userInfo['login'], $userInfo );
-						$aux['display_url']  = $type['content_object']->getContentUrl( $userInfo['login'] );
+						$aux['display_url']  = $type['content_object']->getDisplayUrl( $userInfo['login'] );
 					} else {
 						$aux['title']        = $type['content_object']->getTitle( $aux );
 						$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
