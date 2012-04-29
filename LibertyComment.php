@@ -99,7 +99,7 @@ class LibertyComment extends LibertyMime {
 		if (!$pParamHash['root_id']) {
 			$this->mErrors['root_id'] = "Missing root id for comment";
 		}
- 
+
 		if( empty( $pParamHash['parent_id'] ) ){
 			$pParamHash['parent_id'] = (@BitBase::verifyId($this->mInfo['parent_id']) ? $this->mInfo['parent_id'] : (!@BitBase::verifyId($pParamHash['post_comment_reply_id']) ? $pParamHash['comments_parent_id'] : $pParamHash['post_comment_reply_id']));
 		}
@@ -119,7 +119,7 @@ class LibertyComment extends LibertyMime {
 		if( !empty( $pParamHash['comment_title'] ) ){
 			$pParamHash['title'] = $pParamHash['comment_title'];
 		}
-		
+
 		if( !empty( $pParamHash['comment_data'] ) ){
 			$pParamHash['edit'] = $pParamHash['comment_data'];
 		}
@@ -132,7 +132,7 @@ class LibertyComment extends LibertyMime {
 			$dupeQuery = "SELECT `data` FROM `".BIT_DB_PREFIX."liberty_content` lc INNER JOIN `".BIT_DB_PREFIX."liberty_comments` lcom ON (lc.`content_id`=lcom.`content_id`) WHERE `user_id`=? AND `content_type_guid`='".BITCOMMENT_CONTENT_TYPE_GUID."' AND `ip`=? AND lcom.`root_id`=? ORDER BY `created` DESC";
 			if( $lastPostData = $this->mDb->getOne( $dupeQuery, array( $gBitUser->mUserId, $_SERVER['REMOTE_ADDR'], $pParamHash['root_id'] ) ) ) {
 				if( trim( $lastPostData ) == trim( $pParamHash['edit'] ) ) {
-					$this->mErrors['store'] = tra( 'Duplicate comment.' );	
+					$this->mErrors['store'] = tra( 'Duplicate comment.' );
 				}
 			}
 		}
@@ -151,7 +151,7 @@ class LibertyComment extends LibertyMime {
 	}
 
 	function storeComment( &$pParamHash ) {
-		
+
 
 		$this->mDb->StartTrans();
 		if( $this->verifyComment($pParamHash) && LibertyMime::store( $pParamHash ) ) {
@@ -253,7 +253,7 @@ class LibertyComment extends LibertyMime {
 	//this is the code from the old function which needs to be revised
 	// 1) change name
 	// 2) use materialized path to cut query count and eliminate recursion
-	
+
 	function expunge() {
 		global $gBitSystem;
 		$ret = FALSE;
@@ -308,7 +308,7 @@ class LibertyComment extends LibertyMime {
 			$withinEditTime = TRUE;
 		}
 		if( $gBitUser->isRegistered() ) {
-			/* get the hash of the users perms rather than call hasUserPermission which 
+			/* get the hash of the users perms rather than call hasUserPermission which
 			 * always returns true for owner which interferes with trying to time limit editing
 			 */
 			$checkPerms = $this->getUserPermissions();
@@ -435,20 +435,20 @@ class LibertyComment extends LibertyMime {
 					lcom.`comment_id`,
 					lc.`content_id`,
 					lcom.`parent_id`,
-					lcom.`anon_name`, 
-					lcom.`root_id`, 
-					lc.`title` AS `content_title`, 
-					rlc.`title` AS `root_content_title`, 
-					lc.`created`, 
-					lc.`data`, 
-					lc.`last_modified` as `last_modified`, 
-					lc.`title` as `title`, 
-					ptc.`content_type_guid` as `parent_content_type_guid`, 
-					rlc.`content_type_guid` as `root_content_type_guid`, 
-					lc.`content_type_guid`, 
-					uu.`login` AS `creator_user`, 
+					lcom.`anon_name`,
+					lcom.`root_id`,
+					lc.`title` AS `content_title`,
+					rlc.`title` AS `root_content_title`,
+					lc.`created`,
+					lc.`data`,
+					lc.`last_modified` as `last_modified`,
+					lc.`title` as `title`,
+					ptc.`content_type_guid` as `parent_content_type_guid`,
+					rlc.`content_type_guid` as `root_content_type_guid`,
+					lc.`content_type_guid`,
+					uu.`login` AS `creator_user`,
 					uu.`login`,
-					uu.`real_name`, 
+					uu.`real_name`,
 					uu.`user_id`
 					$selectSql
 				  FROM `".BIT_DB_PREFIX."liberty_comments` lcom
@@ -515,16 +515,16 @@ class LibertyComment extends LibertyMime {
 
 		$joinSql = $selectSql = $whereSql = '';
 
-		/* brute force call to liberty_content_list_sql 
+		/* brute force call to liberty_content_list_sql
 		 * for status enforcement
-		 * 
-		 * here we call liberty_content_list_sql which has a 
-		 * restriction to enforce content_status_id. we could 
+		 *
+		 * here we call liberty_content_list_sql which has a
+		 * restriction to enforce content_status_id. we could
 		 * have called the full list_sql service, but that
 		 * would be overkill for just getting a count.
 		 */
 		if ( !is_array($pContentId) ){
-			$sqlHash = liberty_content_list_sql( $this, NULL ); 
+			$sqlHash = liberty_content_list_sql( $this, NULL );
 			if( !empty( $sqlHash['select_sql'] ) ) {
 				$selectSql .= $sqlHash['select_sql'];
 			}
@@ -698,8 +698,8 @@ class LibertyComment extends LibertyMime {
 
 	function getRootObj(){
 		if ( !is_object( $this->mRootObj ) && !empty( $this->mInfo['root_id'] ) ){
-			if ( $obj = LibertyBase::getLibertyObject( $this->mInfo['root_id'] ) ) { 
-				$this->mRootObj = $obj; 
+			if ( $obj = LibertyBase::getLibertyObject( $this->mInfo['root_id'] ) ) {
+				$this->mRootObj = $obj;
 			}
 		}
 		return $this->mRootObj;

@@ -38,8 +38,8 @@ class LibertyMime extends LibertyContent {
 
 	/**
 	 * load the attachments for a given content id and then stuff them in mStorage
-	 * 
-	 * @param array $pContentId 
+	 *
+	 * @param array $pContentId
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -180,7 +180,7 @@ class LibertyMime extends LibertyContent {
 
 	/**
 	 * pluginStore will use a given plugin to store uploaded file data
-	 * 
+	 *
 	 * @param string $pGuid GUID of plugin
 	 * @param array $pStoreHash Data to be prcessed and stored by the plugin
 	 * @param boolean $pUpdate set to TRUE if this is just an update
@@ -213,7 +213,7 @@ class LibertyMime extends LibertyContent {
 
 	/**
 	 * Verify content that is about to be stored
-	 * 
+	 *
 	 * @param array $pStoreHash hash of all data that needs to be stored in the database
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason
@@ -228,7 +228,7 @@ class LibertyMime extends LibertyContent {
 			// process this, and skip over $_FILES
 			$uploads = $pParamHash['_files_override'];
 		} elseif( !empty( $_FILES )) {
-			// we have some _FILES hanging around we will gobble up. This is inherently dagnerous chewing up a _FILES like this as 
+			// we have some _FILES hanging around we will gobble up. This is inherently dagnerous chewing up a _FILES like this as
 			// it can cause premature storing of a _FILE if you are trying to store multiple pieces of content at once.
 			foreach( $_FILES as $key => $file ) {
 				if( !empty( $file['name'] ) || !empty( $file['attachment_id'] )) {
@@ -272,9 +272,9 @@ class LibertyMime extends LibertyContent {
 
 	/**
 	 * getThumbnailUrl will fetch the primary thumbnail for a given content. If nothing has been set, it will fetch the last thumbnail it can find.
-	 * 
-	 * @param string $pSize 
-	 * @param array $pInfoHash 
+	 *
+	 * @param string $pSize
+	 * @param array $pInfoHash
 	 * @access public
 	 * @return boolean TRUE on success, FALSE on failure - $this->mErrors will contain reason for failure
 	 */
@@ -291,7 +291,7 @@ class LibertyMime extends LibertyContent {
 			if( !empty( $this->mStorage[$attachmentId]['thumbnail_url'][$pSize] )) {
 				$ret = $this->mStorage[$attachmentId]['thumbnail_url'][$pSize];
 			}
-		} 
+		}
 		if( $pDefault && empty( $ret ) ) {
 			$ret = parent::getThumbnailUrl( $pSize, $pInfoHash, $pSecondary );
 		}
@@ -300,7 +300,7 @@ class LibertyMime extends LibertyContent {
 
 	/**
 	 * updateAttachmentParams will update attachment parameters
-	 * 
+	 *
 	 * @param numeric $pAttachmentId attachment_id of the item we want the prefs from (optional)
 	 * @param string $pPluginGuid GUID of the plugin that should process the data
 	 * @param array $pParamHash Data to be processed by the plugin
@@ -335,7 +335,7 @@ class LibertyMime extends LibertyContent {
 
 	/**
 	 * verifyAttachment will perform a generic check if a file is valid for processing
-	 * 
+	 *
 	 * @param array $pFile file array from $_FILES
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
@@ -420,7 +420,7 @@ class LibertyMime extends LibertyContent {
 	 * @author Christian Fowler<spider@steelsun.com>
 	 * @param $pSubDir any desired directory below the StoragePath. this will be created if it doesn't exist
 	 * @param $pUserId indicates the 'users/.../<user_id>' branch or use the 'common' branch if null
-	 * @param $pRootDir **deprecated, unused, will be removed in future relase**. 
+	 * @param $pRootDir **deprecated, unused, will be removed in future relase**.
 	 * @return string full path on local filsystem to store files.
 	 */
 	function getStorageBranch( $pParamHash ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
@@ -429,7 +429,7 @@ class LibertyMime extends LibertyContent {
 
 	/**
 	 * getStorageSubDirName get a filename based on the uploaded file
-	 * 
+	 *
 	 * @param array $pFileHash File information provided in $_FILES
 	 * @access public
 	 * @return appropriate sub dir name
@@ -453,7 +453,7 @@ class LibertyMime extends LibertyContent {
 
 	/**
 	 * validateStoragePath make sure that the file/dir you are trying to delete is valid
-	 * 
+	 *
 	 * @param array $pPath absolute path to the file/dir we want to validate
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
@@ -514,7 +514,7 @@ class LibertyMime extends LibertyContent {
 		foreach( $attachments as $attachment ) {
 			if( $loadFunc = $gLibertySystem->getPluginFunction( $attachment['attachment_plugin_guid'], 'load_function', 'mime' )) {
 				/* @$prefs - quick hack to stop LibertyMime plugins from breaking until migration to LibertyMime is complete
-				 * see expected arguments of liberty/plugins/mime.default.php::mime_default_load -wjames5 
+				 * see expected arguments of liberty/plugins/mime.default.php::mime_default_load -wjames5
 				 */
 				$prefs = array();
 				$ret[$attachment['attachment_id']] = $loadFunc( $attachment, $prefs );
@@ -622,7 +622,7 @@ class LibertyMime extends LibertyContent {
 
 	/**
 	 * getAttachment will load details of a given attachment
-	 * 
+	 *
 	 * @param numeric $pAttachmentId Attachment ID of the attachment
 	 * @param array $pParams optional parameters that might contain information like display thumbnail size
 	 * @access public
@@ -655,7 +655,7 @@ class LibertyMime extends LibertyContent {
 	/**
 	 * setPrimaryAttachment will set is_primary 'y' for the specified
 	 * attachment and will ensure that all others are set to 'n'
-	 * 
+	 *
 	 * @param mixed   $pAttachmentId attachment id of the item we want to
 	 *				  set as the primary attachment. Use 'none' to clear.
 	 * @param numeric $pContentId content id we are working with.
@@ -787,10 +787,10 @@ class LibertyMime extends LibertyContent {
 
 	/**
 	 * setAttachmentPreference will set an attachment preferences without storing it in the database
-	 * 
-	 * @param array $pAttachmentId 
-	 * @param array $pPrefName 
-	 * @param array $pPrefValue 
+	 *
+	 * @param array $pAttachmentId
+	 * @param array $pPrefName
+	 * @param array $pPrefValue
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -799,9 +799,9 @@ class LibertyMime extends LibertyContent {
 	}
 
 	/**
-	 * Saves a preference to the liberty_content_prefs database table with the 
-	 * given pref name and value. If the value is NULL, the existing value will 
-	 * be delete and the value will not be saved. However, a zero will be 
+	 * Saves a preference to the liberty_content_prefs database table with the
+	 * given pref name and value. If the value is NULL, the existing value will
+	 * be delete and the value will not be saved. However, a zero will be
 	 * stored.
 	 *
 	 * @param string Hash key for the prefs value
@@ -832,7 +832,7 @@ class LibertyMime extends LibertyContent {
 
 	/**
 	 * loadPreferences of the currently loaded object or pass in to get preferences of a specific content_id
-	 * 
+	 *
 	 * @param numeric $pContentId content_id of the item we want the prefs from (optional)
 	 * @param numeric $pAttachmentId attachment_id of the item we want the prefs from (optional)
 	 * @access public
@@ -873,7 +873,7 @@ class LibertyMime extends LibertyContent {
 
 	/**
 	 * expungeAttachmentPreferences will remove all attachment preferences of a given attachmtent
-	 * 
+	 *
 	 * @param array $pAttachmentId attachemnt we want to remove the prefs for
 	 * @access public
 	 * @return TRUE on success, FALSE on failure
@@ -892,7 +892,7 @@ class LibertyMime extends LibertyContent {
 
 	// {{{ =================== Meta Methods ====================
 	/**
-	 * storeMetaData 
+	 * storeMetaData
 	 *
 	 * @param numeric $pAttachmentId AttachmentID the data belongs to
 	 * @param string $pType Type of data. e.g.: EXIF, ID3. This will default to "Meta Data"
@@ -934,8 +934,8 @@ class LibertyMime extends LibertyContent {
 	}
 
 	/**
-	 * storeMetaId 
-	 * 
+	 * storeMetaId
+	 *
 	 * @param string $pDescription Description of meta key. e.g.: Exif, ID3, Album, Artist
 	 * @param string $pTable Table data is stored in - either 'type' or 'title'
 	 * @access public
@@ -958,8 +958,8 @@ class LibertyMime extends LibertyContent {
 	}
 
 	/**
-	 * getMetaData 
-	 * 
+	 * getMetaData
+	 *
 	 * @param numeric $pAttachmentId AttachmentID the data belongs to
 	 * @param string $pType Type of data. e.g.: EXIF, ID3.
 	 * @param string $pTitle Title of data. e.g.: Artist, Album.
@@ -1034,7 +1034,7 @@ class LibertyMime extends LibertyContent {
 
 	/**
 	 * expungeMetaData will remove the meta data for a given attachment
-	 * 
+	 *
 	 * @param array $pAttachmentId Attachment ID of attachment
 	 * @access public
 	 * @return query result
@@ -1047,8 +1047,8 @@ class LibertyMime extends LibertyContent {
 	}
 
 	/**
-	 * getMetaId 
-	 * 
+	 * getMetaId
+	 *
 	 * @param string $pDescription Description of meta key. e.g.: Exif, ID3, Album, Artist
 	 * @param string $pTable Table data is stored in - either 'type' or 'title'
 	 * @access public
@@ -1064,8 +1064,8 @@ class LibertyMime extends LibertyContent {
 	}
 
 	/**
-	 * getMetaDescription 
-	 * 
+	 * getMetaDescription
+	 *
 	 * @param string $pId ID of type or title we want the description for
 	 * @param string $pTable Table data is stored in - either 'type' or 'title'
 	 * @access public
@@ -1081,8 +1081,8 @@ class LibertyMime extends LibertyContent {
 	}
 
 	/**
-	 * normalizeMetaDescription 
-	 * 
+	 * normalizeMetaDescription
+	 *
 	 * @param string $pDescription Description of meta key. e.g.: Exif, ID3, Album, Artist
 	 * @access public
 	 * @return normalized meta description that can be used as a guid
@@ -1095,7 +1095,7 @@ class LibertyMime extends LibertyContent {
 
 /**
  * mime_get_storage_sub_dir_name get a filename based on the uploaded file
- * 
+ *
  * @param array $pFileHash File information provided in $_FILES
  * @access public
  * @return appropriate sub dir name
@@ -1183,7 +1183,7 @@ if( !function_exists( 'liberty_mime_get_storage_path' )) {
 }
 
 if( !function_exists( 'liberty_mime_get_source_url' )) {
-	function liberty_mime_get_source_url( $pParamHash ) { 
+	function liberty_mime_get_source_url( $pParamHash ) {
 		if( empty( $pParamHash['package'] ) ) {
 			$pParamHash['package'] = liberty_mime_get_storage_sub_dir_name( array( 'type' => BitBase::getParameter( $pParamHash, 'mime_type' ), 'name' => BitBase::getParameter( $pParamHash, 'file_name' ) ) );
 		}
@@ -1195,7 +1195,7 @@ if( !function_exists( 'liberty_mime_get_source_url' )) {
 }
 
 if( !function_exists( 'liberty_mime_get_source_file' )) {
-	function liberty_mime_get_source_file( $pParamHash ) { 
+	function liberty_mime_get_source_file( $pParamHash ) {
 		if( empty( $pParamHash['package'] ) ) {
 			$pParamHash['package'] = liberty_mime_get_storage_sub_dir_name( array( 'type' => BitBase::getParameter( $pParamHash, 'mime_type' ), 'name' => BitBase::getParameter( $pParamHash, 'file_name' ) ) );
 		}

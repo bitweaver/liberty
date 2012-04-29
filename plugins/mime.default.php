@@ -8,7 +8,7 @@
  * @package     liberty
  * @subpackage  liberty_mime_handler
  *
- * @TODO since plugins can do just about anything here, we might need the<br> 
+ * @TODO since plugins can do just about anything here, we might need the<br>
  * option to create specific tables during install. if required we can scan for<br>
  * files called:<br>
  * table.plugin_guid.php<br>
@@ -64,7 +64,7 @@ $gLibertySystem->registerPlugin( PLUGIN_MIME_GUID_DEFAULT, $pluginParams );
 
 /**
  * Sanitise and validate data before it's stored
- * 
+ *
  * @param array $pStoreRow Hash of data that needs to be stored
  * @param array $pStoreRow['upload'] Hash passed in by $_FILES upload
  * @access public
@@ -126,7 +126,7 @@ if( !function_exists( 'mime_default_verify' )) {
 
 /**
  * When a file is edited
- * 
+ *
  * @param array $pStoreRow File data needed to store details in the database - sanitised and generated in the verify function
  * @access public
  * @return TRUE on success, FALSE on failure - $pStoreRow['errors'] will contain reason
@@ -188,7 +188,7 @@ if( !function_exists( 'mime_default_update' )) {
 
 /**
  * Store the data in the database
- * 
+ *
  * @param array $pStoreRow File data needed to store details in the database - sanitised and generated in the verify function
  * @access public
  * @return TRUE on success, FALSE on failure - $pStoreRow['errors'] will contain reason
@@ -202,7 +202,7 @@ if( !function_exists( 'mime_default_store' )) {
 		if( $storagePath = liberty_process_upload( $pStoreRow, empty( $pStoreRow['upload']['copy_file'] ))) {
 			// add row to liberty_files
 			$storeHash = array(
-				"file_name" => $pStoreRow['upload']['name'],
+				"file_name"    => $pStoreRow['upload']['name'],
 				"file_id"      => $gBitSystem->mDb->GenID( 'liberty_files_id_seq' ),
 				"mime_type"    => $pStoreRow['upload']['type'],
 				"file_size"    => $pStoreRow['upload']['size'],
@@ -230,7 +230,7 @@ if( !function_exists( 'mime_default_store' )) {
 
 /**
  * Load file data from the database
- * 
+ *
  * @param array $pFileHash contains all file information
  * @access public
  * @return TRUE on success, FALSE on failure - ['errors'] will contain reason for failure
@@ -305,7 +305,7 @@ if( !function_exists( 'mime_default_load' )) {
 /**
  * Takes care of the entire download process. Make sure it doesn't die at the end.
  * in this functioin it would be possible to add download resume possibilites and the like
- * 
+ *
  * @param array $pFileHash Basically the same has as returned by the load function
  * @access public
  * @return TRUE on success, FALSE on failure - $pParamHash['errors'] will contain reason for failure
@@ -339,7 +339,7 @@ if( !function_exists( 'mime_default_download' )) {
 					@ob_end_clean();
 				}
 
-				// this will get the browser to open the download dialogue - even when the 
+				// this will get the browser to open the download dialogue - even when the
 				// browser could deal with the content type - not perfect, but works
 				if( $gBitSystem->isFeatureActive( 'mime_force_download' )) {
 					$pFileHash['mime_type'] = "application/force-download";
@@ -372,7 +372,7 @@ if( !function_exists( 'mime_default_download' )) {
 
 /**
  * Nuke data in tables when content is removed
- * 
+ *
  * @param array $pParamHash The contents of LibertyMime->mInfo
  * @access public
  * @return TRUE on success, FALSE on failure - $pParamHash['errors'] will contain reason for failure

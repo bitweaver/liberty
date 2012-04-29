@@ -58,7 +58,7 @@ $gLibertySystem->registerPlugin( PLUGIN_MIME_GUID_IMAGE, $pluginParams );
 
 /**
  * Store the data in the database
- * 
+ *
  * @param array $pStoreRow File data needed to store details in the database - sanitised and generated in the verify function
  * @access public
  * @return TRUE on success, FALSE on failure - $pStoreRow[errors] will contain reason
@@ -81,7 +81,7 @@ function mime_image_store( &$pStoreRow ) {
 
 /**
  * mime_image_update update file information in the database if there were changes.
- * 
+ *
  * @param array $pStoreRow File data needed to update details in the database
  * @access public
  * @return TRUE on success, FALSE on failure - $pStoreRow[errors] will contain reason
@@ -117,7 +117,7 @@ function mime_image_update( &$pStoreRow, $pParams = NULL ) {
 
 /**
  * Load file data from the database
- * 
+ *
  * @param array $pFileHash Contains all file information
  * @param array $pPrefs Attachment preferences taken liberty_attachment_prefs
  * @param array $pParams Parameters for loading the plugin - e.g.: might contain values such as thumbnail size from the view page
@@ -180,7 +180,7 @@ function mime_image_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 
 /**
  * mime_image_store_exif_data Process a JPEG and store its EXIF data as meta data.
- * 
+ *
  * @param array $pFileHash file details.
  * @param array $pFileHash[upload] should contain a complete hash from $_FILES
  * @access public
@@ -208,7 +208,7 @@ function mime_image_store_exif_data( $pFileHash ) {
 
 /**
  * mime_image_get_exif_data fetch meta data from uploaded image
- * 
+ *
  * @param array $pUpload uploaded file data
  * @access public
  * @return array filled with exif goodies
@@ -270,7 +270,7 @@ function mime_image_get_exif_data( $pUpload ) {
 
 /**
  * mime_image_convert_exifgps GPS EIXF data is stored as fractions in an array. here we convert this to a degree decimal float value for easy storing
- * 
+ *
  * @param array $pParams array of positional data in fractions form EXIF tag
  * @access public
  * @return numeric value of positional data
@@ -294,9 +294,9 @@ function mime_image_convert_exifgps( $pParams ) {
 }
 
 /**
- * mime_image_create_panorama 
- * 
- * @param array $pStoreRow 
+ * mime_image_create_panorama
+ *
+ * @param array $pStoreRow
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
@@ -336,9 +336,9 @@ function mime_image_create_panorama( &$pStoreRow ) {
 
 /**
  * liberty_magickwand_panorama_image - strictly speaking, this belongs in one of the image processing plugin files, but we'll leave it here for the moment
- * 
+ *
  * @param array $pFileHash File hash - souce_file is required
- * @param array $pOptions 
+ * @param array $pOptions
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
@@ -385,8 +385,8 @@ function liberty_magickwand_panorama_image( &$pFileHash, $pOptions = array() ) {
 }
 
 /**
- * mime_image_help 
- * 
+ * mime_image_help
+ *
  * @access public
  * @return string
  */

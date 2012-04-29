@@ -804,7 +804,7 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	 * Check if content matches content type GUID - must also be a valid content object, it will not work for generic content class 
+	 * Check if content matches content type GUID - must also be a valid content object, it will not work for generic content class
 	 */
 	function isContentType( $pContentGuid ) {
 		global $gBitUser;
@@ -841,8 +841,8 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	 * check if a service is active for this content type
-	 * requires package LCConfig 
-	 * provisional method until LCConfig package is integrated into the core 
+	 * requires package LCConfig
+	 * provisional method until LCConfig package is integrated into the core
 	 */
 	function hasService( $pServiceGuid ){
 		global $gBitSystem;
@@ -853,7 +853,7 @@ class LibertyContent extends LibertyBase {
 			$LCConfig = LCConfig::getInstance();
 			// LCConfig negates services by content type
 			// if result is not 'n' then service should apply to this content type
-			if( $LCConfig->getConfig( 'service_'.$pServiceGuid, $this->mContentTypeGuid ) == 'n' ){	
+			if( $LCConfig->getConfig( 'service_'.$pServiceGuid, $this->mContentTypeGuid ) == 'n' ){
 				$ret = FALSE;
 			}
 		}
@@ -864,8 +864,8 @@ class LibertyContent extends LibertyBase {
 
 	/**
 	 * check if a service is required for this content type
-	 * requires package LCConfig 
-	 * provisional method until LCConfig package is integrated into the core 
+	 * requires package LCConfig
+	 * provisional method until LCConfig package is integrated into the core
 	 */
 	function isServiceRequired( $pServiceGuid ){
 		global $gBitSystem;
@@ -874,7 +874,7 @@ class LibertyContent extends LibertyBase {
 		if( $gBitSystem->isPackageActive( 'lcconfig' ) ){
 			// LCConfig is a singleton class
 			$LCConfig = LCConfig::getInstance();
-			return ( $LCConfig->getConfig( 'service_'.$pServiceGuid, $this->mContentTypeGuid ) == 'required' );	
+			return ( $LCConfig->getConfig( 'service_'.$pServiceGuid, $this->mContentTypeGuid ) == 'required' );
 		}
 
 		return $ret;
@@ -2496,7 +2496,7 @@ class LibertyContent extends LibertyBase {
 				lc.`ip`,
 				lc.`created`,
 				lc.`content_id`,
-				lcds.`data` AS `summary` 
+				lcds.`data` AS `summary`
 				$selectSql
 			FROM `".BIT_DB_PREFIX."liberty_content` lc
 				INNER JOIN `".BIT_DB_PREFIX."users_users` uuc ON (lc.`user_id`=uuc.`user_id`)
@@ -2581,10 +2581,10 @@ class LibertyContent extends LibertyBase {
 				 * @TODO standardize use of thumbnail_url and provision for hash of thumbnail sizes
 				 *
 				 * We have a bit of a mess with the use of thumbnail_url where sometimes it is a hash of sizes, and sometimes it is a single size
-				 * we should standardize the param and what kind of value it returns, and if we need both types then have two params. 
+				 * we should standardize the param and what kind of value it returns, and if we need both types then have two params.
 				 * This ultimately might need to be more sophisticated to deal with different mime types.
 				 **/
-				if(  $gBitSystem->isFeatureActive( 'liberty_display_primary_attach' )  ){ 
+				if(  $gBitSystem->isFeatureActive( 'liberty_display_primary_attach' ) ) {
 					$aux['thumbnail_urls'] = liberty_fetch_thumbnails( $aux );
 				}
 
@@ -3168,7 +3168,7 @@ class LibertyContent extends LibertyBase {
 	 */
 	function storeActionLog( $pParamHash = NULL ) {
 		global $gBitSystem;
-		
+
 		if( $gBitSystem->isFeatureActive( 'liberty_action_log' ) && LibertyContent::verifyActionLog( $pParamHash ) ) {
 			$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_action_log", $pParamHash['action_log_store'] );
 		}

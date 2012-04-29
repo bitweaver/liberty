@@ -30,11 +30,11 @@ $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERWIKILINKS, $pluginParams );
 define( 'WIKI_WORDS_REGEX', '[A-z0-9]{2}[\w\d_\-]+[A-Z_][\w\d_\-]+[A-z0-9]+' );
 
 /**
- * bitlinks_prefilter 
- * 
- * @param array $pData 
- * @param array $pFilterHash 
- * @param array $pObject 
+ * bitlinks_prefilter
+ *
+ * @param array $pData
+ * @param array $pFilterHash
+ * @param array $pObject
  * @access public
  * @return void
  */
@@ -59,10 +59,10 @@ function bitlinks_prefilter( &$pData, &$pFilterHash, $pObject ) {
 
 /**
  * convert wiki links to html links e.g.: ((Wiki Page)) --> <a href="/wiki/Wiki+Page">Wiki Page</a>
- * 
- * @param string $pData 
- * @param array $pFilterHash 
- * @param object $pObject 
+ *
+ * @param string $pData
+ * @param array $pFilterHash
+ * @param object $pObject
  * @access public
  * @return updated data string
  */
@@ -84,10 +84,10 @@ function bitlinks_postfilter( &$pData, &$pFilterHash, $pObject ) {
 
 /**
  * store links to existing wiki pages in the database
- * 
- * @param string $pData 
- * @param array $pFilterHash 
- * @param object $pObject 
+ *
+ * @param string $pData
+ * @param array $pFilterHash
+ * @param object $pObject
  * @access public
  * @return data string
  */
@@ -113,10 +113,10 @@ function bitlinks_storefilter( &$pData, &$pFilterHash, $pObject ) {
 
 /**
  * expunge bitlinks in the database
- * 
- * @param string $pData 
- * @param array $pFilterHash 
- * @param object $pObject 
+ *
+ * @param string $pData
+ * @param array $pFilterHash
+ * @param object $pObject
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
@@ -134,14 +134,14 @@ function bitlinks_expungefilter( &$pData, &$pFilterHash, $pObject ) {
 
 /**
  * BitLinks class
- * 
+ *
  * @package liberty
  * @uses BitBase
  */
 class BitLinks extends BitBase {
 	/**
-	 * mLinks 
-	 * 
+	 * mLinks
+	 *
 	 * @var array of links pointing to this page
 	 * @access public
 	 */
@@ -149,7 +149,7 @@ class BitLinks extends BitBase {
 
 	/**
 	 * Initiate class
-	 * 
+	 *
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -173,8 +173,8 @@ class BitLinks extends BitBase {
 
 	/**
 	 * Get all pages linking to a given content id
-	 * 
-	 * @param array $pContentId 
+	 *
+	 * @param array $pContentId
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -203,7 +203,7 @@ class BitLinks extends BitBase {
 
 	/**
 	 * see if page has already been created and stored
-	 * 
+	 *
 	 * @param array $pTitle title of the page
 	 * @param array $pObject current object
 	 * @param array $pContentId content_id of the current page - sometimes we don't have the object but a content_id to work with
@@ -239,9 +239,9 @@ class BitLinks extends BitBase {
 	}
 
 	/**
-	 * extractWikiWords 
-	 * 
-	 * @param string $pData 
+	 * extractWikiWords
+	 *
+	 * @param string $pData
 	 * @access public
 	 * @return array of wiki words in the data string
 	 */
@@ -264,11 +264,11 @@ class BitLinks extends BitBase {
 	}
 
 	/**
-	 * convert wiki links to html links 
-	 * 
-	 * @param string $pData 
-	 * @param array $pParamHash 
-	 * @param object $pObject 
+	 * convert wiki links to html links
+	 *
+	 * @param string $pData
+	 * @param array $pParamHash
+	 * @param object $pObject
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -284,7 +284,7 @@ class BitLinks extends BitBase {
 		require_once( WIKI_PKG_PATH.'BitPage.php' );
 
 		// We need to remove ))WikiWords(( before links get made.
-		// users just need to be strict about not inserting spaces between 
+		// users just need to be strict about not inserting spaces between
 		// words and brackets
 		preg_match_all( "!\){2}(".WIKI_WORDS_REGEX.")\({2}!", $pData, $protected );
 
@@ -388,8 +388,8 @@ class BitLinks extends BitBase {
 	}
 
 	/**
-	 * getLocale 
-	 * 
+	 * getLocale
+	 *
 	 * @access public
 	 * @return locale
 	 */
@@ -421,8 +421,8 @@ class BitLinks extends BitBase {
 	}
 
 	/**
-	 * getLanguage 
-	 * 
+	 * getLanguage
+	 *
 	 * @access public
 	 * @return language
 	 */
@@ -442,10 +442,10 @@ class BitLinks extends BitBase {
 	}
 
 	/**
-	 * storeLinks 
-	 * 
-	 * @param string $pData 
-	 * @param array $pFilterHash 
+	 * storeLinks
+	 *
+	 * @param string $pData
+	 * @param array $pFilterHash
 	 * @access public
 	 * @return store wiki links in database
 	 */
@@ -552,11 +552,11 @@ class BitLinks extends BitBase {
 	}
 
 	/**
-	 * renameLinks 
-	 * 
-	 * @param array $pContentId 
-	 * @param array $pOldName 
-	 * @param array $pNewName 
+	 * renameLinks
+	 *
+	 * @param array $pContentId
+	 * @param array $pOldName
+	 * @param array $pNewName
 	 * @access public
 	 * @return void
 	 */
@@ -590,11 +590,11 @@ class BitLinks extends BitBase {
 
 				// - the replacement depends on the new name
 				if( preg_match( "! !", $pNewName )) {
-					// since we have a space in the final name, we need to have (( 
+					// since we have a space in the final name, we need to have ((
 					// and )) to make the link work
 					$replace[] = "(($pNewName))";
 				} else {
-					// no spaces in the new name either, so we only insert the (( 
+					// no spaces in the new name either, so we only insert the ((
 					// and )) if the author used them to start off with
 					$replace[] = "$1$pNewName$2";
 				}
@@ -617,8 +617,8 @@ class BitLinks extends BitBase {
 
 	/**
 	 * expunge bitlinks in the database
-	 * 
-	 * @param numeric $pContentId 
+	 *
+	 * @param numeric $pContentId
 	 * @access public
 	 * @return void
 	 */

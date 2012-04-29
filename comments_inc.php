@@ -101,14 +101,14 @@ if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 
 	if( empty( $_REQUEST['anon_post'] ) && !empty( $_REQUEST['login_email'] ) && !empty( $_REQUEST['login_password'] ) ) {
 		$gBitUser->login( $_REQUEST['login_email'], $_REQUEST['login_password'] );
 		if( !empty( $gBitUser->mErrors['login'] ) ) {
-			$formfeedback['error'][] = $gBitUser->mErrors['login']; 
+			$formfeedback['error'][] = $gBitUser->mErrors['login'];
 		}
 	} else {
 		if( !empty($_REQUEST['comment_name'] )) {
 			$_REQUEST['anon_name'] = $_REQUEST['comment_name'];
 		}
 	}
-	
+
 	// this commentsParentId is some crazy ass business - lets prepare for the day when this can be removed
 	// there are references to it in LibertyComments::verifyComments as well
 	$_REQUEST['comments_parent_id'] = $commentsParentId;
