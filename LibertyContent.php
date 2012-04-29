@@ -2014,7 +2014,7 @@ class LibertyContent extends LibertyBase {
 
 		// finally we are ready to create the full link
 		if( !empty( $pMixed['content_id'] )) {
-			$ret = '<a title="'.htmlspecialchars( $linkTitle ).'" href="'.LibertyContent::getDisplayUrlFromHash( $pMixed['content_id'], $pMixed ).$pAnchor.'">'.htmlspecialchars( $pLinkText ).'</a>';
+			$ret = '<a title="'.htmlspecialchars( $linkTitle ).'" href="'.LibertyContent::getDisplayUrlFromHash( $pMixed ).$pAnchor.'">'.htmlspecialchars( $pLinkText ).'</a>';
 		}
 		return $ret;
 	}
@@ -2027,7 +2027,7 @@ class LibertyContent extends LibertyBase {
 	 */
 	public function getDisplayUri() {
 		if( $this->isValid() ) {
-			return BIT_ROOT_URI.substr( static::getDisplayUrlFromHash( $this->mInfo ), strlen( BIT_ROOT_URL ) );
+			return BIT_ROOT_URI.substr( self::getDisplayUrlFromHash( $this->mInfo ), strlen( BIT_ROOT_URL ) );
 		}
 	}
 
