@@ -461,8 +461,8 @@ class LibertyComment extends LibertyMime {
 		if( $result = $this->mDb->query( $query, $bindVars, $pParamHash['max_records'], $pParamHash['offset'] )) {
 			while( $row = $result->FetchRow() ) {
 				$row['display_link'] = $this->getDisplayLink( $row['content_title'], $row );
-				$row['display_url'] = $this->getDisplayUrlFromHash( $row );
-				$row['direct_url'] = $this->getDirectUrlFromHash( $row );
+				$row['display_url'] = self::getDisplayUrlFromHash( $row );
+				$row['direct_url'] = self::getDirectUrlFromHash( $row );
 				if (!empty($pParamHash['parse'])) {
 					$row['parsed_data'] = $this->parseData($row);
 				}

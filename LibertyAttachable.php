@@ -176,7 +176,7 @@ class LibertyAttachable extends LibertyContent {
 							}
 
 							// don't insert if we already have an entry with this attachment_id
-							if( @BitBase::verifyId( $storeRow['attachment_id'] ) && !isset( $storeRow['skip_insert'] ) && !$this->getAttachment( $storeRow['attachment_id'] )) {
+							if( @BitBase::verifyId( $storeRow['attachment_id'] ) && !isset( $storeRow['skip_insert'] ) && !LibertyMime::loadAttachment( $storeRow['attachment_id'] )) {
 								$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `content_id`, `attachment_id`, `attachment_plugin_guid`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
 								$rs = $this->mDb->query( $sql, array( $storeRow['content_id'], $storeRow['attachment_id'], $storeRow['plugin_guid'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
 							}
