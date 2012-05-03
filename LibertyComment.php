@@ -337,7 +337,7 @@ class LibertyComment extends LibertyMime {
 		if( @BitBase::verifyId( $pParamHash['root_id'] ) && $viewContent = LibertyBase::getLibertyObject( $pParamHash['root_id'] ) ) {
 			// pass in cooment hash to the url func incase the root package needs to do something fancy
 			$viewContent->mInfo['comment'] = $pParamHash;
-			$ret = $viewContent->getDisplayUrl().( @self::verifyId( $pParamHash['content_id'] ) ? "#comment_".$pParamHash['content_id'] : '' );
+			$ret = $viewContent->getDisplayUrl().( @static::verifyId( $pParamHash['content_id'] ) ? "#comment_".$pParamHash['content_id'] : '' );
 		} elseif( @BitBase::verifyId( $pParamHash['content_id'] ) ) {
 			$ret = parent::getDisplayUrlFromHash( $pParamHash );
 			$ret .= "#comment_{$pParamHash['content_id']}";
@@ -461,8 +461,8 @@ class LibertyComment extends LibertyMime {
 		if( $result = $this->mDb->query( $query, $bindVars, $pParamHash['max_records'], $pParamHash['offset'] )) {
 			while( $row = $result->FetchRow() ) {
 				$row['display_link'] = $this->getDisplayLink( $row['content_title'], $row );
-				$row['display_url'] = self::getDisplayUrlFromHash( $row );
-				$row['direct_url'] = self::getDirectUrlFromHash( $row );
+				$row['display_url'] = static::getDisplayUrlFromHash( $row );
+				$row['direct_url'] = static::getDirectUrlFromHash( $row );
 				if (!empty($pParamHash['parse'])) {
 					$row['parsed_data'] = $this->parseData($row);
 				}

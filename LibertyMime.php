@@ -356,7 +356,7 @@ class LibertyMime extends LibertyContent {
 	 */
 	public function addDownloadHit( $pAttachmentId = NULL ) {
 		global $gBitUser, $gBitSystem;
-		if( @BitBase::verifyId( $pAttachmentId ) && $attachment = self::loadAttachment( $pAttachmentId )) {
+		if( @BitBase::verifyId( $pAttachmentId ) && $attachment = static::loadAttachment( $pAttachmentId )) {
 			if( !$gBitUser->isRegistered() || ( $gBitUser->isRegistered() && $gBitUser->mUserId != $attachment['user_id'] )) {
 				$bindVars = array( $pAttachmentId );
 				if( $gBitSystem->mDb->getOne( "SELECT `attachment_id` FROM `".BIT_DB_PREFIX."liberty_attachments` WHERE `attachment_id` = ? AND `hits` IS NULL", $bindVars )) {
