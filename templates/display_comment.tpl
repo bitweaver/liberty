@@ -1,8 +1,8 @@
 {strip}
 {if $comments_style eq 'threaded' && $comment.level}
-	<div class="marginleft20px">
+	<div class="threaded">
 {else}
-	<div class="marginleft0">
+	<div class="">
 {/if}
 	<div class="post" id="comment_{$comment.content_id}">
 		<div class="floaticon">
@@ -10,7 +10,7 @@
 				{if $comments_ajax }
 					<a href="javascript:void(0);" onclick="LibertyComment.attachForm('comment_{$comment.content_id}', '{$comment.content_id}', '{$comment.root_id}')">{biticon ipackage="icons" iname="mail-reply-sender" iexplain="Reply to this comment"}</a>
 				{else}
-					<a href="{$comments_return_url}&amp;post_comment_reply_id={$comment.content_id}&amp;post_comment_request=1#editcomments" rel="nofollow">{biticon ipackage="icons" iname="mail-reply-sender" iexplain="Reply to this comment"}</a>
+					{biticon class="icon" ipackage="icons" iname="mail-reply-sender" iexplain="Reply to this comment" onclick="window.location='`$comments_return_url`&post_comment_reply_id=`$comment.content_id`&post_comment_request=1#editcomments';" }
 				{/if}
 			{/if}
 			{if $comment.is_editable}

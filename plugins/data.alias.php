@@ -62,6 +62,6 @@ function data_alias( $pData, $pParams, $pCommonObject ) {
 			}
 		}
 	}
-	return tra("This page is an alias for:").'&nbsp;'.BitPage::getDisplayLink($page, LibertyContent::pageExists($page));
+	return tra("This page is an alias for:").'&nbsp;'.BitPage::getPageLink($page, LibertyContent::pageExists($page));
 }
 ?>

@@ -161,7 +161,7 @@ function mime_image_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 		}
 
 		// check for panorama image
-		if( is_file( dirname( $ret['source_file'] )."/thumbs/panorama.jpg" )) {
+		if( isset( $ret['source_file'] ) && is_file( dirname( $ret['source_file'] )."/thumbs/panorama.jpg" )) {
 			// if the panorama doesn't have 180⁰ vertical field of view we will restrict up / down movement
 			if(( $ret['pano'] = LibertyMime::getMetaData( $ret['attachment_id'], "PANO" )) && !empty( $ret['pano']['aspect'] )) {
 				// calculation based on logarythmic regression curve

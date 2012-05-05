@@ -26,7 +26,7 @@ class LibertyStructure extends LibertyBase {
 		$this->mContentId = $pContentId;
 	}
 
-	function load() {
+	function load( $pContentId=NULL ) {
 		if( $this->mStructureId || $this->mContentId ) {
 			if( $this->mInfo = $this->getNode( $this->mStructureId, $this->mContentId ) ) {
 				global $gLibertySystem;
@@ -784,7 +784,7 @@ class LibertyStructure extends LibertyBase {
 		$this->getContentArray( $this->mStructureId, $toc );
 		if( count( $toc ) ) {
 			foreach( $toc as $conId ) {
-				if( $viewContent = $this->getLibertyObject( $conId ) ) {
+				if( $viewContent = LibertyBase::getLibertyObject( $conId ) ) {
 					$ret[] = array(
 						'type'       => $viewContent->mContentTypeGuid,
 						'landscape'  => FALSE,

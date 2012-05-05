@@ -35,9 +35,9 @@
 			{/if}
 
 			{formhelp note=$textarea_help}
-			{if $gBitSystem->isPackageActive('fckeditor') &&
-				($gBitSystem->isFeatureActive("fckeditor_ask") || 
-				$gBitSystem->isFeatureActive("fckeditor_on_click"))}
+			{if $gBitSystem->isPackageActive('ckeditor') &&
+				($gBitSystem->isFeatureActive("ckeditor_ask") || 
+				$gBitSystem->isFeatureActive("ckeditor_on_click"))}
 				{formhelp note="Click in the textarea to activate the editor."}
 			{/if}
 		{/forminput}

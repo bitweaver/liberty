@@ -127,7 +127,7 @@ class LibertyContent extends LibertyBase {
 	 * @access public
 	 * @return void
 	 */
-	function load() {
+	function load( $pContentId = NULL, $pPluginParams = NULL ) {
 		if( !empty( $this->mInfo['content_type_guid'] )) {
 			global $gLibertySystem, $gBitSystem, $gBitUser;
 			$this->loadPreferences();
@@ -772,7 +772,7 @@ class LibertyContent extends LibertyBase {
 	 * Check permissions to establish if user has permission to view the object
 	 * Should be provided by the decendent package
 	 */
-	function isViewable() {
+	function isViewable($pContentId = NULL) {
 		return( true );
 	}
 
@@ -780,7 +780,7 @@ class LibertyContent extends LibertyBase {
 	 * Check permissions to establish if user has permission to edit the object
 	 * Should be provided by the decendent package
 	 */
-	function isEditable() {
+	function isEditable($pContentId = NULL) {
 		return( false );
 	}
 
@@ -789,7 +789,7 @@ class LibertyContent extends LibertyBase {
 	 * That would include permission to delete an object or change it's permissions
 	 * Should be provided by the decendent package
 	 */
-	function isAdminable() {
+	function isAdminable($pContentId = NULL) {
 		return( false );
 	}
 
@@ -2019,7 +2019,7 @@ class LibertyContent extends LibertyBase {
 
 		// finally we are ready to create the full link
 		if( !empty( $pMixed['content_id'] )) {
-			$ret = '<a title="'.htmlspecialchars( $linkTitle ).'" href="'.LibertyContent::getDisplayUrl( $pMixed['content_id'], $pMixed ).$pAnchor.'">'.htmlspecialchars( $pLinkText ).'</a>';
+			$ret = '<a title="'.htmlspecialchars( $linkTitle ).'" href="'.LibertyContent::getDisplayUrlFromHash( $pMixed['content_id'], $pMixed ).$pAnchor.'">'.htmlspecialchars( $pLinkText ).'</a>';
 		}
 		return $ret;
 	}
@@ -2030,29 +2030,45 @@ class LibertyContent extends LibertyBase {
 	 * @param array different possibilities depending on derived class
 	 * @return string Formated URL address to display the page.
 	 */
-	function getDisplayUri( $pContentId=NULL, $pMixed=NULL ) {
-		return BIT_ROOT_URI.substr( $this->getDisplayUrl( $pContentId, $pMixed ), strlen( BIT_ROOT_URL ) );
+	public function getDisplayUri() {
+		if( $this->isValid() ) {
+			return BIT_ROOT_URI.substr( static::getDisplayUrlFromHash( $this->mInfo ), strlen( BIT_ROOT_URL ) );
+		}
 	}
 
 	/**
-	 * Not-so-pure virtual function that returns Request_URI to a piece of content
+	 * Not-so-pure virtual function that returns fully qualified URI to a piece of content
 	 * @param string Text for DisplayLink function
 	 * @param array different possibilities depending on derived class
 	 * @return string Formated URL address to display the page.
 	 */
-	function getDisplayUrl( $pContentId = NULL, $pMixed = NULL ) {
-		if( @BitBase::verifyId( $pContentId ) ) {
-			$ret = BIT_ROOT_URL.'index.php?content_id='.$pContentId;
-		} elseif( @BitBase::verifyId( $pMixed['content_id'] ) ) {
-			$ret = BIT_ROOT_URL.'index.php?content_id='.$pMixed['content_id'];
-		} elseif( $this->isValid() ) {
-			$ret = BIT_ROOT_URL.'index.php?content_id='.$this->mContentId;
-		} else {
-			$ret = NULL;
+	public static function getDisplayUriFromHash( &$pParamHash ) {
+		return BIT_ROOT_URI.substr( static::getDisplayUrlFromHash( $pParamHash ), strlen( BIT_ROOT_URL ) );
+	}
+
+	/**
+	 * Not-so-pure virtual function that returns Request_URI to a piece of content
+	 * @param array $pMixed a hash of params to add to the url
+	 * @return string Formated URL address to display the page.
+	 */
+	public static function getDisplayUrlFromHash( &$pParamHash ) {
+		$ret = NULL;
+		if( @static::verifyId( $pParamHash['content_id'] ) ) {
+			$ret = BIT_ROOT_URL.'index.php?content_id='.$pParamHash['content_id'];
 		}
 		return $ret;
 	}
 
+	/**
+	 * Returns Request URL to a piece of content
+	 */
+	public function getDisplayUrl() {
+		$ret = NULL;
+		if( !empty( $this ) && $this->isValid() ) {
+			$ret = static::getDisplayUrlFromHash( $this->mInfo );
+		}
+		return $ret;
+	}
 
 	/**
 	 * Returns the create/edit url to a piece of content
@@ -2116,7 +2132,7 @@ class LibertyContent extends LibertyBase {
 	 * @param int optional secondary id, such as user_id or products_id, etc
 	 * @return string Formated URL address to display the page.
 	 */
-	function getThumbnailUrl( $pSize='small', $pContentId=NULL, $pSecondaryId=NULL ) {
+	function getThumbnailUrl( $pSize = 'small', $pInfoHash = NULL, $pSecondaryId = NULL, $pDefault=TRUE ) {
 		$ret = '';
 		if( !empty( $this->mInfo['content_type']['handler_package'] ) ) {
 			$pkgName = $this->mInfo['content_type']['handler_package'];
@@ -2332,7 +2348,7 @@ class LibertyContent extends LibertyBase {
 		}
 
 		// if we want the primary attachment for each object
-		if(  $gBitSystem->isFeatureActive( 'liberty_display_primary_attach' )  ){ 
+		if(  $gBitSystem->isFeatureActive( 'liberty_display_primary_attach' )  ){
 			$selectSql .= ', lfp.`file_name`, lfp.`mime_type`, la.`attachment_id`, '; 
 			$joinSql .= "LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_attachments` la ON( la.`content_id` = lc.`content_id` AND la.`is_primary` = 'y' ) 
 						 LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files` lfp ON( lfp.`file_id` = la.`foreign_id` )";
@@ -2544,7 +2560,7 @@ class LibertyContent extends LibertyBase {
 						$userInfo = $gBitUser->getUserInfo( array( 'content_id' => $aux['content_id'] ));
 						$aux['title']        = $type['content_object']->getTitle( $userInfo );
 						$aux['display_link'] = $type['content_object']->getDisplayLink( $userInfo['login'], $userInfo );
-						$aux['display_url']  = $type['content_object']->getDisplayUrl( $userInfo['login'] );
+						$aux['display_url']  = $type['content_object']->getContentUrl( $userInfo['login'] );
 					} else {
 						$aux['title']        = $type['content_object']->getTitle( $aux );
 						$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
@@ -2553,7 +2569,7 @@ class LibertyContent extends LibertyBase {
 						 * nice try, but you can't do this because individual classes have gone off the reservation changing the params they accept
 						 * for distributed packages we need to enforce that method overrides all take the same basic params.
 						 **/
-						// $aux['display_url']  = $type['content_object']->getDisplayUrl( NULL, $aux );
+						// $aux['display_url']  = $type['content_object']->getContactUrl( NULL, $aux );
 						$aux['display_url'] = BIT_ROOT_URL."index.php?content_id=".$aux['content_id'];
 					}
 
