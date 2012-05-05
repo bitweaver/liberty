@@ -62,7 +62,7 @@ function tikiwiki_parse_data( &$pParseHash, &$pCommonObject ) {
  */
 class TikiWikiParser extends BitBase {
 	function TikiWikiParser() {
-		BitBase::BitBase();
+		parent::__construct();
 	}
 
 	// This function handles wiki codes for those special HTML characters

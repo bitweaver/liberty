@@ -154,7 +154,7 @@ class BitLinks extends BitBase {
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
 	function BitLinks() {
-		BitBase::BitBase();
+		parent::__construct();
 
 		global $gBitSystem;
 		if( $gBitSystem->getConfig( 'wiki_page_regex', 'strict' ) == 'strict' ) {
