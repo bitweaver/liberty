@@ -6,9 +6,9 @@
 
 // ================== Liberty Plugin Parsing ==================
 /**
- * This crazy function will parse all the data plugin stuff found within any 
+ * This crazy function will parse all the data plugin stuff found within any
  * parsed text section
- * 
+ *
  * @param array $pData Data to be parsed
  * @access public
  * @return void
@@ -28,9 +28,9 @@ function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject, $pParseHash )
 		while( $i >= 0 ) {
 			$plugin_start = $curlyTags[0][$i][0];
 			$plugin = $curlyTags[1][$i][0];
-			// Work out where the plugin starts. This can not be done using the 
-			// positional data from $curlyTags since the position might have 
-			// changed since the last cycle. We therefore need to determine the 
+			// Work out where the plugin starts. This can not be done using the
+			// positional data from $curlyTags since the position might have
+			// changed since the last cycle. We therefore need to determine the
 			// position direclty. - xing - Thursday Nov 01, 2007   22:55:10 CET
 			//$pos = $curlyTags[0][$i][1];
 			$pos = strpos( $pData, $plugin_start );
@@ -132,10 +132,10 @@ function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject, $pParseHash )
 }
 
 /**
- * This function replaces pre- and no-parsed sections with unique keys and 
- * saves the section contents for later reinsertion. It is needed by 
+ * This function replaces pre- and no-parsed sections with unique keys and
+ * saves the section contents for later reinsertion. It is needed by
  * parse_data_plugins() to extract sections that don't require parsing
- * 
+ *
  * @param array $pData data that might contain ~np~ or ~pp~ strings
  * @param array $preparsed array that is updated by refrerence with key and data that needs to be substituted later
  * @param array $noparsed array that is updated by refrerence with key and data that needs to be substituted later
@@ -181,8 +181,8 @@ function parse_protect( &$pData, &$pReplace ) {
 // ================== Liberty Plugin Helper ==================
 /**
  * pass in the plugin paramaters and out comes a hash with usable styling information
- * 
- * @param array $pParamHash 
+ *
+ * @param array $pParamHash
  * @access public
  * @return hash full of styling goodies
  */
@@ -271,8 +271,8 @@ function liberty_plugins_wrapper_style( $pParamHash ) {
 
 // ================== Liberty Service Functions ==================
 /**
- * liberty_content_load_sql 
- * 
+ * liberty_content_load_sql
+ *
  * @access public
  * @return content load sql
  */
@@ -286,8 +286,8 @@ function liberty_content_load_sql( &$pObject, $pParamHash=NULL ) {
 		if(( is_object( $pObject ) && !empty( $pObject->mType['content_type_guid'] ) && $pObject->mType['content_type_guid'] == 'bitcomment' )
 			|| ( !empty( $pParamHash['include_comments'] ) && $pParamHash['include_comments']  == 'y' )) {
 			// if we are getting a list of comments then lets check the owner of the comment root and the owner of the content
-				$ret['join_sql'] = " 
-					INNER JOIN `".BIT_DB_PREFIX."liberty_comments` lcoms ON (lc.`content_id` = lcoms.`content_id`) 
+				$ret['join_sql'] = "
+					INNER JOIN `".BIT_DB_PREFIX."liberty_comments` lcoms ON (lc.`content_id` = lcoms.`content_id`)
 					INNER JOIN `".BIT_DB_PREFIX."liberty_content` rlcs ON( rlcs.`content_id`=lcoms.`root_id` )";
 			$ret['where_sql'] = " AND lc.`content_status_id` < 100 AND ( ( (rlcs.`user_id` = '".$gBitUser->getUserId()."' OR lc.`user_id` = '".$gBitUser->getUserId()."') AND lc.`content_status_id` > -100) OR lc.`content_status_id` > 0 )";
 		} else {
@@ -304,8 +304,8 @@ function liberty_content_load_sql( &$pObject, $pParamHash=NULL ) {
 }
 
 /**
- * liberty_content_list_sql 
- * 
+ * liberty_content_list_sql
+ *
  * @param array $pParamHash
  * @param array $pParamHash['enforce_status'] will add joins to status_id even if user is admin
  * @param array $pParamHash['min_status_id'] one less than the minimum status a content can have to be included
@@ -334,8 +334,8 @@ function liberty_content_list_sql( &$pObject, $pParamHash=NULL ) {
 		if(( is_object( $pObject ) && !empty( $pObject->mType['content_type_guid'] ) && $pObject->mType['content_type_guid'] == 'bitcomment' )
 			|| ( !empty( $pParamHash['include_comments'] ) && $pParamHash['include_comments']  == 'y' )) {
 			// if we are getting a list of comments then lets check the owner of the comment root and the owner of the content
-			$ret['join_sql'] = " 
-					LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_comments` lcoms ON (lc.`content_id` = lcoms.`content_id`) 
+			$ret['join_sql'] = "
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_comments` lcoms ON (lc.`content_id` = lcoms.`content_id`)
 					LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content` rlcs ON( rlcs.`content_id`=lcoms.`root_id` )";
 			$ret['where_sql'] =
 				" AND lc.`content_status_id` < ".$max_status_id.
@@ -357,9 +357,9 @@ function liberty_content_list_sql( &$pObject, $pParamHash=NULL ) {
 }
 
 /**
- * liberty_content_preview 
- * 
- * @param array $pObject 
+ * liberty_content_preview
+ *
+ * @param array $pObject
  * @access public
  * @return void
  */
@@ -379,10 +379,10 @@ function liberty_content_preview( &$pObject ) {
 }
 
 /**
- * liberty_content_display 
- * 
- * @param array $pObject 
- * @param array $pParamHash 
+ * liberty_content_display
+ *
+ * @param array $pObject
+ * @param array $pParamHash
  * @access public
  * @return void
  */
@@ -398,10 +398,10 @@ function liberty_content_display( &$pObject, &$pParamHash ) {
 }
 
 /**
- * liberty_content_edit 
- * 
- * @param array $pObject 
- * @param array $pParamHash 
+ * liberty_content_edit
+ *
+ * @param array $pObject
+ * @param array $pParamHash
  * @access public
  * @return void
  */
@@ -449,7 +449,7 @@ function liberty_process_upload( &$pFileHash, $pMoveFile = TRUE ) {
 	$pFileHash['upload']['dest_base_name'] = $cleanedBaseName;
 	$pFileHash['upload']['source_file'] = $pFileHash['upload']['tmp_name'];
 	// lowercase all file extensions
-		
+
 	$pFileHash['upload']['name'] = $cleanedBaseName.strtolower( substr( $pFileHash['upload']['name'], $ext ) );
 
 	// Thumbs.db is a windows My Photos/ folder file, and seems to really piss off imagick
@@ -574,7 +574,7 @@ function liberty_process_generic( &$pFileHash, $pMoveFile = TRUE ) {
 	if( !empty( $pFileHash['dest_file'] ) ) {
 		$destFile = $pFileHash['dest_file'];
 	} else {
-		$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['name'];;
+		$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['name'];
 		if ( is_windows() ) {
 			$destFile = str_replace( '//', '\\', str_replace( "\\", '\\', $destFile ) );
 		}
@@ -615,7 +615,7 @@ function liberty_process_image( &$pFileHash, $pMoveFile = TRUE ) {
 	list($type, $ext) = explode( '/', strtolower( $pFileHash['type'] ) );
 	if( $resizePath = liberty_process_generic( $pFileHash, $pMoveFile )) {
 		$pFileHash['source_file'] = $resizePath;
-		
+
 		//set permissions if possible - necessary for some wonky shared hosting environments
 		if(chmod($pFileHash['source_file'], 0644)){
 			//does nothing, but fails elegantly
@@ -850,7 +850,7 @@ function liberty_fetch_thumbnail_url( $pParamHash ) {
 
 /**
  * get a set of image size options based on $gThumbSizes
- * 
+ *
  * @param string $pEmptyOption string to use as empty option - if set to FALSE no empty string is eincluded - Note that string is tra()'d
  * @access public
  * @return array of image size options suitable for use in a form
@@ -869,7 +869,7 @@ function get_image_size_options( $pEmptyOption = 'Disable this feature' ) {
 
 /**
  * get_leadtitle will fetch the string before the liberty_subtitle_delimiter
- * 
+ *
  * @param string $pString string that should be checked for the delimiter
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
@@ -881,7 +881,7 @@ function get_leadtitle( $pString ) {
 
 /**
  * get_subtitle will fetch the string after the liberty_subtitle_delimiter
- * 
+ *
  * @param string $pString string that should be checked for the delimiter
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure

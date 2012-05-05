@@ -19,9 +19,9 @@ if( !$gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE)) {
 	$XMLContent = tra( "You do not have the required permissions to post new comments" );
 } elseif( $gContent->isCommentable() ) {
 	/**
-	 * If we are receiving ajax comments request make sure our results also 
-	 * know we are using ajax comments. This is an insurance measure that if 
-	 * the originating content forced on ajax comments (even if off system 
+	 * If we are receiving ajax comments request make sure our results also
+	 * know we are using ajax comments. This is an insurance measure that if
+	 * the originating content forced on ajax comments (even if off system
 	 * wide) that the return results continue to use ajax comments. Don't take 
 	 * this out under penalty of death.
 	 */
