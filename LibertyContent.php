@@ -750,9 +750,10 @@ class LibertyContent extends LibertyBase {
 		$ret = array();
 		if( $this->isValid() ) {
 			$ret = array(
-				'type'      => $this->mContentTypeGuid,
+				'type' => $this->getContentType(),
 				'title'  	=> $this->getTitle(),
-				'url'        => $this->getDisplayUri(),
+				'uri'        => $this->getDisplayUri(),
+				'url'        => $this->getDisplayUrl(),
 				'content_id' => $this->mContentId,
 				'date_created' => date( DateTime::W3C, $this->getField('created') ),
 				'date_last_modified' => date( DateTime::W3C, $this->getField('last_modified') ),
