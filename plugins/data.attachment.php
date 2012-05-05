@@ -113,8 +113,8 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 	// at a minimum, return blank string (not empty) so we still replace the tag
 	$ret = ' ';
 
-	// The Manditory Parameter is missing. we are not gonna trow an error, and 
-	// just return empty since many sites use the old style required second 
+	// The Manditory Parameter is missing. we are not gonna trow an error, and
+	// just return empty since many sites use the old style required second
 	// "closing" empty tag
 	if( empty( $pParams['id'] )) {
 		return $ret;
@@ -169,8 +169,8 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		}
 		$wrapper['display_url'] = $pParams['link'];
 	} elseif( !empty( $att['display_url'] ) )  {
-		$wrapper['display_url'] = $att['display_url'];
-	}
+			$wrapper['display_url'] = $att['display_url'];
+		}
 
 	if( !empty( $wrapper['description'] )) {
 		$parseHash['content_id'] = $pParseHash['content_id'];

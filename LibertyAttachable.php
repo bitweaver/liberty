@@ -145,7 +145,7 @@ class LibertyAttachable extends LibertyContent {
 								if ( defined( 'LINKED_ATTACHMENTS' ) && @BitBase::verifyId( $pParamHash['content_id'] ) ) {
 									$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'] = $pParamHash['content_id'];
 								} else {
-									$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'] = 
+									$storeRow['upload']['attachment_id'] = $storeRow['attachment_id'] =
 										defined( 'LINKED_ATTACHMENTS' ) ? $this->mDb->GenID( 'liberty_content_id_seq') : $this->mDb->GenID( 'liberty_attachments_id_seq' );
 								}
 							}
@@ -176,7 +176,7 @@ class LibertyAttachable extends LibertyContent {
 							}
 
 							// don't insert if we already have an entry with this attachment_id
-							if( @BitBase::verifyId( $storeRow['attachment_id'] ) && !isset( $storeRow['skip_insert'] ) && !$this->getAttachment( $storeRow['attachment_id'] )) {
+							if( @BitBase::verifyId( $storeRow['attachment_id'] ) && !isset( $storeRow['skip_insert'] ) && !LibertyMime::loadAttachment( $storeRow['attachment_id'] )) {
 								$sql = "INSERT INTO `".BIT_DB_PREFIX."liberty_attachments` ( `content_id`, `attachment_id`, `attachment_plugin_guid`, `foreign_id`, `user_id` ) VALUES ( ?, ?, ?, ?, ? )";
 								$rs = $this->mDb->query( $sql, array( $storeRow['content_id'], $storeRow['attachment_id'], $storeRow['plugin_guid'], (int)$storeRow['foreign_id'], $storeRow['user_id'] ) );
 							}
@@ -198,11 +198,11 @@ class LibertyAttachable extends LibertyContent {
 	}
 
 	/**
-	 * verifyAttachment 
-	 * 
-	 * @param array $pParamHash 
-	 * @param array $pFile 
-	 * @param array $pKey 
+	 * verifyAttachment
+	 *
+	 * @param array $pParamHash
+	 * @param array $pFile
+	 * @param array $pKey
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 * @deprecated deprecated since version 2.1.0-beta
@@ -213,7 +213,7 @@ class LibertyAttachable extends LibertyContent {
 
 		if( !empty( $pFile ) && !empty( $pFile['size'] ) ) {
 			if( empty( $pParamHash['storage_guid'] )) {
-				// only file format storage available at present 
+				// only file format storage available at present
 				$pParamHash['storage_guid'] = $storageGuid = PLUGIN_GUID_BIT_FILES;
 			} else {
 				$storageGuid = $pParamHash['storage_guid'];
@@ -279,7 +279,7 @@ class LibertyAttachable extends LibertyContent {
 			// process this, and skip over $_FILES
 			$uploads = $pParamHash['_files_override'];
 		} elseif( !empty( $_FILES ) ) {
-			// we have some _FILES hanging around we will gobble up. This is inherently dagnerous chewing up a _FILES like this as 
+			// we have some _FILES hanging around we will gobble up. This is inherently dagnerous chewing up a _FILES like this as
 			// it can cause premature storing of a _FILE if you are trying to store multiple pieces of content at once.
 			foreach( $_FILES as $key => $file ) {
 				if( !empty( $file['name'] )) {
@@ -338,9 +338,9 @@ class LibertyAttachable extends LibertyContent {
 
 	/**
 	 * extractMetaData extract meta data from images
-	 * 
-	 * @param array $pParamHash 
-	 * @param array $pFile 
+	 *
+	 * @param array $pParamHash
+	 * @param array $pFile
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 * @deprecated deprecated since version 2.1.0-beta

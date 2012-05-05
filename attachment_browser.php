@@ -23,7 +23,7 @@ if (isset($_REQUEST['attachment_id']) && is_numeric($_REQUEST['attachment_id']))
 	// this is a hack to make it compatible with existing tpls for now
 	$attachment = $gContent->getAttachment($_REQUEST['attachment_id']);
 	$ret = array();
-	$ret[$attachment['attachment_id']] = $attachment;	
+	$ret[$attachment['attachment_id']] = $attachment;
 	$userAttachments = $ret;
 	$gContent->mStorage = $userAttachments;
 	$gBitSmarty->assign('gContent', $gContent);
