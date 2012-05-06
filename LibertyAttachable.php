@@ -33,7 +33,7 @@ class LibertyAttachable extends LibertyContent {
 	var $mStorage;
 
 	function LibertyAttachable() {
-		LibertyContent::LibertyContent();
+		parent::__construct();
 	}
 
 	// {{{ =================== Deprecated Methods ====================
