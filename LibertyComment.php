@@ -24,7 +24,7 @@ class LibertyComment extends LibertyMime {
 	var $mCommentId;
 
 	function LibertyComment($pCommentId = NULL, $pContentId = NULL, $pInfo = NULL) {
-		LibertyMime::LibertyMime();
+		parent::__construct();
 		$this->registerContentType( BITCOMMENT_CONTENT_TYPE_GUID, array(
 				'content_type_guid' => BITCOMMENT_CONTENT_TYPE_GUID,
 				'content_name' => 'Comment',
