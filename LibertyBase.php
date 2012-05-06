@@ -39,7 +39,7 @@ class LibertyBase extends BitBase {
 	 * Database will be linked via a previously activated BitDb object
 	 * which will provide the mDb pointer to that database
 	 */
-	function LibertyBase () {
+	function __construct() {
 		parent::__construct();
 	}
 

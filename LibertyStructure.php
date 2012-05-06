@@ -19,9 +19,9 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
 class LibertyStructure extends LibertyBase {
 	var $mStructureId;
 
-	function LibertyStructure ( $pStructureId=NULL, $pContentId=NULL ) {
+	function __construct( $pStructureId=NULL, $pContentId=NULL ) {
 		// we need to init our database connection early
-		LibertyBase::LibertyBase();
+		parent::__construct();
 		$this->mStructureId = $pStructureId;
 		$this->mContentId = $pContentId;
 	}

@@ -99,8 +99,8 @@ class LibertyContent extends LibertyBase {
 	/**
 	 * Construct an empty LibertyBase object with a blank permissions array
 	 */
-	function LibertyContent () {
-		LibertyBase::LibertyBase();
+	function __construct() {
+		parent::__construct();
 		$this->mPrefs = NULL; // init to NULL so getPreference can determine if a load is necessary
 
 		// NOTE: we are not assigning anything to mViewContentPerm. if this is empty, we will return TRUE in hasViewPermission()

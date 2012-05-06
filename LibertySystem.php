@@ -94,8 +94,8 @@ class LibertySystem extends LibertyBase {
 	/**
 	 * Initiate Class
 	 **/
-	function LibertySystem( $pExtras = TRUE ) {
-		LibertyBase::LibertyBase();
+	function __construct( $pExtras = TRUE ) {
+		parent::__construct();
 
 		// if mPluginPath hasn't been set, we set it for liberty plugins
 		if( empty( $this->mPluginPath )) {
