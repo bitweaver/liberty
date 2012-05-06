@@ -27,16 +27,6 @@ class LibertyMime extends LibertyContent {
 	var $mStoragePrefs = NULL;
 
 	/**
-	 * Initiates class
-	 *
-	 * @access public
-	 * @return void
-	 */
-	function LibertyMime() {
-		parent::LibertyContent();
-	}
-
-	/**
 	 * load the attachments for a given content id and then stuff them in mStorage
 	 *
 	 * @param array $pContentId
