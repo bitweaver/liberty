@@ -3169,13 +3169,47 @@ class LibertyContent extends LibertyBase {
 	 * Note: use $gBitSystem throughout that this function can be called statically if needed
 	 *
 	 * @param array $pParamHash
-	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function storeActionLog( $pParamHash = NULL ) {
+	public static function storeActionLogFromHash( $pParamHash = NULL ) {
 		global $gBitSystem;
 
-		if( $gBitSystem->isFeatureActive( 'liberty_action_log' ) && LibertyContent::verifyActionLog( $pParamHash ) ) {
+		if( $gBitSystem->isFeatureActive( 'liberty_action_log' ) && $this->verifyActionLog( $pParamHash ) ) {
+			$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_action_log", $pParamHash['action_log_store'] );
+		}
+	}
+
+	/**
+	 * storeActionLog
+	 * Note: use $gBitSystem throughout that this function can be called statically if needed
+	 *
+	 * @param array $pParamHash
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	public function storeActionLog( $pParamHash = NULL ) {
+		global $gBitSystem;
+
+		if( !empty( $this ) && @BitBase::verifyId( $this->mContentId ) ) {
+			$pParamHash['action_log']['content_id'] = $this->mContentId;
+		}
+		if( !empty( $this->mInfo['title'] ) ) {
+			$pParamHash['action_log']['title'] = $this->mInfo['title'];
+		}
+		$log_message = '';
+		if( empty( $pParamHash['action_log']['log_message'] ) && !empty( $this->mLogs ) ) {
+			foreach( $this->mLogs as $key => $msg ) {
+				$log_message .= "$msg";
+			}
+			$pParamHash['action_log']['log_message'] = $log_message;
+		}
+		$error_message = '';
+		if( empty( $pParamHash['action_log']['error_message'] ) && !empty( $this->mErrors ) ) {
+			foreach( $this->mErrors as $key => $msg ) {
+				$error_message .= "$msg\n";
+			}
+			$pParamHash['action_log']['error_message'] = $error_message;
+		}
+		if( $gBitSystem->isFeatureActive( 'liberty_action_log' ) && static::verifyActionLog( $pParamHash ) ) {
 			$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_action_log", $pParamHash['action_log_store'] );
 		}
 	}
@@ -3186,10 +3220,9 @@ class LibertyContent extends LibertyBase {
 	 * Note: use $gBitSystem throughout that this function can be called statically if needed
 	 *
 	 * @param array $pParamHash
-	 * @access public
 	 * @return TRUE on success, FALSE on failure
 	 */
-	function verifyActionLog( &$pParamHash ) {
+	public static function verifyActionLog( &$pParamHash ) {
 		global $gBitUser, $gBitSystem;
 
 		// we will set $ret FALSE if there is a problem along the way
@@ -3201,10 +3234,7 @@ class LibertyContent extends LibertyBase {
 			$pParamHash['action_log_store']['content_id'] = $pParamHash['action_log']['content_id'];
 		} elseif( @BitBase::verifyId( $pParamHash['content_id'] ) ) {
 			$pParamHash['action_log_store']['content_id'] = $pParamHash['content_id'];
-		} elseif( !empty( $this ) && @BitBase::verifyId( $this->mContentId ) ) {
-			$pParamHash['action_log_store']['content_id'] = $this->mContentId;
 		}
-
 		// generic information needed in log
 		if( !empty( $pParamHash['action_log']['user_id'] ) ) {
 			$pParamHash['action_log_store']['user_id'] = $pParamHash['action_log']['user_id'];
@@ -3215,8 +3245,6 @@ class LibertyContent extends LibertyBase {
 			$pParamHash['action_log_store']['title'] = $pParamHash['action_log']['title'];
 		} elseif( !empty( $pParamHash['content_store']['title'] ) ) {
 			$pParamHash['action_log_store']['title'] = $pParamHash['content_store']['title'];
-		} elseif( !empty( $this ) && !empty( $this->mInfo['title'] ) ) {
-			$pParamHash['action_log_store']['title'] = $this->mInfo['title'];
 		} else {
 			$ret = FALSE;
 		}
@@ -3249,11 +3277,7 @@ class LibertyContent extends LibertyBase {
 		}
 		// error message - default is to put in any stuff in mErrors
 		$error_message = '';
-		if( empty( $pParamHash['action_log']['error_message'] ) && !empty( $this ) && !empty( $this->mErrors ) ) {
-			foreach( $this->mErrors as $key => $msg ) {
-				$error_message .= "$msg\n";
-			}
-		} elseif( !empty( $pParamHash['action_log']['error_message'] ) ) {
+		if( !empty( $pParamHash['action_log']['error_message'] ) ) {
 			$error_message = $pParamHash['action_log']['error_message'];
 		}
 

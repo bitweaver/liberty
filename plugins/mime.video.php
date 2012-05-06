@@ -57,7 +57,7 @@ $gLibertySystem->registerPlugin( PLUGIN_MIME_GUID_VIDEO, $pluginParams );
 
 /**
  * mime_video_preload This function is loaded on every page load before anything happens and is used to load required scripts.
- * 
+ *
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
@@ -68,7 +68,7 @@ function mime_video_preload() {
 
 /**
  * Store the data in the database
- * 
+ *
  * @param array $pStoreRow File data needed to store details in the database - sanitised and generated in the verify function
  * @access public
  * @return TRUE on success, FALSE on failure - $pStoreRow['errors'] will contain reason
@@ -90,9 +90,9 @@ function mime_video_store( &$pStoreRow ) {
 }
 
 /**
- * mime_video_update 
- * 
- * @param array $pStoreRow 
+ * mime_video_update
+ *
+ * @param array $pStoreRow
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
@@ -139,7 +139,7 @@ function mime_video_update( &$pStoreRow, $pParams = NULL ) {
 
 /**
  * Load file data from the database
- * 
+ *
  * @param array $pFileHash Contains all file information
  * @param array $pPrefs Attachment preferences taken liberty_attachment_prefs
  * @param array $pParams Parameters for loading the plugin - e.g.: might contain values from the view page
@@ -172,8 +172,8 @@ function mime_video_load( $pFileHash, &$pPrefs, $pParams = NULL ) {
 
 /**
  * This function will add an entry to the process queue for the cron job to take care of
- * 
- * @param array $pContentId 
+ *
+ * @param array $pContentId
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
@@ -202,8 +202,8 @@ function mime_video_add_process( $pStoreRow ) {
 
 /**
  * Convert a stored video file to flashvideo
- * 
- * @param array $pParamHash 
+ *
+ * @param array $pParamHash
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
@@ -481,7 +481,7 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 		$pParamHash['log'] = $log;
 
 		// we'll add an entry in the action logs
-		LibertyContent::storeActionLog( array( 'action_log' => $actionLog ));
+		LibertyContent::storeActionLogFromHash( array( 'action_log' => $actionLog ));
 
 		// return the log
 		$pParamHash['log'] = $log;
@@ -491,7 +491,7 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 
 /**
  * This function will create a thumbnail for a given video
- * 
+ *
  * @param string $pFile path to video file
  * @param numric $pOffset Offset in seconds to use to create thumbnail from
  * @access public
@@ -544,7 +544,7 @@ function mime_video_create_thumbnail( $pFile, $pOffset = 60 ) {
 
 /**
  * mime_video_calculate_videosize Calculate the display video size
- * 
+ *
  * @param array $pFileHash File information including attachment_id
  * @param array $pCommonObject common object - calculations will be stored in $pCommonObject->mStoragePrefs
  * @access public
@@ -580,8 +580,8 @@ function mime_video_calculate_videosize( &$pMetaData, $pParams ) {
 
 /**
  * mime_video_fix_streaming will make sure the MOOV atom is at the beginning of the MP4 file to enable streaming
- * 
- * @param array $pVideoFile 
+ *
+ * @param array $pVideoFile
  * @access public
  * @return string shell result on success, FALSE on failure
  */

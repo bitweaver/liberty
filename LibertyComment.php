@@ -377,7 +377,7 @@ class LibertyComment extends LibertyMime {
 		return parent::getDisplayLink( $pLinkText, $pMixed, $anchor );
 	}
 
-	function getList( $pParamHash ) {
+	function getList( &$pParamHash ) {
 		global $gBitSystem, $gLibertySystem;
 		if ( !isset( $pParamHash['sort_mode']) or $pParamHash['sort_mode'] == '' ){
 			$pParamHash['sort_mode'] = 'created_desc';
