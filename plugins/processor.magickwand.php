@@ -208,7 +208,7 @@ function liberty_magickwand_convert_colorspace_image( &$pFileHash, $pColorSpace 
 	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
 		$magickWand = NewMagickWand();
 		if( $error = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand ) ) {
-			bit_log_error( "MagickReadImage Failed:$error ( $pFileHash[source_file] )" );
+			bit_error_log( "MagickReadImage Failed:$error ( $pFileHash[source_file] )" );
 		}  else {
 			MagickRemoveImageProfile( $magickWand, "ICC" );
 			switch( strtolower( $pColorSpace ) ) {
@@ -221,7 +221,7 @@ function liberty_magickwand_convert_colorspace_image( &$pFileHash, $pColorSpace 
 							$pFileHash['dest_file'] = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['name'];
 						}
 						if( $error = liberty_magickwand_check_error( MagickWriteImage( $magickWand, $pFileHash['dest_file'] ), $magickWand ) ) {
-							bit_log_error( "MagickWriteImage Failed:$error ( $pFileHash[source_file] )" );
+							bit_error_log( "MagickWriteImage Failed:$error ( $pFileHash[source_file] )" );
 						} else {
 							$ret = TRUE;
 						}

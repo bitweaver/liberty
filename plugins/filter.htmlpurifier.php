@@ -122,7 +122,7 @@ function htmlpure_filter( &$pString, &$pFilterHash, $pObject ) {
 		echo "<br/><hr/><br/>". $renderer->render($diff);
 		 */
 	} else {
-		bit_log_error("HTMLPurifier not installed. Install with: pear channel-discover htmlpurifier.org; pear install hp/HTMLPurifier;");
+		bit_error_log("HTMLPurifier not installed. Install with: pear channel-discover htmlpurifier.org; pear install hp/HTMLPurifier;");
 	}
 
 	return $pString;
