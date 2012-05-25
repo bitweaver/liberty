@@ -69,7 +69,7 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 	if( ( isset( $_REQUEST["action"] ) && ( $_REQUEST["action"] == 'remove' ) ) || !empty( $_REQUEST["confirm"] ) ) {
 		if( $_REQUEST["action"] == 'remove' && !empty( $_REQUEST["confirm"] ) ) {
 			if( $gStructure->removeStructureNode( $_REQUEST["structure_id"], false ) ) {
-				header( "Location: ".$_SERVER['PHP_SELF'].'?structure_id='.$gStructure->mInfo["parent_id"] );
+				header( "Location: ".$_SERVER['SCRIPT_NAME'].'?structure_id='.$gStructure->mInfo["parent_id"] );
 				die;
 			} else {
 				error_log( "Error removing structure: " . vc($gStructure->mErrors ) );
@@ -96,7 +96,7 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 		} elseif ($_REQUEST["move_node"] == '4') {
 			$gStructure->moveNodeEast();
 		}
-		header( "Location: ".$_SERVER['PHP_SELF'].'?structure_id='.$gStructure->mInfo["structure_id"] );
+		header( "Location: ".$_SERVER['SCRIPT_NAME'].'?structure_id='.$gStructure->mInfo["structure_id"] );
 		die;
 	} elseif( !empty( $_REQUEST['submit_structure'] ) ) {
 		if( $gStructure->storeStructure( $_REQUEST ) ) {

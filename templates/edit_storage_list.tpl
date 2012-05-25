@@ -55,7 +55,7 @@
 								{if $storage.is_mime}
 									<a href="{$storage.display_url}">{biticon ipackage="icons" iname="document-open" iexplain="View"}</a>
 								{/if}
-								<a href="{$smarty.server.PHP_SELF}?{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}">{biticon ipackage="icons" iname="edit-delete" iexplain="Delete"}</a>
+								<a href="{$smarty.server.SCRIPT_NAME}?{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}">{biticon ipackage="icons" iname="edit-delete" iexplain="Delete"}</a>
 							{/if}
 						{/if}
 					</td>
