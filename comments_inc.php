@@ -46,7 +46,7 @@ $formfeedback = array( 'error' => array() );
 $gBitSmarty->assign_by_ref( 'formfeedback', $formfeedback );
 
 // make sure that we don't feed ajax comments if we don't have javascript enabled
-if( !BitThemes::isJavascriptEnabled() ) {
+if( !$gBitThemes->isJavascriptEnabled() ) {
 	$gBitSystem->setConfig( 'comments_ajax', 'n' );
 }
 
