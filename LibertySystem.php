@@ -163,7 +163,7 @@ class LibertySystem extends LibertyBase {
 	 * Use loadActivePlugins to load only the active plugins
 	 *
 	 * @param string $pPluginsPath Set the path where to scan for plugins
-	 * @param string $pPrefixPattern Perl regex for filenames can start with to prevent inclusion of unwanted filenames (e.g. (data\.|storage\.)). Final regex: /^{$pPrefixPattern}.*\.php$/ 
+	 * @param string $pPrefixPattern Perl regex for filenames can start with to prevent inclusion of unwanted filenames (e.g. (data\.|storage\.)). Final regex: /^{$pPrefixPattern}.*\.php$/
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -262,7 +262,7 @@ class LibertySystem extends LibertyBase {
 
 	/**
 	 * Allow data plugins to register their tag
-	 * 
+	 *
 	 * @param string $pTag Tag of plugin, e.g.: TOC
 	 * @param string $pPluginGuid GUID of plugin, e.g.: PLUGIN_GUID_TOC
 	 * @access public
@@ -301,8 +301,8 @@ class LibertySystem extends LibertyBase {
 	}
 
 	/**
-	 * setActivePlugins 
-	 * 
+	 * setActivePlugins
+	 *
 	 * @param array $pPluginGuids an array of all the plugin guids that are active. Any left out are *inactive*!
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
@@ -333,7 +333,7 @@ class LibertySystem extends LibertyBase {
 
 	/**
 	 * set a single plugin as active and store the appropriate information in the database
-	 * 
+	 *
 	 * @param array $pPluginGuid the plugin guid we want to set active
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
@@ -440,9 +440,9 @@ class LibertySystem extends LibertyBase {
 	}
 
 	/**
-	 * getPluginInfo 
-	 * 
-	 * @param array $pGuid 
+	 * getPluginInfo
+	 *
+	 * @param array $pGuid
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -455,8 +455,8 @@ class LibertySystem extends LibertyBase {
 	}
 
 	/**
-	 * getPluginFunction 
-	 * 
+	 * getPluginFunction
+	 *
 	 * @param string $pGuid GUID of plugin used - if empty, we get all available functions of that type in all active plugins
 	 * @param string $pFunctionName Function type we want to use
 	 * @param string $pGetDefault Get default function for a given plugin type such as 'mime'
@@ -479,7 +479,7 @@ class LibertySystem extends LibertyBase {
 
 	/**
 	 * getPluginFunctions Get a list of functions of a given type
-	 * 
+	 *
 	 * @param string $pFunctionName Function type we want to get
 	 * @access public
 	 * @return array of functions with the GUID as key
@@ -496,7 +496,7 @@ class LibertySystem extends LibertyBase {
 
 	/**
 	 * getMimeTemplate will fetch an appropriate template to display a given filetype
-	 * 
+	 *
 	 * @param string $pTemplate Basename of the template
 	 * @param string $pGuid GUID of plugin
 	 * @access public
@@ -514,7 +514,7 @@ class LibertySystem extends LibertyBase {
 
 	/**
 	 * getAllMimeTemplates will fetch templates of a given type from all active plugins
-	 * 
+	 *
 	 * @param array $pTemplate Name of the template
 	 * @access public
 	 * @return array of resource paths to templates
@@ -531,8 +531,8 @@ class LibertySystem extends LibertyBase {
 
 	/**
 	 * getPluginsOfType will fetch all plugins of a given type
-	 * 
-	 * @param string $pPluginType 
+	 *
+	 * @param string $pPluginType
 	 * @access public
 	 * @return an array of plugins of a given type
 	 */
@@ -549,9 +549,9 @@ class LibertySystem extends LibertyBase {
 	}
 
 	/**
-	 * This function will purge all plugin settings set in kernel_config. useful when the path to plugins changes 
+	 * This function will purge all plugin settings set in kernel_config. useful when the path to plugins changes
 	 * or plugins don't seem to be working
-	 * 
+	 *
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -607,9 +607,9 @@ class LibertySystem extends LibertyBase {
 			// we just ran some SQL - let's flush the loadContentTypes query cache
 			$this->loadContentTypes( 0 );
 		} else {
-			if( $pTypeParams['handler_package'] != $this->mContentTypes[$pGuid]['handler_package'] || 
-				$pTypeParams['handler_file'] != $this->mContentTypes[$pGuid]['handler_file'] || 
-				$pTypeParams['handler_class'] != $this->mContentTypes[$pGuid]['handler_class'] || 
+			if( $pTypeParams['handler_package'] != $this->mContentTypes[$pGuid]['handler_package'] ||
+				$pTypeParams['handler_file'] != $this->mContentTypes[$pGuid]['handler_file'] ||
+				$pTypeParams['handler_class'] != $this->mContentTypes[$pGuid]['handler_class'] ||
 				( empty( $this->mContentTypes[$pGuid]['content_name_plural'] ) && version_compare( $gBitSystem->getVersion( LIBERTY_PKG_NAME ), '2.1.4', '>=' ) ) // temporary update condition during migration of content_description to content_name remove after april 20 2011
 				) {
 				$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."liberty_content_types", $pTypeParams, array( 'content_type_guid'=>$pGuid ) );
@@ -622,7 +622,7 @@ class LibertySystem extends LibertyBase {
 
 	/**
 	 * requireHandlerFile will require_once() the handler file if given the hash found in $gLibertySystem->mContentTypes[content_type_guid]
-	 * 
+	 *
 	 * @param array $pContentTypeHash the hash found in $gLibertySystem->mContentTypes[content_type_guid]
 	 * @access public
 	 * @return TRUE on success, FALSE on failure
@@ -743,14 +743,14 @@ class LibertySystem extends LibertyBase {
 
 	// ****************************** Miscellaneous Functions
 	/**
-	 * Get the URL to the icon for the mime type passed in. This should probably check for files of multiple image types instead of just jpg 
-	 * 
+	 * Get the URL to the icon for the mime type passed in. This should probably check for files of multiple image types instead of just jpg
+	 *
 	 * @param string $pMimeType Mime type of the file
 	 * @param string $pExt Extension of the file - used to get backup mime icon
 	 * @access public
 	 * @return Full image HTML tag to mime icon
 	 */
-	function getMimeThumbnailURL($pMimeType, $pExt=NULL) {
+	public static function getMimeThumbnailURL($pMimeType, $pExt=NULL) {
 		$ret = NULL;
 		$parts = explode( '/',$pMimeType );
 		if( count( $parts ) > 1 ) {
