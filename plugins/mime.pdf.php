@@ -111,10 +111,10 @@ function mime_pdf_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 	// don't load a mime image if we don't have an image for this file
 	if( $ret = mime_default_load( $pFileHash, $pPrefs, $pParams )) {
 		if( !empty( $ret['source_file'] )) {
-			$source_path = STORAGE_PKG_PATH.dirname( $ret['source_file'] ).'/';
+			$source_path = dirname( $ret['source_file'] ).'/';
 			// if the swf file exists, we pass it back that it can be viewed.
 			if( is_file( $source_path.'pdf.swf' )) {
-				$ret['media_url'] = storage_path_to_url( dirname( $ret['source_file'] ).'/pdf.swf' );
+				$ret['media_url'] = storage_path_to_url( dirname( $ret['source_url'] ).'/pdf.swf' );
 			}
 		}
 	}
