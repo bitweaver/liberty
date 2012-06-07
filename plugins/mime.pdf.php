@@ -54,7 +54,7 @@ $gLibertySystem->registerPlugin( PLUGIN_MIME_GUID_PDF, $pluginParams );
 
 /**
  * Store the data in the database
- * 
+ *
  * @param array $pStoreRow File data needed to store details in the database - sanitised and generated in the verify function
  * @access public
  * @return TRUE on success, FALSE on failure - $pStoreRow[errors] will contain reason
@@ -77,7 +77,7 @@ function mime_pdf_store( &$pStoreRow ) {
 
 /**
  * mime_pdf_update update file information in the database if there were changes.
- * 
+ *
  * @param array $pStoreRow File data needed to update details in the database
  * @access public
  * @return TRUE on success, FALSE on failure - $pStoreRow[errors] will contain reason
@@ -99,7 +99,7 @@ function mime_pdf_update( &$pStoreRow, $pParams = NULL ) {
 
 /**
  * Load file data from the database
- * 
+ *
  * @param array $pFileHash Contains all file information
  * @param array $pPrefs Attachment preferences taken liberty_attachment_prefs
  * @param array $pParams Parameters for loading the plugin - e.g.: might contain values such as thumbnail size from the view page
@@ -123,7 +123,7 @@ function mime_pdf_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 
 /**
  * mime_pdf_convert_pdf2swf Convert a PDF to a SWF video
- * 
+ *
  * @param array $pFileHash file details.
  * @param array $pFileHash[upload] should contain a complete hash from $_FILES
  * @access public
@@ -170,8 +170,8 @@ function mime_pdf_convert_pdf2swf( $pFileHash ) {
 }
 
 /**
- * mime_pdf_help 
- * 
+ * mime_pdf_help
+ *
  * @access public
  * @return string
  */
