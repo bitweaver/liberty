@@ -632,7 +632,7 @@ class LibertyMime extends LibertyContent {
 						if( !empty( $this ) && !empty( $this->mStoragePrefs[$pAttachmentId] )) {
 							$prefs = &$this->mStoragePrefs[$pAttachmentId];
 						} else {
-							$prefs = $this->getAttachmentPreferences( $pAttachmentId );
+							$prefs = static::getAttachmentPreferences( $pAttachmentId );
 						}
 						$ret = $func( $row, $prefs, $pParams );
 					}
