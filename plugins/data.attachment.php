@@ -136,18 +136,18 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		require_once( WIKI_PKG_PATH.'BitPage.php');
 		$wp = new BitPage( $pParams['page_id'] );
 		if( $wp->load() ) {
-				$wrapper['display_url'] = $wp->getContactUrl();
+				$wrapper['display_url'] = $wp->getDisplayUrl();
 		}
 	} elseif( @BitBase::verifyId( $pParams['content_id'] )) {
 		// link to any content by content_id
 		if( $obj = LibertyBase::getLibertyObject( $pParams['content_id'] )) {
-				$wrapper['display_url'] = $obj->getContactUrl();
+				$wrapper['display_url'] = $obj->getDisplayUrl();
 		}
 	} elseif( !empty( $pParams['page_name'] )) {
 		// link to page by page_name
 		require_once( WIKI_PKG_PATH.'BitPage.php');
 		$wp = new BitPage();
-			$wrapper['display_url'] = $wp->getContactUrl( $pParams['page_name'] );
+			$wrapper['display_url'] = $wp->getDisplayUrl( $pParams['page_name'] );
 	} elseif( !empty( $pParams['link'] ) && $pParams['link'] == 'false' ) {
 		// no link
 	} elseif( !empty( $pParams['link'] )) {
