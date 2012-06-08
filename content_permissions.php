@@ -21,7 +21,7 @@ if( $gContent == null ) {
 // Process the form
 // send the user to the content page if he wants to
 if( !empty( $_REQUEST['back'] )) {
-	bit_redirect( $gContent->getContactUrl() );
+	bit_redirect( $gContent->getDisplayUrl() );
 }
 
 // Update database if needed
