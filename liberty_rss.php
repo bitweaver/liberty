@@ -37,7 +37,7 @@ $rss->link = 'http://'.$_SERVER['HTTP_HOST'].LIBERTY_PKG_DIR.'/list_content.php'
 foreach( $feeds as $feed ) {
 	$item = new FeedItem();
 	$item->title = $feed['title'];
-	$item->link = BIT_BASE_URI.$liberty->getContactUrl( $feed['title'], $feed );
+	$item->link = BIT_BASE_URI.$liberty->getDisplayUrl( $feed['title'], $feed );
 
 	// create a page header that we know what type of data we're looking at
 	$description =
