@@ -323,8 +323,8 @@ if( !function_exists( 'mime_default_download' )) {
 				$dl = new HTTP_Download();
 				$dl->setLastModified( $pFileHash['last_modified'] );
 				$dl->setFile( $pFileHash['source_file'] );
-				//$dl->setContentDisposition( HTTP_DOWNLOAD_INLINE, $pFileHash['filename'] );
-				$dl->setContentDisposition( HTTP_DOWNLOAD_ATTACHMENT, $pFileHash['filename'] );
+				//$dl->setContentDisposition( HTTP_DOWNLOAD_INLINE, $pFileHash['file_name'] );
+				$dl->setContentDisposition( HTTP_DOWNLOAD_ATTACHMENT, $pFileHash['file_name'] );
 				$dl->setContentType( $pFileHash['mime_type'] );
 				$res = $dl->send();
 
@@ -351,7 +351,7 @@ if( !function_exists( 'mime_default_download' )) {
 				header( "Accept-Ranges: bytes" );
 				header( "Pragma: public" );
 				header( "Last-Modified: ".gmdate( "D, d M Y H:i:s", $pFileHash['last_modified'] )." GMT", TRUE, 200 );
-				header( 'Content-Disposition: attachment; filename="'.$pFileHash['filename'].'"' );
+				header( 'Content-Disposition: attachment; filename="'.$pFileHash['file_name'].'"' );
 				header( "Content-type: ".$pFileHash['mime_type'] );
 				header( "Content-Description: File Transfer" );
 				header( "Content-Length: ".filesize( $pFileHash['source_file'] ));
