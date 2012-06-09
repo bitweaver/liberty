@@ -2570,7 +2570,7 @@ class LibertyContent extends LibertyBase {
 						 * nice try, but you can't do this because individual classes have gone off the reservation changing the params they accept
 						 * for distributed packages we need to enforce that method overrides all take the same basic params.
 						 **/
-						// $aux['display_url']  = $type['content_object']->getContactUrl( NULL, $aux );
+						// $aux['display_url']  = $type['content_object']->getDisplayUrl( NULL, $aux );
 						$aux['display_url'] = BIT_ROOT_URL."index.php?content_id=".$aux['content_id'];
 					}
 
