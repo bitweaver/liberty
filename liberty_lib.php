@@ -321,7 +321,7 @@ function liberty_content_list_sql( &$pObject, $pParamHash=NULL ) {
 	$hasPerm = FALSE;
 	// enforce_status will require the status limit on everyone including admin and thus we can ignore permission checks
 	if( !isset( $pParamHash['enforce_status'] )) {
-		$hasPerm = ( is_object( $pObject ) && method_exists( $pObject, 'hasUserPermission' )) ? $pObject->hasUserPermission( 'p_liberty_edit_all_status' ) : $gBitUser->hasPermission( 'p_liberty_edit_all_status' );
+		$hasPerm = ( is_object( $pObject ) && method_exists( $pObject, 'hasUserPermission' )) ? $pObject->hasUserPermission( 'p_liberty_edit_all_status', FALSE ) : $gBitUser->hasPermission( 'p_liberty_edit_all_status' );
 	}
 
 	// default show content with status between 0 and 100;
