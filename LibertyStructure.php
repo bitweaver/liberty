@@ -239,6 +239,7 @@ class LibertyStructure extends LibertyBase {
 					$type = &$contentTypes[$res['content_type_guid']];
 					if( empty( $type['content_object'] ) ) {
 						// create *one* object for each object *type* to  call virtual methods.
+						$handlerFile = $gBitSystem->mPackages[$type['content_object']]['path'].$type['handler_file'];
 						if( file_exists( $handlerFile ) ) {
 							include_once( $handlerFile );
 							if( class_exists( $type['handler_class'] ) ) {
