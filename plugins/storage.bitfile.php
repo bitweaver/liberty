@@ -90,7 +90,7 @@ function bit_files_load( $pRow ) {
 // this fuction broken, will fix soon - spiderr
 // I think its fixed now - no promises though! - drewslater
 	global $gBitSystem, $gLibertySystem;
-	$ret = NULL;
+	$ret = array();
 	if( !empty( $pRow['foreign_id'] ) && is_numeric( $pRow['foreign_id'] )) {
 		$query = "
 			SELECT *

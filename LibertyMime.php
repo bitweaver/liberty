@@ -363,16 +363,31 @@ class LibertyMime extends LibertyContent {
 	// {{{ =================== Storage Directory Methods ====================
 	function getSourceUrl( $pParamHash=array() ) {
 		$ret = NULL;
+		if( empty( $pParamHash ) && !empty( $this ) ) {
+			$pParamHash = $this->mInfo;
+		}
 		if( $fileName = $this->getParameter( $pParamHash, 'file_name', $this->getField( 'file_name' ) ) ) {
-			 $ret = $this->getStorageUrl( $pParamHash ).basename( $fileName );
+			$defaultFileName = liberty_mime_get_default_file_name( $fileName, $pParamHash['mime_type'] );
+			if( file_exists( $this->getStoragePath( $pParamHash ).$defaultFileName ) ) {
+				$ret = $this->getStorageUrl( $pParamHash ).$defaultFileName;
+			} else {
+				$ret = $this->getStorageUrl( $pParamHash ).basename( $fileName );
+			}
 		}
 		return $ret;
 	}
 
 	function getSourceFile( $pParamHash=array() ) {
 		$ret = NULL;
+		if( empty( $pParamHash ) && !empty( $this ) ) {
+			$pParamHash = $this->mInfo;
+		}
 		if( $fileName = $this->getParameter( $pParamHash, 'file_name', $this->getField( 'file_name' ) ) ) {
-			 $ret = $this->getStoragePath( $pParamHash ).basename( $fileName );
+			$defaultFileName = liberty_mime_get_default_file_name( $fileName, $pParamHash['mime_type'] );
+			$ret = $this->getStoragePath( $pParamHash ).$defaultFileName;
+			if( !file_exists( $ret ) ) {
+				$ret = $this->getStoragePath( $pParamHash ).basename( $fileName );
+			}
 		}
 		return $ret;
 	}
@@ -425,8 +440,8 @@ class LibertyMime extends LibertyContent {
 	 * @return appropriate sub dir name
 	 */
 	function getStorageSubDirName( $pFileHash = NULL ) {
-		if( !empty( $pFileHash['type'] ) && strstr( $pFileHash['type'], "/" )) {
-			$ret = strtolower( preg_replace( "!/.*$!", "", $pFileHash['type'] ));
+		if( !empty( $pFileHash['mime_type'] ) && strstr( $pFileHash['mime_type'], "/" )) {
+			$ret = strtolower( preg_replace( "!/.*$!", "", $pFileHash['mime_type'] ));
 			// if we only got 'application' we will use the file extenstion
 			if( $ret == 'application' && !empty( $pFileHash['name'] ) && ( $pos = strrpos( $pFileHash['name'], "." )) !== FALSE ) {
 				$ret = strtolower( substr( $pFileHash['name'], $pos + 1 ));
@@ -879,6 +894,25 @@ class LibertyMime extends LibertyContent {
 		return $ret;
 	}
 
+	public static function getAttachmentDownloadUrl( $pAttachmentId ) {
+		global $gBitSystem;
+		$ret = NULL;
+		if( BitBase::verifyId( $pAttachmentId ) ) {
+			if( $gBitSystem->isFeatureActive( "pretty_urls" ) || $gBitSystem->isFeatureActive( "pretty_urls_extended" )) {
+				$ret = LIBERTY_PKG_URL."download/file/".$pAttachmentId;
+			} else {
+				$ret = LIBERTY_PKG_URL."download_file.php?attachment_id=".$pAttachmentId;
+			}
+		}
+		return $ret;
+	}
+
+	public function getDownloadUrl() {
+		if( $this->isValid() && $this->getField( 'attachment_id' ) ) {
+			$ret = LibertyMime::getAttachmentDownloadUrl( $this->getField( 'attachment_id' ) );
+		}
+		return $ret;
+	}
 
 	// {{{ =================== Meta Methods ====================
 	/**
@@ -1092,8 +1126,16 @@ class LibertyMime extends LibertyContent {
  */
 if( !function_exists( 'liberty_mime_get_storage_sub_dir_name' )) {
 	function liberty_mime_get_storage_sub_dir_name( $pFileHash = NULL ) {
-		if( !empty( $pFileHash['type'] ) && strstr( $pFileHash['type'], "/" )) {
-			$ret = strtolower( preg_replace( "!/.*$!", "", $pFileHash['type'] ));
+		if( !empty( $pFileHash['type'] ) ) {
+			// type is from upload file hash
+			$mimeType = $pFileHash['type'];
+		} elseif( !empty( $pFileHash['mime_type'] ) ) {
+			// mime_type is from liberty_files
+			$mimeType = $pFileHash['mime_type'];
+		}
+
+		if( !empty( $mimeType ) && strstr( $mimeType, "/" )) {
+			$ret = strtolower( preg_replace( "!/.*$!", "", $mimeType ));
 			// if we only got 'application' we will use the file extenstion
 			if( $ret == 'application' && !empty( $pFileHash['name'] ) && ( $pos = strrpos( $pFileHash['name'], "." )) !== FALSE ) {
 				$ret = strtolower( substr( $pFileHash['name'], $pos + 1 ));
@@ -1104,7 +1146,6 @@ if( !function_exists( 'liberty_mime_get_storage_sub_dir_name' )) {
 		if( empty( $ret ) || $ret == 'image' ) {
 			$ret = 'images';
 		}
-
 		return $ret;
 	}
 }
@@ -1174,25 +1215,49 @@ if( !function_exists( 'liberty_mime_get_storage_path' )) {
 
 if( !function_exists( 'liberty_mime_get_source_url' )) {
 	function liberty_mime_get_source_url( $pParamHash ) {
+		$fileName = BitBase::getParameter( $pParamHash, 'file_name' );
 		if( empty( $pParamHash['package'] ) ) {
-			$pParamHash['package'] = liberty_mime_get_storage_sub_dir_name( array( 'type' => BitBase::getParameter( $pParamHash, 'mime_type' ), 'name' => BitBase::getParameter( $pParamHash, 'file_name' ) ) );
+			$pParamHash['package'] = liberty_mime_get_storage_sub_dir_name( array( 'mime_type' => BitBase::getParameter( $pParamHash, 'mime_type' ), 'name' => $fileName ) );
 		}
 		if( empty( $pParamHash['sub_dir'] ) ) {
 			$pParamHash['sub_dir'] = BitBase::getParameter( $pParamHash, 'attachment_id' );
 		}
-		return STORAGE_PKG_URL.liberty_mime_get_storage_branch( $pParamHash ).basename( BitBase::getParameter( $pParamHash, 'file_name' ) );
+		$defaultFileName = liberty_mime_get_default_file_name( $fileName, $pParamHash['mime_type'] );
+		$ret = STORAGE_PKG_PATH.liberty_mime_get_storage_branch( $pParamHash ).$defaultFileName;
+		if( !file_exists( $ret ) ) {
+			$ret = STORAGE_PKG_URL.liberty_mime_get_storage_branch( $pParamHash ).basename( BitBase::getParameter( $pParamHash, 'file_name' ) );
+		}
+		return $ret;
 	}
 }
 
 if( !function_exists( 'liberty_mime_get_source_file' )) {
 	function liberty_mime_get_source_file( $pParamHash ) {
+		$fileName = BitBase::getParameter( $pParamHash, 'file_name' );
 		if( empty( $pParamHash['package'] ) ) {
-			$pParamHash['package'] = liberty_mime_get_storage_sub_dir_name( array( 'type' => BitBase::getParameter( $pParamHash, 'mime_type' ), 'name' => BitBase::getParameter( $pParamHash, 'file_name' ) ) );
+			$pParamHash['package'] = liberty_mime_get_storage_sub_dir_name( array( 'mime_type' => BitBase::getParameter( $pParamHash, 'mime_type' ), 'name' => $fileName ) );
 		}
 		if( empty( $pParamHash['sub_dir'] ) ) {
 			$pParamHash['sub_dir'] = BitBase::getParameter( $pParamHash, 'attachment_id' );
 		}
-		return STORAGE_PKG_PATH.liberty_mime_get_storage_branch( $pParamHash ).basename( BitBase::getParameter( $pParamHash, 'file_name' ) );
+		$defaultFileName = liberty_mime_get_default_file_name( $fileName, $pParamHash['mime_type'] );
+		$ret = STORAGE_PKG_PATH.liberty_mime_get_storage_branch( $pParamHash ).$defaultFileName;
+		if( !file_exists( $ret ) ) {
+			$ret = STORAGE_PKG_PATH.liberty_mime_get_storage_branch( $pParamHash ).basename( BitBase::getParameter( $pParamHash, 'file_name' ) );
+		}
+		return $ret;
+	}
+}
+
+if( !function_exists( 'liberty_mime_get_default_file_name' )) {
+	function liberty_mime_get_default_file_name( $pFileName, $pMimeType ) {
+		global $gBitSystem;
+		if( $gBitSystem->isFeatureActive( 'liberty_originalize_file_names' ) ) {
+			$ret = 'original.'.$gBitSystem->getMimeExtension( $pMimeType );
+		} else {
+			$ret = $pFileName;
+		}
+		return $ret;
 	}
 }
 

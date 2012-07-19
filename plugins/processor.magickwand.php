@@ -22,20 +22,8 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 	$magickWand = NewMagickWand();
 	$pFileHash['error'] = NULL;
 	$ret = NULL;
-	$isPdf = preg_match( '/pdf/i', $pFileHash['type'] );
+
 	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) && filesize( $pFileHash['source_file'] ) ) {
-		// This has to come BEFORE the MagickReadImage
-		if( $isPdf ) {
-			// has a customer pdf rasterization function been defined?
-			if( function_exists( 'liberty_rasterize_pdf' ) && $rasteredFile = liberty_rasterize_pdf( $pFileHash['source_file'] ) ) {
-				$pFileHash['source_file'] = $rasteredFile;
-				$isPdf = FALSE;
-			} else {
-				MagickSetImageUnits( $magickWand, MW_PixelsPerInchResolution );
-				$rez =  empty( $pFileHash['max_width'] ) || $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION ? 250 : 72;
-				MagickSetResolution( $magickWand, 300, 300 );
-			}
-		}
 		if( $error = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand ) ) {
 			// $pFileHash['error'] = $error;
 			$destFile = liberty_process_generic( $pFileHash, FALSE );
@@ -47,10 +35,6 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 				MagickProfileImage( $magickWand, 'ICC', file_get_contents( UTIL_PKG_PATH.'icc/srgb.icm' ));
 				MagickSetImageColorspace( $magickWand, MW_RGBColorspace );
 				$pFileHash['colorspace_conversion'] = TRUE;
-			}
-			if( $isPdf ) {
-				MagickResetIterator( $magickWand );
-				MagickNextImage( $magickWand );
 			}
 			MagickSetImageCompressionQuality( $magickWand, $gBitSystem->getConfig( 'liberty_thumbnail_quality', 85 ));
 			$iwidth = round( MagickGetImageWidth( $magickWand ) );

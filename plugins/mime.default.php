@@ -145,7 +145,7 @@ if( !function_exists( 'mime_default_update' )) {
 			if( !empty( $pStoreRow['dest_branch'] ) && !empty( $pStoreRow['file_name'] ) ) {
 				// First we remove the old file
 				$path = STORAGE_PKG_PATH.$pStoreRow['dest_branch'];
-				$file = $path.$pStoreRow['file_name'];
+				$file = $path.liberty_mime_get_default_file_name( $pStoreRow['file_name'], $pStoreRow['mime_type'] );
 				if(( $nuke = LibertyMime::validateStoragePath( $path )) && is_dir( $nuke )) {
 					if( !empty( $pStoreRow['unlink_dir'] )) {
 						@unlink_r( $path );
@@ -251,8 +251,13 @@ if( !function_exists( 'mime_default_load' )) {
 				$storageName = basename( $row['file_name'] );
 				// compatibility with _FILES hash
 				$row['name'] = $storageName;
-				$row['type'] = $row['mime_type'];
-				$storageBranch = liberty_mime_get_storage_branch( array( 'sub_dir' => $row['attachment_id'], 'user_id' =>$row['user_id'], 'package' => liberty_mime_get_storage_sub_dir_name( $row ) ) ).$storageName;
+				$defaultFileName = liberty_mime_get_default_file_name( $row['file_name'], $row['mime_type'] );
+				$storageBranchPath = liberty_mime_get_storage_branch( array( 'sub_dir' => $row['attachment_id'], 'user_id' =>$row['user_id'], 'package' => liberty_mime_get_storage_sub_dir_name( $row ) ) );
+				$storageBranch = $storageBranchPath.$defaultFileName;
+				if( !file_exists( STORAGE_PKG_PATH.$storageBranch ) ) {
+					$storageBranch = liberty_mime_get_storage_branch( array( 'sub_dir' => $row['attachment_id'], 'user_id' =>$row['user_id'], 'package' => liberty_mime_get_storage_sub_dir_name( $row ) ) ).$storageName;
+				}
+
 				// this will fetch the correct thumbnails
 				$thumbHash['source_file'] = STORAGE_PKG_PATH.$storageBranch;
 				$row['source_file'] = STORAGE_PKG_PATH.$storageBranch;
@@ -281,14 +286,11 @@ if( !function_exists( 'mime_default_load' )) {
 				//    make sure to check for these when you use them. frequently the original might not be available
 				//    e.g.: video files are large and the original might be deleted after conversion
 				if( is_file( STORAGE_PKG_PATH.$storageBranch )) {
+					$ret['mime_type'] = $row['mime_type'];
 					$ret['source_file']   = STORAGE_PKG_PATH.$storageBranch;
 					$ret['source_url']    = STORAGE_PKG_URL.$storageBranch;
 					$ret['last_modified'] = filemtime( $ret['source_file'] );
-					if( $gBitSystem->isFeatureActive( "pretty_urls" ) || $gBitSystem->isFeatureActive( "pretty_urls_extended" )) {
-						$ret['download_url'] = LIBERTY_PKG_URL."download/file/".$row['attachment_id'];
-					} else {
-						$ret['download_url'] = LIBERTY_PKG_URL."download_file.php?attachment_id=".$row['attachment_id'];
-					}
+					$ret['download_url'] = LibertyMime::getAttachmentDownloadUrl( $row['attachment_id'] );
 				}
 
 				// add a description of how to insert this file into a wiki page
@@ -323,7 +325,6 @@ if( !function_exists( 'mime_default_download' )) {
 				$dl = new HTTP_Download();
 				$dl->setLastModified( $pFileHash['last_modified'] );
 				$dl->setFile( $pFileHash['source_file'] );
-				//$dl->setContentDisposition( HTTP_DOWNLOAD_INLINE, $pFileHash['file_name'] );
 				$dl->setContentDisposition( HTTP_DOWNLOAD_ATTACHMENT, $pFileHash['file_name'] );
 				$dl->setContentType( $pFileHash['mime_type'] );
 				$res = $dl->send();

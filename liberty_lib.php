@@ -574,11 +574,12 @@ function liberty_process_generic( &$pFileHash, $pMoveFile = TRUE ) {
 	if( !empty( $pFileHash['dest_file'] ) ) {
 		$destFile = $pFileHash['dest_file'];
 	} else {
-		$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['name'];
+		$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].liberty_mime_get_default_file_name( $pFileHash['name'], $pFileHash['type'] );
 		if ( is_windows() ) {
 			$destFile = str_replace( '//', '\\', str_replace( "\\", '\\', $destFile ) );
 		}
 	}
+
 	mkdir_p( dirname( $destFile ) );
 
 	if( is_file( $pFileHash['source_file']) ) {
@@ -701,15 +702,26 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 
 	if( ( !preg_match( '#image/(gif|jpe?g|png)#i', $pFileHash['type'] ) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' )) || in_array( 'original', $pFileHash['thumbnail_sizes'] ) ) {
 		// jpeg version of original
-		$pFileHash['dest_base_name'] = 'original';
-		$pFileHash['name'] = 'original.jpg';
-		$pFileHash['max_width'] = MAX_THUMBNAIL_DIMENSION;
-		$pFileHash['max_height'] = MAX_THUMBNAIL_DIMENSION;
-		if( $convertedFile = $resizeFunc( $pFileHash )) {
-			$pFileHash['source_file'] = $convertedFile;
-			$pFileHash['type'] = $gBitSystem->verifyMimeType( $convertedFile );
-			$ret = TRUE;
+		if( preg_match( '/pdf/i', $pFileHash['type'] ) ) {
+			// has a customer pdf rasterization function been defined?
+			if( function_exists( 'liberty_rasterize_pdf' ) && $rasteredFile = liberty_rasterize_pdf( $pFileHash['source_file'] ) ) {
+				$pFileHash['source_file'] = $rasteredFile;
+			} else {
+				MagickSetImageUnits( $magickWand, MW_PixelsPerInchResolution );
+				$rez =  empty( $pFileHash['max_width'] ) || $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION ? 250 : 72;
+				MagickSetResolution( $magickWand, 300, 300 );
+			}
+		} else {
+			$pFileHash['dest_base_name'] = 'original';
+			$pFileHash['name'] = 'original.jpg';
+			$pFileHash['max_width'] = MAX_THUMBNAIL_DIMENSION;
+			$pFileHash['max_height'] = MAX_THUMBNAIL_DIMENSION;
+			if( $convertedFile = $resizeFunc( $pFileHash )) {
+				$pFileHash['source_file'] = $convertedFile;
+				$ret = TRUE;
+			}
 		}
+		$pFileHash['type'] = $gBitSystem->verifyMimeType( $pFileHash['source_file'] );
 	}
 
 	// override $mimeExt if we have a custom setting for it
@@ -794,7 +806,6 @@ function liberty_fetch_thumbnails( $pParamHash ) {
 
 		// short hand
 		$path = &$pParamHash['source_file'];
-
 		// $path might already be the absolute path or it might already contain BIT_ROOT_URL
 		if( !( $path = preg_replace( "!^".preg_quote( STORAGE_PKG_PATH, "!" )."!", "", $path ))) {
 			$path = preg_replace( "!^".preg_quote( STORAGE_PKG_URL, "!" )."!", "", $path );
