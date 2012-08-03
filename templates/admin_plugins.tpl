@@ -86,7 +86,7 @@
 									{formlabel label="Allow HTML" for="allow_html"}
 									{forminput}
 										<input type="checkbox" name="content_allow_html" id="allow_html" value="y" {if $gBitSystem->isFeatureActive('content_allow_html')}checked="checked"{/if} />
-										This will render HTML in all content pages if it is present. This is a security risk to allow HTML entry by untrusted users, but is usually required for existing installations. For a more controlled environment, assign the <a href="{$smarty.const.USERS_PKG_URL}admin/edit_group.php">p_liberty_enter_html permission</a>.
+										This will render HTML in all content pages if it is present. This is a security risk to allow HTML entry by untrusted users, but is usually required for existing installations. For a more controlled environment, assign the <a href="{$smarty.const.USERS_PKG_URL}admin/edit_role.php">p_liberty_enter_html permission</a>.
 										{formhelp note="Allow the use of HTML in tikiwiki format content."}
 									{/forminput}
 								</div>
@@ -94,7 +94,7 @@
 									{formlabel label="Force Allow HTML" for="force_allow_html"}
 									{forminput}
 										<input type="checkbox" name="content_force_allow_html" id="force_allow_html" value="y" {if $gBitSystem->isFeatureActive('content_force_allow_html')}checked="checked"{/if} />
-										This will force HTML to be allowed for all users in tikiwiki format content. We require this on if you are using FCKEditor and recommended it with any other WYSIWYG editor.
+										This will force HTML to be allowed for all users in tikiwiki format content. We require this on if you are using CKEditor and recommended it with any other WYSIWYG editor.
 										{formhelp note="This will force the allowance of HTML in tikiwiki format content for all users."}
 									{/forminput}
 								</div>
