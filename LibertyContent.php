@@ -3352,7 +3352,7 @@ class LibertyContent extends LibertyBase {
 		while( $aux = $result->fetchRow() ) {
 			$aux['user']         = $aux['modifier_user'];
 			$aux['editor']       = ( isset( $aux['modifier_real_name'] ) ? $aux['modifier_real_name'] : $aux['modifier_user'] );
-			$aux['display_name'] = BitUser::getTitle( $aux );
+			$aux['display_name'] = BitUser::getDisplayNameFromHash( NULL, $aux );
 			$ret[]               = $aux;
 		}
 
