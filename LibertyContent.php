@@ -1179,10 +1179,17 @@ class LibertyContent extends LibertyBase {
 	 */
 	function getContentPermissionsSql( $pPermName, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
 		global $gBitUser;
-		$pJoinSql .= "
-			LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcperm ON (lc.`content_id`=lcperm.`content_id`)
-			LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON (ugm.`group_id`=lcperm.`group_id`) ";
-		$pWhereSql .= " OR (lcperm.perm_name=? AND (ugm.user_id=? OR ugm.user_id=?)) ";
+		if ( defined(ROLE_MODEL) ) {
+			$pJoinSql .= "
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcperm ON (lc.`content_id`=lcperm.`content_id`)
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."users_roles_map` urm ON (urm.`role_id`=lcperm.`role_id`) ";
+			$pWhereSql .= " OR (lcperm.perm_name=? AND (urm.user_id=? OR urm.user_id=?)) ";
+		} else {
+			$pJoinSql .= "
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcperm ON (lc.`content_id`=lcperm.`content_id`)
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON (ugm.`group_id`=lcperm.`group_id`) ";
+			$pWhereSql .= " OR (lcperm.perm_name=? AND (ugm.user_id=? OR ugm.user_id=?)) ";
+		}
 		$pBindVars[] = $pPermName;
 		$pBindVars[] = $gBitUser->mUserId;
 		$pBindVars[] = ANONYMOUS_USER_ID;
@@ -1201,10 +1208,17 @@ class LibertyContent extends LibertyBase {
 	 */
 	function getContentListPermissionsSql( $pPermName, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
 		global $gBitUser;
-		$pJoinSql .= "
-			LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcperm ON (lc.`content_id`=lcperm.`content_id`)
-			LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugsm ON (ugsm.`group_id`=lcperm.`group_id`) ";
-		$pWhereSql .= " AND ( lcperm.perm_name IS NULL OR ( lcperm.perm_name=? AND ugsm.user_id=? AND ( (lcperm.is_revoked !=? OR lcperm.is_revoked IS NULL) OR lc.`user_id`=? ) ) )";
+		if ( defined(ROLE_MODEL) ) {
+			$pJoinSql .= "
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcperm ON (lc.`content_id`=lcperm.`content_id`)
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."users_roles_map` urm ON (urm.`role_id`=lcperm.`role_id`) ";
+			$pWhereSql .= " AND ( lcperm.perm_name IS NULL OR ( lcperm.perm_name=? AND urm.user_id=? AND ( (lcperm.is_revoked !=? OR lcperm.is_revoked IS NULL) OR lc.`user_id`=? ) ) )";
+		} else {
+			$pJoinSql .= "
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcperm ON (lc.`content_id`=lcperm.`content_id`)
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."users_groups_map` ugsm ON (ugsm.`group_id`=lcperm.`group_id`) ";
+			$pWhereSql .= " AND ( lcperm.perm_name IS NULL OR ( lcperm.perm_name=? AND ugsm.user_id=? AND ( (lcperm.is_revoked !=? OR lcperm.is_revoked IS NULL) OR lc.`user_id`=? ) ) )";
+		}
 		$pBindVars[] = $pPermName;
 		$pBindVars[] = $gBitUser->mUserId;
 		$pBindVars[] = "y";
@@ -1248,6 +1262,11 @@ class LibertyContent extends LibertyBase {
 				$bindVars[] = $pParamHash['group_id'];
 			}
 
+			if( !empty( $pParamHash['role_id'] ) ) {
+				$whereSql .= " AND lcperm.`role_id` = ? ";
+				$bindVars[] = $pParamHash['role_id'];
+			}
+
 			$permWhereSql = '';
 			$this->getContentPermissionsSql( $pParamHash['perm_name'], $selectSql, $joinSql, $permWhereSql, $bindVars );
 
@@ -1273,15 +1292,26 @@ class LibertyContent extends LibertyBase {
 		global $gBitUser;
 		$ret = FALSE;
 		if( $this->isValid() ) {
-			$query = "
-				SELECT lcperm.`perm_name`, lcperm.`is_revoked`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
-				FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
-					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
-					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
-				WHERE lcperm.`content_id` = ?";
+			if ( defined(ROLE_MODEL) ) {
+				$query = "
+					SELECT lcperm.`perm_name`, lcperm.`is_revoked`, ur.`role_id`, ur.`role_name`, up.`perm_desc`
+					FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
+						INNER JOIN `".BIT_DB_PREFIX."users_roles` ur ON( lcperm.`role_id`=ur.`role_id` )
+						LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
+					WHERE lcperm.`content_id` = ?";
+				$team = 'role_id';
+			} else {
+				$query = "
+					SELECT lcperm.`perm_name`, lcperm.`is_revoked`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
+					FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
+						INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
+						LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
+					WHERE lcperm.`content_id` = ?";
+				$team = 'group_id';
+			}
 			$perms = $this->mDb->getAll( $query, array( $this->mContentId ));
 			foreach( $perms as $perm ) {
-				$ret[$perm['group_id']][$perm['perm_name']] = $perm;
+				$ret[$perm[$team]][$perm['perm_name']] = $perm;
 			}
 		}
 		return $ret;
@@ -1296,13 +1326,23 @@ class LibertyContent extends LibertyBase {
 	function getContentWithPermissionsList() {
 		global $gBitSystem;
 		$ret = array();
-		$query = "
-			SELECT lcperm.`perm_name`, lc.`title`, lc.`content_id`, lc.`content_type_guid`, lcperm.`is_revoked`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
-			FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
-				INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
-				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcperm.`content_id`=lc.`content_id` )
-				LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
-			ORDER BY ".$gBitSystem->mDb->convertSortmode( 'content_type_guid_asc' ).", ".$gBitSystem->mDb->convertSortmode( 'title_asc' );
+		if ( defined(ROLE_MODEL) ) {
+			$query = "
+				SELECT lcperm.`perm_name`, lc.`title`, lc.`content_id`, lc.`content_type_guid`, lcperm.`is_revoked`, ur.`role_id`, ur.`role_name`, up.`perm_desc`
+				FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
+					INNER JOIN `".BIT_DB_PREFIX."users_roles` ur ON( lcperm.`role_id`=ur.`role_id` )
+					INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcperm.`content_id`=lc.`content_id` )
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
+				ORDER BY ".$gBitSystem->mDb->convertSortmode( 'content_type_guid_asc' ).", ".$gBitSystem->mDb->convertSortmode( 'title_asc' );
+		} else {
+			$query = "
+				SELECT lcperm.`perm_name`, lc.`title`, lc.`content_id`, lc.`content_type_guid`, lcperm.`is_revoked`, ug.`group_id`, ug.`group_name`, up.`perm_desc`
+				FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcperm
+					INNER JOIN `".BIT_DB_PREFIX."users_groups` ug ON( lcperm.`group_id`=ug.`group_id` )
+					INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON( lcperm.`content_id`=lc.`content_id` )
+					LEFT OUTER JOIN `".BIT_DB_PREFIX."users_permissions` up ON( up.`perm_name`=lcperm.`perm_name` )
+				ORDER BY ".$gBitSystem->mDb->convertSortmode( 'content_type_guid_asc' ).", ".$gBitSystem->mDb->convertSortmode( 'title_asc' );
+		}
 		$perms = $gBitSystem->mDb->getAll( $query );
 		foreach( $perms as $perm ) {
 			$ret[$perm['content_type_guid']][$perm['content_id']][] = $perm;
@@ -1558,7 +1598,7 @@ class LibertyContent extends LibertyBase {
 	 * @return Array of all permissions for the current user joined with perms
 	 *         for the current content. This should handle cases where
 	 *         non-default permissions is assigned, default permission is
-	 *         removed, and duplicate default permissions where one group's perm
+	 *         removed, and duplicate default permissions where one team's perm
 	 *         is revoked, but another is still permitted. If the permission is
 	 *         revoked, is_revoked will be set to 'y'
 	 */
@@ -1571,21 +1611,38 @@ class LibertyContent extends LibertyBase {
 		if( !is_numeric( $this->mContentId ) ) $this->mContentId = 0;
 		if( !isset( $this->mUserContentPerms )) {
 			// get the default permissions for specified user
-			$query = "
-				SELECT ugp.`perm_name` as `hash_key`, 1 as `group_perm`, ugp.`perm_name`, ugp.`perm_value`, ugp.`group_id`
-				FROM `".BIT_DB_PREFIX."users_groups_map` ugm
-					LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.`group_id`=ugp.`group_id`)
-					LEFT JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcp ON(lcp.`group_id`=ugm.`group_id` AND lcp.`content_id`=? AND ugp.`perm_name`=lcp.`perm_name`)
-				WHERE (ugm.`user_id`=? OR ugm.`user_id`=?) AND lcp.`perm_name` IS NULL";
+			if ( defined(ROLE_MODEL) ) {
+				$query = "
+					SELECT urp.`perm_name` as `hash_key`, 1 as `role_perm`, urp.`perm_name`, urp.`perm_value`, urp.`role_id`
+					FROM `".BIT_DB_PREFIX."users_roles_map` urm
+						LEFT JOIN `".BIT_DB_PREFIX."users_role_permissions` urp ON(urm.`role_id`=urp.`role_id`)
+						LEFT JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcp ON(lcp.`role_id`=urm.`role_id` AND lcp.`content_id`=? AND urp.`perm_name`=lcp.`perm_name`)
+					WHERE (urm.`user_id`=? OR urm.`user_id`=?) AND lcp.`perm_name` IS NULL";
+			} else {
+				$query = "
+					FROM `".BIT_DB_PREFIX."users_groups_map` ugm
+						LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.`group_id`=ugp.`group_id`)
+						LEFT JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcp ON(lcp.`group_id`=ugm.`group_id` AND lcp.`content_id`=? AND ugp.`perm_name`=lcp.`perm_name`)
+					WHERE (ugm.`user_id`=? OR ugm.`user_id`=?) AND lcp.`perm_name` IS NULL";
+			}
 			if( !$defaultPerms = $this->mDb->getAssoc( $query, array( $this->mContentId, $userId, ANONYMOUS_USER_ID ) ) ) {
 				$defaultPerms = array();
 			}
-			$query = "
-				SELECT lcp.`perm_name` AS `hash_key`, lcp.*
-				FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcp
-					INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON(lcp.group_id=ugm.group_id)
-					LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.group_id=ugp.group_id AND ugp.group_id!=lcp.group_id AND ugp.perm_name=lcp.perm_name)
-				WHERE lcp.content_id=? AND (ugm.user_id=? OR ugm.user_id=?) AND lcp.is_revoked IS NULL";
+			if ( defined(ROLE_MODEL) ) {
+				$query = "
+					SELECT lcp.`perm_name` AS `hash_key`, lcp.*
+					FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcp
+						INNER JOIN `".BIT_DB_PREFIX."users_roles_map` urm ON(lcp.role_id=urm.role_id)
+						LEFT JOIN `".BIT_DB_PREFIX."users_role_permissions` urp ON(urm.role_id=urp.role_id AND urp.role_id!=lcp.role_id AND urp.perm_name=lcp.perm_name)
+					WHERE lcp.content_id=? AND (urm.user_id=? OR urm.user_id=?) AND lcp.is_revoked IS NULL";
+			} else {
+				$query = "
+					SELECT lcp.`perm_name` AS `hash_key`, lcp.*
+					FROM `".BIT_DB_PREFIX."liberty_content_permissions` lcp
+						INNER JOIN `".BIT_DB_PREFIX."users_groups_map` ugm ON(lcp.group_id=ugm.group_id)
+						LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.group_id=ugp.group_id AND ugp.group_id!=lcp.group_id AND ugp.perm_name=lcp.perm_name)
+					WHERE lcp.content_id=? AND (ugm.user_id=? OR ugm.user_id=?) AND lcp.is_revoked IS NULL";
+			}
 			if( !$nonDefaultPerms = $this->mDb->getAssoc( $query, array( $this->mContentId, $userId, ANONYMOUS_USER_ID ) ) ) {
 				$nonDefaultPerms = array();
 			}
@@ -1607,16 +1664,20 @@ class LibertyContent extends LibertyBase {
 	 * @param integer Content Itentifier
 	 * @return bool true ( will not currently report a failure )
 	 */
-	function storePermission( $pGroupId, $pPermName, $pIsRevoked=FALSE, $pContentId=NULL ){
+	function storePermission( $pTeamId, $pPermName, $pIsRevoked=FALSE, $pContentId=NULL ){
 		$ret = FALSE;
 		$pContentId = $pContentId == NULL?$this->mContentId:$pContentId;
 		if( @BitBase::verifyId( $pGroupId ) && !empty( $pPermName ) && @BitBase::verifyId( $pContentId ) ) {
 			$this->removePermission( $pGroupId, $pPermName, $pContentId );
 			$storeHash = array(
-				'group_id' => $pGroupId,
 				'perm_name' => $pPermName,
 				'content_id' => $pContentId,
 			);
+			if ( defined(ROLE_MODEL) ) {
+				$storeHash['role_id'] = $pTeamId;
+			} else {
+				$storeHash['group_id'] = $pTeamId;
+			}
 			// check to see if this is an exclusion
 			if( $pIsRevoked ) {
 				$storeHash['is_revoked'] = 'y';
@@ -1633,13 +1694,18 @@ class LibertyContent extends LibertyBase {
 	 * @param string Name of the permission
 	 * @return bool true ( will not currently report a failure )
 	 */
-	function removePermission( $pGroupId, $pPermName, $pContentId=NULL ) {
+	function removePermission( $pTeamId, $pPermName, $pContentId=NULL ) {
 		$pContentId = $pContentId == NULL?$this->mContentId:$pContentId;
-		if( @BitBase::verifyId( $pGroupId ) && !empty( $pPermName ) && @BitBase::verifyId( $pContentId ) ) {
+		if( @BitBase::verifyId( $pTeamId ) && !empty( $pPermName ) && @BitBase::verifyId( $pContentId ) ) {
+			if ( defined(ROLE_MODEL) ) {
+				$team = 'role_id';
+			} else {
+				$team = 'group_id';
+			}
 			$query = "
 				DELETE FROM `".BIT_DB_PREFIX."liberty_content_permissions`
-				WHERE `group_id` = ? and `content_id` = ? and `perm_name` = ?";
-			$bindVars = array( $pGroupId, $pContentId, $pPermName );
+				WHERE `$team` = ? and `content_id` = ? and `perm_name` = ?";
+			$bindVars = array( $pTeamId, $pContentId, $pPermName );
 			$result = $this->mDb->query( $query, $bindVars );
 		}
 		return TRUE;
@@ -1648,15 +1714,19 @@ class LibertyContent extends LibertyBase {
 	/**
 	 * Check to see if this permission is already in the global permissions table.
 	 *
-	 * @param array $pGroupId
+	 * @param array $pTeamId
 	 * @param array $pPermName
 	 * @access public
 	 * @return TRUE if present, FALSE if not
 	 */
-	function isExcludedPermission( $pGroupId, $pPermName ) {
-		if( @BitBase::verifyId( $pGroupId ) && !empty( $pPermName )) {
-			$query = "SELECT `perm_name` FROM `".BIT_DB_PREFIX."users_group_permissions` WHERE `group_id` = ? AND `perm_name` = ?";
-			return( $this->mDb->getOne( $query, array( $pGroupId, $pPermName )) == $pPermName );
+	function isExcludedPermission( $pTeamId, $pPermName ) {
+		if( @BitBase::verifyId( $pTeamId ) && !empty( $pPermName )) {
+			if ( defined(ROLE_MODEL) ) {
+				$query = "SELECT `perm_name` FROM `".BIT_DB_PREFIX."users_role_permissions` WHERE `role_id` = ? AND `perm_name` = ?";
+			} else {
+				$query = "SELECT `perm_name` FROM `".BIT_DB_PREFIX."users_group_permissions` WHERE `group_id` = ? AND `perm_name` = ?";
+			}
+			return( $this->mDb->getOne( $query, array( $pTeamId, $pPermName )) == $pPermName );
 		}
 	}
 
