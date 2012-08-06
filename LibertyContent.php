@@ -740,6 +740,23 @@ class LibertyContent extends LibertyBase {
 		return $ret;
 	}
 
+	function exportList( $pList ) {
+		$ret = array();
+		$keys = array_merge( array( 'content_type_guid', 'title', 'uri', 'url', 'content_id' ), $this->invokeServices( 'content_export_keys_function', $pList ) );
+		foreach( $pList as $key=>$hash ) {
+			foreach( $keys as $field ) {
+				if( isset( $hash[$field] ) ) {
+					$ret[$key][$field] = $hash[$field];
+				}
+			}
+			$ret[$key]['content_id'] = $hash['content_id'];
+			$ret[$key]['date_created'] = date( DateTime::W3C, $hash['created'] );
+			$ret[$key]['date_last_modified'] = date( DateTime::W3C, $hash['last_modified'] );
+		}
+bit_error_log( $ret );
+		return $ret;
+	}
+
 	/**
 	 * Create an export object from the data
 	 *
