@@ -753,7 +753,6 @@ class LibertyContent extends LibertyBase {
 			$ret[$key]['date_created'] = date( DateTime::W3C, $hash['created'] );
 			$ret[$key]['date_last_modified'] = date( DateTime::W3C, $hash['last_modified'] );
 		}
-bit_error_log( $ret );
 		return $ret;
 	}
 
