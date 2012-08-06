@@ -104,7 +104,7 @@ if( $gBitThemes->isAjaxRequest() ) {
 	$ret = '<a title="'.$contentPerms['roles'][$gid]['role_name']." :: ".$perm.'" '.
 			'href="javascript:void(0);" onclick="BitAjax.updater('.
 			"'{$perm}{$gid}', ".
-			"'".LIBERTY_PKG_URL."content_permissions.php', ".
+			"'".LIBERTY_PKG_URL."content_role_permissions.php', ".
 			"'action={$action}&amp;content_id={$gContent->mContentId}&amp;perm={$perm}&amp;role_id={$gid}'".
 		')">'.smarty_function_biticon( $biticon, $gBitSmarty ).'</a>';
 	echo $ret;
@@ -113,5 +113,5 @@ if( $gBitThemes->isAjaxRequest() ) {
 
 // enable ajaxed permission updating
 $gBitThemes->loadAjax( 'mochikit' );
-$gBitSystem->display( 'bitpackage:liberty/content_permissions.tpl', tra( 'Content Permissions' ), array( 'display_mode' => 'display' ));
+$gBitSystem->display( 'bitpackage:liberty/content_role_permissions.tpl', tra( 'Content Permissions' ), array( 'display_mode' => 'display' ));
 ?>
