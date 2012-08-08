@@ -813,8 +813,9 @@ function liberty_fetch_thumbnails( $pParamHash ) {
 
 		// remove the filename if there is one (we can't just use dirname() becuase we might only have the path to the dir)
 		$dir = substr( $path, 0, strrpos( $path, '/' ) + 1 );
-
-		foreach( $pParamHash['thumbnail_sizes'] as $size ) {
+		// assume thumb sizes are from largest to smallest. reverse so smaller can be used if larger don't exist
+		$lastSize = NULL;
+		foreach( array_reverse( $pParamHash['thumbnail_sizes'] ) as $size ) {
 			foreach( $exts as $ext ) {
 				$image = $size.'.'.$ext;
 				$thumbDir = is_dir( STORAGE_PKG_PATH.$dir.'thumbs/' ) ?  $dir.'thumbs/' :  $dir;
@@ -824,6 +825,16 @@ function liberty_fetch_thumbnails( $pParamHash ) {
 			}
 			// fetch mime image unless we set this to FALSE
 			if(( !isset( $pParamHash['mime_image'] ) || $pParamHash['mime_image'] === TRUE ) && empty( $ret[$size] )) {
+				if( $lastSize && $ret[$lastSize] ) {
+					$ret[$size] = $ret[$lastSize];
+				}
+			}
+			$lastSize = $size;
+		}
+
+		// default if nothing else is available
+		foreach( array_reverse( $pParamHash['thumbnail_sizes'] ) as $size ) {
+			if( empty( $ret[$size] ) ) {
 				if( !empty( $pParamHash['default_image'] )) {
 					$ret[$size] = $pParamHash['default_image'];
 				} else {
