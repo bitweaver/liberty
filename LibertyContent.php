@@ -1636,6 +1636,7 @@ class LibertyContent extends LibertyBase {
 					WHERE (urm.`user_id`=? OR urm.`user_id`=?) AND lcp.`perm_name` IS NULL";
 			} else {
 				$query = "
+	                SELECT ugp.`perm_name` as `hash_key`, 1 as `group_perm`, ugp.`perm_name`, ugp.`perm_value`, ugp.`group_id`
 					FROM `".BIT_DB_PREFIX."users_groups_map` ugm
 						LEFT JOIN `".BIT_DB_PREFIX."users_group_permissions` ugp ON(ugm.`group_id`=ugp.`group_id`)
 						LEFT JOIN `".BIT_DB_PREFIX."liberty_content_permissions` lcp ON(lcp.`group_id`=ugm.`group_id` AND lcp.`content_id`=? AND ugp.`perm_name`=lcp.`perm_name`)
