@@ -1336,10 +1336,9 @@ class LibertyContent extends LibertyBase {
 	/**
 	 * Get a list of content with permissions
 	 *
-	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function getContentWithPermissionsList() {
+	public static function getContentWithPermissionsList() {
 		global $gBitSystem;
 		$ret = array();
 		if ( defined(ROLE_MODEL) ) {
