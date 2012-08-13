@@ -825,7 +825,7 @@ function liberty_fetch_thumbnails( $pParamHash ) {
 			}
 			// fetch mime image unless we set this to FALSE
 			if(( !isset( $pParamHash['mime_image'] ) || $pParamHash['mime_image'] === TRUE ) && empty( $ret[$size] )) {
-				if( $lastSize && $ret[$lastSize] ) {
+				if( $lastSize && !empty( $ret[$lastSize] ) ) {
 					$ret[$size] = $ret[$lastSize];
 				}
 			}
