@@ -570,11 +570,16 @@ function liberty_process_archive( &$pFileHash ) {
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
 function liberty_process_generic( &$pFileHash, $pMoveFile = TRUE ) {
+	global $gBitSystem;
 	$ret = NULL;
 	if( !empty( $pFileHash['dest_file'] ) ) {
 		$destFile = $pFileHash['dest_file'];
 	} else {
-		$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].liberty_mime_get_default_file_name( $pFileHash['name'], $pFileHash['type'] );
+		if( $gBitSystem->isFeatureActive( 'liberty_originalize_file_names' ) ) {
+			$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].liberty_mime_get_default_file_name( $pFileHash['name'], $pFileHash['type'] );
+		} else {
+			$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['name'];
+		}
 		if ( is_windows() ) {
 			$destFile = str_replace( '//', '\\', str_replace( "\\", '\\', $destFile ) );
 		}
