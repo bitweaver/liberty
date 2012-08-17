@@ -220,6 +220,16 @@ $tables = array(
 
 );
 
+if ( defined( 'ROLE_MODEL' ) ) {
+	$tables['liberty_content_permissions'] =
+	" 	role_id I4 PRIMARY,
+		perm_name C(30) PRIMARY,
+		content_id I4 PRIMARY,
+		is_revoked C(1)
+		CONSTRAINT   ' , CONSTRAINT `liberty_content_id_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content` (`content_id`) '
+	";
+}
+
 global $gBitInstaller;
 
 foreach( array_keys( $tables ) AS $tableName ) {
@@ -232,15 +242,6 @@ $constraints = array(
 	'liberty_process_queue' => array('liberty_process_queue_ref' => 'FOREIGN KEY (`content_id`) REFERENCES `'.BIT_DB_PREFIX.'liberty_content`( `content_id` )')
 
 );
-foreach( array_keys($constraints) AS $tableName ) {
-	$gBitInstaller->registerSchemaConstraints( LIBERTY_PKG_NAME, $tableName, $constraints[$tableName]);
-}
-
-
-$gBitInstaller->registerPackageInfo( LIBERTY_PKG_NAME, array(
-	'description' => "Liberty is an integral part and manages all content on your site.",
-	'license' => '<a href="http://www.gnu.org/licenses/licenses.html#LGPL">LGPL</a>',
-) );
 
 // ### Indexes
 $indices = array (
@@ -269,6 +270,22 @@ $indices = array (
 	'lib_attachment_meta_type_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'meta_type_id', 'opts' => NULL ),
 	'lib_attachment_meta_title_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'meta_title_id', 'opts' => NULL ),
 );
+
+if ( defined( 'ROLE_MODEL' ) ) {
+	$constraints['liberty_content_permissions'] = array('liberty_content_perm_role_ref' => 'FOREIGN KEY (`role_id`) REFERENCES `'.BIT_DB_PREFIX.'users_roles` (`role_id`)');
+	unset($indices['liberty_content_perm_group_idx']);
+	$indices['liberty_content_perm_role_idx'] =  array( 'table' => 'liberty_content_permissions', 'cols' => 'role_id', 'opts' => NULL );
+
+}
+foreach( array_keys($constraints) AS $tableName ) {
+	$gBitInstaller->registerSchemaConstraints( LIBERTY_PKG_NAME, $tableName, $constraints[$tableName]);
+}
+
+$gBitInstaller->registerPackageInfo( LIBERTY_PKG_NAME, array(
+	'description' => "Liberty is an integral part and manages all content on your site.",
+	'license' => '<a href="http://www.gnu.org/licenses/licenses.html#LGPL">LGPL</a>',
+) );
+
 $gBitInstaller->registerSchemaIndexes( LIBERTY_PKG_NAME, $indices );
 
 // ### Sequences

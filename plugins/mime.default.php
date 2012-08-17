@@ -384,9 +384,9 @@ if( !function_exists( 'mime_default_expunge' )) {
 		$ret = FALSE;
 		if( @BitBase::verifyId( $pAttachmentId )) {
 			if( $fileHash = LibertyMime::loadAttachment( $pAttachmentId )) {
-				if( $gBitUser->isAdmin() || $gBitUser->mUserId == $fileHash['user_id'] && !empty( $fileHash['source_file'] )) {
+				if( $gBitUser->isAdmin() || $gBitUser->mUserId == $fileHash['user_id'] ) {
 					// make sure this is a valid storage directory before removing it
-					if(( $nuke = LibertyMime::validateStoragePath( $fileHash['source_file'] )) && is_file( $nuke )) {
+					if( !empty( $fileHash['source_file'] ) && ($nuke = LibertyMime::validateStoragePath( $fileHash['source_file'] )) && is_file( $nuke )) {
 						unlink_r( dirname( $nuke ));
 					}
 					$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_files` WHERE `file_id` = ?";
