@@ -144,6 +144,7 @@ class LibertySystem extends LibertyBase {
 				// - xing - Saturday Jul 05, 2008   20:47:29 CEST
 
 				// check for the plugin in the default location - in case bitweaver root path changed.
+
 				if( file_exists( $pluginFile )) {
 					$this->mPluginFilePath = $pluginFile;
 					include_once( $pluginFile );
@@ -285,12 +286,14 @@ class LibertySystem extends LibertyBase {
 		// plugins can set their own file_name. this is not mandatory but makes sure we store the path to the correct file
 		// this is useful for files that are included by other plugins
 		if( !empty( $pPluginParams['file_name'] )) {
-			$this->mPluginFilePath = dirname( $this->mPluginFilePath )."/".$pPluginParams['file_name'];
+			$pluginPath = dirname( $this->mPluginFilePath )."/".$pPluginParams['file_name'];
+		} else {
+			$pluginPath = $this->mPluginFilePath;
 		}
 
-		if( !empty( $pGuid ) && !empty( $this->mPluginFilePath ) && is_file( $this->mPluginFilePath )) {
+		if( !empty( $pGuid ) && !empty( $pluginPath ) && is_file( $pluginPath ) && $gBitSystem->getConfig( "{$this->mSystem}_plugin_status_".$pGuid ) != 'n' ) {
 			// store the relative path - we need to store the path to all plugins and not just active ones since we don't have access to this information when we use setActivePlugins()
-			$gBitSystem->storeConfig( "{$this->mSystem}_plugin_path_".$pGuid, str_replace( BIT_ROOT_PATH, "", $this->mPluginFilePath ), LIBERTY_PKG_NAME );
+			$gBitSystem->storeConfig( "{$this->mSystem}_plugin_path_".$pGuid, str_replace( BIT_ROOT_PATH, "", $pluginPath ), LIBERTY_PKG_NAME );
 			$settings['is_active'] = $gBitSystem->getConfig( "{$this->mSystem}_plugin_status_".$pGuid );
 			if( empty( $settings['is_active'] ) && !empty( $pPluginParams['auto_activate'] )) {
 				$this->setActivePlugin( $pGuid );
@@ -298,6 +301,7 @@ class LibertySystem extends LibertyBase {
 			$settings['plugin_guid'] = $pGuid;
 			$this->mPlugins[$pGuid]  = array_merge( $settings, $pPluginParams );
 		}
+
 	}
 
 	/**
