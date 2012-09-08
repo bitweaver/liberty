@@ -111,7 +111,7 @@ function data_datamodule( $pData, $pParams ) {
 			$out = $gBitSmarty->fetch( 'modules/user_module.tpl' );
 		}
 	}
-	$out = eregi_replace( "\n", "", $out );
+	$out = preg_replace( "#\n#is", "", $out );
 
 	// deal with custom styling
 	$style = '';
