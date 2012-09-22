@@ -435,7 +435,7 @@ class LibertyStructure extends LibertyBase {
 				}
 			}
 		} else {
-			$this->mErrors['verify_structure'] = tra( "The structure could not be stored because of missing data." );
+			$this->mErrors['verify_structure'] = tra( "There are no changes to save." );
 		}
 
 		// clear up some memory
