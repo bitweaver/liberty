@@ -47,7 +47,7 @@
 		</noscript>
 		<input type="submit" name="submit_structure" value="Save Changes" />
 	</div>
-	{formhelp note="To nest items, you first need to convert a page to a folder."}
+	{formhelp note="To nest items, you first need to convert a page to a folder and then insert at least one item into the new folder before saving."}
 	{if !$no_delete}
 		{formhelp note="You can only delete a folder when it is empty."}
 	{/if}
