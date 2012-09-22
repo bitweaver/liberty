@@ -453,10 +453,10 @@ class LibertyStructure extends LibertyBase {
 	function storeStructure( $pParamHash ) {
 		if( $this->verifyStructure( $pParamHash ) ) {
 			// now that the structure is ready to be stored, we remove the old structure first and then insert the new one.
+			$this->mDb->StartTrans();
 			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `root_structure_id`=? AND `structure_id`<>?";
 			$result = $this->mDb->query( $query, array( (int)$pParamHash['root_structure_id'], (int)$pParamHash['root_structure_id'] ) );
 			$query = "";
-			$this->mDb->StartTrans();
 			foreach( $pParamHash['structure_store'] as $node ) {
 				$this->mDb->associateInsert( BIT_DB_PREFIX."liberty_structures", $node );
 			}
