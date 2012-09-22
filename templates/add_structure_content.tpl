@@ -4,7 +4,7 @@ function submitStructure(pForm,pContentId,pMode) {
 	var req = getXMLHttpRequest();
 	req.open("POST", {/literal}'{$smarty.const.LIBERTY_PKG_URL}add_structure_content.php'{literal}, true);
 	var data = queryString(pForm)+"&content[]="+pContentId+"&ajax_xml=1";
-	
+
 	var ajax = new BitBase.SimpleAjax();
 	var donefn = function (r) {
 		var responseHash = BitBase.evalJSON( r.responseText );
@@ -55,7 +55,7 @@ function submitStructure(pForm,pContentId,pMode) {
 		{/if}
 
 		{minifind}
-		
+
 		{* disable until it can be sorted }
 		<div class="row">
 			{formlabel label="Search" for="lib-content"}
@@ -92,16 +92,16 @@ function submitStructure(pForm,pContentId,pMode) {
 						{section loop=$contentListHash name=cx}
 							<tr class="item {cycle values="even,odd"}" id="{$contentListHash[cx].content_id}li">
 								<td>
-									
+
 									{assign var=inStructure value=$gStructure->isInStructure($contentListHash[cx].content_id)}
 									<div class="icon" {if empty($inStructure)}style="display:none"{/if} id="{$contentListHash[cx].content_id}remove" onclick="submitStructure(document.getElementById('structureaddform'),{$contentListHash[cx].content_id},'remove')">
 										{biticon ipackage="icons" iname="list-remove" iexplain="Remove"}
 									</div>
-									
+
 									<div class="icon" {if $inStructure}style="display:none"{/if} id="{$contentListHash[cx].content_id}add" onclick="submitStructure(document.getElementById('structureaddform'),{$contentListHash[cx].content_id},'add')">
 										{biticon ipackage="icons" iname="list-add" iexplain="Add to structure"}
 									</div>
-									
+
 									<a target="_new" href="{$contentListHash[cx].display_url}">
 										{biticon ipackage="icons" iname="zoom-best-fit" iexplain="View (in new window)"}
 									</a>

@@ -40,7 +40,7 @@ class LibertyStructure extends LibertyBase {
 
 	/**
 	 * get the details to a given node
-	 * 
+	 *
 	 * @param array $pStructureId Structure ID of the node
 	 * @param array $pContentId Content ID of the node
 	 * @access public
@@ -101,7 +101,7 @@ class LibertyStructure extends LibertyBase {
 
 	/**
 	 * Check if a node is a root node
-	 * 
+	 *
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -115,7 +115,7 @@ class LibertyStructure extends LibertyBase {
 
 	/**
 	 * get the title of the root node
-	 * 
+	 *
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -128,8 +128,8 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/**
-	 * if you only have a structure id and you want to figure out the root structure id, use this 
-	 * 
+	 * if you only have a structure id and you want to figure out the root structure id, use this
+	 *
 	 * @param array $pParamHash['structure_id'] is the structure id from which you want to figure out the root structure id
 	 * @access public
 	 * @return none. updates $pParamHash['root_structure_id'] by reference
@@ -162,8 +162,8 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/**
-	 * loadNavigation 
-	 * 
+	 * loadNavigation
+	 *
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -351,9 +351,9 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/**
-	 * getList 
-	 * 
-	 * @param array $pListHash 
+	 * getList
+	 *
+	 * @param array $pListHash
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -569,8 +569,8 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/**
-	 * moveNodeWest 
-	 * 
+	 * moveNodeWest
+	 *
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -594,8 +594,8 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/**
-	 * moveNodeEast 
-	 * 
+	 * moveNodeEast
+	 *
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -624,8 +624,8 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/**
-	 * moveNodeSouth 
-	 * 
+	 * moveNodeSouth
+	 *
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -646,8 +646,8 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/**
-	 * moveNodeNorth 
-	 * 
+	 * moveNodeNorth
+	 *
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -706,7 +706,7 @@ class LibertyStructure extends LibertyBase {
 					  FROM `".BIT_DB_PREFIX."liberty_structures`
 					  WHERE `structure_id`=? AND `structure_id`=`root_structure_id`";
 			$content_id = $this->mDb->getOne( $query, array( (int)$structure_id ) );
-			
+
 			// Delete the liberty_content stuff
 			$lc = new LibertyContent($content_id);
 			$lc->expunge();
@@ -720,8 +720,8 @@ class LibertyStructure extends LibertyBase {
 
 	/**
 	 * Returns an array of info about the parent
-	 * 
-	 * @param array $structure_id 
+	 *
+	 * @param array $structure_id
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -736,11 +736,11 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/**
-	 * getContentIds 
-	 * 
-	 * @param array $pStructureId 
-	 * @param array $pToc 
-	 * @param float $pLevel 
+	 * getContentIds
+	 *
+	 * @param array $pStructureId
+	 * @param array $pToc
+	 * @param float $pLevel
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -756,11 +756,11 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/**
-	 * getContentArray 
-	 * 
-	 * @param array $pStructureId 
-	 * @param array $pToc 
-	 * @param float $pLevel 
+	 * getContentArray
+	 *
+	 * @param array $pStructureId
+	 * @param array $pToc
+	 * @param float $pLevel
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -774,8 +774,8 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/**
-	 * exportHtml 
-	 * 
+	 * exportHtml
+	 *
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -816,11 +816,11 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/**
-	 * buildSubtreeToc 
-	 * 
-	 * @param array $id 
-	 * @param array $slide 
-	 * @param string $order 
+	 * buildSubtreeToc
+	 *
+	 * @param array $id
+	 * @param array $slide
+	 * @param string $order
 	 * @param string $tocPrefix can be used to Prefix a subtree as it would start from a given number (e.g. 2.1.3)
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
@@ -834,11 +834,11 @@ class LibertyStructure extends LibertyBase {
 
 
 	/**
-	 * buildSubtreeToc 
-	 * 
-	 * @param array $id 
-	 * @param array $slide 
-	 * @param string $order 
+	 * buildSubtreeToc
+	 *
+	 * @param array $id
+	 * @param array $slide
+	 * @param string $order
 	 * @param string $tocPrefix can be used to Prefix a subtree as it would start from a given number (e.g. 2.1.3)
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
@@ -849,7 +849,7 @@ class LibertyStructure extends LibertyBase {
 		$cant = $this->mDb->getOne("select count(*) from `".BIT_DB_PREFIX."liberty_structures` where `parent_id`=?",array((int)$id));
 		if ($cant) {
 			$query = "SELECT `structure_id`, `root_structure_id`, `parent_id`, `page_alias`, `pos`, `structure_level`, lc.`user_id`, lc.`title`, lc.`content_type_guid`, uu.`login`, uu.`real_name`, lc.`content_id`, lc.`last_modified`, lct.*
-					  FROM `".BIT_DB_PREFIX."liberty_structures` ls 
+					  FROM `".BIT_DB_PREFIX."liberty_structures` ls
 						INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( lc.`content_id`=ls.`content_id` )
 						INNER JOIN `".BIT_DB_PREFIX."liberty_content_types` lct ON ( lc.`content_type_guid`=lct.`content_type_guid` )
 						LEFT JOIN `".BIT_DB_PREFIX."users_users` uu ON ( uu.`user_id` = lc.`user_id` )
@@ -907,13 +907,13 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/**
-	 * getToc 
-	 * 
-	 * @param array $pStructureId 
-	 * @param string $order 
-	 * @param array $showdesc 
-	 * @param array $numbering 
-	 * @param string $numberPrefix 
+	 * getToc
+	 *
+	 * @param array $pStructureId
+	 * @param string $order
+	 * @param array $showdesc
+	 * @param array $numbering
+	 * @param string $numberPrefix
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -926,11 +926,11 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/**
-	 * fetchToc 
-	 * 
-	 * @param array $structure_tree 
-	 * @param array $showdesc 
-	 * @param array $numbering 
+	 * fetchToc
+	 *
+	 * @param array $structure_tree
+	 * @param array $showdesc
+	 * @param array $numbering
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -956,10 +956,10 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/**
-	 * getNextStructureNode 
-	 * 
-	 * @param array $structure_id 
-	 * @param array $deep 
+	 * getNextStructureNode
+	 *
+	 * @param array $structure_id
+	 * @param array $deep
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -1002,10 +1002,10 @@ class LibertyStructure extends LibertyBase {
 	}
 
 	/**
-	 * getPrevStructureNode 
-	 * 
-	 * @param array $structure_id 
-	 * @param array $deep 
+	 * getPrevStructureNode
+	 *
+	 * @param array $structure_id
+	 * @param array $deep
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
@@ -1054,8 +1054,8 @@ class LibertyStructure extends LibertyBase {
 
 	/**
 	 * Return an array of subpages
-	 * 
-	 * @param array $pParentId 
+	 *
+	 * @param array $pParentId
 	 * @access public
 	 * @return array of child structure pages
 	 */
