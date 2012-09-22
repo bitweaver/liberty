@@ -17,7 +17,8 @@
  */
 require_once( '../kernel/setup_inc.php' );
 include_once( LIBERTY_PKG_PATH.'LibertyStructure.php');
-$gBitSmarty->assign_by_ref( 'feedback', $feedback = array() );
+$feedback = array();
+$gBitSmarty->assign_by_ref( 'feedback', $feedback );
 
 // mochikit can interfere sometimes, so we need a way to disable it.
 if( empty( $noAjaxContent )) {
