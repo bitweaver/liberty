@@ -8,8 +8,6 @@ function submitStructure(pForm,pContentId,pMode) {
 	var ajax = new BitBase.SimpleAjax();
 	var donefn = function (r) {
 		var responseHash = BitBase.evalJSON( r.responseText );
-//		document.getElementById(responseHash.content_id+"item");
-//		MochiKit.Visual.fade(document.getElementById(responseHash.content_id+"add"));
 
 		var row = document.getElementById( responseHash.content_id+"feedback" );
 		row.innerHTML = responseHash.feedback;
