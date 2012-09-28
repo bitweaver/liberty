@@ -220,7 +220,7 @@ class TikiWikiParser extends BitBase {
 		if( !empty( $pCommonObject->mPrefs ) ) {
 			$contentPrefs = $pCommonObject->mPrefs;
 		} elseif( empty( $pCommonObject->mContentId ) && !empty( $contentId ) ) {
-			$contentPrefs = LibertyContent::loadPreferences( $contentId );
+			$contentPrefs = $pCommonObject->loadPreferences( $contentId );
 		}
 
 		// only strip out html if needed
