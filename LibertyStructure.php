@@ -360,7 +360,7 @@ class LibertyStructure extends LibertyBase {
 	function getList( &$pListHash ) {
 		global $gBitSystem, $gBitUser;
 
-		$this->prepGetList( $pListHash );
+		BitBase::prepGetList( $pListHash );
 
 		if( !empty( $pListHash['find'] ) ) {
 			$findesc = '%' . $pListHash['find'] . '%';

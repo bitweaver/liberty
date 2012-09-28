@@ -487,7 +487,7 @@ class LibertyMime extends LibertyContent {
 	function getAttachmentList( &$pListHash ) {
 		global $gLibertySystem, $gBitUser, $gBitSystem;
 
-		$this->prepGetList( $pListHash );
+		LibertyContent::prepGetList( $pListHash );
 
 		// initialise some variables
 		$attachments = $ret = $bindVars = array();

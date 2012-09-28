@@ -2258,7 +2258,7 @@ class LibertyContent extends LibertyBase {
 	 * @param pParamHash hash of parameters for any getList() function
 	 * @return the link to display the page.
 	 */
-	function prepGetList( &$pListHash ) {
+	public static function prepGetList( &$pListHash ) {
 		global $gBitUser;
 		if( $gBitUser->isAdmin() ) {
 			$pListHash['min_content_status_id'] = -9999;
@@ -2307,7 +2307,7 @@ class LibertyContent extends LibertyBase {
 			$bindVars[] = $pListHash['content_type_guid'];
 		}
 
-		$this->prepGetList( $pListHash );
+		LibertyContent::prepGetList( $pListHash );
 		$query = "SELECT DISTINCT(uu.`user_id`) AS hash_key, uu.`user_id`, SUM( lch.`hits` ) AS `ag_hits`, uu.`login`, uu.`real_name`
 				FROM `".BIT_DB_PREFIX."liberty_content` lc INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON( uu.`user_id`=lc.`user_id` )
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch
@@ -2362,7 +2362,7 @@ class LibertyContent extends LibertyBase {
 	function getContentList( &$pListHash ) {
 		global $gLibertySystem, $gBitSystem, $gBitUser, $gBitSmarty;
 
-		$this->prepGetList( $pListHash );
+		LibertyContent::prepGetList( $pListHash );
 
 		$hashSql = array('select'=>array(), 'join'=>array(),'where'=>array() );
 		$hashBindVars = array('select'=>array(), 'where'=>array(), 'join'=>array());
