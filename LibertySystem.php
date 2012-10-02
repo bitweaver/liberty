@@ -200,7 +200,7 @@ class LibertySystem extends LibertyBase {
 		}
 
 		// keep plugin list in sorted order
-		if( !empty( $this->mPlugins )) {
+		if( !empty( $this->mPlugins ) and is_array( $this->mPlugins ) ) {
 			asort( $this->mPlugins );
 		}
 
@@ -291,7 +291,7 @@ class LibertySystem extends LibertyBase {
 			$pluginPath = $this->mPluginFilePath;
 		}
 
-		if( !empty( $pGuid ) && !empty( $pluginPath ) && is_file( $pluginPath ) && $gBitSystem->getConfig( "{$this->mSystem}_plugin_status_".$pGuid ) != 'n' ) {
+		if( !empty( $pGuid ) && !empty( $pluginPath ) && is_file( $pluginPath ) ) {
 			// store the relative path - we need to store the path to all plugins and not just active ones since we don't have access to this information when we use setActivePlugins()
 			$gBitSystem->storeConfig( "{$this->mSystem}_plugin_path_".$pGuid, str_replace( BIT_ROOT_PATH, "", $pluginPath ), LIBERTY_PKG_NAME );
 			$settings['is_active'] = $gBitSystem->getConfig( "{$this->mSystem}_plugin_status_".$pGuid );
