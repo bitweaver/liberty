@@ -39,6 +39,8 @@ $pluginParams = array (
 	'attachment_tpl'      => 'bitpackage:liberty/mime/image/attachment.tpl',
 	// url to page with options for this plugin
 	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/plugins/mime_image.php',
+	// This needs to be specified by plugins that are included by other plugins
+	'file_name'          => 'mime.image.php',
 	// This should be the same for all mime plugins
 	'plugin_type'         => MIME_PLUGIN,
 	// Set this to TRUE if you want the plugin active right after installation
