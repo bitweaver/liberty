@@ -5,8 +5,12 @@
 			<div class="path">
 				{section loop=$structureInfo.structure_path name=ix}
 					{if $structureInfo.structure_path[ix].parent_id} &raquo; {/if}
-					<a href="index.php?structure_id={$structureInfo.structure_path[ix].structure_id}">
-						{$structureInfo.structure_path[ix].title|escape}
+					<a href="index.php?content_id={$structureInfo.structure_path[ix].content_id}">
+						{if $structureInfo.structure_path[ix].page_alias}
+							{$structureInfo.structure_path[ix].page_alias|escape}
+						{else}
+							{$structureInfo.structure_path[ix].title|escape}
+						{/if}
 					</a>
 				{/section}
 			</div>
