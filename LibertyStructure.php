@@ -894,7 +894,7 @@ class LibertyStructure extends LibertyBase {
 					if( file_exists( $classFile ) ) {
 						require_once( $classFile );
 						if( class_exists( $res['handler_class'] ) ) {
-							$res['display_url'] = call_user_func( array( $res['handler_class'], 'getDisplayUrl' ), $res['title'], $res );
+							$res['display_url'] = $res['handler_class']::getDisplayUrlFromHash( $res );
 						}
 					}
 				}
