@@ -908,6 +908,7 @@ class LibertyMime extends LibertyContent {
 	}
 
 	public function getDownloadUrl() {
+		$ret = "";
 		if( $this->isValid() && $this->getField( 'attachment_id' ) ) {
 			$ret = LibertyMime::getAttachmentDownloadUrl( $this->getField( 'attachment_id' ) );
 		}
