@@ -1,2 +1,5 @@
 .htaccess
 admin/.htaccess
+.hg
+.hgignore
+
