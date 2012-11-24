@@ -908,6 +908,7 @@ class LibertyMime extends LibertyContent {
 	}
 
 	public function getDownloadUrl() {
+		$ret = "";
 		if( $this->isValid() && $this->getField( 'attachment_id' ) ) {
 			$ret = LibertyMime::getAttachmentDownloadUrl( $this->getField( 'attachment_id' ) );
 		}
@@ -1223,9 +1224,11 @@ if( !function_exists( 'liberty_mime_get_source_url' )) {
 			$pParamHash['sub_dir'] = BitBase::getParameter( $pParamHash, 'attachment_id' );
 		}
 		$defaultFileName = liberty_mime_get_default_file_name( $fileName, $pParamHash['mime_type'] );
-		$ret = STORAGE_PKG_PATH.liberty_mime_get_storage_branch( $pParamHash ).$defaultFileName;
-		if( !file_exists( $ret ) ) {
-			$ret = STORAGE_PKG_URL.liberty_mime_get_storage_branch( $pParamHash ).basename( BitBase::getParameter( $pParamHash, 'file_name' ) );
+		$fileBranch = liberty_mime_get_storage_branch( $pParamHash );
+		if( file_exists( STORAGE_PKG_PATH.$fileBranch.$defaultFileName ) ) {
+			$ret = STORAGE_PKG_URL.$fileBranch.$defaultFileName;
+		} else {
+			$ret = STORAGE_PKG_URL.$fileBranch.basename( BitBase::getParameter( $pParamHash, 'file_name' ) );
 		}
 		return $ret;
 	}
