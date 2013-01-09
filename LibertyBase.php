@@ -75,14 +75,10 @@ class LibertyBase extends BitBase {
 			if( empty( $pContentGuid ) ) {
 				$pContentGuid = $gLibertySystem->mDb->getOne( "SELECT `content_type_guid` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=?", array( $pContentId ) );
 			}
-			if( !empty( $pContentGuid ) && isset( $gLibertySystem->mContentTypes[$pContentGuid] ) ) {
-				$type = $gLibertySystem->mContentTypes[$pContentGuid];
-				if( $gLibertySystem->requireHandlerFile( $type )) {
-					$creator = new $type['handler_class']();
-					$ret = $creator->getNewObject( $type['handler_class'], $pContentId, $pLoadContent );
-				}
+			if( !empty( $pContentGuid ) && isset( $gLibertySystem->mContentTypes[$pContentGuid] ) && $typeClass = $gLibertySystem->getContentClassName( $pContentGuid ) ) {
+				$creator = new $typeClass();
+				$ret = $creator->getNewObject( $typeClass, $pContentId, $pLoadContent );
 			}
-
 		}
 		return $ret;
 	}

@@ -645,6 +645,38 @@ class LibertySystem extends LibertyBase {
 	 * @param boolean $pPlural true will return the plural form of the content type display name
 	 * @return string the display name of the content type
  	 */
+	function getContentType( $pContentTypeGuid ){
+		$ret = NULL;
+		if( !isset( $this->mContentTypes ) ) {
+			$this->loadContentTypes();
+		}
+		if( !empty( $this->mContentTypes[$pContentTypeGuid] ) ) {
+		 	$ret = $this->mContentTypes[$pContentTypeGuid];
+		}
+		return $ret;
+	}
+
+	/**
+	 * Get the display name of the content type
+	 * @param boolean $pPlural true will return the plural form of the content type display name
+	 * @return string the display name of the content type
+ 	 */
+	function getContentClassName( $pContentTypeGuid ) {
+		$ret = NULL;
+		if( !isset( $this->mContentTypes ) ) {
+			$this->loadContentTypes();
+		}
+		if( !empty( $this->mContentTypes[$pContentTypeGuid] ) && $this->requireHandlerFile( $this->mContentTypes[$pContentTypeGuid] ) ) {
+		 	$ret = $this->mContentTypes[$pContentTypeGuid]['handler_class'];
+		}
+		return $ret;
+	}
+
+	/**
+	 * Get the display name of the content type
+	 * @param boolean $pPlural true will return the plural form of the content type display name
+	 * @return string the display name of the content type
+ 	 */
 	function getContentTypeName( $pContentTypeGuid, $pPlural=FALSE ){
 		$ret = NULL;
 		if( $pPlural && isset( $this->mContentTypes[$pContentTypeGuid]['content_name_plural'] ) ) {
