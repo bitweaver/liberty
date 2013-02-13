@@ -757,7 +757,7 @@ class LibertyContent extends LibertyBase {
 	}
 
 	/**
-	 * Create an export object from the data
+	 * Create an export hash from the data
 	 *
 	 * @access public
 	 * @return export data
