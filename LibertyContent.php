@@ -2286,6 +2286,9 @@ class LibertyContent extends LibertyBase {
 					}
 				}
 			}
+		} else {
+			// if sort_mode is not set then use last_modified_desc
+			$pListHash['sort_mode'] = 'last_modified_desc';
 		}
 
 		return parent::prepGetList( $pListHash );
