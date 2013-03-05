@@ -58,6 +58,6 @@ if( $gContent = LibertyBase::getLibertyObject( $attachment['content_id'] ) ) {
 
 	$gBitSystem->display( 'bitpackage:liberty/mime_view.tpl', tra( "View File" ), array( 'display_mode' => 'display' ));
 } else {
-	$gBitSystem->fatalError( 'Not Found', NULL, NULL, HttpStatusCodes::HTTP_NOT_FOUND );
+	$gBitSystem->fatalError( 'Not Found', NULL, NULL, HttpStatusCodes::HTTP_GONE );
 }
 ?>

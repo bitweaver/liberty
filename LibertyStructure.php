@@ -376,6 +376,10 @@ class LibertyStructure extends LibertyBase {
 			array_push( $bindVars, $pListHash['user_id'] );
 		}
 
+		if( empty( $pListHash['sort_mode'] ) ) {
+			$pListHash['sort_mode'] = 'last_modified_desc';
+		}
+
 		if( !empty( $pListHash['content_type_guid'] ) ) {
 			$mid .= " AND lc.`content_type_guid`=? ";
 			array_push( $bindVars, $pListHash['content_type_guid'] );

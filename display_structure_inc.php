@@ -17,6 +17,6 @@
 		$gBitSystem->setBrowserTitle( $gStructure->getRootTitle().' : '.$gContent->getTitle() );
 		include $gContent->getRenderFile();
 	} else {
-		$gBitSystem->fatalError( tra( 'Page cannot be found' ), NULL, NULL, HttpStatusCodes::HTTP_NOT_FOUND );
+		$gBitSystem->fatalError( tra( 'Page cannot be found' ), NULL, NULL, HttpStatusCodes::HTTP_GONE );
 	}
 ?>
