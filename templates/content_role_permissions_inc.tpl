@@ -38,7 +38,7 @@
 		<input type="hidden" name="content_id" value="{$gContent->mContentId}" />
 		<input type="hidden" name="action" value="assign" />
 
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Assign this Permission" for="perm"}
 			{forminput}
 				<select name="perm" id="perm">
@@ -50,7 +50,7 @@
 			{/forminput}
 		</div>
 
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="To this Group" for="role_id"}
 			{forminput}
 				<select name="role_id" id="role_id">
@@ -62,7 +62,7 @@
 			{/forminput}
 		</div>
 
-		<div class="row submit">
+		<div class="control-group submit">
 			<input type="submit" name="back" value="{tr}Go back to content{/tr}" />
 			<input type="submit" name="assign" value="{tr}Assign Permission{/tr}" />
 		</div>

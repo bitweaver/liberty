@@ -6,7 +6,7 @@
 
 	<div class="body">
 		{form legend="Ranking Settings"}
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Select Attribute" for="sort_mode"}
 				{forminput}
 					<select name="sort_mode" id="sort_mode">
@@ -17,7 +17,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Number of items" for="max_records"}
 				{forminput}
 					<select name="max_records" id="max_records">
@@ -29,7 +29,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row submit">
+			<div class="control-group submit">
 				<input type="submit" name="rank_settings" value="{tr}Apply settings{/tr}" />
 			</div>
 		{/form}

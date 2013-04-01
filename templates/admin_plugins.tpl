@@ -82,7 +82,7 @@
 
 							{if $plugin_type eq 'format'}
 								{formfeedback warning="{tr}This will change the way any wiki page that contains HTML will be displayed. We recommend turning on HTMLPurifier if either of these is on.{/tr}"}
-								<div class="row">
+								<div class="control-group">
 									{formlabel label="Allow HTML" for="allow_html"}
 									{forminput}
 										<input type="checkbox" name="content_allow_html" id="allow_html" value="y" {if $gBitSystem->isFeatureActive('content_allow_html')}checked="checked"{/if} />
@@ -90,7 +90,7 @@
 										{formhelp note="Allow the use of HTML in tikiwiki format content."}
 									{/forminput}
 								</div>
-								<div class="row">
+								<div class="control-group">
 									{formlabel label="Force Allow HTML" for="force_allow_html"}
 									{forminput}
 										<input type="checkbox" name="content_force_allow_html" id="force_allow_html" value="y" {if $gBitSystem->isFeatureActive('content_force_allow_html')}checked="checked"{/if} />
@@ -104,11 +104,11 @@
 				{/foreach}
 			{/jstabs}
 
-			<div class="row submit">
+			<div class="control-group submit">
 				<input type="submit" name="pluginsave" value="{tr}Save Plugin Settings{/tr}" />
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Reset all plugin settings" for=""}
 				{forminput}
 					<input type="submit" name="reset_all_plugins" value="{tr}Reset Plugins{/tr}" />

@@ -18,7 +18,7 @@
 			{formfeedback hash=$feedback}
 
 			{foreach from=$pdfSettings key=feature item=output}
-				<div class="row">
+				<div class="control-group">
 					{formlabel label=`$output.label` for=$feature}
 					{forminput}
 						{if $output.type == 'checkbox'}
@@ -31,7 +31,7 @@
 				</div>
 			{/foreach}
 
-			<div class="row submit">
+			<div class="control-group submit">
 				<input type="submit" name="settings_store" value="{tr}Change preferences{/tr}" />
 			</div>
 		{/form}

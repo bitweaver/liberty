@@ -20,16 +20,14 @@
 		{/form}
 
 		{form id="checkform"}
-			<div class="navbar">
-				<ul>
-					<li>{biticon ipackage="icons" iname="emblem-symbolic-link" iexplain="sort by"}</li>
-					<li>{smartlink ititle="Title" isort="title" icontrol=$listInfo}</li>
-					<li>{smartlink ititle="Last Modified" iorder="desc" idefault=1 isort="last_modified" icontrol=$listInfo}</li>
-					<li>{smartlink ititle="Author" isort="creator_user" icontrol=$listInfo}</li>
-					<li>{smartlink ititle="Last Editor" isort="modifier_user" icontrol=$listInfo}</li>
-					{include file="bitpackage:liberty/services_inc.tpl" serviceLocation='list_sort' serviceHash=$gContent->mInfo}
-				</ul>
-			</div>
+			<ul class="inline navbar">
+				<li>{biticon ipackage="icons" iname="emblem-symbolic-link" iexplain="sort by"}</li>
+				<li>{smartlink ititle="Title" isort="title" icontrol=$listInfo}</li>
+				<li>{smartlink ititle="Last Modified" iorder="desc" idefault=1 isort="last_modified" icontrol=$listInfo}</li>
+				<li>{smartlink ititle="Author" isort="creator_user" icontrol=$listInfo}</li>
+				<li>{smartlink ititle="Last Editor" isort="modifier_user" icontrol=$listInfo}</li>
+				{include file="bitpackage:liberty/services_inc.tpl" serviceLocation='list_sort' serviceHash=$gContent->mInfo}
+			</ul>
 
 			<input type="hidden" name="offset" value="{$offset}" />
 			<input type="hidden" name="sort_mode" value="{$sort_mode}" />

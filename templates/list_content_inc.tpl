@@ -2,7 +2,7 @@
 {form legend="Select Content Type" action="`$smarty.server.REQUEST_URI`" method="get"}
 	<input type="hidden" name="user_id" value="{$smarty.request.user_id}" />
 	<input type="hidden" name="sort_mode" value="{$smarty.request.sort_mode}" />
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="Restrict listing" for="content_type_guid"}
 		{forminput}
 			{html_options onchange="submit();" options=$contentTypes name=content_type_guid id=content_type selected=$contentSelect}

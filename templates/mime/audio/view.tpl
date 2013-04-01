@@ -1,12 +1,12 @@
 {strip}
 {if $attachment.media_url}
-	<div class="row aligncenter">
+	<div class="control-group aligncenter">
 		{include file="bitpackage:liberty/mime/audio/player.tpl"}
 	</div>
 {/if}
 
 {if $attachment.meta.title}
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="Title" for=""}
 		{forminput}
 			{$attachment.meta.title}
@@ -15,7 +15,7 @@
 {/if}
 
 {if $attachment.meta.album}
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="Album" for=""}
 		{forminput}
 			{$attachment.meta.album}
@@ -24,7 +24,7 @@
 {/if}
 
 {if $attachment.meta.artist}
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="Artist" for=""}
 		{forminput}
 			{$attachment.meta.artist}
@@ -33,7 +33,7 @@
 {/if}
 
 {if $attachment.meta.year}
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="Year" for=""}
 		{forminput}
 			{$attachment.meta.year}
@@ -42,7 +42,7 @@
 {/if}
 
 {if $attachment.meta.playtimestring}
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="Duration" for=""}
 		{forminput}
 			{$attachment.meta.playtimestring}
@@ -51,7 +51,7 @@
 {/if}
 
 {if $attachment.meta.genre}
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="Genre" for=""}
 		{forminput}
 			{$attachment.meta.genre}

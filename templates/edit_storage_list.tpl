@@ -4,7 +4,7 @@
 	<div id="edit_storage_list{if !$uploadTab}_tab{/if}{if $form_id}_{$form_id}{/if}">
 {/if}
 {if $gContent->mStorage}
-	<div class="row">
+	<div class="control-group">
 		<table class="data" summary="List of attached files">
 			<tr>
 				<th scope="col" class="width29p" title="{tr}Thumbnail{/tr}">{tr}Thumbnail{/tr}</th>

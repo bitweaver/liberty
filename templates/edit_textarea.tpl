@@ -12,7 +12,7 @@
 	{/if}
 {/strip}
 
-	<div class="row rt-edit">
+	<div class="control-group rt-edit">
 		{formlabel label=$textarea_label for=$textarea_id}
 		{forminput}
 			{formfeedback error=$textarea_error}

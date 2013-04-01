@@ -24,7 +24,7 @@
 			{foreach from=$gLibertySystem->mPlugins item=plugin key=guid}
 				{* $no_plugins is set by the including template *}
 				{if $plugin.is_active eq 'y' and $plugin.edit_field and $plugin.plugin_type eq 'storage' and !$no_plugins}
-					<div class="row">
+					<div class="control-group">
 						{formlabel label=`$plugin.edit_label`}
 						{forminput}
 							{eval var=$plugin.edit_field}
@@ -42,7 +42,7 @@
 			{foreach from=$gLibertySystem->mPlugins item=plugin key=guid}
 				{* $no_plugins is set by the including template *}
 				{if $plugin.is_active eq 'y' and $plugin.edit_field and $plugin.plugin_type eq 'storage' and !$no_plugins}
-					<div class="row">
+					<div class="control-group">
 						{formlabel label=`$plugin.edit_label`}
 						{forminput}
 							{eval var=$plugin.edit_field_new}

@@ -9,7 +9,7 @@
 			{form legend="Attachment Filter"}
 				{formfeedback hash=$feedback}
 
-				<div class="row">
+				<div class="control-group">
 					{formlabel label="User" for=""}
 					{forminput}
 					<input type="text" name="login" value="{$smarty.request.login}" />

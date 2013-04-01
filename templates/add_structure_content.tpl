@@ -39,7 +39,7 @@ function submitStructure(pForm,pContentId,pMode) {
 		<input type="hidden" name="tab" value="content" />
 
 		{if $subtree}
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="After page" for="after_ref_id"}
 				{forminput}
 					<select name="after_ref_id" id="after_ref_id">
@@ -55,7 +55,7 @@ function submitStructure(pForm,pContentId,pMode) {
 		{minifind}
 
 		{* disable until it can be sorted }
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Search" for="lib-content"}
 			{forminput}
 				<input autocomplete="off" id="contact_name" name="contact[name]" size="30" type="text" value="" />
@@ -66,7 +66,7 @@ function submitStructure(pForm,pContentId,pMode) {
 		</div>
 		{ *}
 
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Content type" for="content_type_guid"}
 			{forminput}
 				{html_options onchange="submit();" options=$contentTypes name=content_type_guid selected=$contentSelect}
@@ -124,7 +124,7 @@ function submitStructure(pForm,pContentId,pMode) {
 			{/forminput}
 		</div>
 
-		<div class="row submit">
+		<div class="control-group submit">
 			<input type="submit" onclick="submitStructure(this.form);return false;" name="create" value="{tr}Add Content{/tr}" />
 			<input type="submit" name="done" value="{tr}Done{/tr}" />
 		</div>

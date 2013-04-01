@@ -9,7 +9,7 @@
 		{form}
 			{legend legend="Liberty Action Logs"}
 				{foreach from=$logSettings key=item item=output}
-					<div class="row">
+					<div class="control-group">
 						{formlabel label=`$output.label` for=$item}
 						{forminput}
 							{if $output.type == 'input'}
@@ -22,7 +22,7 @@
 					</div>
 				{/foreach}
 
-				<div class="row">
+				<div class="control-group">
 					{formlabel label="Delete Logs" for="log_prune"}
 					{forminput}
 						<select name="log_prune" id="log_prune">
@@ -37,7 +37,7 @@
 					{/forminput}
 				</div>
 
-				<div class="row submit">
+				<div class="control-group submit">
 					<input type="submit" name="apply_settings" value="{tr}Apply Settings{/tr}" />
 				</div>
 			{/legend}

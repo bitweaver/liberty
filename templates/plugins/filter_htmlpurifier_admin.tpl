@@ -7,7 +7,7 @@
 		{form legend="HTMLPurifier Features"}
 			{formfeedback error=$errorMsg}
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Blacklisted HTML tags" for="blacklisted_html_tags"}
 				{formfeedback warning=$errors.blacklist}
 				{forminput}
@@ -17,7 +17,7 @@
 			</div>
 
 			{foreach from=$htmlPurifier key=item item=output}
-				<div class="row">
+				<div class="control-group">
 					{formlabel label=`$output.label` for=$item}
 					{forminput}
 						{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item, $output.default) labels=false id=$item}
@@ -26,7 +26,7 @@
 				</div>
 			{/foreach}
 
-			<div class="row submit">
+			<div class="control-group submit">
 				<input type="submit" name="apply" value="{tr}Save Plugin Settings{/tr}" />
 			</div>
 		{/form}

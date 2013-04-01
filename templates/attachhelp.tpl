@@ -7,7 +7,7 @@
 	{/capture}
 
 	{if $legend}
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Attachment" for="attachhelp"}
 			{forminput}
 				{$smarty.capture.input}

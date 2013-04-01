@@ -154,7 +154,7 @@ class TikiWikiParser extends BitBase {
 
 			// apply default class if no other class has been set
 			if( !empty( $table_params ) && strpos( 'class=', $table_params ) !== FALSE ) {
-				$table_params .= ' class="bittable"';
+				$table_params .= ' class="table"';
 			}
 			$content = "<table $table_params>";
 
@@ -388,7 +388,7 @@ class TikiWikiParser extends BitBase {
 				}
 
 				for ($i = 0; $i < count($tables[0]); $i++) {
-					$repl = '<table class="bittable">';
+					$repl = '<table class="table">';
 
 					for ($j = 0; $j < count($cols[$i]); $j++) {
 						$ncols = count($cols[$i][$j]);
@@ -436,7 +436,7 @@ class TikiWikiParser extends BitBase {
 				}
 
 				for( $i = 0; $i < count( $tables[0] ); $i++ ) {
-					$repl = '<table class="bittable">';
+					$repl = '<table class="table table-striped">';
 
 					if( preg_match( "#^~#", $cols[$i][0][0] ) && $cols[$i][0][0] = preg_replace( "#^~#", "", $cols[$i][0][0] ) ) {
 						$th = TRUE;
