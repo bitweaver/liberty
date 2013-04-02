@@ -21,12 +21,12 @@
 	</div>
 
 	<ul class="inline navbar">
-		<li><a id="tree-moveUp"    href="javascript:void(0)">{biticon ipackage="icons" iname="go-up" iexplain="Up"}</a></li>
+		<li><a id="tree-moveUp"    href="javascript:void(0)">{booticon iname="icon-cloud-upload" ipackage="icons" iexplain="Up"}</a></li>
 		<li><a id="tree-moveDown"  href="javascript:void(0)">{biticon ipackage="icons" iname="go-down" iexplain="Down"}</a></li>
 		<li><a id="tree-moveLeft"  href="javascript:void(0)">{biticon ipackage="icons" iname="go-previous" iexplain="Left"}</a></li>
 		<li><a id="tree-moveRight" href="javascript:void(0)">{biticon ipackage="icons" iname="go-next" iexplain="Right"}</a></li>
 		{if !$no_delete}
-			<li><a id="tree-remove"    href="javascript:void(0)">{biticon ipackage="icons" iname="edit-delete" iexplain="Remove"}</a></li>
+			<li><a id="tree-remove"    href="javascript:void(0)">{booticon iname="icon-trash" ipackage="icons" iexplain="Remove"}</a></li>
 		{else}
 			<input id="tree-remove" type="hidden" value="dummy">
 		{/if}
