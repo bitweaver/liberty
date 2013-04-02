@@ -7,7 +7,7 @@
 		{assign var="amp" value="?"}
 	{/if}
 	<a title="{tr}Refresh cache{/tr}" href="{$url}{$amp}refresh_liberty_cache={$serviceHash.content_id}">
-		{biticon ipackage="icons" iname="view-refresh" iexplain="Refresh cache"}
+		{booticon iname="icon-recycle"  ipackage="icons"  iexplain="Refresh cache"}
 	</a>
 {/if}
 {if $gBitUser->hasPermission( 'p_liberty_assign_content_perms' ) and $serviceHash.content_id}
