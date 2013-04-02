@@ -93,11 +93,11 @@ function submitStructure(pForm,pContentId,pMode) {
 
 									{assign var=inStructure value=$gStructure->isInStructure($contentListHash[cx].content_id)}
 									<div class="icon" {if empty($inStructure)}style="display:none"{/if} id="{$contentListHash[cx].content_id}remove" onclick="submitStructure(document.getElementById('structureaddform'),{$contentListHash[cx].content_id},'remove')">
-										{biticon ipackage="icons" iname="list-remove" iexplain="Remove"}
+										{booticon iname="icon-minus-sign"  ipackage="icons"  iexplain="Remove"}
 									</div>
 
 									<div class="icon" {if $inStructure}style="display:none"{/if} id="{$contentListHash[cx].content_id}add" onclick="submitStructure(document.getElementById('structureaddform'),{$contentListHash[cx].content_id},'add')">
-										{biticon ipackage="icons" iname="list-add" iexplain="Add to structure"}
+										{booticon iname="icon-plus-sign"  ipackage="icons"  iexplain="Add to structure"}
 									</div>
 
 									<a target="_new" href="{$contentListHash[cx].display_url}">

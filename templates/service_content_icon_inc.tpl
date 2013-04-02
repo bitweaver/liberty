@@ -24,6 +24,6 @@
 {/if}
 {* This should always be last so it is right most in the icons! *}
 {if $preview && $closeclick}
-	<a onclick="javascript:return cClick();">{biticon ipackage=icons iname=window-close iexplain="Close Popup"}</a>
+	<a onclick="javascript:return cClick();">{booticon iname="icon-remove"  ipackage=icons  iexplain="Close Popup"}</a>
 {/if}
 {/strip}

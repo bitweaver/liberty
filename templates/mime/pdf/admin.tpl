@@ -8,7 +8,7 @@
 	<div class="body">
 		{form legend="PDF Plugin settings"}
 			<p class="warning">
-				{biticon iname="dialog-warning" iexplain="Warning"} {tr}To make use of this plugin, you need to install <a class="external" href="http://www.swftools.org/">SWF Tools</a>. This will provide all necessary tools to convert uploaded PDF files to shockwave flash files that can be viewed in your browser.{/tr}
+				{booticon iname="icon-warning-sign"   iexplain="Warning"} {tr}To make use of this plugin, you need to install <a class="external" href="http://www.swftools.org/">SWF Tools</a>. This will provide all necessary tools to convert uploaded PDF files to shockwave flash files that can be viewed in your browser.{/tr}
 			</p>
 
 			{if !$gLibertySystem->isPluginActive( 'mimepdf' )}

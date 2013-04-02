@@ -67,7 +67,7 @@
 												{if $plugin.is_active == 'x'}
 													Missing
 												{elseif $plugin.plugin_type == 'mime' && $guid == $smarty.const.LIBERTY_DEFAULT_MIME_HANDLER}
-													{biticon iname="dialog-ok" iexplain="Default"}
+													{booticon iname="icon-ok"   iexplain="Default"}
 													<input type="hidden" name="PLUGINS[{$guid}]" value="y" />
 												{else}
 													{html_checkboxes name="PLUGINS[`$guid`]" values="y" checked=`$plugin.is_active` labels=false id=$guid}

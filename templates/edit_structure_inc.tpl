@@ -22,8 +22,8 @@
 
 	<ul class="inline navbar">
 		<li><a id="tree-moveUp"    href="javascript:void(0)">{booticon iname="icon-cloud-upload" ipackage="icons" iexplain="Up"}</a></li>
-		<li><a id="tree-moveDown"  href="javascript:void(0)">{biticon ipackage="icons" iname="go-down" iexplain="Down"}</a></li>
-		<li><a id="tree-moveLeft"  href="javascript:void(0)">{biticon ipackage="icons" iname="go-previous" iexplain="Left"}</a></li>
+		<li><a id="tree-moveDown"  href="javascript:void(0)">{booticon iname="icon-cloud-download"  ipackage="icons"  iexplain="Down"}</a></li>
+		<li><a id="tree-moveLeft"  href="javascript:void(0)">{booticon iname="icon-arrow-left"  ipackage="icons"  iexplain="Left"}</a></li>
 		<li><a id="tree-moveRight" href="javascript:void(0)">{biticon ipackage="icons" iname="go-next" iexplain="Right"}</a></li>
 		{if !$no_delete}
 			<li><a id="tree-remove"    href="javascript:void(0)">{booticon iname="icon-trash" ipackage="icons" iexplain="Remove"}</a></li>

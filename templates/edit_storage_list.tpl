@@ -53,7 +53,7 @@
 								</a>
 							{else}
 								{if $storage.is_mime}
-									<a href="{$storage.display_url}">{biticon ipackage="icons" iname="document-open" iexplain="View"}</a>
+									<a href="{$storage.display_url}">{booticon iname="icon-folder-open"  ipackage="icons"  iexplain="View"}</a>
 								{/if}
 								<a href="{$smarty.server.SCRIPT_NAME}?{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}">{booticon iname="icon-trash" ipackage="icons" iexplain="Delete"}</a>
 							{/if}

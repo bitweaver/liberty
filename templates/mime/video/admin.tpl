@@ -12,11 +12,11 @@
 
 			{if $ffmpeg_extension}
 				<p class="success">
-					{biticon iname="dialog-ok" iexplain="OK"} {tr}The <a class="external" href="http://ffmpeg-php.sourceforge.net/">ffmpeg-php</a> extension is available.{/tr}
+					{booticon iname="icon-ok"   iexplain="OK"} {tr}The <a class="external" href="http://ffmpeg-php.sourceforge.net/">ffmpeg-php</a> extension is available.{/tr}
 				</p>
 			{else}
 				<p class="warning">
-					{biticon iname="dialog-warning" iexplain="Warning"} {tr}If possible, please install the <a class="external" href="http://ffmpeg-php.sourceforge.net/">ffmpeg-php</a> php extension. This plugin will work without the extension but many features will not work well such as video recognition and mp4 uploads.{/tr}
+					{booticon iname="icon-warning-sign"   iexplain="Warning"} {tr}If possible, please install the <a class="external" href="http://ffmpeg-php.sourceforge.net/">ffmpeg-php</a> php extension. This plugin will work without the extension but many features will not work well such as video recognition and mp4 uploads.{/tr}
 				</p>
 			{/if}
 
@@ -149,7 +149,7 @@
 			</div>
 
 			<p class="warning">
-				{biticon iname="dialog-warning" iexplain="Warning"} {tr}ffmpeg has a habit of changing the API when releasing new versions. Due to the demand for new features and the tendency to use cutting edge versions of ffmpeg it is very difficult to keep track of these API changes.{/tr}
+				{booticon iname="icon-warning-sign"   iexplain="Warning"} {tr}ffmpeg has a habit of changing the API when releasing new versions. Due to the demand for new features and the tendency to use cutting edge versions of ffmpeg it is very difficult to keep track of these API changes.{/tr}
 			</p>
 
 			<div class="control-group">
