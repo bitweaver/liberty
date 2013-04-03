@@ -1,5 +1,5 @@
 {strip}
-<ul>
+<ul class="dropdown-menu sub-menu">
 	<li><a class="item" href="{$smarty.const.KERNEL_PKG_URL}admin/index.php?page=liberty">{tr}Liberty Settings{/tr}</a></li>
 	<li><a class="item" href="{$smarty.const.LIBERTY_PKG_URL}admin/plugins.php">{tr}Plugins{/tr}</a></li>
 	<li><a class="item" href="{$smarty.const.LIBERTY_PKG_URL}admin/action_logs.php">{tr}Action Logs{/tr}</a></li>
