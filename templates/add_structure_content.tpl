@@ -125,8 +125,8 @@ function submitStructure(pForm,pContentId,pMode) {
 		</div>
 
 		<div class="control-group submit">
-			<input type="submit" onclick="submitStructure(this.form);return false;" name="create" value="{tr}Add Content{/tr}" />
-			<input type="submit" name="done" value="{tr}Done{/tr}" />
+			<input type="submit" class="btn" onclick="submitStructure(this.form);return false;" name="create" value="{tr}Add Content{/tr}" />
+			<input type="submit" class="btn" name="done" value="{tr}Done{/tr}" />
 		</div>
 	{/form}
 </div>

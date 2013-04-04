@@ -16,7 +16,7 @@
 
 				<div class="control-group submit">
 					<input type="hidden" name="attachment_id" value="{$smarty.request.attachment_id}" />
-					<input type="submit" name="plugin_submit" value="{tr}Update File{/tr}" />
+					<input type="submit" class="btn" name="plugin_submit" value="{tr}Update File{/tr}" />
 				</div>
 			{/form}
 		{/if}

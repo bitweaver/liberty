@@ -35,13 +35,13 @@
 
 			{forminput}
 				<input type="text" name="find" /> 
-				<input type="submit" value="{tr}Apply filter{/tr}" name="search_objects" />
+				<input type="submit" class="btn" value="{tr}Apply filter{/tr}" name="search_objects" />
 				{formhelp note=""}
 			{/forminput}
 		</div>
 
 		<div class="control-group submit">
-			<input type="submit" name="create" value="{tr}Add Content{/tr}" />
+			<input type="submit" class="btn" name="create" value="{tr}Add Content{/tr}" />
 		</div>
 	{/form}
 </div>

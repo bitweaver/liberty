@@ -8,7 +8,7 @@
 			{html_options onchange="submit();" options=$contentTypes name=content_type_guid id=content_type selected=$contentSelect}
 			{formhelp note="Limit search by content type"}
 			<noscript>
-				<div><input type="submit" name="content_switch" value="{tr}change content type{/tr}" /></div>
+				<div><input type="submit" class="btn" name="content_switch" value="{tr}change content type{/tr}" /></div>
 			</noscript>
 		{/forminput}
 
@@ -26,7 +26,7 @@
 
 		{forminput}
 			<input type="text" name="find" value="{$listInfo.find}" />
-			<input type="submit" value="{tr}Apply Filter{/tr}" name="search_objects" />
+			<input type="submit" class="btn" value="{tr}Apply Filter{/tr}" name="search_objects" />
 			{formhelp note="You can restrict the content listing to a given content type or apply a filter on content title."}
 		{/forminput}
 	</div>
