@@ -12,14 +12,12 @@
 {/if}
 {if $gBitUser->hasPermission( 'p_liberty_assign_content_perms' ) and $serviceHash.content_id}
 	{if $gContent->hasUserPermissions()}
-		{assign var=perm_icon value="icons/emblem-readonly"}
-	{else}
-		{assign var=perm_icon value="icons/emblem-shared"}
+		{assign var=iconClass value="highlight"}
 	{/if}
 	{if $role_model }
-		{smartlink ipackage=liberty ifile=content_role_permissions.php ititle="Assign Permissions" ibiticon=$perm_icon ipackage=liberty ifile="content_permissions.php" content_id=$serviceHash.content_id}
+		{smartlink ipackage=liberty ifile=content_role_permissions.php ititle="Assign Permissions" booticon="icon-key" class=$iconClass ipackage=liberty ifile="content_permissions.php" content_id=$serviceHash.content_id}
 	{else}
-		{smartlink ipackage=liberty ifile=content_permissions.php ititle="Assign Permissions" ibiticon=$perm_icon ipackage=liberty ifile="content_permissions.php" content_id=$serviceHash.content_id}
+		{smartlink ipackage=liberty ifile=content_permissions.php ititle="Assign Permissions" booticon="icon-key" class=$iconClass ipackage=liberty ifile="content_permissions.php" content_id=$serviceHash.content_id}
 	{/if}
 {/if}
 {* This should always be last so it is right most in the icons! *}
