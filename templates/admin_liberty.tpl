@@ -31,10 +31,10 @@
 
 				{foreach from=$attachmentOptions key=item item=output}
 				<div class="control-group">
-					{formlabel label=`$output.label` for=$item}
+					{formlabel label=$output.label for=$item}
 					{forminput}
 						{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
-						{formhelp note=`$output.note` page=`$output.page`}
+						{formhelp note=$output.note page=$output.page}
 					{/forminput}
 				</div>
 				{/foreach}
@@ -43,20 +43,20 @@
 			{legend legend="Miscellaneous"}
 				{foreach from=$formLibertyFeatures key=item item=output}
 					<div class="control-group">
-						{formlabel label=`$output.label` for=$item}
+						{formlabel label=$output.label for=$item}
 						{forminput}
 							{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
-							{formhelp note=`$output.note` page=`$output.page`}
+							{formhelp note=$output.note page=$output.page}
 						{/forminput}
 					</div>
 				{/foreach}
 
 				{foreach from=$formLibertyTextareaFeatures key=item item=output}
 					<div class="control-group">
-						{formlabel label=`$output.label` for=$item}
+						{formlabel label=$output.label for=$item}
 						{forminput}
 							<input type="text" name="{$item}" value="{$gBitSystem->getConfig($item, $output.default)}" />
-							{formhelp note=`$output.note` page=`$output.page`}
+							{formhelp note=$output.note page=$output.page}
 						{/forminput}
 					</div>
 				{/foreach}
@@ -65,10 +65,10 @@
 			{legend legend="Spam and Captcha Settings"}
 				{foreach from=$formCaptcha key=item item=output}
 					<div class="control-group">
-						{formlabel label=`$output.label` for=$item}
+						{formlabel label=$output.label for=$item}
 						{forminput}
 							{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
-							{formhelp note=`$output.note` page=`$output.page`}
+							{formhelp note=$output.note page=$output.page}
 							{if $item == "liberty_use_captcha_freecap"}
 								<p>{tr}If you can see the image below, you can use freecap{/tr}</p>
 								<img src="{$smarty.const.UTIL_PKG_URL}freecap/freecap.php" alt="{tr}Random Image{/tr}" title="{tr}Random Image{/tr}" />
@@ -78,10 +78,10 @@
 				{/foreach}
 				{foreach from=$formCaptchaTextareaFeatures key=item item=output}
 					<div class="control-group">
-						{formlabel label=`$output.label` for=$item}
+						{formlabel label=$output.label for=$item}
 						{forminput}
 							<input type="text" name="{$item}" value="{$gBitSystem->getConfig($item, $output.default)}" />
-							{formhelp note=`$output.note` page=`$output.page`}
+							{formhelp note=$output.note page=$output.page}
 						{/forminput}
 					</div>
 				{/foreach}
@@ -95,7 +95,7 @@
 				<input type="hidden" name="page" value="{$page}" />
 				{foreach from=$imageProcessors key=item item=output}
 					<div class="control-group">
-						{formlabel label=`$output.label` for=$item}
+						{formlabel label=$output.label for=$item}
 						{forminput}
 							<label>
 								<input type="radio" id="{$item}" name="image_processor" value="{$item}" {if !$output.installed}disabled="disabled"{/if} {if $gBitSystem->getConfig('image_processor','gd') == $item}checked="checked"{/if} />
@@ -107,19 +107,19 @@
 							</label>
 
 							{if !$output.installed}
-								{formhelp note=`$output.install_note` page=`$output.page`}
+								{formhelp note=$output.install_note page=$output.page}
 							{/if}
-							{formhelp note=`$output.note` page=`$output.page`}
+							{formhelp note=$output.note page=$output.page}
 						{/forminput}
 					</div>
 				{/foreach}
 
 				{foreach from=$formImageFeatures key=item item=output}
 					<div class="control-group">
-						{formlabel label=`$output.label` for=$item}
+						{formlabel label=$output.label for=$item}
 						{forminput}
 							{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
-							{formhelp note=`$output.note` page=`$output.page`}
+							{formhelp note=$output.note page=$output.page}
 						{/forminput}
 					</div>
 				{/foreach}

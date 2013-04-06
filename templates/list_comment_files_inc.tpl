@@ -10,7 +10,7 @@
 	</h4>
 
  	{if $errors}
- 		{formfeedback warning=`$errors`}
+ 		{formfeedback warning=$errors}
  	{/if}
 
 	<table class="data">

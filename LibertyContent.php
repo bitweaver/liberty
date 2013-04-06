@@ -2098,7 +2098,7 @@ class LibertyContent extends LibertyBase {
 
 		// we add some more info to the title of the link
 		if( !empty( $pMixed['created'] )) {
-			require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'bit_short_date' );
+			$gBitSmarty->loadPlugin( 'smarty_modifier_bit_short_date' );
 			$linkTitle = tra( 'Created' ).': '.smarty_modifier_bit_short_date( $pMixed['created'] );
 		} else {
 			$linkTitle = $pLinkText;

@@ -29,7 +29,7 @@
 				{formlabel label=$label|default:"Upload new Attachment" for=""}
 				{forminput}
 					{$plugin.primary_edit_field}
-					{formhelp note=`$plugin.edit_help`}
+					{formhelp note=$plugin.edit_help}
 				{/forminput}
 			</div>
 		{/if}

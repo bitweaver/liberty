@@ -59,7 +59,7 @@
 					<tr class="{cycle values='odd,even'}">
 						<td class="aligncenter">{$item.content_id}</td>
 						<td>{$item.display_link}</td>
-						<td>{assign var=content_type_guid value=`$item.content_type_guid`}{$contentTypes.$content_type_guid}</td>
+						<td>{assign var=content_type_guid value=$item.content_type_guid}{$contentTypes.$content_type_guid}</td>
 						<td>{displayname real_name=$item.creator_real_name user=$item.creator_user}</td>
 						<td>{displayname real_name=$item.modifier_real_name user=$item.modifier_user}</td>
 						<td>{$item.last_modified|bit_short_date}</td>

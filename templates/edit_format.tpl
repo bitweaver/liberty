@@ -46,12 +46,9 @@
 					<label>
 					{if $numformat > 1}
 							<input type="radio" name="{$format_guid_variable|default:"format_guid"}" value="{$plugin.edit_field}"
-							{if $contentObject->mInfo.format_guid eq $plugin.plugin_guid
-								} checked="checked"{
-							elseif !$contentObject->mInfo.format_guid and $plugin.plugin_guid eq $gBitSystem->getConfig('default_format', 'tikiwiki')
-								} checked="checked"{
-							/if
-							} onclick="
+							{if $contentObject->mInfo.format_guid eq $plugin.plugin_guid} checked="checked"
+							{elseif !$contentObject->mInfo.format_guid and $plugin.plugin_guid eq $gBitSystem->getConfig('default_format', 'tikiwiki')} checked="checked"
+							{/if} onclick="
 								{if $gBitSystem->isPackageActive('quicktags')}
 									{foreach from=$gLibertySystem->mPlugins item=tag key=guid}
 										{if $tag.is_active eq 'y' and $tag.edit_field and $tag.plugin_type eq 'format'}
@@ -84,7 +81,7 @@
 							{/if}
 						{/if}
 					{/if}
-					{formhelp note=`$plugin.edit_help`}
+					{formhelp note=$plugin.edit_help}
 				{/forminput}
 			{/if}
 		{/foreach}

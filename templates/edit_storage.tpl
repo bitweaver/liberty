@@ -25,10 +25,10 @@
 				{* $no_plugins is set by the including template *}
 				{if $plugin.is_active eq 'y' and $plugin.edit_field and $plugin.plugin_type eq 'storage' and !$no_plugins}
 					<div class="control-group">
-						{formlabel label=`$plugin.edit_label`}
+						{formlabel label=$plugin.edit_label}
 						{forminput}
 							{eval var=$plugin.edit_field}
-							{formhelp note=`$plugin.edit_help`}
+							{formhelp note=$plugin.edit_help}
 						{/forminput}
 					</div>
 				{/if}
@@ -43,10 +43,10 @@
 				{* $no_plugins is set by the including template *}
 				{if $plugin.is_active eq 'y' and $plugin.edit_field and $plugin.plugin_type eq 'storage' and !$no_plugins}
 					<div class="control-group">
-						{formlabel label=`$plugin.edit_label`}
+						{formlabel label=$plugin.edit_label}
 						{forminput}
 							{eval var=$plugin.edit_field_new}
-							{formhelp note=`$plugin.edit_help_new`}
+							{formhelp note=$plugin.edit_help_new}
 						{/forminput}
 					</div>
 				{/if}

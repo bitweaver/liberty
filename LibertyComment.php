@@ -490,7 +490,7 @@ class LibertyComment extends LibertyMime {
 		if( !empty( $pHash['title'] ) ) {
 			$ret = $pHash['title'];
 		} elseif( !empty( $pHash['created'] ) ) {
-			require_once $gBitSmarty->_get_plugin_filepath( 'modifier', 'bit_short_date' );
+			$gBitSmarty->loadPlugin( 'smarty_modifier_bit_short_date' );
 			$ret = smarty_modifier_bit_short_date( $pHash['created'] );
 		} elseif( !empty( $pHash['content_name'] ) ) {
 			$ret = $pHash['content_name'];

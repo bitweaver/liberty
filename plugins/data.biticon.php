@@ -64,7 +64,7 @@ function data_biticon( $pData, $pParams ) {
 	$ret = tra( 'Please provide an icon name as iname parameter. You can <a href="'.THEMES_PKG_URL.'icon_browser.php">select icons here</a>.' );
 
 	if( !empty( $pParams['iname'] )) {
-		require_once $gBitSmarty->_get_plugin_filepath( 'function', 'biticon' );
+		$gBitSmarty->loadPlugin( 'smarty_modifier_biticon' );
 
 		// sanitise biticon parameters before they are passed to the function
 		$biticon['iname']    = $pParams['iname'];

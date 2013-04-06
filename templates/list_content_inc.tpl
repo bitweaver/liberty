@@ -64,7 +64,7 @@
 				<td>{$item.content_status_name}</td>
 			{/if}
 			<td>{$item.display_link}</td>
-			<td>{assign var=content_type_guid value=`$item.content_type_guid`}{$gLibertySystem->getContentTypeName($content_type_guid)}</td>
+			<td>{assign var=content_type_guid value=$item.content_type_guid}{$gLibertySystem->getContentTypeName($content_type_guid)}</td>
 			<td>{displayname real_name=$item.creator_real_name user=$item.creator_user}</td>
 			<td class="alignright">{displayname real_name=$item.modifier_real_name user=$item.modifier_user}</td>
 			<td class="alignright">{$item.last_modified|bit_short_date}</td>

@@ -17,7 +17,7 @@
 		{forminput}
 			{formfeedback error=$textarea_error}
 			{if !$textarea_id}{assign var=textarea_id value=$smarty.const.LIBERTY_TEXT_AREA}{/if}
-			<textarea {$textarea_class} {$textarea_attributes} {if $textarea_maxchars}onkeydown="BitBase.charCounter('{$textarea_id}','{$textarea_id}Counter','{$textarea_maxchars}');" onkeyup="BitBase.charCounter('{$textarea_id}','{$textarea_id}Counter','{$textarea_maxchars}');"{/if} {spellchecker width=$cols height=$rows} id="{$textarea_id}" name="{$textarea_name|default:edit}" {$textarea_style}>{$textarea_data|escape:html}</textarea>
+			<textarea {$textarea_class} {$textarea_attributes} {if $textarea_maxchars}onkeydown="BitBase.charCounter('{$textarea_id}','{$textarea_id}Counter','{$textarea_maxchars}');" onkeyup="BitBase.charCounter('{$textarea_id}','{$textarea_id}Counter','{$textarea_maxchars}');"{/if} {spellchecker width=$cols height=$rows} id="{$textarea_id}" name="{$textarea_name|default:edit}" {$textarea_style}>{$textarea_edit|escape:html}</textarea>
 			{if $textarea_required}{required}{/if}
 
 			{if $textarea_maxchars}
@@ -29,7 +29,7 @@
 						document.getElementById( counterId ).value = maxChars - document.getElementById( textareaId ).value.length;
 					{rdelim}
 				//]]></script>
-				{assign var=charCount value=$textarea_data|count_characters:true}
+				{assign var=charCount value=$textarea_edit|count_characters:true}
 				<div class="formhelp">{tr}Maximum character count:{/tr}{$textarea_maxchars}<br />
 					{tr}Characters remaining:{/tr} <input readonly="readonly" type="text" id="{$textarea_id}Counter" size="5" value="{$textarea_maxchars-$charCount}" /></div>
 			{/if}

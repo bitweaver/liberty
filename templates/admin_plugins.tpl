@@ -59,7 +59,7 @@
 											{/if}
 											<td class="actionicon">
 												{if $plugin.help_page}
-													{jspopup href="http://www.bitweaver.org/wiki/`$plugin.help_page`" ibiticon="icons/dialog-information" title=`$plugin.help_page` class="external"}
+													{jspopup href="http://www.bitweaver.org/wiki/`$plugin.help_page`" ibiticon="icons/dialog-information" title=$plugin.help_page class="external"}
 												{/if}
 												{if $plugin.plugin_settings_url}
 													<a href="{$plugin.plugin_settings_url}">{booticon iname="icon-edit"   iexplain="Plugin Settings"}</a>
@@ -70,7 +70,7 @@
 													{booticon iname="icon-ok"   iexplain="Default"}
 													<input type="hidden" name="PLUGINS[{$guid}]" value="y" />
 												{else}
-													{html_checkboxes name="PLUGINS[`$guid`]" values="y" checked=`$plugin.is_active` labels=false id=$guid}
+													{html_checkboxes name="PLUGINS[`$guid`]" values="y" checked=$plugin.is_active labels=false id=$guid}
 												{/if}
 											</td>
 										</tr>
