@@ -25,11 +25,13 @@ $gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
 // packages haven't been scanned yet making things like <pkg>_PKG_URL and similar
 // unavailable to the plugins that are kept in <pkg>/liberty_plugins/
 $current_default_format_guid = $gBitSystem->getConfig( 'default_format' );
-$plugin_status = $gBitSystem->getConfig( 'liberty_plugin_status_'.$current_default_format_guid );
-if( empty( $current_default_format_guid ) || empty( $plugin_status ) || $plugin_status != 'y' ) {
-	$gLibertySystem->scanAllPlugins();
-} else {
-	$gLibertySystem->loadActivePlugins();
+if( $gLibertySystem->mDb->isValid() ) { // install condition check
+	$plugin_status = $gBitSystem->getConfig( 'liberty_plugin_status_'.$current_default_format_guid );
+	if( empty( $current_default_format_guid ) || empty( $plugin_status ) || $plugin_status != 'y' ) {
+		$gLibertySystem->scanAllPlugins();
+	} else {
+		$gLibertySystem->loadActivePlugins();
+	}
 }
 
 $gLibertySystem->registerService( 'liberty', 
