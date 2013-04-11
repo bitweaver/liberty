@@ -32,7 +32,7 @@ if( !empty( $module_params['show_date'] ) ) {
 	$gBitSmarty->assign( 'showDate' , TRUE );
 }
 
-$gBitSmarty->assign( 'contentType', !empty( $module_params['content_type_guid'] ) ? $module_params['content_type_guid'] : NULL );
+$_template->tpl_vars['contentType'] = new Smarty_variable( !empty( $module_params['content_type_guid'] );
 
 $listHash = array(
 	'content_type_guid' => !empty( $module_params['content_type_guid'] ) ? $module_params['content_type_guid'] : NULL,
