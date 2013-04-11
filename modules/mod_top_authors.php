@@ -29,5 +29,5 @@ if( !empty( $module_params['content_type_guid'] ) ) {
 $listHash['max_records'] = $module_rows;
 
 $modAuthors = $gBitUser->getAuthorList( $listHash );
-$gBitSmarty->assign_by_ref( 'modAuthors', $modAuthors );
+$_template->tpl_vars['modAuthors'] = new Smarty_variable( $modAuthors );
 ?>
