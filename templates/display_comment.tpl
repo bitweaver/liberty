@@ -39,7 +39,7 @@
 	{if $comment.children}
 		<div id="comment_{$comment.content_id}_children">
 			{foreach key=key item=item from=$comment.children}
-				{include file="bitpackage:liberty/display_comment.tpl" comment="$item"}
+				{include file="bitpackage:liberty/display_comment.tpl" comment=$item}
 			{/foreach}
 		</div>
 	{/if}

@@ -20,7 +20,7 @@
 
 		<div id="comment_{$gContent->mContentId}"></div>
 			{foreach name=comments_loop key=key item=item from=$comments}
-				{displaycomment comment="$item"}
+				{displaycomment comment=$item}
 			{/foreach}
 		<div id="comment_{$gContent->mContentId}_footer"></div>
 
