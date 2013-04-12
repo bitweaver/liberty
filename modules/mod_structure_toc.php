@@ -32,5 +32,5 @@ if( is_object( $gStructure ) && $gStructure->isValid() ) {
 }
 
 if( is_object( $struct ) && count( $struct->isValid() ) ) {
-	$_template->tpl_vars['modStructureTOC'] = new Smarty_variable( $struct->getToc( $struct->mInfo['root_structure_id'], 'asc', FALSE, 2 );
+	$_template->tpl_vars['modStructureTOC'] = new Smarty_variable( $struct->getToc( $struct->mInfo['root_structure_id'], 'asc', FALSE, 2 ) );
 }
