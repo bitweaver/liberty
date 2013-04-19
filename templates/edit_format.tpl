@@ -43,7 +43,7 @@
 		{foreach name=formatPlugins from=$gLibertySystem->mPlugins item=plugin key=guid}
 			{if $plugin.is_active eq 'y' and $plugin.edit_field and $plugin.plugin_type eq 'format'}
 				{forminput}
-					<label>
+					<label class="radio">
 					{if $numformat > 1}
 							<input type="radio" name="{$format_guid_variable|default:"format_guid"}" value="{$plugin.edit_field}"
 							{if $contentObject->mInfo.format_guid eq $plugin.plugin_guid} checked="checked"
@@ -66,14 +66,10 @@
 					{else}
 						{$plugin.edit_label}
 					{/if}
-					</label>
 					{if $plugin.plugin_guid == "tikiwiki"}
-						{if $numformat > 1}		
-							&nbsp;&nbsp;
-						{/if}
 						{if !$gBitSystem->isFeatureActive('content_force_allow_html')}
 							{if $gBitUser->hasPermission( 'p_liberty_enter_html' ) || $gBitSystem->isFeatureActive('content_allow_html')}
-								&nbsp; &nbsp; <label><input type="checkbox" name="preferences[content_enter_html]" value="y" id="html" {if $contentObject->mPrefs.content_enter_html}checked="checked" {/if}/> {tr}Allow HTML{/tr}</label>
+								&nbsp;<input type="checkbox" name="preferences[content_enter_html]" value="y" id="html" {if $contentObject->mPrefs.content_enter_html}checked="checked" {/if}/> {tr}Allow HTML{/tr}
 							{elseif is_object($contentObject) && $contentObject->getPreference( 'content_enter_html' )}
 								[ {tr}HTML will remain as HTML{/tr} ]
 							{else}
@@ -81,6 +77,7 @@
 							{/if}
 						{/if}
 					{/if}
+					</label>
 					{formhelp note=$plugin.edit_help}
 				{/forminput}
 			{/if}
