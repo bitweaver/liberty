@@ -650,10 +650,11 @@ class TikiWikiParser extends BitBase {
 								$edit_link = '<span class="editsection" style="float:right;margin-left:5px;">[<a href="'.$edit_url.'">'.tra( "edit" ).'</a>]</span>';
 							}
 						}
+						$hTagLevel = $hdrlevel + 1; // there should only be 1 <h1> per html document
 						$line = $edit_link
-							. "<h$hdrlevel>"
+							. "<h$hTagLevel>"
 							. substr($line, $hdrlevel + $addremove)
-							. "</h$hdrlevel>"
+							. "</h$hTagLevel>"
 							. $aclose
 							;
 					} elseif (!strcmp($line, "...page...")) {
