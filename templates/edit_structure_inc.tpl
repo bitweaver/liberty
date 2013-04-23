@@ -20,18 +20,18 @@
 		</div>
 	</div>
 
-	<ul class="inline navbar">
-		<li><a id="tree-moveUp"    href="javascript:void(0)">{booticon iname="icon-cloud-upload" ipackage="icons" iexplain="Up"}</a></li>
-		<li><a id="tree-moveDown"  href="javascript:void(0)">{booticon iname="icon-cloud-download"  ipackage="icons"  iexplain="Down"}</a></li>
-		<li><a id="tree-moveLeft"  href="javascript:void(0)">{booticon iname="icon-arrow-left"  ipackage="icons"  iexplain="Left"}</a></li>
-		<li><a id="tree-moveRight" href="javascript:void(0)">{biticon ipackage="icons" iname="go-next" iexplain="Right"}</a></li>
+	<ul class="inline">
+		<li><a id="tree-moveUp"    href="javascript:void(0)">{booticon iname="icon-arrow-up" ipackage="icons" iexplain="Up"}</a></li>
+		<li><a id="tree-moveDown"  href="javascript:void(0)">{booticon iname="icon-arrow-down" ipackage="icons" iexplain="Down"}</a></li>
+		<li><a id="tree-moveLeft"  href="javascript:void(0)">{booticon iname="icon-arrow-left" ipackage="icons" iexplain="Left"}</a></li>
+		<li><a id="tree-moveRight" href="javascript:void(0)">{booticon iname="icon-arrow-right" ipackage="icons" iexplain="Right"}</a></li>
 		{if !$no_delete}
 			<li><a id="tree-remove"    href="javascript:void(0)">{booticon iname="icon-trash" ipackage="icons" iexplain="Remove"}</a></li>
 		{else}
 			<input id="tree-remove" type="hidden" value="dummy">
 		{/if}
-		<li><a id="tree-convert"   href="javascript:void(0)">{biticon ipackage=liberty iname=tree-folder iexplain="Folder"} &larr; &rarr; {biticon ipackage=liberty iname=tree-doc iexplain="Document"}</a></li>
-		<li><div id="tree-tooltip" class="tree-tooltip"></div>
+		<li><a id="tree-convert"   href="javascript:void(0)">{booticon ipackage=liberty iname="icon-folder-close" iexplain="Folder"} &larr; &rarr; {booticon iname="icon-file-alt" iexplain="Document"}</a></li>
+		<li><small id="tree-tooltip"></small></li>
 	</ul>
 </div>
 

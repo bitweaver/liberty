@@ -101,7 +101,7 @@ function submitStructure(pForm,pContentId,pMode) {
 									</div>
 
 									<a target="_new" href="{$contentListHash[cx].display_url}">
-										{biticon ipackage="icons" iname="zoom-best-fit" iexplain="View (in new window)"}
+										{booticon ipackage="icons" iname="icon-zoom-in" iexplain="View (in new window)"}
 									</a>
 								</td>
 								<td class="title">
