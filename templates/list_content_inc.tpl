@@ -1,36 +1,4 @@
 {strip}
-{form legend="Select Content Type" action="`$smarty.server.REQUEST_URI`" method="get"}
-	<input type="hidden" name="user_id" value="{$smarty.request.user_id}" />
-	<input type="hidden" name="sort_mode" value="{$smarty.request.sort_mode}" />
-	<div class="control-group">
-		{formlabel label="Restrict listing" for="content_type_guid"}
-		{forminput}
-			{html_options onchange="submit();" options=$contentTypes name=content_type_guid id=content_type selected=$contentSelect}
-			{formhelp note="Limit search by content type"}
-			<noscript>
-				<div><input type="submit" class="btn" name="content_switch" value="{tr}change content type{/tr}" /></div>
-			</noscript>
-		{/forminput}
-
-		{if $gBitSystem->isFeatureActive( 'liberty_display_status' ) && $gBitUser->hasPermission( 'p_liberty_view_all_status' )}
-			{forminput}
-				{html_options
-					options=$content_statuses
-					values=$content_statuses
-					name=content_status_id
-					id=content_status_id
-					selected=$smarty.request.content_status_id|default:''}
-				{formhelp note="Limit selection to a given status."}
-			{/forminput}
-		{/if}
-
-		{forminput}
-			<input type="text" name="find" value="{$listInfo.find}" />
-			<input type="submit" class="btn" value="{tr}Apply Filter{/tr}" name="search_objects" />
-			{formhelp note="You can restrict the content listing to a given content type or apply a filter on content title."}
-		{/forminput}
-	</div>
-{/form}
 
 {* assign the correct sort columns for user name sorting *}
 {if $gBitSystem->getConfig( 'users_display_name' ) eq 'login'}
@@ -41,10 +9,10 @@
 	{assign var=isort_editor value=modifier_real_name}
 {/if}
 
-<table class="data">
+<table class="table data clear">
 	<caption>{tr}Available Content{/tr} <span class="total">[ {$listInfo.total_records} ]</span></caption>
 	<tr>
-		<th class="width2p">{smartlink ititle="ID" isort=lc.content_id list_page=$listInfo.current_page ihash=$listInfo.ihash}</th>
+		<th class="width2p">{smartlink ititle="ID" isort="lc.content_id" list_page=$listInfo.current_page ihash=$listInfo.ihash}</th>
 		{if $gBitSystem->isFeatureActive( 'liberty_display_status' ) && $gBitUser->hasPermission( 'p_liberty_view_all_status' )}
 			<th>{smartlink ititle="Status" isort=content_status_name list_page=$listInfo.current_page ihash=$listInfo.ihash}</th>
 		{/if}
