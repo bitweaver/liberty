@@ -5,7 +5,7 @@
 {/if}
 {if $gContent->mStorage}
 	<div class="control-group">
-		<table class="data" summary="List of attached files">
+		<table class="table data" summary="List of attached files">
 			<tr>
 				<th scope="col" class="width29p" title="{tr}Thumbnail{/tr}">{tr}Thumbnail{/tr}</th>
 				<th scope="col" class="width40p" title="{tr}Inclusion Code{/tr}">{tr}Inclusion Code{/tr}</th>

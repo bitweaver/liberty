@@ -77,7 +77,7 @@ function submitStructure(pForm,pContentId,pMode) {
 			{/forminput *}
 
 			{forminput}
-				<table class="data">
+				<table class="table data">
 					<thead>
 						<tr>
 							<th></th>

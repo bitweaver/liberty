@@ -47,7 +47,7 @@
 
 		{minifind}
 
-		<table class="data">
+		<table class="table data">
 			<caption>{tr}Action Logs{/tr} <span class="total">[ {$listInfo.total_records|default:0} ]</span></caption>
 			<tr>
 				<th></th>

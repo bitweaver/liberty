@@ -18,7 +18,7 @@
 			{assign var=size value="large/"}
 		{/if}
 
-		<table class="data">
+		<table class="table data">
 			<caption>{tr}Permissions set for this content item{/tr}</caption>
 			<tr>
 				<th>{tr}Permission{/tr}</th>

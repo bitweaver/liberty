@@ -7,7 +7,7 @@
 {/if}
 
 <div class="storage">
-	<table class="data">
+	<table class="table data">
 		<caption>
 			{tr}Files attached to this page{/tr}
 		</caption>

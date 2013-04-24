@@ -9,7 +9,7 @@
 
 	{foreach from=$contentPerms.groups item=group}
 		<h3>{tr}Permissions for{/tr}: {$group.group_name}</h3>
-		<table class="data">
+		<table class="table data">
 			<tr>
 				<th>{tr}Permission{/tr}</th>
 				<th>{tr}Status{/tr}</th>
@@ -71,7 +71,7 @@
 	{if $contentPerms.assigned}
 		<br />
 
-		<table class="data">
+		<table class="table data">
 			<caption>{tr}Permissions assigned to this content{/tr}</caption>
 			<tr>
 				<th>{smartlink content_id=$gContent->mContentId ititle=Group isort=group_name idefault=1}</th>

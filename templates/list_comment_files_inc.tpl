@@ -13,7 +13,7 @@
  		{formfeedback warning=$errors}
  	{/if}
 
-	<table class="data">
+	<table class="table data">
 		<tr>
 			<th style="width:40%;">{tr}File{/tr}</th>
 			<th style="width:10%;">{tr}Type{/tr}</th>

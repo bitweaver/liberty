@@ -34,7 +34,7 @@
 
 			<div class="clear"></div>
 
-			<table class="data">
+			<table class="table data">
 				<caption>{tr}{if $contentType}{$contentType}s{else}Content{/if} Listing{/tr} <span class="total">[ {$listInfo.total_records} ]</span></caption>
 				<tr>
 				{counter name=cols start=-1 print=false}

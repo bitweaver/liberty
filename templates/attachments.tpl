@@ -41,7 +41,7 @@
 			</ul>
 		{/if}
 
-		<table class="data">
+		<table class="table data">
 			<caption>{tr}Liberty Attachments{/tr}</caption>
 			<tr>
 				<th class="width1p"></th>
