@@ -141,7 +141,7 @@ if( $cache->isCached( $cacheFile, filemtime( __FILE__ ))) {
 	$mediawiki = array(
 		'Example 1' => array(
 			'data' =>
-'{| border=3
+'{| class="table"
 |+A Simple Table
 |-
 ! Col 1 !! Col 2 !! Col 3
@@ -157,7 +157,7 @@ if( $cache->isCached( $cacheFile, filemtime( __FILE__ ))) {
 		),
 		'Example 2' => array(
 			'data' =>
-'{| border="2" cellpadding="5"
+'{| class="table table-boardered"
 |+Multiplication table
 |-
 ! X !! 1 !! 2 !! 3
@@ -180,25 +180,33 @@ if( $cache->isCached( $cacheFile, filemtime( __FILE__ ))) {
 		),
 		'Example 3' => array(
 			'data' =>
-'{|
+'{| class="table table-striped"
 |+ Table with alternating rows
-|- class=odd
+|-
 | one
 | two
-|- class=even
-| class=highlight | three
+|-
+| three
 | four
-|- class=odd
+|- 
 | five
 | six
-|- class=even
+|- 
 | seven
 | eight
+|- class="success"
+| colspan="2" | success
+|- class="error"
+| colspan="2" | error
+|- class="warning"
+| colspan="2" | warning
+|- class="info"
+| colspan="2" | info
 |}'
 		),
 		'Example 4' => array(
 			'data' =>
-'{| style="background:yellow;color:green"
+'{| class="table" style="background:yellow;color:green"
 |+ Table with many colours
 |-
 | abc

@@ -1,6 +1,6 @@
 {strip}
 	{foreach from=$examples.tikiwiki key=title item=tikiwiki name=tw}
-		<legend>{tr}{$title}{/tr}</legend>
+		<h2>{tr}{$title}{/tr}</h2>
 			<table class="bittable">
 				<tr>
 					<th style="width:50%">Example</th>
@@ -21,7 +21,7 @@
 			</table>
 	{/foreach}
 
-	<legend>{tr}Mediawiki tables{/tr}</legend>
+	<h2>{tr}Mediawiki tables{/tr}</h2>
 		<table class="bittable">
 			<tr>
 				<th style="width:60%">Code</th>
@@ -66,7 +66,6 @@
 			</tr>
 		</table>
 
-		<br /> <br />
 		<table class="bittable">
 			<caption>{tr}Applied Examples{/tr}</caption>
 			{foreach from=$examples.mediawiki key=title item=example}
