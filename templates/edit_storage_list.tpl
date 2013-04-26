@@ -4,8 +4,8 @@
 	<div id="edit_storage_list{if !$uploadTab}_tab{/if}{if $form_id}_{$form_id}{/if}">
 {/if}
 {if $gContent->mStorage}
-	<div class="row">
-		<table class="data" summary="List of attached files">
+	<div class="control-group">
+		<table class="table data" summary="List of attached files">
 			<tr>
 				<th scope="col" class="width29p" title="{tr}Thumbnail{/tr}">{tr}Thumbnail{/tr}</th>
 				<th scope="col" class="width40p" title="{tr}Inclusion Code{/tr}">{tr}Inclusion Code{/tr}</th>
@@ -49,13 +49,13 @@
 								<a href="javascript:void(0);" onclick="
 									BitAjax.updater('edit_storage_list_tab_{$form_id}', '{$smarty.const.LIBERTY_PKG_URL}ajax_edit_storage.php', '{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}&amp;form_id={$form_id}');
 									BitAjax.updater('edit_storage_list_{$form_id}', '{$smarty.const.LIBERTY_PKG_URL}ajax_edit_storage.php', '{$smarty.capture.urlArgs}&amp;form_id={$form_id}');">
-										{biticon ipackage="icons" iname="edit-delete" iexplain="delete"}
+										{booticon iname="icon-trash" ipackage="icons" iexplain="delete"}
 								</a>
 							{else}
 								{if $storage.is_mime}
-									<a href="{$storage.display_url}">{biticon ipackage="icons" iname="document-open" iexplain="View"}</a>
+									<a href="{$storage.display_url}">{booticon iname="icon-folder-open"  ipackage="icons"  iexplain="View"}</a>
 								{/if}
-								<a href="{$smarty.server.SCRIPT_NAME}?{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}">{biticon ipackage="icons" iname="edit-delete" iexplain="Delete"}</a>
+								<a href="{$smarty.server.SCRIPT_NAME}?{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}">{booticon iname="icon-trash" ipackage="icons" iexplain="Delete"}</a>
 							{/if}
 						{/if}
 					</td>

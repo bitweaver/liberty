@@ -100,7 +100,7 @@ if( $gBitThemes->isAjaxRequest() ) {
 		}
 	}
 
-	require_once $gBitSmarty->_get_plugin_filepath( 'function', 'biticon' );
+	$gBitSmarty->loadPlugin( 'smarty_modifier_biticon' );
 	$ret = '<a title="'.$contentPerms['groups'][$gid]['group_name']." :: ".$perm.'" '.
 			'href="javascript:void(0);" onclick="BitAjax.updater('.
 			"'{$perm}{$gid}', ".

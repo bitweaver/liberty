@@ -8,7 +8,7 @@
 
 {if $gBitThemes->isAjaxLib('mochikit')}
 
-	<div class="row">
+	<div class="control-group">
 		<div class="formlabel">
 			{$gContent->getContentTypeName()} {tr}Structure{/tr}
 			<br/>

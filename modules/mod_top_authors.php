@@ -15,10 +15,10 @@ if( empty( $module_title ) ) {
 	if( !empty( $module_params['content_type_guid'] ) && !empty( $gLibertySystem->mContentTypes[$module_params['content_type_guid']] ) ) {
 		$title = tra( "Top Authors" ).': '.$gLibertySystem->getContentTypeName( $module_params['content_type_guid'] );
 	} else {
-		$gBitSmarty->assign( 'showContentType', TRUE );
+		$_template->tpl_vars['showContentType'] = new Smarty_variable( TRUE );
 		$title = tra( "Top Authors" );
 	}
-	$gBitSmarty->assign( 'moduleTitle', $title );
+	$_template->tpl_vars['moduleTitle'] = new Smarty_variable( $title );
 }
 */
 
@@ -29,5 +29,5 @@ if( !empty( $module_params['content_type_guid'] ) ) {
 $listHash['max_records'] = $module_rows;
 
 $modAuthors = $gBitUser->getAuthorList( $listHash );
-$gBitSmarty->assign_by_ref( 'modAuthors', $modAuthors );
+$_template->tpl_vars['modAuthors'] = new Smarty_variable( $modAuthors );
 ?>

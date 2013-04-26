@@ -943,18 +943,19 @@ class LibertyStructure extends LibertyBase {
 		$ret='';
 		if ($structure_tree != '') {
 			$gBitSmarty->verifyCompileDir();
-			$ret.=$gBitSmarty->fetch( "bitpackage:wiki/book_toc_startul.tpl");
+			$ret.=$gBitSmarty->fetch( "bitpackage:liberty/structure_toc_startul.tpl");
 			foreach($structure_tree as $leaf) {
 				//echo "<br />";print_r($leaf);echo "<br />";
 				$gBitSmarty->assign_by_ref('structure_tree',$leaf);
 				$gBitSmarty->assign('showdesc',$showdesc);
 				$gBitSmarty->assign('numbering',$numbering);
-				$ret.=$gBitSmarty->fetch( "bitpackage:wiki/book_toc_leaf.tpl");
+				$ret.=$gBitSmarty->fetch( "bitpackage:liberty/structure_toc_leaf.tpl");
 				if(isset($leaf["sub"]) && is_array($leaf["sub"])) {
-					$ret.=$this->fetchToc($leaf["sub"],$showdesc,$numbering);
+					// recurse down in - li tags are for w3c standard
+					$ret.= '<li>'.$this->fetchToc($leaf["sub"],$showdesc,$numbering).'</li>';
 				}
 			}
-			$ret.=$gBitSmarty->fetch( "bitpackage:wiki/book_toc_endul.tpl");
+			$ret.=$gBitSmarty->fetch( "bitpackage:liberty/structure_toc_endul.tpl");
 		}
 		return $ret;
 	}

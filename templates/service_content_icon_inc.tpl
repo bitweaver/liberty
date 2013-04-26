@@ -7,23 +7,21 @@
 		{assign var="amp" value="?"}
 	{/if}
 	<a title="{tr}Refresh cache{/tr}" href="{$url}{$amp}refresh_liberty_cache={$serviceHash.content_id}">
-		{biticon ipackage="icons" iname="view-refresh" iexplain="Refresh cache"}
+		{booticon iname="icon-recycle"  ipackage="icons"  iexplain="Refresh cache"}
 	</a>
 {/if}
 {if $gBitUser->hasPermission( 'p_liberty_assign_content_perms' ) and $serviceHash.content_id}
 	{if $gContent->hasUserPermissions()}
-		{assign var=perm_icon value="icons/emblem-readonly"}
-	{else}
-		{assign var=perm_icon value="icons/emblem-shared"}
+		{assign var=iconClass value="highlight"}
 	{/if}
 	{if $role_model }
-		{smartlink ipackage=liberty ifile=content_role_permissions.php ititle="Assign Permissions" ibiticon=$perm_icon ipackage=liberty ifile="content_permissions.php" content_id=$serviceHash.content_id}
+		{smartlink ipackage=liberty ifile="content_role_permissions.php" ititle="Assign Permissions" booticon="icon-key" class=$iconClass ipackage=liberty ifile="content_permissions.php" content_id="$serviceHash.content_id"}
 	{else}
-		{smartlink ipackage=liberty ifile=content_permissions.php ititle="Assign Permissions" ibiticon=$perm_icon ipackage=liberty ifile="content_permissions.php" content_id=$serviceHash.content_id}
+		{smartlink ipackage=liberty ifile="content_permissions.php" ititle="Assign Permissions" booticon="icon-key" class=$iconClass ipackage=liberty ifile="content_permissions.php" content_id="$serviceHash.content_id"}
 	{/if}
 {/if}
 {* This should always be last so it is right most in the icons! *}
 {if $preview && $closeclick}
-	<a onclick="javascript:return cClick();">{biticon ipackage=icons iname=window-close iexplain="Close Popup"}</a>
+	<a onclick="javascript:return cClick();">{booticon iname="icon-remove"  ipackage=icons  iexplain="Close Popup"}</a>
 {/if}
 {/strip}

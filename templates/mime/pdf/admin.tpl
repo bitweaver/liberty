@@ -8,7 +8,7 @@
 	<div class="body">
 		{form legend="PDF Plugin settings"}
 			<p class="warning">
-				{biticon iname="dialog-warning" iexplain="Warning"} {tr}To make use of this plugin, you need to install <a class="external" href="http://www.swftools.org/">SWF Tools</a>. This will provide all necessary tools to convert uploaded PDF files to shockwave flash files that can be viewed in your browser.{/tr}
+				{booticon iname="icon-warning-sign"   iexplain="Warning"} {tr}To make use of this plugin, you need to install <a class="external" href="http://www.swftools.org/">SWF Tools</a>. This will provide all necessary tools to convert uploaded PDF files to shockwave flash files that can be viewed in your browser.{/tr}
 			</p>
 
 			{if !$gLibertySystem->isPluginActive( 'mimepdf' )}
@@ -18,7 +18,7 @@
 			{formfeedback hash=$feedback}
 
 			{foreach from=$pdfSettings key=feature item=output}
-				<div class="row">
+				<div class="control-group">
 					{formlabel label=`$output.label` for=$feature}
 					{forminput}
 						{if $output.type == 'checkbox'}
@@ -31,7 +31,7 @@
 				</div>
 			{/foreach}
 
-			<div class="row submit">
+			<div class="control-group submit">
 				<input type="submit" name="settings_store" value="{tr}Change preferences{/tr}" />
 			</div>
 		{/form}

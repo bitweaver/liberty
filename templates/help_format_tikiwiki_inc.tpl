@@ -1,7 +1,6 @@
 {strip}
-{jstabs}
 	{foreach from=$examples.tikiwiki key=title item=tikiwiki name=tw}
-		{jstab title="$title"}
+		<h2>{tr}{$title}{/tr}</h2>
 			<table class="bittable">
 				<tr>
 					<th style="width:50%">Example</th>
@@ -20,10 +19,9 @@
 					</tr>
 				{/foreach}
 			</table>
-		{/jstab}
 	{/foreach}
 
-	{jstab title="Mediawiki tables"}
+	<h2>{tr}Mediawiki tables{/tr}</h2>
 		<table class="bittable">
 			<tr>
 				<th style="width:60%">Code</th>
@@ -68,7 +66,6 @@
 			</tr>
 		</table>
 
-		<br /> <br />
 		<table class="bittable">
 			<caption>{tr}Applied Examples{/tr}</caption>
 			{foreach from=$examples.mediawiki key=title item=example}
@@ -82,6 +79,4 @@
 				</tr>
 			{/foreach}
 		</table>
-	{/jstab}
-{/jstabs}
 {/strip}

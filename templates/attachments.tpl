@@ -9,7 +9,7 @@
 			{form legend="Attachment Filter"}
 				{formfeedback hash=$feedback}
 
-				<div class="row">
+				<div class="control-group">
 					{formlabel label="User" for=""}
 					{forminput}
 					<input type="text" name="login" value="{$smarty.request.login}" />
@@ -18,7 +18,7 @@
 				</div>
 
 				<div class="submit">
-					<input type="submit" name="apply" value="{tr}Filter{/tr}" />
+					<input type="submit" class="btn" name="apply" value="{tr}Filter{/tr}" />
 				</div>
 			{/form}
 		{/if}
@@ -41,7 +41,7 @@
 			</ul>
 		{/if}
 
-		<table class="data">
+		<table class="table data">
 			<caption>{tr}Liberty Attachments{/tr}</caption>
 			<tr>
 				<th class="width1p"></th>

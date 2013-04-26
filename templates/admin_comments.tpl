@@ -12,16 +12,16 @@
 			{jstab title="Comment Display"}
 			{legend legend="Display Settings"}
 			{foreach from=$commentSettings key=item item=output}
-				<div class="row">
-					{formlabel label=`$output.label` for=$item}
+				<div class="control-group">
+					{formlabel label=$output.label for=$item}
 					{forminput}
 						{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
-						{formhelp note=`$output.note` page=`$output.page`}
+						{formhelp note=$output.note page=$output.page}
 					{/forminput}
 				</div>
 			{/foreach}
 			
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Editable Time Period" for="comments_edit_minutes"}
 				{forminput}
 					<input type="text" name="comments_edit_minutes" value="{$gBitSystem->getConfig('comments_edit_minutes', 60)}" />
@@ -29,7 +29,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Comments per Page" for="comments_per_page"}
 				{forminput}
 					<select name="comments_per_page" id="comments_per_page">
@@ -44,7 +44,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Default Sort Mode" for="comments_default_ordering"}
 				{forminput}
 					<select name="comments_default_ordering" id="comments_default_ordering">
@@ -56,7 +56,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Comments default display mode" for="comments_default_display_mode"}
 				{forminput}
 					<select name="comments_default_display_mode" id="comments_default_display_mode">
@@ -66,7 +66,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Default post textarea lines number" for="comments_default_post_lines"}
 				{forminput}
 					<select name="comments_default_post_lines" id="comments_default_post_lines">
@@ -82,8 +82,8 @@
 			{/jstab}
 		{/jstabs}
 
-		<div class="row submit">
-			<input type="submit" name="change_prefs" value="{tr}Change preferences{/tr}" />
+		<div class="control-group submit">
+			<input type="submit" class="btn" name="change_prefs" value="{tr}Change preferences{/tr}" />
 		</div>
 	{/form}
 

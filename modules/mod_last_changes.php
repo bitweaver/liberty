@@ -29,10 +29,10 @@ if( empty( $module_title ) ) {
 }
 
 if( !empty( $module_params['show_date'] ) ) {
-	$gBitSmarty->assign( 'showDate' , TRUE );
+	$_template->tpl_vars['showDate'] = new Smarty_variable(  TRUE  );
 }
 
-$gBitSmarty->assign( 'contentType', !empty( $module_params['content_type_guid'] ) ? $module_params['content_type_guid'] : NULL );
+$_template->tpl_vars['contentType'] = new Smarty_variable( !empty( $module_params['content_type_guid'] );
 
 $listHash = array(
 	'content_type_guid' => !empty( $module_params['content_type_guid'] ) ? $module_params['content_type_guid'] : NULL,
@@ -42,5 +42,5 @@ $listHash = array(
 	'user_id' => $userId,
 );
 $modLastContent = $gBitUser->getContentList( $listHash );
-$gBitSmarty->assign_by_ref( 'modLastContent', $modLastContent );
+$_template->tpl_vars['modLastContent'] = new Smarty_variable( $modLastContent );
 ?>

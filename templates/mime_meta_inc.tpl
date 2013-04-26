@@ -1,5 +1,5 @@
 {strip}
-<div class="row">
+<div class="control-group">
 	{formlabel label="Uploaded by" for=""}
 	{forminput}
 		{displayname user_id=$attachment.user_id}
@@ -7,14 +7,14 @@
 </div>
 
 {if $display && $attachment.display_url}
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="View" for=""}
 		{forminput}
 			<a href="{$attachment.display_url}">{$attachment.file_name}</a>
 		{/forminput}
 	</div>
 {elseif $attachment.download_url}
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="Download" for=""}
 		{forminput}
 			<a href="{$attachment.download_url}">{$attachment.file_name}</a> <small>({$attachment.mime_type} &bull; {$attachment.file_size|display_bytes})</small>
@@ -22,14 +22,14 @@
 	</div>
 {/if}
 
-<div class="row">
+<div class="control-group">
 	{formlabel label="Downloads" for=""}
 	{forminput}
 		{$attachment.downloads|default:"{tr}none{/tr}"}
 	{/forminput}
 </div>
 
-<div class="row">
+<div class="control-group">
 	{formlabel label="Last Modified" for=""}
 	{forminput}
 		{$attachment.last_modified|bit_long_datetime}
@@ -37,7 +37,7 @@
 </div>
 
 {if $gContent->mInfo.hits}
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="Hits" for=""}
 		{forminput}
 			{$gContent->mInfo.hits}

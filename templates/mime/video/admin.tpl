@@ -12,11 +12,11 @@
 
 			{if $ffmpeg_extension}
 				<p class="success">
-					{biticon iname="dialog-ok" iexplain="OK"} {tr}The <a class="external" href="http://ffmpeg-php.sourceforge.net/">ffmpeg-php</a> extension is available.{/tr}
+					{booticon iname="icon-ok"   iexplain="OK"} {tr}The <a class="external" href="http://ffmpeg-php.sourceforge.net/">ffmpeg-php</a> extension is available.{/tr}
 				</p>
 			{else}
 				<p class="warning">
-					{biticon iname="dialog-warning" iexplain="Warning"} {tr}If possible, please install the <a class="external" href="http://ffmpeg-php.sourceforge.net/">ffmpeg-php</a> php extension. This plugin will work without the extension but many features will not work well such as video recognition and mp4 uploads.{/tr}
+					{booticon iname="icon-warning-sign"   iexplain="Warning"} {tr}If possible, please install the <a class="external" href="http://ffmpeg-php.sourceforge.net/">ffmpeg-php</a> php extension. This plugin will work without the extension but many features will not work well such as video recognition and mp4 uploads.{/tr}
 				</p>
 			{/if}
 
@@ -25,7 +25,7 @@
 			{/if}
 
 			{formfeedback hash=$feedback}
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Path to ffmpeg" for="ffmpeg_path"}
 				{forminput}
 					<input type='text' name="ffmpeg_path" id="ffmpeg_path" size="40" value="{$gBitSystem->getConfig('ffmpeg_path')|escape|default:$ffmpeg_path}" />
@@ -33,7 +33,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Video codec" for="mime_video_video_codec"}
 				{forminput}
 					{html_options
@@ -51,7 +51,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Force encode" for="mime_video_force_encode"}
 				{forminput}
 					<input type='checkbox' name="mime_video_force_encode" id="mime_video_force_encode" value="y" {if $gBitSystem->isFeatureActive('mime_video_force_encode')}checked="checked"{/if} />
@@ -59,7 +59,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Path to MP4Box" for="mp4box_path"}
 				{forminput}
 					<input type='text' name="mp4box_path" id="mp4box_path" size="40" value="{$gBitSystem->getConfig('mp4box_path')|escape|default:$mp4box_path}" />
@@ -67,7 +67,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Video bitrate" for="mime_video_video_bitrate"}
 				{forminput}
 					{html_options
@@ -80,7 +80,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Video width" for="mime_video_width"}
 				{forminput}
 					{html_options
@@ -93,7 +93,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Audio sample rate" for="mime_video_audio_samplerate"}
 				{forminput}
 					{html_options
@@ -106,7 +106,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Audio bitrate" for="mime_video_audio_bitrate"}
 				{forminput}
 					{html_options
@@ -119,7 +119,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Default displayed size" for="mime_video_default_size"}
 				{forminput}
 					{html_options
@@ -132,7 +132,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Foreground Colour" for="mime_video_frontcolor"}
 				{forminput}
 					<input type='text' name="mime_video_frontcolor" id="mime_video_frontcolor" size="10" value="{$gBitSystem->getConfig('mime_video_frontcolor')|default:"FFFFFF"}" />
@@ -140,7 +140,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Background Colour" for="mime_video_backcolor"}
 				{forminput}
 					<input type='text' name="mime_video_backcolor" id="mime_video_backcolor" size="10" value="{$gBitSystem->getConfig('mime_video_backcolor')|default:"000000"}" />
@@ -149,10 +149,10 @@
 			</div>
 
 			<p class="warning">
-				{biticon iname="dialog-warning" iexplain="Warning"} {tr}ffmpeg has a habit of changing the API when releasing new versions. Due to the demand for new features and the tendency to use cutting edge versions of ffmpeg it is very difficult to keep track of these API changes.{/tr}
+				{booticon iname="icon-warning-sign"   iexplain="Warning"} {tr}ffmpeg has a habit of changing the API when releasing new versions. Due to the demand for new features and the tendency to use cutting edge versions of ffmpeg it is very difficult to keep track of these API changes.{/tr}
 			</p>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="MP3 Library" for="ffmpeg_mp3_lib"}
 				{forminput}
 					{html_options
@@ -165,7 +165,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Motion estimation parameter" for="ffmpeg_me_method"}
 				{forminput}
 					{html_options
@@ -178,7 +178,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row submit">
+			<div class="control-group submit">
 				<input type="submit" name="plugin_settings" value="{tr}Save Plugin Settings{/tr}" />
 			</div>
 		{/form}

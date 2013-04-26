@@ -791,7 +791,7 @@ class LibertySystem extends LibertyBase {
 		$parts = explode( '/',$pMimeType );
 		if( count( $parts ) > 1 ) {
 			global $gBitSmarty;
-			require_once $gBitSmarty->_get_plugin_filepath( 'function','biticon' );
+			$gBitSmarty->loadPlugin( 'smarty_function_biticon' );
 
 			$ext = strtolower( $parts[1] );
 			$biticon = array(
