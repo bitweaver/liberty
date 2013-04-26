@@ -2258,28 +2258,18 @@ class LibertyContent extends LibertyBase {
 	 * @param pParamHash hash of parameters for any getList() function
 	 * @return the link to display the page.
 	 */
-	public static function getSortModeFields( &$pSortMode ) {
+	public static function getSortModeFields() {
 		return array(
-			'content_id_desc',
-			'content_id_asc',
-			'modifier_user_desc',
-			'modifier_user_asc',
-			'modifier_real_name_desc',
-			'modifier_real_name_asc',
-			'creator_user_desc',
-			'creator_user_asc',
-			'creator_real_name_desc',
-			'creator_real_name_asc',
-			'title_asc',
-			'title_desc',
-			'content_type_guid_asc',
-			'content_type_guid_desc',
-			'ip_asc',
-			'ip_desc',
-			'last_modified_asc',
-			'last_modified_desc',
-			'created_asc',
-			'created_desc',
+			'content_id',
+			'modifier_user',
+			'modifier_real_name',
+			'creator_user',
+			'creator_real_name',
+			'title',
+			'content_type_guid',
+			'ip',
+			'last_modified',
+			'created',
 		);
 	}
 
@@ -2292,7 +2282,12 @@ class LibertyContent extends LibertyBase {
 
 		$sortHash = static::getSortModeFields();
 
-		if( !in_array( $pSortMode, $sortHash ) ) {
+		$baseSortMode = str_replace( '_asc', '', str_replace( '_desc', '', $pSortMode ) );
+
+		$baseSortMode = preg_replace( '/^.*\./', '', $baseSortMode );
+bit_error_log( "$pSortMode => $baseSortMode" );
+
+		if( !in_array( $baseSortMode, $sortHash ) ) {
 			$pSortMode = $pDefault;
 		}
 
