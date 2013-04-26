@@ -650,7 +650,7 @@ class LibertyContent extends LibertyBase {
 		if( $this->isValid() ) {
 			global $gBitSystem;
 			$this->expungeCacheFile($this->mContentId);
-			$query = "select * from `".BIT_DB_PREFIX."liberty_content_history` where `content_id`=? order by ".$this->mDb->convertSortmode("last_modified_desc");
+			$query = "select * from `".BIT_DB_PREFIX."liberty_content_history` where `content_id`=? order by ".$this->convertSortMode("last_modified_desc");
 			$result = $this->mDb->query($query, array( $this->mContentId ) );
 			if ($result->numRows()) {
 				// We have a version
@@ -2254,6 +2254,53 @@ class LibertyContent extends LibertyBase {
 
 
 	/**
+	 * Validate inbound sort_mode parameter
+	 * @param pParamHash hash of parameters for any getList() function
+	 * @return the link to display the page.
+	 */
+	public static function getSortModeFields( &$pSortMode ) {
+		return array(
+			'content_id_desc',
+			'content_id_asc',
+			'modifier_user_desc',
+			'modifier_user_asc',
+			'modifier_real_name_desc',
+			'modifier_real_name_asc',
+			'creator_user_desc',
+			'creator_user_asc',
+			'creator_real_name_desc',
+			'creator_real_name_asc',
+			'title_asc',
+			'title_desc',
+			'content_type_guid_asc',
+			'content_type_guid_desc',
+			'ip_asc',
+			'ip_desc',
+			'last_modified_asc',
+			'last_modified_desc',
+			'created_asc',
+			'created_desc',
+		);
+	}
+
+	/**
+	 * Validate inbound sort_mode parameter
+	 * @param pParamHash hash of parameters for any getList() function
+	 * @return the link to display the page.
+	 */
+	public function convertSortMode( &$pSortMode, $pDefault='last_modified_desc' ) {
+
+		$sortHash = static::getSortModeFields();
+
+		if( !in_array( $pSortMode, $sortHash ) ) {
+			$pSortMode = $pDefault;
+		}
+
+		return $this->mDb->convertSortmode( $pSortMode );
+	}
+
+
+	/**
 	 * Liberty override to stuff content_status_id and prepares parameters with default values for any getList function
 	 * @param pParamHash hash of parameters for any getList() function
 	 * @return the link to display the page.
@@ -2600,7 +2647,7 @@ class LibertyContent extends LibertyBase {
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`data_type`='summary')
 				$joinSql
 				$whereSql
-			ORDER BY ".$orderTable.$this->mDb->convertSortmode($pListHash['sort_mode']);
+			ORDER BY ".$orderTable.$this->convertSortMode($pListHash['sort_mode']);
 
 		$query_cant = "
 			SELECT
@@ -3423,7 +3470,7 @@ class LibertyContent extends LibertyBase {
 			if( preg_match( "/^last_modified|^title/", $pListHash['sort_mode'] )) {
 				$pListHash['sort_mode'] = "lal.".$pListHash['sort_mode'];
 			}
-			$orderSql = " ORDER BY ".$this->mDb->convertSortmode( $pListHash['sort_mode'] )." ";
+			$orderSql = " ORDER BY ".$this->convertSortMode( $pListHash['sort_mode'] )." ";
 		}
 
 		$query = "
