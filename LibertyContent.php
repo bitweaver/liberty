@@ -2285,7 +2285,6 @@ class LibertyContent extends LibertyBase {
 		$baseSortMode = str_replace( '_asc', '', str_replace( '_desc', '', $pSortMode ) );
 
 		$baseSortMode = preg_replace( '/^.*\./', '', $baseSortMode );
-bit_error_log( "$pSortMode => $baseSortMode" );
 
 		if( !in_array( $baseSortMode, $sortHash ) ) {
 			$pSortMode = $pDefault;
