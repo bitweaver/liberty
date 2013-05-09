@@ -37,7 +37,7 @@
  */
 require_once( LIBERTY_PKG_PATH.'LibertyComment.php' );
 
-global $commentsLib, $gBitSmarty, $gBitSystem;
+global $commentsLib, $gBitSmarty, $gBitSystem, $gBitThemes;
 
 $postComment = array();
 $formfeedback = array( 'error' => array() );
