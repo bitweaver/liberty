@@ -7,7 +7,7 @@
 	<div class="body">
 		{form legend="Code specific settings"}
 			{formfeedback hash=$feedback}
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Default Source" for="liberty_plugin_code_default_source"}
 				{forminput}
 					{html_options
@@ -20,7 +20,7 @@
 				{/forminput}
 			</div>
 
-			<div class="row submit">
+			<div class="control-group submit">
 				<input type="submit" name="plugin_settings" value="{tr}Save Plugin Settings{/tr}" />
 			</div>
 		{/form}

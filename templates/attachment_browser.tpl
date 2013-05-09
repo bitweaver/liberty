@@ -1,5 +1,5 @@
 {strip}
-<div class="row">
+<div class="control-group">
 	{formlabel label="Attach Existing File(s)" for="existing_attachment_id_input"}
 	{forminput}
 		<input type="text" name="existing_attachment_id[]" id="existing_attachment_id_input" size="20"/>

@@ -3,7 +3,7 @@
 	{jstabs}
 		{jstab title="General Settings"}
 			{legend legend="Liberty Cache"}
-				<div class="row">
+				<div class="control-group">
 					{formlabel label="Liberty Cache" for="liberty_cache"}
 					{forminput}
 						{html_options name=liberty_cache id=liberty_cache values=$cacheTimes options=$cacheTimes selected=$gBitSystem->getConfig('liberty_cache')}
@@ -13,7 +13,7 @@
 			{/legend}
 
 			{legend legend="Attachments"}
-				<div class="row">
+				<div class="control-group">
 					{formlabel label="Auto-Display Attachment Thumbnails" for="liberty_auto_display_attachment_thumbs"}
 					{forminput}
 						{html_options options=$imageSizes name="liberty_auto_display_attachment_thumbs" id="liberty_auto_display_attachment_thumbs" selected=$gBitSystem->getConfig('liberty_auto_display_attachment_thumbs')}
@@ -21,7 +21,7 @@
 					{/forminput}
 				</div>
 
-				<div class="row">
+				<div class="control-group">
 					{formlabel label="Liberty Attachment Style" for="liberty_attachment_style"}
 					{forminput}
 						{html_radios options=$attachmentStyleOptions values=$attachmentStyleOptions id=liberty_attachment_style name=liberty_attachment_style checked=$gBitSystem->getConfig('liberty_attachment_style', 'standard') separator="<br />"}
@@ -30,11 +30,11 @@
 				</div>
 
 				{foreach from=$attachmentOptions key=item item=output}
-				<div class="row">
-					{formlabel label=`$output.label` for=$item}
+				<div class="control-group">
+					{formlabel label=$output.label for=$item}
 					{forminput}
 						{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
-						{formhelp note=`$output.note` page=`$output.page`}
+						{formhelp note=$output.note page=$output.page}
 					{/forminput}
 				</div>
 				{/foreach}
@@ -42,21 +42,21 @@
 
 			{legend legend="Miscellaneous"}
 				{foreach from=$formLibertyFeatures key=item item=output}
-					<div class="row">
-						{formlabel label=`$output.label` for=$item}
+					<div class="control-group">
+						{formlabel label=$output.label for=$item}
 						{forminput}
 							{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
-							{formhelp note=`$output.note` page=`$output.page`}
+							{formhelp note=$output.note page=$output.page}
 						{/forminput}
 					</div>
 				{/foreach}
 
 				{foreach from=$formLibertyTextareaFeatures key=item item=output}
-					<div class="row">
-						{formlabel label=`$output.label` for=$item}
+					<div class="control-group">
+						{formlabel label=$output.label for=$item}
 						{forminput}
 							<input type="text" name="{$item}" value="{$gBitSystem->getConfig($item, $output.default)}" />
-							{formhelp note=`$output.note` page=`$output.page`}
+							{formhelp note=$output.note page=$output.page}
 						{/forminput}
 					</div>
 				{/foreach}
@@ -64,11 +64,11 @@
 
 			{legend legend="Spam and Captcha Settings"}
 				{foreach from=$formCaptcha key=item item=output}
-					<div class="row">
-						{formlabel label=`$output.label` for=$item}
+					<div class="control-group">
+						{formlabel label=$output.label for=$item}
 						{forminput}
 							{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
-							{formhelp note=`$output.note` page=`$output.page`}
+							{formhelp note=$output.note page=$output.page}
 							{if $item == "liberty_use_captcha_freecap"}
 								<p>{tr}If you can see the image below, you can use freecap{/tr}</p>
 								<img src="{$smarty.const.UTIL_PKG_URL}freecap/freecap.php" alt="{tr}Random Image{/tr}" title="{tr}Random Image{/tr}" />
@@ -77,11 +77,11 @@
 					</div>
 				{/foreach}
 				{foreach from=$formCaptchaTextareaFeatures key=item item=output}
-					<div class="row">
-						{formlabel label=`$output.label` for=$item}
+					<div class="control-group">
+						{formlabel label=$output.label for=$item}
 						{forminput}
 							<input type="text" name="{$item}" value="{$gBitSystem->getConfig($item, $output.default)}" />
-							{formhelp note=`$output.note` page=`$output.page`}
+							{formhelp note=$output.note page=$output.page}
 						{/forminput}
 					</div>
 				{/foreach}
@@ -94,8 +94,8 @@
 			{legend legend="Image Processing System"}
 				<input type="hidden" name="page" value="{$page}" />
 				{foreach from=$imageProcessors key=item item=output}
-					<div class="row">
-						{formlabel label=`$output.label` for=$item}
+					<div class="control-group">
+						{formlabel label=$output.label for=$item}
 						{forminput}
 							<label>
 								<input type="radio" id="{$item}" name="image_processor" value="{$item}" {if !$output.installed}disabled="disabled"{/if} {if $gBitSystem->getConfig('image_processor','gd') == $item}checked="checked"{/if} />
@@ -107,24 +107,24 @@
 							</label>
 
 							{if !$output.installed}
-								{formhelp note=`$output.install_note` page=`$output.page`}
+								{formhelp note=$output.install_note page=$output.page}
 							{/if}
-							{formhelp note=`$output.note` page=`$output.page`}
+							{formhelp note=$output.note page=$output.page}
 						{/forminput}
 					</div>
 				{/foreach}
 
 				{foreach from=$formImageFeatures key=item item=output}
-					<div class="row">
-						{formlabel label=`$output.label` for=$item}
+					<div class="control-group">
+						{formlabel label=$output.label for=$item}
 						{forminput}
 							{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
-							{formhelp note=`$output.note` page=`$output.page`}
+							{formhelp note=$output.note page=$output.page}
 						{/forminput}
 					</div>
 				{/foreach}
 
-				<div class="row">
+				<div class="control-group">
 					{formlabel label="Image Compression" for="liberty_thumbnail_quality"}
 					{forminput}
 						{html_options values=$imageCompression options=$imageCompression id=liberty_thumbnail_quality name=liberty_thumbnail_quality selected=$gBitSystem->getConfig('liberty_thumbnail_quality')|default:85}
@@ -132,7 +132,7 @@
 					{/forminput}
 				</div>
 
-				<div class="row">
+				<div class="control-group">
 					{formlabel label="Thumbnail Format" for="thumbformat"}
 					{forminput}
 						{html_options values=$thumbFormats options=$thumbFormats id=thumbformat name=liberty_thumbnail_format selected=$gBitSystem->getConfig('liberty_thumbnail_format')}
@@ -140,7 +140,7 @@
 					{/forminput}
 				</div>
 
-				<div class="row">
+				<div class="control-group">
 					{formlabel label="Thumbnail Size" for="liberty_thumbnail_size"}
 					{forminput}
 						{html_options options=$imageSizes name="liberty_thumbnail_size" id="liberty_thumbnail_size" selected=$gBitSystem->getConfig('liberty_thumbnail_size')|default:medium}
@@ -151,8 +151,8 @@
 		{/jstab}
 	{/jstabs}
 
-	<div class="row submit">
-		<input type="submit" name="change_prefs" value="{tr}Change preferences{/tr}" />
+	<div class="control-group submit">
+		<input type="submit" class="btn" name="change_prefs" value="{tr}Change preferences{/tr}" />
 	</div>
 {/form}
 {/strip}

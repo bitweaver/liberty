@@ -4,7 +4,7 @@
 		<input type="hidden" name="structure_id" value="{$structureInfo.structure_id}" />
 		<input type="hidden" name="tab" value="alias" />
 
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Page Alias" for="pageAlias"}
 			{forminput}
 				<input type="text" name="pageAlias" id="pageAlias" value="{$structureInfo.page_alias}" size="30" maxlength="240"/>
@@ -12,8 +12,8 @@
 			{/forminput}
 		</div>
 
-		<div class="row submit">
-			<input type="submit" name="create" value="{tr}Update{/tr}"/>
+		<div class="control-group submit">
+			<input type="submit" class="btn" name="create" value="{tr}Update{/tr}"/>
 		</div>
 	{/form}
 </div>

@@ -9,7 +9,7 @@
 
 	{foreach from=$contentPerms.groups item=group}
 		<h3>{tr}Permissions for{/tr}: {$group.group_name}</h3>
-		<table class="data">
+		<table class="table data">
 			<tr>
 				<th>{tr}Permission{/tr}</th>
 				<th>{tr}Status{/tr}</th>
@@ -38,7 +38,7 @@
 		<input type="hidden" name="content_id" value="{$gContent->mContentId}" />
 		<input type="hidden" name="action" value="assign" />
 
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Assign this Permission" for="perm"}
 			{forminput}
 				<select name="perm" id="perm">
@@ -50,7 +50,7 @@
 			{/forminput}
 		</div>
 
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="To this Group" for="group_id"}
 			{forminput}
 				<select name="group_id" id="group_id">
@@ -62,16 +62,16 @@
 			{/forminput}
 		</div>
 
-		<div class="row submit">
-			<input type="submit" name="back" value="{tr}Go back to content{/tr}" />
-			<input type="submit" name="assign" value="{tr}Assign Permission{/tr}" />
+		<div class="control-group submit">
+			<input type="submit" class="btn" name="back" value="{tr}Go back to content{/tr}" />
+			<input type="submit" class="btn" name="assign" value="{tr}Assign Permission{/tr}" />
 		</div>
 	{/form}
 
 	{if $contentPerms.assigned}
 		<br />
 
-		<table class="data">
+		<table class="table data">
 			<caption>{tr}Permissions assigned to this content{/tr}</caption>
 			<tr>
 				<th>{smartlink content_id=$gContent->mContentId ititle=Group isort=group_name idefault=1}</th>
@@ -83,7 +83,7 @@
 					<td>{$perm.group_name}</td>
 					<td>{$perm.perm_desc} <em>({$perm.perm_name})</em></td>
 					<td class="alignright">
-						{smartlink ititle="Remove Permission" ibiticon="icons/edit-delete" iforce="icon" action=remove content_id=$gContent->mContentId perm=$perm.perm_name group_id=$perm.group_id}
+						{smartlink ititle="Remove Permission" booticon="icon-trash" iforce="icon" action=remove content_id=$gContent->mContentId perm=$perm.perm_name group_id=$perm.group_id}
 					</td>
 				</tr>
 			{foreachelse}

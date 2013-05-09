@@ -39,7 +39,7 @@ function submitStructure(pForm,pContentId,pMode) {
 		<input type="hidden" name="tab" value="content" />
 
 		{if $subtree}
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="After page" for="after_ref_id"}
 				{forminput}
 					<select name="after_ref_id" id="after_ref_id">
@@ -55,7 +55,7 @@ function submitStructure(pForm,pContentId,pMode) {
 		{minifind}
 
 		{* disable until it can be sorted }
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Search" for="lib-content"}
 			{forminput}
 				<input autocomplete="off" id="contact_name" name="contact[name]" size="30" type="text" value="" />
@@ -66,7 +66,7 @@ function submitStructure(pForm,pContentId,pMode) {
 		</div>
 		{ *}
 
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Content type" for="content_type_guid"}
 			{forminput}
 				{html_options onchange="submit();" options=$contentTypes name=content_type_guid selected=$contentSelect}
@@ -77,7 +77,7 @@ function submitStructure(pForm,pContentId,pMode) {
 			{/forminput *}
 
 			{forminput}
-				<table class="data">
+				<table class="table data">
 					<thead>
 						<tr>
 							<th></th>
@@ -93,15 +93,15 @@ function submitStructure(pForm,pContentId,pMode) {
 
 									{assign var=inStructure value=$gStructure->isInStructure($contentListHash[cx].content_id)}
 									<div class="icon" {if empty($inStructure)}style="display:none"{/if} id="{$contentListHash[cx].content_id}remove" onclick="submitStructure(document.getElementById('structureaddform'),{$contentListHash[cx].content_id},'remove')">
-										{biticon ipackage="icons" iname="list-remove" iexplain="Remove"}
+										{booticon iname="icon-minus-sign"  ipackage="icons"  iexplain="Remove"}
 									</div>
 
 									<div class="icon" {if $inStructure}style="display:none"{/if} id="{$contentListHash[cx].content_id}add" onclick="submitStructure(document.getElementById('structureaddform'),{$contentListHash[cx].content_id},'add')">
-										{biticon ipackage="icons" iname="list-add" iexplain="Add to structure"}
+										{booticon iname="icon-plus-sign"  ipackage="icons"  iexplain="Add to structure"}
 									</div>
 
 									<a target="_new" href="{$contentListHash[cx].display_url}">
-										{biticon ipackage="icons" iname="zoom-best-fit" iexplain="View (in new window)"}
+										{booticon ipackage="icons" iname="icon-zoom-in" iexplain="View (in new window)"}
 									</a>
 								</td>
 								<td class="title">
@@ -124,9 +124,9 @@ function submitStructure(pForm,pContentId,pMode) {
 			{/forminput}
 		</div>
 
-		<div class="row submit">
-			<input type="submit" onclick="submitStructure(this.form);return false;" name="create" value="{tr}Add Content{/tr}" />
-			<input type="submit" name="done" value="{tr}Done{/tr}" />
+		<div class="control-group submit">
+			<input type="submit" class="btn" onclick="submitStructure(this.form);return false;" name="create" value="{tr}Add Content{/tr}" />
+			<input type="submit" class="btn" name="done" value="{tr}Done{/tr}" />
 		</div>
 	{/form}
 </div>

@@ -36,7 +36,7 @@ $pluginParams = array (
 	'help_function' => 'data_toc_help',
 	'syntax'        => '{toc structure_id= }',
 	'plugin_type'   => DATA_PLUGIN,
-	'biticon'       => '{biticon ilocation=quicktag ipackage=quicktags iname=toc iexplain="Structure Table of Contents"}',
+	'booticon'       => '{booticon iname="icon-list-ol" iexplain="Structure Table of Contents"}',
 	'taginsert'     => '{toc}',
 	'structure_id'  => 'id of the structure to display'
 );

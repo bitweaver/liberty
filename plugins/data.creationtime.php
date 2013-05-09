@@ -38,9 +38,6 @@ $pluginParams = array (
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATA_CREATIONTIME, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATA_CREATIONTIME );
 
-global $gBitSmarty;
-require_once $gBitSmarty->_get_plugin_filepath('modifier','bit_short_datetime');
-
 // Help Routine
 function data_creationtime_help() {
 	return tra( "Example: " )."{creationtime}<br />";

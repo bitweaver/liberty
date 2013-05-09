@@ -9,20 +9,20 @@
 		{form}
 			{legend legend="Liberty Action Logs"}
 				{foreach from=$logSettings key=item item=output}
-					<div class="row">
-						{formlabel label=`$output.label` for=$item}
+					<div class="control-group">
+						{formlabel label=$output.label for=$item}
 						{forminput}
 							{if $output.type == 'input'}
 								<input type='text' name="{$item}" id="{$item}" value="{$gBitSystem->getConfig($item)}" />
 							{else}
 								{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
 							{/if}
-							{formhelp note=`$output.note` page=`$output.page`}
+							{formhelp note=$output.note page=$output.page}
 						{/forminput}
 					</div>
 				{/foreach}
 
-				<div class="row">
+				<div class="control-group">
 					{formlabel label="Delete Logs" for="log_prune"}
 					{forminput}
 						<select name="log_prune" id="log_prune">
@@ -37,8 +37,8 @@
 					{/forminput}
 				</div>
 
-				<div class="row submit">
-					<input type="submit" name="apply_settings" value="{tr}Apply Settings{/tr}" />
+				<div class="control-group submit">
+					<input type="submit" class="btn" name="apply_settings" value="{tr}Apply Settings{/tr}" />
 				</div>
 			{/legend}
 		{/form}
@@ -47,7 +47,7 @@
 
 		{minifind}
 
-		<table class="data">
+		<table class="table data">
 			<caption>{tr}Action Logs{/tr} <span class="total">[ {$listInfo.total_records|default:0} ]</span></caption>
 			<tr>
 				<th></th>

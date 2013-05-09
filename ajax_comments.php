@@ -49,7 +49,7 @@ if( !$gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE)) {
 	$gBitSmarty->assign( 'commentsParentId', $commentsParentId );
 	if( !empty( $formfeedback )){
 		$statusCode = 400;
-		require_once $gBitSmarty->_get_plugin_filepath( 'function', 'formfeedback' );
+		$gBitSmarty->loadPlugin( 'smarty_modifier_formfeedback' );
 		$XMLContent = smarty_function_formfeedback( $formfeedback, $gBitSmarty );
 	}
 	$XMLContent .= $gBitSmarty->fetch( 'bitpackage:liberty/display_comment.tpl' );

@@ -14,22 +14,22 @@
 				{formfeedback hash=$feedback}
 				{include file=$edit_template preferences=$attachment.preferences}
 
-				<div class="row submit">
+				<div class="control-group submit">
 					<input type="hidden" name="attachment_id" value="{$smarty.request.attachment_id}" />
-					<input type="submit" name="plugin_submit" value="{tr}Update File{/tr}" />
+					<input type="submit" class="btn" name="plugin_submit" value="{tr}Update File{/tr}" />
 				</div>
 			{/form}
 		{/if}
 
 		{legend legend="Content this attachment belongs to"}
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Title"}
 				{forminput}
 					<a href="{$gContent->getDisplayUrl()}">{$gContent->getTitle()}</a>
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Content Type"}
 				{forminput}
 					{$gContent->getContentTypeName()}

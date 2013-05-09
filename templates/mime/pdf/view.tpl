@@ -1,6 +1,6 @@
 {strip}
 {if $attachment.media_url}
-	<div class="row aligncenter">
+	<div class="control-group aligncenter">
 		<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,0,0" width="800" height="600" id="viewer" align="middle">
 			<param name="allowScriptAccess" value="sameDomain" />
 			<param name="movie" value="{$attachment.media_url}" />

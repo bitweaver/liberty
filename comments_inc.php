@@ -8,15 +8,13 @@
  * @subpackage functions
  */
 
-// $Header$
-
 // Copyright (c) 2002-2003, Luis Argerich, Garland Foster, Eduardo Polidor, et. al.
 // All Rights Reserved. See below for details and a complete list of authors.
 // Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See http://www.gnu.org/copyleft/lesser.html for details.
 
 // This file sets up the information needed to display
 // the comments preferences, post-comment box and the
-// list of comments. Finally it displays blog-comments.tpl
+// list of comments. Finally it displays comments.tpl
 // using this information
 
 // Setup URLS for the Comments next and prev buttons and use variables that
@@ -39,7 +37,7 @@
  */
 require_once( LIBERTY_PKG_PATH.'LibertyComment.php' );
 
-global $commentsLib, $gBitSmarty, $gBitSystem;
+global $commentsLib, $gBitSmarty, $gBitSystem, $gBitThemes;
 
 $postComment = array();
 $formfeedback = array( 'error' => array() );

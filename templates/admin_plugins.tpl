@@ -59,18 +59,18 @@
 											{/if}
 											<td class="actionicon">
 												{if $plugin.help_page}
-													{jspopup href="http://www.bitweaver.org/wiki/`$plugin.help_page`" ibiticon="icons/dialog-information" title=`$plugin.help_page` class="external"}
+													{jspopup href="http://www.bitweaver.org/wiki/`$plugin.help_page`" ibiticon="icons/dialog-information" title=$plugin.help_page class="external"}
 												{/if}
 												{if $plugin.plugin_settings_url}
-													<a href="{$plugin.plugin_settings_url}">{biticon iname=accessories-text-editor iexplain="Plugin Settings"}</a>
+													<a href="{$plugin.plugin_settings_url}">{booticon iname="icon-edit"   iexplain="Plugin Settings"}</a>
 												{/if}
 												{if $plugin.is_active == 'x'}
 													Missing
 												{elseif $plugin.plugin_type == 'mime' && $guid == $smarty.const.LIBERTY_DEFAULT_MIME_HANDLER}
-													{biticon iname="dialog-ok" iexplain="Default"}
+													{booticon iname="icon-ok"   iexplain="Default"}
 													<input type="hidden" name="PLUGINS[{$guid}]" value="y" />
 												{else}
-													{html_checkboxes name="PLUGINS[`$guid`]" values="y" checked=`$plugin.is_active` labels=false id=$guid}
+													{html_checkboxes name="PLUGINS[`$guid`]" values="y" checked=$plugin.is_active labels=false id=$guid}
 												{/if}
 											</td>
 										</tr>
@@ -82,7 +82,7 @@
 
 							{if $plugin_type eq 'format'}
 								{formfeedback warning="{tr}This will change the way any wiki page that contains HTML will be displayed. We recommend turning on HTMLPurifier if either of these is on.{/tr}"}
-								<div class="row">
+								<div class="control-group">
 									{formlabel label="Allow HTML" for="allow_html"}
 									{forminput}
 										<input type="checkbox" name="content_allow_html" id="allow_html" value="y" {if $gBitSystem->isFeatureActive('content_allow_html')}checked="checked"{/if} />
@@ -90,7 +90,7 @@
 										{formhelp note="Allow the use of HTML in tikiwiki format content."}
 									{/forminput}
 								</div>
-								<div class="row">
+								<div class="control-group">
 									{formlabel label="Force Allow HTML" for="force_allow_html"}
 									{forminput}
 										<input type="checkbox" name="content_force_allow_html" id="force_allow_html" value="y" {if $gBitSystem->isFeatureActive('content_force_allow_html')}checked="checked"{/if} />
@@ -104,14 +104,14 @@
 				{/foreach}
 			{/jstabs}
 
-			<div class="row submit">
-				<input type="submit" name="pluginsave" value="{tr}Save Plugin Settings{/tr}" />
+			<div class="control-group submit">
+				<input type="submit" class="btn" name="pluginsave" value="{tr}Save Plugin Settings{/tr}" />
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Reset all plugin settings" for=""}
 				{forminput}
-					<input type="submit" name="reset_all_plugins" value="{tr}Reset Plugins{/tr}" />
+					<input type="submit" class="btn" name="reset_all_plugins" value="{tr}Reset Plugins{/tr}" />
 					{formhelp note="This will remove all plugin settings from the database and reset them to the default values. This can be useful if some plugins don't seem to work or you simply want to reset all values on this page."}
 				{/forminput}
 			</div>

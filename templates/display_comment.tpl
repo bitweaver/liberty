@@ -8,16 +8,16 @@
 		<div class="floaticon">
 			{if $gBitUser->hasPermission( 'p_liberty_post_comments' )}
 				{if $comments_ajax }
-					<a href="javascript:void(0);" onclick="LibertyComment.attachForm('comment_{$comment.content_id}', '{$comment.content_id}', '{$comment.root_id}')">{biticon ipackage="icons" iname="mail-reply-sender" iexplain="Reply to this comment"}</a>
+					<a href="javascript:void(0);" onclick="LibertyComment.attachForm('comment_{$comment.content_id}', '{$comment.content_id}', '{$comment.root_id}')">{booticon iname="icon-envelope-alt"  ipackage="icons"  iexplain="Reply to this comment"}</a>
 				{else}
-					{biticon class="icon" ipackage="icons" iname="mail-reply-sender" iexplain="Reply to this comment" onclick="window.location='`$comments_return_url`&post_comment_reply_id=`$comment.content_id`&post_comment_request=1#editcomments';" }
+					{booticon iname="icon-envelope-alt"  class="icon" ipackage="icons"  iexplain="Reply to this comment" onclick="window.location='`$comments_return_url`&post_comment_reply_id=`$comment.content_id`&post_comment_request=1#editcomments';" }
 				{/if}
 			{/if}
 			{if $comment.is_editable}
-				<a href="{$comments_return_url}&amp;post_comment_id={$comment.comment_id}&amp;post_comment_request=1#editcomments" rel="nofollow">{biticon ipackage="icons" iname="accessories-text-editor" iexplain="Edit"}</a>
+				<a href="{$comments_return_url}&amp;post_comment_id={$comment.comment_id}&amp;post_comment_request=1#editcomments" rel="nofollow">{booticon iname="icon-edit" ipackage="icons" iexplain="Edit"}</a>
 			{/if}
 			{if $gBitUser->hasPermission('p_liberty_admin_comments')}
-				<a href="{$comments_return_url}&amp;delete_comment_id={$comment.comment_id}" rel="nofollow">{biticon ipackage="icons" iname="edit-delete" iexplain="Remove"}</a>
+				<a href="{$comments_return_url}&amp;delete_comment_id={$comment.comment_id}" rel="nofollow">{booticon iname="icon-trash" ipackage="icons" iexplain="Remove"}</a>
 			{/if}
 		</div>
 
@@ -39,7 +39,7 @@
 	{if $comment.children}
 		<div id="comment_{$comment.content_id}_children">
 			{foreach key=key item=item from=$comment.children}
-				{include file="bitpackage:liberty/display_comment.tpl" comment="$item"}
+				{include file="bitpackage:liberty/display_comment.tpl" comment=$item}
 			{/foreach}
 		</div>
 	{/if}

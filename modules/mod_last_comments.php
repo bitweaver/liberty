@@ -41,9 +41,9 @@ if( !empty( $params['root_content_type_guid'] ) ) {
 	}
 	$listHash['root_content_type_guid'] = $params['root_content_type_guid'];
 }
-$gBitSmarty->assign( 'moduleTitle', $moduleTitle );
+$_template->tpl_vars['moduleTitle'] = new Smarty_variable( $moduleTitle );
 
 $lcom = new LibertyComment();
 $modLastComments = $lcom->getList( $listHash );
-$gBitSmarty->assign( 'modLastComments', $modLastComments );
+$_template->tpl_vars['modLastComments'] = new Smarty_variable( $modLastComments );
 ?>

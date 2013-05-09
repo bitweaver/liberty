@@ -1,6 +1,6 @@
 {strip}
 {if $attachment.media_url}
-	<div class="row aligncenter">
+	<div class="control-group aligncenter">
 		{include file="bitpackage:liberty/mime/video/player.tpl"}
 	</div>
 
@@ -12,7 +12,7 @@
 		{/foreach}
 	</div>
 {elseif $attachment.status.processing}
-	<div class="row aligncenter">
+	<div class="control-group aligncenter">
 		<a href="{$attachment.download_url}">
 			{assign var=size value=$gBitSystem->getConfig('treasury_item_view_thumb')}
 			<img src="{$attachment.thumbnail_url.$size}{$refresh}" alt="{$gContent->getTitle()}" title="{$gContent->getTitle()}" />
@@ -21,7 +21,7 @@
 	</div>
 	{formfeedback warning="{tr}The video is being processed. please try to reload in a couple of minutes.{/tr}"}
 {elseif $attachment.status.error}
-	<div class="row aligncenter">
+	<div class="control-group aligncenter">
 		<a href="{$attachment.download_url}">
 			{assign var=size value=$gBitSystem->getConfig('treasury_item_view_thumb')}
 			<img src="{$attachment.thumbnail_url.$size}{$refresh}" alt="{$gContent->getTitle()}" title="{$gContent->getTitle()}" />
@@ -32,7 +32,7 @@
 {/if}
 
 {if $attachment.meta.duration}
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="Duration" for=""}
 		{forminput}
 			{$attachment.meta.duration|display_duration}

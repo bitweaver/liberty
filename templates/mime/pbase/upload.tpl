@@ -1,6 +1,6 @@
 {strip}
 {if $gBitUser->hasPermission('p_liberty_attach_attachments') }
-	<div class="row">
+	<div class="control-group">
 		{formlabel label="PBase image ID"}
 		{forminput}
 			<input type="input" name="mimeplugin[{$smarty.const.PLUGIN_MIME_GUID_PBASE}][pbase_id]" size="10" />
