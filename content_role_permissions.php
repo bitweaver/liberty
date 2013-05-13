@@ -100,7 +100,7 @@ if( $gBitThemes->isAjaxRequest() ) {
 		}
 	}
 
-	$gBitSmarty->loadPlugin( 'smarty_modifier_biticon' );
+	$gBitSmarty->loadPlugin( 'smarty_function_biticon' );
 	$ret = '<a title="'.$contentPerms['roles'][$gid]['role_name']." :: ".$perm.'" '.
 			'href="javascript:void(0);" onclick="BitAjax.updater('.
 			"'{$perm}{$gid}', ".

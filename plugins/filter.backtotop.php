@@ -39,7 +39,7 @@ function backtotop_postparsefilter( &$pData, &$pFilterHash ) {
 		$params['max'] = 6;
 		$params = array_merge( $params, parse_xml_attributes( $backtotop[1] ));
 
-		$gBitSmarty->loadPlugin( 'smarty_modifier_biticon' );
+		$gBitSmarty->loadPlugin( 'smarty_function_biticon' );
 		$biticon = array(
 			'ipackage' => 'icons',
 			'iname'    => 'go-top',
