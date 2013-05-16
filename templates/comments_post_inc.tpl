@@ -37,12 +37,11 @@
 						{formlabel label="Login" for="login-email"}
 						{forminput}
 							<div style="display:inline-block;padding-right:20px;">
-								<input type="text" size="20" name="login_email" id="login-email" value="{$smarty.request.login_email|escape:html}" />
-								<div class="label">{tr}Username or Email{/tr}</div>
+								<input type="text" placeholder="{tr}Username or Email{/tr}" name="login_email" id="login-email" value="{$smarty.request.login_email|escape:html}" />
+								
 							</div>
 							<div style="display:inline-block">
-								<input type="password" size="8" name="login_password" id="login-password" value="{$smarty.request.login_password|escape:html}" />
-								<div class="label">{tr}Password{/tr}</div>
+								<input type="password" placeholder="{tr}Password{/tr}" name="login_password" id="login-password" value="{$smarty.request.login_password|escape:html}" />
 							</div>
 							<div class="formhelp">{tr}If you are already registered with <strong>{$gBitSystem->mConfig.site_title|default:"this site"}</strong> please enter your login details above.{/tr}</div>
 						{/forminput}
