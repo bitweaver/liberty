@@ -319,51 +319,34 @@ if( !function_exists( 'mime_default_download' )) {
 
 		// Check to see if the file actually exists
 		if( !empty( $pFileHash['source_file'] ) && is_readable( $pFileHash['source_file'] )) {
-			// if we have PEAR HTTP/Download installed, we make use of it since it allows download resume and download manager access
-			// read the docs if you want to enable download throttling and the like
-			if( @include_once( 'HTTP/Download.php' )) {
-				$dl = new HTTP_Download();
-				$dl->setLastModified( $pFileHash['last_modified'] );
-				$dl->setFile( $pFileHash['source_file'] );
-				$dl->setContentDisposition( HTTP_DOWNLOAD_ATTACHMENT, $pFileHash['file_name'] );
-				$dl->setContentType( $pFileHash['mime_type'] );
-				$res = $dl->send();
-
-				if( PEAR::isError( $res )) {
-					$gBitSystem->fatalError( $res->getMessage() );
-				} else {
-					$ret = TRUE;
-				}
-			} else {
-				// make sure we close off obzip compression if it's on
-				if( $gBitSystem->isFeatureActive( 'site_output_obzip' )) {
-					@ob_end_clean();
-				}
-
-				// this will get the browser to open the download dialogue - even when the
-				// browser could deal with the content type - not perfect, but works
-				if( $gBitSystem->isFeatureActive( 'mime_force_download' )) {
-					$pFileHash['mime_type'] = "application/force-download";
-				}
-
-				// set up header
-				header( "Cache Control:  no-cache, must-revalidate" );
-				header( "Expires: 0" );
-				header( "Accept-Ranges: bytes" );
-				header( "Pragma: public" );
-				header( "Last-Modified: ".gmdate( "D, d M Y H:i:s", $pFileHash['last_modified'] )." GMT", TRUE, 200 );
-				header( 'Content-Disposition: attachment; filename="'.$pFileHash['file_name'].'"' );
-				header( "Content-type: ".$pFileHash['mime_type'] );
-				header( "Content-Description: File Transfer" );
-				header( "Content-Length: ".filesize( $pFileHash['source_file'] ));
-				header( "Content-Transfer-Encoding: binary" );
-				//header( "Connection: close" );
-
-				@ob_clean();
-				flush();
-				readfile( $pFileHash['source_file'] );
-				$ret = TRUE;
+			// make sure we close off obzip compression if it's on
+			if( $gBitSystem->isFeatureActive( 'site_output_obzip' )) {
+				@ob_end_clean();
 			}
+
+			// this will get the browser to open the download dialogue - even when the
+			// browser could deal with the content type - not perfect, but works
+			if( $gBitSystem->isFeatureActive( 'mime_force_download' )) {
+				$pFileHash['mime_type'] = "application/force-download";
+			}
+
+			// set up header
+			header( "Cache Control:  no-cache, must-revalidate" );
+			header( "Expires: 0" );
+			header( "Accept-Ranges: bytes" );
+			header( "Pragma: public" );
+			header( "Last-Modified: ".gmdate( "D, d M Y H:i:s T", $pFileHash['last_modified'] ), TRUE, 200 );
+			header( 'Content-Disposition: attachment; filename="'.$pFileHash['file_name'].'"' );
+			header( "Content-type: ".$pFileHash['mime_type'] );
+			header( "Content-Description: File Transfer" );
+			header( "Content-Length: ".filesize( $pFileHash['source_file'] ));
+			header( "Content-Transfer-Encoding: binary" );
+			//header( "Connection: close" );
+
+			@ob_clean();
+			flush();
+			readfile( $pFileHash['source_file'] );
+			$ret = TRUE;
 		} else {
 			$pFileHash['errors']['no_file'] = tra( 'No matching file found.' );
 		}
