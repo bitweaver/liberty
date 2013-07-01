@@ -99,6 +99,14 @@ class LibertyStructure extends LibertyBase {
 		return $ret;
 	}
 
+	function hasViewPermission( $pVerifyAccessControl=TRUE ) {
+		$ret = FALSE;
+		if( !empty( $this->mInfo['content_object'] ) && is_a( $this->mInfo['content_object'], 'LibertyContent' ) ) {
+			return( $this->mInfo['content_object']->hasUpdatePermission( $pVerifyAccessControl ) || empty( $this->mInfo['content_object']->mViewContentPerm ) || $this->mInfo['content_object']->hasUserPermission( $this->mInfo['content_object']->mViewContentPerm, $pVerifyAccessControl ));
+		} 
+		return $ret;
+	}
+
 	/**
 	 * Check if a node is a root node
 	 *

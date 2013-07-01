@@ -16,12 +16,12 @@ extract( $moduleParams );
 
 $struct = NULL;
 
-if( is_object( $gStructure ) && $gStructure->isValid() ) {
+if( is_object( $gStructure ) && $gStructure->isValid() && $gStructure->hasViewPermission() ) {
 	$struct = &$gStructure;
 } elseif( @BitBase::verifyId( $module_params['structure_id'] ) ) {
 		$struct = new LibertyStructure( $module_params['structure_id'] );
 		$struct->load();
-} elseif( is_object( $gContent ) ) {
+} elseif( is_object( $gContent ) && $gContent->hasViewPermission() ) {
 	$structures = $gContent->getStructures();
 	// We take the first structure. not good, but works for now - spiderr
 	if( !empty( $structures[0] ) ) {
