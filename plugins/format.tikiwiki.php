@@ -316,7 +316,7 @@ class TikiWikiParser extends BitBase {
 */
 
 		// Replace boxes - add a new line that we can have something like: ^!heading^ without the need for a \n after the initial ^ - \n will be removed below
-		$data = preg_replace("/\^([^\^]+)\^/", "<div class=\"bitbox\"><!-- bitremovebr -->\n$1</div>", $data);
+		$data = preg_replace("/\^([^\^]+)\^/", "<div class=\"alert alert-info bitbox\"><!-- bitremovebr -->\n$1</div>", $data);
 		// Replace colors ~~color:text~~
 		$data = preg_replace("/\~\~([^\:]+):([^\~]+)\~\~/", "<span style=\"color:$1;\">$2</span>", $data);
 		// Replace background colors ++color:text++
