@@ -1,4 +1,3 @@
-{* $Header$ *}
 {strip}
 {if $storageHash}
 	<h4 class="table">
@@ -25,7 +24,7 @@
 		{foreach from=$storageHash item=item key=id}
 			<tr class="{cycle values="odd,even"}" >
 				<td style="text-align:left;">
-					{jspopup notra=1 href="`$item.display_url`&popup=y" title=$item.filename|escape}
+					{jspopup notra=1 href="`$item.display_url`&popup=y" title=$item.file_name|default:"File `$id`"|escape}
 				</td>
 				<td style="text-align:center;">
 					{$item.mime_type}
