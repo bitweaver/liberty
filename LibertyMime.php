@@ -603,7 +603,7 @@ class LibertyMime extends LibertyContent {
 	 *
 	 * @param numeric $pAttachmentId Attachment ID of the attachment
 	 * @param array $pParams optional parameters that might contain information like display thumbnail size
-	 * @access public static
+	 * @access public
 	 * @return attachment details
 	 */
 	public static function loadAttachment( $pAttachmentId, $pParams = NULL ) {
