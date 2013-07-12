@@ -32,7 +32,7 @@ if( !empty( $module_params['show_date'] ) ) {
 	$_template->tpl_vars['showDate'] = new Smarty_variable(  TRUE  );
 }
 
-$_template->tpl_vars['contentType'] = new Smarty_variable( !empty( $module_params['content_type_guid'] );
+$_template->tpl_vars['contentType'] = new Smarty_variable( !empty( $module_params['content_type_guid'] ) );
 
 $listHash = array(
 	'content_type_guid' => !empty( $module_params['content_type_guid'] ) ? $module_params['content_type_guid'] : NULL,
