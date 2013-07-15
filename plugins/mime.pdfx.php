@@ -160,7 +160,12 @@ function mime_pdfx_convert_pdf2swf( $pFileHash ) {
 		$swfcombine = trim( $gBitSystem->getConfig( 'swfcombine_path', shell_exec( 'which swfcombine' )));
 
 		if( is_executable( $pdf2swf ) && is_executable( $swfcombine )) {
-			$source    = STORAGE_PKG_PATH.$pFileHash['upload']['dest_branch'].$pFileHash['upload']['name'];
+			$source    = STORAGE_PKG_PATH.$pFileHash['upload']['dest_branch'];
+			if ( $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ) ) {
+				$source .= 'original.jpg';
+			} else {
+				$source .= $pFileHash['upload']['name'];
+			}
 			$dest_branch = dirname( $source );
 
 			$tmp_file  = "$dest_branch/tmp.swf";
@@ -206,7 +211,12 @@ function mime_pdfx_thumbnail( $pFileHash ) {
 		$mwconvert  = trim( $gBitSystem->getConfig( 'mwconvert_path', shell_exec( 'which convert' )));
 
 		if( is_executable( $mwconvert ) && $gBitSystem->getConfig( 'pdf_thumbnails', 'y' ) == 'y' ) {
-			$source    = STORAGE_PKG_PATH.$pFileHash['upload']['dest_branch'].$pFileHash['upload']['name'];
+			$source    = STORAGE_PKG_PATH.$pFileHash['upload']['dest_branch'];
+			if ( $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ) ) {
+				$source .= 'original.jpg';
+			} else {
+				$source .= $pFileHash['upload']['name'];
+			}
 			$dest_branch = dirname( $source );
 
 			$thumb_file  = "$dest_branch/thumb.jpg";
@@ -223,7 +233,7 @@ function mime_pdfx_thumbnail( $pFileHash ) {
 				'dest_branch'		=> $pFileHash['upload']['dest_branch'],
 				'source_file'		=> $thumb_file,
 				'type'				=> 'image/jpeg',
-				'thumbnail_sizes'	=> $pFileHash['upload']['thumbnail_sizes'],
+				'thumbnail_sizes'	=> array( 'extra-large', 'large', 'medium', 'small', 'avatar', 'icon' ),
 			);
 			if( liberty_generate_thumbnails( $genHash )) {
 //				$genHash['source_file'] = $genHash['icon_thumb_path'];

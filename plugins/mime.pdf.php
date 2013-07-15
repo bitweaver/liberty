@@ -137,7 +137,12 @@ function mime_pdf_convert_pdf2swf( $pFileHash ) {
 		$swfcombine = trim( $gBitSystem->getConfig( 'swfcombine_path', shell_exec( 'which swfcombine' )));
 
 		if( is_executable( $pdf2swf ) && is_executable( $swfcombine )) {
-			$source    = STORAGE_PKG_PATH.$pFileHash['upload']['dest_branch'].$pFileHash['upload']['name'];
+			$source    = STORAGE_PKG_PATH.$pFileHash['upload']['dest_branch'];
+			if ( $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ) ) {
+				$source .= 'original.jpg';
+			} else {
+				$source .= $pFileHash['upload']['name'];
+			}
 			$destPath = dirname( $source );
 
 			$tmp_file  = "$destPath/tmp.swf";
