@@ -34,10 +34,15 @@
 			{/if}
 
 			{formhelp note=$textarea_help}
-			{if $gBitSystem->isPackageActive('ckeditor') &&
-				($gBitSystem->isFeatureActive("ckeditor_ask") || 
-				$gBitSystem->isFeatureActive("ckeditor_on_click"))}
-				{formhelp note="Click in the textarea to activate the editor."}
+			{if $gBitSystem->isPackageActive('ckeditor')}
+	            <script>
+	                CKEDITOR.replace( '{$smarty.const.LIBERTY_TEXT_AREA}' );
+	            </script>
+
+				{if ($gBitSystem->isFeatureActive("ckeditor_ask") || 
+					$gBitSystem->isFeatureActive("ckeditor_on_click"))}
+					{formhelp note="Click in the textarea to activate the editor."}
+				{/if}
 			{/if}
 		{/forminput}
 	</div>
