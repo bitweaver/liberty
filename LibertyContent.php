@@ -195,9 +195,9 @@ class LibertyContent extends LibertyBase {
 		}
 
 		// Are we allowed to override owner?
-		if ($gBitSystem->isFeatureActive('liberty_allow_change_owner') && $gBitUser->hasPermission('p_liberty_edit_content_owner')) {
-			// If an owner is being set override user_id
-			if (!empty($pParamHash['owner_id']) && !empty($pParamHash['current_owner_id']) && $pParamHash['owner_id'] != $pParamHash['current_owner_id']) {
+		if( !empty($pParamHash['owner_id'] ) ) {
+			if( $gBitUser->isAdmin() || ($gBitSystem->isFeatureActive('liberty_allow_change_owner') && $gBitUser->hasPermission('p_liberty_edit_content_owner') && !empty($pParamHash['owner_id']) && !empty($pParamHash['current_owner_id']) && $pParamHash['owner_id'] != $pParamHash['current_owner_id']) ) {
+				// If an owner is being set override user_id
 				$pParamHash['content_store']['user_id'] = $pParamHash['owner_id'];
 			}
 		}
