@@ -1,9 +1,11 @@
 {if $gBitUser->hasPermission('p_liberty_post_comments') || $gBitUser->hasPermission('p_liberty_read_comments')}
 {strip}
 <div class="display comment">
+	{if $comments}
 	<div class="header">
 		<h2>{tr}Comments{/tr}</h2>
 	</div>
+	{/if}
 
 	<div class="body"{if !( $post_comment_request || $post_comment_preview )} id="editcomments"{/if}>
 		<div id="edit_comments" {if $comments_ajax}style="display:none"{/if}>
