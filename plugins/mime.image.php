@@ -201,7 +201,7 @@ function mime_image_store_exif_data( $pFileHash ) {
 		}
 
 		if( !empty( $exifHash['EXIF'] )) {
-			LibertyMime::storeMetaData( $pFileHash['attachment_id'], 'EXIF', $exifHash['EXIF'] );
+//			LibertyMime::storeMetaData( $pFileHash['attachment_id'], 'EXIF', $exifHash['EXIF'] );
 		}
 	}
 
