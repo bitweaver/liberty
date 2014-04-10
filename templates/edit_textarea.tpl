@@ -3,11 +3,11 @@
 		{include file="bitpackage:liberty/edit_format.tpl"}
 	{/if}
 
-	{if $gBitSystem->isFeatureActive('package_smileys')}
+	{if $gBitSystem->isPackageActive('package_smileys')}
 		{include file="bitpackage:smileys/smileys_full.tpl"}
 	{/if}
 
-	{if $gBitSystem->isFeatureActive('package_quicktags')}
+	{if $gBitSystem->isPackageActive('package_quicktags')}
 		{include file="bitpackage:quicktags/quicktags_full.tpl"}
 	{/if}
 {/strip}
