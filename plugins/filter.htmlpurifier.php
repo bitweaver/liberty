@@ -177,7 +177,7 @@ function htmlpure_getDefaultConfig( &$htmlp_version, $pObject=NULL ){
 		// Last person to edit this file has admin permission for this entire class of content, let freedom ring
 		$config->set( 'CSS.AllowTricky', true );
 
-		$css =& $config->getCSSDefinition();
+		$css = $config->getCSSDefinition();
         $css->info['position'] = new HTMLPurifier_AttrDef_CSS_Composite(array( new HTMLPurifier_AttrDef_Enum(array('absolute', 'fixed', 'relative', 'static', 'inherit')) ) );
         $css->info['top'] = new HTMLPurifier_AttrDef_CSS_Composite(array( new HTMLPurifier_AttrDef_CSS_Length()));
         $css->info['left'] = new HTMLPurifier_AttrDef_CSS_Composite(array( new HTMLPurifier_AttrDef_CSS_Length()));
