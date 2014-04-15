@@ -121,6 +121,10 @@ class LibertyContent extends LibertyBase {
 		}
 	}
 
+	public static function getCacheKey( $pCacheKeyUuid = '' ) {
+		return parent::getCacheKey().'#'.$pCacheKeyUuid;
+	}
+
 	/**
 	 * load Assume a derived class has joined on the liberty_content table, and loaded it's columns already.
 	 *
