@@ -2247,8 +2247,14 @@ class LibertyContent extends LibertyBase {
 	}
 
 
-	function getThumbnailFile( $pSize='small', $pInfoHash=NULL ) {
-		$ret = $this->getThumbnailUrl( $pSize, $pInfoHash );
+	public function getThumbnailFile( $pSize='small' ) {
+		if( $this->isValid() ) {
+			$this->getThumbnailUrl( $this->mInfo, $pSize );
+		}
+	}
+
+	public static function getThumbnailFileFromHash( $pMixed, $pSize='small' ) {
+		$ret = static::getThumbnailUrlFromHash( $pMixed, $pSize );
 		// Check to make sure we don't have an absolute URI already, which could be the case for custom classes
 		if( strpos( $ret, 'http' ) !== 0 ) {
 			$ret = substr( $ret, strlen( BIT_ROOT_URL ) );
