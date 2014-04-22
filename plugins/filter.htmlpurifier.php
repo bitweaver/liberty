@@ -229,7 +229,7 @@ function htmlpure_getDefaultConfig( &$htmlp_version, $pObject=NULL ){
 		$blacklistedTags = $gBitSystem->
 			getConfig('blacklisted_html_tags', '');
 
-		$def =& $config->getHTMLDefinition();
+		$def = $config->getHTMLDefinition();
 		// HTMLPurifier doesn't have a blacklist feature. Duh guys!
 		// Note that this has to come last since the other configs
 		// may tweak the def.

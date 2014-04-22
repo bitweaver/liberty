@@ -68,7 +68,8 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  *
  * @package liberty
  */
-class LibertySystem extends LibertyBase {
+class LibertySystem extends BitSingleton {
+
 
 	// Hash of plugin data
 	var $mPlugins = array();
