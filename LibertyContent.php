@@ -121,7 +121,7 @@ class LibertyContent extends LibertyBase {
 		}
 	}
 
-	public static function getCacheKey( $pCacheKeyUuid = '' ) {
+	public function getCacheKey( $pCacheKeyUuid = '' ) {
 		return parent::getCacheKey().'#'.$pCacheKeyUuid;
 	}
 
