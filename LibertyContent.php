@@ -2231,7 +2231,6 @@ class LibertyContent extends LibertyBase {
 
 
 	public static function getThumbnailUrlFromHash( &$pMixed, $pSize = 'small', $pSecondaryId = NULL, $pDefault=TRUE ) {
-print '">';bt();die;
 		$ret = '';
 		if( !empty( $pMixed['content_type']['handler_package'] ) ) {
 			$pkgName = $pMixed['content_type']['handler_package'];
