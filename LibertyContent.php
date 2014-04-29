@@ -49,7 +49,7 @@ define( 'LIBERTY_SPLIT_REGEX', "!\.{3}split\.{3}[\t ]*\n?!" );
  *
  * @package liberty
  */
-class LibertyContent extends LibertyBase {
+class LibertyContent extends LibertyBase implements BitCacheable {
 	/**
 	 * Content Id if an object has been loaded
 	 * @public
@@ -121,8 +121,15 @@ class LibertyContent extends LibertyBase {
 		}
 	}
 
-	public function getCacheKey( $pCacheKeyUuid = '' ) {
-		return parent::getCacheKey().'#'.$pCacheKeyUuid;
+	public static function isCacheableClass() {
+		return true;
+	}
+
+
+	public function getCacheKey() {
+		if( $this->isValid() ) {
+			return $this->mContentId;
+		}
 	}
 
 	/**
