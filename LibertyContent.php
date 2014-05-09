@@ -122,7 +122,8 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	}
 
 	public static function isCacheableClass() {
-		return true;
+		global $gBitSystem;
+		return !$gBitSystem->isLive();
 	}
 
 
