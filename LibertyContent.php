@@ -494,6 +494,8 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 
 			$this->mDb->CompleteTrans();
 			$ret = TRUE;
+
+			parent::expunge();
 		}
 		return $ret;
 	}
