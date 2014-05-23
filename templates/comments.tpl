@@ -16,7 +16,7 @@
 
 		{if $comments_ajax && $gBitUser->hasPermission( 'p_liberty_post_comments' )}
 			<div class="control-group">
-				<input type="submit" class="btn" name="post_comment_request" value="{tr}Add Comment{/tr}" onclick="LibertyComment.attachForm('comment_{$gContent->mContentId}', '{$gContent->mContentId}', {if $gContent->mContentId}{$gContent->mContentId}{elseif $commentsParentId}{$commentsParentId}{else}null{/if})"/>
+				<input type="submit" class="btn btn-default" name="post_comment_request" value="{tr}Add Comment{/tr}" onclick="LibertyComment.attachForm('comment_{$gContent->mContentId}', '{$gContent->mContentId}', {if $gContent->mContentId}{$gContent->mContentId}{elseif $commentsParentId}{$commentsParentId}{else}null{/if})"/>
 			</div>
 		{/if}
 

@@ -63,8 +63,8 @@
 		</div>
 
 		<div class="control-group submit">
-			<input type="submit" class="btn" name="back" value="{tr}Go back to content{/tr}" />
-			<input type="submit" class="btn" name="assign" value="{tr}Assign Permission{/tr}" />
+			<input type="submit" class="btn btn-default" name="back" value="{tr}Go back to content{/tr}" />
+			<input type="submit" class="btn btn-default" name="assign" value="{tr}Assign Permission{/tr}" />
 		</div>
 	{/form}
 

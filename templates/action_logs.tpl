@@ -38,7 +38,7 @@
 				</div>
 
 				<div class="control-group submit">
-					<input type="submit" class="btn" name="apply_settings" value="{tr}Apply Settings{/tr}" />
+					<input type="submit" class="btn btn-default" name="apply_settings" value="{tr}Apply Settings{/tr}" />
 				</div>
 			{/legend}
 		{/form}

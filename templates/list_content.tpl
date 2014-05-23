@@ -18,7 +18,7 @@
 	{/if}
 	 <div class="input-append">
 		<input type="text" name="find" value="{$listInfo.find}" class="search-query" placeholder="{tr}Search Within Results{/tr}">
-		<input type="submit" class="btn" value="{tr}Search{/tr}" name="search_objects"/>
+		<input type="submit" class="btn btn-default" value="{tr}Search{/tr}" name="search_objects"/>
 	</div>
 {/form}
 		<h1>

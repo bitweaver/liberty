@@ -30,7 +30,7 @@
 			</div>
 
 			<div class="control-group submit">
-				<input type="submit" class="btn" name="rank_settings" value="{tr}Apply settings{/tr}" />
+				<input type="submit" class="btn btn-default" name="rank_settings" value="{tr}Apply settings{/tr}" />
 			</div>
 		{/form}
 

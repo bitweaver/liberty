@@ -18,7 +18,7 @@
 				</div>
 
 				<div class="submit">
-					<input type="submit" class="btn" name="apply" value="{tr}Filter{/tr}" />
+					<input type="submit" class="btn btn-default" name="apply" value="{tr}Filter{/tr}" />
 				</div>
 			{/form}
 		{/if}

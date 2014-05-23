@@ -32,7 +32,7 @@
 								<option value="commentDate_asc" {if $comments_sort_mode eq "commentDate_asc"}selected="selected"{/if}>Oldest first</option>
 							</select>
 						</td>
-						<td style="text-align:right"><input type="submit" class="btn" name="comments_setOptions" value="set" /></td>
+						<td style="text-align:right"><input type="submit" class="btn btn-default" name="comments_setOptions" value="set" /></td>
 					</tr>
 				</table>
 			{/form}

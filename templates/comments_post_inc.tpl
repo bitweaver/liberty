@@ -76,14 +76,14 @@
 				{/if}
 
 				<div class="control-group submit">
-					<input type="submit" class="btn" name="post_comment_preview" value="{tr}Preview{/tr}" {if $comments_ajax}onclick="LibertyComment.previewComment(); return false;"{/if}/>&nbsp;
-					<input type="submit" class="btn" name="post_comment_submit" value="{tr}Post{/tr}" {if $comments_ajax}onclick="LibertyComment.postComment(); return false;"{/if}/>&nbsp;
-					<input type="submit" class="btn" name="post_comment_cancel" value="{tr}Cancel{/tr}" {if $comments_ajax}onclick="LibertyComment.cancelComment(true); return false;"{/if}/>
+					<input type="submit" class="btn btn-default" name="post_comment_preview" value="{tr}Preview{/tr}" {if $comments_ajax}onclick="LibertyComment.previewComment(); return false;"{/if}/>&nbsp;
+					<input type="submit" class="btn btn-default" name="post_comment_submit" value="{tr}Post{/tr}" {if $comments_ajax}onclick="LibertyComment.postComment(); return false;"{/if}/>&nbsp;
+					<input type="submit" class="btn btn-default" name="post_comment_cancel" value="{tr}Cancel{/tr}" {if $comments_ajax}onclick="LibertyComment.cancelComment(true); return false;"{/if}/>
 				</div>
 			{/legend}
 		{elseif $gBitUser->hasPermission( 'p_liberty_post_comments' )}
 			<div class="control-group">
-				<input type="submit" class="btn" name="post_comment_request" value="{tr}Add Comment{/tr}" />
+				<input type="submit" class="btn btn-default" name="post_comment_request" value="{tr}Add Comment{/tr}" />
 			</div>
 		{/if}
 	{/form}
