@@ -49,7 +49,7 @@ define( 'LIBERTY_SPLIT_REGEX', "!\.{3}split\.{3}[\t ]*\n?!" );
  *
  * @package liberty
  */
-class LibertyContent extends LibertyBase {
+class LibertyContent extends LibertyBase implements BitCacheable {
 	/**
 	 * Content Id if an object has been loaded
 	 * @public
@@ -121,8 +121,16 @@ class LibertyContent extends LibertyBase {
 		}
 	}
 
-	public static function getCacheKey( $pCacheKeyUuid = '' ) {
-		return parent::getCacheKey().'#'.$pCacheKeyUuid;
+	public static function isCacheableClass() {
+		global $gBitSystem;
+		return !$gBitSystem->isLive();
+	}
+
+
+	public function getCacheKey() {
+		if( $this->isValid() ) {
+			return $this->mContentId;
+		}
 	}
 
 	/**
@@ -486,6 +494,8 @@ class LibertyContent extends LibertyBase {
 
 			$this->mDb->CompleteTrans();
 			$ret = TRUE;
+
+			parent::expunge();
 		}
 		return $ret;
 	}
@@ -2223,10 +2233,17 @@ class LibertyContent extends LibertyBase {
 	 * @param int optional secondary id, such as user_id or products_id, etc
 	 * @return string Formated URL address to display the page.
 	 */
-	function getThumbnailUrl( $pSize = 'small', $pInfoHash = NULL, $pSecondaryId = NULL, $pDefault=TRUE ) {
+	public function getThumbnailUrl( $pSize = 'small', $pSecondaryId = NULL, $pDefault=TRUE ) {
+		if( $this->isValid() ) {
+			return $this->getThumbnailUrlFromHash( $this->mInfo, $pSize );
+		}
+	}
+
+
+	public static function getThumbnailUrlFromHash( &$pMixed, $pSize = 'small', $pSecondaryId = NULL, $pDefault=TRUE ) {
 		$ret = '';
-		if( !empty( $this->mInfo['content_type']['handler_package'] ) ) {
-			$pkgName = $this->mInfo['content_type']['handler_package'];
+		if( !empty( $pMixed['content_type']['handler_package'] ) ) {
+			$pkgName = $pMixed['content_type']['handler_package'];
 			if( $pkgPath = constant( strtoupper( $pkgName ).'_PKG_PATH' ) ) {
 				if( file_exists( $pkgPath.'icons/pkg_'.$pkgName.'.png' ) ) {
 					$ret = constant( strtoupper( $pkgName ).'_PKG_URL' ).'icons/pkg_'.$pkgName.'.png';
@@ -2237,8 +2254,14 @@ class LibertyContent extends LibertyBase {
 	}
 
 
-	function getThumbnailUri( $pSize='small', $pInfoHash=NULL ) {
-		$ret = $this->getThumbnailUrl( $pSize, $pInfoHash );
+	public function getThumbnailUri( $pSize='small' ) {
+		if( $this->isValid() ) {
+			return $this->getThumbnailUriFromHash( $this->mInfo, $pSize );
+		}
+	}
+
+	public static function getThumbnailUriFromHash( &$pMixed, $pSize='small' ) {
+		$ret = static::getThumbnailUrlFromHash( $pMixed, $pSize );
 		// Check to make sure we don't have an absolute URI already, which could be the case for custom classes
 		if( strpos( $ret, 'http' ) !== 0 ) {
 			$ret = STORAGE_HOST_URI.substr( $ret, strlen( BIT_ROOT_URL ) );
@@ -2249,11 +2272,11 @@ class LibertyContent extends LibertyBase {
 
 	public function getThumbnailFile( $pSize='small' ) {
 		if( $this->isValid() ) {
-			$this->getThumbnailUrl( $this->mInfo, $pSize );
+			return $this->getThumbnailFileFromHash( $this->mInfo, $pSize );
 		}
 	}
 
-	public static function getThumbnailFileFromHash( $pMixed, $pSize='small' ) {
+	public static function getThumbnailFileFromHash( &$pMixed, $pSize='small' ) {
 		$ret = static::getThumbnailUrlFromHash( $pMixed, $pSize );
 		// Check to make sure we don't have an absolute URI already, which could be the case for custom classes
 		if( strpos( $ret, 'http' ) !== 0 ) {

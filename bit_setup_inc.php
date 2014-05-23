@@ -17,8 +17,7 @@ $gBitSystem->registerPackage( $registerHash );
 
 // initiate LibertySystem
 require_once( LIBERTY_PKG_PATH.'LibertySystem.php' );
-global $gLibertySystem;
-$gLibertySystem = new LibertySystem();
+LibertySystem::loadSingleton();
 $gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
 
 // We can't load this in liberty/bit_setup_inc.php becuase it's too soon in the process.
