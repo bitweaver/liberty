@@ -1,5 +1,5 @@
 {strip}
-<div class="pagination">
+<div class="paginator">
 	{if $pgnPage gt 1}
 		{if $ajaxId}
 			<a href="javascript:void(0);" onclick="BitAjax.ajaxUpdater( '{$ajaxId}', '{$smarty.const.LIBERTY_PKG_URL}ajax_attachment_browser.php', '{$pgnName}={$pgnPage-1}{$pgnVars}' );">&laquo;</a>&nbsp;
@@ -22,7 +22,6 @@
 		&nbsp;&nbsp;
 	{/if}
 
-	<br />
 
 	{* MSIE dies when we use a form in the pagination when doing ajax stuff *}
 	{counter start=1 print=0 name=pgcount assign=pgcount}	
