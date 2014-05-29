@@ -12,7 +12,7 @@
 /**
  * setup
  */
-global $gLibertySystem;
+global $gLibertySystem, $gBitSystem;
 
 /**
  *  This is the name of the plugin - max char length is 16
