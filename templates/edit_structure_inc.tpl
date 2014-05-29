@@ -20,7 +20,7 @@
 		</div>
 	</div>
 
-	<ul class="inline">
+	<ul class="list-inline">
 		<li><a id="tree-moveUp"    href="javascript:void(0)">{booticon iname="icon-arrow-up" ipackage="icons" iexplain="Up"}</a></li>
 		<li><a id="tree-moveDown"  href="javascript:void(0)">{booticon iname="icon-arrow-down" ipackage="icons" iexplain="Down"}</a></li>
 		<li><a id="tree-moveLeft"  href="javascript:void(0)">{booticon iname="icon-arrow-left" ipackage="icons" iexplain="Left"}</a></li>
