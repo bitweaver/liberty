@@ -7,7 +7,7 @@
 {/if}
 
 {if $translationsList}
-	<div class="control-group">
+	<div class="form-group">
 		{formfeedback error=$errors.format}
 		{formlabel label="Language" for="lang_code"}
 		{forminput}
@@ -37,7 +37,7 @@
 	{/if}
 {/foreach}
 {if $numformat > 1 || $format_options}
-	<div class="control-group">
+	<div class="form-group">
 		{formfeedback error=$errors.format}
 		{formlabel label="Content Format"}
 		{foreach name=formatPlugins from=$gLibertySystem->mPlugins item=plugin key=guid}
@@ -93,7 +93,7 @@
 {else}
 	{* if there was one format in the liberty plugins hash then use it and display a label so user knows what format is being used, otherwise use default and hide it*}
 	{if $numformat eq 1}
-		<div class="control-group">
+		<div class="form-group">
 			{formlabel label="Content Format"}
 			{forminput}
 				<label>

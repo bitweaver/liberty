@@ -11,7 +11,7 @@
 				{if $feature == 'mime_image_panoramas' && $image_processor_warning}
 					{formfeedback warning="This feature is only available when using the magickwand image processor."}
 				{/if}
-				<div class="control-group">
+				<div class="form-group">
 					{formlabel label=`$output.label` for=$feature}
 					{forminput}
 						{if $output.type == 'checkbox'}
@@ -28,7 +28,7 @@
 				</div>
 			{/foreach}
 
-			<div class="control-group">
+			<div class="form-group">
 				{formlabel label="Panorama Size" for="mime_image_panorama_width"}
 				{forminput}
 					{html_options values=$panWidth options=$panWidth name="mime_image_panorama_width" id="mime_image_panorama_width" selected=$gBitSystem->getConfig('mime_image_panorama_width')|default:3000} {tr}pixels{/tr}
@@ -36,7 +36,7 @@
 				{/forminput}
 			</div>
 
-			<div class="control-group submit">
+			<div class="form-group submit">
 				<input type="submit" name="settings_store" value="{tr}Change preferences{/tr}" />
 			</div>
 		{/form}

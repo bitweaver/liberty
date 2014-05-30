@@ -1,5 +1,5 @@
 {if $attachment}{strip}
-<div class="control-group aligncenter">
+<div class="form-group aligncenter">
 	{assign var=size value=$smarty.request.size|default:medium}
 	{if $gBitSystem->isFeatureActive( 'site_fancy_zoom' )}
 		{if $attachment.original}

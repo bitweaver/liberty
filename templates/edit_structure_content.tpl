@@ -10,7 +10,7 @@
 		<input type="hidden" name="tab" value="content" />
 
 		{if $subpages}
-			<div class="control-group">
+			<div class="form-group">
 				{formlabel label="After page" for="after_ref_id"}
 				{forminput}
 					<select name="after_ref_id" id="after_ref_id">
@@ -23,7 +23,7 @@
 			</div>
 		{/if}
 
-		<div class="control-group">
+		<div class="form-group">
 			{formlabel label="Content" for="lib-content"}
 			{forminput}
 				{html_options onchange="submit();" options=$contentTypes name=content_type_guid selected=$contentSelect}
@@ -40,7 +40,7 @@
 			{/forminput}
 		</div>
 
-		<div class="control-group submit">
+		<div class="form-group submit">
 			<input type="submit" class="btn btn-default" name="create" value="{tr}Add Content{/tr}" />
 		</div>
 	{/form}

@@ -17,7 +17,7 @@
 			{formfeedback hash=$feedback}
 			<p class="formhelp">{tr}You can spcify the path to either ffmpeg or mplayer and lame. If you have all applications installed, we will first try to convert audio files using ffmpeg and if that didn't work, we'll use mplayer and lame.{/tr}</p>
 
-			<div class="control-group">
+			<div class="form-group">
 				{formlabel label="Path to ffmpeg" for="ffmpeg_path"}
 				{forminput}
 					<input type='text' name="ffmpeg_path" id="ffmpeg_path" size="40" value="{$gBitSystem->getConfig('ffmpeg_path')|escape|default:$ffmpeg_path}" />
@@ -25,7 +25,7 @@
 				{/forminput}
 			</div>
 
-			<div class="control-group">
+			<div class="form-group">
 				{formlabel label="MP3 Library" for="ffmpeg_mp3_lib"}
 				{forminput}
 					{html_options
@@ -38,7 +38,7 @@
 				{/forminput}
 			</div>
 
-			<div class="control-group">
+			<div class="form-group">
 				{formlabel label="Path to mplayer" for="mplayer_path"}
 				{forminput}
 					<input type='text' name="mplayer_path" id="mplayer_path" size="40" value="{$gBitSystem->getConfig('mplayer_path')|escape|default:$mplayer_path}" />
@@ -46,7 +46,7 @@
 				{/forminput}
 			</div>
 
-			<div class="control-group">
+			<div class="form-group">
 				{formlabel label="Path to lame" for="lame_path"}
 				{forminput}
 					<input type='text' name="lame_path" id="lame_path" size="40" value="{$gBitSystem->getConfig('lame_path')|escape|default:$lame_path}" />
@@ -54,7 +54,7 @@
 				{/forminput}
 			</div>
 
-			<div class="control-group">
+			<div class="form-group">
 				{formlabel label="Lame options" for="mime_audio_lame_options"}
 				{forminput}
 					<input type='text' name="mime_audio_lame_options" id="mime_audio_lame_options" size="40" value="{$gBitSystem->getConfig('mime_audio_lame_options')|escape|default:$lame_options}" />
@@ -62,7 +62,7 @@
 				{/forminput}
 			</div>
 
-			<div class="control-group">
+			<div class="form-group">
 				{formlabel label="Audio sample rate" for="mime_audio_samplerate"}
 				{forminput}
 					{html_options
@@ -75,7 +75,7 @@
 				{/forminput}
 			</div>
 
-			<div class="control-group">
+			<div class="form-group">
 				{formlabel label="Audio bitrate" for="mime_audio_bitrate"}
 				{forminput}
 					{html_options
@@ -88,7 +88,7 @@
 				{/forminput}
 			</div>
 
-			<div class="control-group">
+			<div class="form-group">
 				{formlabel label="Force encode" for="mime_audio_force_encode"}
 				{forminput}
 					<input type='checkbox' name="mime_audio_force_encode" id="mime_audio_force_encode" value="y" {if $gBitSystem->isFeatureActive('mime_audio_force_encode')}checked="checked"{/if} />
@@ -96,7 +96,7 @@
 				{/forminput}
 			</div>
 
-			<div class="control-group">
+			<div class="form-group">
 				{formlabel label="Foreground Colour" for="mime_audio_frontcolor"}
 				{forminput}
 					<input type='text' name="mime_audio_frontcolor" id="mime_audio_frontcolor" size="10" value="{$gBitSystem->getConfig('mime_audio_frontcolor')|default:"FFFFFF"}" />
@@ -104,7 +104,7 @@
 				{/forminput}
 			</div>
 
-			<div class="control-group">
+			<div class="form-group">
 				{formlabel label="Background Colour" for="mime_audio_backcolor"}
 				{forminput}
 					<input type='text' name="mime_audio_backcolor" id="mime_audio_backcolor" size="10" value="{$gBitSystem->getConfig('mime_audio_backcolor')|default:"000000"}" />
@@ -112,7 +112,7 @@
 				{/forminput}
 			</div>
 
-			<div class="control-group submit">
+			<div class="form-group submit">
 				<input type="submit" name="plugin_settings" value="{tr}Save Plugin Settings{/tr}" />
 			</div>
 		{/form}

@@ -24,7 +24,7 @@
 					<input type="hidden" name="no_js_preview" value="y" />
 				{/if}
 
-				<div class="control-group">
+				<div class="form-group">
 					{formlabel label="Title" for="comments-title"}
 					{forminput}
 						<input type="text" size="50" name="comment_title" id="comments-title" value="{$postComment.title|escape:html}" />
@@ -33,7 +33,7 @@
 				</div>
 
 				{if !$gBitUser->isRegistered()}
-					<div class="control-group" id="post-login">
+					<div class="form-group" id="post-login">
 						{formlabel label="Login" for="login-email"}
 						{forminput}
 							<div style="display:inline-block;padding-right:20px;">
@@ -46,7 +46,7 @@
 							<div class="formhelp">{tr}If you are already registered with <strong>{$gBitSystem->mConfig.site_title|default:"this site"}</strong> please enter your login details above.{/tr}</div>
 						{/forminput}
 					</div>
-					<div class="control-group" style="display:none" id="post-anon">
+					<div class="form-group" style="display:none" id="post-anon">
 						{formlabel label="Your Name" for="comments-name"}
 						{forminput}
 							<input type="text" size="50" name="comment_name" id="comments-name" value="{$postComment.anon_name|escape:html}" />
@@ -54,7 +54,7 @@
 						{/forminput}
 					</div>
 					{captcha variant="row" id="post-captcha" style="display:none"}
-					<div class="control-group">
+					<div class="form-group">
 						{forminput}
 							<input type="checkbox" name="anon_post" id="anon-post" value="y" onchange="BitBase.toggleElementDisplay('post-login','block');BitBase.toggleElementDisplay('post-anon','block');BitBase.toggleElementDisplay('post-captcha','block');" /> {tr}Anonymous Post{/tr}
 							{formhelp note=""}
@@ -75,14 +75,14 @@
 					{/if}
 				{/if}
 
-				<div class="control-group submit">
+				<div class="form-group submit">
 					<input type="submit" class="btn btn-default" name="post_comment_preview" value="{tr}Preview{/tr}" {if $comments_ajax}onclick="LibertyComment.previewComment(); return false;"{/if}/>&nbsp;
 					<input type="submit" class="btn btn-default" name="post_comment_submit" value="{tr}Post{/tr}" {if $comments_ajax}onclick="LibertyComment.postComment(); return false;"{/if}/>&nbsp;
 					<input type="submit" class="btn btn-default" name="post_comment_cancel" value="{tr}Cancel{/tr}" {if $comments_ajax}onclick="LibertyComment.cancelComment(true); return false;"{/if}/>
 				</div>
 			{/legend}
 		{elseif $gBitUser->hasPermission( 'p_liberty_post_comments' )}
-			<div class="control-group">
+			<div class="form-group">
 				<input type="submit" class="btn btn-default" name="post_comment_request" value="{tr}Add Comment{/tr}" />
 			</div>
 		{/if}

@@ -39,7 +39,7 @@
 	<input type="hidden" name="structure_string" id="structure_string" value="" />
 	<input type="hidden" name="structure_id" value="{$gStructure->mInfo.structure_id}" />
 	<input type="hidden" name="root_structure_id" value="{$gStructure->mInfo.root_structure_id}" />
-	<div class="control-group submit">
+	<div class="form-group submit">
 		<noscript>
 			<p class="warning">{tr}The Structure organisation system only works with javascript turned on{/tr}</p>
 		</noscript>

@@ -1,6 +1,6 @@
 {strip}
 {if $gBitUser->hasPermission('p_liberty_attach_attachments') }
-	<div class="control-group">
+	<div class="form-group">
 		{formlabel label="Upload File(s)"}
 		{forminput}
 			{if $gBitSystem->getConfig("liberty_attachment_style") == "multiple"}

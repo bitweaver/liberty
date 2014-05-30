@@ -7,7 +7,7 @@
 		{form legend="Simple HTML Purifier Features"}
 			{formfeedback error=$errorMsg}
 
-			<div class="control-group">
+			<div class="form-group">
 				{formlabel label="Approved HTML tags" for="approved_html_tags"}
 				{formfeedback warning=$errors.approved}
 				{forminput}
@@ -16,7 +16,7 @@
 				{/forminput}
 			</div>
 
-			<div class="control-group submit">
+			<div class="form-group submit">
 				<input type="submit" name="apply" value="{tr}Save Plugin Settings{/tr}" />
 			</div>
 		{/form}

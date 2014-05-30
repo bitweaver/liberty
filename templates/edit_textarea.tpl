@@ -11,7 +11,7 @@
 		{include file="bitpackage:quicktags/quicktags_full.tpl"}
 	{/if}
 {/strip}
-	<div class="control-group rt-edit">
+	<div class="form-group rt-edit">
 		{formlabel label=$textarea_label for=$textarea_id}
 		{forminput}
 			{formfeedback error=$textarea_error}

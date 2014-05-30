@@ -6,7 +6,7 @@
 {assign var=cin1  value=1.85}
 {assign var=cin2  value=2.39}
 
-<div class="control-group">
+<div class="form-group">
 	{formlabel label="Set Aspect Ratio" for="aspect"}
 	{forminput}
 		<select name="plugin[{$attachment.attachment_id}][mimevideo][meta][aspect]" id="aspect">
