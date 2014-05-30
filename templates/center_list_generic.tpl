@@ -20,7 +20,7 @@
 		{/form}
 
 		{form id="checkform"}
-			<ul class="inline navbar">
+			<ul class="list-inline navbar">
 				<li>{booticon iname="icon-circle-arrow-right"  ipackage="icons"  iexplain="sort by"}</li>
 				<li>{smartlink ititle="Title" isort="title" icontrol=$listInfo}</li>
 				<li>{smartlink ititle="Last Modified" iorder="desc" idefault=1 isort="last_modified" icontrol=$listInfo}</li>
