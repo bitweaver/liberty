@@ -403,7 +403,7 @@ class LibertyMime extends LibertyContent {
 	 * @param $pRootDir override BIT_ROOT_DIR with a custom absolute path - useful for areas where no we access should be allowed
 	 * @return string full path on local filsystem to store files.
 	 */
-	function getStoragePath( $pParamHash, $pRootDir=NULL ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pRootDir = NULL ) {
+	function getStoragePath( $pParamHash, $pRootDir=NULL ) {
 		$ret = null;
 
 		if( $branch = liberty_mime_get_storage_branch( $pParamHash ) ) {
@@ -414,7 +414,7 @@ class LibertyMime extends LibertyContent {
 	}
 
 
-	function getStorageUrl( $pParamHash ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755 ) {
+	function getStorageUrl( $pParamHash ) {
 		return STORAGE_PKG_URL.liberty_mime_get_storage_branch( $pParamHash );
 	}
 
@@ -428,7 +428,7 @@ class LibertyMime extends LibertyContent {
 	 * @param $pRootDir **deprecated, unused, will be removed in future relase**.
 	 * @return string full path on local filsystem to store files.
 	 */
-	function getStorageBranch( $pParamHash ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
+	function getStorageBranch( $pParamHash ) {
 		return liberty_mime_get_storage_branch( $pParamHash );
 	}
 
@@ -1160,7 +1160,7 @@ if( !function_exists( 'liberty_mime_get_storage_sub_dir_name' )) {
  * @return string full path on local filsystem to store files.
  */
 if( !function_exists( 'liberty_mime_get_storage_branch' )) {
-	function liberty_mime_get_storage_branch( $pParamHash ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
+	function liberty_mime_get_storage_branch( $pParamHash ) {
 		// *PRIVATE FUNCTION. GO AWAY! DO NOT CALL DIRECTLY!!!
 		global $gBitSystem;
 		$pathParts = array();
@@ -1203,13 +1203,13 @@ if( !function_exists( 'liberty_mime_get_storage_branch' )) {
 }
 
 if( !function_exists( 'liberty_mime_get_storage_url' )) {
-	function liberty_mime_get_storage_url( $pParamHash ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
+	function liberty_mime_get_storage_url( $pParamHash ) {
 		return STORAGE_PKG_URL.liberty_mime_get_storage_branch( $pParamHash );
 	}
 }
 
 if( !function_exists( 'liberty_mime_get_storage_path' )) {
-	function liberty_mime_get_storage_path( $pParamHash ) { // $pSubDir = NULL, $pUserId = NULL, $pPackage = ACTIVE_PACKAGE, $pPermissions = 0755, $pCreateDir = true ) {
+	function liberty_mime_get_storage_path( $pParamHash ) {
 		return STORAGE_PKG_PATH.liberty_mime_get_storage_branch( $pParamHash );
 	}
 }
