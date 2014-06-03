@@ -1953,8 +1953,9 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			if( $this->getField('summary') ) {
 				$ret = $this->getField('summary');
 			} elseif( $this->getField('data') ) {
+				$text = preg_replace('/\s+/', ' ', $this->parseData() );
 				// 250 to 300 is max description
-				$ret = substr( $this->parseData(), 0, 250 );
+				$ret = substr( $text, 0, 250 );
 			}
 		}
 		return $ret;
