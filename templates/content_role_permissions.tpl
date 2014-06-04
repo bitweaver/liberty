@@ -50,12 +50,12 @@
 						<td style="text-align:center">
 							{if $gBitThemes->isJavascriptEnabled()}
 								<span id="{$perm}{$roleId}">
-									<a title="{$contentPerms.roles.$roleId.role_name} :: {$perm}" href="javascript:void(0);" onclick="BitAjax.updater('{$perm}{$roleId}', '{$smarty.const.LIBERTY_PKG_URL}content_permissions.php', 'action={$action}&amp;content_id={$gContent->mContentId}&amp;perm={$perm}&amp;role_id={$roleId}')">
-										{biticon iname=$size$icon iexplain="" iforce="icon"}
+									<a title="{$contentPerms.roles.$roleId.role_name} :: {$perm}" href="javascript:void(0);" onclick="BitAjax.updater('{$perm}{$roleId}', '{$smarty.const.LIBERTY_PKG_URL}content_role_permissions.php', 'action={$action}&amp;content_id={$gContent->mContentId}&amp;perm={$perm}&amp;role_id={$roleId}')">
+										{biticon iname="$size$icon" iexplain="$icon"}
 									</a>
 								</span>
 							{else}
-								{smartlink itra=false ititle="`$contentPerms.roles.$roleId.role_name` :: $perm" ibiticon=icons/$size$icon iforce="icon" action=$action content_id=$gContent->mContentId perm=$perm role_id=$roleId}
+								{smartlink itra=false ititle="$contentPerms.roles.$roleId.role_name :: $perm" ibiticon="$size$icon" action=$action content_id=$gContent->mContentId perm=$perm role_id=$roleId}
 							{/if}
 						</td>
 					{/foreach}

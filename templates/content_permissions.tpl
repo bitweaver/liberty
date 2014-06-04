@@ -51,11 +51,11 @@
 							{if $gBitThemes->isJavascriptEnabled()}
 								<span id="{$perm}{$groupId}">
 									<a title="{$contentPerms.groups.$groupId.group_name} :: {$perm}" href="javascript:void(0);" onclick="BitAjax.updater('{$perm}{$groupId}', '{$smarty.const.LIBERTY_PKG_URL}content_permissions.php', 'action={$action}&amp;content_id={$gContent->mContentId}&amp;perm={$perm}&amp;group_id={$groupId}')">
-										{biticon iname="`$size$icon`" iexplain=$icon}
+										{biticon iname="$size$icon" iexplain=$icon}
 									</a>
 								</span>
 							{else}
-								{smartlink itra=false ititle="`$contentPerms.groups.$groupId.group_name` :: $perm" ibiticon=icons/$size$icon iforce="icon" action=$action content_id=$gContent->mContentId perm=$perm group_id=$groupId}
+								{smartlink itra=false ititle="$contentPerms.groups.$groupId.group_name :: $perm" ibiticon="$size$icon" action=$action content_id=$gContent->mContentId perm=$perm group_id=$groupId}
 							{/if}
 						</td>
 					{/foreach}
