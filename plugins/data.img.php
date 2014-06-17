@@ -72,6 +72,9 @@ function data_img( $pData, $pParams ) {
 					// remove values from the hash that they don't get used in the div as well
 					$pParams[$key] = NULL;
 					break;
+				case 'style':
+					$img_style .= ';'.$value;
+					break;
 			}
 		}
 	}
