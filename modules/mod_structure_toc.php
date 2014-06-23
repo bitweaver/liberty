@@ -27,7 +27,11 @@ if( is_object( $gStructure ) && $gStructure->isValid() && $gStructure->hasViewPe
 	if( !empty( $structures[0] ) ) {
 		require_once( LIBERTY_PKG_PATH.'LibertyStructure.php' );
 		$struct = new LibertyStructure( $structures[0]['structure_id'] );
-		$struct->load();
+		if( $struct->load() ) {
+			if( $moduleParams['title'] == 'Structure Toc' ) {
+				$moduleParams['title'] = $struct->getRootTitle();
+			}
+		}
 	}
 }
 

@@ -10,7 +10,7 @@
 				{if $comments_ajax }
 					<a href="javascript:void(0);" onclick="LibertyComment.attachForm('comment_{$comment.content_id}', '{$comment.content_id}', '{$comment.root_id}')">{booticon iname="icon-comment-alt"  ipackage="icons"  iexplain="Reply to this comment"}</a>
 				{else}
-					<a href="#">{booticon iname="icon-comment-alt"  class="icon" iexplain="Reply to this comment" onclick="window.location='`$comments_return_url`&post_comment_reply_id=`$comment.content_id`&post_comment_request=1#editcomments';" }</a>
+					<a href="#">{booticon iname="icon-comment-alt"  class="icon" onclick="window.location='`$comments_return_url`&amp;post_comment_reply_id=`$comment.content_id`&amp;post_comment_request=1#editcomments';" iexplain="Reply to this comment" }</a>
 				{/if}
 			{/if}
 			{if $comment.is_editable}
