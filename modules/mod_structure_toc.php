@@ -26,10 +26,10 @@ if( is_object( $gStructure ) && $gStructure->isValid() && $gStructure->hasViewPe
 	// We take the first structure. not good, but works for now - spiderr
 	if( !empty( $structures[0] ) ) {
 		require_once( LIBERTY_PKG_PATH.'LibertyStructure.php' );
-		$struct = new LibertyStructure( $structures[0]['structure_id'] );
+		$struct = new LibertyStructure( $structures[0]['root_structure_id'] );
 		if( $struct->load() ) {
 			if( $moduleParams['title'] == 'Structure Toc' ) {
-				$moduleParams['title'] = $struct->getRootTitle();
+				$_template->tpl_vars['moduleTitle'] = new Smarty_variable( $struct->getField( 'title', 'Table of Contents' ) );
 			}
 		}
 	}
