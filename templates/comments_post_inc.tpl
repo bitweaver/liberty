@@ -12,7 +12,7 @@
 		{formfeedback hash=$formfeedback}
 
 
-		{if $post_comment_request || $smarty.request.post_comment_preview || $comments_ajax}
+		{if $post_comment_request || $smarty.request.post_comment_preview || $gBitSystem->isFeatureActive('comments_ajax')}
 			{legend legend=$post_title}
 				<input type="hidden" name="post_comment_reply_id" value="{$post_comment_reply_id}" />
 				<input type="hidden" name="post_comment_id" value="{$post_comment_id}" />
@@ -76,9 +76,9 @@
 				{/if}
 
 				<div class="form-group submit">
-					<input type="submit" class="btn btn-default" name="post_comment_preview" value="{tr}Preview{/tr}" {if $comments_ajax}onclick="LibertyComment.previewComment(); return false;"{/if}/>&nbsp;
-					<input type="submit" class="btn btn-default" name="post_comment_submit" value="{tr}Post{/tr}" {if $comments_ajax}onclick="LibertyComment.postComment(); return false;"{/if}/>&nbsp;
-					<input type="submit" class="btn btn-default" name="post_comment_cancel" value="{tr}Cancel{/tr}" {if $comments_ajax}onclick="LibertyComment.cancelComment(true); return false;"{/if}/>
+					<input type="submit" class="btn btn-default" name="post_comment_preview" value="{tr}Preview{/tr}" {if $gBitSystem->isFeatureActive('comments_ajax')}onclick="LibertyComment.previewComment(); return false;"{/if}/>&nbsp;
+					<input type="submit" class="btn btn-default" name="post_comment_submit" value="{tr}Post{/tr}" {if $gBitSystem->isFeatureActive('comments_ajax')}onclick="LibertyComment.postComment(); return false;"{/if}/>&nbsp;
+					<input type="submit" class="btn btn-default" name="post_comment_cancel" value="{tr}Cancel{/tr}" {if $gBitSystem->isFeatureActive('comments_ajax')}onclick="LibertyComment.cancelComment(true); return false;"{/if}/>
 				</div>
 			{/legend}
 		{elseif $gBitUser->hasPermission( 'p_liberty_post_comments' )}

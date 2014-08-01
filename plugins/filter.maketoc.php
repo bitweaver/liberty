@@ -238,12 +238,14 @@ function maketoc_create_list( $pTocHash, $pParams ) {
 		}
 	}
 
-	$class = 'class="maketoc"';
+	$class = 'maketoc';
 	if( !empty( $pParams['class'] ) ) {
-		$class = 'class="'.$pParams['class'].'"';
+		$class .= ' '.$pParams['class'];
+	} else {
+		$class .= ' well width33p pull-right';
 	}
 
-	$list = "<div $class $width><h3>" .( !empty( $pParams['title'] ) ? $pParams['title'] : tra( 'Page Contents' ) ).'</h3>'.$list.$toplink.'</div>';
+	$list = "<nav class='$class' $width><h3>" .( !empty( $pParams['title'] ) ? $pParams['title'] : tra( 'Page Contents' ) ).'</h3>'.$list.$toplink.'</nav>';
 
 	return $list;
 }

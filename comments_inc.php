@@ -48,11 +48,6 @@ if( !$gBitThemes->isJavascriptEnabled() ) {
 	$gBitSystem->setConfig( 'comments_ajax', 'n' );
 }
 
-if( $gBitSystem->isFeatureActive( 'comments_ajax' ) && !empty( $gContent ) && is_object( $gContent ) && $gContent->isCommentable() ) {
-	$gBitSmarty->assign( 'comments_ajax', TRUE );
-	$gBitThemes->loadAjax( 'mochikit', array( 'Iter.js', 'DOM.js', 'Style.js', 'Color.js', 'Position.js', 'Visual.js' ));
-}
-
 if( @BitBase::verifyId( $_REQUEST['delete_comment_id'] )) {
 	$deleteComment = new LibertyComment($_REQUEST['delete_comment_id']);
 	// make sure we're loaded up before we delete

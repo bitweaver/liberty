@@ -111,7 +111,5 @@ if( $gBitThemes->isAjaxRequest() ) {
 	die;
 }
 
-// enable ajaxed permission updating
-$gBitThemes->loadAjax( 'mochikit' );
 $gBitSystem->display( 'bitpackage:liberty/content_role_permissions.tpl', tra( 'Content Permissions' ), array( 'display_mode' => 'display' ));
 ?>
