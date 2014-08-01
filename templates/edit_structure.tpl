@@ -6,8 +6,8 @@
 	{assign var=structureName value="Structure"}
 {/if}
 
-<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/jquery-acisortable/js/jquery.aciPlugin.min.js"></script>
-<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/jquery-acisortable/js/jquery.aciSortable.js"></script>
+<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/jquery-acisortable/jquery.aciPlugin.min.js"></script>
+<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/jquery-acisortable/jquery.aciSortable.js"></script>
 
 {$structureToc}
 
@@ -135,7 +135,6 @@ var undoHash = [];
 
 function deleteStructureNode( pStructureId, pStructureText ) {
 	if( confirm( "Are you sure you want to delete the following item, and all of its children? This cannot be undone."+"\n\nDELETE: "+pStructureText) ) {
-		console.log( "deleted" );
 		var eleId = '#structure-node-'+pStructureId;
 		$(eleId).detach();
 		// One day undoHash could be popped for undo
