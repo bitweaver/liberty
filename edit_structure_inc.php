@@ -17,27 +17,6 @@
  */
 require_once( '../kernel/setup_inc.php' );
 include_once( LIBERTY_PKG_PATH.'LibertyStructure.php');
-$feedback = array();
-$gBitSmarty->assign_by_ref( 'feedback', $feedback );
-
-// mochikit can interfere sometimes, so we need a way to disable it.
-if( empty( $noAjaxContent )) {
-	$gBitThemes->loadAjax(
-		'mochikit', array(
-			'Iter.js',
-			'DOM.js',
-			'Format.js',
-			'Style.js',
-			'Signal.js',
-			'Logging.js',
-			'ThickBox.js',
-			'Controls.js',
-			'Color.js',
-			'Position.js',
-			'Visual.js'
-		)
-	);
-}
 
 if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 	$gBitSystem->fatalError( tra( "No structure indicated" ));
@@ -59,8 +38,12 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 		$rootStructure->loadNavigation();
 		$rootStructure->loadPath();
 	}
-	$gContent->verifyUpdatePermission();
+	if( empty( $gContent ) ) {
+		$gContent = LibertyContent::getLibertyObject( $gStructure->getField( 'content_id' ) );
+		$gContent->verifyUpdatePermission();
+	}
 	$gBitSmarty->assign_by_ref( 'gStructure', $gStructure );
+	$gBitSmarty->assign( 'editingStructure', TRUE );
 	$gBitSmarty->assign('structureInfo', $gStructure->mInfo);
 
 	// Store the actively stored structure name
@@ -68,13 +51,19 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 	$gBitUser->storePreference( 'edit_structure_id', $rootStructure->mStructureId );
 
 	if( ( isset( $_REQUEST["action"] ) && ( $_REQUEST["action"] == 'remove' ) ) || !empty( $_REQUEST["confirm"] ) ) {
-		if( $_REQUEST["action"] == 'remove' && !empty( $_REQUEST["confirm"] ) ) {
+		$gBitUser->verifyTicket();
+		if( $_REQUEST["action"] == 'remove' && ($gBitThemes->isAjaxRequest() || !empty( $_REQUEST["confirm"] )) ) {
+			$gBitUser->verifyTicket();
 			if( $gStructure->removeStructureNode( $_REQUEST["structure_id"], false ) ) {
-				header( "Location: ".$_SERVER['SCRIPT_NAME'].'?structure_id='.$gStructure->mInfo["parent_id"] );
-				die;
+				if( $gBitThemes->isAjaxRequest() ) {
+					$feedback['success'] = tra( "removed from" ).' '.$gContent->getContentTypeName();
+				} else {
+					bit_redirect( $_SERVER['SCRIPT_NAME'].'?structure_id='.$gStructure->mInfo["parent_id"] );
+				}
 			} else {
-				error_log( "Error removing structure: " . vc($gStructure->mErrors ) );
+				$feedback['error'] = $gStructure->mErrors;
 			}
+			$gBitSmarty->assign_by_ref('feedback', $feedback);
 		} elseif( $_REQUEST["action"] == 'remove' ) {
 			$gBitSystem->setBrowserTitle( tra('Confirm removal of ').$gContent->getTitle() );
 			$formHash['action'] = 'remove';
@@ -97,19 +86,14 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 		} elseif ($_REQUEST["move_node"] == '4') {
 			$gStructure->moveNodeEast();
 		}
-		header( "Location: ".$_SERVER['SCRIPT_NAME'].'?structure_id='.$gStructure->mInfo["structure_id"] );
-		die;
+		bit_redirect( $_SERVER['SCRIPT_NAME'].'?structure_id='.$gStructure->mInfo["structure_id"] );
 	} elseif( !empty( $_REQUEST['submit_structure'] ) ) {
 		if( $gStructure->storeStructure( $_REQUEST ) ) {
 			$feedback['success'] = tra( "Your changes were successfully saved." );
 		} else {
 			$feedback['error'] = $gStructure->mErrors;
 		}
-	} elseif (isset($_REQUEST["create"])) {
-//		if (isset($_REQUEST["pageAlias"]))	{
-//			$gStructure->set_page_alias($_REQUEST["structure_id"], $_REQUEST["pageAlias"]);
-//		}
-
+	} elseif (isset($_REQUEST["create"]) || (isset( $_REQUEST["action"] ) && $_REQUEST["action"] == 'add') ) {
 		$structureHash['root_structure_id'] = $rootStructure->mStructureId;
 		$structureHash['parent_id'] = $_REQUEST['structure_id'];
 
@@ -132,9 +116,11 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 		}
 	}
 
-	$rootTree = $rootStructure->getSubTree( $rootStructure->mStructureId, NULL, array('thumbnail_size'=>'small') );
-	$gBitSmarty->assign('subtree', $rootTree);
+	$structureTocId = $rootStructure->mStructureId;
+	$gBitSmarty->assign( 'structureToc', $rootStructure->getToc() );
+	$gBitSmarty->assign( 'structureTocId', $structureTocId );
 	$gBitSmarty->assign_by_ref('feedback', $feedback);
 }
+	$gBitSmarty->assign( 'editingStructure', FALSE );
 
 ?>

@@ -424,36 +424,81 @@ class LibertyStructure extends LibertyBase {
 	* @return TRUE on success, FALSE on failure where $this->mErrors will contain the reason why it failed
 	*/
 	function verifyStructure( &$pParamHash ) {
-		if( !empty( $pParamHash['structure_string'] ) ) {
-			eval( $pParamHash['structure_string'] );
-			$pParamHash = array_merge( $pParamHash, $tree );
+		$storeNodes = array();
+		if( !self::getParameter( $pParamHash, 'root_structure_id' ) ) {
+			$pParamHash['root_structure_id'] = $this->getField( 'root_structure_id' );
 		}
 
-		if( !empty( $pParamHash['structure'] ) && @BitBase::verifyId( $pParamHash['root_structure_id'] ) ) {
-			LibertyStructure::embellishStructureHash( $pParamHash['structure'] );
-			$structureHash = LibertyStructure::flattenStructureHash( $pParamHash['structure'] );
-
-			// replace the 'tree' in the data array with the root_structure_id
-			foreach( $pParamHash['data'] as $structure_id => $node ) {
-				if( !@BitBase::verifyId( $pParamHash['data'][$structure_id]['parent_id'] ) ) {
-					$pParamHash['data'][$structure_id]['parent_id'] = $pParamHash['root_structure_id'];
-				}
-			}
-
-			foreach( $structureHash as $node ) {
-				if( @BitBase::verifyId( $node['structure_id'] ) ) {
-					$pParamHash['structure_store'][$node['structure_id']] = array_merge( $node, $pParamHash['data'][$node['structure_id']] );
-					$pParamHash['structure_store'][$node['structure_id']]['root_structure_id'] = $pParamHash['root_structure_id'];
-				}
-			}
+		if( !self::verifyId( $pParamHash['root_structure_id'] ) ) {
+			$this->mErrors['verify_structure'] = tra( "Unknown root structure." );
 		} else {
+			if( !empty( $pParamHash['structure_json'] ) ) {
+//vd( $pParamHash['structure_json'] );
+				// {{{ closure here to recursively parse json
+				$parseStructureJson = function($treeHash, $pRootId, $pParentId, $pLevel, $pPos ) use ( &$parseStructureJson, &$storeNodes ) {
+					if( is_numeric( key( $treeHash ) ) ) {
+						$pos = 1;
+						foreach( array_keys( $treeHash ) as $i ) {
+							// Array of nodes came in. Process each at the same level
+							$parseStructureJson( $treeHash[$i], $pRootId, $pParentId, $pLevel, $pos++ );
+						}
+					} else {
+						// Base node with data
+						$storeNode = array();
+						$storeNode['root_structure_id'] = $pRootId;
+						$storeNode['parent_id'] = $pParentId;
+						$storeNode['structure_id'] = $treeHash['structure_id'];
+						$storeNode['content_id'] = $treeHash['content_id'];
+						$storeNode['pos'] = $pPos++;
+						//$storeNode['page_alias']
+						$storeNode['structure_level'] = $pLevel;
+						$storeNodes[$treeHash['structure_id']] = $storeNode;
+						if( !empty( $treeHash['children'] ) ) {
+							// current node has children, recurse down in
+							$parseStructureJson( $treeHash['children'], $pRootId, $treeHash['structure_id'], $pLevel + 1, 1 );
+						}
+					}
+				};
+				// }}}
+
+				$parseStructureJson( $pParamHash['structure_json'], $this->mStructureId, $pParamHash['root_structure_id'], 1, 1 );
+				if( !empty( $storeNodes ) ) {
+					$pParamHash['structure_store'] = $storeNodes;
+				}
+//vd( $storeNodes );
+			}
+
+			
+			// deprecated flat tree store, code is unused AFAIK.-- spiderr
+			if( !empty( $pParamHash['structure'] ) ) {
+	//			LibertyStructure::embellishStructureHash( $pParamHash['structure'] );
+	//			$structureHash = LibertyStructure::flattenStructureHash( $pParamHash['structure'] );
+
+				// replace the 'tree' in the data array with the root_structure_id
+				foreach( $pParamHash['data'] as $structure_id => $node ) {
+					if( !@BitBase::verifyId( $pParamHash['data'][$structure_id]['parent_id'] ) ) {
+						$pParamHash['data'][$structure_id]['parent_id'] = $pParamHash['root_structure_id'];
+					}
+				}
+
+				foreach( $structureHash as $node ) {
+					if( @BitBase::verifyId( $node['structure_id'] ) ) {
+						$pParamHash['structure_store'][$node['structure_id']] = array_merge( $node, $pParamHash['data'][$node['structure_id']] );
+						$pParamHash['structure_store'][$node['structure_id']]['root_structure_id'] = $pParamHash['root_structure_id'];
+					}
+				}
+			}
+		}
+
+		if( empty( $pParamHash['structure_store'] ) ) {
 			$this->mErrors['verify_structure'] = tra( "There are no changes to save." );
 		}
 
 		// clear up some memory
-		if( !empty( $pParamHash['structure_string'] ) ) { unset( $pParamHash['structure_string'] ); }
+		if( !empty( $pParamHash['structure_json'] ) ) { unset( $pParamHash['structure_json'] ); }
 		if( !empty( $pParamHash['structure'] ) )        { unset( $pParamHash['structure'] ); }
 		if( !empty( $pParamHash['data'] ) )             { unset( $pParamHash['data'] ); }
+
 		return( count( $this->mErrors ) == 0 );
 	}
 
@@ -466,9 +511,8 @@ class LibertyStructure extends LibertyBase {
 		if( $this->verifyStructure( $pParamHash ) ) {
 			// now that the structure is ready to be stored, we remove the old structure first and then insert the new one.
 			$this->mDb->StartTrans();
-			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `root_structure_id`=? AND `structure_id`<>?";
+			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `root_structure_id`=? AND `structure_id`!=?";
 			$result = $this->mDb->query( $query, array( (int)$pParamHash['root_structure_id'], (int)$pParamHash['root_structure_id'] ) );
-			$query = "";
 			foreach( $pParamHash['structure_store'] as $node ) {
 				$this->mDb->associateInsert( BIT_DB_PREFIX."liberty_structures", $node );
 			}
@@ -929,39 +973,41 @@ class LibertyStructure extends LibertyBase {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function getToc($pStructureId=NULL,$order='asc',$showdesc=false,$pNumberDepth=true,$numberPrefix='') {
+	function getToc($pStructureId=NULL,$order='asc',$showdesc=false,$pNumberDepth=true,$numberPrefix='',$pCss='') {
 		if( !@$this->verifyId( $pStructureId ) ) {
 			$pStructureId = $this->mStructureId;
 		}
-		$structure_tree = $this->buildSubtreeToc( $pStructureId, $order, $numberPrefix, $pNumberDepth );
-		return $this->fetchToc( $structure_tree,$showdesc,$pNumberDepth );
+		$structureTree = $this->buildSubtreeToc( $pStructureId, $order, $numberPrefix, $pNumberDepth, $pCss );
+		return '<div class="aciTree" id="structure-'.$this->mStructureId.'">'.$this->fetchToc( $structureTree,$showdesc,$pNumberDepth ).'</div>';
 	}
 
 	/**
 	 * fetchToc
 	 *
-	 * @param array $structure_tree
+	 * @param array $structureTree
 	 * @param array $showdesc
 	 * @param array $numbering
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function fetchToc($structure_tree,$showdesc,$numbering) {
+	function fetchToc($structureTree,$showdesc,$numbering,$pCss='') {
 		global $gBitSmarty;
 		$ret='';
-		if ($structure_tree != '') {
+		if ($structureTree != '') {
 			$gBitSmarty->verifyCompileDir();
+			$gBitSmarty->assign_by_ref( 'structureId', $this->mStructureId );
 			$ret.=$gBitSmarty->fetch( "bitpackage:liberty/structure_toc_startul.tpl");
-			foreach($structure_tree as $leaf) {
+			foreach($structureTree as $leaf) {
 				//echo "<br />";print_r($leaf);echo "<br />";
 				$gBitSmarty->assign_by_ref('structure_tree',$leaf);
 				$gBitSmarty->assign('showdesc',$showdesc);
 				$gBitSmarty->assign('numbering',$numbering);
-				$ret.=$gBitSmarty->fetch( "bitpackage:liberty/structure_toc_leaf.tpl");
+				$ret .= $gBitSmarty->fetch( "bitpackage:liberty/structure_toc_leaf.tpl");
 				if(isset($leaf["sub"]) && is_array($leaf["sub"])) {
 					// recurse down in - li tags are for w3c standard
-					$ret.= '<li>'.$this->fetchToc($leaf["sub"],$showdesc,$numbering).'</li>';
+					$ret .= $this->fetchToc($leaf["sub"],$showdesc,$numbering);
 				}
+				$ret .= '</li>';
 			}
 			$ret.=$gBitSmarty->fetch( "bitpackage:liberty/structure_toc_endul.tpl");
 		}

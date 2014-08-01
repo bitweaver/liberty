@@ -1,6 +1,6 @@
 {strip}
 {* comment or content @TODO pass in as a var in includes *}
-{if ( $post_comment_request || $post_comment_preview || $comments_ajax ) && $gComment}
+{if ( $post_comment_request || $post_comment_preview || $gBitSystem->isFeatureActive('comments_ajax') ) && $gComment}
 	{assign var=contentObject value=$gComment}
 {else}
 	{assign var=contentObject value=$gContent}

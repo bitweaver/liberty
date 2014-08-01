@@ -15,7 +15,7 @@
 
 {* perhaps we can remove this as well at some point and load it using
 $gBitThemes->loadJavascript(); *}
-{if $comments_ajax}
+{if $gBitSystem->isFeatureActive('comments_ajax')}
 	<script src="{$smarty.const.LIBERTY_PKG_URL}scripts/LibertyComment.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		LibertyComment.ROOT_ID = {if $gContent->mContentId}{$gContent->mContentId}{elseif $commentsParentId}{$commentsParentId}{else}null{/if}; {* this is the content id - would be better as part of something in kernel but here it is until that day *}
