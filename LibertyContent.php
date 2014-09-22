@@ -1929,11 +1929,8 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @param array pHash type hash of data to be used to provide base data
 	 * @return string Descriptive title for the page
 	 */
-	function getTitle( $pHash=NULL, $pDefault=TRUE ) {
+	function getTitleFromHash( $pHash, $pDefault=TRUE ) {
 		$ret = NULL;
-		if( empty( $pHash ) ) {
-			$pHash = &$this->mInfo;
-		}
 		if( !empty( $pHash['title'] ) ) {
 			$ret = $pHash['title'];
 		} elseif( $pDefault && !empty( $pHash['content_name'] ) ) {
@@ -2723,11 +2720,11 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 					if( $aux['content_type_guid'] == BITUSER_CONTENT_TYPE_GUID ) {
 						// here we provide getDisplay(Link|Url) with user-specific information that we get the correct links to display in pages
 						$userInfo = $gBitUser->getUserInfo( array( 'content_id' => $aux['content_id'] ));
-						$aux['title']        = $type['content_object']->getTitle( $userInfo );
+						$aux['title']        = $type['content_object']->getTitleFromHash( $userInfo );
 						$aux['display_link'] = $type['content_object']->getDisplayLink( $userInfo['login'], $userInfo );
 						$aux['display_url']  = $type['content_object']->getDisplayUrl( $userInfo['login'] );
 					} else {
-						$aux['title']        = $type['content_object']->getTitle( $aux );
+						$aux['title']        = $type['content_object']->getTitleFromHash( $aux );
 						$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
 						/**
 						 * @TODO standardize getDisplayUrl params
