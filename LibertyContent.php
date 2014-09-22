@@ -1929,12 +1929,27 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @param array pHash type hash of data to be used to provide base data
 	 * @return string Descriptive title for the page
 	 */
-	function getTitleFromHash( $pHash, $pDefault=TRUE ) {
+	static function getTitleFromHash( &$pHash, $pDefault=TRUE ) {
 		$ret = NULL;
 		if( !empty( $pHash['title'] ) ) {
 			$ret = $pHash['title'];
 		} elseif( $pDefault && !empty( $pHash['content_name'] ) ) {
 			$ret = $pHash['content_name'];
+		}
+		return $ret;
+	}
+
+	/**
+	 * Create the generic title for a content item
+	 *
+	 * This will normally be overwriten by extended classes to provide
+	 * an appropriate title string
+	 * @return string Descriptive title for the page
+	 */
+	function getTitle() {
+		$ret = NULL;
+		if( $this->isValid() ) {
+			$ret = static::getTitleFromHash( $this->mInfo );
 		}
 		return $ret;
 	}
