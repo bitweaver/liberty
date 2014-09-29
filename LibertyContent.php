@@ -232,7 +232,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 					|| (!empty($pParamHash["edit_comment"]) && !empty($this->mInfo["edit_comment"]) && (md5($this->mInfo["edit_comment"]) != md5($pParamHash["edit_comment"])));
 		// check some lengths, if too long, then truncate
 		if( !empty( $pParamHash['title'] ) ) {
-			$pParamHash['content_store']['title'] = substr( $pParamHash['title'], 0, BIT_CONTENT_MAX_TITLE_LEN );
+			$pParamHash['content_store']['title'] = substr( preg_replace( '/:space:+/m', ' ', $pParamHash['title'] ), 0, BIT_CONTENT_MAX_TITLE_LEN );
 		} elseif( isset( $pParamHash['title'] ) ) {
 			$pParamHash['content_store']['title'] = NULL;
 		}
@@ -1949,7 +1949,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	function getTitle() {
 		$ret = NULL;
 		if( $this->isValid() ) {
-			$ret = static::getTitleFromHash( $this->mInfo );
+			$ret = self::getTitleFromHash( $this->mInfo );
 		}
 		return $ret;
 	}
