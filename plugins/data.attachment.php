@@ -35,7 +35,7 @@ $pluginParams = array (
 	'help_function' => 'data_attachment_help',
 	'syntax'        => '{attachment id= size= align= }',
 	'plugin_type'   => DATA_PLUGIN,
-	'booticon'       => '{booticon iname="icon-paperclip" iexplain="Attachment"}',
+	'booticon'       => '{booticon iname="icon-paper-clip" iexplain="Attachment"}',
 	'taginsert'     => '{attachment id= align= size= description= alt=}',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAATTACHMENT, $pluginParams );
