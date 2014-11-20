@@ -160,7 +160,7 @@ class LibertyAttachable extends LibertyContent {
 								if (!empty( $pParamHash['thumbnail_sizes'] ) ) {
 									$storeRow['upload']['thumbnail_sizes'] = $pParamHash['thumbnail_sizes'];
 								}
-								$storagePath = liberty_process_upload( $storeRow );
+								$storagePath = liberty_process_upload( $storeRow['upload'] );
 								// We're gonna store to local file system & liberty_files table
 								if( empty( $storagePath ) ) {
 									$this->mErrors['file'] = tra( "Could not store file" ).": ".$storeRow['upload']['name'].'.';
