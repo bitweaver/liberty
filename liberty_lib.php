@@ -420,7 +420,7 @@ function liberty_content_edit( &$pObject ) {
  * @param array $pFileHash['name'] (required) Name of the uploaded file
  * @param array $pFileHash['type'] (required) Mime type of the file uploaded
  * @param array $pFileHash['dest_branch'] (required) Relative path where you want to store the file (trailing slash required)
- * @param array $pFileHash['source_file'] (required) Absolute path to file including file name
+ * @param array $pFileHash['tmp_name'] (required) Absolute path to file including file name
  * @param boolean $pFileHash['thumbnail'] (optional) Set to FALSE if you don't want to generate thumbnails
  * @param array $pFileHash['thumbnail_sizes'] (optional) Decide what sizes thumbnails you want to create: icon, avatar, small, medium, large
  * @param boolean $pMoveFile (optional) specify if you want to move or copy the original file
@@ -691,7 +691,7 @@ function liberty_get_function( $pType ) {
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function liberty_generate_thumbnails( &$pFileHash ) {
+function liberty_generate_thumbnails( $pFileHash ) {
 	global $gBitSystem, $gThumbSizes;
 	$resizeFunc = liberty_get_function( 'resize' );
 	$ret = FALSE;
@@ -762,7 +762,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 				$pFileHash['dest_branch'] = $initialDestPath.'thumbs/';
 				clearstatcache();
 				if( !is_dir( STORAGE_PKG_PATH.$pFileHash['dest_branch'] )) {
-					mkdir( STORAGE_PKG_PATH.$pFileHash['dest_branch'] );
+					mkdir( STORAGE_PKG_PATH.$pFileHash['dest_branch'], 0775, TRUE );
 					clearstatcache();
 				}
 			}
