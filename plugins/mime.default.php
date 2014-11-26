@@ -165,7 +165,7 @@ if( !function_exists( 'mime_default_update' )) {
 				}
 
 				// Now we process the uploaded file
-				if( $storagePath = liberty_process_upload( $pStoreRow )) {
+				if( $storagePath = liberty_process_upload( $pStoreRow['upload'] )) {
 					$sql = "UPDATE `".BIT_DB_PREFIX."liberty_files` SET `file_name` = ?, `mime_type` = ?, `file_size` = ?, `user_id` = ? WHERE `file_id` = ?";
 					$gBitSystem->mDb->query( $sql, array( $pStoreRow['upload']['name'], $pStoreRow['upload']['type'], $pStoreRow['upload']['size'], $pStoreRow['user_id'], $pStoreRow['file_id'] ));
 				}
@@ -199,7 +199,7 @@ if( !function_exists( 'mime_default_store' )) {
 		$ret = FALSE;
 
 		// take care of the uploaded file and insert it into the liberty_files and liberty_attachments tables
-		if( $storagePath = liberty_process_upload( $pStoreRow, empty( $pStoreRow['upload']['copy_file'] ))) {
+		if( $storagePath = liberty_process_upload( $pStoreRow['upload'], empty( $pStoreRow['upload']['copy_file'] ))) {
 			// add row to liberty_files
 			$storeHash = array(
 				"file_name"    => $pStoreRow['upload']['name'],
