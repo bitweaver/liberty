@@ -42,8 +42,7 @@
 		{formlabel label="Content Format"}
 		{foreach name=formatPlugins from=$gLibertySystem->mPlugins item=plugin key=guid}
 			{if $plugin.is_active eq 'y' and $plugin.edit_field and $plugin.plugin_type eq 'format'}
-				{forminput}
-					<label class="radio">
+				{forminput label="radio"}
 					{if $numformat > 1}
 							<input type="radio" name="{$format_guid_variable|default:"format_guid"}" value="{$plugin.edit_field}"
 							{if $contentObject->mInfo.format_guid eq $plugin.plugin_guid} checked="checked"
@@ -77,7 +76,6 @@
 							{/if}
 						{/if}
 					{/if}
-					</label>
 					{formhelp note=$plugin.edit_help}
 				{/forminput}
 			{/if}
@@ -96,9 +94,7 @@
 		<div class="form-group">
 			{formlabel label="Content Format"}
 			{forminput}
-				<label>
-					{$singleplugin.edit_label}
-				</label>
+				{$singleplugin.edit_label}
 			{/forminput}
 		</div>
 	{/if}
