@@ -36,10 +36,10 @@
 
 {if $attachment.source_file}
 	<div class="form-group">
-		<label class="checkbox">
+		{forminput label="checkbox"}
 			<input type="checkbox" id="remove_original" name="plugin[{$attachment.attachment_id}][mimeaudio][remove_original]" value="y" />Remove Original
 			{formhelp note="This will permanently remove the original file from the server. This will still allow you to listen to the audio file but not download it."}
-		</label>
+		{/forminput}
 	</div>
 {/if}
 

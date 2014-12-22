@@ -417,12 +417,12 @@ function liberty_content_edit( &$pObject ) {
  * Process uploaded files. Will automagically generate thumbnails for images
  *
  * @param array $pFileHash Data require to process the files
- * @param array $pFileHash['upload']['name'] (required) Name of the uploaded file
- * @param array $pFileHash['upload']['type'] (required) Mime type of the file uploaded
- * @param array $pFileHash['upload']['dest_branch'] (required) Relative path where you want to store the file (trailing slash required)
- * @param array $pFileHash['upload']['source_file'] (required) Absolute path to file including file name
- * @param boolean $pFileHash['upload']['thumbnail'] (optional) Set to FALSE if you don't want to generate thumbnails
- * @param array $pFileHash['upload']['thumbnail_sizes'] (optional) Decide what sizes thumbnails you want to create: icon, avatar, small, medium, large
+ * @param array $pFileHash['name'] (required) Name of the uploaded file
+ * @param array $pFileHash['type'] (required) Mime type of the file uploaded
+ * @param array $pFileHash['dest_branch'] (required) Relative path where you want to store the file (trailing slash required)
+ * @param array $pFileHash['tmp_name'] (required) Absolute path to file including file name
+ * @param boolean $pFileHash['thumbnail'] (optional) Set to FALSE if you don't want to generate thumbnails
+ * @param array $pFileHash['thumbnail_sizes'] (optional) Decide what sizes thumbnails you want to create: icon, avatar, small, medium, large
  * @param boolean $pMoveFile (optional) specify if you want to move or copy the original file
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
@@ -431,33 +431,33 @@ function liberty_process_upload( &$pFileHash, $pMoveFile = TRUE ) {
 	global $gBitSystem;
 
 	// Check for evil file extensions that could be execed on the server
-	if( preg_match( EVIL_EXTENSION_PATTERN, $pFileHash['upload']['name'] )) {
-		$pFileHash['upload']['type'] = 'text/plain';
-		$pFileHash['upload']['name'] = $pFileHash['upload']['name'].'.txt';
+	if( preg_match( EVIL_EXTENSION_PATTERN, $pFileHash['name'] )) {
+		$pFileHash['type'] = 'text/plain';
+		$pFileHash['name'] = $pFileHash['name'].'.txt';
 	}
 
 	if ( !is_windows() ) {
-		list( $pFileHash['upload']['name'], $pFileHash['upload']['type'] ) = $gBitSystem->verifyFileExtension( $pFileHash['upload']['tmp_name'], $pFileHash['upload']['name'] );
+		list( $pFileHash['name'], $pFileHash['type'] ) = $gBitSystem->verifyFileExtension( $pFileHash['tmp_name'], $pFileHash['name'] );
 	} else {
 		//$pFile['type'] = $gBitSystem->verifyMimeType( $pFile['tmp_name'] );
 	}
 
-	$ext = strrpos( $pFileHash['upload']['name'], '.' );
+	$ext = strrpos( $pFileHash['name'], '.' );
 
 	// clean out crap that can make life difficult in server maintenance
-	$cleanedBaseName = preg_replace( '/[&\%:\/\\\]/', '', substr( $pFileHash['upload']['name'], 0, $ext ) );
-	$pFileHash['upload']['dest_base_name'] = $cleanedBaseName;
-	$pFileHash['upload']['source_file'] = $pFileHash['upload']['tmp_name'];
+	$cleanedBaseName = preg_replace( '/[&\%:\/\\\]/', '', substr( $pFileHash['name'], 0, $ext ) );
+	$pFileHash['dest_base_name'] = $cleanedBaseName;
+	$pFileHash['source_file'] = $pFileHash['tmp_name'];
 	// lowercase all file extensions
 
-	$pFileHash['upload']['name'] = $cleanedBaseName.strtolower( substr( $pFileHash['upload']['name'], $ext ) );
+	$pFileHash['name'] = $cleanedBaseName.strtolower( substr( $pFileHash['name'], $ext ) );
 
 	// Thumbs.db is a windows My Photos/ folder file, and seems to really piss off imagick
 	$canThumbFunc = liberty_get_function( 'can_thumbnail' );
-	if( !empty( $canThumbFunc ) && $canThumbFunc( $pFileHash['upload']['type'] ) && $pFileHash['upload']['name'] != 'Thumbs.db' ) {
-		$ret = liberty_process_image( $pFileHash['upload'], $pMoveFile );
+	if( !empty( $canThumbFunc ) && $canThumbFunc( $pFileHash['type'] ) && $pFileHash['name'] != 'Thumbs.db' ) {
+		$ret = liberty_process_image( $pFileHash, $pMoveFile );
 	} else {
-		$ret = liberty_process_generic( $pFileHash['upload'], $pMoveFile );
+		$ret = liberty_process_generic( $pFileHash, $pMoveFile );
 	}
 
 	return $ret;
@@ -691,7 +691,7 @@ function liberty_get_function( $pType ) {
  * @access public
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
-function liberty_generate_thumbnails( &$pFileHash ) {
+function liberty_generate_thumbnails( $pFileHash ) {
 	global $gBitSystem, $gThumbSizes;
 	$resizeFunc = liberty_get_function( 'resize' );
 	$ret = FALSE;
@@ -762,7 +762,7 @@ function liberty_generate_thumbnails( &$pFileHash ) {
 				$pFileHash['dest_branch'] = $initialDestPath.'thumbs/';
 				clearstatcache();
 				if( !is_dir( STORAGE_PKG_PATH.$pFileHash['dest_branch'] )) {
-					mkdir( STORAGE_PKG_PATH.$pFileHash['dest_branch'] );
+					mkdir( STORAGE_PKG_PATH.$pFileHash['dest_branch'], 0775, TRUE );
 					clearstatcache();
 				}
 			}
