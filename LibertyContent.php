@@ -127,6 +127,10 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	}
 
 
+	public function isCacheableObject() {
+		return parent::isCacheableObject() && !empty( $this->mContentId );
+	}
+
 	public function getCacheKey() {
 		if( $this->isValid() ) {
 			return $this->mContentId;
