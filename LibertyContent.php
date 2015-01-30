@@ -127,6 +127,10 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	}
 
 
+	public function isCacheableObject() {
+		return parent::isCacheableObject() && !empty( $this->mContentId );
+	}
+
 	public function getCacheKey() {
 		if( $this->isValid() ) {
 			return $this->mContentId;
@@ -1929,7 +1933,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @param array pHash type hash of data to be used to provide base data
 	 * @return string Descriptive title for the page
 	 */
-	static function getTitleFromHash( &$pHash, $pDefault=TRUE ) {
+	public static function getTitleFromHash( &$pHash, $pDefault=TRUE ) {
 		$ret = NULL;
 		if( !empty( $pHash['title'] ) ) {
 			$ret = $pHash['title'];
