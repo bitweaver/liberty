@@ -48,6 +48,9 @@
 							{if $contentObject->mInfo.format_guid eq $plugin.plugin_guid} checked="checked"
 							{elseif !$contentObject->mInfo.format_guid and $plugin.plugin_guid eq $gBitSystem->getConfig('default_format', 'tikiwiki')} checked="checked"
 							{/if} onclick="
+								{if $gBitSystem->isPackageActive('ckeditor')}
+									if($(this).val() == 'bithtml') { createCkEditor('{$textarea_id}'); } else { destroyCkEditor('{$textarea_id}'); }
+								{/if}
 								{if $gBitSystem->isPackageActive('quicktags')}
 									{foreach from=$gLibertySystem->mPlugins item=tag key=guid}
 										{if $tag.is_active eq 'y' and $tag.edit_field and $tag.plugin_type eq 'format'}
@@ -68,7 +71,7 @@
 					{if $plugin.plugin_guid == "tikiwiki"}
 						{if !$gBitSystem->isFeatureActive('content_force_allow_html')}
 							{if $gBitUser->hasPermission( 'p_liberty_enter_html' ) || $gBitSystem->isFeatureActive('content_allow_html')}
-								&nbsp;<input type="checkbox" name="preferences[content_enter_html]" value="y" id="html" {if $contentObject->mPrefs.content_enter_html}checked="checked" {/if}/> {tr}Allow HTML{/tr}
+								<label class="inline-block checkbox"><input type="checkbox" name="preferences[content_enter_html]" value="y" id="{$textarea_id}-html" {if $contentObject->mPrefs.content_enter_html}{if $gBitSystem->isPackageActive('ckeditor')}contenteditable="true"{/if} checked="checked" {/if}/> {tr}Allow HTML{/tr}</label>
 							{elseif is_object($contentObject) && $contentObject->getPreference( 'content_enter_html' )}
 								[ {tr}HTML will remain as HTML{/tr} ]
 							{else}
