@@ -15,8 +15,8 @@
 				<input type="hidden" name="i18n[from_id]" value="{$translateFrom->mContentId}" />
 			{/if}
 			<select name="i18n[lang_code]" id="lang_code">
-				{foreach from=$translationsList key=langCode item=lang}
-					<option value="{$langCode}" {if $smarty.request.i18n.lang_code==$langCode || $contentObject->mInfo.lang_code==$langCode || ( $langCode==$gBitSystem->getConfig('bitlanguage') && !$smarty.request.i18n.lang_code && !$contentObject->getField('lang_code') )}selected="selected" {/if}>{$lang.native_name}</option>
+				{foreach from=$translationsList key=codeKey item=lang}
+					<option value="{$codeKey}" {if $smarty.request.i18n.lang_code==$codeKey || $langCode==$codeKey || ($codeKey==$gBitSystem->getConfig('bitlanguage') && !$smarty.request.i18n.lang_code && !$langCode)}selected="selected" {/if}>{$lang.native_name}</option>
 				{/foreach}
 			</select>
 			{formhelp note="The language of this page"}
@@ -45,8 +45,8 @@
 				{forminput label="radio"}
 					{if $numformat > 1}
 							<input type="radio" name="{$format_guid_variable|default:"format_guid"}" value="{$plugin.edit_field}"
-							{if $contentObject->mInfo.format_guid eq $plugin.plugin_guid} checked="checked"
-							{elseif !$contentObject->mInfo.format_guid and $plugin.plugin_guid eq $gBitSystem->getConfig('default_format', 'tikiwiki')} checked="checked"
+							{if $formatGuid eq $plugin.plugin_guid} checked="checked"
+							{elseif !$formatGuid and $plugin.plugin_guid eq $gBitSystem->getConfig('default_format', 'tikiwiki')} checked="checked"
 							{/if} onclick="
 								{if $gBitSystem->isPackageActive('ckeditor')}
 									if($(this).val() == 'bithtml') { createCkEditor('{$textarea_id}'); } else { destroyCkEditor('{$textarea_id}'); }
@@ -104,4 +104,11 @@
 	<input type="hidden" name="{$format_guid_variable|default:"format_guid"}" value="{if $numformat eq 1}{$singleplugin.edit_field}{else}{$gBitSystem->getConfig('default_format','tikiwiki')}{/if}" />
 {/if}
 
+{if $gBitSystem->isPackageActive('ckeditor') && $formatGuid=='bithtml'}
+<script type="text/javascript">
+$(document).ready( function() {
+createCkEditor('{$textarea_id}');
+} );
+</script>
+{/if}
 {/strip}
