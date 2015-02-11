@@ -56,7 +56,8 @@ function data_img_help() {
 }
 
 function data_img( $pData, $pParams ) {
-	$img_style = '';
+	$cssStyle = '';
+	$cssClass = '';
 
 	foreach( $pParams as $key => $value ) {
 		if( !empty( $value ) ) {
@@ -65,15 +66,18 @@ function data_img( $pData, $pParams ) {
 				case 'width':
 				case 'height':
 					if( preg_match( "/^\d+(em|px|%|pt)$/", trim( $value ) ) ) {
-						$img_style .= $key.':'.$value.';';
+						$cssStyle .= $key.':'.$value.';';
 					} elseif( preg_match( "/^\d+$/", $value ) ) {
-						$img_style .= $key.':'.$value.'px;';
+						$cssStyle .= $key.':'.$value.'px;';
 					}
 					// remove values from the hash that they don't get used in the div as well
 					$pParams[$key] = NULL;
 					break;
+				case 'class':
+					$cssClass .= $value.' ';
+					break;
 				case 'style':
-					$img_style .= ';'.$value;
+					$cssStyle .= ';'.$value;
 					break;
 			}
 		}
@@ -89,7 +93,8 @@ function data_img( $pData, $pParams ) {
 				' alt="'.  $alt.'"'.
 				' title="'.$alt.'"'.
 				' src="'  .$pParams['src'].'"'.
-				' style="'.$img_style.'"'.
+				' style="'.$cssStyle.'"'.
+				' class="'.$cssClass.'"'.
 			' />';
 
 		// if this image is linking to something, wrap the image with the <a>
