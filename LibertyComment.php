@@ -131,7 +131,7 @@ class LibertyComment extends LibertyMime {
 		} else {
 			$dupeQuery = "SELECT `data` FROM `".BIT_DB_PREFIX."liberty_content` lc INNER JOIN `".BIT_DB_PREFIX."liberty_comments` lcom ON (lc.`content_id`=lcom.`content_id`) WHERE `user_id`=? AND `content_type_guid`='".BITCOMMENT_CONTENT_TYPE_GUID."' AND `ip`=? AND lcom.`root_id`=? ORDER BY `created` DESC";
 			if( $lastPostData = $this->mDb->getOne( $dupeQuery, array( $gBitUser->mUserId, $_SERVER['REMOTE_ADDR'], $pParamHash['root_id'] ) ) ) {
-				if( trim( $lastPostData ) == trim( $pParamHash['edit'] ) ) {
+				if( empty( $this->mCommentId ) && trim( $lastPostData ) == trim( $pParamHash['edit'] ) ) {
 					$this->mErrors['store'] = tra( 'Duplicate comment.' );
 				}
 			}
@@ -151,8 +151,6 @@ class LibertyComment extends LibertyMime {
 	}
 
 	function storeComment( &$pParamHash ) {
-
-
 		$this->mDb->StartTrans();
 		if( $this->verifyComment($pParamHash) && LibertyMime::store( $pParamHash ) ) {
 			if (!$this->mCommentId) {
@@ -481,12 +479,9 @@ class LibertyComment extends LibertyMime {
 	* @param array mInfo type hash of data to be used to provide base data
 	* @return string Descriptive title for the object
 	*/
-	function getTitle( $pHash=NULL, $pDefault=TRUE ) {
+	public static function getTitleFromHash( $pHash, $pDefault=TRUE ) {
 		global $gBitSmarty;
 		$ret = NULL;
-		if( empty( $pHash ) ) {
-			$pHash = &$this->mInfo;
-		}
 		if( !empty( $pHash['title'] ) ) {
 			$ret = $pHash['title'];
 		} elseif( !empty( $pHash['created'] ) ) {

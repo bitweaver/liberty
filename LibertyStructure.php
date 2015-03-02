@@ -89,7 +89,7 @@ class LibertyStructure extends LibertyBase {
 				}
 			}
 			if( !empty( $type['content_object'] ) && is_object( $type['content_object'] ) ) {
-				$ret['title'] = $type['content_object']->getTitle( $ret );
+				$ret['title'] = $type['content_object']->getTitleFromHash( $ret );
 			}
 		}
 
@@ -262,7 +262,7 @@ class LibertyStructure extends LibertyBase {
 						}
 					}
 					if( !empty( $type['content_object'] ) && is_object( $type['content_object'] ) ) {
-						$aux['title'] = $type['content_object']->getTitle( $aux );
+						$aux['title'] = $type['content_object']->getTitleFromHash( $aux );
 					}
 					$ret[$aux['structure_id']] = $aux;
 				}
@@ -935,7 +935,7 @@ class LibertyStructure extends LibertyBase {
 						}
 					}
 					if( !empty( $type['content_object'] ) && is_object( $type['content_object'] ) ) {
-						$res['title'] = $type['content_object']->getTitle( $res );
+						$res['title'] = $type['content_object']->getTitleFromHash( $res );
 					}
 					if ($res['structure_id'] != $id) {
 						$sub = $this->buildSubtreeToc( $res['structure_id'],$order,$res['prefix'], $pPrefixDepth, ($pDepth + 1) );
