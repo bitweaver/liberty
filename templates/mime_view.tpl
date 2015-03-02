@@ -22,19 +22,11 @@
 		{/if}
 
 		{legend legend="Content this attachment belongs to"}
-			<div class="form-group">
-				{formlabel label="Title"}
-				{forminput}
-					<a href="{$gContent->getDisplayUrl()}">{$gContent->getTitle()}</a>
-				{/forminput}
-			</div>
-
-			<div class="form-group">
-				{formlabel label="Content Type"}
-				{forminput}
-					{$gContent->getContentTypeName()}
-				{/forminput}
-			</div>
+			<ol>
+				<li>
+					<a href="{$gContent->getDisplayUrl()}">{$gContent->getTitle()}</a> <small>({$gContent->getContentTypeName()})</small>
+				</li>
+			</ol>
 		{/legend}
 
 		{if $usage}
