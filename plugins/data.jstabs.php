@@ -35,8 +35,8 @@ $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAJSTABS )
 
 function data_jstabs( $pData, $pParams, $pCommonObject ) {
 	global $gBitSmarty;
-	$gBitSmarty->loadPlugin( 'smarty_modifier_jstab' );
-	$gBitSmarty->loadPlugin( 'smarty_modifier_jstabs' );
+	$gBitSmarty->loadPlugin( 'smarty_block_jstab' );
+	$gBitSmarty->loadPlugin( 'smarty_block_jstabs' );
 
 	// collect all tabs
 	$tabs = preg_split( "!\n---tab:\s*!i", $pData );
