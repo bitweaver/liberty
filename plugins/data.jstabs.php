@@ -57,13 +57,13 @@ function data_jstabs( $pData, $pParams, $pCommonObject ) {
 				$parseHash['no_cache'] = TRUE;
 				$parseHash['data'] = $split[2];
 
-				$html .= smarty_block_jstab( $params, $pCommonObject->parseData( $parseHash ), $gBitSmarty );
+				$html .= smarty_block_jstab( $params, $pCommonObject->parseData( $parseHash ), $gBitSmarty, '' );
 			}
 		}
 	}
 
 	if( !empty( $html )) {
-		return smarty_block_jstabs( array(), $html, $gBitSmarty );
+		return smarty_block_jstabs( array(), $html, $gBitSmarty, '' );
 	} else {
 		return ' ';
 	}
