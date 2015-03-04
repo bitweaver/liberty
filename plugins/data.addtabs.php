@@ -71,7 +71,7 @@ function data_addtabs($data, $params) {
 		if( isset( ${'tab'.$i} ) ) {
 			if (is_numeric( ${'tab'.$i} ) ) {
 				if( $obj = LibertyBase::getLibertyObject( ${'tab'.$i} ) ) {
-					$ret .= '<div class="tabpage"><h4 id="tab_'.$id.'_'.$i.'" class="tab">'.$obj->getTitle().'</h4>'.$obj->getPreview().'</div>';
+					$ret .= '<div class="tabpage"><h4 id="tab_'.$id.'_'.$i.'" class="tab">'.$obj->getTitle().'</h4>'.$obj->mInfo['parsed_data'].'</div>';
 					$good=True;
 				}
 			}
