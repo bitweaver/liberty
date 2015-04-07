@@ -46,7 +46,7 @@
 					{if $numformat > 1}
 							<input type="radio" name="{$format_guid_variable|default:"format_guid"}" value="{$plugin.edit_field}"
 							{if $formatGuid eq $plugin.plugin_guid} checked="checked"
-							{elseif !$formatGuid and $plugin.plugin_guid eq $gBitSystem->getConfig('default_format', 'tikiwiki')} checked="checked"
+							{elseif !$formatGuid and $plugin.plugin_guid eq $gBitSystem->getConfig('default_format', 'tikiwiki')} checked="checked" {assign var=formatGuid value='tikiwiki'}
 							{/if} onclick="
 								{if $gBitSystem->isPackageActive('ckeditor')}
 									if($(this).val() == 'bithtml') { createCkEditor('{$textarea_id}'); } else { destroyCkEditor('{$textarea_id}'); }
@@ -71,7 +71,7 @@
 					{if $plugin.plugin_guid == "tikiwiki"}
 						{if !$gBitSystem->isFeatureActive('content_force_allow_html')}
 							{if $gBitUser->hasPermission( 'p_liberty_enter_html' ) || $gBitSystem->isFeatureActive('content_allow_html')}
-								<label class="inline-block checkbox"><input type="checkbox" name="preferences[content_enter_html]" value="y" id="{$textarea_id}-html" {if $contentObject->mPrefs.content_enter_html}{if $gBitSystem->isPackageActive('ckeditor')}contenteditable="true"{/if} checked="checked" {/if}/> {tr}Allow HTML{/tr}</label>
+								<label class="inline-block checkbox"><input type="checkbox" name="preferences[content_enter_html]" value="y" id="{$textarea_id}-html" {if $contentObject->mPrefs.content_enter_html}{if $gBitSystem->isPackageActive('ckeditor')}contenteditable="true"{/if} checked="checked" {/if} {*if $gBitSystem->isPackageActive('ckeditor')}onclick="if($(this).is(':checked')) createCkEditor('{$textarea_id}'); else destroyCkEditor('{$textarea_id}');{/if*}"/> {tr}Allow HTML{/tr}</label>
 							{elseif is_object($contentObject) && $contentObject->getPreference( 'content_enter_html' )}
 								[ {tr}HTML will remain as HTML{/tr} ]
 							{else}
@@ -104,7 +104,7 @@
 	<input type="hidden" name="{$format_guid_variable|default:"format_guid"}" value="{if $numformat eq 1}{$singleplugin.edit_field}{else}{$gBitSystem->getConfig('default_format','tikiwiki')}{/if}" />
 {/if}
 
-{if $gBitSystem->isPackageActive('ckeditor') && $formatGuid=='bithtml'}
+{if $gBitSystem->isPackageActive('ckeditor') && ($formatGuid=='bithtml')}{* || (is_object($contentObject) && $formatGuid=='tikiwiki' && $contentObject->getPreference('content_enter_html')))} *}
 <script type="text/javascript">
 $(document).ready( function() {
 createCkEditor('{$textarea_id}');
