@@ -4,34 +4,35 @@
  * @package  liberty
  * @subpackage plugins_data
  */
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2004, bitweaver.org
-// +----------------------------------------------------------------------+
-// | All Rights Reserved. See below for details and a complete list of authors.
-// | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See http://www.gnu.org/copyleft/lesser.html for details
-// |
-// | For comments, please use phpdocu.sourceforge.net documentation standards!!!
-// | -> see http://phpdocu.sourceforge.net/
-// +----------------------------------------------------------------------+
-// | Author: StarRider <starrrider@users.sourceforge.net>
-// +----------------------------------------------------------------------+
-// $Id$
+ * +----------------------------------------------------------------------+
+ * | Copyright (c) 2015, bitweaver.org
+ * +----------------------------------------------------------------------+
+ * | All Rights Reserved. See below for details and a complete list of authors.
+ * | Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See http://www.gnu.org/copyleft/lesser.html for details
+ * |
+ * | For comments, please use phpdocu.sourceforge.net documentation standards!!!
+ * | -> see http://phpdocu.sourceforge.net/
+ * +----------------------------------------------------------------------+
+ * | Author: StarRider <starrrider@users.sourceforge.net>
+ * | port to jstabs <lester@lsces.co.uk>
+ * +----------------------------------------------------------------------+
+ */
 
 /**
  * definitions
  */
-define( 'PLUGIN_GUID_DATAADDTABS', 'dataaddtabs' );
+define( 'PLUGIN_GUID_DATAADDJSTABS', 'dataaddjstabs' );
 global $gLibertySystem;
 global $gContent;
 $pluginParams = array (
-	'tag' => 'ADDTABS',
+	'tag' => 'ADDJSTABS',
 	'auto_activate' => FALSE,
 	'requires_pair' => FALSE,
-	'load_function' => 'data_addtabs',
-	'title' => 'AddTabs',
-	'help_page' => 'DataPluginAddTabs',
+	'load_function' => 'data_addjstabs',
+	'title' => 'AddJSTabs',
+	'help_page' => 'DataPluginAddJSTabs',
 	'description' => tra("Will join the contents from several sources in a Tabbed Interface."),
-	'help_function' => 'data_addtabs_help',
+	'help_function' => 'data_addjstabs_help',
 	'syntax' => "{ADDTABS tab1= tab2= tab3= . . . tab99= }",
 	'plugin_type' => DATA_PLUGIN
 );
@@ -41,7 +42,7 @@ $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAADDTABS 
 /**
  * Help Function
  */
-function data_addtabs_help() {
+function data_addjstabs_help() {
 	$help =
 		'<table class="data help">'
 			.'<tr>'
@@ -52,7 +53,7 @@ function data_addtabs_help() {
 			.'<tr class="odd">'
 				.'<td>tab1 - tab99</td>'
 				.'<td>' . tra( "numeric") . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Will create a Tab interface on a page. The name on each tab is the name given to the imported page.The value sent with the TabX parameter is a Numeric Content Id. This allows blog posts, images, wiki pages . . . (and more) to be added.")
+				.'<td>' . tra( "Will create a Tab interface on a page using jstab format. The name on each tab is the name given to the imported page.The value sent with the TabX parameter is a Numeric Content Id. This allows blog posts, images, wiki pages . . . (and more) to be added.")
 				. tra("<br /><strong>Note 1:</strong> A listing of Content Id's can be found ")
 				. '<a href="'.LIBERTY_PKG_URL.'list_content.php" title="Launch BitWeaver Content Browser in New Window" onkeypress="javascript:BitBase.popUpWin(this.href,\'standard\',800,800);" onclick="javascript:BitBase.popUpWin(this.href,\'standard\',800,800);return false;">' . tra( "Here" ) . '</a>'
 				. tra("<br /><strong>Note 2:</strong> The order used when the tabs are specified does not matter. The Tabname does - Tab1 is always first and Tab99 will always be last.</td>")
@@ -62,16 +63,22 @@ function data_addtabs_help() {
 	return $help;
 }
 
-function data_addtabs($data, $params) {
+function data_addjstabs($data, $params) {
+	global $gBitSmarty;
+	$gBitSmarty->loadPlugin( 'smarty_block_jstab' );
+	$gBitSmarty->loadPlugin( 'smarty_block_jstabs' );
+
 	extract ($params, EXTR_SKIP);
 	$id = 1000000 * microtime();
-	$ret = '<div class="tabpane" id="id_'.$id.'">';
+	$html = '';
 	$good = false;
+
 	for ($i = 1; $i <= 99; $i++) {
 		if( isset( ${'tab'.$i} ) ) {
 			if (is_numeric( ${'tab'.$i} ) ) {
 				if( $obj = LibertyBase::getLibertyObject( ${'tab'.$i} ) ) {
-					$ret .= '<div class="tabpage"><h4 id="tab_'.$id.'_'.$i.'" class="tab">'.$obj->getTitle().'</h4>'.$obj->mInfo['parsed_data'].'</div>';
+					$params['title'] = $obj->getTitle();
+					$html .= smarty_block_jstab( $params, $obj->mInfo['parsed_data'], $gBitSmarty, '' );
 					$good=True;
 				}
 			}
@@ -80,10 +87,13 @@ function data_addtabs($data, $params) {
 			}
 		}
 	}
-	$ret .= "</div><script type=\"text/javascript\">//<![CDATA[\nsetupAllTabs()\n//]]></script>";
 	if( !$good ) {
-		$ret = tra("The plugin AddTabs requires valid parameters. Numeric content id numbers can use the parameter names 'tab1' thru 'tab99'");
+		$html = tra("The plugin AddTabs requires valid parameters. Numeric content id numbers can use the parameter names 'tab1' thru 'tab99'");
 	}
-	return $ret;
+	if( !empty( $html )) {
+		return smarty_block_jstabs( array(), $html, $gBitSmarty, '' );
+	} else {
+		return $html;
+	}
 }
 ?>
