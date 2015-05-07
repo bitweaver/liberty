@@ -35,8 +35,8 @@ $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATAJSTABS )
 
 function data_jstabs( $pData, $pParams, $pCommonObject ) {
 	global $gBitSmarty;
-	$gBitSmarty->loadPlugin( 'smarty_modifier_jstab' );
-	$gBitSmarty->loadPlugin( 'smarty_modifier_jstabs' );
+	$gBitSmarty->loadPlugin( 'smarty_block_jstab' );
+	$gBitSmarty->loadPlugin( 'smarty_block_jstabs' );
 
 	// collect all tabs
 	$tabs = preg_split( "!\n---tab:\s*!i", $pData );
@@ -57,13 +57,13 @@ function data_jstabs( $pData, $pParams, $pCommonObject ) {
 				$parseHash['no_cache'] = TRUE;
 				$parseHash['data'] = $split[2];
 
-				$html .= smarty_block_jstab( $params, $pCommonObject->parseData( $parseHash ), $gBitSmarty );
+				$html .= smarty_block_jstab( $params, $pCommonObject->parseData( $parseHash ), $gBitSmarty, '' );
 			}
 		}
 	}
 
 	if( !empty( $html )) {
-		return smarty_block_jstabs( array(), $html, $gBitSmarty );
+		return smarty_block_jstabs( array(), $html, $gBitSmarty, '' );
 	} else {
 		return ' ';
 	}
