@@ -85,12 +85,7 @@ function data_img( $pData, $pParams ) {
 	if( !empty( $pParams['src'] ) ) {
 		// set up image first
 		$alt = ( !empty( $wrapper['description'] ) ? $wrapper['description'] : tra( 'Image' ) );
-		$ret = '<img'.
-				' alt="'.  $alt.'"'.
-				' title="'.$alt.'"'.
-				' src="'  .$pParams['src'].'"'.
-				' style="'.$img_style.'"'.
-			' />';
+		$ret = '<img alt="'.$alt.'" title="'.$alt.'" src="'.$pParams['src'].'" style="'.$img_style.'" class="img-responsive '.( !empty( $wrapper['class'] ) ? $wrapper['class'] : '').'"/>';
 
 		// if this image is linking to something, wrap the image with the <a>
 		if( !empty( $wrapper['link'] ) ) {
@@ -99,7 +94,7 @@ function data_img( $pData, $pParams ) {
 
 		// finally, wrap the image
 		if( !empty( $wrapper['style'] ) || !empty( $class ) || !empty( $wrapper['description'] ) ) {
-			$ret = '<'.$wrapper['wrapper'].' class="'.( !empty( $wrapper['class'] ) ? $wrapper['class'] : "img-plugin" ).'" style="'.$wrapper['style'].'">'.$ret.( !empty( $wrapper['description'] ) ? '<br />'.$wrapper['description'] : '' ).'</'.$wrapper['wrapper'].'>';
+			$ret = '<'.$wrapper['wrapper'].' class="img-plugin" style="'.$wrapper['style'].'">'.$ret.( !empty( $wrapper['description'] ) ? '<br />'.$wrapper['description'] : '' ).'</'.$wrapper['wrapper'].'>';
 		}
 	} else {
 		$ret = '<span class="warning">'.tra( 'When using <strong>{img}</strong> the <strong>src</strong> parameter is required.' ).'</span>';
