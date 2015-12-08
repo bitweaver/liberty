@@ -479,7 +479,7 @@ class LibertyComment extends LibertyMime {
 	* @param array mInfo type hash of data to be used to provide base data
 	* @return string Descriptive title for the object
 	*/
-	public static function getTitleFromHash( $pHash, $pDefault=TRUE ) {
+	public static function getTitleFromHash( &$pHash, $pDefault=TRUE ) {
 		global $gBitSmarty;
 		$ret = NULL;
 		if( !empty( $pHash['title'] ) ) {
