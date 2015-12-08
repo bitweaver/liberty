@@ -35,4 +35,7 @@
 
 			{formhelp note=$textarea_help}
 		{/forminput}
+		{if $gBitSystem->isPackageActive('ckeditor')}
+			{assign var=wysiwygEdit value=true}
+		{/if}
 	</div>
