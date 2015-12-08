@@ -23,7 +23,7 @@ define( 'BITCOMMENT_CONTENT_TYPE_GUID', 'bitcomment' );
 class LibertyComment extends LibertyMime {
 	var $mCommentId;
 
-	function LibertyComment($pCommentId = NULL, $pContentId = NULL, $pInfo = NULL) {
+	function __construct($pCommentId = NULL, $pContentId = NULL, $pInfo = NULL) {
 		parent::__construct();
 		$this->registerContentType( BITCOMMENT_CONTENT_TYPE_GUID, array(
 				'content_type_guid' => BITCOMMENT_CONTENT_TYPE_GUID,
