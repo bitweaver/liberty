@@ -712,9 +712,24 @@ function liberty_generate_thumbnails( $pFileHash ) {
 			if( function_exists( 'liberty_rasterize_pdf' ) && $rasteredFile = liberty_rasterize_pdf( $pFileHash['source_file'] ) ) {
 				$pFileHash['source_file'] = $rasteredFile;
 			} else {
-				MagickSetImageUnits( $magickWand, MW_PixelsPerInchResolution );
-				$rez =  empty( $pFileHash['max_width'] ) || $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION ? 250 : 72;
-				MagickSetResolution( $magickWand, 300, 300 );
+				$magickWand = NewMagickWand();
+				if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand )) {
+					MagickSetFormat( $magickWand, 'JPG' );
+					if( MagickGetImageColorspace( $magickWand ) == MW_CMYKColorspace ) {
+						MagickProfileImage( $magickWand,"ICC", UTIL_PKG_PATH.'icc/srgb.icm' );
+						MagickSetImageColorspace( $magickWand, MW_sRGBColorspace );
+					}
+
+					$imgWidth = MagickGetImageWidth( $magickWand );
+					$imgHeight = MagickGetImageHeight( $magickWand );
+
+					MagickSetImageUnits( $magickWand, MW_PixelsPerInchResolution );
+					MagickSetResolution( $magickWand, 300, 300 );
+					$rasteredFile = dirname( $pFileHash['source_file'] ).'/original.jpg';
+					if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickWriteImage( $magickWand, $rasteredFile ), $magickWand )) {
+						$pFileHash['source_file'] = $rasteredFile;
+					}
+				}
 			}
 		} else {
 			$pFileHash['dest_base_name'] = 'original';
