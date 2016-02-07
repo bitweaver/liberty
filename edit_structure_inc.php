@@ -42,7 +42,7 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 		$gContent = LibertyContent::getLibertyObject( $gStructure->getField( 'content_id' ) );
 		$gContent->verifyUpdatePermission();
 	}
-	$gBitSmarty->assign_by_ref( 'gStructure', $gStructure );
+	$gBitSmarty->assignByRef( 'gStructure', $gStructure );
 	$gBitSmarty->assign( 'editingStructure', TRUE );
 	$gBitSmarty->assign('structureInfo', $gStructure->mInfo);
 
@@ -63,7 +63,7 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 			} else {
 				$feedback['error'] = $gStructure->mErrors;
 			}
-			$gBitSmarty->assign_by_ref('feedback', $feedback);
+			$gBitSmarty->assignByRef('feedback', $feedback);
 		} elseif( $_REQUEST["action"] == 'remove' ) {
 			$gBitSystem->setBrowserTitle( tra('Confirm removal of ').$gContent->getTitle() );
 			$formHash['action'] = 'remove';
@@ -119,7 +119,7 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 	$structureTocId = $rootStructure->mStructureId;
 	$gBitSmarty->assign( 'structureToc', $rootStructure->getToc() );
 	$gBitSmarty->assign( 'structureTocId', $structureTocId );
-	$gBitSmarty->assign_by_ref('feedback', $feedback);
+	$gBitSmarty->assignByRef('feedback', $feedback);
 }
 	$gBitSmarty->assign( 'editingStructure', FALSE );
 

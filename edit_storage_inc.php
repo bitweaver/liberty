@@ -44,7 +44,7 @@ if( !empty( $_REQUEST['deleteAttachment'] )) {
 
 	// in case we have deleted attachments
 	// seems like there should be a better way to do this -- maybe original assign should have been by reference?
-	$gBitSmarty->clear_assign( 'gContent' );
+	$gBitSmarty->clearAssign( 'gContent' );
 	$gBitSmarty->assign( 'gContent', $gContent );
 }
 

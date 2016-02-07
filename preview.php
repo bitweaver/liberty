@@ -20,7 +20,7 @@ include_once( LIBERTY_PKG_PATH.'lookup_content_inc.php' );
 // If we can't find one make an invalid one to keep the template happy.
 if (empty($gContent)) {
 	$gContent = new LibertyContent();
-	$gBitSmarty->assign_by_ref('gContent', $gContent);
+	$gBitSmarty->assignByRef('gContent', $gContent);
 }
 // Should we tell the template to generate a closeclick icon
 if (isset($_REQUEST['closeclick'])) {

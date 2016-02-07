@@ -51,9 +51,9 @@ foreach( $gLibertySystem->mPlugins as $guid => $plugin ) {
 	$guidSort[$guid] = $plugin['plugin_guid'];
 }
 array_multisort( $typeSort, SORT_ASC, $guidSort, SORT_ASC, $gLibertySystem->mPlugins );
-$gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
+$gBitSmarty->assignByRef( 'gLibertySystem', $gLibertySystem );
 ksort( $types );
-$gBitSmarty->assign_by_ref( 'pluginTypes', $types );
+$gBitSmarty->assignByRef( 'pluginTypes', $types );
 
 $gBitSystem->display( 'bitpackage:liberty/admin_plugins.tpl', tra( 'Liberty Plugins' ), array( 'display_mode' => 'admin' ));
 ?>

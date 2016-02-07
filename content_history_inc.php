@@ -30,8 +30,8 @@ if( isset( $_REQUEST["delete"] ) && isset( $_REQUEST["hist"] )) {
 	if( $version = $gContent->getHistory( $_REQUEST["preview"] )) {
 		$version['data'][0]['no_cache'] = TRUE;
 		$version['data'][0]['parsed_data'] = $gContent->parseData( $version["data"][0] );
-		$gBitSmarty->assign_by_ref( $smartyContentRef, $version['data'][0] );
-		$gBitSmarty->assign_by_ref( 'version', $_REQUEST["preview"] );
+		$gBitSmarty->assignByRef( $smartyContentRef, $version['data'][0] );
+		$gBitSmarty->assignByRef( 'version', $_REQUEST["preview"] );
 	}
 
 } elseif( @BitBase::verifyId( $_REQUEST["diff2"] ) ) {
@@ -70,9 +70,9 @@ if( isset( $_REQUEST["delete"] ) && isset( $_REQUEST["hist"] )) {
 	$from_page = $gContent->getHistory( $from_version );
 	$from_page['data'][0]['no_cache'] = TRUE;
 	$gBitSmarty->assign( 'compare', 'y' );
-	$gBitSmarty->assign_by_ref( 'diff_from', $gContent->parseData( $from_page['data'][0] ) );
-	$gBitSmarty->assign_by_ref( 'diff_to', $gContent->parseData() );
-	$gBitSmarty->assign_by_ref( 'version_from', $from_version );
+	$gBitSmarty->assignByRef( 'diff_from', $gContent->parseData( $from_page['data'][0] ) );
+	$gBitSmarty->assignByRef( 'diff_to', $gContent->parseData() );
+	$gBitSmarty->assignByRef( 'version_from', $from_version );
 
 } elseif( @BitBase::verifyId( $_REQUEST["rollback"] )) {
 	$gContent->verifyUserPermission( !empty( $rollbackPerm ) ? $rollbackPerm : $gContent->mUpdateContentPerm );

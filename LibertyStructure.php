@@ -995,11 +995,11 @@ class LibertyStructure extends LibertyBase {
 		$ret='';
 		if ($structureTree != '') {
 			$gBitSmarty->verifyCompileDir();
-			$gBitSmarty->assign_by_ref( 'structureId', $this->mStructureId );
+			$gBitSmarty->assignByRef( 'structureId', $this->mStructureId );
 			$ret.=$gBitSmarty->fetch( "bitpackage:liberty/structure_toc_startul.tpl");
 			foreach($structureTree as $leaf) {
 				//echo "<br />";print_r($leaf);echo "<br />";
-				$gBitSmarty->assign_by_ref('structure_tree',$leaf);
+				$gBitSmarty->assignByRef('structure_tree',$leaf);
 				$gBitSmarty->assign('showdesc',$showdesc);
 				$gBitSmarty->assign('numbering',$numbering);
 				$ret .= $gBitSmarty->fetch( "bitpackage:liberty/structure_toc_leaf.tpl");

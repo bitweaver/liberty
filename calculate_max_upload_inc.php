@@ -21,5 +21,5 @@ if( $gBitSystem->isPackageActive( 'quota' ) ) {
 	require_once( QUOTA_PKG_PATH.'calculate_quota_inc.php' );
 }
 
-$gBitSmarty->assign_by_ref( 'uploadMax', $uploadMax );
+$gBitSmarty->assignByRef( 'uploadMax', $uploadMax );
 ?>

@@ -41,7 +41,7 @@ global $commentsLib, $gBitSmarty, $gBitSystem, $gBitThemes;
 
 $postComment = array();
 $formfeedback = array( 'error' => array() );
-$gBitSmarty->assign_by_ref( 'formfeedback', $formfeedback );
+$gBitSmarty->assignByRef( 'formfeedback', $formfeedback );
 
 // make sure that we don't feed ajax comments if we don't have javascript enabled
 if( !$gBitThemes->isJavascriptEnabled() ) {
@@ -159,7 +159,7 @@ if( $gBitSystem->isPackageActive( 'lcconfig' ) ){
 if( !empty( $_REQUEST['post_comment_request'] ) && $_REQUEST['post_comment_request'] == 'y' && !$gContent->hasUserPermission( 'p_liberty_post_comments' ) ) {
 	$gBitSystem->fatalPermission( 'p_liberty_post_comments' );
 }
-$gBitSmarty->assign_by_ref('post_comment_request', $post_comment_request);
+$gBitSmarty->assignByRef('post_comment_request', $post_comment_request);
 
 if( !empty( $_REQUEST['post_comment_cancel'] ) ) {
 	$postComment = NULL;
@@ -176,7 +176,7 @@ if( !empty( $_REQUEST['post_comment_preview'] )) {
 		$no_js_preview = "n";
 	}
 
-	$gBitSmarty->assign_by_ref( 'no_js_preview', $no_js_preview );
+	$gBitSmarty->assignByRef( 'no_js_preview', $no_js_preview );
 
 	$postComment['user_id'] = $gBitUser->mUserId;
 	$postComment['title'] = $_REQUEST['comment_title'];
@@ -315,7 +315,7 @@ if( $gContent->hasUserPermission( 'p_liberty_read_comments' )) {
 		}
 	}
 
-	$gBitSmarty->assign_by_ref( 'comments', $commentsTree );
+	$gBitSmarty->assignByRef( 'comments', $commentsTree );
 	$gBitSmarty->assign( 'maxComments', $maxComments );
 
 	$numCommentPages = ceil( $numComments / $maxComments );
@@ -331,9 +331,9 @@ if( $gContent->hasUserPermission( 'p_liberty_read_comments' )) {
 			'comments_page' => ( empty( $comments_on_separate_page ) ? FALSE : $comments_on_separate_page ),
 			'ianchor'       => 'editcomments',
 			);
-	$gBitSmarty->assign_by_ref( 'commentsPgnHash', $commentsPgnHash );
-	$gBitSmarty->assign_by_ref( 'postComment', $postComment );
-	$gBitSmarty->assign_by_ref( 'gComment', $gComment );
+	$gBitSmarty->assignByRef( 'commentsPgnHash', $commentsPgnHash );
+	$gBitSmarty->assignByRef( 'postComment', $postComment );
+	$gBitSmarty->assignByRef( 'gComment', $gComment );
 
 	$gBitSmarty->assign( 'currentTimestamp', time() );
 	$gBitSmarty->assign( 'comments_return_url', $comments_return_url );
