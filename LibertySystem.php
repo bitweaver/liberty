@@ -576,7 +576,7 @@ class LibertySystem extends BitSingleton {
 	 * @return none
 	 **/
 	function loadContentTypes( $pCacheTime=BIT_QUERY_CACHE_TIME ) {
-		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."liberty_content_types`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
+		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."liberty_content_types`", FALSE, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
 			while( $row = $rs->fetchRow() ) {
 				// translate name
 				// content_description backward compatibility for now
