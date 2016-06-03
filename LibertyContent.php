@@ -1959,6 +1959,32 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	}
 
 	/**
+	 * Get the time this object was created
+	 *
+	 * @return int Unix epoch of time object was created
+	 */
+	function getTimeCreated() {
+		$ret = NULL;
+		if( $this->isValid() ) {
+			$ret = $this->getField( 'created' );
+		}
+		return $ret;
+	}
+
+	/**
+	 * Get the time this object was last modified
+	 *
+	 * @return int Unix epoch of time object was last modified
+	 */
+	function getTimeModified() {
+		$ret = NULL;
+		if( $this->isValid() ) {
+			$ret = $this->getField( 'last_modified' );
+		}
+		return $ret;
+	}
+
+	/**
 	 * Attempt to create a brief description of this object, most useful for <meta name="description" />
 	 *
 	 * @return array list of aliases
