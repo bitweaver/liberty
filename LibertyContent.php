@@ -137,6 +137,10 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		}
 	}
 
+	public function __sleep() {
+		return array( 'mContentId', 'mInfo' );
+	}
+
 	/**
 	 * load Assume a derived class has joined on the liberty_content table, and loaded it's columns already.
 	 *
