@@ -46,6 +46,10 @@ class LibertyComment extends LibertyMime {
 	}
 
 
+	public function __sleep() {
+		return array_merge( parent::__sleep(), array( 'mCommentId', 'mRootObj' ) );
+	}
+
 	function loadComment() {
 		global $gBitSystem, $gBitUser;
 		if (!$this->verifyId($this->mCommentId) && !$this->verifyId($this->mContentId)) {
