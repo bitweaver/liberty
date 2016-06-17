@@ -123,6 +123,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 
 	public static function isCacheableClass() {
 		global $gBitSystem;
+		// new feature, cache by default in development systems only
 		return !$gBitSystem->isLive();
 	}
 
@@ -138,7 +139,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	}
 
 	public function __sleep() {
-		return array( 'mContentId', 'mInfo', 'mStructureId', 'mContentTypeGuid', 'mType', 'mUserContentPerms', 'mPrefs', 'mViewContentPerm', 'mUpdateContentPerm', 'mCreateContentPerm', 'mExpungeContentPerm', 'mAdminContentPerm');
+		return array_merge( parent::__sleep(), array( 'mContentId', 'mInfo', 'mStructureId', 'mContentTypeGuid', 'mType', 'mUserContentPerms', 'mPrefs', 'mViewContentPerm', 'mUpdateContentPerm', 'mCreateContentPerm', 'mExpungeContentPerm', 'mAdminContentPerm') );
 	}
 
 	/**
@@ -431,7 +432,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 				$tmpComment->expunge();
 			}
 		}
-		return TRUE;
+		return parent::expunge();
 	}
 
 	/**
@@ -1957,7 +1958,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	function getTitle() {
 		$ret = NULL;
 		if( $this->isValid() ) {
-			$ret = self::getTitleFromHash( $this->mInfo );
+			$ret = static::getTitleFromHash( $this->mInfo );
 		}
 		return $ret;
 	}
@@ -2760,21 +2761,17 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 				$aux['editor']              = (isset( $aux['modifier_real_name'] ) ? $aux['modifier_real_name'] : $aux['modifier_user'] );
 				$aux['user']                = $aux['creator_user'];
 				$aux['user_id']             = $aux['creator_user_id'];
-				// create *one* object for each object *type* to  call virtual methods.
-				if( empty( $type['content_object'] ) ) {
-					include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
-					$type['content_object'] = new $type['handler_class']();
-				}
 				if( !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
+					include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
 					if( $aux['content_type_guid'] == BITUSER_CONTENT_TYPE_GUID ) {
 						// here we provide getDisplay(Link|Url) with user-specific information that we get the correct links to display in pages
 						$userInfo = $gBitUser->getUserInfo( array( 'content_id' => $aux['content_id'] ));
-						$aux['title']        = $type['content_object']->getTitleFromHash( $userInfo );
-						$aux['display_link'] = $type['content_object']->getDisplayLink( $userInfo['login'], $userInfo );
-						$aux['display_url']  = $type['content_object']->getDisplayUrl( $userInfo['login'] );
+						$aux['title']        = $type['handler_class']::getTitleFromHash( $userInfo );
+						$aux['display_link'] = $type['handler_class']::getDisplayLink( $userInfo['login'], $userInfo );
+						$aux['display_url']  = $type['handler_class']::getDisplayUrl( $userInfo['login'] );
 					} else {
-						$aux['title']        = $type['content_object']->getTitleFromHash( $aux );
-						$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
+						$aux['title']        = $type['handler_class']::getTitleFromHash( $aux );
+						$aux['display_link'] = $type['handler_class']::getDisplayLink( $aux['title'], $aux );
 						/**
 						 * @TODO standardize getDisplayUrl params
 						 * nice try, but you can't do this because individual classes have gone off the reservation changing the params they accept
@@ -2785,7 +2782,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 					}
 
 					if( !empty( $pListHash['thumbnail_size'] ) ) {
-						$aux['content_object'] = new $type['handler_class']( NULL, $aux['content_id'] );
+						$aux['content_object'] = static::getList( $aux['content_id'], $aux['content_type_guid'] );
 						if( $aux['content_object']->load( FALSE ) ) {
 							$aux['thumbnail_url'] = $aux['content_object']->getThumbnailUrl( $pListHash['thumbnail_size'] );
 						}

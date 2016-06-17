@@ -48,9 +48,9 @@ class LibertyBase extends BitBase {
 	 *
 	 * @param the content type to be loaded
 	 */
-	function getLibertyClass($pContentGuid) {
+	function getLibertyClass($pContentTypeGuid) {
 		// We can abuse getLibertyObject to do the work
-		$ret = LibertyBase::getLibertyObject('1', $pContentGuid, FALSE);
+		$ret = LibertyBase::getLibertyObject('1', $pContentTypeGuid, FALSE);
 		// Make sure we don't have a content_id set though.
 		unset($ret->mContentId);
 		return $ret;
@@ -64,20 +64,27 @@ class LibertyBase extends BitBase {
 	 * @param call load on the content. Defaults to true.
 	 * @returns object of the appropriate content type class
 	 */
-	public static function getLibertyObject( $pContentId, $pContentGuid=NULL, $pLoadContent = TRUE ) {
+	public static function getLibertyObject( $pContentId, $pContentTypeGuid=NULL, $pLoadContent = TRUE ) {
 		$ret = NULL;
 		global $gLibertySystem, $gBitUser, $gBitSystem;
 
-		if( BitBase::verifyId( $pContentId ) ) {
+		if( static::verifyId( $pContentId ) ) {
 			// remove non integer bits from structure_id and content_id requests
 			// can happen with period's at the end of url's that are email'ed around
+			$typeClass = NULL;
 			$pContentId = preg_replace( '/[\D]/', '', $pContentId );
-			if( empty( $pContentGuid ) ) {
-				$pContentGuid = $gLibertySystem->mDb->getOne( "SELECT `content_type_guid` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=?", array( $pContentId ) );
+			if( empty( $pContentTypeGuid ) ) {
+				$pContentTypeGuid = $gLibertySystem->mDb->getOne( "SELECT `content_type_guid` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=?", array( $pContentId ) );
 			}
-			if( !empty( $pContentGuid ) && isset( $gLibertySystem->mContentTypes[$pContentGuid] ) && $typeClass = $gLibertySystem->getContentClassName( $pContentGuid ) ) {
-				$creator = new $typeClass();
-				$ret = $creator->getNewObject( $typeClass, $pContentId, $pLoadContent );
+			if( !empty( $pContentTypeGuid ) && isset( $gLibertySystem->mContentTypes[$pContentTypeGuid] ) ) {
+				$typeClass = $gLibertySystem->getContentClassName( $pContentTypeGuid );
+			}
+			if( $ret = static::loadFromCache( $pContentId, $typeClass ) ) {
+			} else {
+				if( $typeClass ) {
+					$creator = new $typeClass();
+					$ret = $creator->getNewObject( $typeClass, $pContentId, $pLoadContent );
+				}
 			}
 		}
 		return $ret;

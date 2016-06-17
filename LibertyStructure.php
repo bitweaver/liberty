@@ -425,11 +425,11 @@ class LibertyStructure extends LibertyBase {
 	*/
 	function verifyStructure( &$pParamHash ) {
 		$storeNodes = array();
-		if( !self::getParameter( $pParamHash, 'root_structure_id' ) ) {
+		if( !static::getParameter( $pParamHash, 'root_structure_id' ) ) {
 			$pParamHash['root_structure_id'] = $this->getField( 'root_structure_id' );
 		}
 
-		if( !self::verifyId( $pParamHash['root_structure_id'] ) ) {
+		if( !static::verifyId( $pParamHash['root_structure_id'] ) ) {
 			$this->mErrors['verify_structure'] = tra( "Unknown root structure." );
 		} else {
 			if( !empty( $pParamHash['structure_json'] ) ) {
@@ -585,6 +585,7 @@ class LibertyStructure extends LibertyBase {
 				$result = $this->mDb->query($query,array((int)$pParamHash['max'], (int)$pParamHash['parent_id']));
 			}
 			$pParamHash['max']++;
+bt(); die;
 			if( $pParamHash['structure_id'] = $this->mDb->getOne( "SELECT `structure_id` FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `root_structure_id`=? and `content_id`=?", array($pParamHash['root_structure_id'], $pParamHash['content_id'] ) ) ) {
 				$this->mErrors[] = tra( 'Content already exists in structure.' )." ($pParamHash[structure_id])";
 			}
