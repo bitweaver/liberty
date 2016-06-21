@@ -352,6 +352,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	function store( &$pParamHash ) {
 		global $gLibertySystem;
 		if( LibertyContent::verify( $pParamHash ) ) {
+			$this->clearFromCache();
 			$this->mDb->StartTrans();
 			$table = BIT_DB_PREFIX."liberty_content";
 			if( !@$this->verifyId( $pParamHash['content_id'] ) ) {

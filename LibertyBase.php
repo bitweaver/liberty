@@ -80,6 +80,7 @@ class LibertyBase extends BitBase {
 				$typeClass = $gLibertySystem->getContentClassName( $pContentTypeGuid );
 			}
 			if( $ret = static::loadFromCache( $pContentId, $typeClass ) ) {
+				$ret->mCacheObject = TRUE;
 			} else {
 				if( $typeClass ) {
 					$creator = new $typeClass();
