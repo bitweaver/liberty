@@ -2414,6 +2414,10 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			$pListHash['sort_mode'] = 'last_modified_desc';
 		}
 
+		if( !$gBitUser->hasPermission( 'p_liberty_list_content' ) ) {
+			$pListHash['user_id'] = $gBitUser->mUserId;
+		}
+
 		return parent::prepGetList( $pListHash );
 	}
 
