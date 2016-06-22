@@ -155,7 +155,7 @@ class LibertyComment extends LibertyMime {
 	}
 
 	function storeComment( &$pParamHash ) {
-		$this->mDb->StartTrans();
+		$this->StartTrans();
 		if( $this->verifyComment($pParamHash) && LibertyMime::store( $pParamHash ) ) {
 			if (!$this->mCommentId) {
 				$this->mCommentId = $this->mDb->GenID( 'liberty_comment_id_seq');
@@ -198,7 +198,7 @@ class LibertyComment extends LibertyMime {
 
 		}
 
-		$this->mDb->CompleteTrans();
+		$this->CompleteTrans();
 		return (count($this->mErrors) == 0);
 	}
 
@@ -216,7 +216,7 @@ class LibertyComment extends LibertyMime {
 		global $gBitSystem;
 		$ret = FALSE;
 		if( $this->isValid() ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 
 			if( $gBitSystem->isPackageActive( 'boards' ) ) {
 				// due to foreign key constraints, this has to go in the base class of BitBoardPost
@@ -242,7 +242,7 @@ class LibertyComment extends LibertyMime {
 
 			if( LibertyMime::expunge() ) {
 				$ret = TRUE;
-				$this->mDb->CompleteTrans();
+				$this->CompleteTrans();
 			} else {
 				$this->mDb->RollbackTrans();
 			}
@@ -260,7 +260,7 @@ class LibertyComment extends LibertyMime {
 		global $gBitSystem;
 		$ret = FALSE;
 		if( $this->isValid() ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$sql = "SELECT `comment_id` FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `parent_id` = ?";
 			$rows = $this->mDb->getAll($sql, array($this->mContentId));
 
@@ -292,7 +292,7 @@ class LibertyComment extends LibertyMime {
 
 			if( LibertyMime::expunge() ) {
 				$ret = TRUE;
-				$this->mDb->CompleteTrans();
+				$this->CompleteTrans();
 			} else {
 				$this->mDb->RollbackTrans();
 			}

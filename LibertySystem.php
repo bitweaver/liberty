@@ -606,7 +606,7 @@ class LibertySystem extends BitSingleton {
 		if( empty( $pTypeParams['content_name_plural'] ) ){
 			$pTypeParams['content_name_plural'] = $pTypeParams['content_name'].'s';
 		}
-		$this->mDb->StartTrans();
+		$this->StartTrans();
 		if( empty( $this->mContentTypes[$pGuid] ) && !empty( $pTypeParams ) ) {
 			$result = $this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_types", $pTypeParams );
 			// we just ran some SQL - let's flush the loadContentTypes query cache
@@ -622,7 +622,7 @@ class LibertySystem extends BitSingleton {
 				$this->loadContentTypes( 0 );
 			}
 		}
-		$this->mDb->CompleteTrans();
+		$this->CompleteTrans();
 	}
 
 	/**

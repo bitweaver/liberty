@@ -353,7 +353,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		global $gLibertySystem;
 		if( LibertyContent::verify( $pParamHash ) ) {
 			$this->clearFromCache();
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$table = BIT_DB_PREFIX."liberty_content";
 			if( !@$this->verifyId( $pParamHash['content_id'] ) ) {
 				// make sure some variables are stuff in case services need getObjectType, mContentId, etc...
@@ -412,7 +412,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			$this->storeActionLog( $pParamHash );
 
 
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 		return( count( $this->mErrors ) == 0 );
 	}
@@ -446,7 +446,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		global $gBitSystem, $gLibertySystem;
 		$ret = FALSE;
 		if( $this->isValid() ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$this->expungeComments();
 
 			// services, filters and cache
@@ -502,7 +502,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			$this->mLogs['content_expunge'] = "Deleted";
 			$this->storeActionLog();
 
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 			$ret = TRUE;
 
 			parent::expunge();
@@ -701,7 +701,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		$ret = FALSE;
 		if( $this->isValid() ) {
 			global $gBitUser,$gBitSystem;
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			// JHT - cache invalidation appears to be handled by store function - so don't need to do it here
 			$query = "select lch.*, lch.`user_id` AS modifier_user_id, lch.`data` AS `edit` from `".BIT_DB_PREFIX."liberty_content_history` lch where lch.`content_id`=? and lch.`version`=?";
 			if( $res = $this->mDb->getRow($query,array( $this->mContentId, $pVersion ) ) ) {
@@ -722,7 +722,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 				if( $this->store( $res ) ) {
 					$ret = TRUE;
 				}
-				$this->mDb->CompleteTrans();
+				$this->CompleteTrans();
 			} else {
 				$this->mDb->RollbackTrans();
 			}
@@ -741,7 +741,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		global $gBitUser;
 		$ret = FALSE;
 		if( $this->isValid() ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$bindVars = array( $this->mContentId );
 			$versionSql = '';
 			if( $pVersion ) {
@@ -759,7 +759,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 				$result = $this->mDb->query($query,array($action,$this->mContentId,$t,$gBitUser->mUserId,$_SERVER["REMOTE_ADDR"],$pComment));
 				$ret = TRUE;
 			}
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 		return $ret;
 	}
@@ -1887,9 +1887,9 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 				}
 				$bindVars[] = $gBitSystem->getUTCTime();
 				$bindVars[] = $this->mContentId;
-				$this->mDb->StartTrans();
+				$this->StartTrans();
 				$result = $this->mDb->query( $query, $bindVars );
-				$this->mDb->CompleteTrans();
+				$this->CompleteTrans();
 			}
 		}
 		return TRUE;

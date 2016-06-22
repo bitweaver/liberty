@@ -84,7 +84,7 @@ class LibertyMime extends LibertyContent {
 		global $gLibertySystem;
 		// make sure all the data is in order
 		if( LibertyMime::verify( $pStoreHash ) && ( !empty( $pStoreHash['skip_content_store'] ) || LibertyContent::store( $pStoreHash ) ) ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			// files have been uploaded
 			if( !empty( $pStoreHash['upload_store']['files'] ) && is_array( $pStoreHash['upload_store']['files'] )) {
 
@@ -159,7 +159,7 @@ class LibertyMime extends LibertyContent {
 
 			// Roll back if something went wrong
 			if( empty( $this->mErrors )) {
-				$this->mDb->CompleteTrans();
+				$this->CompleteTrans();
 			} else {
 				$this->mDb->RollbackTrans();
 			}

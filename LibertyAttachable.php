@@ -109,7 +109,7 @@ class LibertyAttachable extends LibertyContent {
 	function store( &$pParamHash ) {
 		//deprecated( "This method has been replaced by a method in LibertyMime. Please try to migrate your code." );
 		global $gLibertySystem, $gBitSystem, $gBitUser;
-		$this->mDb->StartTrans();
+		$this->StartTrans();
 		if( LibertyAttachable::verify( $pParamHash ) && ( isset($pParamHash['skip_content_store']) ||  LibertyContent::store( $pParamHash ) ) ) {
 
 			if(!empty( $pParamHash['STORAGE'] ) && count( $pParamHash['STORAGE'] ) ) {
@@ -192,7 +192,7 @@ class LibertyAttachable extends LibertyContent {
 				empty( $pParamHash['liberty_attachments']['auto_primary'] ) || $pParamHash['liberty_attachments']['auto_primary'] ? TRUE : FALSE
 				);
 		}
-		$this->mDb->CompleteTrans();
+		$this->CompleteTrans();
 
 		return( count( $this->mErrors ) == 0 );
 	}
