@@ -24,7 +24,7 @@ define( 'MAX_THUMBNAIL_DIMENSION', 99999 );
  * @package liberty
  */
 class LibertyMime extends LibertyContent {
-	var $mStoragePrefs = NULL;
+	public $mStoragePrefs = NULL;
 
 	/**
 	 * load the attachments for a given content id and then stuff them in mStorage

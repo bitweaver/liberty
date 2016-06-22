@@ -29,8 +29,8 @@ require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
  * @package liberty
  */
 class LibertyAttachable extends LibertyContent {
-	var $mContentId;
-	var $mStorage;
+	public $mContentId;
+	public $mStorage;
 
 	function LibertyAttachable() {
 		parent::__construct();

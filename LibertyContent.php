@@ -54,47 +54,47 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * Content Id if an object has been loaded
 	 * @public
 	 */
-	var $mContentId;
+	public $mContentId;
 
 	/**
 	 * If this content is being viewed within a structure
 	 * @public
 	 */
-	var $mStructureId;
+	public $mStructureId;
 
 	/**
 	 * Content type GUID for this LibertyContent object
 	 * @public
 	 */
-	var $mContentTypeGuid;
+	public $mContentTypeGuid;
 
 	/**
 	 * Content type hash for this LibertyContent object
 	 * @public
 	 */
-	var $mType;
+	public $mType;
 
 	/**
 	 *Permissions hash specific to the user accessing this LibertyContetn object
 	 * @public
 	 */
-	var $mUserContentPerms;
+	public $mUserContentPerms;
 
 	/**
 	 * Preferences hash specific to this LibertyContent object - accessed via getPreference/storePreference
 	 * @private
 	 */
-	var $mPrefs = NULL;
+	public $mPrefs = NULL;
 
 	/**
 	 * Control permission specific to this LibertyContent type
 	 * @private
 	 */
-	var $mViewContentPerm;
-	var $mUpdateContentPerm;
-	var $mCreateContentPerm;
-	var $mExpungeContentPerm;
-	var $mAdminContentPerm;
+	public $mViewContentPerm;
+	public $mUpdateContentPerm;
+	public $mCreateContentPerm;
+	public $mExpungeContentPerm;
+	public $mAdminContentPerm;
 
 	/**
 	 * Construct an empty LibertyBase object with a blank permissions array

@@ -72,24 +72,24 @@ class LibertySystem extends BitSingleton {
 
 
 	// Hash of plugin data
-	var $mPlugins = array();
+	public $mPlugins = array();
 
 	// Liberty data tags
-	var $mDataTags;
+	public $mDataTags;
 
 	// Content Status
-	var $mContentStatus;
+	public $mContentStatus;
 
 	// Content types
-	var $mContentTypes;
+	public $mContentTypes;
 
 	// File name of last plug that registered
-	var $mPluginFileName;
+	public $mPluginFileName;
 
 	// Packages using LibertySystem
 	// this makes it possible to extend LibertySystem by another package
-	var $mSystem = LIBERTY_PKG_NAME;
-	var $mPluginPath;
+	public $mSystem = LIBERTY_PKG_NAME;
+	public $mPluginPath;
 
 
 	/**
