@@ -153,7 +153,7 @@ class BitLinks extends BitBase {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function BitLinks() {
+	function __construct() {
 		parent::__construct();
 
 		global $gBitSystem;
