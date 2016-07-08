@@ -64,7 +64,7 @@ class LibertyBase extends BitBase {
 	 * @param call load on the content. Defaults to true.
 	 * @returns object of the appropriate content type class
 	 */
-	public static function getLibertyObject( $pContentId, $pContentTypeGuid=NULL, $pLoadContent = TRUE ) {
+	public static function getLibertyObject( $pContentId, $pContentTypeGuid=NULL, $pLoadFromCache = TRUE ) {
 		$ret = NULL;
 		global $gLibertySystem, $gBitUser, $gBitSystem;
 
@@ -74,17 +74,19 @@ class LibertyBase extends BitBase {
 			$typeClass = NULL;
 			$pContentId = preg_replace( '/[\D]/', '', $pContentId );
 			if( empty( $pContentTypeGuid ) ) {
-				$pContentTypeGuid = $gLibertySystem->mDb->getOne( "SELECT `content_type_guid` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=?", array( $pContentId ) );
+				$pContentTypeGuid = $gLibertySystem->mDb->getOne( "SELECT `content_type_guid` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=?", array( $pContentId ), NULL, NULL, 3600 );
 			}
 			if( !empty( $pContentTypeGuid ) && isset( $gLibertySystem->mContentTypes[$pContentTypeGuid] ) ) {
 				$typeClass = $gLibertySystem->getContentClassName( $pContentTypeGuid );
 			}
-			if( $ret = static::loadFromCache( $pContentId, $typeClass ) ) {
+			if( $pLoadFromCache && ($ret = static::loadFromCache( $pContentId, $typeClass )) ) {
 				$ret->mCacheObject = TRUE;
 			} else {
 				if( $typeClass ) {
 					$creator = new $typeClass();
-					$ret = $creator->getNewObject( $typeClass, $pContentId, $pLoadContent );
+					$ret = $creator->getNewObject( $typeClass, $pContentId, $pLoadFromCache );
+					$ret->setCacheableObject( FALSE );
+					$ret->clearFromCache();
 				}
 			}
 		}
@@ -99,9 +101,8 @@ class LibertyBase extends BitBase {
 	 * @param call load on the content. Defaults to true.
 	 * @returns object of the appropriate content type class
 	 */
-	public function getNewObjectById( $pClass, $pPrimaryId, $pLoadContent=TRUE ) {
-		$ret = new $pClass( $pPrimaryId );
-		if( $ret && $pLoadContent ) {
+	public static function getNewObjectById( $pClass, $pPrimaryId, $pLoadFromCache=TRUE ) {
+		if( $ret = new $pClass( $pPrimaryId ) ) {
 			$ret->load();
 		}
 		return $ret;
@@ -115,9 +116,8 @@ class LibertyBase extends BitBase {
 	 * @param call load on the content. Defaults to true.
 	 * @returns object of the appropriate content type class
 	 */
-	public function getNewObject( $pClass, $pContentId, $pLoadContent=TRUE ) {
-		$ret = new $pClass( NULL, $pContentId );
-		if( $ret && $pLoadContent ) {
+	public static function getNewObject( $pClass, $pContentId, $pLoadFromCache=TRUE ) {
+		if( $ret = new $pClass( NULL, $pContentId ) ) {
 			$ret->load();
 		}
 		return $ret;
