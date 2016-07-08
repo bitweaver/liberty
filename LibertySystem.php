@@ -75,7 +75,7 @@ class LibertySystem extends BitSingleton {
 	public $mPlugins = array();
 
 	// Liberty data tags
-	public $mDataTags;
+	public $mDataTags = array();
 
 	// Content Status
 	public $mContentStatus;
@@ -98,16 +98,14 @@ class LibertySystem extends BitSingleton {
 	function __construct( $pExtras = TRUE ) {
 		parent::__construct();
 
-		// if mPluginPath hasn't been set, we set it for liberty plugins
-		if( empty( $this->mPluginPath )) {
-			$this->mPluginPath = LIBERTY_PKG_PATH.'plugins/';
-		}
+		$this->mPluginPath = LIBERTY_PKG_PATH.'plugins/';
 
-		// extras - only needed by liberty
-		if( $pExtras ) {
-			$this->mDataTags = array();
-			$this->loadContentTypes();
-		}
+		$this->loadContentTypes();
+	}
+
+
+	public function __sleep() {
+		return array_merge( parent::__sleep(), array( 'mPlugins', 'mDataTags', 'mContentStatus', 'mContentTypes', 'mPluginFileName', 'mSystem', 'mPluginPath' ) );
 	}
 
 	// ****************************** Plugin Functions
