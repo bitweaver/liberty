@@ -821,7 +821,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * Check permissions to establish if user has permission to edit the object
 	 * Should be provided by the decendent package
 	 */
-	function isEditable($pContentId = NULL) {
+	function isEditable() {
 		return( false );
 	}
 
