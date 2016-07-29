@@ -2787,7 +2787,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 					}
 
 					if( !empty( $pListHash['thumbnail_size'] ) ) {
-						$aux['content_object'] = static::getList( $aux['content_id'], $aux['content_type_guid'] );
+						$aux['content_object'] = static::getLibertyObject( $aux['content_id'], $aux['content_type_guid'] );
 						if( $aux['content_object']->load( FALSE ) ) {
 							$aux['thumbnail_url'] = $aux['content_object']->getThumbnailUrl( $pListHash['thumbnail_size'] );
 						}
