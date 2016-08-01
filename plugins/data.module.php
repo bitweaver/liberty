@@ -106,8 +106,8 @@ function data_datamodule( $pData, $pParams ) {
 	if( !$out = $gBitSmarty->fetch( $tpl ) ) {
 		if( $gBitThemes->isCustomModule( $module ) ) {
 			$info = $gBitThemes->getCustomModule( $module );
-			$gBitSmarty->assign_by_ref( 'user_title', $info["title"] );
-			$gBitSmarty->assign_by_ref( 'user_data', $info["data"] );
+			$gBitSmarty->assignByRef( 'user_title', $info["title"] );
+			$gBitSmarty->assignByRef( 'user_data', $info["data"] );
 			$out = $gBitSmarty->fetch( 'modules/user_module.tpl' );
 		}
 	}

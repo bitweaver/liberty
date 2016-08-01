@@ -42,14 +42,14 @@ if( $gBitThemes->isAjaxRequest() ) {
 	foreach( $contentList as $cItem ) {
 		$cList[$contentTypes[$cItem['content_type_guid']]][$cItem['content_id']] = $cItem['title'].' [id: '.$cItem['content_id'].']';
 	}
-	$gBitSmarty->assign_by_ref( 'contentListHash', $contentList );
+	$gBitSmarty->assignByRef( 'contentListHash', $contentList );
 	$gBitSmarty->assign( 'contentList', $cList );
 	$gBitSmarty->assign( 'contentSelect', $contentSelect );
 	$gBitSmarty->assign( 'contentTypes', $contentTypes );
 
 	$subpages = $gStructure->getStructureNodes($_REQUEST["structure_id"]);
 	$max = count($subpages);
-	$gBitSmarty->assign_by_ref('subpages', $subpages);
+	$gBitSmarty->assignByRef('subpages', $subpages);
 	if ($max != 0) {
 		$last_child = $subpages[$max - 1];
 		$gBitSmarty->assign('insert_after', $last_child["structure_id"]);

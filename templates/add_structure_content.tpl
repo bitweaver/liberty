@@ -112,7 +112,7 @@ function addStructure(pContentId) {
 								</td>
 								<td class="title">
 									{if $contentListHash[cx].thumbnail_url}
-										<img class="thumb" src="{$contentListHash[cx].thumbnail_url}" alt="{tr}Thumbnail{/tr}" />
+										<img class="img-responsive" src="{$contentListHash[cx].thumbnail_url}" alt="{tr}Thumbnail{/tr}" />
 									{/if}
 									{$contentListHash[cx].title}
 									<span id="{$contentListHash[cx].content_id}feedback"></span>

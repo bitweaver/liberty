@@ -17,7 +17,7 @@ if( !empty( $_REQUEST['apply'] )) {
 		}
 		$gBitSystem->storeConfig('approved_html_tags', $tags , LIBERTY_PKG_NAME );
 	}
-	$gBitSmarty->assign_by_ref( 'errors', $errors );
+	$gBitSmarty->assignByRef( 'errors', $errors );
 
 	if( !empty($_REQUEST['approved_html_tags'] )) {
 		$tags = preg_replace( '/\s/', '', $_REQUEST['approved_html_tags'] );

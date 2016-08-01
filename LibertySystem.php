@@ -72,24 +72,24 @@ class LibertySystem extends BitSingleton {
 
 
 	// Hash of plugin data
-	var $mPlugins = array();
+	public $mPlugins = array();
 
 	// Liberty data tags
-	var $mDataTags;
+	public $mDataTags = array();
 
 	// Content Status
-	var $mContentStatus;
+	public $mContentStatus;
 
 	// Content types
-	var $mContentTypes;
+	public $mContentTypes;
 
 	// File name of last plug that registered
-	var $mPluginFileName;
+	public $mPluginFileName;
 
 	// Packages using LibertySystem
 	// this makes it possible to extend LibertySystem by another package
-	var $mSystem = LIBERTY_PKG_NAME;
-	var $mPluginPath;
+	public $mSystem = LIBERTY_PKG_NAME;
+	public $mPluginPath;
 
 
 	/**
@@ -98,16 +98,14 @@ class LibertySystem extends BitSingleton {
 	function __construct( $pExtras = TRUE ) {
 		parent::__construct();
 
-		// if mPluginPath hasn't been set, we set it for liberty plugins
-		if( empty( $this->mPluginPath )) {
-			$this->mPluginPath = LIBERTY_PKG_PATH.'plugins/';
-		}
+		$this->mPluginPath = LIBERTY_PKG_PATH.'plugins/';
 
-		// extras - only needed by liberty
-		if( $pExtras ) {
-			$this->mDataTags = array();
-			$this->loadContentTypes();
-		}
+		$this->loadContentTypes();
+	}
+
+
+	public function __sleep() {
+		return array_merge( parent::__sleep(), array( 'mPlugins', 'mDataTags', 'mContentStatus', 'mContentTypes', 'mPluginFileName', 'mSystem', 'mPluginPath' ) );
 	}
 
 	// ****************************** Plugin Functions
@@ -576,7 +574,7 @@ class LibertySystem extends BitSingleton {
 	 * @return none
 	 **/
 	function loadContentTypes( $pCacheTime=BIT_QUERY_CACHE_TIME ) {
-		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."liberty_content_types`", NULL, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
+		if( $rs = $this->mDb->query( "SELECT * FROM `".BIT_DB_PREFIX."liberty_content_types`", FALSE, BIT_QUERY_DEFAULT, BIT_QUERY_DEFAULT ) ) {
 			while( $row = $rs->fetchRow() ) {
 				// translate name
 				// content_description backward compatibility for now
@@ -606,7 +604,7 @@ class LibertySystem extends BitSingleton {
 		if( empty( $pTypeParams['content_name_plural'] ) ){
 			$pTypeParams['content_name_plural'] = $pTypeParams['content_name'].'s';
 		}
-		$this->mDb->StartTrans();
+		$this->StartTrans();
 		if( empty( $this->mContentTypes[$pGuid] ) && !empty( $pTypeParams ) ) {
 			$result = $this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_types", $pTypeParams );
 			// we just ran some SQL - let's flush the loadContentTypes query cache
@@ -622,7 +620,7 @@ class LibertySystem extends BitSingleton {
 				$this->loadContentTypes( 0 );
 			}
 		}
-		$this->mDb->CompleteTrans();
+		$this->CompleteTrans();
 	}
 
 	/**

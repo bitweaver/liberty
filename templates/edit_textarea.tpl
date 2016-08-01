@@ -16,7 +16,7 @@
 		{forminput}
 			{formfeedback error=$textarea_error}
 			{if !$textarea_id}{assign var=textarea_id value=$smarty.const.LIBERTY_TEXT_AREA}{/if}
-			<textarea {$textarea_class} {$textarea_attributes} {if $textarea_maxchars}onkeydown="BitBase.charCounter('{$textarea_id}','{$textarea_id}Counter','{$textarea_maxchars}');" onkeyup="BitBase.charCounter('{$textarea_id}','{$textarea_id}Counter','{$textarea_maxchars}');"{/if} {spellchecker width=$cols height=$rows} id="{$textarea_id}" name="{$textarea_name|default:edit}" {$textarea_style}>{$textarea_edit}</textarea>
+			<textarea {$textarea_class} {$textarea_attributes} {if $textarea_maxchars}onkeydown="BitBase.charCounter('{$textarea_id}','{$textarea_id}Counter','{$textarea_maxchars}');" onkeyup="BitBase.charCounter('{$textarea_id}','{$textarea_id}Counter','{$textarea_maxchars}');"{/if} {spellchecker width=$cols height=$rows} id="{$textarea_id}" name="{$textarea_name|default:edit}" {$textarea_style}>{$textarea_edit|escape}</textarea>
 			{if $textarea_required}{required}{/if}
 
 			{if $textarea_maxchars}
@@ -35,4 +35,7 @@
 
 			{formhelp note=$textarea_help}
 		{/forminput}
+		{if $gBitSystem->isPackageActive('ckeditor')}
+			{assign var=wysiwygEdit value=true}
+		{/if}
 	</div>

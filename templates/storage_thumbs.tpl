@@ -25,7 +25,7 @@
 				<tr class="{cycle values="odd,even"}" >
 					<td>
 						{if $attachment.source_url}<a href="{$attachment.source_url}">{/if}
-							<img class="thumb" src="{$attachment.thumbnail_url.$thumbsize}" alt="{$attachment.filename}" title="{$attachment.filename}" />
+							<img class="img-responsive" src="{$attachment.thumbnail_url.$thumbsize}" alt="{$attachment.filename}" title="{$attachment.filename}" />
 							{if $attachment.source_url}</a>{/if}
 					</td>
 					<td>
@@ -65,7 +65,7 @@
 						<div class="item">
 							<h3>
 							{if $attachment.source_url}<a href="{$attachment.source_url}">{/if}
-								<img class="thumb" src="{$attachment.thumbnail_url.$thumbsize}" alt="{$attachment.filename}" title="{$attachment.filename}" {popup fullhtml=1 center=1 text=$smarty.capture.popup|escape:"javascript"|escape:"html"}/>
+								<img class="img-responsive" src="{$attachment.thumbnail_url.$thumbsize}" alt="{$attachment.filename}" title="{$attachment.filename}" {popup fullhtml=1 center=1 text=$smarty.capture.popup|escape:"javascript"|escape:"html"}/>
 								{$attachment.filename}
 							{if $attachment.source_url}</a>{/if}
 							</h3>

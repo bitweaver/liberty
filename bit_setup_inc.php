@@ -18,7 +18,7 @@ $gBitSystem->registerPackage( $registerHash );
 // initiate LibertySystem
 require_once( LIBERTY_PKG_PATH.'LibertySystem.php' );
 LibertySystem::loadSingleton();
-$gBitSmarty->assign_by_ref( 'gLibertySystem', $gLibertySystem );
+$gBitSmarty->assignByRef( 'gLibertySystem', $gLibertySystem );
 
 // We can't load this in liberty/bit_setup_inc.php becuase it's too soon in the process.
 // packages haven't been scanned yet making things like <pkg>_PKG_URL and similar
@@ -62,5 +62,5 @@ if( !empty( $_REQUEST['refresh_liberty_cache'] ) && BitBase::verifyId( $_REQUEST
 
 // make thumbnail sizes available to smarty
 global $gThumbSizes;
-$gBitSmarty->assign_by_ref( 'gThumbSizes', $gThumbSizes );
+$gBitSmarty->assignByRef( 'gThumbSizes', $gThumbSizes );
 ?>

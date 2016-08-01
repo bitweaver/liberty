@@ -205,7 +205,7 @@ if( !function_exists( 'mime_default_store' )) {
 				"file_name"    => $pStoreRow['upload']['name'],
 				"file_id"      => $gBitSystem->mDb->GenID( 'liberty_files_id_seq' ),
 				"mime_type"    => $pStoreRow['upload']['type'],
-				"file_size"    => $pStoreRow['upload']['size'],
+				"file_size"    => (int)$pStoreRow['upload']['size'],
 				"user_id"      => $pStoreRow['user_id'],
 			);
 			$gBitSystem->mDb->associateInsert( BIT_DB_PREFIX."liberty_files", $storeHash );

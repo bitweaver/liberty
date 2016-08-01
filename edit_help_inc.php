@@ -53,16 +53,16 @@ foreach( array_keys( $formatplugins ) as $guid ) {
 
 if( !empty( $formatplugins ) ) {
 	usort( $formatplugins, 'usort_by_title' );
-	$gBitSmarty->assign_by_ref( 'formatplugins', $formatplugins );
+	$gBitSmarty->assignByRef( 'formatplugins', $formatplugins );
 }
 
 if( !empty( $mimeplugins ) ) {
 	usort( $mimeplugins, 'usort_by_title' );
-	$gBitSmarty->assign_by_ref( 'mimeplugins', $mimeplugins );
+	$gBitSmarty->assignByRef( 'mimeplugins', $mimeplugins );
 }
 
 if( !empty( $dataplugins ) ) {
 	usort( $dataplugins, 'usort_by_title' );
-	$gBitSmarty->assign_by_ref( 'dataplugins', $dataplugins );
+	$gBitSmarty->assignByRef( 'dataplugins', $dataplugins );
 }
 ?>

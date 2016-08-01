@@ -288,7 +288,7 @@ function htmlpure_cleanupPeeTags( $pee ) {
 	$pee = preg_replace('#<p>\s*</p>#', '', $pee);
 
 	// Unpee pre blocks
-	$pee = preg_replace('#(<pre.*?(?:[^>]*)>)(.*?)</pre>#sie',
+	$pee = preg_replace('#(<pre.*?(?:[^>]*)>)(.*?)</pre>#si',
 		" '$1' . preg_replace('#<br[\s/]*(?:[^>]*)/>#', '"."\n"."',
 		preg_replace('#<p[\s]*(?:[^>]*)>#', '"."\n"."',
 		preg_replace('#</p[\s]*(?:[^>]*)>#', '', '$2'))). '</pre>'", $pee);

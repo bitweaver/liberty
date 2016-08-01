@@ -17,7 +17,7 @@ require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
  * @package liberty
  */
 class LibertyStructure extends LibertyBase {
-	var $mStructureId;
+	public $mStructureId;
 
 	function __construct( $pStructureId=NULL, $pContentId=NULL ) {
 		// we need to init our database connection early
@@ -425,11 +425,11 @@ class LibertyStructure extends LibertyBase {
 	*/
 	function verifyStructure( &$pParamHash ) {
 		$storeNodes = array();
-		if( !self::getParameter( $pParamHash, 'root_structure_id' ) ) {
+		if( !static::getParameter( $pParamHash, 'root_structure_id' ) ) {
 			$pParamHash['root_structure_id'] = $this->getField( 'root_structure_id' );
 		}
 
-		if( !self::verifyId( $pParamHash['root_structure_id'] ) ) {
+		if( !static::verifyId( $pParamHash['root_structure_id'] ) ) {
 			$this->mErrors['verify_structure'] = tra( "Unknown root structure." );
 		} else {
 			if( !empty( $pParamHash['structure_json'] ) ) {
@@ -510,13 +510,13 @@ class LibertyStructure extends LibertyBase {
 	function storeStructure( $pParamHash ) {
 		if( $this->verifyStructure( $pParamHash ) ) {
 			// now that the structure is ready to be stored, we remove the old structure first and then insert the new one.
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$query = "DELETE FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `root_structure_id`=? AND `structure_id`!=?";
 			$result = $this->mDb->query( $query, array( (int)$pParamHash['root_structure_id'], (int)$pParamHash['root_structure_id'] ) );
 			foreach( $pParamHash['structure_store'] as $node ) {
 				$this->mDb->associateInsert( BIT_DB_PREFIX."liberty_structures", $node );
 			}
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 		return( count( $this->mErrors ) == 0 );
 	}
@@ -585,6 +585,7 @@ class LibertyStructure extends LibertyBase {
 				$result = $this->mDb->query($query,array((int)$pParamHash['max'], (int)$pParamHash['parent_id']));
 			}
 			$pParamHash['max']++;
+
 			if( $pParamHash['structure_id'] = $this->mDb->getOne( "SELECT `structure_id` FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `root_structure_id`=? and `content_id`=?", array($pParamHash['root_structure_id'], $pParamHash['content_id'] ) ) ) {
 				$this->mErrors[] = tra( 'Content already exists in structure.' )." ($pParamHash[structure_id])";
 			}
@@ -607,7 +608,7 @@ class LibertyStructure extends LibertyBase {
 //		$created = $this->create_page($name, 0, '', $now, tra('created from structure'), 'system', '0.0.0.0', '');
 		// if were not trying to add a duplicate structure head
 		if ( $this->verifyNode( $pParamHash ) ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 
 			//Create a new structure entry
 			$pParamHash['structure_id'] = $this->mDb->GenID( 'liberty_structures_id_seq' );
@@ -616,7 +617,7 @@ class LibertyStructure extends LibertyBase {
 			}
 			$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_structures`( `structure_id`, `parent_id`,`content_id`, `root_structure_id`, `page_alias`, `pos` ) values(?,?,?,?,?,?)";
 			$result = $this->mDb->query( $query, array( $pParamHash['structure_id'], $pParamHash['parent_id'], (int)$pParamHash['content_id'], (int)$pParamHash['root_structure_id'], $pParamHash['alias'], $pParamHash['max'] ) );
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 			$ret = $pParamHash['structure_id'];
 		} else {
 			//vd( $this->mErrors );
@@ -633,7 +634,7 @@ class LibertyStructure extends LibertyBase {
 	function moveNodeWest() {
 		if( $this->isValid() ) {
 			//If there is a parent and the parent isnt the structure root node.
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			if( @$this->verifyId( $this->mInfo["parent_id"] ) ) {
 				$parentNode = $this->getNode( $this->mInfo["parent_id"] );
 				if( @$this->verifyId( $parentNode['parent_id'] ) ) {
@@ -645,7 +646,7 @@ class LibertyStructure extends LibertyBase {
 					$this->mDb->query($query, array( $parentNode['parent_id'], $parentNode['pos'], $this->mStructureId ) );
 				}
 			}
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 	}
 
@@ -657,7 +658,7 @@ class LibertyStructure extends LibertyBase {
 	 */
 	function moveNodeEast() {
 		if( $this->isValid() ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$query = "select `structure_id`, `pos` from `".BIT_DB_PREFIX."liberty_structures` where `pos`<? and `parent_id`=? order by `pos` desc";
 			$result = $this->mDb->query($query,array($this->mInfo["pos"], (int)$this->mInfo["parent_id"]));
 			if ($previous = $result->fetchRow()) {
@@ -675,7 +676,7 @@ class LibertyStructure extends LibertyBase {
 				$query = "update `".BIT_DB_PREFIX."liberty_structures` set `pos`=`pos`-1 where `pos`>? and `parent_id`=?";
 				$this->mDb->query( $query, array( $this->mInfo['pos'], $this->mInfo['parent_id'] ) );
 			}
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 	}
 
@@ -687,7 +688,7 @@ class LibertyStructure extends LibertyBase {
 	 */
 	function moveNodeSouth() {
 		if( $this->isValid() ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$query = "select `structure_id`, `pos` from `".BIT_DB_PREFIX."liberty_structures` where `pos`>? and `parent_id`=? order by `pos` asc";
 			$result = $this->mDb->query($query,array((int)$this->mInfo["pos"], (int)$this->mInfo["parent_id"]));
 			$res = $result->fetchRow();
@@ -697,7 +698,7 @@ class LibertyStructure extends LibertyBase {
 				$this->mDb->query($query,array((int)$this->mInfo["pos"], (int)$res["structure_id"]) );
 				$this->mDb->query($query,array((int)$res["pos"], (int)$this->mInfo["structure_id"]) );
 			}
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 	}
 
@@ -709,7 +710,7 @@ class LibertyStructure extends LibertyBase {
 	 */
 	function moveNodeNorth() {
 		if( $this->isValid() ) {
-			$this->mDb->StartTrans();
+			$this->StartTrans();
 			$query = "select `structure_id`, `pos` from `".BIT_DB_PREFIX."liberty_structures` where `pos`<? and `parent_id`=? order by `pos` desc";
 			$result = $this->mDb->query($query,array((int)$this->mInfo["pos"], (int)$this->mInfo["parent_id"]));
 			$res = $result->fetchRow();
@@ -719,7 +720,7 @@ class LibertyStructure extends LibertyBase {
 				$this->mDb->query($query,array((int)$res["pos"], (int)$this->mInfo["structure_id"]) );
 				$this->mDb->query($query,array((int)$this->mInfo["pos"], (int)$res["structure_id"]) );
 			}
-			$this->mDb->CompleteTrans();
+			$this->CompleteTrans();
 		}
 	}
 
@@ -995,11 +996,11 @@ class LibertyStructure extends LibertyBase {
 		$ret='';
 		if ($structureTree != '') {
 			$gBitSmarty->verifyCompileDir();
-			$gBitSmarty->assign_by_ref( 'structureId', $this->mStructureId );
+			$gBitSmarty->assignByRef( 'structureId', $this->mStructureId );
 			$ret.=$gBitSmarty->fetch( "bitpackage:liberty/structure_toc_startul.tpl");
 			foreach($structureTree as $leaf) {
 				//echo "<br />";print_r($leaf);echo "<br />";
-				$gBitSmarty->assign_by_ref('structure_tree',$leaf);
+				$gBitSmarty->assignByRef('structure_tree',$leaf);
 				$gBitSmarty->assign('showdesc',$showdesc);
 				$gBitSmarty->assign('numbering',$numbering);
 				$ret .= $gBitSmarty->fetch( "bitpackage:liberty/structure_toc_leaf.tpl");

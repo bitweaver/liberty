@@ -94,7 +94,7 @@ function data_quote( $pData, $pParams ) {
 
 	if( !empty( $pParams['comment_id'] )) {
 		
-		if( ACTIVE_PACKAGE == 'boards' ) {
+		if( $gBitSystem->getActivePackage() == 'boards' ) {
 			$c = new BitBoardPost( preg_replace( '/[^0-9]/', '', $pParams['comment_id'] ) );
 		} else {
 			$c = new LibertyComment( preg_replace( '/[^0-9]/', '', $pParams['comment_id'] ) );

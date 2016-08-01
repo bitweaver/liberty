@@ -54,7 +54,7 @@ if( !empty( $_REQUEST['ajax_xml'] )) {
 if( !empty( $_REQUEST['output'] )) {
 	switch( $_REQUEST['output'] ) {
 	case 'json':
-		$gBitSmarty->assign_by_ref( 'listcontent', $contentList );
+		$gBitSmarty->assignByRef( 'listcontent', $contentList );
 		header( 'Content-type:application/json' );
 		$gBitSmarty->display( 'bitpackage:liberty/list_content_json.tpl' );
 		break;

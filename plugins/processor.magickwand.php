@@ -81,13 +81,13 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 				$targetType = 'jpeg';
 				$destExt = '.jpg';
 			}
-			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || $mimeExt != $targetType ) || !empty( $pFileHash['colorspace_conversion'] ) ) {
-				if( !empty( $pFileHash['dest_file'] ) ) {
-					$destFile = $pFileHash['dest_file'];
-				} else {
-					$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['dest_base_name'].$destExt;
-				}
 
+			if( !empty( $pFileHash['dest_file'] ) ) {
+				$destFile = $pFileHash['dest_file'];
+			} else {
+				$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['dest_base_name'].$destExt;
+			}
+			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || $mimeExt != $targetType ) || !empty( $pFileHash['colorspace_conversion'] ) ) {
 				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 				// Alternate Filter settings can seen here http://www.dylanbeattie.net/magick/filters/result.html
 				if ( $error = liberty_magickwand_check_error( MagickResizeImage( $magickWand, $pFileHash['max_width'], $pFileHash['max_height'], MW_CatromFilter, 1.00 ), $magickWand ) ) {
@@ -98,7 +98,7 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 				}
 				$pFileHash['size'] = filesize( $destFile );
 			} else {
-				$destFile = liberty_process_generic( $pFileHash, FALSE );
+				copy( $pFileHash['source_file'], $destFile );
 			}
 		}
 		$ret = $destFile;

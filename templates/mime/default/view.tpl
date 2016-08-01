@@ -8,7 +8,7 @@
 			<a href="{$attachment.thumbnail_url.large}">
 		{/if}
 	{/if}
-	<img title="" alt="" src="{$attachment.thumbnail_url.$size}" />
+	<img title="" alt="" src="{$attachment.thumbnail_url.$size}" class="img-responsive"/>
 	{if $gBitSystem->isFeatureActive( 'site_fancy_zoom' )}
 		</a>
 	{/if}
