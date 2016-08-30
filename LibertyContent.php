@@ -608,7 +608,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 				$bindVars[] = $this->mContentId;
 				$whereSql .= ' th.`content_id`=? ';
 			}
-			if( !empty( $pVersion ) ) {
+			if( BitBase::verifyId( $pVersion ) ) {
 				array_push( $bindVars, $pVersion );
 				$versionSql = ' AND th.`version`=? ';
 			}
