@@ -1846,7 +1846,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			$result   = $this->mDb->query($query, $bindvars);
 			if( !is_null( $pPrefValue )) {
 				$query      = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_prefs` (`content_id`,`pref_name`,`pref_value`) VALUES(?, ?, ?)";
-				$bindvars[] = substr( $pPrefValue, 0, 250 );
+				$bindvars[] = substr( $pPrefValue, 0, 510 );
 				$result     = $this->mDb->query( $query, $bindvars );
 				$this->mPrefs[$pPrefName] = $pPrefValue;
 			}
