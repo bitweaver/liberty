@@ -604,9 +604,10 @@ class LibertySystem extends BitSingleton {
 		if( empty( $pTypeParams['content_name_plural'] ) ){
 			$pTypeParams['content_name_plural'] = $pTypeParams['content_name'].'s';
 		}
-		$this->StartTrans();
 		if( empty( $this->mContentTypes[$pGuid] ) && !empty( $pTypeParams ) ) {
+			$this->StartTrans();
 			$result = $this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_types", $pTypeParams );
+			$this->CompleteTrans();
 			// we just ran some SQL - let's flush the loadContentTypes query cache
 			$this->loadContentTypes( 0 );
 		} else {
@@ -615,12 +616,13 @@ class LibertySystem extends BitSingleton {
 				$pTypeParams['handler_class'] != $this->mContentTypes[$pGuid]['handler_class'] ||
 				( empty( $this->mContentTypes[$pGuid]['content_name_plural'] ) && version_compare( $gBitSystem->getVersion( LIBERTY_PKG_NAME ), '2.1.4', '>=' ) ) // temporary update condition during migration of content_description to content_name remove after april 20 2011
 				) {
+				$this->StartTrans();
 				$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."liberty_content_types", $pTypeParams, array( 'content_type_guid'=>$pGuid ) );
+				$this->CompleteTrans();
 				// we just ran some SQL - let's flush the loadContentTypes query cache
 				$this->loadContentTypes( 0 );
 			}
 		}
-		$this->CompleteTrans();
 	}
 
 	/**
