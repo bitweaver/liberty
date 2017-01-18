@@ -1841,6 +1841,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	function storePreference( $pPrefName, $pPrefValue = NULL ) {
 		$ret = FALSE;
 		if( LibertyContent::isValid() ) {
+			$this->StartTrans();
 			$query    = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=? AND `pref_name`=?";
 			$bindvars = array( $this->mContentId, $pPrefName );
 			$result   = $this->mDb->query($query, $bindvars);
@@ -1851,6 +1852,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 				$this->mPrefs[$pPrefName] = $pPrefValue;
 			}
 			$this->mPrefs[$pPrefName] = $pPrefValue;
+			$this->CompleteTrans();
 		}
 		return $ret;
 	}
