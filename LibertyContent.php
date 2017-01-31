@@ -241,7 +241,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 					|| (!empty($pParamHash["edit_comment"]) && !empty($this->mInfo["edit_comment"]) && (md5($this->mInfo["edit_comment"]) != md5($pParamHash["edit_comment"])));
 		// check some lengths, if too long, then truncate
 		if( !empty( $pParamHash['title'] ) ) {
-			$pParamHash['content_store']['title'] = substr( preg_replace( '/:space:+/m', ' ', $pParamHash['title'] ), 0, BIT_CONTENT_MAX_TITLE_LEN );
+			$pParamHash['content_store']['title'] = substr( preg_replace( '/:space:+/m', ' ', trim( $pParamHash['title'] ) ), 0, BIT_CONTENT_MAX_TITLE_LEN );
 		} elseif( isset( $pParamHash['title'] ) ) {
 			$pParamHash['content_store']['title'] = NULL;
 		}
@@ -608,7 +608,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 				$bindVars[] = $this->mContentId;
 				$whereSql .= ' th.`content_id`=? ';
 			}
-			if( !empty( $pVersion ) ) {
+			if( BitBase::verifyId( $pVersion ) ) {
 				array_push( $bindVars, $pVersion );
 				$versionSql = ' AND th.`version`=? ';
 			}
@@ -1841,16 +1841,18 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	function storePreference( $pPrefName, $pPrefValue = NULL ) {
 		$ret = FALSE;
 		if( LibertyContent::isValid() ) {
+			$this->StartTrans();
 			$query    = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=? AND `pref_name`=?";
 			$bindvars = array( $this->mContentId, $pPrefName );
 			$result   = $this->mDb->query($query, $bindvars);
 			if( !is_null( $pPrefValue )) {
 				$query      = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_prefs` (`content_id`,`pref_name`,`pref_value`) VALUES(?, ?, ?)";
-				$bindvars[] = substr( $pPrefValue, 0, 250 );
+				$bindvars[] = substr( $pPrefValue, 0, 510 );
 				$result     = $this->mDb->query( $query, $bindvars );
 				$this->mPrefs[$pPrefName] = $pPrefValue;
 			}
 			$this->mPrefs[$pPrefName] = $pPrefValue;
+			$this->CompleteTrans();
 		}
 		return $ret;
 	}
@@ -2414,7 +2416,8 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			$pListHash['sort_mode'] = 'last_modified_desc';
 		}
 
-		if( !$gBitUser->hasPermission( 'p_liberty_list_content' ) ) {
+		// Users without permission can only see their own content listing
+		if( $gBitUser->isRegistered() && !$gBitUser->hasPermission( 'p_liberty_list_content' ) ) {
 			$pListHash['user_id'] = $gBitUser->mUserId;
 		}
 
