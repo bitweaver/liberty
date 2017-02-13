@@ -69,8 +69,6 @@ function liberty_gd_resize_image( &$pFileHash ) {
 		if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
 			$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
 		} else {
-			// make sure we have image_type_to_extension available
-			include_once( UTIL_PKG_PATH.'PHP_Compat/Compat/Function/image_type_to_mime_type.php' );
 			list( $type, $mimeExt ) = explode( '/', strtolower( image_type_to_mime_type( $itype )));
 		}
 
