@@ -1820,28 +1820,6 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	}
 
 	/**
-	 * Returns the content preferences value for the passed in key.
-	 *
-	 * @param string Hash key for the mPrefs value
-	 * @param string Default value to return if the preference is empty
-	 * @param int Optional content_id for arbitrary content preference
-	 */
-	static function getContentPreference( $pContentId, $pPrefName, $pPrefDefault=NULL ) {
-		global $gBitDb;
-		$ret = NULL;
-
-		if( BitBase::verifyId( $pContentId ) && !empty( $pPrefName )) {
-			// Get a user preference for an arbitrary user
-			$sql = "SELECT `pref_value` FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=? AND `pref_name`=?";
-
-			if( !$ret = $gBitDb->getOne( $sql, array( $pContentId, $pPrefName ) ) ) {
-				$ret = $pPrefDefault;
-			}
-		}
-		return $ret;
-	}
-
-	/**
 	 * loadPreferences of the currently loaded object or pass in to get preferences of a specific content_id
 	 *
 	 * @param numeric $pContentId content_id of the item we want the prefs from (optional)
