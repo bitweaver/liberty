@@ -90,7 +90,6 @@ class TikiWikiParser extends BitBase {
 			"~euro~" => "&euro;",
 		);
 
-		include_once( UTIL_PKG_PATH."PHP_Compat/Compat/Function/str_ireplace.php" );
 		foreach( $patterns as $pattern => $replace ) {
 			$pData = str_ireplace( $pattern, $replace, $pData );
 		}
