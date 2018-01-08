@@ -37,7 +37,8 @@
 										{if $plugin.is_active == 'x'}
 											[Missing]
 										{elseif $plugin.plugin_type == 'mime' && $guid == $smarty.const.LIBERTY_DEFAULT_MIME_HANDLER}
-											<input type="checkbox" name="PLUGINS[{$guid}][]" checked id="{$guid}" value="y" disabled>
+											<input type="checkbox" checked value="y" disabled>
+											<input type="hidden" name="PLUGINS[{$guid}][]" checked id="{$guid}" value="y">
 										{else}
 											<input type="checkbox" name="PLUGINS[{$guid}][]" value="y" {if $plugin.is_active}checked{/if} id="{$guid}">
 										{/if}
