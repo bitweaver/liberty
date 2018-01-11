@@ -40,7 +40,7 @@
 											<input type="checkbox" checked value="y" disabled>
 											<input type="hidden" name="PLUGINS[{$guid}][]" checked id="{$guid}" value="y">
 										{else}
-											<input type="checkbox" name="PLUGINS[{$guid}][]" value="y" {if $plugin.is_active}checked{/if} id="{$guid}">
+											<input type="checkbox" name="PLUGINS[{$guid}][]" value="y" {if $plugin.is_active=='y'}checked{/if} id="{$guid}">
 										{/if}
 										{if $plugin.edit_label}{$plugin.edit_label}{else}{$plugin.title|escape}{/if} <small>[{$guid}]</small>
 									</strong><label></div>
