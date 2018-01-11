@@ -46,14 +46,14 @@
 									</strong><label></div>
 								</dt>
 								<dd>
+									{if $plugin_type eq 'format'}
+										<div class="inline-block radio">
+										{if $plugin.is_active == 'y'}<label><input type="radio" value="{$guid}" name="default_format" {if $gBitSystem->getConfig('default_format')==$guid}checked{/if}> <em class="small">{tr}Default{/tr}</em></label>{/if}
+										</div>
+									{/if}
 									{if $plugin.plugin_type == 'mime' && $guid == $smarty.const.LIBERTY_DEFAULT_MIME_HANDLER}<strong>{tr}DEFAULT{/tr}</strong>{/if} {$plugin.description}
 									{if $plugin.requirements.output}
 										{formfeedback hash=$plugin.requirements.output}
-									{/if}
-									{if $plugin_type eq 'format'}
-										<div class="radio">
-										{if $plugin.is_active == 'y'}{html_radios values=$guid name="default_format" checked=$gBitSystem->getConfig('default_format')}{/if}
-										</div>
 									{/if}
 								</dd>
 							{/if}
