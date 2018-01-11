@@ -21,11 +21,21 @@ if( is_object( $gStructure ) && $gStructure->isValid() && $gStructure->hasViewPe
 } elseif( @BitBase::verifyId( $module_params['structure_id'] ) ) {
 	$struct = new LibertyStructure( $module_params['structure_id'] );
 } elseif( is_object( $gContent ) && $gContent->hasViewPermission( FALSE ) ) {
-	$structures = $gContent->getStructures();
-	// We take the first structure. not good, but works for now - spiderr
-	if( !empty( $structures[0] ) ) {
-		require_once( LIBERTY_PKG_PATH.'LibertyStructure.php' );
-		$struct = new LibertyStructure( $structures[0]['structure_id'] );
+	if( $structures = $gContent->getStructures() ) {
+		// We take the first structure by default, perhaps there is a better choice
+		$structureId = $structures[0]['structure_id'];
+		if( count( $structures ) > 1 ) {
+			foreach( $structures as $structureHash ) {
+				if( $gContent->getTitle() == $structureHash['root_title'] ) {
+					$structureId = $structureHash['root_structure_id'];
+					break;
+				}
+			}
+		}
+		if( !empty( $structures[0] ) ) {
+			require_once( LIBERTY_PKG_PATH.'LibertyStructure.php' );
+			$struct = new LibertyStructure( $structureId );
+		}
 	}
 }
 
