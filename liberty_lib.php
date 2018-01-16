@@ -180,7 +180,7 @@ function parse_protect( &$pData, &$pReplace ) {
 
 // ================== Liberty Plugin Helper ==================
 /**
- * pass in the plugin paramaters and out comes a hash with usable styling information
+ * pass in the plugin parameters and out comes a hash with usable styling information
  *
  * @param array $pParamHash
  * @access public
