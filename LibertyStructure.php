@@ -24,6 +24,7 @@ class LibertyStructure extends LibertyBase {
 		parent::__construct();
 		$this->mStructureId = $pStructureId;
 		$this->mContentId = $pContentId;
+		$this->load();
 	}
 
 	function load( $pContentId=NULL ) {
@@ -117,6 +118,22 @@ class LibertyStructure extends LibertyBase {
 		$ret = FALSE;
 		if( @$this->verifyId( $this->mInfo['structure_id'] ) ) {
 			$ret = $this->mInfo['root_structure_id'] == $this->mInfo['structure_id'];
+		}
+		return $ret;
+	}
+
+	/**
+	 * get the title of the root node
+	 *
+	 * @access public
+	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
+	 */
+	function getRootObject() {
+		$ret = NULL;
+		if( !empty( $this->mInfo['root_structure_id'] ) ) {
+			if( $rootHash = $this->mDb->getRow( "SELECT * FROM `".BIT_DB_PREFIX."liberty_structures` WHERE `structure_id` = ?", array( $this->mInfo['root_structure_id'] ) ) ) {
+				$ret = $this->getLibertyObject( $rootHash['content_id'] );
+			}
 		}
 		return $ret;
 	}

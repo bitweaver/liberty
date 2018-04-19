@@ -331,7 +331,7 @@ if( !function_exists( 'mime_default_download' )) {
 			}
 
 			// set up header
-			header( "Cache Control:  no-cache, must-revalidate" );
+			header( "Cache-Control: no-cache,must-revalidate" );
 			header( "Expires: 0" );
 			header( "Accept-Ranges: bytes" );
 			header( "Pragma: public" );

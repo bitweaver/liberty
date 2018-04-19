@@ -83,7 +83,7 @@ class LibertyMime extends LibertyContent {
 	public function store( &$pStoreHash ) {
 		global $gLibertySystem;
 		// make sure all the data is in order
-		if( LibertyMime::verify( $pStoreHash ) && ( !empty( $pStoreHash['skip_content_store'] ) || LibertyContent::store( $pStoreHash ) ) ) {
+		if( LibertyMime::verify( $pStoreHash ) && ( !empty( $pStoreHash['skip_content_store'] ) || parent::store( $pStoreHash ) ) ) {
 			$this->StartTrans();
 			// files have been uploaded
 			if( !empty( $pStoreHash['upload_store']['files'] ) && is_array( $pStoreHash['upload_store']['files'] )) {
