@@ -635,8 +635,11 @@ class LibertySystem extends BitSingleton {
 	function requireHandlerFile( $pContentTypeHash ) {
 		$ret = FALSE;
 		if( defined( strtoupper( $pContentTypeHash['handler_package'] ).'_PKG_PATH' )) {
-			require_once( constant( strtoupper( $pContentTypeHash['handler_package'] ).'_PKG_PATH' ).$pContentTypeHash['handler_file'] );
-			$ret = TRUE;
+			$handlerFile = constant( strtoupper( $pContentTypeHash['handler_package'] ).'_PKG_PATH' ).$pContentTypeHash['handler_file'];
+			if( file_exists( $handlerFile ) ) {
+				require_once( $handlerFile );
+				$ret = TRUE;
+			}
 		}
 		return $ret;
 	}

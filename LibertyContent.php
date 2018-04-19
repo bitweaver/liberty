@@ -3692,6 +3692,16 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	}
 
 	/**
+	 * isHidden status test
+	 *
+	 * @return true when the content status = -10
+	 */
+	function isPublic() {
+		global $gBitSystem;
+		return( $this->getField( 'content_status_id' ) >= $gBitSystem->getConfig( 'liberty_status_threshold_public', 50 ) );
+	}
+
+	/**
 	 * getContentStatusName
 	 *
 	 * @param array $pStatusId Status ID if not available in $this->mInfo['content_status_id']
