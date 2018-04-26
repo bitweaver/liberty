@@ -2785,7 +2785,17 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 				$aux['user']                = $aux['creator_user'];
 				$aux['user_id']             = $aux['creator_user_id'];
 				if( !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
-					include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
+					if( !class_exists( $type['handler_class'] ) ) {
+						$testPath = $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'];
+						if( file_exists( $testPath ) ) {
+							include_once( $testPath );
+						} else {
+							$testPath = $gBitSystem->mPackages[$type['handler_package']]['path'].'includes/'.$type['handler_file'];
+							if( file_exists( $testPath ) ) {
+								include_once( $testPath );
+							}
+						}
+					}
 					if( $aux['content_type_guid'] == BITUSER_CONTENT_TYPE_GUID ) {
 						// here we provide getDisplay(Link|Url) with user-specific information that we get the correct links to display in pages
 						$userInfo = $gBitUser->getUserInfo( array( 'content_id' => $aux['content_id'] ));
