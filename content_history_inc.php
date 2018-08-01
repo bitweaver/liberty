@@ -55,7 +55,7 @@ if( isset( $_REQUEST["delete"] ) && isset( $_REQUEST["hist"] )) {
 		$renderer = new Text_Diff_Renderer_inline();
 		$html = $renderer->render( $diff );
 	} else {
-		include_once( UTIL_PKG_PATH.'diff.php');
+		include_once( UTIL_PKG_INC.'diff.php');
 		$diffx = new WikiDiff( $from_lines,$to_lines );
 		$fmt = new WikiUnifiedDiffFormatter;
 		$html = $fmt->format( $diffx, $from_lines );

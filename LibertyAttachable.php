@@ -352,11 +352,11 @@ class LibertyAttachable extends LibertyContent {
 			$exifHash = @exif_read_data( $pFile['tmp_name'], 0, true);
 
 			// Change: Allow this example file to be easily relocatable - as of version 1.11
-			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/JPEG.php';
-			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/JFIF.php';
-			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/PictureInfo.php';
-			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/XMP.php';
-			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/EXIF.php';
+			require_once UTIL_PKG_INC.'jpeg_metadata_tk/JPEG.php';
+			require_once UTIL_PKG_INC.'jpeg_metadata_tk/JFIF.php';
+			require_once UTIL_PKG_INC.'jpeg_metadata_tk/PictureInfo.php';
+			require_once UTIL_PKG_INC.'jpeg_metadata_tk/XMP.php';
+			require_once UTIL_PKG_INC.'jpeg_metadata_tk/EXIF.php';
 
 			// Retrieve the header information from the JPEG file
 			$jpeg_header_data = get_jpeg_header_data( $pFile['tmp_name'] );
@@ -370,7 +370,7 @@ class LibertyAttachable extends LibertyContent {
 			// Retrieve Photoshop IRB information from the JPEG file
 			$IRB_array = get_Photoshop_IRB( $jpeg_header_data );
 			if( !empty( $exifHash['IFD0']['Software'] ) && preg_match( '/photoshop/i', $exifHash['IFD0']['Software'] ) ) {
-				require_once UTIL_PKG_PATH.'jpeg_metadata_tk/Photoshop_File_Info.php';
+				require_once UTIL_PKG_INC.'jpeg_metadata_tk/Photoshop_File_Info.php';
 				// Retrieve Photoshop File Info from the three previous arrays
 				$psFileInfo = get_photoshop_file_info( $Exif_array, $XMP_array, $IRB_array );
 

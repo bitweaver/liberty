@@ -223,11 +223,11 @@ function mime_image_get_exif_data( $pUpload ) {
 
 		// extract more information if we can find it
 		if( ini_get( 'short_open_tag' )) {
-			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/JPEG.php';
-			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/JFIF.php';
-			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/PictureInfo.php';
-			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/XMP.php';
-			require_once UTIL_PKG_PATH.'jpeg_metadata_tk/EXIF.php';
+			require_once UTIL_PKG_INC.'jpeg_metadata_tk/JPEG.php';
+			require_once UTIL_PKG_INC.'jpeg_metadata_tk/JFIF.php';
+			require_once UTIL_PKG_INC.'jpeg_metadata_tk/PictureInfo.php';
+			require_once UTIL_PKG_INC.'jpeg_metadata_tk/XMP.php';
+			require_once UTIL_PKG_INC.'jpeg_metadata_tk/EXIF.php';
 
 			// Retrieve the header information from the JPEG file
 			$jpeg_header_data = get_jpeg_header_data( $pUpload['source_file'] );
@@ -241,7 +241,7 @@ function mime_image_get_exif_data( $pUpload ) {
 			// Retrieve Photoshop IRB information from the JPEG file
 			$IRB_array = get_Photoshop_IRB( $jpeg_header_data );
 			if( !empty( $exifHash['IFD0']['Software'] ) && preg_match( '/photoshop/i', $exifHash['IFD0']['Software'] ) ) {
-				require_once UTIL_PKG_PATH.'jpeg_metadata_tk/Photoshop_File_Info.php';
+				require_once UTIL_PKG_INC.'jpeg_metadata_tk/Photoshop_File_Info.php';
 				// Retrieve Photoshop File Info from the three previous arrays
 				$psFileInfo = get_photoshop_file_info( $Exif_array, $XMP_array, $IRB_array );
 
