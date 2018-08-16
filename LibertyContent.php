@@ -2043,10 +2043,12 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 *
 	 * @return array list of aliases
 	 */
-	function getAliases() {
+	function getAliases( $pUpperCase = FALSE ) {
+		global $gBitSystem;
 		$ret = array();
 		if( $this->isValid() ) {
-			$ret = $this->mDb->getCol( "SELECT `alias_title` FROM `".BIT_DB_PREFIX."liberty_aliases` lal INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(lal.`content_id`=lc.`content_id`) WHERE lal.`content_id`=? ", array( $this->mContentId ) );
+			$selectColumn = ( $pUpperCase ? $gBitSystem->mDb->getCaseLessColumn('alias_title') : '`alias_title`' );
+			$ret = $this->mDb->getCol( "SELECT ".$selectColumn." FROM `".BIT_DB_PREFIX."liberty_aliases` lal INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(lal.`content_id`=lc.`content_id`) WHERE lal.`content_id`=? ", array( $this->mContentId ), BIT_QUERY_CACHE_TIME );
 		}
 		return $ret;
 	}
