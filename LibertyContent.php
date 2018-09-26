@@ -765,17 +765,9 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	}
 
 	function exportList( $pList ) {
-		$ret = array();
-		$keys = array_merge( array( 'content_type_guid', 'title', 'uri', 'url', 'content_id' ), $this->invokeServices( 'content_export_keys_function', $pList ) );
-		foreach( $pList as $key=>$hash ) {
-			foreach( $keys as $field ) {
-				if( isset( $hash[$field] ) ) {
-					$ret[$key][$field] = $hash[$field];
-				}
-			}
-			$ret[$key]['content_id'] = $hash['content_id'];
-			$ret[$key]['date_created'] = date( DateTime::W3C, $hash['created'] );
-			$ret[$key]['date_last_modified'] = date( DateTime::W3C, strtotime( $hash['last_modified'] ) );
+		foreach( $pList as $keyId=>$hash ) {
+			$content = static::getLibertyObject( $keyId );
+			$ret[$keyId] = $content->exportHash();
 		}
 		return $ret;
 	}
@@ -790,14 +782,20 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		$ret = array();
 		if( $this->isValid() ) {
 			$ret = array(
-				'type' => $this->getContentType(),
-				'title'  	=> $this->getTitle(),
-				'uri'        => $this->getDisplayUri(),
-				'url'        => $this->getDisplayUrl(),
+				'content_type' => $this->getContentType(),
 				'content_id' => $this->mContentId,
+				'title'  	=> $this->getTitle(),
+				'display_uri'        => $this->getDisplayUri(),
+				'display_url'        => $this->getDisplayUrl(),
 				'date_created' => date( DateTime::W3C, $this->getField('created') ),
 				'date_last_modified' => date( DateTime::W3C, $this->getField('last_modified') ),
 			);
+			$keys = $this->invokeServices( 'content_export_keys_function', $pList );
+			foreach( $keys as $field ) {
+				if( $value = $this->getField( $field ) ) {
+					$ret[$field] = $value;
+				}
+			}
 		}
 		return $ret;
 	}
