@@ -782,7 +782,8 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		$ret = array();
 		if( $this->isValid() ) {
 			$ret = array(
-				'content_type' => $this->getContentType(),
+				'content_type_guid' => $this->getContentType(),
+				'content_type' => $this->getContentTypeName(),
 				'content_id' => $this->mContentId,
 				'title'  	=> $this->getTitle(),
 				'display_uri'        => $this->getDisplayUri(),
