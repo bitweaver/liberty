@@ -195,8 +195,14 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			$pParamHash['user_id'] = $gBitUser->getUserId();
 		}
 
-		if( !@$this->verifyId( $pParamHash['content_id'] ) ) {
-			if( !@$this->verifyId( $this->mContentId ) ) {
+		if( $this->verifyIdParameter( $pParamHash, 'content_id' ) && $pParamHash['content_id'] != $this->mContentId ) {
+			// we have request for a content, but is not the same as this object, something stinky going on.
+			// Unset the pParamHash['content_id'] and let mContentId be used going forward
+			unset( $pParamHash['content_id'] );
+		}
+
+		if( !$this->verifyIdParameter( $pParamHash, 'content_id' ) ) {
+			if( !$this->verifyId( $this->mContentId ) ) {
 				// These should never be updated, only inserted
 				$pParamHash['content_store']['created'] = !empty( $pParamHash['created'] ) ? $pParamHash['created'] : $gBitSystem->getUTCTime();
 				// This may get overridden by owner set
@@ -211,7 +217,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			}
 		}
 
-		if( @BitBase::verifyId( $pParamHash['content_id'] )) {
+		if( BitBase::verifyIdParameter( $pParamHash, 'content_id' ) ) {
 			$pParamHash['content_store']['content_id'] = $pParamHash['content_id'];
 		}
 
@@ -355,7 +361,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			$this->clearFromCache();
 			$this->StartTrans();
 			$table = BIT_DB_PREFIX."liberty_content";
-			if( !@$this->verifyId( $pParamHash['content_id'] ) ) {
+			if( !$this->verifyIdParameter( $pParamHash, 'content_id' ) ) {
 				// make sure some variables are stuff in case services need getObjectType, mContentId, etc...
 				$this->mContentId = $pParamHash['content_id'] = $pParamHash['content_store']['content_id'] = $this->mDb->GenID( 'liberty_content_id_seq' );
 				$this->mContentTypeGuid = $this->mInfo['content_type_guid'] = $pParamHash['content_type_guid'];
