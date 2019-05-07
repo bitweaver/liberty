@@ -195,8 +195,14 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			$pParamHash['user_id'] = $gBitUser->getUserId();
 		}
 
-		if( !@$this->verifyId( $pParamHash['content_id'] ) ) {
-			if( !@$this->verifyId( $this->mContentId ) ) {
+		if( $this->verifyIdParameter( $pParamHash, 'content_id' ) && $pParamHash['content_id'] != $this->mContentId ) {
+			// we have request for a content, but is not the same as this object, something stinky going on.
+			// Unset the pParamHash['content_id'] and let mContentId be used going forward
+			unset( $pParamHash['content_id'] );
+		}
+
+		if( !$this->verifyIdParameter( $pParamHash, 'content_id' ) ) {
+			if( !$this->verifyId( $this->mContentId ) ) {
 				// These should never be updated, only inserted
 				$pParamHash['content_store']['created'] = !empty( $pParamHash['created'] ) ? $pParamHash['created'] : $gBitSystem->getUTCTime();
 				// This may get overridden by owner set
@@ -211,7 +217,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			}
 		}
 
-		if( @BitBase::verifyId( $pParamHash['content_id'] )) {
+		if( BitBase::verifyIdParameter( $pParamHash, 'content_id' ) ) {
 			$pParamHash['content_store']['content_id'] = $pParamHash['content_id'];
 		}
 
@@ -355,7 +361,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			$this->clearFromCache();
 			$this->StartTrans();
 			$table = BIT_DB_PREFIX."liberty_content";
-			if( !@$this->verifyId( $pParamHash['content_id'] ) ) {
+			if( !$this->verifyIdParameter( $pParamHash, 'content_id' ) ) {
 				// make sure some variables are stuff in case services need getObjectType, mContentId, etc...
 				$this->mContentId = $pParamHash['content_id'] = $pParamHash['content_store']['content_id'] = $this->mDb->GenID( 'liberty_content_id_seq' );
 				$this->mContentTypeGuid = $this->mInfo['content_type_guid'] = $pParamHash['content_type_guid'];
@@ -765,17 +771,9 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	}
 
 	function exportList( $pList ) {
-		$ret = array();
-		$keys = array_merge( array( 'content_type_guid', 'title', 'uri', 'url', 'content_id' ), $this->invokeServices( 'content_export_keys_function', $pList ) );
-		foreach( $pList as $key=>$hash ) {
-			foreach( $keys as $field ) {
-				if( isset( $hash[$field] ) ) {
-					$ret[$key][$field] = $hash[$field];
-				}
-			}
-			$ret[$key]['content_id'] = $hash['content_id'];
-			$ret[$key]['date_created'] = date( DateTime::W3C, $hash['created'] );
-			$ret[$key]['date_last_modified'] = date( DateTime::W3C, strtotime( $hash['last_modified'] ) );
+		foreach( $pList as $keyId=>$hash ) {
+			$content = static::getLibertyObject( $keyId );
+			$ret[$keyId] = $content->exportHash();
 		}
 		return $ret;
 	}
@@ -790,14 +788,21 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		$ret = array();
 		if( $this->isValid() ) {
 			$ret = array(
-				'type' => $this->getContentType(),
-				'title'  	=> $this->getTitle(),
-				'uri'        => $this->getDisplayUri(),
-				'url'        => $this->getDisplayUrl(),
+				'content_type_guid' => $this->getContentType(),
+				'content_type' => $this->getContentTypeName(),
 				'content_id' => $this->mContentId,
+				'title'  	=> $this->getTitle(),
+				'display_uri'        => $this->getDisplayUri(),
+				'display_url'        => $this->getDisplayUrl(),
 				'date_created' => date( DateTime::W3C, $this->getField('created') ),
 				'date_last_modified' => date( DateTime::W3C, $this->getField('last_modified') ),
 			);
+			$keys = $this->invokeServices( 'content_export_keys_function', $pList );
+			foreach( $keys as $field ) {
+				if( $value = $this->getField( $field ) ) {
+					$ret[$field] = $value;
+				}
+			}
 		}
 		return $ret;
 	}
@@ -2043,10 +2048,12 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 *
 	 * @return array list of aliases
 	 */
-	function getAliases() {
+	function getAliases( $pUpperCase = FALSE ) {
+		global $gBitSystem;
 		$ret = array();
 		if( $this->isValid() ) {
-			$ret = $this->mDb->getCol( "SELECT `alias_title` FROM `".BIT_DB_PREFIX."liberty_aliases` lal INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(lal.`content_id`=lc.`content_id`) WHERE lal.`content_id`=? ", array( $this->mContentId ) );
+			$selectColumn = ( $pUpperCase ? $gBitSystem->mDb->getCaseLessColumn('alias_title') : '`alias_title`' );
+			$ret = $this->mDb->getCol( "SELECT ".$selectColumn." FROM `".BIT_DB_PREFIX."liberty_aliases` lal INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON(lal.`content_id`=lc.`content_id`) WHERE lal.`content_id`=? ", array( $this->mContentId ), BIT_QUERY_CACHE_TIME );
 		}
 		return $ret;
 	}
@@ -2785,7 +2792,17 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 				$aux['user']                = $aux['creator_user'];
 				$aux['user_id']             = $aux['creator_user_id'];
 				if( !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
-					include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
+					if( !class_exists( $type['handler_class'] ) ) {
+						$testPath = $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'];
+						if( file_exists( $testPath ) ) {
+							include_once( $testPath );
+						} else {
+							$testPath = $gBitSystem->mPackages[$type['handler_package']]['path'].'includes/'.$type['handler_file'];
+							if( file_exists( $testPath ) ) {
+								include_once( $testPath );
+							}
+						}
+					}
 					if( $aux['content_type_guid'] == BITUSER_CONTENT_TYPE_GUID ) {
 						// here we provide getDisplay(Link|Url) with user-specific information that we get the correct links to display in pages
 						$userInfo = $gBitUser->getUserInfo( array( 'content_id' => $aux['content_id'] ));

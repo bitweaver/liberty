@@ -32,6 +32,6 @@ function markdown_verify_data( &$pParamHash ) {
 }
 
 function markdown_parse_data( &$pParseHash, &$pCommonObject ) {
-	require_once( UTIL_PKG_PATH.'markdown.php' );
+	require_once( UTIL_PKG_INC.'markdown.php' );
 	return Markdown( $pParseHash['data'] );
 }

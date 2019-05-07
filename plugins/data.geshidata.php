@@ -83,10 +83,10 @@ function data_help_GeshiData() {
 * Load Function *
  ****************/
 function data_GeshiData($data, $params) {
-	if ( !file_exists( UTIL_PKG_PATH . 'geshi/geshi.php' )) { // Exit - Unable to display the code.
+	if ( !file_exists( UTIL_PKG_INC . 'geshi/geshi.php' )) { // Exit - Unable to display the code.
 		return pluginError('GeshiData', tra('The Plugin GeshiData Can Not Function Without The GeSHi Code!'));
 	}
-	include_once( UTIL_PKG_PATH.'geshi/geshi.php' );
+	include_once( UTIL_PKG_INC.'geshi/geshi.php' );
 	extract ($params);
 // NOTE: The the order of the next 2 arrays is critical - if you change one of them then change the other in the same way
 	$langKeyWordArray =	array('actionscript',	'ada',	'apache',			'asm',				'asp',	'bash',	'c',	'c_mac',		'caddcl',		'cadlisp',		'cpp',	'csharp',	'css',	'd',	'delphi',	'diff',			'html4strict',	'java',	'javascript',	'lisp',	'lua',	'matlab',	'mpasm',	'nsis',					'objc',			'oobas',				'oracle8',	'pascal',	'perl',	'php',	'php-brief',	'python',	'qbasic',		'smarty',	'sql',	'vb',			'vbnet',	'vhdl',	'visualfoxpro',	'xml'); // Used by Key-word test
@@ -98,7 +98,7 @@ function data_GeshiData($data, $params) {
 
 	if (-!isset($doall)) {
 		if (in_array($info,$infoKeyWordArray)) {
-			$obj = new GeSHi('Function code(){ }', $lang, UTIL_PKG_PATH.'geshi/geshi' );
+			$obj = new GeSHi('Function code(){ }', $lang, UTIL_PKG_INC.'geshi/geshi' );
 			switch ($info) {
 				case 'comment' : {
 					$datArr = $obj->language_data['COMMENT_SINGLE'];
@@ -124,7 +124,7 @@ function data_GeshiData($data, $params) {
 		$ret .=		'<div class="boxcontent">'; // The Body
 		$cnt = 0;
 		foreach ($langKeyWordArray as $i) {
-			$obj = new GeSHi('Function code(){ }', $i, UTIL_PKG_PATH.'geshi/geshi' );
+			$obj = new GeSHi('Function code(){ }', $i, UTIL_PKG_INC.'geshi/geshi' );
 			$ret .=		'<table class="data help" style="width: 100%;" border="2" cellpadding="4">';
 			$ret .=			'<tr>';
 			$ret .=				'<th colspan="3" style="text-align: center;"><strong><large>'.$obj->language_data['LANG_NAME'].'</large></strong></th>';
