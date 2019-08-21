@@ -3399,11 +3399,17 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		global $gLibertySystem, $gBitSystem;
 		foreach ($gLibertySystem->mContentTypes as $type) {
 			if ($type['content_type_guid'] == $pContentTypeGuid) {
-				$path = $gBitSystem->mPackages[$type['handler_package']]['path'];//constant(strtoupper($type['handler_package']).'_PKG_PATH');
-				include_once($path.$type['handler_file']);
-				$content = new $type['handler_class'];
-				if (method_exists($content, 'getFilterSql')) {
-					$content->getFilterSql($pSql, $pBindVars, $pHash);
+				if( !empty( $gBitSystem->mPackages[$type['handler_package']]['path'] ) ) {
+					$path = $gBitSystem->mPackages[$type['handler_package']]['path'];//constant(strtoupper($type['handler_package']).'_PKG_PATH');
+					if( file_exists( $path.$type['handler_file'] ) ) {
+						include_once($path.$type['handler_file']);
+						if ( class_exists( $type['handler_class'] ) ) {
+							$content = new $type['handler_class'];
+							if (method_exists($content, 'getFilterSql')) {
+								$content->getFilterSql($pSql, $pBindVars, $pHash);
+							}
+						}
+					}
 				}
 			}
 		}
