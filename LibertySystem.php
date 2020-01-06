@@ -806,11 +806,11 @@ class LibertySystem extends BitSingleton {
 				'url' => 'only',
 			);
 
-			if( !$ret = smarty_function_biticon( $biticon,$gBitSmarty ) ) {
+			if( !$ret = smarty_function_biticon( $biticon ) ) {
 				$biticon['iname'] = strtolower( $pExt );
-				if( !$ret = smarty_function_biticon( $biticon,$gBitSmarty ) ) {
+				if( !$ret = smarty_function_biticon( $biticon ) ) {
 					$biticon['iname'] = 'generic';
-					$ret = smarty_function_biticon( $biticon,$gBitSmarty );
+					$ret = smarty_function_biticon( $biticon );
 				}
 			}
 		}
