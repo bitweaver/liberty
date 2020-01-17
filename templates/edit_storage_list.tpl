@@ -5,44 +5,65 @@
 {/if}
 {if $gContent->mStorage}
 	<div class="form-group">
-		<table class="table data" summary="List of attached files">
-			<tr>
-				<th scope="col" class="width29p" title="{tr}Thumbnail{/tr}">{tr}Thumbnail{/tr}</th>
-				<th scope="col" class="width40p" title="{tr}Inclusion Code{/tr}">{tr}Inclusion Code{/tr}</th>
-				<th scope="col" class="width30p" title="{tr}Actions{/tr}">{tr}Actions{/tr}</th>
-			</tr>
-
+		{formlabel label="Attachments"}
+<script>
+var attachmentUrls = {ldelim}{rdelim};
+</script>
 			{foreach from=$gContent->mStorage item=storage key=attachmentId name=atts}
-				<tr class="{cycle values="odd,even"}">
-					<td class="aligncenter">
+<script>
+attachmentUrls["{$storage.attachment_id}"] = {ldelim}{rdelim};
+</script>
+				<div class="row">
+					<div class="col-xs-2">
 						{if $storage.is_mime}
 							{include file=$gLibertySystem->getMimeTemplate('storage',$storage.attachment_plugin_guid) thumbsize=small preferences=$gContent->mStoragePrefs.$attachmentId attachment=$storage}
 						{else}
 							{jspopup href=$storage.source_url title=$storage.title|default:$storage.filename notra=1 img=$storage.thumbnail_url.avatar}
-							<br />{$storage.filename} <span class="date">{$storage.file_size|display_bytes}</span>
-							{if $smarty.foreach.atts.first}
-								{formhelp note="click to see large preview"}
-							{/if}
+							<div class="help-block">
+						{tr}ID:{/tr} {$storage.attachment_id}<br>
+								{$storage.filename} <span class="date">{$storage.file_size|display_bytes}</span>
+</div>
 						{/if}
-					</td>
-					<td>
-						<div>{tr}Attachment ID{/tr}: <strong>{$storage.attachment_id}</strong></div>
-						{if $gBitThemes->isJavascriptEnabled()}
-							<div><a href="javascript:void(0);" onclick="BitBase.toggleElementDisplay('wiki_attachment_code_{$storage.attachment_id}','table-row');">Wiki Code</a></div>
-							<div><a href="javascript:void(0);" onclick="BitBase.toggleElementDisplay('html_attachment_code_{$storage.attachment_id}','table-row');">HTML Code</a></div>
-						{else}
-							{$storage.wiki_plugin_link}
-							{if $smarty.foreach.atts.first}
-								{formhelp note="copy this code into your edit window to embed the file into your text"}
-							{/if}
-						{/if}
-					</td>
-					<td class="actionicon">
 						{if $uploadTab}
 							{* these radio buttons can not be displayed twice in the same form due to interference in $_REQUEST *}
-							<label>{tr}{$primary_label|default:"Primary"}{/tr}:&nbsp;<input type="radio" name="liberty_attachments[primary]" value="{$attachmentId}"{if $storage.is_primary eq 'y'} checked="checked"{/if} /></label>
-							<br />
+							<label><input type="radio" name="liberty_attachments[primary]" value="{$attachmentId}"{if $storage.is_primary eq 'y'} checked="checked"{/if} />&nbsp;{tr}{$primary_label|default:"Primary"}{/tr}</label>
 						{/if}
+					</div>
+					<div class="col-xs-9">
+						{forminput}
+							<input name="attachment_source_wiki_{$storage.attachment_id}" value="{$storage.wiki_plugin_link}" class="form-control" onClick="this.select();"/>
+							{formhelp note="Wiki Code"}
+						{/forminput}
+
+						{forminput}
+							<input class="form-control attachment-img-{$storage.attachment_id}" name="attachment_source_{$size}_{$storage.attachment_id}" onClick="this.select();"/>
+							{formhelp note="HTML `$size`"}
+						{/forminput}
+<script type="text/javascript">
+{foreach name=size key=size from=$storage.thumbnail_url item=url}
+window.attachmentUrls["{$storage.attachment_id}"]["{$size}"] = "{$url|escape}";
+{/foreach}
+{if ( $storage.source_url ) }
+window.attachmentUrls["{$storage.attachment_id}"]["original"] = "{$storage.source_url|escape}";
+{/if}
+</script>
+
+						<div class="input-group">
+							<div class="input-group-btn">
+								<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="attachment-label-{$storage.attachment_id}">{tr}Size{/tr}...</span> <span class="caret"></span></button>
+								<ul class="dropdown-menu">
+								{foreach name=size key=size from=$storage.thumbnail_url item=url}
+									<li><a href="#" onclick="setThumbnail('{$storage.attachment_id}','{$size}');return false;">{$size|ucwords}</a></li>
+								{/foreach}
+								{if ( $storage.source_url ) }
+									<li><a href="#" onclick="setThumbnail('{$storage.attachment_id}','original');return false;">{tr}Original{/tr}</a></li>
+								{/if}
+								</ul>
+							</div>
+							<input type="text" class="form-control attachment-thumbnail-{$storage.attachment_id}" onClick="this.select();">
+						</div>
+					</div>
+					<div class="col-xs-1">
 						{if $gBitUser->isAdmin() || ($storage.user_id == $gBitUser->mUserId) }
 							{capture name=urlArgs}{$attachmentBaseArgs}content_id={$gContent->mContentId}{if empty($gContent->mContentId)}{foreach from=$gContent->mStorage key=key item=val}&amp;STORAGE[existing][{$val.attachment_id}]={$val.attachment_id}{/foreach}{/if}{/capture}
 							{if $libertyUploader || $gBitSystem->getConfig('liberty_attachment_style') == 'ajax'}
@@ -58,73 +79,30 @@
 								<a href="{$smarty.server.SCRIPT_NAME}?{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}">{booticon iname="icon-trash" ipackage="icons" iexplain="Delete"}</a>
 							{/if}
 						{/if}
-					</td>
-				</tr>
-				{if $gBitThemes->isJavascriptEnabled()}
-					{capture name=inputhelp}
-						<tr>
-							<td colspan="2">
-								{formhelp note="copy this code into your edit window to embed the file into your text"}
-							</td>
-						</tr>
-					{/capture}
-
-					<tr id="wiki_attachment_code_{$storage.attachment_id}" style="display:none;">
-						<td colspan=4>
-							<table>
-								{$smarty.capture.inputhelp}
-								<tr>
-									<td class="width15p">{tr}Wiki code{/tr}</td>
-									<td class="width85p"><input name="attachment_source_wiki_{$storage.attachment_id}" value="{$storage.wiki_plugin_link}" readonly="readonly" class="width100p"/></td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr id="html_attachment_code_{$storage.attachment_id}" style="display:none;">
-						<td colspan=4>
-							<table>
-								{$smarty.capture.inputhelp}
-								<tr>
-									<th class="width15p">{tr}Size{/tr}</th>
-									<th class="width85p">{tr}Code{/tr}</th>
-								</tr>
-								{if $storage.attachment_plugin_guid eq 'mimeimage'}
-									{foreach name=size key=size from=$storage.thumbnail_url item=url}
-										<tr>
-											<td>{$size}</td>
-											<td><input name="attachment_source_{$size}_{$storage.attachment_id}" value='&lt;img src="{$url|escape}" /&gt;' readonly="readonly" class="width100p"/></td>
-										</tr>
-									{/foreach}
-									{if ( $storage.source_url ) }
-										<tr>
-											<td>original</td>
-											<td><input name="attachment_source_original_{$storage.attachment_id}" value='&lt;img src="{$storage.source_url|escape}" /&gt;' readonly="readonly" class="width100p"/></td>
-										</tr>
-									{/if}
-								{else}
-									<tr>
-										<td class="width15p">icon</td>
-										<td class="width85p"><input name="attachment_source_icon_{$storage.attachment_id}" value='&lt;a href="{$storage.download_url}" &gt;&lt;img src="{$storage.thumbnail_url.icon}" /&gt;&lt;/a&gt;&lt;br /&gt;{$storage.filename}' readonly="readonly" class="width100p"/></td>
-									</tr>
-								{/if}
-							</table>
-						</td>
-					</tr>
-				{/if}
+					</div>
+				</div>
+<script type="text/javascript">
+$(document).ready(function(){ldelim}
+	setThumbnail('{$storage.attachment_id}','medium');
+{rdelim});
+</script>
 			{/foreach}
 			{if $uploadTab}
-				<tr>
-					<td colspan="2">&nbsp;</td>
-					<td class="actionicon">
+				<div>
 						<label>
-							{tr}No {$primary_label|default:"Primary"}{/tr}:&nbsp;
-							<input type="radio" name="liberty_attachments[primary]" value="none" {if !$gContent->getField('primary_attachment_id')}checked="checked"{/if} />
+							<input type="radio" name="liberty_attachments[primary]" value="none" {if !$gContent->getField('primary_attachment_id')}checked="checked"{/if} /> {tr}No {$primary_label|default:"Primary"}{/tr}
 						</label>
-					</td>
-				</tr>
+				</div>
 			{/if}
+<script type="text/javascript">{literal}
+function setThumbnail(pAttachmentId,pSize) {
+    $(".attachment-img-"+pAttachmentId).attr("value",'<img src="'+attachmentUrls[pAttachmentId][pSize]+'">');
+	$(".attachment-img-"+pAttachmentId).trigger( "change" )
+	$(".attachment-label-"+pAttachmentId).html( pSize );
+	$(".attachment-thumbnail-"+pAttachmentId).val( attachmentUrls[pAttachmentId][pSize] );
+}
+{/literal}</script>
 
-		</table>
 	</div>
 {/if}
 {if !$gBitThemes->isAjaxRequest()}
