@@ -1873,6 +1873,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			}
 			$this->mPrefs[$pPrefName] = $pPrefValue;
 			$this->CompleteTrans();
+			$this->clearFromCache();
 		}
 		return $ret;
 	}
