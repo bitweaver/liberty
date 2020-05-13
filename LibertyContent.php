@@ -2165,7 +2165,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @param string $pAnchor anchor string e.g.: #comment_123
 	 * @return string Formated html the link to display the page.
 	 */
-	function getDisplayLink( $pLinkText=NULL, $pMixed=NULL, $pAnchor=NULL ) {
+	public static function getDisplayLink( $pLinkText=NULL, $pMixed=NULL, $pAnchor=NULL ) {
 		global $gBitSmarty;
 		$ret = '';
 		if( empty( $pMixed ) && !empty( $this->mInfo )) {

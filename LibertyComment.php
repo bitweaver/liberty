@@ -367,7 +367,7 @@ class LibertyComment extends LibertyMime {
 			return ( $ret );
 	}
 
-	function getDisplayLink( $pLinkText=NULL, $pMixed=NULL, $pAnchor=NULL ) {
+	public static function getDisplayLink( $pLinkText=NULL, $pMixed=NULL, $pAnchor=NULL ) {
 		$anchor = '';
 		// Override default title with something comment centric
 		if( empty( $pLinkText ) ) {
