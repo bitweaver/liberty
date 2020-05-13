@@ -83,7 +83,7 @@ function liberty_imagick_get_function( $pFunction ) {
 // =============================================
 // ======== Version 0.9* of php-imagick ========
 // =============================================
-function liberty_imagick0_resize_image( &$pFileHash ) {
+function liberty_imagick_resize_image( &$pFileHash ) {
 	global $gBitSystem;
 	$pFileHash['error'] = NULL;
 	$ret = NULL;
@@ -162,7 +162,7 @@ function liberty_imagick0_resize_image( &$pFileHash ) {
 	return $ret;
 }
 
-function liberty_imagick0_rotate_image( &$pFileHash ) {
+function liberty_imagick_rotate_image( &$pFileHash ) {
 	$ret = FALSE;
 	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
 		$iImg = imagick_readimage( $pFileHash['source_file'] );
