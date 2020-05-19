@@ -2157,26 +2157,27 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		return LIBERTY_PKG_PATH.'display_content_inc.php';
 	}
 
+	public function getDisplayLink( $pLinkText=NULL, $pAnchor=NULL ) {
+		return self::getDisplayLinkFromHash( $this->mInfo, $pLinkText, $pAnchor );
+	}
+
 	/**
 	 * Pure virtual function that returns link to display a piece of content
 	 *
 	 * @param string $pLinkText Text for the link unless overriden by object title
-	 * @param array $pMixed different possibilities depending on derived class
+	 * @param array $pParamHash different possibilities depending on derived class
 	 * @param string $pAnchor anchor string e.g.: #comment_123
 	 * @return string Formated html the link to display the page.
 	 */
-	public static function getDisplayLink( $pLinkText=NULL, $pMixed=NULL, $pAnchor=NULL ) {
+	public static function getDisplayLinkFromHash( &$pParamHash, $pLinkText=NULL, $pAnchor=NULL ) {
 		global $gBitSmarty;
 		$ret = '';
-		if( empty( $pMixed ) && !empty( $this->mInfo )) {
-			$pMixed = &$this->mInfo;
-		}
 
 		if( empty( $pLinkText )) {
-			if( !empty( $pMixed['title'] )) {
-				$pLinkText = $pMixed['title'];
-			} elseif( !empty( $pMixed['content_name'] ) ) {
-				$pLinkText = "[ ".$pMixed['content_name']." ]";
+			if( !empty( $pParamHash['title'] )) {
+				$pLinkText = $pParamHash['title'];
+			} elseif( !empty( $pParamHash['content_name'] ) ) {
+				$pLinkText = "[ ".$pParamHash['content_name']." ]";
 			}
 		}
 
@@ -2185,16 +2186,16 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		}
 
 		// we add some more info to the title of the link
-		if( !empty( $pMixed['created'] )) {
+		if( !empty( $pParamHash['created'] )) {
 			$gBitSmarty->loadPlugin( 'smarty_modifier_bit_short_date' );
-			$linkTitle = tra( 'Created' ).': '.smarty_modifier_bit_short_date( $pMixed['created'] );
+			$linkTitle = tra( 'Created' ).': '.smarty_modifier_bit_short_date( $pParamHash['created'] );
 		} else {
 			$linkTitle = $pLinkText;
 		}
 
 		// finally we are ready to create the full link
-		if( !empty( $pMixed['content_id'] )) {
-			$ret = '<a title="'.htmlspecialchars( $linkTitle ).'" href="'.LibertyContent::getDisplayUrlFromHash( $pMixed ).$pAnchor.'">'.htmlspecialchars( $pLinkText ).'</a>';
+		if( !empty( $pParamHash['content_id'] )) {
+			$ret = '<a title="'.htmlspecialchars( $linkTitle ).'" href="'.LibertyContent::getDisplayUrlFromHash( $pParamHash ).$pAnchor.'">'.htmlspecialchars( $pLinkText ).'</a>';
 		}
 		return $ret;
 	}
@@ -2223,7 +2224,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 
 	/**
 	 * Not-so-pure virtual function that returns Request_URI to a piece of content
-	 * @param array $pMixed a hash of params to add to the url
+	 * @param array $pParamHash a hash of params to add to the url
 	 * @return string Formated URL address to display the page.
 	 */
 	public static function getDisplayUrlFromHash( &$pParamHash ) {
@@ -2808,11 +2809,11 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 						// here we provide getDisplay(Link|Url) with user-specific information that we get the correct links to display in pages
 						$userInfo = $gBitUser->getUserInfo( array( 'content_id' => $aux['content_id'] ));
 						$aux['title']        = $type['handler_class']::getTitleFromHash( $userInfo );
-						$aux['display_link'] = $type['handler_class']::getDisplayLink( $userInfo['login'], $userInfo );
-						$aux['display_url']  = $type['handler_class']::getDisplayUrl( $userInfo['login'] );
+						$aux['display_link'] = $type['handler_class']::getDisplayLinkFromHash( $userInfo, $userInfo['login'] );
+						$aux['display_url']  = $type['handler_class']::getDisplayUrlFromHash( $userInfo );
 					} else {
 						$aux['title']        = $type['handler_class']::getTitleFromHash( $aux );
-						$aux['display_link'] = $type['handler_class']::getDisplayLink( $aux['title'], $aux );
+						$aux['display_link'] = $type['handler_class']::getDisplayLinkFromHash( $aux, $aux['title'] );
 						/**
 						 * @TODO standardize getDisplayUrl params
 						 * nice try, but you can't do this because individual classes have gone off the reservation changing the params they accept
@@ -3606,7 +3607,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		while( $aux = $result->fetchRow() ) {
 			$aux['user']         = $aux['modifier_user'];
 			$aux['editor']       = ( isset( $aux['modifier_real_name'] ) ? $aux['modifier_real_name'] : $aux['modifier_user'] );
-			$aux['display_name'] = BitUser::getDisplayNameFromHash( NULL, $aux );
+			$aux['display_name'] = BitUser::getDisplayNameFromHash( $aux );
 			$ret[]               = $aux;
 		}
 
