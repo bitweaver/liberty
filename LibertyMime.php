@@ -29,18 +29,14 @@ class LibertyMime extends LibertyContent {
 	/**
 	 * load the attachments for a given content id and then stuff them in mStorage
 	 *
-	 * @param array $pContentId
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	public function load( $pContentId = NULL, $pPluginParams = NULL ) {
+	public function load() {
 		global $gLibertySystem;
-		// assume a derived class has joined on the liberty_content table, and loaded it's columns already.
-		$contentId = ( @BitBase::verifyId( $pContentId ) ? $pContentId : $this->mContentId );
-
-		if( @BitBase::verifyId( $contentId )) {
+		if( @BitBase::verifyId( $this->mContentId )) {
 			// load up the content
-			LibertyContent::load( $contentId );
+			LibertyContent::load();
 
 			// don't loadAttachmentPreferences() when we are forcing the installer since it breaks the login process before 2.1.0-beta
 			if( !defined( 'INSTALLER_FORCE' ) && !defined( 'LOGIN_VALIDATE' )) {
@@ -48,7 +44,7 @@ class LibertyMime extends LibertyContent {
 			}
 
 			$query = "SELECT * FROM `".BIT_DB_PREFIX."liberty_attachments` la WHERE la.`content_id`=? ORDER BY la.`pos` ASC, la.`attachment_id` ASC";
-			if( $result = $this->mDb->query( $query,array( (int)$contentId ))) {
+			if( $result = $this->mDb->query( $query,array( $this->mContentId ))) {
 				$this->mStorage = array();
 				while( $row = $result->fetchRow() ) {
 					if( !empty( $row['is_primary'] ) ) {
@@ -63,7 +59,7 @@ class LibertyMime extends LibertyContent {
 						if( empty( $this->mStoragePrefs[$row['attachment_id']] )) {
 							$this->mStoragePrefs[$row['attachment_id']] = array();
 						}
-						$this->mStorage[$row['attachment_id']] = $func( $row, $this->mStoragePrefs[$row['attachment_id']], $pPluginParams );
+						$this->mStorage[$row['attachment_id']] = $func( $row, $this->mStoragePrefs[$row['attachment_id']], NULL );
 					} else {
 						print "No load_function for ".$row['attachment_plugin_guid'];
 					}

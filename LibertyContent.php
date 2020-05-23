@@ -148,7 +148,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return void
 	 */
-	function load( $pContentId = NULL, $pPluginParams = NULL ) {
+	public function load() {
 		if( !empty( $this->mInfo['content_type_guid'] )) {
 			global $gLibertySystem, $gBitSystem, $gBitUser;
 			$this->loadPreferences();
