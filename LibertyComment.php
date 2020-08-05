@@ -367,16 +367,16 @@ class LibertyComment extends LibertyMime {
 			return ( $ret );
 	}
 
-	function getDisplayLink( $pLinkText=NULL, $pMixed=NULL, $pAnchor=NULL ) {
+	public static function getDisplayLinkFromHash( &$pParamHash, $pLinkText=NULL, $pAnchor=NULL ) {
 		$anchor = '';
 		// Override default title with something comment centric
 		if( empty( $pLinkText ) ) {
 			$pLinkText = tra( 'Comment' );
 		}
-		if( @BitBase::verifyId( $pMixed['content_id'] )) {
-			$anchor = "&view_comment_id=".$pMixed['content_id']."#comment_{$pMixed['content_id']}";
+		if( @BitBase::verifyId( $pParamHash['content_id'] )) {
+			$anchor = "&view_comment_id=".$pParamHash['content_id']."#comment_{$pParamHash['content_id']}";
 		}
-		return parent::getDisplayLink( $pLinkText, $pMixed, $anchor );
+		return parent::getDisplayLinkFromHash( $pParamHash, $pLinkText, $anchor );
 	}
 
 	function getList( &$pParamHash ) {

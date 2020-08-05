@@ -43,7 +43,7 @@
 							<div style="display:inline-block">
 								<input type="password" placeholder="{tr}Password{/tr}" name="login_password" id="login-password" value="{$smarty.request.login_password|escape:html}" />
 							</div>
-							<div class="formhelp">{tr}If you are already registered with <strong>{$gBitSystem->mConfig.site_title|default:"this site"}</strong> please enter your login details above.{/tr}</div>
+							<div class="formhelp">{tr}If you are already registered, please enter your login credentials.{/tr}</div>
 						{/forminput}
 					</div>
 					<div class="form-group" style="display:none" id="post-anon">

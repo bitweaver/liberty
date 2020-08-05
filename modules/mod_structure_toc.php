@@ -40,7 +40,9 @@ if( is_object( $gStructure ) && $gStructure->isValid() && $gStructure->hasViewPe
 }
 
 if( is_object( $struct ) && count( $struct->isValid() ) ) {
-	$_template->tpl_vars['moduleTitle'] = new Smarty_variable( $moduleParams['title'] );
+	if( !empty( $moduleParams['title'] ) ) {
+		$_template->tpl_vars['moduleTitle'] = new Smarty_variable( $moduleParams['title'] );
+	}
 	$toc = $struct->getToc( $struct->mInfo['root_structure_id'], 'asc', FALSE, 2 );
 	$root = $struct->getRootObject( $struct->mInfo['root_structure_id'] );
 	$_template->tpl_vars['rootTitle'] = new Smarty_variable( $root->getDisplayLink() );
