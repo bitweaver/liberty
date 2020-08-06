@@ -88,7 +88,7 @@ function liberty_magickwand_resize_image( &$pFileHash ) {
 				$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['dest_base_name'].$destExt;
 			}
 			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || $mimeExt != $targetType ) || !empty( $pFileHash['colorspace_conversion'] ) ) {
-				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
+				$pFileHash['name'] = basename( $destFile );
 				// Alternate Filter settings can seen here http://www.dylanbeattie.net/magick/filters/result.html
 				if ( $error = liberty_magickwand_check_error( MagickResizeImage( $magickWand, $pFileHash['max_width'], $pFileHash['max_height'], MW_CatromFilter, 1.00 ), $magickWand ) ) {
 					$pFileHash['error'] .= $error;
