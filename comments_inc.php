@@ -72,12 +72,12 @@ if( @BitBase::verifyId( $_REQUEST['post_comment_id'] ) && $gContent->hasUserPerm
 			$postComment['data'] = $editComment->mInfo['data'];
 			$postComment['title'] = $editComment->mInfo['title'];
 		} else {
-			$formfeedback['error'] = "You do not have permission to edit this comment.";
+			$formfeedback['error'][] = "You do not have permission to edit this comment.";
 			$editComment = NULL;
 			$post_comment_id = NULL;
 		}
 	} else {
-		$formfeedback['error'] = "Comment does not exist.";
+		$formfeedback['error'][] = "Comment does not exist.";
 		$editComment = NULL;
 		$post_comment_id = NULL;
 	}
