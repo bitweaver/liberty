@@ -35,7 +35,7 @@ if( !empty( $_REQUEST['action'] ) && @BitBase::verifyId( $gContent->mContentId )
 	}
 
 	if( @BitBase::verifyId( $_REQUEST["role_id"] ) && !empty( $_REQUEST["perm"] )) {
-		$gBitUser->verifyTicket( TRUE );
+		$gBitUser->verifyTicket();
 		if( $_REQUEST["action"] == 'assign' ) {
 			$gContent->storePermission( $_REQUEST["role_id"], $_REQUEST["perm"] );
 		} elseif( $_REQUEST["action"] == 'negate' ) {
