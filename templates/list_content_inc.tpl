@@ -9,11 +9,19 @@
 	{assign var=isort_editor value=modifier_real_name}
 {/if}
 
+{if $gBitUser->isAdmin()}
+<form id="bulkcontentform" action="{$smarty.const.LIBERTY_PKG_URL}list_content.php?{$smarty.server.QUERY_STRING}" method="POST">
+{/if}
+
+{assign var=showStatus value=($gBitSystem->isFeatureActive( 'liberty_display_status' ) && $gBitUser->hasPermission( 'p_liberty_view_all_status' ))}
 <table class="table data clear">
 	<caption>{tr}Available Content{/tr} <span class="total">[ {$listInfo.total_records} ]</span></caption>
 	<tr>
-		<th class="width2p">{smartlink ititle="ID" isort="lc.content_id" list_page=$listInfo.current_page ihash=$listInfo.ihash}</th>
-		{if $gBitSystem->isFeatureActive( 'liberty_display_status' ) && $gBitUser->hasPermission( 'p_liberty_view_all_status' )}
+		{if $gBitUser->isAdmin()}
+		<th><input name="switcher" id="switcher" type="checkbox" onclick="BitBase.switchCheckboxes(this.form.id,'batch_content_ids[]','switcher')" /></th>
+		{/if}
+		<th class="text-right">{smartlink ititle="ID" isort="lc.content_id" list_page=$listInfo.current_page ihash=$listInfo.ihash}</th>
+		{if $showStatus}
 			<th>{smartlink ititle="Status" isort=content_status_name list_page=$listInfo.current_page ihash=$listInfo.ihash}</th>
 		{/if}
 		<th>{smartlink ititle="Title" isort=title list_page=$listInfo.current_page idefault=1 ihash=$listInfo.ihash}</th>
@@ -27,8 +35,11 @@
 	</tr>
 	{foreach from=$contentList item=item}
 		<tr class="{cycle values='odd,even'}">
-			<td class="alignright">{$item.content_id}</td>
-			{if $gBitSystem->isFeatureActive( 'liberty_display_status' ) && $gBitUser->hasPermission( 'p_liberty_view_all_status' )}
+			{if $gBitUser->isAdmin()}
+			<td><input type="checkbox" name="batch_content_ids[]" value="{$item.content_id}"/></td>
+			{/if}
+			<td class="text-right">{$item.content_id}</td>
+			{if $showStatus}
 				<td>{$item.content_status_name}</td>
 			{/if}
 			<td>{$item.display_link}</td>
@@ -46,6 +57,20 @@
 		</tr>
 	{/foreach}
 </table>
+	{if $gBitUser->hasPermission( 'p_users_admin' )}
+		<div style="text-align:right;">
+			<select name="action" onchange="if( confirm('Are you sure you want to PERMANENTLY DELETE checked content? This is NOT UNDOABLE.') ) { this.form.submit() }">
+				<option value="">{tr}with checked{/tr}:</option>
+				<option value="delete">{tr}Remove{/tr}</option>
+				<option value="export">{tr}Export List{/tr}</option>
+			</select>
+
+			<noscript>
+				<div><input type="submit" class="btn btn-default" value="{tr}Submit{/tr}" /></div>
+			</noscript>
+		</div>
+		</form>
+	{/if}
 
 {pagination content_status_id=$smarty.request.content_status_id}
 {/strip}
