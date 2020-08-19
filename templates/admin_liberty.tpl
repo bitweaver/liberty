@@ -71,7 +71,7 @@
 							{formhelp note=$output.note page=$output.page}
 							{if $item == "liberty_use_captcha_freecap"}
 								<p>{tr}If you can see the image below, you can use freecap{/tr}</p>
-								<img src="{$smarty.const.UTIL_PKG_URL}freecap/freecap.php" alt="{tr}Random Image{/tr}" title="{tr}Random Image{/tr}" />
+								<img src="{$smarty.const.USERS_PKG_URL}freecap/freecap.php" alt="{tr}Random Image{/tr}" title="{tr}Random Image{/tr}" />
 							{/if}
 						{/forminput}
 					</div>

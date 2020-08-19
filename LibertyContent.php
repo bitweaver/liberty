@@ -2749,7 +2749,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 				$selectSql
 			FROM `".BIT_DB_PREFIX."liberty_content` lc
 				INNER JOIN `".BIT_DB_PREFIX."users_users` uuc ON (lc.`user_id`=uuc.`user_id`)
-				INNER JOIN `".BIT_DB_PREFIX."users_users` uue ON (lc.`modifier_user_id`=uue.`user_id`)
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uue ON (lc.`modifier_user_id`=uue.`user_id`)
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON( lc.`content_id` =  lch.`content_id`)
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`data_type`='summary')
 				$joinSql
@@ -2760,7 +2760,6 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			SELECT
 				COUNT(lc.`content_id`)
 			FROM `".BIT_DB_PREFIX."liberty_content` lc
-				INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON (lc.`modifier_user_id`=uu.`user_id`)
 			$joinSql
 			$whereSql";
 

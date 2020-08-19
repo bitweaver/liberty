@@ -23,6 +23,40 @@ if( !empty( $_REQUEST['sort_mode'] )) {
 
 #$max_content = ( !empty( $_REQUEST['max_records'] )) ? $_REQUEST['max_records'] : $gBitSystem->getConfig( 'max_records' );
 
+if( !empty( $_POST ) ) {
+	$feedback = array();
+
+	$gBitUser->verifyTicket();
+	switch( BitBase::getParameter( $_POST, 'action' ) ) {
+		case 'delete':
+			if( !empty( $_POST['batch_content_ids'] ) ) {
+				// only admins can batch delete
+				$gBitSystem->verifyPermission( 'p_admin' );
+				$delUsers = $errDelUsers = "";
+				foreach( $_POST['batch_content_ids'] as $contentId ) {
+					if( ($content = LibertyContent::getLibertyObject( $contentId )) && $content->isValid() ) {
+						$title = $content->getTitle();
+						if( $content->expunge() ) {
+							$delUsers .= '<li>'.$content->getField('content_type_guid').'#'.$contentId." ".$title."</li>";
+						} else {
+							$errDelUsers .= "<li>#$contentId could not be expunged</li>";
+						}
+					} else {
+						$errDelUsers .= "<li>#$contentId could not be loaded</li>";
+					}
+				}
+			}
+			break;
+	}
+	if( !empty( $delUsers ) ) {
+		$feedback['success'][] = tra( 'Content deleted' ).": <ul>$delUsers</ul>";
+	} 
+	if( !empty( $errDelUsers ) ) {
+		$feedback['error'][] = tra( 'Content not deleted' ).": <ul>$errDelUsers</ul>";
+	}
+	$gBitSmarty->assign( 'feedback', $feedback );
+}
+
 if( !empty( $_SESSION['liberty_records_per_page'] )) {
 	$max_content = $_SESSION['liberty_records_per_page'];
 } else {
@@ -81,4 +115,3 @@ if( !empty( $_REQUEST['output'] )) {
 	$gBitSystem->setBrowserTitle( 'List Content' );
 	$gBitSystem->display( 'bitpackage:liberty/list_content.tpl' , NULL, array( 'display_mode' => 'list' ));
 }
-?>
