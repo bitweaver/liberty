@@ -1957,8 +1957,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	/**
 	 * Create the generic title for a content item
 	 *
-	 * This will normally be overwriten by extended classes to provide
-	 * an appropriate title string
+	 * This can be overwriten by extended classes to provide an appropriate title string
 	 * @param array pHash type hash of data to be used to provide base data
 	 * @return string Descriptive title for the page
 	 */
