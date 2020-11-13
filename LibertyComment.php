@@ -33,8 +33,8 @@ class LibertyComment extends LibertyMime {
 				'handler_file' => 'LibertyComment.php',
 				'maintainer_url' => 'http://www.bitweaver.org'
 			) );
-		$this->mCommentId = $pCommentId;
-		$this->mContentId = $pContentId;
+		$this->mCommentId = (int)$pCommentId;
+		$this->mContentId = (int)$pContentId;
 		$this->mInfo = $pInfo;
 		$this->mContentTypeGuid = BITCOMMENT_CONTENT_TYPE_GUID;
 		$this->mAdminContentPerm = 'p_liberty_admin_comments';
