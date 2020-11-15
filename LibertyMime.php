@@ -777,10 +777,10 @@ class LibertyMime extends LibertyContent {
 			if( @BitBase::verifyId( $pAttachmentId ) && isset( $this->mStoragePrefs[$pAttachmentId] )) {
 				$ret = $this->mStoragePrefs[$pAttachmentId];
 			}
-		} else {
+		} elseif( @BitBase::verifyId( $pAttachmentId ) ) {
 			// if the object isn't loaded, we need to get the prefs from the database
 			$sql = "SELECT `pref_name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_attachment_prefs` WHERE `attachment_id` = ?";
-			$ret = $gBitSystem->mDb->getAssoc( $sql, array( $pAttachmentId ));
+			$ret = $gBitSystem->mDb->getAssoc( $sql, array( (int)$pAttachmentId ));
 		}
 
 		return $ret;
