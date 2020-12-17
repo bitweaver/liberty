@@ -9,32 +9,6 @@
  */
 
 /**
- * liberty_imagick_resize_image 
- * 
- * @param array $pFileHash 
- * @access public
- * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
- */
-function liberty_imagick_resize_image( &$pFileHash ) {
-	if( $func = liberty_imagick_get_function( 'resize_image' )) {
-		return $func( $pFileHash );
-	}
-}
-
-/**
- * liberty_imagick_rotate_image 
- * 
- * @param array $pFileHash 
- * @access public
- * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
- */
-function liberty_imagick_rotate_image( &$pFileHash ) {
-	if( $func = liberty_imagick_get_function( 'rotate_image' )) {
-		return $func( $pFileHash );
-	}
-}
-
-/**
  * liberty_imagick_can_thumbnail_image 
  * 
  * @param array $pMimeType 
@@ -55,144 +29,10 @@ function liberty_imagick_can_thumbnail_image( $pMimeType ) {
 	return $ret;
 }
 
-/**
- * liberty_imagick_get_function will automagically pick the correct function based on the version of imagick extension installed 
- * 
- * @return valid function.
- */
-function liberty_imagick_get_function( $pFunction ) {
-	$ret = FALSE;
-	if( extension_loaded( 'imagick' )) {
-		if( function_exists( 'imagick_readimage' )) {
-			$version = 0;
-		} elseif( class_exists( 'Imagick' )) {
-			$version = 2;
-		}
-	}
-
-	if( isset( $version ) && !empty( $pFunction )) {
-		$func = 'liberty_imagick'.$version.'_'.$pFunction;
-		if( function_exists( $func )) {
-			$ret = $func;
-		}
-	}
-	return $ret;
-}
-
-
-// =============================================
-// ======== Version 0.9* of php-imagick ========
-// =============================================
-function liberty_imagick0_resize_image( &$pFileHash ) {
-	global $gBitSystem;
-	$pFileHash['error'] = NULL;
-	$ret = NULL;
-	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
-		$iImg = imagick_readimage( $pFileHash['source_file'] );
-		if( !$iImg ) {
-			// $pFileHash['error'] = $pFileHash['name'].' '.tra ( "is not a known image file" );
-			$destFile = liberty_process_generic( $pFileHash, FALSE );
-		} elseif( imagick_iserror( $iImg ) ) {
-			// $pFileHash['error'] = imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
-			$destFile = liberty_process_generic( $pFileHash, FALSE );
-		} else {
-			imagick_set_image_quality( $iImg, $gBitSystem->getConfig( 'liberty_thumbnail_quality', 85 ));
-			$iwidth = imagick_getwidth( $iImg );
-			$iheight = imagick_getheight( $iImg );
-			if( (($iwidth / $iheight) > 0) && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) ) {
-				// we have a portrait image, flip everything
-				$temp = $pFileHash['max_width'];
-				$pFileHash['max_height'] = $pFileHash['max_width'];
-				$pFileHash['max_width'] = $temp;
-			}
-
-			$itype = imagick_getmimetype( $iImg );
-
-			// override $mimeExt if we have a custom setting for it
-			if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
-				$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
-			} else {
-				list( $type, $mimeExt ) = explode( '/', strtolower( $itype ));
-			}
-
-			if( $mimeExt = preg_replace( "!^(x-)?(jpeg|png|gif)$!", "$2", $mimeExt )) {
-				$targetType = $mimeExt;
-				$destExt = '.'.$mimeExt;
-			}
-			if( !$mimeExt || $mimeExt == 'jpeg' ) {
-				$targetType = 'jpeg';
-				$destExt = '.jpg';
-			}
-
-			if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && ( ($pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || $mimeExt != $targetType )) {
-				// We have to resize. *ALL* resizes are converted to jpeg or png
-				if( !empty( $pFileHash['dest_file'] ) ) {
-					$destFile = $pFileHash['dest_file'];
-				} else {
-					$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['dest_base_name'].$destExt;
-				}
-				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
-				// print "			if ( !imagick_resize( $iImg, $pFileHash[max_width], $pFileHash[max_height], IMAGICK_FILTER_LANCZOS, 0.5, $pFileHash[max_width] x $pFileHash[max_height] > ) ) {";
-
-				// Alternate Filter settings can seen here http://www.dylanbeattie.net/magick/filters/result.html
-
-				if ( !imagick_resize( $iImg, $pFileHash['max_width'], $pFileHash['max_height'], IMAGICK_FILTER_CATROM, 1.00, '>' ) ) {
-					$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
-				}
-
-				if( function_exists( 'imagick_set_attribute' ) ) {
-					// this exists in the PECL package, but not php-imagick
-					$imagick_set_attribute( $iImg, array( "quality"=>1 ));
-				}
-
-				if( !imagick_writeimage( $iImg, $destFile ) ) {
-					$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
-				}
-				$pFileHash['size'] = filesize( $destFile );
-			} else {
-				// print "GENERIC";
-				$destFile = liberty_process_generic( $pFileHash, FALSE );
-			}
-		}
-		$ret = $destFile;
-	} else {
-		$pFileHash['error'] = "No source file to resize";
-	}
-
-	return $ret;
-}
-
-function liberty_imagick0_rotate_image( &$pFileHash ) {
-	$ret = FALSE;
-	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) ) {
-		$iImg = imagick_readimage( $pFileHash['source_file'] );
-		if( !$iImg ) {
-			$pFileHash['error'] = $pFileHash['name'].' '.tra ( "is not a known image file" );
-		} elseif( imagick_iserror( $iImg ) ) {
-			$pFileHash['error'] = imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
-		} elseif( empty( $pFileHash['degrees'] ) || !is_numeric( $pFileHash['degrees'] ) ) {
-			$pFileHash['error'] = tra( 'Invalid rotation amount' );
-		} else {
-			if ( !imagick_rotate( $iImg, $pFileHash['degrees'] ) ) {
-				$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
-			}
-			if( !imagick_writeimage( $iImg, $pFileHash['source_file'] ) ) {
-				$pFileHash['error'] .= imagick_failedreason( $iImg ) . imagick_faileddescription( $iImg );
-			}
-		}
-	} else {
-		$pFileHash['error'] = "No source file to resize";
-	}
-
-	return( empty( $pFileHash['error'] ) );
-}
-
-
-
 // ============================================
 // ======== Version 2.* of php-imagick ========
 // ============================================
-function liberty_imagick2_resize_image( &$pFileHash ) {
+function liberty_imagick_resize_image( &$pFileHash ) {
 	global $gBitSystem;
 	$pFileHash['error'] = NULL;
 	$ret = NULL;
@@ -265,7 +105,7 @@ function liberty_imagick2_resize_image( &$pFileHash ) {
 	return $ret;
 }
 
-function liberty_imagick2_rotate_image( &$pFileHash ) {
+function liberty_imagick_rotate_image( &$pFileHash ) {
 	$ret = FALSE;
 	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] )) {
 		$im = new Imagick();
