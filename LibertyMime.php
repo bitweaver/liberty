@@ -9,7 +9,7 @@
  * required setup
  */
 require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
-
+$gBitSystem->setConfig( 'image_processor','imagick' );
 // load the image processor plugin, check for loaded 'gd' since that is the default processor, and config might not be set.
 if( $gBitSystem->isFeatureActive( 'image_processor' ) || extension_loaded( 'gd' ) ) {
 	require_once( LIBERTY_PKG_PATH."plugins/processor.".$gBitSystem->getConfig( 'image_processor','gd' ).".php" );

@@ -13,7 +13,7 @@
  * @access public
  * @return void
  */
-function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject, $pParseHash ) {
+function parse_data_plugins( &$pData, &$pReplace, $pCommonObject, $pParseHash ) {
 	global $gLibertySystem, $gBitSystem;
 
 	// note: $curlyTags[0] is the complete match, $curlyTags[1] is plugin name, $curlyTags[2] is plugin arguments

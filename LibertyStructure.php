@@ -995,8 +995,8 @@ class LibertyStructure extends LibertyBase {
 		if( !@$this->verifyId( $pStructureId ) ) {
 			$pStructureId = $this->mStructureId;
 		}
-		$structureTree = $this->buildSubtreeToc( $pStructureId, $order, $numberPrefix, $pNumberDepth, $pCss );
-		return '<div class="aciTree" id="structure-'.$this->mStructureId.'">'.$this->fetchToc( $structureTree,$showdesc,$pNumberDepth ).'</div>';
+		$structureTree = $this->buildSubtreeToc( $pStructureId, $order, $numberPrefix, $pNumberDepth );
+		return '<div class="aciTree" id="structure-'.$this->mStructureId.'">'.$this->fetchToc( $structureTree, $showdesc, $pNumberDepth, $pCss ).'</div>';
 	}
 
 	/**

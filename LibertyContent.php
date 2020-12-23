@@ -3041,7 +3041,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 				LibertyContent::filterData( $parseHash['data'], $parseHash, 'preplugin' );
 
 				// this will handle all liberty data plugins like {code} and {attachment} usage in all formats
-				parse_data_plugins( $parseHash['data'], $replace, $this, $parseHash );
+				parse_data_plugins( $parseHash['data'], $replace, (!empty( $this ) ? $this : NULL), $parseHash );
 
 				// pre parse filter according to what we're parsing - split or full body
 				$filter = empty( $parseHash['split_parse'] ) ? 'parse' : 'split';
@@ -3049,7 +3049,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 
 				if( $func = $gLibertySystem->getPluginFunction( $parseHash['format_guid'], 'load_function' ) ) {
 					// get the beast parsed
-					if( $ret = $func( $parseHash, $this )) {
+					if( !empty( $this ) && ($ret = $func( $parseHash, $this )) ) {
 						// post parse filter
 						LibertyContent::filterData( $ret, $parseHash, 'post'.$filter );
 

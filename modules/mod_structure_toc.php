@@ -39,7 +39,7 @@ if( is_object( $gStructure ) && $gStructure->isValid() && $gStructure->hasViewPe
 	}
 }
 
-if( is_object( $struct ) && count( $struct->isValid() ) ) {
+if( is_object( $struct ) && $struct->isValid() ) {
 	if( !empty( $moduleParams['title'] ) ) {
 		$_template->tpl_vars['moduleTitle'] = new Smarty_variable( $moduleParams['title'] );
 	}
