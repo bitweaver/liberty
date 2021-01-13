@@ -1251,7 +1251,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function getContentListPermissionsSql( $pPermName, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
+	static function getContentListPermissionsSql( $pPermName, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
 		global $gBitUser;
 		if ( defined('ROLE_MODEL') ) {
 			$pJoinSql .= "
@@ -3344,7 +3344,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure
 	 */
-	function expungeCacheFile( $pContentId = NULL ) {
+	static function expungeCacheFile( $pContentId = NULL ) {
 		global $gBitSystem;
 		if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && @BitBase::verifyId( $pContentId ) ) {
 			// we need to unlink all files with the same id and any extension
@@ -3367,7 +3367,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure
 	 */
-	function expungeCache() {
+	static function expungeCache() {
 		global $gBitSystem;
 		$ret = FALSE;
 		if( $gBitSystem->isFeatureActive( 'liberty_cache' )) {
