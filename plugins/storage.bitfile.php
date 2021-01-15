@@ -101,7 +101,7 @@ function bit_files_load( $pRow ) {
 			$ret['file_name'] = basename( $ret['file_name'] );
 			$ret['source_file'] = liberty_mime_get_source_file( $ret );
 			$canThumbFunc = liberty_get_function( 'can_thumbnail' );
-			if( $canThumbFunc( $ret['mime_type'] )) {
+			if( function_exists( $canThumbFunc) && $canThumbFunc( $ret['mime_type'] )) {
 				$thumbHash['default_image'] = LIBERTY_PKG_URL.'icons/generating_thumbnails.png';
 			}
 			$ret['source_url'] = liberty_mime_get_source_url( $ret );
