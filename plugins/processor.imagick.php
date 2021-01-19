@@ -61,6 +61,9 @@ function liberty_imagick_resize_image( &$pFileHash ) {
 			}
 			 */
 
+			global $gBitSystem;
+			$pFileHash['type'] = $gBitSystem->verifyMimeType( $pFileHash['source_file'] );
+
 			// override $mimeExt if we have a custom setting for it
 			if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
 				$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
@@ -81,8 +84,8 @@ function liberty_imagick_resize_image( &$pFileHash ) {
 					$destFile = $pFileHash['dest_file'];
 				} else {
 					$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['dest_base_name'].$destExt;
+					$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 				}
-				$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
 
 				// create thumb and write
 				$im->thumbnailImage( $pFileHash['max_width'],  $pFileHash['max_height'], TRUE );
