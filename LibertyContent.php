@@ -2893,9 +2893,8 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * Get a list of all structures this content is a member of
 	 **/
 	function getStructures() {
-		$ret = NULL;
+		$ret = array();
 		if( $this->isValid() ) {
-			$ret = array();
 			$structures_added = array();
 			$query = 'SELECT ls.*, lc.`title`, tcr.`title` AS `root_title`
 				FROM `'.BIT_DB_PREFIX.'liberty_content` lc, `'.BIT_DB_PREFIX.'liberty_structures` ls
