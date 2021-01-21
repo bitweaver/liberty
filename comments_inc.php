@@ -183,7 +183,7 @@ if( !empty( $_REQUEST['post_comment_preview'] )) {
 	if( !empty( $_REQUEST['comment_name'] )) {
 		$postComment['anon_name'] = $_REQUEST['comment_name'];
 	}
-	$postComment['data'] = $_REQUEST['comment_data'];
+	$postComment['data'] = BitBase::getParameter( $_REQUEST, 'comment_data' );
 	$postComment['format_guid'] = empty( $_REQUEST['format_guid'])? $gBitSystem->getConfig( 'default_format' ) : $_REQUEST['format_guid'];
 	$postComment['parsed_data'] = LibertyComment::parseData( $postComment );
 	$postComment['created'] = time();
