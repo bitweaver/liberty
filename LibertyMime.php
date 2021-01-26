@@ -16,7 +16,7 @@ if( $gBitSystem->isFeatureActive( 'image_processor' ) || extension_loaded( 'gd' 
 }
 
 // maximum size of the 'original' image when converted to jpg
-define( 'MAX_THUMBNAIL_DIMENSION', 99999 );
+define( 'MAX_THUMBNAIL_DIMENSION', 20000 );
 
 /**
  * LibertyMime class
