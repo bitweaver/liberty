@@ -80,6 +80,20 @@ function liberty_imagick_resize_image( &$pFileHash ) {
 					$destExt = '.jpg';
 				}
 
+				if( ( empty( $pFileHash['max_width'] ) && empty( $pFileHash['max_height'] ) ) || ( !empty( $pFileHash['max_width'] ) && $pFileHash['max_width'] == MAX_THUMBNAIL_DIMENSION ) || ( !empty( $pFileHash['max_height'] ) && $pFileHash['max_height'] == MAX_THUMBNAIL_DIMENSION ) ) {
+					$pFileHash['max_width'] = $iwidth;
+					$pFileHash['max_height'] = $iheight;
+				} elseif( $iheight && ( $iwidth / $iheight ) < 1 && !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] )) {
+					// we have a portrait image, flip everything
+					$temp = $pFileHash['max_width'];
+					$pFileHash['max_height'] = $pFileHash['max_width'];
+					$pFileHash['max_width'] = round(( $iwidth / $iheight ) * $pFileHash['max_height'] );
+				} elseif( !empty( $pFileHash['max_width'] ) ) {
+					$pFileHash['max_height'] = round(( $iheight / $iwidth ) * $pFileHash['max_width'] );
+				} elseif( !empty( $pFileHash['max_height'] ) ) {
+					$pFileHash['max_width'] = round(( $iwidth / $iheight ) * $pFileHash['max_height'] );
+				}
+
 				if( !empty( $pFileHash['max_width'] ) && !empty( $pFileHash['max_height'] ) && (( $pFileHash['max_width'] < $iwidth || $pFileHash['max_height'] < $iheight ) || $mimeExt != $targetType )) {
 					if( !empty( $pFileHash['dest_file'] ) ) {
 						$destFile = $pFileHash['dest_file'];
