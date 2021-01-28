@@ -923,7 +923,7 @@ class LibertyMime extends LibertyContent {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure
 	 */
-	function storeMetaData( $pAttachmentId, $pType = "Meta Data", $pStoreHash ) {
+	public static function storeMetaData( $pAttachmentId, $pType = "Meta Data", $pStoreHash ) {
 		global $gBitSystem;
 		$ret = FALSE;
 		if( @BitBase::verifyId( $pAttachmentId ) && !empty( $pType ) && !empty( $pStoreHash )) {
@@ -964,7 +964,7 @@ class LibertyMime extends LibertyContent {
 	 * @access public
 	 * @return newly stored ID on success, FALSE on failure
 	 */
-	function storeMetaId( $pDescription, $pTable = 'type' ) {
+	private static function storeMetaId( $pDescription, $pTable = 'type' ) {
 		global $gBitSystem;
 		$ret = FALSE;
 		if( !empty( $pDescription )) {
@@ -1077,7 +1077,7 @@ class LibertyMime extends LibertyContent {
 	 * @access public
 	 * @return meta type or title id on sucess, FALSE on failure
 	 */
-	function getMetaId( $pDescription, $pTable = 'type' ) {
+	private static function getMetaId( $pDescription, $pTable = 'type' ) {
 		global $gBitSystem;
 		$ret = FALSE;
 		if( !empty( $pDescription ) && ( $pTable == 'type' || $pTable == 'title' )) {
