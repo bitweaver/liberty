@@ -100,7 +100,10 @@ function liberty_imagick_resize_image( &$pFileHash ) {
 					} else {
 						$destFile = STORAGE_PKG_PATH.$pFileHash['dest_branch'].$pFileHash['dest_base_name'].$destExt;
 					}
-					$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
+
+					if( !empty( $pFileHash['dest_base_name'] ) ) {
+						$pFileHash['name'] = $pFileHash['dest_base_name'].$destExt;
+					}
 
 					// create thumb and write
 					$im->thumbnailImage( $pFileHash['max_width'],  $pFileHash['max_height'], TRUE );
