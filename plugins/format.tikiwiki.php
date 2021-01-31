@@ -215,18 +215,10 @@ class TikiWikiParser extends BitBase {
 			require_once( WIKI_PKG_PATH.'BitPage.php' );
 		}
 
-		// if the object isn't loaded, we'll try and get the content prefs manually
-		if( !empty( $pCommonObject->mPrefs ) ) {
-			$contentPrefs = $pCommonObject->mPrefs;
-		} elseif( empty( $pCommonObject->mContentId ) && !empty( $contentId ) ) {
-			$contentPrefs = $pCommonObject->loadPreferences( $contentId );
-		}
-
+		
 		// only strip out html if needed
 		if( $gBitSystem->isFeatureActive( 'content_allow_html' ) || $gBitSystem->isFeatureActive( 'content_force_allow_html' )) {
 			// we allow html unconditionally with this parser
-		} elseif( !empty( $contentPrefs['content_enter_html'] )) {
-			// we allow html on a per page basis
 		} else {
 			// we are parsing this page and we either have no way of checking permissions or we have no need for html
 			$data = htmlspecialchars( $data, ENT_NOQUOTES, 'UTF-8' );
@@ -343,7 +335,7 @@ class TikiWikiParser extends BitBase {
 			}
 
 			// comments and anonymously created pages get nofollow
-			if( $pCommonObject && ( get_class( $pCommonObject ) == 'comments' || ( isset( $pCommonObject->mInfo['user_id'] ) &&  $pCommonObject->mInfo['user_id'] == ANONYMOUS_USER_ID ))) {
+			if( is_object( $pCommonObject ) && ( get_class( $pCommonObject ) == 'comments' || ( isset( $pCommonObject->mInfo['user_id'] ) &&  $pCommonObject->mInfo['user_id'] == ANONYMOUS_USER_ID ))) {
 				$attributes .= ' rel="nofollow" ';
 			}
 

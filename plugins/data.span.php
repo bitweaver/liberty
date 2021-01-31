@@ -92,7 +92,7 @@ function data_span( $pData, $pParams, $pCommonObject ) {
 	$parseHash = $pCommonObject->mInfo;
 	$parseHash['no_cache'] = TRUE;
 	$parseHash['data'] = $pData;
-	$parsedData = $pCommonObject->parseData( $parseHash );
+	$parsedData = LibertyContent::parseDataHash( $parseHash, $pCommonObject );
 	$parsedData = preg_replace( '|<br\s*/?>$|', '', $parsedData );
 	return( '<span '.( !empty( $class ) ? 'class="'.$class.'" ' : '' ).'style="'.$style.'">'.$parsedData.'</span>' );
 }

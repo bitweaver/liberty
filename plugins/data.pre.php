@@ -86,7 +86,7 @@ function data_pre( $pData, $pParams, $pCommonObject, $pParseHash ) {
 	$parseHash['user_id'] = $pParseHash['user_id'];
 	$parseHash['no_cache'] = TRUE;
 	$parseHash['data'] = $pData;
-	$ret = '<pre '.( !empty( $class ) ? 'class="'.$class.'" ' : '' ).'style="'.$style.'">'.$pCommonObject->parseData( $parseHash ).'</pre>';
+	$ret = '<pre '.( !empty( $class ) ? 'class="'.$class.'" ' : '' ).'style="'.$style.'">'.LibertyContent::parseDataHash( $parseHash, $pCommonObject ).'</pre>';
 	return $ret;
 }
 ?>

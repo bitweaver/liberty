@@ -177,7 +177,7 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		$parseHash['user_id']    = $pParseHash['user_id'];
 		$parseHash['no_cache']   = TRUE;
 		$parseHash['data']       = $wrapper['description'];
-		$wrapper['description_parsed'] = $pCommonObject->parseData( $parseHash );
+		$wrapper['description_parsed'] = LibertyContent::parseDataHash( $parseHash );
 	}
 
 	// pass stuff to the template

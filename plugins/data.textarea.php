@@ -100,7 +100,7 @@ function  data_textarea( $pData, $pParams, $pCommonObject ) {
 	$parseHash = $pCommonObject->mInfo;
 	$parseHash['no_cache'] = TRUE;
 	$parseHash['data'] = $pData;
-	$parsedData = $pCommonObject->parseData( $parseHash );
+	$parsedData = LibertyContent::parseDataHash( $parseHash, $pCommonObject );
 	return( '<textarea '.$attributes.( !empty( $class ) ? 'class="'.$class.'" ' : '' ).'style="'.$style.'">'.$parsedData.'</textarea>' );
 }
 ?>

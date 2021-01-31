@@ -46,7 +46,7 @@ foreach( $feeds as $feed ) {
 
 	// add the parsed data, if there is any
 	if( !empty( $feed['data'] ) ) {
-		$description .= '<br /><hr /><br />'.tra( 'Content' ).':<br />'.$liberty->parseData( $feed ).'<br /><hr />';
+		$description .= '<br /><hr /><br />'.tra( 'Content' ).':<br />'.LibertyContent::parseDataHash( $feed ).'<br /><hr />';
 	}
 
 	$item->description = $description;
@@ -64,4 +64,3 @@ foreach( $feeds as $feed ) {
 
 // finally we are ready to serve the data
 echo $rss->saveFeed( $rss_version_name, $cacheFile );
-?>

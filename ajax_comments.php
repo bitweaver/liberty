@@ -35,7 +35,7 @@ if( !$gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE)) {
 		if ($storeComment->loadComment()){
 			$statusCode = 200;
 			$postComment = $storeComment->mInfo;
-			$postComment['parsed_data'] = $storeComment->parseData( $postComment );
+			$postComment['parsed_data'] = LibertyContent::parseDataHash( $postComment, $storeComment  );
 		} else {
 			//if store is requested but it fails for some reason - like captcha mismatch
 			$statusCode = 400;
@@ -80,5 +80,3 @@ header( "content-type:text/xml" );
 print_r( '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>' );
 print_r( $mRet );
 
-die;
-?>

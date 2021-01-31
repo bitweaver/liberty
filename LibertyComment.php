@@ -466,7 +466,7 @@ class LibertyComment extends LibertyMime {
 				$row['display_url'] = static::getDisplayUrlFromHash( $row );
 				$row['direct_url'] = static::getDirectUrlFromHash( $row );
 				if (!empty($pParamHash['parse'])) {
-					$row['parsed_data'] = $this->parseData($row);
+					$row['parsed_data'] = self::parseDataHash( $row );
 				}
 				$ret[] = $row;
 			}
@@ -641,7 +641,7 @@ class LibertyComment extends LibertyMime {
 			$flat_comments = array();
 			if( $result = $this->mDb->query( $sql, $bindVars, $pMaxComments, $pOffset ) ) {
 				while( $row = $result->FetchRow() ) {
-					$row['parsed_data'] = $this->parseData( $row );
+					$row['parsed_data'] = self::parseDataHash( $row );
 					$row['level'] = substr_count ( $row['thread_forward_sequence'], '.' ) - 1;
 					$c = new LibertyComment();
 					$c->mInfo=$row;

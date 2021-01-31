@@ -117,7 +117,7 @@ if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 
 			// Draft the message:
 			$message['subject'] = tra( 'New comment on:' ).' '.$gContent->getTitle().' @ '.$gBitSystem->getConfig( 'site_title' );
 			$message['message'] = tra('A new message was posted to ').' '.$gContent->getTitle()."<br/>\n".$gContent->getDisplayUri()."<br/>\n"
-					.'/----- '.tra('Here is the message')." -----/<br/>\n<br/>\n".'<h2>'.$storeComment->getTitle()."</h2>\n".tra('By').' '.$gBitUser->getDisplayName()."\n<p>".$storeComment->parseData().'</p>';
+					.'/----- '.tra('Here is the message')." -----/<br/>\n<br/>\n".'<h2>'.$storeComment->getTitle()."</h2>\n".tra('By').' '.$gBitUser->getDisplayName()."\n<p>".$storeComment->getParsedData().'</p>';
 			$gSwitchboardSystem->sendEvent('My Content', 'new comment', $gContent->mContentId, $message );
 		}
 		$postComment = NULL;
@@ -185,7 +185,7 @@ if( !empty( $_REQUEST['post_comment_preview'] )) {
 	}
 	$postComment['data'] = BitBase::getParameter( $_REQUEST, 'comment_data' );
 	$postComment['format_guid'] = empty( $_REQUEST['format_guid'])? $gBitSystem->getConfig( 'default_format' ) : $_REQUEST['format_guid'];
-	$postComment['parsed_data'] = LibertyComment::parseData( $postComment );
+	$postComment['parsed_data'] = LibertyComment::parseDataHash( $postComment );
 	$postComment['created'] = time();
 	$postComment['last_modified'] = time();
 	$gBitSmarty->assign('post_comment_preview', TRUE);

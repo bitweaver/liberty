@@ -57,7 +57,7 @@ function data_jstabs( $pData, $pParams, $pCommonObject ) {
 				$parseHash['no_cache'] = TRUE;
 				$parseHash['data'] = $split[2];
 
-				$html .= smarty_block_jstab( $params, $pCommonObject->parseData( $parseHash ), $gBitSmarty, '' );
+				$html .= smarty_block_jstab( $params, LibertyContent::parseDataHash( $parseHash, $pCommonObject ), $gBitSmarty, '' );
 			}
 		}
 	}

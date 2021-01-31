@@ -78,12 +78,12 @@ function data_include($data, $params) {
 		require_once( WIKI_PKG_PATH.'BitPage.php');
 		$wp = new BitPage( $params['page_id'] );
 		if( $wp->load() ) {
-			$ret = $wp->parseData( $wp->mInfo );
+			$ret = $wp->getParsedData();
 		}
 	// load page by content_id
 	} elseif( isset( $params['content_id'] ) && is_numeric( $params['content_id'] ) ) {
 		if( $obj = LibertyBase::getLibertyObject( $params['content_id'] ) ) {
-			$ret = $obj->parseData();
+			$ret = $obj->getParsedData();
 		}
 	// load page by page_name
 	} elseif( isset( $params['page_name'] ) ) {

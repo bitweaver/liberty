@@ -75,7 +75,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	public $mType;
 
 	/**
-	 *Permissions hash specific to the user accessing this LibertyContetn object
+	 *Permissions hash specific to the user accessing this LibertyContent object
 	 * @public
 	 */
 	public $mUserContentPerms;
@@ -2023,7 +2023,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			if( $this->getField('summary') ) {
 				$ret = $this->getField('summary');
 			} elseif( $this->getField('data') ) {
-				$text = preg_replace('/\s+/', ' ', $this->parseData() );
+				$text = trim( preg_replace('/\s+/', ' ', strip_tags( $this->getParsedData() ) ) );
 				// 250 to 300 is max description
 				$ret = substr( $text, 0, 250 );
 			}
@@ -2957,7 +2957,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 
 		if( !empty( $pParseHash['data'] )) {
 			// parse data and run it through postsplit filter
-			if( $parsed = $this->parseData( $pParseHash )) {
+			if( $parsed = self::parseDataHash( $pParseHash, $this )) {
 				// parsing split content can break stuff so we remove trailing junk
 				$res['parsed'] = $res['parsed_description'] = preg_replace( '!((<br\b[^>]*>)*\s*)*$!si', '', $parsed );
 
@@ -2975,6 +2975,18 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		return $res;
 	}
 
+	public function getParsedData() {
+		if( empty( $this->mInfo['parsed_data'] ) ) {
+			$this->parseData();
+		}
+		return $this->mInfo['parsed_data'];
+	}
+
+	protected function parseData() {
+		// get the data into place
+		$this->mInfo['parsed_data'] = self::parseDataHash( $this->mInfo, $this );
+	}
+
 	/**
 	 * Process the raw content blob using the speified content GUID processor
 	 *
@@ -2988,72 +3000,70 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @param string pFormatGuid processor to use
 	 * @return string Formated data string
 	 */
-	function parseData( $pMixed=NULL, $pFormatGuid=NULL ) {
+	static function parseDataHash( &$pParseHash, $pObject=NULL ) {
 		global $gLibertySystem, $gBitSystem, $gBitUser;
-
-		// get the data into place
-		if( empty( $pMixed ) && !empty( $this->mInfo['data'] ) ) {
-			$parseHash = $this->mInfo;
-		} elseif( is_array( $pMixed ) ) {
-			$parseHash = $pMixed;
-			if( empty( $parseHash['data'] ) ) {
-				$parseHash['data'] = '';
-			}
-		} else {
+/*
+		if( !is_array( $pParseHash ) ) {
 			$parseHash['data'] = $pMixed;
+		} elseif( empty( $pParseHash['data'] ) ) {
+			$pParseHash['data'] = '';
 		}
-
-		// sanitise parseHash a bit
-		$parseHash['content_id']      = !empty( $parseHash['content_id'] )      ? $parseHash['content_id']      : NULL;
-		$parseHash['cache_extension'] = !empty( $parseHash['cache_extension'] ) ? $parseHash['cache_extension'] : NULL;
-		$parseHash['format_guid']     = !empty( $parseHash['format_guid'] )     ? $parseHash['format_guid']     : $pFormatGuid;
-		$parseHash['user_id']         = !empty( $parseHash['user_id'] )         ? $parseHash['user_id']         : is_object( $gBitUser ) ? $gBitUser->mUserId : ANONYMOUS_USER_ID;
+*/
+		// sanitise pParseHash a bit
+		$pParseHash['content_id']      = !empty( $pParseHash['content_id'] )      ? $pParseHash['content_id']      : NULL;
+		$pParseHash['cache_extension'] = !empty( $pParseHash['cache_extension'] ) ? $pParseHash['cache_extension'] : NULL;
+		$pParseHash['user_id']         = !empty( $pParseHash['user_id'] )         ? $pParseHash['user_id']         : is_object( $gBitUser ) ? $gBitUser->mUserId : ANONYMOUS_USER_ID;
 
 		// Ensure we have a format
-		if( empty( $parseHash['format_guid'] )) {
-			$parseHash['format_guid'] = $gBitSystem->getConfig( 'default_format', 'tikiwiki' );
+		if( empty( $pParseHash['format_guid'] ) ) {
+			// use system wide default
+			$pParseHash['format_guid'] = $gBitSystem->getConfig( 'default_format', 'tikiwiki' );
+			if( is_a( $pObject, 'LibertyContent' ) && ($objectFormat = $pObject->getField( 'format_guid' ) ) ) {
+				// if pObject has a specified format, use that...
+				$pParseHash['format_guid'] = $objectFormat;
+			}
 		}
 
 		$ret = NULL;
 		// Handle caching if it is enabled.
-		if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && !empty( $parseHash['content_id'] ) && empty( $parseHash['no_cache'] ) ) {
-			if( $cacheFile = LibertyContent::getCacheFile( $parseHash['content_id'], $parseHash['cache_extension'] ) ) {
+		if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && !empty( $pParseHash['content_id'] ) && empty( $pParseHash['no_cache'] ) ) {
+			if( $cacheFile = LibertyContent::getCacheFile( $pParseHash['content_id'], $pParseHash['cache_extension'] ) ) {
 				// Attempt to read cache file
 				if( !( $ret = LibertyContent::readCacheFile( $cacheFile ))) {
 					// failed to read from cache.
 					$parseAndCache = TRUE;
 				} else {
 					// Note that we read from cache.
-					$this->mInfo['is_cached'] = TRUE;
+					$pParseHash['is_cached'] = TRUE;
 				}
 			}
 		}
 
 		// if $ret is empty, we haven't read anything from cache yet - we need to parse the raw data
 		if( empty( $ret ) || !empty( $parseAndCache )) {
-			if( !empty( $parseHash['data'] ) && $parseHash['format_guid'] ) {
+			if( !empty( $pParseHash['data'] ) && $pParseHash['format_guid'] ) {
 				$replace = array();
 				// extract and protect ~pp~...~/pp~ and ~np~...~/np~ sections
-				parse_protect( $parseHash['data'], $replace );
+				parse_protect( $pParseHash['data'], $replace );
 
 				// some few filters such as stencils need to be before the data plugins
-				LibertyContent::filterData( $parseHash['data'], $parseHash, 'preplugin' );
+				self::filterDataHash( $pParseHash['data'], $pParseHash, 'preplugin' );
 
-				// this will handle all liberty data plugins like {code} and {attachment} usage in all formats
-				parse_data_plugins( $parseHash['data'], $replace, (!empty( $this ) ? $this : NULL), $parseHash );
+				// handle all liberty data plugins like {code} and {attachment} usage in all formats
+				parse_data_plugins( $pParseHash['data'], $replace, $pObject, $pParseHash );
 
 				// pre parse filter according to what we're parsing - split or full body
-				$filter = empty( $parseHash['split_parse'] ) ? 'parse' : 'split';
-				LibertyContent::filterData( $parseHash['data'], $parseHash, 'pre'.$filter );
+				$filter = empty( $pParseHash['split_parse'] ) ? 'parse' : 'split';
+				self::filterDataHash( $pParseHash['data'], $pParseHash, 'pre'.$filter );
 
-				if( $func = $gLibertySystem->getPluginFunction( $parseHash['format_guid'], 'load_function' ) ) {
+				if( $func = $gLibertySystem->getPluginFunction( $pParseHash['format_guid'], 'load_function' ) ) {
 					// get the beast parsed
-					if( !empty( $this ) && ($ret = $func( $parseHash, $this )) ) {
+					if( $ret = $func( $pParseHash, $pObject ) ) {
 						// post parse filter
-						LibertyContent::filterData( $ret, $parseHash, 'post'.$filter );
+						self::filterDataHash( $ret, $pParseHash, 'post'.$filter );
 
-						// before we cache we insert the protected sections back - currently this is even after the filters.
-						// this might not be ideal but it allows stuff like ~pp~{maketoc}~/pp~
+						// before we cache we insert the protected sections back - even after the filters.
+						// might not be ideal but it allows stuff like ~pp~{maketoc}~/pp~
 						$replace = array_reverse( $replace );
 						foreach( $replace as $rep ) {
 							$ret = str_replace( $rep["key"], $rep["data"], $ret );
@@ -3070,6 +3080,10 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		return $ret;
 	}
 
+	protected function filterData( &$pData, &$pFilterHash, $pFilterStage = 'preparse' ) {
+		self::filterDataHash( $pData, $pFilterHash, $pFilterStage, $this );
+	}
+
 	/**
 	 * filterData will apply one of the specified filter stages to the input data
 	 *
@@ -3079,12 +3093,13 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return filtered data
 	 */
-	function filterData( &$pData, &$pFilterHash, $pFilterStage = 'preparse' ) {
+	static function filterDataHash( &$pData, &$pFilterHash, $pFilterStage = 'preparse', $pObject = NULL ) {
 		global $gLibertySystem;
-		if( !empty( $pData ) && $filters = $gLibertySystem->getPluginsOfType( FILTER_PLUGIN )) {
+		if( !empty( $pData ) && ($filters = $gLibertySystem->getPluginsOfType( FILTER_PLUGIN )) ) {
 			foreach( $filters as $guid => $filter ) {
-				if( $gLibertySystem->isPluginActive( $guid ) && $func = $gLibertySystem->getPluginFunction( $guid, $pFilterStage.'_function' )) {
-					$func( $pData, $pFilterHash, ( !empty( $this ) ? $this : NULL ));
+//vvd( $guid, $gLibertySystem->isPluginActive( $guid ), $pFilterStage, $gLibertySystem->getPluginFunction( $guid, $pFilterStage.'_function' ));//, $pData ); //, $pFilterHash, $pObject );
+				if( $gLibertySystem->isPluginActive( $guid ) && FALSE ) { //($func = $gLibertySystem->getPluginFunction( $guid, $pFilterStage.'_function' )) ) {
+					$func( $pData, $pFilterHash, $pObject );
 				}
 			}
 		}
