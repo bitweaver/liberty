@@ -3261,7 +3261,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return absolute path
 	 */
-	pubilc static function getCacheBasePath() {
+	public static function getCacheBasePath() {
 		return str_replace( '//', '/', TEMP_PKG_PATH.LIBERTY_PKG_NAME.'/cache/' );
 	}
 
