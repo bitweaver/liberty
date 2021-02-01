@@ -345,7 +345,7 @@ if( $gContent->hasUserPermission( 'p_liberty_read_comments' )) {
 
 	// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
 	if( $gBitSystem->isPackageActive( 'boards' )) {
-		require_once(BOARDS_PKG_PATH.'BitBoardTopic.php');
+		require_once(BOARDS_PKG_CLASS_PATH.'BitBoardTopic.php');
 	}
 
 	// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
