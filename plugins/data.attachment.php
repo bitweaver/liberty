@@ -120,7 +120,7 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		return $ret;
 	}
 
-	if( is_a( $pCommonObject, 'LibertyMime' ) && !$att = $pCommonObject->getAttachment( $pParams['id'], $pParams )) {
+	if( is_a( $pCommonObject, 'LibertyMime' ) && !($att = $pCommonObject->getAttachment( $pParams['id'], $pParams )) ) {
 		$ret = tra( "The attachment id given is not valid." );
 		return $ret;
 	}
