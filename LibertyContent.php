@@ -2793,32 +2793,26 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 				$aux['user_id']             = $aux['creator_user_id'];
 				if( !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
 					if( !class_exists( $type['handler_class'] ) ) {
-						$testPath = $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'];
-						if( file_exists( $testPath ) ) {
-							include_once( $testPath );
-						} else {
-							$testPath = $gBitSystem->mPackages[$type['handler_package']]['path'].'includes/'.$type['handler_file'];
-							if( file_exists( $testPath ) ) {
-								include_once( $testPath );
-							}
-						}
+						$gLibertySystem->getContentClassName( $aux['content_type_guid'] );
 					}
-					if( $aux['content_type_guid'] == BITUSER_CONTENT_TYPE_GUID ) {
-						// here we provide getDisplay(Link|Url) with user-specific information that we get the correct links to display in pages
-						$userInfo = $gBitUser->getUserInfo( array( 'content_id' => $aux['content_id'] ));
-						$aux['title']        = $type['handler_class']::getTitleFromHash( $userInfo );
-						$aux['display_link'] = $type['handler_class']::getDisplayLinkFromHash( $userInfo, $userInfo['login'] );
-						$aux['display_url']  = $type['handler_class']::getDisplayUrlFromHash( $userInfo );
-					} else {
-						$aux['title']        = $type['handler_class']::getTitleFromHash( $aux );
-						$aux['display_link'] = $type['handler_class']::getDisplayLinkFromHash( $aux, $aux['title'] );
-						/**
-						 * @TODO standardize getDisplayUrl params
-						 * nice try, but you can't do this because individual classes have gone off the reservation changing the params they accept
-						 * for distributed packages we need to enforce that method overrides all take the same basic params.
-						 **/
-						// $aux['display_url']  = $type['content_object']->getDisplayUrl( NULL, $aux );
-						$aux['display_url'] = BIT_ROOT_URL."index.php?content_id=".$aux['content_id'];
+					if( class_exists( $type['handler_class'] ) ) {
+						if( $aux['content_type_guid'] == BITUSER_CONTENT_TYPE_GUID ) {
+							// here we provide getDisplay(Link|Url) with user-specific information that we get the correct links to display in pages
+							$userInfo = $gBitUser->getUserInfo( array( 'content_id' => $aux['content_id'] ));
+							$aux['title']        = $type['handler_class']::getTitleFromHash( $userInfo );
+							$aux['display_link'] = $type['handler_class']::getDisplayLinkFromHash( $userInfo, $userInfo['login'] );
+							$aux['display_url']  = $type['handler_class']::getDisplayUrlFromHash( $userInfo );
+						} else {
+							$aux['title']        = $type['handler_class']::getTitleFromHash( $aux );
+							$aux['display_link'] = $type['handler_class']::getDisplayLinkFromHash( $aux, $aux['title'] );
+							/**
+							 * @TODO standardize getDisplayUrl params
+							 * nice try, but you can't do this because individual classes have gone off the reservation changing the params they accept
+							 * for distributed packages we need to enforce that method overrides all take the same basic params.
+							 **/
+							// $aux['display_url']  = $type['content_object']->getDisplayUrl( NULL, $aux );
+							$aux['display_url'] = BIT_ROOT_URL."index.php?content_id=".$aux['content_id'];
+						}
 					}
 
 					if( !empty( $pListHash['thumbnail_size'] ) ) {
