@@ -1251,7 +1251,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	static function getContentListPermissionsSql( $pPermName, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
+	public static function getContentListPermissionsSql( $pPermName, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
 		global $gBitUser;
 		if ( defined('ROLE_MODEL') ) {
 			$pJoinSql .= "
@@ -3000,7 +3000,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @param string pFormatGuid processor to use
 	 * @return string Formated data string
 	 */
-	static function parseDataHash( &$pParseHash, $pObject=NULL ) {
+	public static function parseDataHash( &$pParseHash, $pObject=NULL ) {
 		global $gLibertySystem, $gBitSystem, $gBitUser;
 /*
 		if( !is_array( $pParseHash ) ) {
@@ -3093,7 +3093,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return filtered data
 	 */
-	static function filterDataHash( &$pData, &$pFilterHash, $pFilterStage = 'preparse', $pObject = NULL ) {
+	public static function filterDataHash( &$pData, &$pFilterHash, $pFilterStage = 'preparse', $pObject = NULL ) {
 		global $gLibertySystem;
 		if( !empty( $pData ) && ($filters = $gLibertySystem->getPluginsOfType( FILTER_PLUGIN )) ) {
 			foreach( $filters as $guid => $filter ) {
@@ -3250,12 +3250,8 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return absolute path
 	 */
-	function isCached( $pContentId = NULL ) {
+	public function isCached( $pContentId = NULL ) {
 		global $gBitSystem;
-		if( empty( $pContentId ) && @BitBase::verifyId( $this->mContentId ) ) {
-			$pContentId = $this->mContentId;
-		}
-
 		return( $gBitSystem->getConfig( 'liberty_cache' ) && is_file( LibertyContent::getCacheFile( $pContentId )));
 	}
 
@@ -3265,7 +3261,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return absolute path
 	 */
-	function getCacheBasePath() {
+	pubilc static function getCacheBasePath() {
 		return str_replace( '//', '/', TEMP_PKG_PATH.LIBERTY_PKG_NAME.'/cache/' );
 	}
 
@@ -3276,11 +3272,8 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return path on success, FALSE on failure
 	 */
-	function getCachePath( $pContentId = NULL ) {
+	public static function getCachePath( $pContentId = NULL ) {
 		global $gBitSystem;
-		if( empty( $pContentId ) && @BitBase::verifyId( $this->mContentId ) ) {
-			$pContentId = $this->mContentId;
-		}
 
 		$ret = FALSE;
 		if( @BitBase::verifyId( $pContentId ) ) {
@@ -3306,7 +3299,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @param the name of the cache file from getCacheFile()
 	 * @return the contents of the cache file or NULL
 	 */
-	function readCacheFile( $pCacheFile ) {
+	public static function readCacheFile( $pCacheFile ) {
 		global $gBitSystem;
 		$ret = NULL;
 		if( is_file( $pCacheFile ) && ( time() - filemtime( $pCacheFile )) < $gBitSystem->getConfig('liberty_cache') && filesize( $pCacheFile ) > 0 ) {
@@ -3326,7 +3319,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @param the name of the cache file from getCacheFile() to write
 	 * @param the contents to write to the file
 	 */
-	function writeCacheFile( $pCacheFile, $pData ) {
+	public static function writeCacheFile( $pCacheFile, $pData ) {
 		// Cowardly refuse to write nothing.
 		if( !empty( $pData )) {
 			// write parsed contents to cache file
@@ -3343,7 +3336,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return filename on success, FALSE on failure
 	 */
-	function getCacheFile( $pContentId = NULL, $pCacheExtension = NULL ) {
+	public static function getCacheFile( $pContentId = NULL, $pCacheExtension = NULL ) {
 		if( $ret = LibertyContent::getCachePath( $pContentId ) ) {
 			return( $ret.$pContentId.( !empty( $pCacheExtension ) ? '.'.$pCacheExtension : '') );
 		} else {
@@ -3358,7 +3351,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure
 	 */
-	static function expungeCacheFile( $pContentId = NULL ) {
+	public static function expungeCacheFile( $pContentId = NULL ) {
 		global $gBitSystem;
 		if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && @BitBase::verifyId( $pContentId ) ) {
 			// we need to unlink all files with the same id and any extension
@@ -3381,7 +3374,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure
 	 */
-	static function expungeCache() {
+	public static function expungeCache() {
 		global $gBitSystem;
 		$ret = FALSE;
 		if( $gBitSystem->isFeatureActive( 'liberty_cache' )) {

@@ -340,7 +340,7 @@ class LibertyMime extends LibertyContent {
 	 * @return adodb query result or FALSE
 	 * @note we're abusing the hits column for download count.
 	 */
-	public function addDownloadHit( $pAttachmentId = NULL ) {
+	public static function addDownloadHit( $pAttachmentId = NULL ) {
 		global $gBitUser, $gBitSystem;
 		if( @BitBase::verifyId( $pAttachmentId ) && $attachment = static::loadAttachment( $pAttachmentId )) {
 			if( !$gBitUser->isRegistered() || ( $gBitUser->isRegistered() && $gBitUser->mUserId != $attachment['user_id'] )) {
