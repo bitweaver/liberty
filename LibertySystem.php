@@ -632,13 +632,16 @@ class LibertySystem extends BitSingleton {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure
 	 */
-	function requireHandlerFile( $pContentTypeHash ) {
+	private function requireHandlerFile( $pContentTypeHash ) {
 		$ret = FALSE;
-		if( defined( strtoupper( $pContentTypeHash['handler_package'] ).'_PKG_PATH' )) {
-			$handlerFile = constant( strtoupper( $pContentTypeHash['handler_package'] ).'_PKG_PATH' ).$pContentTypeHash['handler_file'];
-			if( file_exists( $handlerFile ) ) {
-				require_once( $handlerFile );
-				$ret = TRUE;
+		$pkgName = strtoupper( $pContentTypeHash['handler_package'] );
+		foreach( array( '_PKG_CLASS_PATH', '_PKG_INCLUDE_PATH', '_PKG_PATH' ) as $pkgConstPath ) {
+			if( defined( $pkgName.$pkgConstPath ) && ($pkgDef = constant( $pkgName.$pkgConstPath )) ) {
+				$handlerFile = $pkgDef.$pContentTypeHash['handler_file'];
+				if( is_file( $handlerFile ) ) {
+					require_once( $handlerFile );
+					$ret = TRUE;
+				}
 			}
 		}
 		return $ret;
@@ -665,7 +668,7 @@ class LibertySystem extends BitSingleton {
 	 * @param boolean $pPlural true will return the plural form of the content type display name
 	 * @return string the display name of the content type
  	 */
-	function getContentClassName( $pContentTypeGuid ) {
+	public function getContentClassName( $pContentTypeGuid ) {
 		$ret = NULL;
 		if( !isset( $this->mContentTypes ) ) {
 			$this->loadContentTypes();
