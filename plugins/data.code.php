@@ -146,7 +146,7 @@ if( !function_exists( 'unHtmlEntities' )) { // avoid name collisions
 if( !function_exists( 'deCodeHTML' )) { // avoid name collisions
 	function deCodeHTML( $pStr ) {
 		$pStr = strtr( $pStr, array_flip( get_html_translation_table( HTML_ENTITIES )));
-		$pStr = preg_replace( "/&#([0-9]+);/me", "chr('\\1')", $pStr );
+		$pStr = preg_replace_callback( "/&#([0-9]+);/m", function($matches){ foreach($matches as $match){ return chr($match); } }, $pStr );
 		return $pStr;
 	}
 }
