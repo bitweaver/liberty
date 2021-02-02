@@ -169,8 +169,8 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		}
 		$wrapper['display_url'] = $pParams['link'];
 	} elseif( !empty( $att['display_url'] ) )  {
-			$wrapper['display_url'] = $att['display_url'];
-		}
+		$wrapper['display_url'] = $att['display_url'];
+	}
 
 	if( !empty( $wrapper['description'] )) {
 		$parseHash['content_id'] = $pParseHash['content_id'];

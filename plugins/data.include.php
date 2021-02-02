@@ -75,7 +75,8 @@ function data_include($data, $params) {
 	$ret = "<p>Please enter a valid 'page_name', 'page_id' or 'content_id' to include in this page.</p>";
 	// load page by page_id
 	if( isset( $params['page_id'] ) && is_numeric( $params['page_id'] ) ) {
-		require_once( WIKI_PKG_PATH.'BitPage.php');
+		global $gLibertySystem;
+		$typeClass = $gLibertySystem->getContentClassName( 'bitpage' );
 		$wp = new BitPage( $params['page_id'] );
 		if( $wp->load() ) {
 			$ret = $wp->getParsedData();

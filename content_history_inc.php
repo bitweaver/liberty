@@ -70,7 +70,7 @@ if( isset( $_REQUEST["delete"] ) && isset( $_REQUEST["hist"] )) {
 	$from_page = $gContent->getHistory( $from_version );
 	$from_page['data'][0]['no_cache'] = TRUE;
 	$gBitSmarty->assign( 'compare', 'y' );
-	$gBitSmarty->assign( 'diff_from', LibertyContent::parseDataHash( $from_page['data'][0] ) );
+	$gBitSmarty->assign( 'diff_from', LibertyContent::parseDataHash( $from_page['data'][0], $gContent ) );
 	$gBitSmarty->assign( 'diff_to', $gContent->getParsedData() );
 	$gBitSmarty->assignByRef( 'version_from', $from_version );
 
