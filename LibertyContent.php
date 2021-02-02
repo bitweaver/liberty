@@ -3092,7 +3092,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		if( !empty( $pData ) && ($filters = $gLibertySystem->getPluginsOfType( FILTER_PLUGIN )) ) {
 			foreach( $filters as $guid => $filter ) {
 //vvd( $guid, $gLibertySystem->isPluginActive( $guid ), $pFilterStage, $gLibertySystem->getPluginFunction( $guid, $pFilterStage.'_function' ));//, $pData ); //, $pFilterHash, $pObject );
-				if( $gLibertySystem->isPluginActive( $guid ) && FALSE ) { //($func = $gLibertySystem->getPluginFunction( $guid, $pFilterStage.'_function' )) ) {
+				if( $gLibertySystem->isPluginActive( $guid ) && ($func = $gLibertySystem->getPluginFunction( $guid, $pFilterStage.'_function' )) ) {
 					$func( $pData, $pFilterHash, $pObject );
 				}
 			}

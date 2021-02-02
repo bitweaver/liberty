@@ -212,7 +212,9 @@ class TikiWikiParser extends BitBase {
 		$section_count = 1;
 
 		if( $gBitSystem->isPackageActive( 'wiki' ) ) {
-			require_once( WIKI_PKG_PATH.'BitPage.php' );
+			// force wiki page to load
+			global $gLibertySystem;
+			$gLibertySystem->getContentClassName( 'bitpage' );
 		}
 
 		
