@@ -220,7 +220,7 @@ function mime_audio_converter( &$pParamHash ) {
 			$log['success'] = 'Successfully converted to mp3 audio';
 
 			// now that we have a new mp3 file, we might as well copy the tags accross in case someone downloads it
-			require_once( UTIL_PKG_INC.'getid3/getid3/getid3.php' );
+			require_once( UTIL_PKG_INCLUDE_PATH.'getid3/getid3/getid3.php' );
 			$getID3 = new getID3;
 			// we silence this since this will spew lots of ugly errors when using UTF-8 and some odd character in the file ID
 			$meta = @$getID3->analyze( $source );
@@ -401,10 +401,10 @@ function mime_audio_update_tags( $pFile, $pMetaData ) {
 	$ret = NULL;
 	if( !empty( $pFile ) && is_file( $pFile ) && is_array( $pMetaData )) {
 		// we need to initiate getID3 for the writer to work
-		require_once( UTIL_PKG_INC.'getid3/getid3/getid3.php' );
+		require_once( UTIL_PKG_INCLUDE_PATH.'getid3/getid3/getid3.php' );
 		$getID3 = new getID3;
 
-		require_once( UTIL_PKG_INC.'getid3/getid3/write.php' );
+		require_once( UTIL_PKG_INCLUDE_PATH.'getid3/getid3/write.php' );
 		// Initialize getID3 tag-writing module
 		$tagwriter = new getid3_writetags();
 		$tagwriter->filename       = $pFile;

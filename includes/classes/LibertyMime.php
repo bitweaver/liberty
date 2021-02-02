@@ -8,7 +8,7 @@
 /**
  * required setup
  */
-require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
+require_once( LIBERTY_PKG_CLASS_PATH.'LibertyContent.php' );
 
 // load the image processor plugin, check for loaded 'gd' since that is the default processor, and config might not be set.
 if( $gBitSystem->isFeatureActive( 'image_processor' ) || extension_loaded( 'gd' ) ) {

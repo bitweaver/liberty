@@ -18,7 +18,7 @@ if( $postMax < $uploadMax ) {
  * calculate user quota
  */
 if( $gBitSystem->isPackageActive( 'quota' ) ) {
-	require_once( QUOTA_PKG_PATH.'calculate_quota_inc.php' );
+	require_once( QUOTA_PKG_INCLUDE_PATH.'calculate_quota_inc.php' );
 }
 
 $gBitSmarty->assignByRef( 'uploadMax', $uploadMax );

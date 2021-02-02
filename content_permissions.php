@@ -12,7 +12,7 @@ require_once( '../kernel/setup_inc.php' );
 
 $gBitSystem->verifyPermission( 'p_liberty_assign_content_perms' );
 
-require_once( LIBERTY_PKG_PATH.'lookup_content_inc.php' );
+require_once( LIBERTY_PKG_INCLUDE_PATH.'lookup_content_inc.php' );
 
 if( $gContent == null ) {
 	$gBitSystem->fatalError('Could not find the requested content.', NULL, NULL, HttpStatusCodes::HTTP_GONE );

@@ -29,7 +29,7 @@ if( !$gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE)) {
 
 	$commentsParentId = $_REQUEST['parent_id'];
 	$comments_return_url = $_REQUEST['comments_return_url'];
-	include_once( LIBERTY_PKG_PATH.'comments_inc.php' );
+	include_once( LIBERTY_PKG_INCLUDE_PATH.'comments_inc.php' );
 
 	if( isset( $_REQUEST['post_comment_submit'] )) {
 		if ($storeComment->loadComment()){

@@ -21,8 +21,8 @@
 /**
  * required setup
  */
-require_once( LIBERTY_PKG_PATH.'liberty_lib.php' );
-require_once( KERNEL_PKG_PATH.'BitBase.php' );
+require_once( LIBERTY_PKG_INCLUDE_PATH.'liberty_lib.php' );
+require_once( KERNEL_PKG_CLASS_PATH.'BitBase.php' );
 
 /**
  * Virtual base class (as much as one can have such things in PHP) for all

@@ -11,7 +11,7 @@
 /**
  * required setup
  */
-require_once( LIBERTY_PKG_PATH."LibertyContent.php" );
+require_once( LIBERTY_PKG_CLASS_PATH.'LibertyContent.php' );
 global $gContent;
 global $gLibertySystem;
 

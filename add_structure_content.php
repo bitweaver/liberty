@@ -21,8 +21,8 @@ if( !empty( $_REQUEST['modal'] ) ) {
 	$gBitSmarty->assign( 'popupPage', '1' );
 }
 
-require_once( LIBERTY_PKG_PATH.'lookup_content_inc.php' );
-require_once( LIBERTY_PKG_PATH.'edit_structure_inc.php' );
+require_once( LIBERTY_PKG_INCLUDE_PATH.'lookup_content_inc.php' );
+require_once( LIBERTY_PKG_INCLUDE_PATH.'edit_structure_inc.php' );
 
 if( !empty( $_SERVER['HTTP_REFERER'] ) ) {
 	$urlHash = parse_url( $_SERVER['HTTP_REFERER'] );
@@ -38,7 +38,7 @@ if( $gBitThemes->isAjaxRequest() ) {
 } else {
 
 	$_REQUEST['thumbnail_size'] = 'icon';
-	include_once( LIBERTY_PKG_PATH.'get_content_list_inc.php' );
+	include_once( LIBERTY_PKG_INCLUDE_PATH.'get_content_list_inc.php' );
 	foreach( $contentList as $cItem ) {
 		$cList[$contentTypes[$cItem['content_type_guid']]][$cItem['content_id']] = $cItem['title'].' [id: '.$cItem['content_id'].']';
 	}

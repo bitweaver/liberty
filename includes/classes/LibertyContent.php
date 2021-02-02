@@ -39,7 +39,7 @@ if( !defined( 'BIT_CONTENT_DEFAULT_STATUS' ) ) {
 /**
  * required setup
  */
-require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
+require_once( LIBERTY_PKG_CLASS_PATH.'LibertyBase.php' );
 
 define( 'LIBERTY_SPLIT_REGEX', "!\.{3}split\.{3}[\t ]*\n?!" );
 
@@ -430,7 +430,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
 	function expungeComments() {
-		require_once( LIBERTY_PKG_PATH.'LibertyComment.php' );
+		require_once( LIBERTY_PKG_CLASS_PATH.'LibertyComment.php' );
 		// Delete all comments associated with this piece of content
 		$query = "SELECT `comment_id` FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `root_id` = ?";
 		if( $commentIds = $this->mDb->getCol($query, array( $this->mContentId ) ) ) {
@@ -2153,7 +2153,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @return the fully specified path to file to be included
 	 */
 	function getRenderFile() {
-		return LIBERTY_PKG_PATH.'display_content_inc.php';
+		return LIBERTY_PKG_INCLUDE_PATH.'display_content_inc.php';
 	}
 
 	public function getDisplayLink( $pLinkText=NULL, $pAnchor=NULL ) {
@@ -2491,7 +2491,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			global $gBitUser;
 			$ret['data'] = $gBitUser->getAuthorList( $pListHash );
 		} else {
-			include_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
+			include_once( LIBERTY_PKG_CLASS_PATH.'LibertyContent.php' );
 			$libertyContent = new LibertyContent();
 			$ret['data'] = $libertyContent->getContentList( $pListHash );
 		}

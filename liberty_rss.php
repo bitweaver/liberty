@@ -9,8 +9,8 @@
  * Initialization
  */
 require_once( "../kernel/setup_inc.php" );
-require_once( RSS_PKG_PATH."rss_inc.php" );
-require_once( LIBERTY_PKG_PATH."LibertyContent.php" );
+require_once( RSS_PKG_INCLUDE_PATH.'rss_inc.php' );
+require_once( LIBERTY_PKG_CLASS_PATH.'LibertyContent.php' );
 
 $gBitSystem->verifyPackage( 'rss' );
 $gBitSystem->verifyFeature( 'liberty_rss' );

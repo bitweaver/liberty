@@ -45,8 +45,8 @@ foreach( array_keys( $formatplugins ) as $guid ) {
 	// check to see if we have some format syntax help
 	if( is_file( LIBERTY_PKG_PATH."templates/help_format_{$guid}_inc.tpl" )) {
 		$formatplugins[$guid]['format_help'] = "bitpackage:liberty/help_format_{$guid}_inc.tpl";
-		if( is_file( LIBERTY_PKG_PATH."help_format_{$guid}_inc.php" )) {
-			include_once( LIBERTY_PKG_PATH."help_format_{$guid}_inc.php" );
+		if( is_file( LIBERTY_PKG_INCLUDE_PATH.'help_format_{$guid}_inc.php' )) {
+			include_once( LIBERTY_PKG_INCLUDE_PATH.'help_format_{$guid}_inc.php' );
 		}
 	}
 }

@@ -35,7 +35,7 @@
 /**
  * required setup
  */
-require_once( LIBERTY_PKG_PATH.'LibertyComment.php' );
+require_once( LIBERTY_PKG_CLASS_PATH.'LibertyComment.php' );
 
 global $commentsLib, $gBitSmarty, $gBitSystem, $gBitThemes;
 

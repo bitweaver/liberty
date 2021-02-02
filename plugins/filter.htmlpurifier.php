@@ -213,11 +213,11 @@ function htmlpure_getDefaultConfig( &$htmlp_version, $pObject=NULL ){
 			$config->set('Filter.YouTube', false);
 
 			if ($gBitSystem->isFeatureActive('htmlpure_allow_youtube')) {
-				require_once(UTIL_PKG_INC.'htmlpure/Filter/YouTube.php');
+				require_once(UTIL_PKG_INCLUDE_PATH.'htmlpure/Filter/YouTube.php');
 				$custom_filters[] = new HTMLPurifier_Filter_YouTube();
 			}
 			if ($gBitSystem->isFeatureActive('htmlpure_allow_cnbc')) {
-				require_once(UTIL_PKG_INC.'htmlpure/Filter/CNBC.php');
+				require_once(UTIL_PKG_INCLUDE_PATH.'htmlpure/Filter/CNBC.php');
 				$custom_filters[] = new HTMLPurifier_Filter_CNBC();
 			}
 
@@ -263,12 +263,12 @@ function htmlpure_legacyAddFilters(){
 	global $gHtmlPurifier, $gBitSystem;
 
 	if ( $gBitSystem->isFeatureActive('htmlpure_allow_youtube') ) {
-		require_once(UTIL_PKG_INC.'htmlpure/Filter/YouTube.php');
+		require_once(UTIL_PKG_INCLUDE_PATH.'htmlpure/Filter/YouTube.php');
 
 		$gHtmlPurifier->addFilter(new HTMLPurifier_Filter_YouTube());
 	}
 	if ($gBitSystem->isFeatureActive('htmlpure_allow_cnbc')) {
-		require_once(UTIL_PKG_INC.'htmlpure/Filter/CNBC.php');
+		require_once(UTIL_PKG_INCLUDE_PATH.'htmlpure/Filter/CNBC.php');
 		$gHtmlPurifier->addFilter(new HTMLPurifier_Filter_CNBC());
 	}
 }

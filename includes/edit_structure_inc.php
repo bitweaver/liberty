@@ -16,7 +16,7 @@
  * required setup
  */
 require_once( '../kernel/setup_inc.php' );
-include_once( LIBERTY_PKG_PATH.'LibertyStructure.php');
+include_once( LIBERTY_PKG_CLASS_PATH.'LibertyStructure.php');
 
 if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 	$gBitSystem->fatalError( tra( "No structure indicated" ));

@@ -61,7 +61,7 @@ define( 'LIBERTY_UPLOAD', 'upload' );
 /**
  * Link to base class
  */
-require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
+require_once( LIBERTY_PKG_CLASS_PATH.'LibertyBase.php' );
 
 /**
  * System class for handling the liberty package

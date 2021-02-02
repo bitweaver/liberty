@@ -307,10 +307,10 @@ array( 'DATADICT' => array(
 array( 'PHP' => '
 	#require_once( "../kernel/setup_inc.php" );
 	#require_once( WIKI_PKG_PATH."BitPage.php" );
-	require_once( LIBERTY_PKG_PATH."LibertyBase.php");
+	require_once( LIBERTY_PKG_CLASS_PATH.'LibertyBase.php');
 
 	global $gQueryUserId;
-	require_once( LIBERTY_PKG_PATH."LibertyComment.php" );
+	require_once( LIBERTY_PKG_CLASS_PATH.'LibertyComment.php' );
 	$cmt = new LibertyComment();
 	$max_records = 100000;
 	$allComments = $cmt->getList(

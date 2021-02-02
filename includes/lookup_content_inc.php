@@ -13,7 +13,7 @@
 		/**
 		 * required setup
 		 */
-		require_once( LIBERTY_PKG_PATH.'LibertyStructure.php');
+		require_once( LIBERTY_PKG_CLASS_PATH.'LibertyStructure.php');
 		$_REQUEST['structure_id'] = preg_replace( '/[\D]/', '', $_REQUEST['structure_id'] );
 		$gStructure = new LibertyStructure( $_REQUEST['structure_id'] );
 		if( $gStructure->load() ) {
@@ -30,7 +30,7 @@
 		}
 	} elseif( @BitBase::verifyId( $_REQUEST['content_id'] ) ) {
 		$_REQUEST['content_id'] = preg_replace( '/[\D]/', '', $_REQUEST['content_id'] );
-		require_once( LIBERTY_PKG_PATH.'LibertyBase.php');
+		require_once( LIBERTY_PKG_CLASS_PATH.'LibertyBase.php');
 		if( $gContent = LibertyBase::getLibertyObject( $_REQUEST['content_id'] ) ) {
 			$gBitSmarty->assignByRef( 'gContent', $gContent );
 			$gBitSmarty->assignByRef( 'pageInfo', $gContent->mInfo );
