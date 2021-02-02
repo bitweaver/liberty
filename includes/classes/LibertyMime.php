@@ -629,7 +629,7 @@ class LibertyMime extends LibertyContent {
 	 * @access public
 	 * @return attachment details
 	 */
-	public function getAttachment( $pAttachmentId, $pParams = NULL ) {
+	public static function getAttachment( $pAttachmentId, $pParams = NULL ) {
 		global $gLibertySystem, $gBitSystem;
 		$ret = NULL;
 
@@ -638,13 +638,7 @@ class LibertyMime extends LibertyContent {
 			if( $result = $gBitSystem->mDb->query( $query, array( (int)$pAttachmentId ))) {
 				if( $row = $result->fetchRow() ) {
 					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function', 'mime' )) {
-						$prefs = array();
-						// if the object is available, we'll copy the preferences by reference to allow the plugin to update them as needed
-						if( !empty( $this ) && !empty( $this->mStoragePrefs[$pAttachmentId] )) {
-							$prefs = &$this->mStoragePrefs[$pAttachmentId];
-						} else {
-							$prefs = static::getAttachmentPreferences( $pAttachmentId );
-						}
+						$prefs = static::getAttachmentPreferences( $pAttachmentId );
 						$ret = $func( $row, $prefs, $pParams );
 					}
 				}
