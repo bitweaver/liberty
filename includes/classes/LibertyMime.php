@@ -758,25 +758,14 @@ class LibertyMime extends LibertyContent {
 	 * @param string Default value to return if the preference is empty
 	 * @param int Optional content_id for arbitrary content preference
 	 */
-	function getAttachmentPreferences( $pAttachmentId ) {
+	protected static function getAttachmentPreferences( $pAttachmentId ) {
 		global $gBitSystem;
 
 		$ret = array();
 		if( BitBase::verifyId( $pAttachmentId ) ) {
-			if( !empty( $this ) && is_subclass_of( $this, "LibertyMime" ) ) {
-				// we're loading from within object
-				if( is_null( $this->mStoragePrefs )) {
-					$this->loadAttachmentPreferences();
-				}
-
-				if( @BitBase::verifyId( $pAttachmentId ) && isset( $this->mStoragePrefs[$pAttachmentId] )) {
-					$ret = $this->mStoragePrefs[$pAttachmentId];
-				}
-			} else {
-				// if the object isn't loaded, we need to get the prefs from the database
-				$sql = "SELECT `pref_name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_attachment_prefs` WHERE `attachment_id` = ?";
-				$ret = $gBitSystem->mDb->getAssoc( $sql, array( (int)$pAttachmentId ));
-			}
+			// if the object isn't loaded, we need to get the prefs from the database
+			$sql = "SELECT `pref_name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_attachment_prefs` WHERE `attachment_id` = ?";
+			$ret = $gBitSystem->mDb->getAssoc( $sql, array( (int)$pAttachmentId ));
 		}
 
 		return $ret;
