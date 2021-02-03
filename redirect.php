@@ -11,7 +11,7 @@
 /**
  * Required setup
  */
-require_once( '../kernel/setup_inc.php' );
+require_once( '../kernel/includes/setup_inc.php' );
 if( !empty( $_REQUEST['q'] )) {
 	bit_redirect( $_REQUEST['q'] );
 } else {

@@ -13,7 +13,7 @@
  */
 global $gLightweightScan;
 $gLightwieightScan = TRUE;
-require_once( '../kernel/setup_inc.php' );
+require_once( '../kernel/includes/setup_inc.php' );
 
 global $gContent, $gBitSystem, $gBitSmarty;
 include_once( LIBERTY_PKG_INCLUDE_PATH.'lookup_content_inc.php' );

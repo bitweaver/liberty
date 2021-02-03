@@ -8,7 +8,7 @@
 /**
  * required setup
  */
-require_once( '../kernel/setup_inc.php' );
+require_once( '../kernel/includes/setup_inc.php' );
 
 $staticContent = new LibertyContent();
 $gContent = LibertyBase::getLibertyObject( $_REQUEST['parent_id'], ( !empty( $_REQUEST['parent_guid'] ) ? $_REQUEST['parent_guid'] : NULL ));

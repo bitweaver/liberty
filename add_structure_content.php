@@ -12,7 +12,7 @@
  * required setup
  */
 $gLiteweightScan = TRUE;
-require_once( '../kernel/setup_inc.php' );
+require_once( '../kernel/includes/setup_inc.php' );
 
 if( !empty( $_REQUEST['modal'] ) ) {
 	$gBitSystem->mConfig['site_top_bar'] = FALSE;
