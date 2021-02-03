@@ -15,7 +15,7 @@
 /**
  * required setup
  */
-require_once( '../kernel/setup_inc.php' );
+require_once( '../kernel/includes/setup_inc.php' );
 include_once( LIBERTY_PKG_CLASS_PATH.'LibertyStructure.php');
 
 if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {

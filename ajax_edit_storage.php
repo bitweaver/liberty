@@ -10,7 +10,7 @@
  * required setup
  */
 global $gContent;
-include_once( '../kernel/setup_inc.php' );
+include_once( '../kernel/includes/setup_inc.php' );
 
 // load the content
 include_once( LIBERTY_PKG_INCLUDE_PATH.'lookup_content_inc.php' );
