@@ -107,11 +107,6 @@ function mime_image_update( &$pStoreRow, $pParams = NULL ) {
 		if( !mime_image_create_panorama( $pStoreRow )) {
 			$ret = FALSE;
 		}
-	} elseif( empty( $pParams['preference']['is_panorama'] ) && !empty( $pStoreRow['thumbnail_url']['panorama'] )) {
-		// we remove the panorama setting in the database and the panorama thumb
-		if( LibertyAttachable::validateStoragePath( STORAGE_PKG_PATH.$pStoreRow['thumbnail_url']['panorama'] )) {
-			@unlink( STORAGE_PKG_PATH.$pStoreRow['thumbnail_url']['panorama'] );
-		}
 	}
 
 	return $ret;

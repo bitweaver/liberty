@@ -400,13 +400,7 @@ class LibertyMime extends LibertyContent {
 	 * @return string full path on local filsystem to store files.
 	 */
 	function getStoragePath( $pParamHash, $pRootDir=NULL ) {
-		$ret = null;
-
-		if( $branch = liberty_mime_get_storage_branch( $pParamHash ) ) {
-			$ret = ( !empty( $pRootDir ) ? $pRootDir : STORAGE_PKG_PATH ).$branch;
-			mkdir_p($ret);
-		}
-		return $ret;
+		return liberty_mime_get_storage_path( $pParamHash, $pRootDir );
 	}
 
 
@@ -1157,12 +1151,23 @@ if( !function_exists( 'liberty_mime_get_storage_sub_dir_name' )) {
  * @param $pParamHash key=>value pairs to determine path. Possible keys in descending directory depth are: 'user_id' indicates the 'users/.../<user_id>' branch or use the 'common' branch if null, 'package' - any desired directory below the StoragePath. this will be created if it doesn't exist, 'sub_dir' -  the sub-directory in the package organization directory, this is often a primary id such as attachment_id
  * @return string full path on local filsystem to store files.
  */
+if( !function_exists( 'liberty_mime_get_storage_path' )) {
+	function liberty_mime_get_storage_path( $pParamHash, $pRootDir ) {
+		$ret = null;
+
+		if( $branch = liberty_mime_get_storage_branch( $pParamHash ) ) {
+			$ret = ( !empty( $pRootDir ) ? $pRootDir : STORAGE_PKG_PATH ).$branch;
+			mkdir_p($ret);
+		}
+
+		return $ret;
+	}
+}
+
 if( !function_exists( 'liberty_mime_get_storage_branch' )) {
 	function liberty_mime_get_storage_branch( $pParamHash ) {
-		// *PRIVATE FUNCTION. GO AWAY! DO NOT CALL DIRECTLY!!!
 		global $gBitSystem;
 		$pathParts = array();
-
 
 		if( $pUserId = BitBase::getParameter( $pParamHash, 'user_id' ) ) {
 			$pathParts[] = 'users';
