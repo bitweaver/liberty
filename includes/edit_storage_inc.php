@@ -35,7 +35,7 @@ if( !empty( $_REQUEST['deleteAttachment'] )) {
 	}
 
 	$attachmentId = $_REQUEST['deleteAttachment'];
-	$attachmentInfo = $gContent->getAttachment( $attachmentId );
+	$attachmentInfo = LibertyMime::getAttachment( $attachmentId );
 
 	// the second part of this check seems odd (never used?) to me, but I'll leave it in for now - spiderr 10/17/2007
 	if( $gContent->hasAdminPermission() || ( $gContent->isOwner( $attachmentInfo ) && $gBitUser->hasPermission( 'p_liberty_delete_attachment' ))) {

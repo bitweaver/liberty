@@ -623,7 +623,7 @@ class LibertyMime extends LibertyContent {
 	 * @access public
 	 * @return attachment details
 	 */
-	public function getAttachment( $pAttachmentId, $pParams = NULL ) {
+	public static function getAttachment( $pAttachmentId, $pParams = NULL ) {
 		global $gLibertySystem, $gBitSystem;
 		$ret = NULL;
 
@@ -632,13 +632,7 @@ class LibertyMime extends LibertyContent {
 			if( $result = $gBitSystem->mDb->query( $query, array( (int)$pAttachmentId ))) {
 				if( $row = $result->fetchRow() ) {
 					if( $func = $gLibertySystem->getPluginFunction( $row['attachment_plugin_guid'], 'load_function', 'mime' )) {
-						$prefs = array();
-						// if the object is available, we'll copy the preferences by reference to allow the plugin to update them as needed
-						if( !empty( $this ) && !empty( $this->mStoragePrefs[$pAttachmentId] )) {
-							$prefs = &$this->mStoragePrefs[$pAttachmentId];
-						} else {
-							$prefs = static::getAttachmentPreferences( $pAttachmentId );
-						}
+						$prefs = static::getAttachmentPreferences( $pAttachmentId );
 						$ret = $func( $row, $prefs, $pParams );
 					}
 				}
@@ -758,25 +752,14 @@ class LibertyMime extends LibertyContent {
 	 * @param string Default value to return if the preference is empty
 	 * @param int Optional content_id for arbitrary content preference
 	 */
-	function getAttachmentPreferences( $pAttachmentId ) {
+	protected static function getAttachmentPreferences( $pAttachmentId ) {
 		global $gBitSystem;
 
 		$ret = array();
 		if( BitBase::verifyId( $pAttachmentId ) ) {
-			if( !empty( $this ) && is_subclass_of( $this, "LibertyMime" ) ) {
-				// we're loading from within object
-				if( is_null( $this->mStoragePrefs )) {
-					$this->loadAttachmentPreferences();
-				}
-
-				if( @BitBase::verifyId( $pAttachmentId ) && isset( $this->mStoragePrefs[$pAttachmentId] )) {
-					$ret = $this->mStoragePrefs[$pAttachmentId];
-				}
-			} else {
-				// if the object isn't loaded, we need to get the prefs from the database
-				$sql = "SELECT `pref_name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_attachment_prefs` WHERE `attachment_id` = ?";
-				$ret = $gBitSystem->mDb->getAssoc( $sql, array( (int)$pAttachmentId ));
-			}
+			// if the object isn't loaded, we need to get the prefs from the database
+			$sql = "SELECT `pref_name`, `pref_value` FROM `".BIT_DB_PREFIX."liberty_attachment_prefs` WHERE `attachment_id` = ?";
+			$ret = $gBitSystem->mDb->getAssoc( $sql, array( (int)$pAttachmentId ));
 		}
 
 		return $ret;
