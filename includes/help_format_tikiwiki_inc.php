@@ -12,7 +12,7 @@
  * required setup
  */
 global $gBitSystem, $gBitSmarty;
-require_once( KERNEL_PKG_PATH.'BitCache.php' );
+require_once( KERNEL_PKG_CLASS_PATH.'BitCache.php' );
 $cache = new BitCache( 'liberty/help' );
 
 // only regenerate this thing if it's not cached yet

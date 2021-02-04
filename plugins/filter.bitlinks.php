@@ -227,7 +227,7 @@ class BitLinks extends BitBase {
 
 		// final attempt to get page details
 		if( empty( $ret ) && !empty( $pObject ) && $gBitSystem->isPackageActive( 'wiki' ) ) {
-			require_once( WIKI_PKG_PATH.'BitPage.php' );
+			require_once( WIKI_PKG_CLASS_PATH.'BitPage.php' );
 			if( $ret = BitPage::pageExists( $pTitle, FALSE, $pContentId )) {
 				if( count( $ret ) > 1 ) {
 					$ret[0]['description'] = tra( 'Multiple pages with this name' );

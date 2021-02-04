@@ -133,7 +133,7 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		// link to page by page_id
 		// avoid endless loops
 
-		require_once( WIKI_PKG_PATH.'BitPage.php');
+		require_once( WIKI_PKG_CLASS_PATH.'BitPage.php');
 		$wp = new BitPage( $pParams['page_id'] );
 		if( $wp->load() ) {
 				$wrapper['display_url'] = $wp->getDisplayUrl();
@@ -145,7 +145,7 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		}
 	} elseif( !empty( $pParams['page_name'] )) {
 		// link to page by page_name
-		require_once( WIKI_PKG_PATH.'BitPage.php');
+		require_once( WIKI_PKG_CLASS_PATH.'BitPage.php');
 		$wp = new BitPage();
 			$wrapper['display_url'] = $wp->getDisplayUrl( $pParams['page_name'] );
 	} elseif( !empty( $pParams['link'] ) && $pParams['link'] == 'false' ) {

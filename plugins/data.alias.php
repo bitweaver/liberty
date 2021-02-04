@@ -49,7 +49,7 @@ function data_alias_help() {
 
 function data_alias( $pData, $pParams, $pCommonObject ) {
 	$page = '';
-	require_once(WIKI_PKG_PATH."BitPage.php");
+	require_once(WIKI_PKG_CLASS_PATH.'BitPage.php');
 
 	foreach( $pParams as $key => $value ) {
 		if( !empty( $value ) ) {
