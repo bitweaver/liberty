@@ -120,6 +120,8 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		return $ret;
 	}
 
+	$att = array();
+
 	if( is_a( $pCommonObject, 'LibertyMime' ) && !($att = $pCommonObject->getAttachment( $pParams['id'], $pParams )) ) {
 		$ret = tra( "The attachment id given is not valid." );
 		return $ret;
@@ -196,4 +198,3 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 	$ret = $gBitSmarty->fetch( $gLibertySystem->getMimeTemplate( 'attachment', $mimehandler ));
 	return $ret;
 }
-?>
