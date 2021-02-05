@@ -406,8 +406,8 @@ function liberty_content_display( $pObject, &$pParamHash ) {
  * @return void
  */
 function liberty_content_edit( $pObject ) {
-	include_once( LIBERTY_PKG_PATH.'edit_help_inc.php' );
-	include_once( LIBERTY_PKG_PATH."edit_storage_inc.php" );
+	include_once( LIBERTY_PKG_INCLUDE_PATH.'edit_help_inc.php' );
+	include_once( LIBERTY_PKG_INCLUDE_PATH."edit_storage_inc.php" );
 }
 
 
