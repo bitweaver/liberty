@@ -1163,7 +1163,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	* Set up SQL strings for services used by the object
 	* TODO: set this function deprecated and eventually nuke it
 	*/
-	function getServicesSql( $pServiceFunction, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars, $pObject = NULL, &$pParamHash = NULL ) {
+	static protected function getServicesSql( $pServiceFunction, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars, $pObject = NULL, &$pParamHash = NULL ) {
 		//deprecated( 'You package is calling the deprecated LibertyContent::getServicesSql() method. Please update your code to use LibertyContent::getLibertySql' );
 		global $gLibertySystem;
 		if( $loadFuncs = $gLibertySystem->getServiceValues( $pServiceFunction ) ) {
@@ -1172,7 +1172,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 					if( !empty( $pObject ) && is_object( $pObject ) ) {
 						$loadHash = $func( $pObject, $pParamHash );
 					} else {
-						$loadHash = $func( $this, $pParamHash );
+						$loadHash = $func( (!empty( $pObject ) ? $this : NULL), $pParamHash );
 					}
 					if( !empty( $loadHash['select_sql'] ) ) {
 						$pSelectSql .= $loadHash['select_sql'];

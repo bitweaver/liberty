@@ -276,7 +276,7 @@ function liberty_plugins_wrapper_style( $pParamHash ) {
  * @access public
  * @return content load sql
  */
-function liberty_content_load_sql( &$pObject, $pParamHash=NULL ) {
+function liberty_content_load_sql( $pObject, $pParamHash=NULL ) {
 	global $gBitSystem, $gBitUser;
 	$ret = array();
 
@@ -314,7 +314,7 @@ function liberty_content_load_sql( &$pObject, $pParamHash=NULL ) {
  * @access public
  * @return content list sql
  */
-function liberty_content_list_sql( &$pObject, $pParamHash=NULL ) {
+function liberty_content_list_sql( $pObject, $pParamHash=NULL ) {
 	global $gBitSystem, $gBitUser;
 	$ret = array();
 
@@ -363,7 +363,7 @@ function liberty_content_list_sql( &$pObject, $pParamHash=NULL ) {
  * @access public
  * @return void
  */
-function liberty_content_preview( &$pObject ) {
+function liberty_content_preview( $pObject ) {
 	global $gBitSystem, $gBitUser;
 	if( $gBitSystem->isFeatureActive( 'liberty_display_status' )
 		&& ( $gBitUser->hasPermission( 'p_liberty_edit_content_status' ) || $gBitUser->hasPermission( 'p_libert_edit_all_status' ))
@@ -386,7 +386,7 @@ function liberty_content_preview( &$pObject ) {
  * @access public
  * @return void
  */
-function liberty_content_display( &$pObject, &$pParamHash ) {
+function liberty_content_display( $pObject, &$pParamHash ) {
 	if( $pObject->isValid() ) {
 		global $gBitUser, $gBitSystem;
 
@@ -405,9 +405,9 @@ function liberty_content_display( &$pObject, &$pParamHash ) {
  * @access public
  * @return void
  */
-function liberty_content_edit( &$pObject ) {
-	include_once( LIBERTY_PKG_INCLUDE_PATH.'edit_help_inc.php' );
-	include_once( LIBERTY_PKG_INCLUDE_PATH.'edit_storage_inc.php' );
+function liberty_content_edit( $pObject ) {
+	include_once( LIBERTY_PKG_PATH.'edit_help_inc.php' );
+	include_once( LIBERTY_PKG_PATH."edit_storage_inc.php" );
 }
 
 
