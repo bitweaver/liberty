@@ -106,7 +106,7 @@ function liberty_imagick_resize_image( &$pFileHash ) {
 					}
 
 					// create thumb and write
-					$im->thumbnailImage( $pFileHash['max_width'],  $pFileHash['max_height'], TRUE );
+					$im->thumbnailImage( (int)$pFileHash['max_width'], (int)$pFileHash['max_height'], TRUE );
 					$im->writeImage( $destFile );
 
 					$pFileHash['size'] = filesize( $destFile );
