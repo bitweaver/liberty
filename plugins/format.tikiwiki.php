@@ -548,8 +548,7 @@ class TikiWikiParser extends BitBase {
 								$listate = substr($line, $listlevel, 1);
 
 								if (($listate == '+' || $listate == '-') && !($litype == '*' && !strstr(current($listbeg), '</ul>') || $litype == '#' && !strstr(current($listbeg), '</ol>'))) {
-									$thisid = 'id' . microtime() * 1000000;
-
+									$thisid = 'id' . intval( microtime(true) * 1000000 );
 									$data .= '<br /><a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\',1)">[' . ($listate == '-' ? '+' : '-') . ']</a>';
 									$listyle = ' id="' . $thisid . '" style="display:' . ($listate == '+' ? 'block' : 'none') . ';"';
 									$addremove = 1;
