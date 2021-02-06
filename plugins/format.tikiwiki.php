@@ -549,7 +549,7 @@ class TikiWikiParser extends BitBase {
 
 								if (($listate == '+' || $listate == '-') && !($litype == '*' && !strstr(current($listbeg), '</ul>') || $litype == '#' && !strstr(current($listbeg), '</ol>'))) {
 									$thisid = 'id' . intval( microtime(true) * 1000000 );
-									$data .= '<br /><a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\',1)">[' . ($listate == '-' ? '+' : '-') . ']</a>';
+									$data .= '<br /><a id="flipper' . $thisid . '" href="javascript:BitBase.flipWithSign(\'' . $thisid . '\',1)">[' . ($listate == '-' ? '+' : '-') . ']</a>';
 									$listyle = ' id="' . $thisid . '" style="display:' . ($listate == '+' ? 'block' : 'none') . ';"';
 									$addremove = 1;
 								}
@@ -570,7 +570,7 @@ class TikiWikiParser extends BitBase {
 						if (($listate == '+' || $listate == '-')) {
 							$thisid = 'id' . microtime() * 1000000;
 
-							$data .= '<br /><a id="flipper' . $thisid . '" href="javascript:flipWithSign(\'' . $thisid . '\',1)">[' . ($listate == '-' ? '+' : '-') . ']</a>';
+							$data .= '<br /><a id="flipper' . $thisid . '" href="javascript:BitBase.flipWithSign(\'' . $thisid . '\',1)">[' . ($listate == '-' ? '+' : '-') . ']</a>';
 							$listyle = ' id="' . $thisid . '" style="display:' . ($listate == '+' ? 'block' : 'none') . ';"';
 							$addremove = 1;
 						}
