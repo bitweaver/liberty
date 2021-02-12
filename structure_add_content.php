@@ -22,7 +22,7 @@ if( !empty( $_REQUEST['modal'] ) ) {
 }
 
 require_once( LIBERTY_PKG_INCLUDE_PATH.'lookup_content_inc.php' );
-require_once( LIBERTY_PKG_INCLUDE_PATH.'edit_structure_inc.php' );
+require_once( LIBERTY_PKG_INCLUDE_PATH.'structure_edit_inc.php' );
 
 if( !empty( $_SERVER['HTTP_REFERER'] ) ) {
 	$urlHash = parse_url( $_SERVER['HTTP_REFERER'] );
@@ -56,7 +56,11 @@ if( $gBitThemes->isAjaxRequest() ) {
 	}
 
 	if( !empty( $_REQUEST['done'] ) ) {
-		bit_redirect( $_SESSION['structure_referer'] );
+		if( !empty( $_SESSION['structure_referer'] ) ) {
+			bit_redirect( $_SESSION['structure_referer'] );
+		} else {
+			bit_redirect( $gContent->getDisplayUri() );
+		}
 	}
 	$gBitSystem->display( 'bitpackage:liberty/add_structure_content.tpl', "Add Content" , array( 'display_mode' => 'display' ));
 }

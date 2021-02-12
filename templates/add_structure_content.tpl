@@ -12,7 +12,7 @@ function addStructure(pContentId) {
 		BitBase.showById( responseHash.content_id+"remove" );
 		BitBase.fade( responseHash.content_id+"add" );
 	};
-	ajax.connect( "{/literal}{$smarty.const.LIBERTY_PKG_URL}add_structure_content.php{literal}", data, donefn, "GET" );
+	ajax.connect( "{/literal}{$smarty.const.LIBERTY_PKG_URL}structure_add_content.php{literal}", data, donefn, "GET" );
 	return false;
 }
 
@@ -23,7 +23,7 @@ function addStructure(pContentId) {
 
 <div id="structureaddresult"></div>
 
-<div class="edit structurecontent">
+<div class="edit">
 
 	<div class="header">
 		<h1>{$gContent->getTitle()|escape} {tr}Table of Contents{/tr}</h1>
@@ -34,8 +34,8 @@ function addStructure(pContentId) {
 		<input type="hidden" name="tab" value="content" />
 
 		<div class="row">
-			<div class="col-sm-4">
 		{if $subtree}
+			<div class="col-sm-4">
 			<div class="form-group">
 				{formlabel label="After page" for="after_ref_id"}
 				{forminput}
@@ -47,8 +47,8 @@ function addStructure(pContentId) {
 					{formhelp note="Format: Position in tree - Title of Content, insert after, structure_id"}
 				{/forminput}
 			</div>
-		{/if}
 			</div>
+		{/if}
 			<div class="col-sm-3">
 		{minifind}
 
@@ -81,54 +81,41 @@ function addStructure(pContentId) {
 			</div>
 		</div>
 
-		<div class="form-group">
-			{forminput}
-				<table class="table data">
-					<thead>
-						<tr>
-							<th></th>
-							<th>{tr}Title{/tr}</th>
-							<th>{tr}Type{/tr}</th>
-							<th>{tr}Author{/tr}</th>
-						</tr>
-					</thead>
-					<tbody>
-						{section loop=$contentListHash name=cx}
-							<tr class="item {cycle values="even,odd"}" id="{$contentListHash[cx].content_id}li">
-								<td>
+		<table class="table data">
+		{foreach from=$contentListHash item=contentHash}
+			{assign var=inStructureId value=$gStructure->isInStructure($contentHash.content_id)}
+			<tr>
+				<td class="text-center">{if $contentHash.thumbnail_url}<img class="img-responsive" src="{$contentHash.thumbnail_url}" alt="{tr}Thumbnail{/tr}" />{/if}</td>
+				<td class="item {cycle values="even,odd"}" id="{$contentHash.content_id}li">
 
-									{assign var=inStructureId value=$gStructure->isInStructure($contentListHash[cx].content_id)}
-									<div class="icon" {if empty($inStructureId)}style="display:none"{/if} id="{$contentListHash[cx].content_id}remove" onclick="removeStructure({$inStructureId})">
-										{booticon iname="icon-minus-sign"  ipackage="icons"  iexplain="Remove"}
-									</div>
-
-									<div class="icon" {if $inStructureId}style="display:none"{/if} id="{$contentListHash[cx].content_id}add" onclick="addStructure({$contentListHash[cx].content_id})">
-										{booticon iname="icon-plus-sign"  ipackage="icons"  iexplain="Add to structure"}
-									</div>
-
-									<a target="_new" href="{$contentListHash[cx].display_url}">
-										{booticon ipackage="icons" iname="icon-zoom-in" iexplain="View (in new window)"}
-									</a>
-								</td>
-								<td class="title">
-									{if $contentListHash[cx].thumbnail_url}
-										<img class="img-responsive" src="{$contentListHash[cx].thumbnail_url}" alt="{tr}Thumbnail{/tr}" />
-									{/if}
-									{$contentListHash[cx].title}
-									<span id="{$contentListHash[cx].content_id}feedback"></span>
-								</td>
-								<td class="description" id="{$contentListHash[cx].content_id}item">
-									{$contentListHash[cx].content_name}
-								</td>
-								<td class="author">
-								 	{displayname hash=$contentListHash[cx]}
-								</td>
-							</tr>
-						{/section}
-					</tbody>
-				</table>
-			{/forminput}
-		</div>
+					<div class="title">
+						{$contentHash.title}
+						<div class="help-block">
+						<a target="_new" href="{$contentHash.display_url}">
+							{booticon ipackage="icons" iname="icon-zoom-in" iexplain="View (in new window)"}
+						</a>
+{$contentHash.content_name}</div>
+					</div>
+				</td>
+				<td>
+					<div class="author">
+						{displayname hash=$contentHash}
+					</div>
+				</td>
+				<td>
+					{if $inStructureId}
+					<div class="icon" {if empty($inStructureId)}style="display:none"{/if} id="{$contentHash.content_id}remove" onclick="removeStructure({$inStructureId})">
+						<button class="btn btn-default btn-xs" title="Remove from structure">{tr}Remove{/tr}</button>
+					</div>
+					{else}
+					<div class="icon" id="{$contentHash.content_id}add" onclick="addStructure({$contentHash.content_id})">
+						<button class="btn btn-default btn-xs" title="Add to structure">{tr}Add{/tr}</button>
+					</div>
+					{/if} 
+				</td>
+			</tr>
+		{/foreach}
+		</table>
 
 		<div class="form-group submit">
 			<input type="submit" class="btn btn-default" onclick="submitStructure(this.form);return false;" name="create" value="{tr}Add Content{/tr}" />

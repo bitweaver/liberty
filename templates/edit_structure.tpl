@@ -121,7 +121,7 @@ console.log( childNode );
 function saveStructure( pStructureId ) {
 	// var json = structureTocToJson(document.getElementById('structure-branch-'+pStructureId));$('#pre-tree').html(JSON.stringify(json,null,2)); 
 	$.ajax({
-		url: {/literal}"{$smarty.const.LIBERTY_PKG_URL}edit_structure_inc.php?tk={$gBitUser->mTicket}&submit_structure=1&structure_id="+pStructureId,{literal}
+		url: {/literal}"{$smarty.const.LIBERTY_PKG_URL}structure_edit.php?tk={$gBitUser->mTicket}&submit_structure=1&structure_id="+pStructureId,{literal}
 		type: 'POST',
 		context: document.body,
 		data: { 'structure_json': structureTocToJson(document.getElementById('structure-branch-'+pStructureId)) }
@@ -145,7 +145,7 @@ function deleteStructureNode( pStructureId, pStructureText ) {
 
 </script>
 
-		<div class="btn btn-primary" onclick="saveStructure('{$gStructure->mInfo.root_structure_id}');">{tr}Save Changes{/tr}</div> <a href="{$smart.const.BIT_ROOT_URL}index.php?structure_id={$gStructure->mInfo.root_structure_id}" class="btn btn-default"">{tr}Back{/tr}</a> <a class="btn btn-default" href="{$smarty.const.LIBERTY_PKG_URL}add_structure_content.php?structure_id={$smarty.request.structure_id}&amp;content_type_guid={$smarty.request.content_type_guid}" title="Add Content to {$gContent->getTitle()}" title="Add Content">Add Content</a>
+		<div class="btn btn-primary" onclick="saveStructure('{$gStructure->mInfo.root_structure_id}');">{tr}Save Changes{/tr}</div> <a href="{$smart.const.BIT_ROOT_URL}index.php?structure_id={$gStructure->mInfo.root_structure_id}" class="btn btn-default"">{tr}Back{/tr}</a> <a class="btn btn-default" href="{$smarty.const.LIBERTY_PKG_URL}structure_add_content.php?structure_id={$smarty.request.structure_id}&amp;content_type_guid={$smarty.request.content_type_guid}" title="Add Content to {$gContent->getTitle()}" title="Add Content">Add Content</a>
 <div id="structure-feedback">
 </div>
 
