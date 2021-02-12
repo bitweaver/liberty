@@ -33,7 +33,7 @@ if( !empty( $_SERVER['HTTP_REFERER'] ) ) {
 
 if( $gBitThemes->isAjaxRequest() ) {
 	header( 'Content-Type: text/html; charset=utf-8' );
-	print $gBitSmarty->fetch( "bitpackage:liberty/add_structure_feedback_inc.tpl" ); 
+	print $gBitSmarty->fetch( "bitpackage:liberty/structure_add_feedback_inc.tpl" ); 
 	exit;
 } else {
 
@@ -62,6 +62,6 @@ if( $gBitThemes->isAjaxRequest() ) {
 			bit_redirect( $gContent->getDisplayUri() );
 		}
 	}
-	$gBitSystem->display( 'bitpackage:liberty/add_structure_content.tpl', "Add Content" , array( 'display_mode' => 'display' ));
+	$gBitSystem->display( 'bitpackage:liberty/structure_add_content.tpl', "Add Content" , array( 'display_mode' => 'display' ));
 }
 
