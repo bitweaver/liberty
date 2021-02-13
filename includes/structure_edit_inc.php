@@ -1,9 +1,8 @@
 <?php
 /**
- * edit_structure_inc
+ * structure_edit_inc
  *
- * @author   Christian Fowler>
- * @version  $Revision$
+ * @author   Christian Fowler
  * @package  liberty
  * @subpackage functions
  */
@@ -12,9 +11,6 @@
 // All Rights Reserved. See below for details and a complete list of authors.
 // Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See http://www.gnu.org/copyleft/lesser.html for details.
 
-/**
- * required setup
- */
 require_once( '../kernel/includes/setup_inc.php' );
 include_once( LIBERTY_PKG_CLASS_PATH.'LibertyStructure.php');
 
@@ -38,10 +34,12 @@ if( !@BitBase::verifyId( $_REQUEST["structure_id"] ) ) {
 		$rootStructure->loadNavigation();
 		$rootStructure->loadPath();
 	}
+
 	if( empty( $gContent ) ) {
 		$gContent = LibertyContent::getLibertyObject( $gStructure->getField( 'content_id' ) );
 		$gContent->verifyUpdatePermission();
 	}
+
 	$gBitSmarty->assignByRef( 'gStructure', $gStructure );
 	$gBitSmarty->assign( 'editingStructure', TRUE );
 	$gBitSmarty->assign('structureInfo', $gStructure->mInfo);

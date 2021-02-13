@@ -84,9 +84,10 @@ class LibertyBase extends BitBase {
 			} else {
 				if( $typeClass ) {
 					$creator = new $typeClass();
-					$ret = $creator->getNewObject( $typeClass, $pContentId, $pLoadFromCache );
-					$ret->setCacheableObject( FALSE );
-					$ret->clearFromCache();
+					if( $ret = $creator->getNewObject( $typeClass, $pContentId, $pLoadFromCache ) ) {
+						$ret->setCacheableObject( FALSE );
+						$ret->clearFromCache();
+					}
 				}
 			}
 		}

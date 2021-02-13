@@ -2522,6 +2522,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 
 		$hashSql = array('select'=>array(), 'join'=>array(),'where'=>array() );
 		$hashBindVars = array('select'=>array(), 'where'=>array(), 'join'=>array());
+
 		if( !empty( $pListHash['content_type_guid'] ) && is_array( $pListHash['content_type_guid'] )) {
 			foreach( $pListHash['content_type_guid'] as $contentTypeGuid ) {
 				$this->getFilter( $contentTypeGuid, $hashSql, $hashBindVars, $pListHash );
@@ -2536,6 +2537,10 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			$selectSql = '';
 		}
 		$joinSql = implode( ' ', $hashSql['join'] );
+		if( !empty( $pListHash['join_sql'] ) ) {
+			$joinSql .= $pListHash['join_sql'];
+		}
+
 		$whereSql = '';
 		if( empty( $hashBindVars['join'] )) {
 			$bindVars = array();
@@ -2772,7 +2777,6 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			$lastPageNumber = ceil ( $pListHash["cant"] / $pListHash['max_records'] ) - 1;
 			$pListHash['offset'] = $pListHash['max_records'] * $lastPageNumber;
 		}
-
 
 		if( !empty( $hashBindVars['select'] ) ) {
 			$bindVars = array_merge($hashBindVars['select'], $bindVars);
