@@ -22,7 +22,7 @@ if( !empty( $_REQUEST['modal'] ) ) {
 }
 
 require_once( LIBERTY_PKG_INCLUDE_PATH.'lookup_content_inc.php' );
-require_once( LIBERTY_PKG_INCLUDE_PATH.'edit_structure_inc.php' );
+require_once( LIBERTY_PKG_INCLUDE_PATH.'structure_edit_inc.php' );
 
 if( !empty( $_SERVER['HTTP_REFERER'] ) ) {
 	$urlHash = parse_url( $_SERVER['HTTP_REFERER'] );
@@ -33,7 +33,7 @@ if( !empty( $_SERVER['HTTP_REFERER'] ) ) {
 
 if( $gBitThemes->isAjaxRequest() ) {
 	header( 'Content-Type: text/html; charset=utf-8' );
-	print $gBitSmarty->fetch( "bitpackage:liberty/add_structure_feedback_inc.tpl" ); 
+	print $gBitSmarty->fetch( "bitpackage:liberty/structure_add_feedback_inc.tpl" ); 
 	exit;
 } else {
 
@@ -56,8 +56,12 @@ if( $gBitThemes->isAjaxRequest() ) {
 	}
 
 	if( !empty( $_REQUEST['done'] ) ) {
-		bit_redirect( $_SESSION['structure_referer'] );
+		if( !empty( $_SESSION['structure_referer'] ) ) {
+			bit_redirect( $_SESSION['structure_referer'] );
+		} else {
+			bit_redirect( $gContent->getDisplayUri() );
+		}
 	}
-	$gBitSystem->display( 'bitpackage:liberty/add_structure_content.tpl', "Add Content" , array( 'display_mode' => 'display' ));
+	$gBitSystem->display( 'bitpackage:liberty/structure_add_content.tpl', "Add Content" , array( 'display_mode' => 'display' ));
 }
 

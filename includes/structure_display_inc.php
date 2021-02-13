@@ -1,6 +1,6 @@
 <?php
 /**
- * display_structure_inc
+ * structure_display_inc
  *
  * @author   spider <spider@steelsun.com>
  * @version  $Revision$
