@@ -73,29 +73,29 @@ class LibertyStructure extends LibertyBase {
 				  LEFT JOIN `'.BIT_DB_PREFIX.'users_users` uu ON ( uu.`user_id` = lc.`user_id` )' . $where;
 
 		if( $result = $this->mDb->query( $query, $bindVars ) ) {
-			$ret = $result->fetchRow();
-		}
-
-		if( !empty( $contentTypes[$ret['content_type_guid']] ) ) {
-			// quick alias for code readability
-			$type = &$contentTypes[$ret['content_type_guid']];
-			if( empty( $type['content_object'] ) && !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
-				// create *one* object for each object *type* to  call virtual methods.
-				$handlerFile = $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'];
-				if( file_exists( $handlerFile ) ) {
-					include_once( $handlerFile );
-					if( class_exists( $type['handler_class'] ) ) {
-						$type['content_object'] = new $type['handler_class']();
+			if( $ret = $result->fetchRow() ) {
+				if( !empty( $contentTypes[$ret['content_type_guid']] ) ) {
+					// quick alias for code readability
+					$type = &$contentTypes[$ret['content_type_guid']];
+					if( empty( $type['content_object'] ) && !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
+						// create *one* object for each object *type* to  call virtual methods.
+						$handlerFile = $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'];
+						if( file_exists( $handlerFile ) ) {
+							include_once( $handlerFile );
+							if( class_exists( $type['handler_class'] ) ) {
+								$type['content_object'] = new $type['handler_class']();
+							}
+						}
+					}
+					if( !empty( $type['content_object'] ) && is_object( $type['content_object'] ) ) {
+						$ret['title'] = $type['content_object']->getTitleFromHash( $ret );
 					}
 				}
-			}
-			if( !empty( $type['content_object'] ) && is_object( $type['content_object'] ) ) {
-				$ret['title'] = $type['content_object']->getTitleFromHash( $ret );
+
+				$sStructureNodeCache['structure_id'][$ret['structure_id']] = $ret;
+				$sStructureNodeCache['content_id'][$ret['content_id']] = $ret;
 			}
 		}
-
-		$sStructureNodeCache['structure_id'][$ret['structure_id']] = $ret;
-		$sStructureNodeCache['content_id'][$ret['content_id']] = $ret;
 
 		return $ret;
 	}
