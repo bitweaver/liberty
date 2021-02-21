@@ -250,16 +250,18 @@ if( $gContent->hasUserPermission( 'p_liberty_read_comments' )) {
 		$_SESSION['liberty_comments_display_mode'] = $comments_display_style;
 	}
 
+	$currentPage = BitBase::verifyIdParameter( $_REQUEST, 'comment_page', 1 );
+
 	if( !empty( $_REQUEST['comment_page'] ) || !empty( $_REQUEST['post_comment_request'] ) ) {
 		$comments_at_top_of_page = 'y';
 	}
-	$commentOffset = !empty( $_REQUEST['comment_page'] ) ? ($_REQUEST['comment_page'] - 1) * $maxComments : 0;
+	$commentOffset = ($currentPage - 1) * $maxComments;
 
 	if( empty( $gComment )) {
 		$gComment = new LibertyComment();
 	}
 
-	$currentPage = !empty( $_REQUEST['comment_page'] ) ? $_REQUEST['comment_page'] : 1;
+	$currentPage = BitBase::verifyIdParameter( $_REQUEST, 'comment_page', 1 );
 	if( $currentPage < 1 ) {
 		$currentPage = 1;
 	}
