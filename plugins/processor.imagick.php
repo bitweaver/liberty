@@ -36,6 +36,7 @@ function liberty_imagick_resize_image( &$pFileHash ) {
 	global $gBitSystem;
 	$pFileHash['error'] = NULL;
 	$ret = NULL;
+	clearstatcache( true, $pFileHash['source_file'] );
 	if( !empty( $pFileHash['source_file'] ) && file_exists( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] ) && (filesize( $pFileHash['source_file'] ) > 0) ) {
 		try { 
 			$im = new Imagick();
