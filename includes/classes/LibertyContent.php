@@ -2998,7 +2998,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @param string pFormatGuid processor to use
 	 * @return string Formated data string
 	 */
-	public static function parseDataHash( &$pParseHash, $pObject=NULL ) {
+	public static function parseDataHash( $pParseHash, $pObject=NULL ) {
 		global $gLibertySystem, $gBitSystem, $gBitUser;
 /*
 		if( !is_array( $pParseHash ) ) {
