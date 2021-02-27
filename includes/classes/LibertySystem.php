@@ -626,21 +626,22 @@ class LibertySystem extends BitSingleton {
 	}
 
 	/**
-	 * requireHandlerFile will require_once() the handler file if given the hash found in $gLibertySystem->mContentTypes[content_type_guid]
+	 * requireContentType will require_once() the handler file if given the hash found in $gLibertySystem->mContentTypes[content_type_guid]
 	 *
 	 * @param array $pContentTypeHash the hash found in $gLibertySystem->mContentTypes[content_type_guid]
 	 * @access public
 	 * @return TRUE on success, FALSE on failure
 	 */
-	private function requireHandlerFile( $pContentTypeHash ) {
-		$ret = FALSE;
+	public static function requireContentType( $pContentTypeHash ) {
 		$pkgName = strtoupper( $pContentTypeHash['handler_package'] );
-		foreach( array( '_PKG_CLASS_PATH', '_PKG_INCLUDE_PATH', '_PKG_PATH' ) as $pkgConstPath ) {
-			if( defined( $pkgName.$pkgConstPath ) && ($pkgDef = constant( $pkgName.$pkgConstPath )) ) {
-				$handlerFile = $pkgDef.$pContentTypeHash['handler_file'];
-				if( is_file( $handlerFile ) ) {
-					require_once( $handlerFile );
-					$ret = TRUE;
+		if( !($ret = class_exists( $pContentTypeHash['handler_class'] )) )  {
+			foreach( array( '_PKG_CLASS_PATH', '_PKG_INCLUDE_PATH', '_PKG_PATH' ) as $pkgConstPath ) {
+				if( defined( $pkgName.$pkgConstPath ) && ($pkgDef = constant( $pkgName.$pkgConstPath )) ) {
+					$handlerFile = $pkgDef.$pContentTypeHash['handler_file'];
+					if( is_file( $handlerFile ) ) {
+						require_once( $handlerFile );
+						$ret = class_exists( $pContentTypeHash['handler_class'] );
+					}
 				}
 			}
 		}
@@ -673,7 +674,7 @@ class LibertySystem extends BitSingleton {
 		if( !isset( $this->mContentTypes ) ) {
 			$this->loadContentTypes();
 		}
-		if( !empty( $this->mContentTypes[$pContentTypeGuid] ) && $this->requireHandlerFile( $this->mContentTypes[$pContentTypeGuid] ) ) {
+		if( !empty( $this->mContentTypes[$pContentTypeGuid] ) && static::requireContentType( $this->mContentTypes[$pContentTypeGuid] ) ) {
 		 	$ret = $this->mContentTypes[$pContentTypeGuid]['handler_class'];
 		}
 		return $ret;

@@ -33,16 +33,10 @@ if ( !isset($_FILES['upload'] ) ) {
 		// load up the requested content type handler class
 		$contentType = $_REQUEST['liberty_attachments']['content_type_guid'];
 		$contentTypeHash = $gLibertySystem->mContentTypes[$contentType];
-		$class =  $contentTypeHash['handler_class'];
-		$classFile =  $contentTypeHash['handler_file'];
-		$package = $contentTypeHash['handler_package'];
-		$pathVar = strtoupper($package).'_PKG_PATH';
-
-		if( !defined( $pathVar ) ) {
+		if( LibertySystem::requireContentType( $contentTypeHash ) ) {
+			$gContent = new $contentTypeHash['handler_class']();
+		} else {
 			$error = tra( "Undefined handler package path" );
-		}else{
-			require_once( constant( $pathVar ).$classFile );
-			$gContent = new $class();
 		}
 	}
 }else{

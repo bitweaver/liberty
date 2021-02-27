@@ -79,12 +79,8 @@ class LibertyStructure extends LibertyBase {
 					$type = &$contentTypes[$ret['content_type_guid']];
 					if( empty( $type['content_object'] ) && !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
 						// create *one* object for each object *type* to  call virtual methods.
-						$handlerFile = $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'];
-						if( file_exists( $handlerFile ) ) {
-							include_once( $handlerFile );
-							if( class_exists( $type['handler_class'] ) ) {
-								$type['content_object'] = new $type['handler_class']();
-							}
+						if( LibertySystem::requireContentType( $type ) ) {
+							$type['content_object'] = new $type['handler_class']();
 						}
 					}
 					if( !empty( $type['content_object'] ) && is_object( $type['content_object'] ) ) {
@@ -264,12 +260,8 @@ class LibertyStructure extends LibertyBase {
 					$type = &$contentTypes[$res['content_type_guid']];
 					if( empty( $type['content_object'] ) ) {
 						// create *one* object for each object *type* to  call virtual methods.
-						$handlerFile = $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'];
-						if( file_exists( $handlerFile ) ) {
-							include_once( $handlerFile );
-							if( class_exists( $type['handler_class'] ) ) {
-								$type['content_object'] = new $type['handler_class']();
-							}
+						if( LibertySystem::requireContentType( $type ) ) {
+							$type['content_object'] = new $type['handler_class']();
 						}
 					}
 					if( !empty( $pParamHash['thumbnail_size'] ) ) {
@@ -944,12 +936,8 @@ class LibertyStructure extends LibertyBase {
 					$type = &$contentTypes[$res['content_type_guid']];
 					if( empty( $type['content_object'] ) && !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
 						// create *one* object for each object *type* to  call virtual methods.
-						$handlerFile = $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'];
-						if( file_exists( $handlerFile ) ) {
-							include_once( $handlerFile );
-							if( class_exists( $type['handler_class'] ) ) {
-								$type['content_object'] = new $type['handler_class']();
-							}
+						if( LibertySystem::requireContentType( $type ) ) {
+							$type['content_object'] = new $type['handler_class']();
 						}
 					}
 					if( !empty( $type['content_object'] ) && is_object( $type['content_object'] ) ) {
@@ -964,12 +952,8 @@ class LibertyStructure extends LibertyBase {
 				}
 				$pkgPath = strtoupper( $res['handler_package'] ).'_PKG_PATH';
 				if( defined( $pkgPath ) ) {
-					$classFile = constant( strtoupper( $res['handler_package'] ).'_PKG_PATH' ).$res['handler_file'];
-					if( file_exists( $classFile ) ) {
-						require_once( $classFile );
-						if( class_exists( $res['handler_class'] ) ) {
-							$res['display_url'] = $res['handler_class']::getDisplayUrlFromHash( $res );
-						}
+					if( LibertySystem::requireContentType( $res ) ) {
+						$res['display_url'] = $res['handler_class']::getDisplayUrlFromHash( $res );
 					}
 				}
 				$back[] = $res;
