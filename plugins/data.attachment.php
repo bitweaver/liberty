@@ -122,7 +122,7 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 
 	$att = array();
 
-	if( empty( $pCommonObject ) || !is_a( $pCommonObject, 'LibertyMime' ) && !($att = $pCommonObject->getAttachment( $pParams['id'], $pParams )) ) {
+	if( !($att = LibertyMime::getAttachment( $pParams['id'], $pParams )) ) {
 		$ret = tra( "The attachment id given is not valid." );
 		return $ret;
 	}
@@ -193,7 +193,7 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 
 	$height = !empty( $pParams['height'] ) ? $pParams['height'] : '';
 	$gBitSmarty->assign( 'height', $height );
-eb( $att );
+
 	$mimehandler = (( !empty( $wrapper['output'] ) && $wrapper['output'] == 'thumbnail' ) ? LIBERTY_DEFAULT_MIME_HANDLER : $att['attachment_plugin_guid'] );
 	$ret = $gBitSmarty->fetch( $gLibertySystem->getMimeTemplate( 'attachment', $mimehandler ));
 	return $ret;
