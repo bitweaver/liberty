@@ -746,10 +746,11 @@ function liberty_generate_thumbnails( $pFileHash ) {
 			$pFileHash['type'] = $gBitSystem->verifyMimeType( $pFileHash['source_file'] );
 		}
 
+		$mimeExt = '';
 		// override $mimeExt if we have a custom setting for it
 		if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
 			$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
-		} else {
+		} elseif( !empty( $pFileHash['type'] ) ) {
 			list( $type, $mimeExt ) = preg_split( '#/#', strtolower( $pFileHash['type'] ));
 		}
 
