@@ -71,6 +71,6 @@ function data_sort( $pData, $pParams, $pCommonObject, $pParseHash ) {
 	$parseHash['user_id']    = $pParseHash['user_id'];
 	$parseHash['no_cache']   = TRUE;
 	$parseHash['data']       = trim( $pData );
-	return $pCommonObject->parseData( $parseHash );
+	return LibertyContent::parseDataHash( $parseHash, $pCommonObject );
 }
 ?>

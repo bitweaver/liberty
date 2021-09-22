@@ -10,7 +10,7 @@
  * Initial Setup
  */
 global $gStructure, $gContent, $moduleParams, $gBitSmarty;
-require_once( LIBERTY_PKG_PATH.'LibertyStructure.php' );
+require_once( LIBERTY_PKG_CLASS_PATH.'LibertyStructure.php' );
 
 extract( $moduleParams );
 
@@ -33,13 +33,13 @@ if( is_object( $gStructure ) && $gStructure->isValid() && $gStructure->hasViewPe
 			}
 		}
 		if( !empty( $structures[0] ) ) {
-			require_once( LIBERTY_PKG_PATH.'LibertyStructure.php' );
+			require_once( LIBERTY_PKG_CLASS_PATH.'LibertyStructure.php' );
 			$struct = new LibertyStructure( $structureId );
 		}
 	}
 }
 
-if( is_object( $struct ) && count( $struct->isValid() ) ) {
+if( is_object( $struct ) && $struct->isValid() ) {
 	if( !empty( $moduleParams['title'] ) ) {
 		$_template->tpl_vars['moduleTitle'] = new Smarty_variable( $moduleParams['title'] );
 	}

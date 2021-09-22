@@ -13,7 +13,7 @@
  * @access public
  * @return void
  */
-function parse_data_plugins( &$pData, &$pReplace, &$pCommonObject, $pParseHash ) {
+function parse_data_plugins( &$pData, &$pReplace, $pCommonObject, $pParseHash ) {
 	global $gLibertySystem, $gBitSystem;
 
 	// note: $curlyTags[0] is the complete match, $curlyTags[1] is plugin name, $curlyTags[2] is plugin arguments
@@ -276,7 +276,7 @@ function liberty_plugins_wrapper_style( $pParamHash ) {
  * @access public
  * @return content load sql
  */
-function liberty_content_load_sql( &$pObject, $pParamHash=NULL ) {
+function liberty_content_load_sql( $pObject, $pParamHash=NULL ) {
 	global $gBitSystem, $gBitUser;
 	$ret = array();
 
@@ -314,7 +314,7 @@ function liberty_content_load_sql( &$pObject, $pParamHash=NULL ) {
  * @access public
  * @return content list sql
  */
-function liberty_content_list_sql( &$pObject, $pParamHash=NULL ) {
+function liberty_content_list_sql( $pObject, $pParamHash=NULL ) {
 	global $gBitSystem, $gBitUser;
 	$ret = array();
 
@@ -363,7 +363,7 @@ function liberty_content_list_sql( &$pObject, $pParamHash=NULL ) {
  * @access public
  * @return void
  */
-function liberty_content_preview( &$pObject ) {
+function liberty_content_preview( $pObject ) {
 	global $gBitSystem, $gBitUser;
 	if( $gBitSystem->isFeatureActive( 'liberty_display_status' )
 		&& ( $gBitUser->hasPermission( 'p_liberty_edit_content_status' ) || $gBitUser->hasPermission( 'p_libert_edit_all_status' ))
@@ -375,7 +375,7 @@ function liberty_content_preview( &$pObject ) {
 		&& @BitBase::verifyId( $_REQUEST['owner_id'] )) {
 		$pObject->mInfo['owner_id'] = $_REQUEST['owner_id'];
 	}
-	include_once( LIBERTY_PKG_PATH.'edit_help_inc.php' );
+	include_once( LIBERTY_PKG_INCLUDE_PATH.'edit_help_inc.php' );
 }
 
 /**
@@ -386,7 +386,7 @@ function liberty_content_preview( &$pObject ) {
  * @access public
  * @return void
  */
-function liberty_content_display( &$pObject, &$pParamHash ) {
+function liberty_content_display( $pObject, &$pParamHash ) {
 	if( $pObject->isValid() ) {
 		global $gBitUser, $gBitSystem;
 
@@ -405,9 +405,9 @@ function liberty_content_display( &$pObject, &$pParamHash ) {
  * @access public
  * @return void
  */
-function liberty_content_edit( &$pObject ) {
-	include_once( LIBERTY_PKG_PATH.'edit_help_inc.php' );
-	include_once( LIBERTY_PKG_PATH."edit_storage_inc.php" );
+function liberty_content_edit( $pObject ) {
+	include_once( LIBERTY_PKG_INCLUDE_PATH.'edit_help_inc.php' );
+	include_once( LIBERTY_PKG_INCLUDE_PATH."edit_storage_inc.php" );
 }
 
 
@@ -680,7 +680,8 @@ function liberty_clear_thumbnails( &$pFileHash ) {
  */
 function liberty_get_function( $pType ) {
 	global $gBitSystem;
-	$ret = 'liberty_'.$gBitSystem->getConfig( 'image_processor', 'gd' ).'_'.$pType.'_image';
+	$processor = $gBitSystem->getConfig( 'image_processor', 'gd' );
+	$ret = 'liberty_'.$processor.'_'.$pType.'_image';
 	return( function_exists( $ret ) ? $ret : FALSE );
 }
 
@@ -693,112 +694,114 @@ function liberty_get_function( $pType ) {
  */
 function liberty_generate_thumbnails( $pFileHash ) {
 	global $gBitSystem, $gThumbSizes;
-	$resizeFunc = liberty_get_function( 'resize' );
 	$ret = FALSE;
 
-	// allow custom selection of thumbnail sizes
-	if( empty( $pFileHash['thumbnail_sizes'] )) {
-		if( !empty( $gThumbSizes ) && is_array( $gThumbSizes )) {
-			$pFileHash['thumbnail_sizes'] = array_keys( $gThumbSizes );
-		} else {
-			$pFileHash['thumbnail_sizes'] = array( 'large', 'medium', 'small', 'avatar', 'icon' );
-		}
-	}
+	if( $resizeFunc = liberty_get_function( 'resize' ) ) {
 
-	if( ( !preg_match( '#image/(gif|jpe?g|png)#i', $pFileHash['type'] ) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' )) || in_array( 'original', $pFileHash['thumbnail_sizes'] ) ) {
-		// jpeg version of original
-		if( preg_match( '/pdf/i', $pFileHash['type'] ) ) {
-			// has a customer pdf rasterization function been defined?
-			if( function_exists( 'liberty_rasterize_pdf' ) && $rasteredFile = liberty_rasterize_pdf( $pFileHash['source_file'] ) ) {
-				$pFileHash['source_file'] = $rasteredFile;
+		// allow custom selection of thumbnail sizes
+		if( empty( $pFileHash['thumbnail_sizes'] )) {
+			if( !empty( $gThumbSizes ) && is_array( $gThumbSizes )) {
+				$pFileHash['thumbnail_sizes'] = array_keys( $gThumbSizes );
 			} else {
-				$magickWand = NewMagickWand();
-				if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand )) {
-					MagickSetFormat( $magickWand, 'JPG' );
-					if( MagickGetImageColorspace( $magickWand ) == MW_CMYKColorspace ) {
-						MagickProfileImage( $magickWand,"ICC", UTIL_PKG_PATH.'icc/srgb.icm' );
-						MagickSetImageColorspace( $magickWand, MW_sRGBColorspace );
-					}
+				$pFileHash['thumbnail_sizes'] = array( 'large', 'medium', 'small', 'avatar', 'icon' );
+			}
+		}
 
-					$imgWidth = MagickGetImageWidth( $magickWand );
-					$imgHeight = MagickGetImageHeight( $magickWand );
+		if( ( !preg_match( '#image/(gif|jpe?g|png)#i', $pFileHash['type'] ) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' )) || in_array( 'original', $pFileHash['thumbnail_sizes'] ) ) {
+			// jpeg version of original
+			if( preg_match( '/pdf/i', $pFileHash['type'] ) ) {
+				// has a customer pdf rasterization function been defined?
+				if( function_exists( 'liberty_rasterize_pdf' ) && $rasteredFile = liberty_rasterize_pdf( $pFileHash['source_file'] ) ) {
+					$pFileHash['source_file'] = $rasteredFile;
+				} else {
+					$magickWand = NewMagickWand();
+					if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand )) {
+						MagickSetFormat( $magickWand, 'JPG' );
+						if( MagickGetImageColorspace( $magickWand ) == MW_CMYKColorspace ) {
+							MagickProfileImage( $magickWand,"ICC", UTIL_PKG_PATH.'icc/srgb.icm' );
+							MagickSetImageColorspace( $magickWand, MW_sRGBColorspace );
+						}
 
-					MagickSetImageUnits( $magickWand, MW_PixelsPerInchResolution );
-					MagickSetResolution( $magickWand, 300, 300 );
-					$rasteredFile = dirname( $pFileHash['source_file'] ).'/original.jpg';
-					if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickWriteImage( $magickWand, $rasteredFile ), $magickWand )) {
-						$pFileHash['source_file'] = $rasteredFile;
+						$imgWidth = MagickGetImageWidth( $magickWand );
+						$imgHeight = MagickGetImageHeight( $magickWand );
+
+						MagickSetImageUnits( $magickWand, MW_PixelsPerInchResolution );
+						MagickSetResolution( $magickWand, 300, 300 );
+						$rasteredFile = dirname( $pFileHash['source_file'] ).'/original.jpg';
+						if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickWriteImage( $magickWand, $rasteredFile ), $magickWand )) {
+							$pFileHash['source_file'] = $rasteredFile;
+						}
 					}
 				}
+			} else {
+				$pFileHash['dest_base_name'] = 'original';
+				$pFileHash['name'] = 'original.jpg';
+				$pFileHash['max_width'] = MAX_THUMBNAIL_DIMENSION;
+				$pFileHash['max_height'] = MAX_THUMBNAIL_DIMENSION;
+				if( $convertedFile = $resizeFunc( $pFileHash )) {
+					$pFileHash['source_file'] = $convertedFile;
+					$ret = TRUE;
+				}
 			}
-		} else {
-			$pFileHash['dest_base_name'] = 'original';
-			$pFileHash['name'] = 'original.jpg';
-			$pFileHash['max_width'] = MAX_THUMBNAIL_DIMENSION;
-			$pFileHash['max_height'] = MAX_THUMBNAIL_DIMENSION;
-			if( $convertedFile = $resizeFunc( $pFileHash )) {
-				$pFileHash['source_file'] = $convertedFile;
-				$ret = TRUE;
-			}
+			$pFileHash['type'] = $gBitSystem->verifyMimeType( $pFileHash['source_file'] );
 		}
-		$pFileHash['type'] = $gBitSystem->verifyMimeType( $pFileHash['source_file'] );
-	}
 
-	// override $mimeExt if we have a custom setting for it
-	if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
-		$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
-	} else {
-		list( $type, $mimeExt ) = preg_split( '#/#', strtolower( $pFileHash['type'] ));
-	}
+		$mimeExt = '';
+		// override $mimeExt if we have a custom setting for it
+		if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
+			$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
+		} elseif( !empty( $pFileHash['type'] ) ) {
+			list( $type, $mimeExt ) = preg_split( '#/#', strtolower( $pFileHash['type'] ));
+		}
 
-	if( preg_match( "!(png|gif)!", $mimeExt )) {
-		$destExt = '.'.$mimeExt;
-	} else {
-		$destExt = '.jpg';
-	}
+		if( preg_match( "!(png|gif)!", $mimeExt )) {
+			$destExt = '.'.$mimeExt;
+		} else {
+			$destExt = '.jpg';
+		}
 
-	$initialDestPath = $pFileHash['dest_branch'];
-	foreach( $pFileHash['thumbnail_sizes'] as $thumbSize ) {
-		if( isset( $gThumbSizes[$thumbSize] )) {
-			$pFileHash['dest_base_name'] = $thumbSize;
-			$pFileHash['name'] = $thumbSize.$destExt;
-			if( !empty( $gThumbSizes[$thumbSize]['width'] )) {
-				$pFileHash['max_width'] = $gThumbSizes[$thumbSize]['width'];
-			} else {
-				// Have to unset since we reuse $pFileHash
-				unset( $pFileHash['max_width'] );
-			}
+		$initialDestPath = $pFileHash['dest_branch'];
+		foreach( $pFileHash['thumbnail_sizes'] as $thumbSize ) {
+			if( isset( $gThumbSizes[$thumbSize] )) {
+				$pFileHash['dest_base_name'] = $thumbSize;
+				$pFileHash['name'] = $thumbSize.$destExt;
+				if( !empty( $gThumbSizes[$thumbSize]['width'] )) {
+					$pFileHash['max_width'] = $gThumbSizes[$thumbSize]['width'];
+				} else {
+					// Have to unset since we reuse $pFileHash
+					unset( $pFileHash['max_width'] );
+				}
 
-			// reset dest_branch for created thumbs
-			if( !empty( $pFileHash['thumb_path'] ) ) {
-				$pFileHash['dest_file'] = $pFileHash['thumb_path'].$pFileHash['name'];
-			} else {
-				// create a subdirectory for the thumbs
-				$pFileHash['dest_branch'] = $initialDestPath.'thumbs/';
-				clearstatcache();
-				if( !is_dir( STORAGE_PKG_PATH.$pFileHash['dest_branch'] )) {
-					@mkdir( STORAGE_PKG_PATH.$pFileHash['dest_branch'], 0775, TRUE );
+				// reset dest_branch for created thumbs
+				if( !empty( $pFileHash['thumb_path'] ) ) {
+					$pFileHash['dest_file'] = $pFileHash['thumb_path'].$pFileHash['name'];
+				} else {
+					// create a subdirectory for the thumbs
+					$pFileHash['dest_branch'] = $initialDestPath.'thumbs/';
 					clearstatcache();
+					if( !is_dir( STORAGE_PKG_PATH.$pFileHash['dest_branch'] )) {
+						@mkdir( STORAGE_PKG_PATH.$pFileHash['dest_branch'], 0775, TRUE );
+						clearstatcache();
+					}
+				}
+
+				if( !empty( $gThumbSizes[$thumbSize]['height'] )) {
+					$pFileHash['max_height'] = $gThumbSizes[$thumbSize]['height'];
+				} else {
+					// Have to unset since we reuse $pFileHash
+					unset( $pFileHash['max_height'] );
+				}
+				if( $pFileHash['icon_thumb_path'] = $resizeFunc( $pFileHash )) {
+					$ret = TRUE;
+					// use the previous thumb as the source for the next, decreasingly smaller thumb as this GREATLY increases speed
+					$pFileHash['source_file'] = $pFileHash['icon_thumb_path'];
 				}
 			}
-
-			if( !empty( $gThumbSizes[$thumbSize]['height'] )) {
-				$pFileHash['max_height'] = $gThumbSizes[$thumbSize]['height'];
-			} else {
-				// Have to unset since we reuse $pFileHash
-				unset( $pFileHash['max_height'] );
-			}
-
-			if( $pFileHash['icon_thumb_path'] = $resizeFunc( $pFileHash )) {
-				$ret = TRUE;
-				// use the previous thumb as the source for the next, decreasingly smaller thumb as this GREATLY increases speed
-				$pFileHash['source_file'] = $pFileHash['icon_thumb_path'];
-			}
 		}
-	}
 
-	// to keep everything in bitweaver working smoothly, we need to remove the thumbs/ subdir again
-	$pFileHash['dest_branch'] = $initialDestPath;
+		// to keep everything in bitweaver working smoothly, we need to remove the thumbs/ subdir again
+		$pFileHash['dest_branch'] = $initialDestPath;
+	}
 
 	return $ret;
 }

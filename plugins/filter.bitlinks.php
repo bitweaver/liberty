@@ -227,7 +227,7 @@ class BitLinks extends BitBase {
 
 		// final attempt to get page details
 		if( empty( $ret ) && !empty( $pObject ) && $gBitSystem->isPackageActive( 'wiki' ) ) {
-			require_once( WIKI_PKG_PATH.'BitPage.php' );
+			require_once( WIKI_PKG_CLASS_PATH.'BitPage.php' );
 			if( $ret = BitPage::pageExists( $pTitle, FALSE, $pContentId )) {
 				if( count( $ret ) > 1 ) {
 					$ret[0]['description'] = tra( 'Multiple pages with this name' );
@@ -273,7 +273,7 @@ class BitLinks extends BitBase {
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
 	function parseLinks( $pData, $pParamHash, $pObject ) {
-		global $gBitSystem;
+		global $gBitSystem, $gLibertySystem;
 
 		// if wiki isn't active, there isn't much we can do here
 		if( !$gBitSystem->isPackageActive( 'wiki' )) {
@@ -281,7 +281,7 @@ class BitLinks extends BitBase {
 		}
 
 		// fetch BitPage in case it hasn't been loaded yet
-		require_once( WIKI_PKG_PATH.'BitPage.php' );
+		$gLibertySystem->getContentClassName( 'bitpage' );
 
 		// We need to remove ))WikiWords(( before links get made.
 		// users just need to be strict about not inserting spaces between

@@ -86,7 +86,7 @@ function data_quote( $pData, $pParams ) {
 	$ret = "";
 
 	if( $func = $gLibertySystem->getPluginFunction( $formatGuid, 'load_function' ) ) {
-		$ret = $func( $rendererHash, $this );
+//		$ret = $func( $rendererHash, $this );
 	}
 
 	$quote = array();

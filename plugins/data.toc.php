@@ -66,7 +66,7 @@ function data_toc_help() {
  * Load Function
  */
 function data_toc( $pData, $pParams ) {
-	include_once( LIBERTY_PKG_PATH.'LibertyStructure.php' );
+	include_once( LIBERTY_PKG_CLASS_PATH.'LibertyStructure.php' );
 	global $gStructure, $gContent, $gBitSmarty;
 
 	if( is_object( $gStructure ) && $gStructure->isValid() ) {
@@ -78,7 +78,7 @@ function data_toc( $pData, $pParams ) {
 		$structures = $gContent->getStructures();
 		// We take the first structure. not good, but works for now - spiderr
 		if( !empty( $structures[0] ) ) {
-			require_once( LIBERTY_PKG_PATH.'LibertyStructure.php' );
+			require_once( LIBERTY_PKG_CLASS_PATH.'LibertyStructure.php' );
 			$struct = new LibertyStructure( $structures[0]['structure_id'] );
 			$struct->load();
 		}

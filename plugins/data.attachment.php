@@ -108,7 +108,7 @@ function data_attachment_help() {
 }
 
 function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
-	require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
+	require_once( LIBERTY_PKG_CLASS_PATH.'LibertyMime.php' );
 
 	// at a minimum, return blank string (not empty) so we still replace the tag
 	$ret = ' ';
@@ -120,7 +120,9 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		return $ret;
 	}
 
-	if( !$att = $pCommonObject->getAttachment( $pParams['id'], $pParams )) {
+	$att = array();
+
+	if( !($att = LibertyMime::getAttachment( $pParams['id'], $pParams )) ) {
 		$ret = tra( "The attachment id given is not valid." );
 		return $ret;
 	}
@@ -133,7 +135,7 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		// link to page by page_id
 		// avoid endless loops
 
-		require_once( WIKI_PKG_PATH.'BitPage.php');
+		require_once( WIKI_PKG_CLASS_PATH.'BitPage.php');
 		$wp = new BitPage( $pParams['page_id'] );
 		if( $wp->load() ) {
 				$wrapper['display_url'] = $wp->getDisplayUrl();
@@ -145,7 +147,7 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		}
 	} elseif( !empty( $pParams['page_name'] )) {
 		// link to page by page_name
-		require_once( WIKI_PKG_PATH.'BitPage.php');
+		require_once( WIKI_PKG_CLASS_PATH.'BitPage.php');
 		$wp = new BitPage();
 			$wrapper['display_url'] = $wp->getDisplayUrl( $pParams['page_name'] );
 	} elseif( !empty( $pParams['link'] ) && $pParams['link'] == 'false' ) {
@@ -169,15 +171,15 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 		}
 		$wrapper['display_url'] = $pParams['link'];
 	} elseif( !empty( $att['display_url'] ) )  {
-			$wrapper['display_url'] = $att['display_url'];
-		}
+		$wrapper['display_url'] = $att['display_url'];
+	}
 
 	if( !empty( $wrapper['description'] )) {
 		$parseHash['content_id'] = $pParseHash['content_id'];
 		$parseHash['user_id']    = $pParseHash['user_id'];
 		$parseHash['no_cache']   = TRUE;
 		$parseHash['data']       = $wrapper['description'];
-		$wrapper['description_parsed'] = $pCommonObject->parseData( $parseHash );
+		$wrapper['description_parsed'] = LibertyContent::parseDataHash( $parseHash );
 	}
 
 	// pass stuff to the template
@@ -196,4 +198,3 @@ function data_attachment( $pData, $pParams, $pCommonObject, $pParseHash ) {
 	$ret = $gBitSmarty->fetch( $gLibertySystem->getMimeTemplate( 'attachment', $mimehandler ));
 	return $ret;
 }
-?>

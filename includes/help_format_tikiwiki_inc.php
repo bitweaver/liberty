@@ -12,7 +12,7 @@
  * required setup
  */
 global $gBitSystem, $gBitSmarty;
-require_once( KERNEL_PKG_PATH.'BitCache.php' );
+require_once( KERNEL_PKG_CLASS_PATH.'BitCache.php' );
 $cache = new BitCache( 'liberty/help' );
 
 // only regenerate this thing if it's not cached yet
@@ -132,7 +132,7 @@ if( $cache->isCached( $cacheFile, filemtime( __FILE__ ))) {
 		foreach( $tikiwiki[$section] as $title => $example ) {
 			if( empty( $example['result'] )) {
 				$example['format_guid'] = 'tikiwiki';
-				$tikiwiki[$section][$title]['result'] = LibertyContent::parseData( $example );
+				$tikiwiki[$section][$title]['result'] = LibertyContent::parseDataHash( $example );
 			}
 		}
 	}
@@ -227,7 +227,7 @@ if( $cache->isCached( $cacheFile, filemtime( __FILE__ ))) {
 	foreach( $mediawiki as $title => $example ) {
 		if( empty( $example['result'] )) {
 			$example['format_guid'] = 'tikiwiki';
-			$mediawiki[$title]['result'] = LibertyContent::parseData( $example );
+			$mediawiki[$title]['result'] = LibertyContent::parseDataHash( $example );
 		}
 	}
 

@@ -39,7 +39,7 @@ if( !defined( 'BIT_CONTENT_DEFAULT_STATUS' ) ) {
 /**
  * required setup
  */
-require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
+require_once( LIBERTY_PKG_CLASS_PATH.'LibertyBase.php' );
 
 define( 'LIBERTY_SPLIT_REGEX', "!\.{3}split\.{3}[\t ]*\n?!" );
 
@@ -75,7 +75,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	public $mType;
 
 	/**
-	 *Permissions hash specific to the user accessing this LibertyContetn object
+	 *Permissions hash specific to the user accessing this LibertyContent object
 	 * @public
 	 */
 	public $mUserContentPerms;
@@ -430,7 +430,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
 	function expungeComments() {
-		require_once( LIBERTY_PKG_PATH.'LibertyComment.php' );
+		require_once( LIBERTY_PKG_CLASS_PATH.'LibertyComment.php' );
 		// Delete all comments associated with this piece of content
 		$query = "SELECT `comment_id` FROM `".BIT_DB_PREFIX."liberty_comments` WHERE `root_id` = ?";
 		if( $commentIds = $this->mDb->getCol($query, array( $this->mContentId ) ) ) {
@@ -1163,7 +1163,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	* Set up SQL strings for services used by the object
 	* TODO: set this function deprecated and eventually nuke it
 	*/
-	function getServicesSql( $pServiceFunction, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars, $pObject = NULL, &$pParamHash = NULL ) {
+	static protected function getServicesSql( $pServiceFunction, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars, $pObject = NULL, &$pParamHash = NULL ) {
 		//deprecated( 'You package is calling the deprecated LibertyContent::getServicesSql() method. Please update your code to use LibertyContent::getLibertySql' );
 		global $gLibertySystem;
 		if( $loadFuncs = $gLibertySystem->getServiceValues( $pServiceFunction ) ) {
@@ -1172,7 +1172,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 					if( !empty( $pObject ) && is_object( $pObject ) ) {
 						$loadHash = $func( $pObject, $pParamHash );
 					} else {
-						$loadHash = $func( $this, $pParamHash );
+						$loadHash = $func( (!empty( $pObject ) ? $this : NULL), $pParamHash );
 					}
 					if( !empty( $loadHash['select_sql'] ) ) {
 						$pSelectSql .= $loadHash['select_sql'];
@@ -1251,7 +1251,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
-	function getContentListPermissionsSql( $pPermName, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
+	public static function getContentListPermissionsSql( $pPermName, &$pSelectSql, &$pJoinSql, &$pWhereSql, &$pBindVars ) {
 		global $gBitUser;
 		if ( defined('ROLE_MODEL') ) {
 			$pJoinSql .= "
@@ -1957,8 +1957,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	/**
 	 * Create the generic title for a content item
 	 *
-	 * This will normally be overwriten by extended classes to provide
-	 * an appropriate title string
+	 * This can be overwriten by extended classes to provide an appropriate title string
 	 * @param array pHash type hash of data to be used to provide base data
 	 * @return string Descriptive title for the page
 	 */
@@ -2024,7 +2023,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			if( $this->getField('summary') ) {
 				$ret = $this->getField('summary');
 			} elseif( $this->getField('data') ) {
-				$text = preg_replace('/\s+/', ' ', $this->parseData() );
+				$text = trim( preg_replace('/\s+/', ' ', strip_tags( $this->getParsedData() ) ) );
 				// 250 to 300 is max description
 				$ret = substr( $text, 0, 250 );
 			}
@@ -2154,7 +2153,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @return the fully specified path to file to be included
 	 */
 	function getRenderFile() {
-		return LIBERTY_PKG_PATH.'display_content_inc.php';
+		return LIBERTY_PKG_INCLUDE_PATH.'display_content_inc.php';
 	}
 
 	public function getDisplayLink( $pLinkText=NULL, $pAnchor=NULL ) {
@@ -2492,7 +2491,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			global $gBitUser;
 			$ret['data'] = $gBitUser->getAuthorList( $pListHash );
 		} else {
-			include_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
+			include_once( LIBERTY_PKG_CLASS_PATH.'LibertyContent.php' );
 			$libertyContent = new LibertyContent();
 			$ret['data'] = $libertyContent->getContentList( $pListHash );
 		}
@@ -2523,6 +2522,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 
 		$hashSql = array('select'=>array(), 'join'=>array(),'where'=>array() );
 		$hashBindVars = array('select'=>array(), 'where'=>array(), 'join'=>array());
+
 		if( !empty( $pListHash['content_type_guid'] ) && is_array( $pListHash['content_type_guid'] )) {
 			foreach( $pListHash['content_type_guid'] as $contentTypeGuid ) {
 				$this->getFilter( $contentTypeGuid, $hashSql, $hashBindVars, $pListHash );
@@ -2537,6 +2537,10 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			$selectSql = '';
 		}
 		$joinSql = implode( ' ', $hashSql['join'] );
+		if( !empty( $pListHash['join_sql'] ) ) {
+			$joinSql .= $pListHash['join_sql'];
+		}
+
 		$whereSql = '';
 		if( empty( $hashBindVars['join'] )) {
 			$bindVars = array();
@@ -2774,7 +2778,6 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			$pListHash['offset'] = $pListHash['max_records'] * $lastPageNumber;
 		}
 
-
 		if( !empty( $hashBindVars['select'] ) ) {
 			$bindVars = array_merge($hashBindVars['select'], $bindVars);
 		}
@@ -2794,32 +2797,26 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 				$aux['user_id']             = $aux['creator_user_id'];
 				if( !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
 					if( !class_exists( $type['handler_class'] ) ) {
-						$testPath = $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'];
-						if( file_exists( $testPath ) ) {
-							include_once( $testPath );
-						} else {
-							$testPath = $gBitSystem->mPackages[$type['handler_package']]['path'].'includes/'.$type['handler_file'];
-							if( file_exists( $testPath ) ) {
-								include_once( $testPath );
-							}
-						}
+						$gLibertySystem->getContentClassName( $aux['content_type_guid'] );
 					}
-					if( $aux['content_type_guid'] == BITUSER_CONTENT_TYPE_GUID ) {
-						// here we provide getDisplay(Link|Url) with user-specific information that we get the correct links to display in pages
-						$userInfo = $gBitUser->getUserInfo( array( 'content_id' => $aux['content_id'] ));
-						$aux['title']        = $type['handler_class']::getTitleFromHash( $userInfo );
-						$aux['display_link'] = $type['handler_class']::getDisplayLinkFromHash( $userInfo, $userInfo['login'] );
-						$aux['display_url']  = $type['handler_class']::getDisplayUrlFromHash( $userInfo );
-					} else {
-						$aux['title']        = $type['handler_class']::getTitleFromHash( $aux );
-						$aux['display_link'] = $type['handler_class']::getDisplayLinkFromHash( $aux, $aux['title'] );
-						/**
-						 * @TODO standardize getDisplayUrl params
-						 * nice try, but you can't do this because individual classes have gone off the reservation changing the params they accept
-						 * for distributed packages we need to enforce that method overrides all take the same basic params.
-						 **/
-						// $aux['display_url']  = $type['content_object']->getDisplayUrl( NULL, $aux );
-						$aux['display_url'] = BIT_ROOT_URL."index.php?content_id=".$aux['content_id'];
+					if( class_exists( $type['handler_class'] ) ) {
+						if( $aux['content_type_guid'] == BITUSER_CONTENT_TYPE_GUID ) {
+							// here we provide getDisplay(Link|Url) with user-specific information that we get the correct links to display in pages
+							$userInfo = $gBitUser->getUserInfo( array( 'content_id' => $aux['content_id'] ));
+							$aux['title']        = $type['handler_class']::getTitleFromHash( $userInfo );
+							$aux['display_link'] = $type['handler_class']::getDisplayLinkFromHash( $userInfo, $userInfo['login'] );
+							$aux['display_url']  = $type['handler_class']::getDisplayUrlFromHash( $userInfo );
+						} else {
+							$aux['title']        = $type['handler_class']::getTitleFromHash( $aux );
+							$aux['display_link'] = $type['handler_class']::getDisplayLinkFromHash( $aux, $aux['title'] );
+							/**
+							 * @TODO standardize getDisplayUrl params
+							 * nice try, but you can't do this because individual classes have gone off the reservation changing the params they accept
+							 * for distributed packages we need to enforce that method overrides all take the same basic params.
+							 **/
+							// $aux['display_url']  = $type['content_object']->getDisplayUrl( NULL, $aux );
+							$aux['display_url'] = BIT_ROOT_URL."index.php?content_id=".$aux['content_id'];
+						}
 					}
 
 					if( !empty( $pListHash['thumbnail_size'] ) ) {
@@ -2894,9 +2891,8 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * Get a list of all structures this content is a member of
 	 **/
 	function getStructures() {
-		$ret = NULL;
+		$ret = array();
 		if( $this->isValid() ) {
-			$ret = array();
 			$structures_added = array();
 			$query = 'SELECT ls.*, lc.`title`, tcr.`title` AS `root_title`
 				FROM `'.BIT_DB_PREFIX.'liberty_content` lc, `'.BIT_DB_PREFIX.'liberty_structures` ls
@@ -2959,7 +2955,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 
 		if( !empty( $pParseHash['data'] )) {
 			// parse data and run it through postsplit filter
-			if( $parsed = $this->parseData( $pParseHash )) {
+			if( $parsed = self::parseDataHash( $pParseHash, $this )) {
 				// parsing split content can break stuff so we remove trailing junk
 				$res['parsed'] = $res['parsed_description'] = preg_replace( '!((<br\b[^>]*>)*\s*)*$!si', '', $parsed );
 
@@ -2977,6 +2973,18 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		return $res;
 	}
 
+	public function getParsedData() {
+		if( empty( $this->mInfo['parsed_data'] ) ) {
+			$this->parseData();
+		}
+		return $this->mInfo['parsed_data'];
+	}
+
+	protected function parseData() {
+		// get the data into place
+		$this->mInfo['parsed_data'] = self::parseDataHash( $this->mInfo, $this );
+	}
+
 	/**
 	 * Process the raw content blob using the speified content GUID processor
 	 *
@@ -2990,72 +2998,70 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @param string pFormatGuid processor to use
 	 * @return string Formated data string
 	 */
-	function parseData( $pMixed=NULL, $pFormatGuid=NULL ) {
+	public static function parseDataHash( $pParseHash, $pObject=NULL ) {
 		global $gLibertySystem, $gBitSystem, $gBitUser;
-
-		// get the data into place
-		if( empty( $pMixed ) && !empty( $this->mInfo['data'] ) ) {
-			$parseHash = $this->mInfo;
-		} elseif( is_array( $pMixed ) ) {
-			$parseHash = $pMixed;
-			if( empty( $parseHash['data'] ) ) {
-				$parseHash['data'] = '';
-			}
-		} else {
+/*
+		if( !is_array( $pParseHash ) ) {
 			$parseHash['data'] = $pMixed;
+		} elseif( empty( $pParseHash['data'] ) ) {
+			$pParseHash['data'] = '';
 		}
-
-		// sanitise parseHash a bit
-		$parseHash['content_id']      = !empty( $parseHash['content_id'] )      ? $parseHash['content_id']      : NULL;
-		$parseHash['cache_extension'] = !empty( $parseHash['cache_extension'] ) ? $parseHash['cache_extension'] : NULL;
-		$parseHash['format_guid']     = !empty( $parseHash['format_guid'] )     ? $parseHash['format_guid']     : $pFormatGuid;
-		$parseHash['user_id']         = !empty( $parseHash['user_id'] )         ? $parseHash['user_id']         : is_object( $gBitUser ) ? $gBitUser->mUserId : ANONYMOUS_USER_ID;
+*/
+		// sanitise pParseHash a bit
+		$pParseHash['content_id']      = !empty( $pParseHash['content_id'] )      ? $pParseHash['content_id']      : NULL;
+		$pParseHash['cache_extension'] = !empty( $pParseHash['cache_extension'] ) ? $pParseHash['cache_extension'] : NULL;
+		$pParseHash['user_id']         = !empty( $pParseHash['user_id'] )         ? $pParseHash['user_id']         : is_object( $gBitUser ) ? $gBitUser->mUserId : ANONYMOUS_USER_ID;
 
 		// Ensure we have a format
-		if( empty( $parseHash['format_guid'] )) {
-			$parseHash['format_guid'] = $gBitSystem->getConfig( 'default_format', 'tikiwiki' );
+		if( empty( $pParseHash['format_guid'] ) ) {
+			// use system wide default
+			$pParseHash['format_guid'] = $gBitSystem->getConfig( 'default_format', 'tikiwiki' );
+			if( is_a( $pObject, 'LibertyContent' ) && ($objectFormat = $pObject->getField( 'format_guid' ) ) ) {
+				// if pObject has a specified format, use that...
+				$pParseHash['format_guid'] = $objectFormat;
+			}
 		}
 
 		$ret = NULL;
 		// Handle caching if it is enabled.
-		if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && !empty( $parseHash['content_id'] ) && empty( $parseHash['no_cache'] ) ) {
-			if( $cacheFile = LibertyContent::getCacheFile( $parseHash['content_id'], $parseHash['cache_extension'] ) ) {
+		if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && !empty( $pParseHash['content_id'] ) && empty( $pParseHash['no_cache'] ) ) {
+			if( $cacheFile = LibertyContent::getCacheFile( $pParseHash['content_id'], $pParseHash['cache_extension'] ) ) {
 				// Attempt to read cache file
 				if( !( $ret = LibertyContent::readCacheFile( $cacheFile ))) {
 					// failed to read from cache.
 					$parseAndCache = TRUE;
 				} else {
 					// Note that we read from cache.
-					$this->mInfo['is_cached'] = TRUE;
+					$pParseHash['is_cached'] = TRUE;
 				}
 			}
 		}
 
 		// if $ret is empty, we haven't read anything from cache yet - we need to parse the raw data
 		if( empty( $ret ) || !empty( $parseAndCache )) {
-			if( !empty( $parseHash['data'] ) && $parseHash['format_guid'] ) {
+			if( !empty( $pParseHash['data'] ) && $pParseHash['format_guid'] ) {
 				$replace = array();
 				// extract and protect ~pp~...~/pp~ and ~np~...~/np~ sections
-				parse_protect( $parseHash['data'], $replace );
+				parse_protect( $pParseHash['data'], $replace );
 
 				// some few filters such as stencils need to be before the data plugins
-				LibertyContent::filterData( $parseHash['data'], $parseHash, 'preplugin' );
+				self::filterDataHash( $pParseHash['data'], $pParseHash, 'preplugin' );
 
-				// this will handle all liberty data plugins like {code} and {attachment} usage in all formats
-				parse_data_plugins( $parseHash['data'], $replace, $this, $parseHash );
+				// handle all liberty data plugins like {code} and {attachment} usage in all formats
+				parse_data_plugins( $pParseHash['data'], $replace, $pObject, $pParseHash );
 
 				// pre parse filter according to what we're parsing - split or full body
-				$filter = empty( $parseHash['split_parse'] ) ? 'parse' : 'split';
-				LibertyContent::filterData( $parseHash['data'], $parseHash, 'pre'.$filter );
+				$filter = empty( $pParseHash['split_parse'] ) ? 'parse' : 'split';
+				self::filterDataHash( $pParseHash['data'], $pParseHash, 'pre'.$filter );
 
-				if( $func = $gLibertySystem->getPluginFunction( $parseHash['format_guid'], 'load_function' ) ) {
+				if( $func = $gLibertySystem->getPluginFunction( $pParseHash['format_guid'], 'load_function' ) ) {
 					// get the beast parsed
-					if( $ret = $func( $parseHash, $this )) {
+					if( $ret = $func( $pParseHash, $pObject ) ) {
 						// post parse filter
-						LibertyContent::filterData( $ret, $parseHash, 'post'.$filter );
+						self::filterDataHash( $ret, $pParseHash, 'post'.$filter );
 
-						// before we cache we insert the protected sections back - currently this is even after the filters.
-						// this might not be ideal but it allows stuff like ~pp~{maketoc}~/pp~
+						// before we cache we insert the protected sections back - even after the filters.
+						// might not be ideal but it allows stuff like ~pp~{maketoc}~/pp~
 						$replace = array_reverse( $replace );
 						foreach( $replace as $rep ) {
 							$ret = str_replace( $rep["key"], $rep["data"], $ret );
@@ -3072,6 +3078,10 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		return $ret;
 	}
 
+	protected function filterData( &$pData, &$pFilterHash, $pFilterStage = 'preparse' ) {
+		self::filterDataHash( $pData, $pFilterHash, $pFilterStage, $this );
+	}
+
 	/**
 	 * filterData will apply one of the specified filter stages to the input data
 	 *
@@ -3081,12 +3091,13 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return filtered data
 	 */
-	function filterData( &$pData, &$pFilterHash, $pFilterStage = 'preparse' ) {
+	public static function filterDataHash( &$pData, &$pFilterHash, $pFilterStage = 'preparse', $pObject = NULL ) {
 		global $gLibertySystem;
-		if( !empty( $pData ) && $filters = $gLibertySystem->getPluginsOfType( FILTER_PLUGIN )) {
+		if( !empty( $pData ) && ($filters = $gLibertySystem->getPluginsOfType( FILTER_PLUGIN )) ) {
 			foreach( $filters as $guid => $filter ) {
-				if( $gLibertySystem->isPluginActive( $guid ) && $func = $gLibertySystem->getPluginFunction( $guid, $pFilterStage.'_function' )) {
-					$func( $pData, $pFilterHash, ( !empty( $this ) ? $this : NULL ));
+//vvd( $guid, $gLibertySystem->isPluginActive( $guid ), $pFilterStage, $gLibertySystem->getPluginFunction( $guid, $pFilterStage.'_function' ));//, $pData ); //, $pFilterHash, $pObject );
+				if( $gLibertySystem->isPluginActive( $guid ) && ($func = $gLibertySystem->getPluginFunction( $guid, $pFilterStage.'_function' )) ) {
+					$func( $pData, $pFilterHash, $pObject );
 				}
 			}
 		}
@@ -3237,12 +3248,8 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return absolute path
 	 */
-	function isCached( $pContentId = NULL ) {
+	public function isCached( $pContentId = NULL ) {
 		global $gBitSystem;
-		if( empty( $pContentId ) && @BitBase::verifyId( $this->mContentId ) ) {
-			$pContentId = $this->mContentId;
-		}
-
 		return( $gBitSystem->getConfig( 'liberty_cache' ) && is_file( LibertyContent::getCacheFile( $pContentId )));
 	}
 
@@ -3252,7 +3259,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return absolute path
 	 */
-	function getCacheBasePath() {
+	public static function getCacheBasePath() {
 		return str_replace( '//', '/', TEMP_PKG_PATH.LIBERTY_PKG_NAME.'/cache/' );
 	}
 
@@ -3263,11 +3270,8 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return path on success, FALSE on failure
 	 */
-	function getCachePath( $pContentId = NULL ) {
+	public static function getCachePath( $pContentId = NULL ) {
 		global $gBitSystem;
-		if( empty( $pContentId ) && @BitBase::verifyId( $this->mContentId ) ) {
-			$pContentId = $this->mContentId;
-		}
 
 		$ret = FALSE;
 		if( @BitBase::verifyId( $pContentId ) ) {
@@ -3293,7 +3297,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @param the name of the cache file from getCacheFile()
 	 * @return the contents of the cache file or NULL
 	 */
-	function readCacheFile( $pCacheFile ) {
+	public static function readCacheFile( $pCacheFile ) {
 		global $gBitSystem;
 		$ret = NULL;
 		if( is_file( $pCacheFile ) && ( time() - filemtime( $pCacheFile )) < $gBitSystem->getConfig('liberty_cache') && filesize( $pCacheFile ) > 0 ) {
@@ -3313,7 +3317,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @param the name of the cache file from getCacheFile() to write
 	 * @param the contents to write to the file
 	 */
-	function writeCacheFile( $pCacheFile, $pData ) {
+	public static function writeCacheFile( $pCacheFile, $pData ) {
 		// Cowardly refuse to write nothing.
 		if( !empty( $pData )) {
 			// write parsed contents to cache file
@@ -3330,7 +3334,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return filename on success, FALSE on failure
 	 */
-	function getCacheFile( $pContentId = NULL, $pCacheExtension = NULL ) {
+	public static function getCacheFile( $pContentId = NULL, $pCacheExtension = NULL ) {
 		if( $ret = LibertyContent::getCachePath( $pContentId ) ) {
 			return( $ret.$pContentId.( !empty( $pCacheExtension ) ? '.'.$pCacheExtension : '') );
 		} else {
@@ -3345,7 +3349,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure
 	 */
-	function expungeCacheFile( $pContentId = NULL ) {
+	public static function expungeCacheFile( $pContentId = NULL ) {
 		global $gBitSystem;
 		if( $gBitSystem->isFeatureActive( 'liberty_cache' ) && @BitBase::verifyId( $pContentId ) ) {
 			// we need to unlink all files with the same id and any extension
@@ -3368,7 +3372,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 * @access public
 	 * @return TRUE on success, FALSE on failure
 	 */
-	function expungeCache() {
+	public static function expungeCache() {
 		global $gBitSystem;
 		$ret = FALSE;
 		if( $gBitSystem->isFeatureActive( 'liberty_cache' )) {
@@ -3400,16 +3404,10 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		global $gLibertySystem, $gBitSystem;
 		foreach ($gLibertySystem->mContentTypes as $type) {
 			if ($type['content_type_guid'] == $pContentTypeGuid) {
-				if( !empty( $gBitSystem->mPackages[$type['handler_package']]['path'] ) ) {
-					$path = $gBitSystem->mPackages[$type['handler_package']]['path'];//constant(strtoupper($type['handler_package']).'_PKG_PATH');
-					if( file_exists( $path.$type['handler_file'] ) ) {
-						include_once($path.$type['handler_file']);
-						if ( class_exists( $type['handler_class'] ) ) {
-							$content = new $type['handler_class'];
-							if (method_exists($content, 'getFilterSql')) {
-								$content->getFilterSql($pSql, $pBindVars, $pHash);
-							}
-						}
+				if( LibertySystem::requireContentType( $type ) ) {
+					$content = new $type['handler_class'];
+					if (method_exists($content, 'getFilterSql')) {
+						$content->getFilterSql($pSql, $pBindVars, $pHash);
 					}
 				}
 			}

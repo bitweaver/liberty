@@ -1,6 +1,6 @@
 <?php
 
-require_once( LIBERTY_PKG_PATH.'LibertyComment.php' );
+require_once( LIBERTY_PKG_CLASS_PATH.'LibertyComment.php' );
 global $gQueryUser, $gBitUser, $gLibertySystem, $moduleParams;
 $params = $moduleParams['module_params'];
 $moduleTitle = !empty($moduleParams['title'])? $moduleParams['title'] : 'Recent Activity';

@@ -10,7 +10,7 @@
 /**
  * required setup
  */
-require_once( LIBERTY_PKG_PATH.'LibertyMime.php' );
+require_once( LIBERTY_PKG_CLASS_PATH.'LibertyMime.php' );
 
 define( 'BITCOMMENT_CONTENT_TYPE_GUID', 'bitcomment' );
 
@@ -33,8 +33,8 @@ class LibertyComment extends LibertyMime {
 				'handler_file' => 'LibertyComment.php',
 				'maintainer_url' => 'http://www.bitweaver.org'
 			) );
-		$this->mCommentId = $pCommentId;
-		$this->mContentId = $pContentId;
+		$this->mCommentId = (int)$pCommentId;
+		$this->mContentId = (int)$pContentId;
 		$this->mInfo = $pInfo;
 		$this->mContentTypeGuid = BITCOMMENT_CONTENT_TYPE_GUID;
 		$this->mAdminContentPerm = 'p_liberty_admin_comments';
@@ -466,7 +466,7 @@ class LibertyComment extends LibertyMime {
 				$row['display_url'] = static::getDisplayUrlFromHash( $row );
 				$row['direct_url'] = static::getDirectUrlFromHash( $row );
 				if (!empty($pParamHash['parse'])) {
-					$row['parsed_data'] = $this->parseData($row);
+					$row['parsed_data'] = self::parseDataHash( $row );
 				}
 				$ret[] = $row;
 			}
@@ -641,7 +641,7 @@ class LibertyComment extends LibertyMime {
 			$flat_comments = array();
 			if( $result = $this->mDb->query( $sql, $bindVars, $pMaxComments, $pOffset ) ) {
 				while( $row = $result->FetchRow() ) {
-					$row['parsed_data'] = $this->parseData( $row );
+					$row['parsed_data'] = self::parseDataHash( $row );
 					$row['level'] = substr_count ( $row['thread_forward_sequence'], '.' ) - 1;
 					$c = new LibertyComment();
 					$c->mInfo=$row;

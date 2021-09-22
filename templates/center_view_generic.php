@@ -23,7 +23,7 @@ if( $gContent = LibertyBase::getLibertyObject( $lookupHash['content_id'] ) ) {
 		$parseHash['content_id']		= $gContent->mInfo['content_id'];
 		$parseHash['user_id']			= $gContent->mInfo['user_id'];
 		$parseHash['data']				= $gContent->mInfo['data'];
-		$gContent->mInfo['parsed_data'] = $gContent->parseData( $parseHash );
+		$gContent->mInfo['parsed_data'] = LibertyContent::parseDataHash( $parseHash, $gContent );
 
 		if( !empty( $moduleParams['title'] )) {
 			$gContent->mInfo['title'] = $moduleParams['title'];
@@ -36,4 +36,3 @@ if( $gContent = LibertyBase::getLibertyObject( $lookupHash['content_id'] ) ) {
 }
 
 $gBitSmarty->assign( "gContent", $gContent );
-?>

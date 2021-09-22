@@ -8,7 +8,7 @@
 /**
  * required setup
  */
-require_once( '../kernel/setup_inc.php' );
+require_once( '../kernel/includes/setup_inc.php' );
 
 $staticContent = new LibertyContent();
 $gContent = LibertyBase::getLibertyObject( $_REQUEST['parent_id'], ( !empty( $_REQUEST['parent_guid'] ) ? $_REQUEST['parent_guid'] : NULL ));
@@ -29,13 +29,13 @@ if( !$gContent->hasUserPermission( 'p_liberty_post_comments', TRUE, TRUE)) {
 
 	$commentsParentId = $_REQUEST['parent_id'];
 	$comments_return_url = $_REQUEST['comments_return_url'];
-	include_once( LIBERTY_PKG_PATH.'comments_inc.php' );
+	include_once( LIBERTY_PKG_INCLUDE_PATH.'comments_inc.php' );
 
 	if( isset( $_REQUEST['post_comment_submit'] )) {
 		if ($storeComment->loadComment()){
 			$statusCode = 200;
 			$postComment = $storeComment->mInfo;
-			$postComment['parsed_data'] = $storeComment->parseData( $postComment );
+			$postComment['parsed_data'] = LibertyContent::parseDataHash( $postComment, $storeComment  );
 		} else {
 			//if store is requested but it fails for some reason - like captcha mismatch
 			$statusCode = 400;
@@ -80,5 +80,3 @@ header( "content-type:text/xml" );
 print_r( '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>' );
 print_r( $mRet );
 
-die;
-?>

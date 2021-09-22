@@ -86,7 +86,7 @@ function data_div( $pData, $pParams, $pCommonObject, $pParseHash ) {
 	$parseHash['user_id'] = $pParseHash['user_id'];
 	$parseHash['no_cache'] = TRUE;
 	$parseHash['data'] = $pData;
-	$ret = '<div '.( !empty( $class ) ? 'class="'.$class.'" ' : '' ).'style="'.$style.'">'.$pCommonObject->parseData( $parseHash ).'</div>';
+	$ret = '<div '.( !empty( $class ) ? 'class="'.$class.'" ' : '' ).'style="'.$style.'">'.LibertyContent::parseDataHash( $parseHash, $pCommonObject ).'</div>';
 	return $ret;
 }
 ?>

@@ -10,13 +10,13 @@
 
 $registerHash = array(
 	'package_name' => 'liberty',
-	'package_path' => dirname( __FILE__ ).'/',
+	'package_path' => dirname( dirname( __FILE__ ) ).'/',
 	'required_package'=> TRUE,
 );
 $gBitSystem->registerPackage( $registerHash );
 
 // initiate LibertySystem
-require_once( LIBERTY_PKG_PATH.'LibertySystem.php' );
+require_once( LIBERTY_PKG_CLASS_PATH.'LibertySystem.php' );
 LibertySystem::loadSingleton();
 $gBitSmarty->assignByRef( 'gLibertySystem', $gLibertySystem );
 
@@ -56,7 +56,7 @@ $gLibertySystem->registerService( 'liberty',
 
 // delete cache file if requested
 if( !empty( $_REQUEST['refresh_liberty_cache'] ) && BitBase::verifyId( $_REQUEST['refresh_liberty_cache'] )) {
-	require_once( LIBERTY_PKG_PATH.'LibertyContent.php' );
+	require_once( LIBERTY_PKG_CLASS_PATH.'LibertyContent.php' );
 	LibertyContent::expungeCacheFile( $_REQUEST['refresh_liberty_cache'] );
 }
 

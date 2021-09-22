@@ -53,7 +53,7 @@ function data_code_help() {
 				.'<td>source</td>'
 				.'<td>' . tra( "key-word") . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "Defines the format of the Source Code Snippet. Possible values are:");
-	if( file_exists( UTIL_PKG_INC.'geshi/geshi.php' ) ) {
+	if( file_exists( UTIL_PKG_INCLUDE_PATH.'geshi/geshi.php' ) ) {
 		$help = $help . '<br />
 			<strong>ActionScript</strong> &bull;
 			<strong>Ada</strong> &bull;
@@ -146,7 +146,7 @@ if( !function_exists( 'unHtmlEntities' )) { // avoid name collisions
 if( !function_exists( 'deCodeHTML' )) { // avoid name collisions
 	function deCodeHTML( $pStr ) {
 		$pStr = strtr( $pStr, array_flip( get_html_translation_table( HTML_ENTITIES )));
-		$pStr = preg_replace( "/&#([0-9]+);/me", "chr('\\1')", $pStr );
+		$pStr = preg_replace_callback( "/&#([0-9]+);/m", function($matches){ foreach($matches as $match){ return chr($match); } }, $pStr );
 		return $pStr;
 	}
 }
@@ -191,16 +191,16 @@ function data_code( $pData, $pParams ) { // Pre-Clyde Changes
 	// Trim any leading blank lines
 	$code = preg_replace( '/^[\n\r]+/', "", $code );
 	// Trim any trailing blank lines
-	if( file_exists( UTIL_PKG_INC.'geshi/geshi.php' )) {
+	if( file_exists( UTIL_PKG_INCLUDE_PATH.'geshi/geshi.php' )) {
 		$code = preg_replace('/[\n\r]+$/', "", $code );
 	} else {
 		$code = preg_replace('/[\n\r]+$/', "\n", $code );
 	}
 
-	if( file_exists( UTIL_PKG_INC.'geshi/geshi.php' ) ) {
+	if( file_exists( UTIL_PKG_INCLUDE_PATH.'geshi/geshi.php' ) ) {
 		// Include the GeSHi library
-		include_once( UTIL_PKG_INC.'geshi/geshi.php' );
-		$geshi = new GeSHi($code, $source, UTIL_PKG_INC.'geshi/geshi' );
+		include_once( UTIL_PKG_INCLUDE_PATH.'geshi/geshi.php' );
+		$geshi = new GeSHi($code, $source, UTIL_PKG_INCLUDE_PATH.'geshi/geshi' );
 		if( $num ) { // Line Numbering has been requested
 			$geshi->enable_line_numbers( GESHI_FANCY_LINE_NUMBERS );
 			if( is_numeric( $num )) {

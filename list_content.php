@@ -11,7 +11,7 @@
 /**
  * required setup
  */
-require_once("../kernel/setup_inc.php");
+require_once("../kernel/includes/setup_inc.php");
 
 $gBitSystem->verifyPermission( 'p_liberty_list_content' );
 
@@ -68,7 +68,7 @@ if( !empty( $_REQUEST["max_records"] )) {
 }
 
 // now that we have all the offsets, we can get the content list
-include_once( LIBERTY_PKG_PATH.'get_content_list_inc.php' );
+include_once( LIBERTY_PKG_INCLUDE_PATH.'get_content_list_inc.php' );
 
 $gBitSmarty->assign( 'contentSelect', $contentSelect );
 $gBitSmarty->assign( 'contentTypes', $contentTypes );

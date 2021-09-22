@@ -13,10 +13,10 @@
  */
 global $gLightweightScan;
 $gLightwieightScan = TRUE;
-require_once( '../kernel/setup_inc.php' );
+require_once( '../kernel/includes/setup_inc.php' );
 
 global $gContent, $gBitSystem, $gBitSmarty;
-include_once( LIBERTY_PKG_PATH.'lookup_content_inc.php' );
+include_once( LIBERTY_PKG_INCLUDE_PATH.'lookup_content_inc.php' );
 // If we can't find one make an invalid one to keep the template happy.
 if (empty($gContent)) {
 	$gContent = new LibertyContent();

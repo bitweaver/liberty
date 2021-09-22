@@ -61,7 +61,7 @@ define( 'LIBERTY_UPLOAD', 'upload' );
 /**
  * Link to base class
  */
-require_once( LIBERTY_PKG_PATH.'LibertyBase.php' );
+require_once( LIBERTY_PKG_CLASS_PATH.'LibertyBase.php' );
 
 /**
  * System class for handling the liberty package
@@ -626,19 +626,23 @@ class LibertySystem extends BitSingleton {
 	}
 
 	/**
-	 * requireHandlerFile will require_once() the handler file if given the hash found in $gLibertySystem->mContentTypes[content_type_guid]
+	 * requireContentType will require_once() the handler file if given the hash found in $gLibertySystem->mContentTypes[content_type_guid]
 	 *
 	 * @param array $pContentTypeHash the hash found in $gLibertySystem->mContentTypes[content_type_guid]
 	 * @access public
 	 * @return TRUE on success, FALSE on failure
 	 */
-	function requireHandlerFile( $pContentTypeHash ) {
-		$ret = FALSE;
-		if( defined( strtoupper( $pContentTypeHash['handler_package'] ).'_PKG_PATH' )) {
-			$handlerFile = constant( strtoupper( $pContentTypeHash['handler_package'] ).'_PKG_PATH' ).$pContentTypeHash['handler_file'];
-			if( file_exists( $handlerFile ) ) {
-				require_once( $handlerFile );
-				$ret = TRUE;
+	public static function requireContentType( $pContentTypeHash ) {
+		$pkgName = strtoupper( $pContentTypeHash['handler_package'] );
+		if( !($ret = class_exists( $pContentTypeHash['handler_class'] )) )  {
+			foreach( array( '_PKG_CLASS_PATH', '_PKG_INCLUDE_PATH', '_PKG_PATH' ) as $pkgConstPath ) {
+				if( defined( $pkgName.$pkgConstPath ) && ($pkgDef = constant( $pkgName.$pkgConstPath )) ) {
+					$handlerFile = $pkgDef.$pContentTypeHash['handler_file'];
+					if( is_file( $handlerFile ) ) {
+						require_once( $handlerFile );
+						$ret = class_exists( $pContentTypeHash['handler_class'] );
+					}
+				}
 			}
 		}
 		return $ret;
@@ -665,12 +669,12 @@ class LibertySystem extends BitSingleton {
 	 * @param boolean $pPlural true will return the plural form of the content type display name
 	 * @return string the display name of the content type
  	 */
-	function getContentClassName( $pContentTypeGuid ) {
+	public function getContentClassName( $pContentTypeGuid ) {
 		$ret = NULL;
 		if( !isset( $this->mContentTypes ) ) {
 			$this->loadContentTypes();
 		}
-		if( !empty( $this->mContentTypes[$pContentTypeGuid] ) && $this->requireHandlerFile( $this->mContentTypes[$pContentTypeGuid] ) ) {
+		if( !empty( $this->mContentTypes[$pContentTypeGuid] ) && static::requireContentType( $this->mContentTypes[$pContentTypeGuid] ) ) {
 		 	$ret = $this->mContentTypes[$pContentTypeGuid]['handler_class'];
 		}
 		return $ret;

@@ -12,7 +12,7 @@
  * required setup
  */
 $gLiteweightScan = TRUE;
-require_once( '../kernel/setup_inc.php' );
+require_once( '../kernel/includes/setup_inc.php' );
 
 if( !empty( $_REQUEST['modal'] ) ) {
 	$gBitSystem->mConfig['site_top_bar'] = FALSE;
@@ -21,8 +21,8 @@ if( !empty( $_REQUEST['modal'] ) ) {
 	$gBitSmarty->assign( 'popupPage', '1' );
 }
 
-require_once( LIBERTY_PKG_PATH.'lookup_content_inc.php' );
-require_once( LIBERTY_PKG_PATH.'edit_structure_inc.php' );
+require_once( LIBERTY_PKG_INCLUDE_PATH.'lookup_content_inc.php' );
+require_once( LIBERTY_PKG_INCLUDE_PATH.'structure_edit_inc.php' );
 
 if( !empty( $_SERVER['HTTP_REFERER'] ) ) {
 	$urlHash = parse_url( $_SERVER['HTTP_REFERER'] );
@@ -33,12 +33,12 @@ if( !empty( $_SERVER['HTTP_REFERER'] ) ) {
 
 if( $gBitThemes->isAjaxRequest() ) {
 	header( 'Content-Type: text/html; charset=utf-8' );
-	print $gBitSmarty->fetch( "bitpackage:liberty/add_structure_feedback_inc.tpl" ); 
+	print $gBitSmarty->fetch( "bitpackage:liberty/structure_add_feedback_inc.tpl" ); 
 	exit;
 } else {
 
 	$_REQUEST['thumbnail_size'] = 'icon';
-	include_once( LIBERTY_PKG_PATH.'get_content_list_inc.php' );
+	include_once( LIBERTY_PKG_INCLUDE_PATH.'get_content_list_inc.php' );
 	foreach( $contentList as $cItem ) {
 		$cList[$contentTypes[$cItem['content_type_guid']]][$cItem['content_id']] = $cItem['title'].' [id: '.$cItem['content_id'].']';
 	}
@@ -56,8 +56,12 @@ if( $gBitThemes->isAjaxRequest() ) {
 	}
 
 	if( !empty( $_REQUEST['done'] ) ) {
-		bit_redirect( $_SESSION['structure_referer'] );
+		if( !empty( $_SESSION['structure_referer'] ) ) {
+			bit_redirect( $_SESSION['structure_referer'] );
+		} else {
+			bit_redirect( $gContent->getDisplayUri() );
+		}
 	}
-	$gBitSystem->display( 'bitpackage:liberty/add_structure_content.tpl', "Add Content" , array( 'display_mode' => 'display' ));
+	$gBitSystem->display( 'bitpackage:liberty/structure_add_content.tpl', "Add Content" , array( 'display_mode' => 'display' ));
 }
 

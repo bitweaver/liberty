@@ -35,7 +35,7 @@
 /**
  * required setup
  */
-require_once( LIBERTY_PKG_PATH.'LibertyComment.php' );
+require_once( LIBERTY_PKG_CLASS_PATH.'LibertyComment.php' );
 
 global $commentsLib, $gBitSmarty, $gBitSystem, $gBitThemes;
 
@@ -117,7 +117,7 @@ if( !empty( $_REQUEST['post_comment_submit'] ) && $gContent->hasUserPermission( 
 			// Draft the message:
 			$message['subject'] = tra( 'New comment on:' ).' '.$gContent->getTitle().' @ '.$gBitSystem->getConfig( 'site_title' );
 			$message['message'] = tra('A new message was posted to ').' '.$gContent->getTitle()."<br/>\n".$gContent->getDisplayUri()."<br/>\n"
-					.'/----- '.tra('Here is the message')." -----/<br/>\n<br/>\n".'<h2>'.$storeComment->getTitle()."</h2>\n".tra('By').' '.$gBitUser->getDisplayName()."\n<p>".$storeComment->parseData().'</p>';
+					.'/----- '.tra('Here is the message')." -----/<br/>\n<br/>\n".'<h2>'.$storeComment->getTitle()."</h2>\n".tra('By').' '.$gBitUser->getDisplayName()."\n<p>".$storeComment->getParsedData().'</p>';
 			$gSwitchboardSystem->sendEvent('My Content', 'new comment', $gContent->mContentId, $message );
 		}
 		$postComment = NULL;
@@ -183,9 +183,9 @@ if( !empty( $_REQUEST['post_comment_preview'] )) {
 	if( !empty( $_REQUEST['comment_name'] )) {
 		$postComment['anon_name'] = $_REQUEST['comment_name'];
 	}
-	$postComment['data'] = $_REQUEST['comment_data'];
+	$postComment['data'] = BitBase::getParameter( $_REQUEST, 'comment_data' );
 	$postComment['format_guid'] = empty( $_REQUEST['format_guid'])? $gBitSystem->getConfig( 'default_format' ) : $_REQUEST['format_guid'];
-	$postComment['parsed_data'] = LibertyComment::parseData( $postComment );
+	$postComment['parsed_data'] = LibertyComment::parseDataHash( $postComment );
 	$postComment['created'] = time();
 	$postComment['last_modified'] = time();
 	$gBitSmarty->assign('post_comment_preview', TRUE);
@@ -250,16 +250,18 @@ if( $gContent->hasUserPermission( 'p_liberty_read_comments' )) {
 		$_SESSION['liberty_comments_display_mode'] = $comments_display_style;
 	}
 
+	$currentPage = BitBase::verifyIdParameter( $_REQUEST, 'comment_page', 1 );
+
 	if( !empty( $_REQUEST['comment_page'] ) || !empty( $_REQUEST['post_comment_request'] ) ) {
 		$comments_at_top_of_page = 'y';
 	}
-	$commentOffset = !empty( $_REQUEST['comment_page'] ) ? ($_REQUEST['comment_page'] - 1) * $maxComments : 0;
+	$commentOffset = ($currentPage - 1) * $maxComments;
 
 	if( empty( $gComment )) {
 		$gComment = new LibertyComment();
 	}
 
-	$currentPage = !empty( $_REQUEST['comment_page'] ) ? $_REQUEST['comment_page'] : 1;
+	$currentPage = BitBase::verifyIdParameter( $_REQUEST, 'comment_page', 1 );
 	if( $currentPage < 1 ) {
 		$currentPage = 1;
 	}
@@ -345,7 +347,7 @@ if( $gContent->hasUserPermission( 'p_liberty_read_comments' )) {
 
 	// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services
 	if( $gBitSystem->isPackageActive( 'boards' )) {
-		require_once(BOARDS_PKG_PATH.'BitBoardTopic.php');
+		require_once(BOARDS_PKG_CLASS_PATH.'BitBoardTopic.php');
 	}
 
 	// @TODO get this shit out of here - boards and any other package ridding on comments should make use of services

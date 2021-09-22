@@ -8,9 +8,9 @@
 /**
  * Initialization
  */
-require_once( "../kernel/setup_inc.php" );
-require_once( RSS_PKG_PATH."rss_inc.php" );
-require_once( LIBERTY_PKG_PATH."LibertyContent.php" );
+require_once( "../kernel/includes/setup_inc.php" );
+require_once( RSS_PKG_INCLUDE_PATH.'rss_inc.php' );
+require_once( LIBERTY_PKG_CLASS_PATH.'LibertyContent.php' );
 
 $gBitSystem->verifyPackage( 'rss' );
 $gBitSystem->verifyFeature( 'liberty_rss' );
@@ -46,7 +46,7 @@ foreach( $feeds as $feed ) {
 
 	// add the parsed data, if there is any
 	if( !empty( $feed['data'] ) ) {
-		$description .= '<br /><hr /><br />'.tra( 'Content' ).':<br />'.$liberty->parseData( $feed ).'<br /><hr />';
+		$description .= '<br /><hr /><br />'.tra( 'Content' ).':<br />'.LibertyContent::parseDataHash( $feed ).'<br /><hr />';
 	}
 
 	$item->description = $description;
@@ -64,4 +64,3 @@ foreach( $feeds as $feed ) {
 
 // finally we are ready to serve the data
 echo $rss->saveFeed( $rss_version_name, $cacheFile );
-?>
