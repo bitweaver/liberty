@@ -274,7 +274,7 @@ array( 'QUERY' =>
 	array( 'SQL92' => array(
 		"UPDATE `".BIT_DB_PREFIX."liberty_content_history` SET `content_id`=(SELECT `content_id` FROM `".BIT_DB_PREFIX."tiki_pages` wp WHERE wp.`page_id`=`".BIT_DB_PREFIX."liberty_content_history`.`page_id`)",
 		"UPDATE `".BIT_DB_PREFIX."liberty_content` SET version=(SELECT `version` from `".BIT_DB_PREFIX."tiki_pages` wp WHERE wp.`content_id`=`".BIT_DB_PREFIX."liberty_content`.`content_id`)",
-		"UPDATE `".BIT_DB_PREFIX."liberty_content_history` SET `summary`=`decription`",
+		"UPDATE `".BIT_DB_PREFIX."liberty_content_history` SET `summary`=`description`",
 	)),
 ),
 
