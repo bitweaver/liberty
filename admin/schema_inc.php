@@ -267,6 +267,7 @@ $indices = array (
 	'liberty_content_perm_perm_idx' => array( 'table' => 'liberty_content_permissions', 'cols' => 'perm_name', 'opts' => NULL ),
 	'liberty_content_perm_cont_idx' => array( 'table' => 'liberty_content_permissions', 'cols' => 'content_id', 'opts' => NULL ),
 	'process_id_idx' => array( 'table' => 'liberty_process_queue', 'cols' => 'content_id', 'opts' => NULL ),
+	'liberty_content_data_idx' => array( 'table' => 'liberty_content_data', 'cols' => 'content_id', 'opts' => NULL ),
 	'lib_attachment_meta_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'attachment_id', 'opts' => NULL ),
 	'lib_attachment_meta_type_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'meta_type_id', 'opts' => NULL ),
 	'lib_attachment_meta_title_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'meta_title_id', 'opts' => NULL ),
