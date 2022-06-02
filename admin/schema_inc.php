@@ -32,6 +32,7 @@ $tables = array(
 	lang_code C(32),
 	title C(160),
 	ip C(39),
+	options_json X,
 	data X
 	CONSTRAINT ', CONSTRAINT `liberty_content_status_ref` FOREIGN KEY (`content_status_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content_status`( `content_status_id` )
 				, CONSTRAINT `liberty_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )'

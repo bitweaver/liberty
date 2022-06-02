@@ -1885,6 +1885,18 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		return $ret;
 	}
 
+	public function storeOptions( $pKey, $pHash )  {
+		if( $this->isValid() ) {
+			$this->mInfo['options'][$pKey] = $pHash;
+			$optionsJson = json_encode( $this->mInfo['options'] );
+			$this->mDb->query( "UPDATE `".BIT_DB_PREFIX."liberty_content` lc SET `options_json`=? WHERE `content_id`=?", array( $optionsJson, $this->getField( 'content_id' ) ) );
+		}
+	}
+
+	public function setOptions( $pKey, $pHash )  {
+		$this->mInfo['options'][$pKey] = $pHash;
+	}
+
 	/**
 	 * Register the content type for reference
 	 *
