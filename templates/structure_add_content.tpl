@@ -92,7 +92,7 @@ function addStructure(pContentId) {
 						{$contentHash.title}
 						<div class="help-block">
 						<a target="_new" href="{$contentHash.display_url}">
-							{booticon ipackage="icons" iname="icon-zoom-in" iexplain="View (in new window)"}
+							{booticon iname="fa-magnifying-glass-plus" iexplain="View (in new window)"}
 						</a>
 {$contentHash.content_name}</div>
 					</div>

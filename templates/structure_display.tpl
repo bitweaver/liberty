@@ -22,7 +22,7 @@
 					{if $structureInfo.prev and $structureInfo.prev.structure_id}
 						<a href="index.php?structure_id={$structureInfo.prev.structure_id}">
 							{if $wikibook_use_icons eq 'y'}
-								{booticon iname="icon-arrow-left"  ipackage="icons"  iexplain=Previous}
+								{booticon iname="fa-arrow-left" iexplain=Previous}
 							{else}
 								&laquo;&nbsp;{$structureInfo.prev.title|escape}
 							{/if}
