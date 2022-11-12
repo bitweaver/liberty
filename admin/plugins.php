@@ -1,6 +1,6 @@
 <?php
 require_once( '../../kernel/includes/setup_inc.php' );
-include_once( KERNEL_PKG_PATH.'simple_form_functions_lib.php' );
+include_once( KERNEL_PKG_INCLUDE_PATH.'simple_form_functions_lib.php' );
 
 $gBitSystem->verifyPermission( 'p_admin' );
 
