@@ -32,6 +32,7 @@ $tables = array(
 	lang_code C(32),
 	title C(160),
 	ip C(39),
+	options_json X,
 	data X
 	CONSTRAINT ', CONSTRAINT `liberty_content_status_ref` FOREIGN KEY (`content_status_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content_status`( `content_status_id` )
 				, CONSTRAINT `liberty_content_type_ref` FOREIGN KEY (`content_type_guid`) REFERENCES `".BIT_DB_PREFIX."liberty_content_types`( `content_type_guid` )'
@@ -267,6 +268,7 @@ $indices = array (
 	'liberty_content_perm_perm_idx' => array( 'table' => 'liberty_content_permissions', 'cols' => 'perm_name', 'opts' => NULL ),
 	'liberty_content_perm_cont_idx' => array( 'table' => 'liberty_content_permissions', 'cols' => 'content_id', 'opts' => NULL ),
 	'process_id_idx' => array( 'table' => 'liberty_process_queue', 'cols' => 'content_id', 'opts' => NULL ),
+	'liberty_content_data_idx' => array( 'table' => 'liberty_content_data', 'cols' => 'content_id', 'opts' => NULL ),
 	'lib_attachment_meta_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'attachment_id', 'opts' => NULL ),
 	'lib_attachment_meta_type_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'meta_type_id', 'opts' => NULL ),
 	'lib_attachment_meta_title_idx' => array( 'table' => 'liberty_attachment_meta_data', 'cols' => 'meta_title_id', 'opts' => NULL ),

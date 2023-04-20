@@ -342,6 +342,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			}
 		}
 		$pParamHash['data_store']['summary'] = !empty( $pParamHash['summary'] ) ? $pParamHash['summary'] : NULL ;
+		$pParamHash['data_store']['metatags'] = !empty( $pParamHash['metatags'] ) ? $pParamHash['metatags'] : NULL ;
 
 		// call verify service to see if any services have errors
 		$this->invokeServices( 'content_verify_function', $pParamHash );
@@ -950,6 +951,12 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			$pQueryHash['join']['sql'][] = "
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON( lc.`content_id` = lcds.`content_id` AND lcds.`data_type` = ? )";
 			$pQueryHash['join']['var'][] = 'summary';
+		}
+		if( empty( $pJoins ) || in_array( 'metatags', $pJoins )) {
+			$pQueryHash['select']['sql'][] = "lcdm.`data` AS `metatags`";
+			$pQueryHash['join']['sql'][] = "
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcdm ON( lc.`content_id` = lcdm.`content_id` AND lcdm.`data_type` = ? )";
+			$pQueryHash['join']['var'][] = 'metatags';
 		}
 		if( empty( $pJoins ) || in_array( 'hits', $pJoins )) {
 			$pQueryHash['select']['sql'][] = "lch.`hits`, lch.`last_hit`";
@@ -1878,6 +1885,18 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		return $ret;
 	}
 
+	public function storeOptions( $pKey, $pHash )  {
+		if( $this->isValid() ) {
+			$this->mInfo['options'][$pKey] = $pHash;
+			$optionsJson = json_encode( $this->mInfo['options'] );
+			$this->mDb->query( "UPDATE `".BIT_DB_PREFIX."liberty_content` lc SET `options_json`=? WHERE `content_id`=?", array( $optionsJson, $this->getField( 'content_id' ) ) );
+		}
+	}
+
+	public function setOptions( $pKey, $pHash )  {
+		$this->mInfo['options'][$pKey] = $pHash;
+	}
+
 	/**
 	 * Register the content type for reference
 	 *
@@ -2749,13 +2768,15 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 				lc.`ip`,
 				lc.`created`,
 				lc.`content_id`,
-				lcds.`data` AS `summary`
+				lcds.`data` AS `summary`,
+				lcdm.`data` AS `metatags`
 				$selectSql
 			FROM `".BIT_DB_PREFIX."liberty_content` lc
 				INNER JOIN `".BIT_DB_PREFIX."users_users` uuc ON (lc.`user_id`=uuc.`user_id`)
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."users_users` uue ON (lc.`modifier_user_id`=uue.`user_id`)
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON( lc.`content_id` =  lch.`content_id`)
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcds ON (lc.`content_id` = lcds.`content_id` AND lcds.`data_type`='summary')
+				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_content_data` lcdm ON (lc.`content_id` = lcdm.`content_id` AND lcdm.`data_type`='metatags')
 				$joinSql
 				$whereSql
 			ORDER BY ".$orderTable.$this->convertSortMode($pListHash['sort_mode']);

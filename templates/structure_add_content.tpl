@@ -92,7 +92,7 @@ function addStructure(pContentId) {
 						{$contentHash.title}
 						<div class="help-block">
 						<a target="_new" href="{$contentHash.display_url}">
-							{booticon ipackage="icons" iname="icon-zoom-in" iexplain="View (in new window)"}
+							{booticon iname="fa-magnifying-glass-plus" iexplain="View (in new window)"}
 						</a>
 {$contentHash.content_name}</div>
 					</div>
@@ -105,11 +105,11 @@ function addStructure(pContentId) {
 				<td>
 					{if $inStructureId}
 					<div class="icon" {if empty($inStructureId)}style="display:none"{/if} id="{$contentHash.content_id}remove" onclick="removeStructure({$inStructureId})">
-						<button class="btn btn-default btn-xs" title="Remove from structure">{tr}Remove{/tr}</button>
+						<span class="btn btn-default btn-xs" title="Remove from structure">{tr}Remove{/tr}</span>
 					</div>
 					{else}
 					<div class="icon" id="{$contentHash.content_id}add" onclick="addStructure({$contentHash.content_id})">
-						<button class="btn btn-default btn-xs" title="Add to structure">{tr}Add{/tr}</button>
+						<span class="btn btn-default btn-xs" title="Add to structure">{tr}Add{/tr}</span>
 					</div>
 					{/if} 
 				</td>

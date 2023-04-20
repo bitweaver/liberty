@@ -25,7 +25,7 @@
 							{assign var=action value="remove"}
 						{/if}
 					{/foreach}
-					<td style="text-align:center">{smartlink ititle=Allow ibiticon=$icon iforce="icon" action=$action content_id=$gContent->mContentId perm=$perm.perm_name group_id=$group.group_id}</td>
+					<td style="text-align:center">{smartlink ititle=Allow ibiticon=$icon action=$action content_id=$gContent->mContentId perm=$perm.perm_name group_id=$group.group_id}</td>
 				</tr>
 			{/foreach}
 		</table>
@@ -83,7 +83,7 @@
 					<td>{$perm.group_name}</td>
 					<td>{$perm.perm_desc} <em>({$perm.perm_name})</em></td>
 					<td class="alignright">
-						{smartlink ititle="Remove Permission" booticon="icon-trash" iforce="icon" action=remove content_id=$gContent->mContentId perm=$perm.perm_name group_id=$perm.group_id}
+						{smartlink ititle="Remove Permission" booticon="fa-trash" action=remove content_id=$gContent->mContentId perm=$perm.perm_name group_id=$perm.group_id}
 					</td>
 				</tr>
 			{foreachelse}

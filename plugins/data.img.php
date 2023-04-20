@@ -22,7 +22,7 @@ $pluginParams = array (
 	'help_function' => 'data_img_help',
 	'syntax'        => "{img src=http://www.google.at/logos/olympics06_ski_jump.gif}",
 	'plugin_type'   => DATA_PLUGIN,
-	'booticon'       => '{booticon iname="icon-picture" iexplain="Web Image"}',
+	'booticon'       => '{booticon iname="fa-image-landscape" iexplain="Web Image"}',
 	'taginsert'     => '{img src= width= height= align= description= link=}'
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATAIMG, $pluginParams );

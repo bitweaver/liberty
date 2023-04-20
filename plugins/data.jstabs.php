@@ -22,7 +22,7 @@ $pluginParams = array (
 	'plugin_type'   => DATA_PLUGIN,
 
 	// display icon in quicktags bar
-	'booticon'       => '{booticon iname="icon-folder-closed-alt" iexplain="Javascript Tabs"}',
+	'booticon'       => '{booticon iname="fa-folder" iexplain="Javascript Tabs"}',
 	'taginsert'     => '{jstabs}text{/jstabs}',
 
 	// functions
