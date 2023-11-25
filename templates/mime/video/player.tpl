@@ -3,7 +3,7 @@
 	{assign var=id value="video_`$caller``$attachment.attachment_id`"}
 	{if $uploadTab}{assign var=id value="`$id`_tab"}{/if}
 	<div id="{$id}"><a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see this video.</div>
-	<script type="text/javascript">/* <![CDATA[ */
+	<script>/* <![CDATA[ */
 		{if $thumbsize eq "small"}
 			{assign var=width value=160}
 			{math width=$width scrollbar=20 original_width=$attachment.meta.width original_height=$attachment.meta.height equation="original_height / original_width * width + scrollbar" assign=height}

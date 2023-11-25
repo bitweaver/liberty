@@ -105,7 +105,7 @@
 {/if}
 
 {if $gBitSystem->isPackageActive('ckeditor') && ($formatGuid=='bithtml')}{* || (is_object($contentObject) && $formatGuid=='tikiwiki' && $contentObject->getPreference('content_enter_html')))} *}
-<script type="text/javascript">
+<script>
 $(document).ready( function() {
 createCkEditor('{$textarea_id}');
 } );

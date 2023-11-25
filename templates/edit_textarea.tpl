@@ -20,7 +20,7 @@
 			{if $textarea_required}{required}{/if}
 
 			{if $textarea_maxchars}
-				<script type="text/javascript">//<![CDATA[
+				<script>//<![CDATA[
 					if( typeof( BitBase ) == 'undefined' ){ldelim}
 						BitBase = {ldelim}{rdelim};
 					{rdelim};

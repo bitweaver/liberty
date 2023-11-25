@@ -39,7 +39,7 @@ attachmentUrls["{$storage.attachment_id}"] = {ldelim}{rdelim};
 							<input class="form-control attachment-img-{$storage.attachment_id}" name="attachment_source_{$size}_{$storage.attachment_id}" onClick="this.select();"/>
 							{formhelp note="HTML `$size`"}
 						{/forminput}
-<script type="text/javascript">
+<script>
 {foreach name=size key=size from=$storage.thumbnail_url item=url}
 window.attachmentUrls["{$storage.attachment_id}"]["{$size}"] = "{$url|escape}";
 {/foreach}
@@ -81,7 +81,7 @@ window.attachmentUrls["{$storage.attachment_id}"]["original"] = "{$storage.sourc
 						{/if}
 					</div>
 				</div>
-<script type="text/javascript">
+<script>
 $(document).ready(function(){ldelim}
 	setThumbnail('{$storage.attachment_id}','medium');
 {rdelim});
@@ -94,7 +94,7 @@ $(document).ready(function(){ldelim}
 						</label>
 				</div>
 			{/if}
-<script type="text/javascript">{literal}
+<script>{literal}
 function setThumbnail(pAttachmentId,pSize) {
     $(".attachment-img-"+pAttachmentId).attr("value",'<img src="'+attachmentUrls[pAttachmentId][pSize]+'">');
 	$(".attachment-img-"+pAttachmentId).trigger( "change" )
