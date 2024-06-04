@@ -1,5 +1,5 @@
 {literal}
-<script type="text/javascript">
+<script>
 function addStructure(pContentId) {
 	var data = $("#structureaddform").serialize()+"&content[]="+pContentId+"&ajax_xml=1&action=add";
 	var ajax = new BitBase.SimpleAjax();
@@ -58,7 +58,7 @@ function addStructure(pContentId) {
 			{forminput}
 				<input class="form-control" autocomplete="off" id="contact_name" name="contact[name]" type="text" value="" />
 				<div class="auto_complete" id="contact_name_auto_complete"></div>
-				<script type="text/javascript">new Ajax.Autocompleter('contact_name', 'contact_name_auto_complete', '/presentations/foo.php', {ldelim}{rdelim})</script>
+				<script>new Ajax.Autocompleter('contact_name', 'contact_name_auto_complete', '/presentations/foo.php', {ldelim}{rdelim})</script>
 				{formhelp note=""}
 			{/forminput}
 		</div>

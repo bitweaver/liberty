@@ -1,6 +1,6 @@
 {strip}
 {if $errors}
-	<script type="text/javascript">
+	<script>
 		alert("Error with upload: {$errors|addslashes}");
 	</script>
 {/if}

@@ -6,12 +6,12 @@
 	{assign var=structureName value="Structure"}
 {/if}
 
-<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/jquery/plugins/acisortable/jquery.aciPlugin.min.js"></script>
-<script type="text/javascript" src="{$smarty.const.UTIL_PKG_URL}javascript/jquery/plugins/acisortable/jquery.aciSortable.js"></script>
+<script src="{$smarty.const.UTIL_PKG_URL}javascript/jquery/plugins/acisortable/jquery.aciPlugin.min.js"></script>
+<script src="{$smarty.const.UTIL_PKG_URL}javascript/jquery/plugins/acisortable/jquery.aciSortable.js"></script>
 
 {$structureToc}
 
-<script type="text/javascript">
+<script>
 $.fn.aciSortable.defaults.container = 'ol';
 $('#structure-{$structureTocId}').aciSortable( {literal}{
 	child: 50,
