@@ -79,9 +79,9 @@ $contentListHash['listInfo']['ihash']['find'] = $contentListHash['listInfo']['fi
 $gBitSmarty->assign( 'listInfo', $contentListHash['listInfo'] );
 $gBitSmarty->assign( 'content_type_guids', ( isset( $_REQUEST['content_type_guid'] ) ? $_REQUEST['content_type_guid'] : NULL ));
 
-//depricate 'ajax_xml', use 'output'
+//depricate 'ajax_api', use 'output'
 //@todo clean out from other packages
-if( !empty( $_REQUEST['ajax_xml'] )) {
+if( !empty( $_REQUEST['ajax_api'] )) {
 	$_REQUEST['output'] = 'ajax';
 }
 
