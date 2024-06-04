@@ -1,7 +1,7 @@
 {literal}
 <script>
 function addStructure(pContentId) {
-	var data = $("#structureaddform").serialize()+"&content[]="+pContentId+"&ajax_xml=1&action=add";
+	var data = $("#structureaddform").serialize()+"&content[]="+pContentId+"&ajax_api=1&action=add";
 	var ajax = new BitBase.SimpleAjax();
 	var donefn = function (r) {
 		var responseHash = BitBase.evalJSON( r.responseText );
