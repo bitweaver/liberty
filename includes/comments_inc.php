@@ -48,7 +48,7 @@ if( !$gBitThemes->isJavascriptEnabled() ) {
 	$gBitSystem->setConfig( 'comments_ajax', 'n' );
 }
 
-if( @BitBase::verifyId( $_REQUEST['delete_comment_id'] )) {
+if( BitBase::verifyIdParameter( $_REQUEST, 'delete_comment_id' )) {
 	$deleteComment = new LibertyComment($_REQUEST['delete_comment_id']);
 	// make sure we're loaded up before we delete
 	$deleteComment->loadComment();
@@ -58,7 +58,7 @@ if( @BitBase::verifyId( $_REQUEST['delete_comment_id'] )) {
 	}
 }
 
-if( @BitBase::verifyId( $_REQUEST['post_comment_id'] ) && $gContent->hasUserPermission( 'p_liberty_post_comments' )) {
+if( BitBase::verifyIdParameter( $_REQUEST, 'post_comment_id' ) && $gContent->hasUserPermission( 'p_liberty_post_comments' )) {
 	$post_comment_id = $_REQUEST['post_comment_id'];
 	$editComment = new LibertyComment( $post_comment_id );
 	//if we are passed a comment id but not going to store it then turn off ajax
@@ -192,7 +192,7 @@ if( !empty( $_REQUEST['post_comment_preview'] )) {
 }
 
 // $post_comment_reply_id is the content_id which a post is replying to
-if( @BitBase::verifyId( $_REQUEST['post_comment_reply_id'] )) {
+if( BitBase::verifyIdParameter( $_REQUEST, 'post_comment_reply_id' )) {
 	$post_comment_reply_id = $_REQUEST['post_comment_reply_id'];
 	$tmpComment = new LibertyComment( NULL, $post_comment_reply_id );
 	if( !empty( $_REQUEST['quote'] )) {
@@ -285,7 +285,7 @@ if( $gContent->hasUserPermission( 'p_liberty_read_comments' )) {
 		$comments = array();
 		$numComments = 0;
 	} else {
-		if( @BitBase::verifyId( $commentsParentIds ) ) {
+		if( !empty( $commentsParentIds ) ) {
 			$parents = $commentsParentIds;
 		} else {
 			$parents = $commentsParentId;

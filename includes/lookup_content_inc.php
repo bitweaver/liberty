@@ -10,7 +10,7 @@
 
 global $gContent;
 
-if( @BitBase::verifyId( $_REQUEST['structure_id'] ) ) {
+if( BitBase::verifyIdParameter( $_REQUEST, 'structure_id' ) ) {
 	/**
 	 * required setup
 	 */
@@ -29,7 +29,7 @@ if( @BitBase::verifyId( $_REQUEST['structure_id'] ) ) {
 			$gBitSmarty->assignByRef( 'gContent', $gContent );
 		}
 	}
-} elseif( @BitBase::verifyId( $_REQUEST['content_id'] ) ) {
+} elseif( BitBase::verifyIdParameter( $_REQUEST, 'content_id' ) ) {
 	$_REQUEST['content_id'] = preg_replace( '/[\D]/', '', $_REQUEST['content_id'] );
 	require_once( LIBERTY_PKG_CLASS_PATH.'LibertyBase.php');
 	if( $gContent = LibertyBase::getLibertyObject( $_REQUEST['content_id'] ) ) {

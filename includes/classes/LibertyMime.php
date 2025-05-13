@@ -243,7 +243,7 @@ class LibertyMime extends LibertyContent {
 		}
 
 		// primary attachment. Allow 'none' to clear the primary.
-		if( !@BitBase::verifyId( $pParamHash['liberty_attachments']['primary'] ) && ( empty( $pParamHash['liberty_attachments']['primary'] ) || $pParamHash['liberty_attachments']['primary'] != 'none' ) ) {
+		if( !empty( $pParamHash['liberty_attachments']['primary'] ) && ( empty( $pParamHash['liberty_attachments']['primary'] ) || $pParamHash['liberty_attachments']['primary'] != 'none' ) ) {
 			$pParamHash['liberty_attachments']['primary'] = NULL;
 		}
 
