@@ -284,7 +284,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		}
 		$pParamHash['content_store']['ip'] = $pParamHash['ip'];
 
-		if( !@$this->verifyId( $pParamHash['modifier_user_id'] ) ) {
+		if( !BitBase::verifyIdParameter( $pParamHash, 'modifier_user_id' ) ) {
 			$pParamHash['modifier_user_id'] = $gBitUser->getUserId();
 		}
 		$pParamHash['content_store']['modifier_user_id'] = $pParamHash['modifier_user_id'];
@@ -314,7 +314,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		}
 		$pParamHash['content_store']['format_guid'] = $pParamHash['format_guid'];
 
-		if( !@BitBase::verifyId( $this->mInfo['version'] ) ) {
+		if( !BitBase::verifyIdParameter( $this->mInfo, 'version' ) ) {
 			$pParamHash['content_store']['version'] = 1;
 		} else {
 			$pParamHash['content_store']['version'] = $this->mInfo['version'] + 1;
@@ -557,7 +557,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 				"ip"              => $this->getField( "ip" ),
 				"data"            => $this->getField( "data" ),
 				"summary"         => $this->getField( "summary" ),
-				"history_comment" => (string)substr( $this->getField( "edit_comment" ), 0, 200 ),
+				"history_comment" => (string)substr( $this->getField( "edit_comment" ) ?? '', 0, 200 ),
 				"format_guid"     => $this->getField( "format_guid", $gBitSystem->getConfig( "default_format", "tikiwiki" )),
 			);
 			$this->mDb->associateInsert( BIT_DB_PREFIX."liberty_content_history", $storeHash );
@@ -847,7 +847,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 */
 	function isOwner( $pParamHash = NULL ) {
 		global $gBitUser;
-		if( @BitBase::verifyId( $pParamHash['user_id'] ) ) {
+		if( BitBase::verifyIdParameter( $pParamHash, 'user_id' ) ) {
 			$user_id = $pParamHash['user_id'];
 		} elseif( $this->isValid() && @$this->verifyId( $this->mInfo['user_id'] ) ) {
 			$user_id = $this->mInfo['user_id'];
@@ -2637,12 +2637,12 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 			}
 		}
 
-		if( @$this->verifyId( $pListHash['user_id'] ) ) {
+		if( @$this->verifyIdParameter( $pListHash, 'user_id' ) ) {
 			$whereSql .= " AND lc.`user_id` = ? ";
 			$bindVars[] = $pListHash['user_id'];
 		}
 
-		if( @$this->verifyId( $pListHash['link_content_id'] ) ){
+		if( @$this->verifyIdParameter( $pListHash, 'link_content_id' ) ){
 			$joinSql .= " INNER JOIN `".BIT_DB_PREFIX."liberty_content_links` lclk ON ( lc.`content_id` = lclk.`to_content_id` )";
 			$whereSql .= " AND lclk.`from_content_id` = ? ";
 			$bindVars[] = (int)$pListHash['link_content_id'];
@@ -3031,7 +3031,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		// sanitise pParseHash a bit
 		$pParseHash['content_id']      = !empty( $pParseHash['content_id'] )      ? $pParseHash['content_id']      : NULL;
 		$pParseHash['cache_extension'] = !empty( $pParseHash['cache_extension'] ) ? $pParseHash['cache_extension'] : NULL;
-		$pParseHash['user_id']         = !empty( $pParseHash['user_id'] )         ? $pParseHash['user_id']         : is_object( $gBitUser ) ? $gBitUser->mUserId : ANONYMOUS_USER_ID;
+		$pParseHash['user_id']         = !empty( $pParseHash['user_id'] )         ? $pParseHash['user_id']         : (is_object( $gBitUser ) ? $gBitUser->mUserId : ANONYMOUS_USER_ID);
 
 		// Ensure we have a format
 		if( empty( $pParseHash['format_guid'] ) ) {
@@ -3777,7 +3777,7 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	 */
 	function storeData( $pData, $pType ) {
 		if( $this->mContentId ) {
-			$pData = trim( $pData );
+			$pData = trim( $pData ?? '' );
 			if( empty( $pData ) ) {
 				$this->mDb->query( "DELETE FROM `".BIT_DB_PREFIX."liberty_content_data` WHERE `content_id`=? AND `data_type`=?", array( $this->mContentId, $pType ) );
 			} else {

@@ -116,7 +116,7 @@ class TikiWikiParser extends BitBase {
 	function howManyAtStart($str, $car) {
 		$cant = 0;
 		$i = 0;
-		while (($i < strlen($str)) && (isset($str{$i})) && ($str{$i}== $car)) {
+		while (($i < strlen($str)) && (isset($str[$i])) && ($str[$i]== $car)) {
 			$i++;
 			$cant++;
 		}
