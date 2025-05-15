@@ -202,7 +202,7 @@ if( !function_exists( 'mime_default_store' )) {
 		if( $storagePath = liberty_process_upload( $pStoreRow['upload'], empty( $pStoreRow['upload']['copy_file'] ))) {
 			// add row to liberty_files
 			$storeHash = array(
-				"file_name"    => $pStoreRow['upload']['name'],
+				"file_name"    => substr( $pStoreRow['upload']['name'], 0, 250 ),
 				"file_id"      => $gBitSystem->mDb->GenID( 'liberty_files_id_seq' ),
 				"mime_type"    => $pStoreRow['upload']['type'],
 				"file_size"    => (int)$pStoreRow['upload']['size'],
