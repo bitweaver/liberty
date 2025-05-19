@@ -336,7 +336,7 @@ if( !function_exists( 'mime_default_download' )) {
 			header( "Accept-Ranges: bytes" );
 			header( "Pragma: public" );
 			header( "Last-Modified: ".gmdate( "D, d M Y H:i:s T", $pFileHash['last_modified'] ), TRUE, 200 );
-			header( 'Content-Disposition: attachment; filename="'.$pFileHash['file_name'].'"' );
+			header( "Content-Disposition: attachment; filename*=UTF-8''".rawurlencode( $pFileHash['file_name'] ) );
 			header( "Content-type: ".$pFileHash['mime_type'] );
 			header( "Content-Description: File Transfer" );
 			header( "Content-Length: ".filesize( $pFileHash['source_file'] ));
