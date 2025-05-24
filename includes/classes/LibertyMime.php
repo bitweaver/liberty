@@ -147,11 +147,13 @@ class LibertyMime extends LibertyContent {
 			}
 
 			// deal with the primary attachment after we've dealt with all the files
-			$this->setPrimaryAttachment(
-				$pStoreHash['liberty_attachments']['primary'],
-				$pStoreHash['content_id'],
-				empty( $pStoreHash['liberty_attachments']['auto_primary'] ) || $pStoreHash['liberty_attachments']['auto_primary'] ? TRUE : FALSE
-			);
+			if( !empty( $pStoreHash['liberty_attachments']['primary'] ) ) {
+				$this->setPrimaryAttachment(
+					$pStoreHash['liberty_attachments']['primary'],
+					$pStoreHash['content_id'],
+					empty( $pStoreHash['liberty_attachments']['auto_primary'] ) || $pStoreHash['liberty_attachments']['auto_primary'] ? TRUE : FALSE
+				);
+			}
 
 			// Roll back if something went wrong
 			if( empty( $this->mErrors )) {
