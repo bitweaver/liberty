@@ -20,7 +20,7 @@ if( is_object( $gStructure ) && $gStructure->isValid() && $gStructure->hasViewPe
 	$struct = &$gStructure;
 } elseif( @BitBase::verifyId( $module_params['structure_id'] ) ) {
 	$struct = new LibertyStructure( $module_params['structure_id'] );
-} elseif( is_object( $gContent ) && $gContent->hasViewPermission( FALSE ) ) {
+} elseif( is_object( $gContent ) && is_a( $gContent, 'LibertyBase' ) && $gContent->hasViewPermission( FALSE ) ) {
 	if( $structures = $gContent->getStructures() ) {
 		// We take the first structure by default, perhaps there is a better choice
 		$structureId = $structures[0]['structure_id'];
