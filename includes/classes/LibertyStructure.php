@@ -577,7 +577,7 @@ class LibertyStructure extends LibertyBase {
 		if( !$this->verifyIdParameter( $pParamHash, 'content_id' ) ) {
 			$this->mErrors['content'] = 'Could not store structure. Invalid content id. '.$pParamHash['content_id'];
 		} else {
-			if( $this->verifyIdParameter( $pParamHash, 'parent_id' ) ) {
+			if( !$this->verifyIdParameter( $pParamHash, 'parent_id' ) ) {
 				$pParamHash['parent_id'] = 0;
 			}
 			if( empty( $pParamHash['alias'] ) ) {
@@ -616,6 +616,7 @@ class LibertyStructure extends LibertyBase {
 		$now = $gBitSystem->getUTCTime();
 //		$created = $this->create_page($name, 0, '', $now, tra('created from structure'), 'system', '0.0.0.0', '');
 		// if were not trying to add a duplicate structure head
+
 		if ( $this->verifyNode( $pParamHash ) ) {
 			$this->StartTrans();
 

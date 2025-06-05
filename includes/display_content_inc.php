@@ -8,10 +8,9 @@
  * @subpackage functions
  */
 
-	global $gBitSmarty, $gBitSystem, $gContent;
+global $gBitSmarty, $gBitSystem, $gContent;
 
-	$gBitSmarty->assignByRef( 'pageInfo', $gContent->mInfo );
+$gBitSmarty->assignByRef( 'pageInfo', $gContent->mInfo );
 
-	$gBitSystem->display( 'bitpackage:liberty/display_content.tpl' , NULL, array( 'display_mode' => 'display' ));
+$gBitSystem->display( 'bitpackage:liberty/display_content.tpl' , NULL, array( 'display_mode' => 'display' ));
 
-?>
