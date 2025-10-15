@@ -87,7 +87,7 @@
 			<ul>
 				{foreach from=$gBitSystem->mAppMenu item=menu}
 					{if $menu.admin_comments_url}
-						<li><a href="{$menu.admin_comments_url}">{$menu.menu_title}</a></li>
+						<li><a rel="ugc" href="{$menu.admin_comments_url}">{$menu.menu_title}</a></li>
 					{/if}
 				{/foreach}
 			</ul>
