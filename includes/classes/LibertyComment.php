@@ -22,6 +22,7 @@ define( 'BITCOMMENT_CONTENT_TYPE_GUID', 'bitcomment' );
 
 class LibertyComment extends LibertyMime {
 	public $mCommentId;
+	public $mRootObj;
 
 	function __construct($pCommentId = NULL, $pContentId = NULL, $pInfo = array()) {
 		parent::__construct();

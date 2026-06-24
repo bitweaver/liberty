@@ -36,7 +36,7 @@ function parse_data_plugins( &$pData, &$pReplace, $pCommonObject, $pParseHash ) 
 			$pos = strpos( $pData, $plugin_start );
 			$dataTag = strtolower( $plugin );
 			// hush up the return of this in case someone uses curly braces to enclose text
-			$pluginInfo = $gLibertySystem->getPluginInfo( @$gLibertySystem->mDataTags[$dataTag] ) ;
+			$pluginInfo = $gLibertySystem->getPluginInfo( $gLibertySystem->mDataTags[$dataTag] ?? null ) ;
 
 			// only process a standalone unpaired tag or the start tag for a paired tag
 			if( empty( $paired_close_tag_seen[$dataTag] ) || $paired_close_tag_seen[$dataTag] == 0 ) {
@@ -707,9 +707,9 @@ function liberty_generate_thumbnails( $pFileHash ) {
 			}
 		}
 
-		if( ( !preg_match( '#image/(gif|jpe?g|png)#i', $pFileHash['type'] ) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' )) || in_array( 'original', $pFileHash['thumbnail_sizes'] ) ) {
+		if( ( !preg_match( '#image/(gif|jpe?g|png)#i', $pFileHash['type'] ?? '' ) && $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' )) || in_array( 'original', $pFileHash['thumbnail_sizes'] ) ) {
 			// jpeg version of original
-			if( preg_match( '/pdf/i', $pFileHash['type'] ) ) {
+			if( preg_match( '/pdf/i', $pFileHash['type'] ?? '' ) ) {
 				// has a customer pdf rasterization function been defined?
 				if( function_exists( 'liberty_rasterize_pdf' ) && $rasteredFile = liberty_rasterize_pdf( $pFileHash['source_file'] ) ) {
 					$pFileHash['source_file'] = $rasteredFile;

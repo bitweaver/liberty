@@ -147,6 +147,8 @@ class BitLinks extends BitBase {
 	 */
 	var $mLinks = NULL;
 
+	var $mWikiWordRegex = NULL;
+
 	/**
 	 * Initiate class
 	 *

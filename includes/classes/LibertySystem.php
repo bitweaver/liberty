@@ -89,16 +89,19 @@ class LibertySystem extends BitSingleton {
 	// Packages using LibertySystem
 	// this makes it possible to extend LibertySystem by another package
 	public $mSystem = LIBERTY_PKG_NAME;
-	public $mPluginPath;
 
+	// Location of liberty plugins
+	public $mPluginPath = LIBERTY_PKG_PATH.'plugins/';
+
+	public $mPluginFilePath = '';
+
+	public $mServices = array();
 
 	/**
 	 * Initiate Class
 	 **/
 	function __construct( $pExtras = TRUE ) {
 		parent::__construct();
-
-		$this->mPluginPath = LIBERTY_PKG_PATH.'plugins/';
 
 		$this->loadContentTypes();
 	}

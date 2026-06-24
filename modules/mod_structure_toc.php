@@ -18,7 +18,7 @@ $struct = NULL;
 
 if( is_object( $gStructure ) && $gStructure->isValid() && $gStructure->hasViewPermission() ) {
 	$struct = &$gStructure;
-} elseif( @BitBase::verifyId( $module_params['structure_id'] ) ) {
+} elseif( isset( $module_params ) && BitBase::verifyId( $module_params['structure_id'] ?? null ) ) {
 	$struct = new LibertyStructure( $module_params['structure_id'] );
 } elseif( is_object( $gContent ) && is_a( $gContent, 'LibertyBase' ) && $gContent->hasViewPermission( FALSE ) ) {
 	if( $structures = $gContent->getStructures() ) {
