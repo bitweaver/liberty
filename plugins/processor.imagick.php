@@ -89,9 +89,9 @@ function liberty_imagick_resize_image( &$pFileHash ) {
 					$temp = $pFileHash['max_width'];
 					$pFileHash['max_height'] = $pFileHash['max_width'];
 					$pFileHash['max_width'] = round(( $iwidth / $iheight ) * $pFileHash['max_height'] );
-				} elseif( !empty( $pFileHash['max_width'] ) ) {
+				} elseif( $iwidth && !empty( $pFileHash['max_width'] ) ) {
 					$pFileHash['max_height'] = round(( $iheight / $iwidth ) * $pFileHash['max_width'] );
-				} elseif( !empty( $pFileHash['max_height'] ) ) {
+				} elseif( $iheight && !empty( $pFileHash['max_height'] ) ) {
 					$pFileHash['max_width'] = round(( $iwidth / $iheight ) * $pFileHash['max_height'] );
 				}
 
