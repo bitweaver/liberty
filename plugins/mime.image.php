@@ -277,7 +277,14 @@ function mime_image_convert_exifgps( $pParams ) {
 	if( !empty( $pParams ) && is_array( $pParams ) && count( $pParams ) == 3 ) {
 		list( $lng['deg'], $lng['min'], $lng['sec'] ) = array_values( $pParams );
 		foreach( $lng as $key => $fraction ) {
-			list( $dividend, $divisor ) = explode( "/", $fraction );
+			// EXIF rationals are "N/D". Some phones (e.g. Pixel with GPS
+			// placeholders) write "0/0" — guard against DivisionByZeroError.
+			$parts = explode( '/', (string) $fraction, 2 );
+			$dividend = (float) $parts[0];
+			$divisor = isset( $parts[1] ) ? (float) $parts[1] : 1.0;
+			if( $divisor == 0.0 ) {
+				continue;
+			}
 			$num = $dividend / $divisor;
 			if( $key == 'min' ) {
 				$num = $num / 60;
