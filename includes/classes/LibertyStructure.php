@@ -239,7 +239,7 @@ class LibertyStructure extends LibertyBase {
 		// make sure we have the correct id to get the entire structure
 		LibertyStructure::getRootStructureId( $pParamHash );
 
-		$ret = FALSE;
+		$ret = array();
 
 		if( BitBase::verifyIdParameter( $pParamHash, 'root_structure_id' ) ) {
 			// Get all nodes for this structure
