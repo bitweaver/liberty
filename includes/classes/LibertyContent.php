@@ -2291,6 +2291,9 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 
 	public static function getThumbnailUriFromHash( &$pMixed, $pSize='small' ) {
 		$ret = static::getThumbnailUrlFromHash( $pMixed, $pSize );
+		if( !is_string( $ret ) || $ret === '' ) {
+			return '';
+		}
 		// Check to make sure we don't have an absolute URI already, which could be the case for custom classes
 		if( strpos( $ret, 'http' ) !== 0 ) {
 			$ret = STORAGE_HOST_URI.substr( $ret, strlen( BIT_ROOT_URL ) );
