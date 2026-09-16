@@ -52,6 +52,34 @@ Callbacks commonly receive the content object and a parameter hash by
 reference. They can add errors, data, SQL fragments, or presentation state.
 Changing a shared parameter key is an API change across packages.
 
+### Services are not a command bus
+
+A service GUID is a **lifecycle and presentation slot**, not a general RPC
+surface. `invokeServices()` runs during load, store, update, expunge, list SQL,
+and display/edit template collection. It is the wrong place to put an
+on-demand operation such as “transform this file now”, a paid remote API call,
+or a long-running job.
+
+Put those operations in the **provider package**: a PHP class plus a
+controller (or CLI) that the caller invokes directly. Other packages should
+call that class, or gate UI with `isPackageActive()` / `hasService()`. Do not
+invent a service callback whose only job is to run a command.
+
+Processor plugins (`liberty_get_function('resize')` and similar) are **local**
+image and media operations through GD, ImageMagick, or MagickWand. They take a
+file hash and return a path. They are not a home for network APIs.
+
+Optional packages that must not be hard dependencies of a public content type
+(for example an install-only feature on `fisheyeimage`) can still register
+`content_icon_tpl` or `content_edit_mini_tpl`. The content package already
+invokes those template slots; the **handler URL** stays in the provider
+package. Test with the provider **absent**. Do not mark an install-only
+service required on a public content type.
+
+Choose an existing GUID only when the semantic slot matches. A new GUID is
+justified for a new lifecycle concern (access control, upload, translation),
+not for one command.
+
 ### SQL service hooks
 
 `getLibertySql()`, `getServicesSql2()`, and `convertQueryHash()` compose service
@@ -133,6 +161,7 @@ and `validateStoragePath()`.
 ## Adding a service
 
 1. Choose an existing service GUID only when the semantic slot matches.
+   See [Services are not a command bus](#services-are-not-a-command-bus).
 2. Register from the provider package bootstrap.
 3. Supply only implemented callbacks/templates.
 4. Define required/optional behavior.

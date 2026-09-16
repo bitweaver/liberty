@@ -36,3 +36,6 @@ Does not define application-specific content types; packages register handlers a
 - [Permissions](permissions.md) — global, object, service, and status checks.
 - [Services and plugins](services-and-plugins.md) — extension contracts for
   packages, parsers, filters, MIME handlers, processors, and storage.
+  Services attach to content lifecycle and edit/display chrome; they are not
+  a command bus. On-demand work belongs in the provider package. Processor
+  plugins are local image/media ops, not remote APIs.
