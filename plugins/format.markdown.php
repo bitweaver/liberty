@@ -19,7 +19,7 @@ $pluginParams = array (
 	'load_function'   => 'markdown_parse_data',
 	'verify_function' => 'markdown_verify_data',
 	'auto_activate'   => FALSE,
-	'description'     => 'This parser allows you to use plain text, which is then converted to HTML. For the full syntax, please view <a href ="http://daringfireball.net/projects/markdown/syntax">Markdown Syntax</a>',
+	'description'     => 'This parser converts Markdown to HTML (Parsedown). For the full syntax, please view <a href ="http://daringfireball.net/projects/markdown/syntax">Markdown Syntax</a>',
 	'edit_label'      => 'Markdown',
 	'edit_field'      => PLUGIN_GUID_MARKDOWN,
 	'plugin_type'     => FORMAT_PLUGIN,
@@ -32,6 +32,7 @@ function markdown_verify_data( &$pParamHash ) {
 }
 
 function markdown_parse_data( &$pParseHash, &$pCommonObject ) {
-	require_once( UTIL_PKG_INCLUDE_PATH.'markdown.php' );
-	return Markdown( $pParseHash['data'] );
+	require_once( UTIL_PKG_INCLUDE_PATH.'parsedown/Parsedown.php' );
+	$parser = new Parsedown();
+	return $parser->text( $pParseHash['data'] );
 }

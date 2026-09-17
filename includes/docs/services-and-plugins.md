@@ -106,8 +106,8 @@ necessarily active.
 ### Format
 
 Format plugins define how a content body's source representation is verified,
-stored, and parsed. Current files include BBCode, BitHTML, Markdown, PEAR Wiki,
-simple text, and TikiWiki handlers.
+stored, and parsed. Current files include BBCode, BitHTML, Markdown (Parsedown
+in Util `includes/parsedown/`), PEAR Wiki, simple text, and TikiWiki handlers.
 
 Standard callback concepts are:
 
