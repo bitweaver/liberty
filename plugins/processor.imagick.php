@@ -146,7 +146,6 @@ function liberty_imagick_rotate_image( &$pFileHash ) {
 				$im->writeImage( $pFileHash['source_file'] );
 			}
 		} catch( ImagickException $e ) {
-			bit_error_log( $e->getMessage().' '.$pFileHash['source_file'] );
 			$pFileHash['error'] = $e->getMessage();
 		}
 	} else {
