@@ -1805,6 +1805,13 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		$ret = FALSE;
 		if( LibertyContent::isValid() ) {
 			$this->StartTrans();
+			// Hold the content row until this transaction ends. The first
+			// write of a pref deletes nothing, so it takes no key lock, and
+			// a second writer can insert the same (content_id, pref_name).
+			$lock = $this->mDb->query( "SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=? FOR UPDATE", array( $this->mContentId ) );
+			if( is_object( $lock ) ) {
+				$lock->Close();
+			}
 			$query    = "DELETE FROM `".BIT_DB_PREFIX."liberty_content_prefs` WHERE `content_id`=? AND `pref_name`=?";
 			$bindvars = array( $this->mContentId, $pPrefName );
 			$result   = $this->mDb->query($query, $bindvars);

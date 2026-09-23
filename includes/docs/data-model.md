@@ -54,6 +54,10 @@ Alternate titles keyed by `content_id` and `alias_title`.
 ### `liberty_content_prefs`
 
 Per-content preferences keyed by `(content_id, pref_name)`.
+`LibertyContent::storePreference()` locks the parent `liberty_content` row
+for the transaction, then deletes and inserts. The first write of a name
+matches no preference row, so the content-row lock is what keeps two
+writers from inserting the same pair.
 
 ### `liberty_content_hits`
 
