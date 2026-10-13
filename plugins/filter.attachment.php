@@ -27,58 +27,10 @@ $pluginParams = array (
 	//'plugin_settings_url'      => LIBERTY_PKG_URL.'admin/filter_attachment.php',
 
 	// various filter functions and when they are called
-	'requirement_function'     => 'attachment_filter_reqirements',
 	'prestore_function'        => 'attachment_filter',
 	'expunge_function'         => 'attachment_filter_expunge',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_FILTERATTACHMENT, $pluginParams );
-
-/**
- * To use this plugin you need to create a table in your database such as:
- *
- * CREATE TABLE liberty_attachment_usage (
- *     content_id INT NOT NULL,
- *     attachment_id INT NOT NULL
- * );
- * ALTER TABLE liberty_attachment_usage ADD CONSTRAINT liberty_att_usage_content_ref FOREIGN KEY (content_id) REFERENCES liberty_content(content_id);
- * ALTER TABLE liberty_attachment_usage ADD CONSTRAINT liberty_att_usage_att_ref FOREIGN KEY (attachment_id) REFERENCES liberty_attachments(attachment_id);
- */
-
-/**
- * attachment_filter_reqirements 
- * 
- * @param boolean $pInstall 
- * @access private
- * @return information hash
- */
-function attachment_filter_reqirements( $pInstall = FALSE ) {
-	global $gLibertySystem;
-	$ret = array();
-	if( $pInstall ) {
-		$ret['schema'] = array(
-			'tables' => array(
-				'liberty_attachment_usage' => "
-					content_id I4 NOTNULL,
-					attachment_id I4 NOTNULL
-					CONSTRAINT '
-						, CONSTRAINT `lib_att_usage_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
-						, CONSTRAINT `lib_att_usage_attachment_ref` FOREIGN KEY (`attachment_id`) REFERENCES `".BIT_DB_PREFIX."liberty_attachments`( `attachment_id` )
-					'
-				"
-			),
-			'indexes' => array(
-				'lib_att_usage_content_idx' => array( 'table' => 'liberty_attachment_usage', 'cols' => 'content_id', 'opts' => NULL ),
-				'lib_att_usage_attachment_idx' => array( 'table' => 'liberty_attachment_usage', 'cols' => 'attachment_id', 'opts' => NULL ),
-			),
-//			'sequences' => array(
-//				'liberty_attachment_usage_id_seq' => array( 'start' => 1 ),
-//			),
-		);
-	}
-
-//	$ret['output']['important'][] = "This plugin will install a new table in your database as soon as you enable it.<br />If you don't want to use this plugin anymore, we recommend that you remove the 'liberty_attachment_usage' table from your database after you have disabled the plugin. You need to do this manually.";
-	return $ret;
-}
 
 /**
  * attachment_filter will find out what attachments are used where.
