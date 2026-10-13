@@ -1841,6 +1841,135 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 	}
 
 	/**
+	 * Registered package key, or FALSE. The first options_json object key.
+	 */
+	public static function normalizePackageOptionKey( $pPackage ) {
+		global $gBitSystem;
+		$package = strtolower( trim( str_replace( ' ', '_', (string)$pPackage ) ) );
+		if( $package === '' || !preg_match( '/^[a-z][a-z0-9_]*$/', $package ) ) {
+			return FALSE;
+		}
+		if( empty( $gBitSystem->mPackages[$package] ) ) {
+			return FALSE;
+		}
+		return $package;
+	}
+
+	/**
+	 * Branch or leaf segment. A leaf may be digits. A branch may not.
+	 */
+	protected static function normalizePackageOptionSegment( $pSegment, $pAllowDigits = FALSE ) {
+		$segment = (string)$pSegment;
+		$pattern = $pAllowDigits ? '/^[a-z0-9][a-z0-9_]*$/' : '/^[a-z][a-z0-9_]*$/';
+		if( !preg_match( $pattern, $segment ) ) {
+			return FALSE;
+		}
+		return $segment;
+	}
+
+	/**
+	 * One leaf of options_json: {package, branch, name}. Null deletes that leaf.
+	 * Locks the content row, then jsonb_set, so other packages' branches stay.
+	 */
+	function storePackageOption( $pPackage, $pBranch, $pName, $pValue ) {
+		if( $pValue === NULL ) {
+			return $this->expungePackageOption( $pPackage, $pBranch, $pName );
+		}
+		$package = LibertyContent::normalizePackageOptionKey( $pPackage );
+		$branch = LibertyContent::normalizePackageOptionSegment( $pBranch, FALSE );
+		$name = LibertyContent::normalizePackageOptionSegment( $pName, TRUE );
+		if( $package === FALSE || $branch === FALSE || $name === FALSE || !$this->isValid() ) {
+			return FALSE;
+		}
+		$encoded = json_encode( $pValue );
+		if( $encoded === FALSE ) {
+			return FALSE;
+		}
+		$this->StartTrans();
+		$locked = $this->mDb->getOne( "SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=? FOR UPDATE", array( $this->mContentId ) );
+		if( !BitBase::verifyId( $locked ) ) {
+			$this->CompleteTrans();
+			return FALSE;
+		}
+		// jsonb_set does not create missing parent objects. Build the package
+		// and branch from the current document, then set the leaf.
+		$this->mDb->query(
+			"UPDATE `".BIT_DB_PREFIX."liberty_content` SET `options_json` = jsonb_set(COALESCE(`options_json`, '{}'::jsonb), ARRAY[?], jsonb_set(COALESCE(`options_json` -> ?, '{}'::jsonb), ARRAY[?], jsonb_set(COALESCE(`options_json` -> ? -> ?, '{}'::jsonb), ARRAY[?], ?::jsonb, true), true), true) WHERE `content_id`=?",
+			array( $package, $package, $branch, $package, $branch, $name, $encoded, $this->mContentId )
+		);
+		$this->CompleteTrans();
+		$this->clearFromCache();
+		return TRUE;
+	}
+
+	/**
+	 * The branch object, or an empty array when it is absent.
+	 */
+	function getPackageOptions( $pPackage, $pBranch ) {
+		$package = LibertyContent::normalizePackageOptionKey( $pPackage );
+		$branch = LibertyContent::normalizePackageOptionSegment( $pBranch, FALSE );
+		if( $package === FALSE || $branch === FALSE || !$this->isValid() ) {
+			return array();
+		}
+		$raw = $this->mDb->getOne(
+			"SELECT `options_json` #> ARRAY[?, ?]::text[] FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=?",
+			array( $package, $branch, $this->mContentId )
+		);
+		if( $raw === NULL || $raw === '' || $raw === 'null' ) {
+			return array();
+		}
+		$decoded = is_array( $raw ) ? $raw : json_decode( $raw, TRUE );
+		return is_array( $decoded ) ? $decoded : array();
+	}
+
+	/**
+	 * Delete one leaf, or the whole branch when $pName is null.
+	 */
+	function expungePackageOption( $pPackage, $pBranch, $pName = NULL ) {
+		$package = LibertyContent::normalizePackageOptionKey( $pPackage );
+		$branch = LibertyContent::normalizePackageOptionSegment( $pBranch, FALSE );
+		if( $package === FALSE || $branch === FALSE || !$this->isValid() ) {
+			return FALSE;
+		}
+		$path = array( $package, $branch );
+		if( $pName !== NULL ) {
+			$name = LibertyContent::normalizePackageOptionSegment( $pName, TRUE );
+			if( $name === FALSE ) {
+				return FALSE;
+			}
+			$path[] = $name;
+		}
+		$this->StartTrans();
+		$locked = $this->mDb->getOne( "SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=? FOR UPDATE", array( $this->mContentId ) );
+		if( !BitBase::verifyId( $locked ) ) {
+			$this->CompleteTrans();
+			return FALSE;
+		}
+		if( count( $path ) === 3 ) {
+			$this->mDb->query(
+				"UPDATE `".BIT_DB_PREFIX."liberty_content` SET `options_json` = `options_json` #- ARRAY[?, ?, ?]::text[] WHERE `content_id`=? AND `options_json` IS NOT NULL",
+				array( $path[0], $path[1], $path[2], $this->mContentId )
+			);
+		} else {
+			$this->mDb->query(
+				"UPDATE `".BIT_DB_PREFIX."liberty_content` SET `options_json` = `options_json` #- ARRAY[?, ?]::text[] WHERE `content_id`=? AND `options_json` IS NOT NULL",
+				array( $path[0], $path[1], $this->mContentId )
+			);
+		}
+		$this->mDb->query(
+			"UPDATE `".BIT_DB_PREFIX."liberty_content` SET `options_json` = `options_json` #- ARRAY[?, ?]::text[] WHERE `content_id`=? AND `options_json` #> ARRAY[?, ?]::text[] = '{}'::jsonb",
+			array( $package, $branch, $this->mContentId, $package, $branch )
+		);
+		$this->mDb->query(
+			"UPDATE `".BIT_DB_PREFIX."liberty_content` SET `options_json` = `options_json` #- ARRAY[?]::text[] WHERE `content_id`=? AND `options_json` -> ? = '{}'::jsonb",
+			array( $package, $this->mContentId, $package )
+		);
+		$this->CompleteTrans();
+		$this->clearFromCache();
+		return TRUE;
+	}
+
+	/**
 	 * Register the content type for reference
 	 *
 	 * @param string Content Type GUID

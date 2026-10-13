@@ -34,7 +34,7 @@ Key fields:
 - `format_guid` — parser/format plugin.
 - `content_status_id`.
 - `version`, `lang_code`, `title`, and `ip`.
-- `options_json` — extensible options.
+- `options_json` — one jsonb document of package options. The first key is the registered package name (`$gBitSystem->mPackages`, such as `bitcommerce` or `products`). The second key is that package's branch. Leaves belong to the package. Writers use `LibertyContent::storePackageOption()`. That method locks the content row and sets one leaf. `jsonb_set` does not create missing parent objects, so the update builds the package object and the branch object from the current document before setting the leaf. Another package's branch stays. `getPackageOptions()` reads one branch. `expungePackageOption()` deletes one leaf, or the branch when the leaf name is omitted. An unknown package name is rejected. A normal content save does not write this column.
 - `data` — current content body.
 
 Domain package tables normally reference `content_id` and add only their
