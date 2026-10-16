@@ -24,6 +24,11 @@ $gBitSmarty->assign( 'attachment', $attachment );
 // first we need to check the permissions of the content the attachment belongs to since they inherit them
 if( $gContent = LibertyBase::getLibertyObject( $attachment['content_id'] ) ) {
 	$gContent->verifyViewPermission();
+	// Original images stay with the owner unless the site has chosen to display originals to viewers.
+	$mimeType = isset( $attachment['mime_type'] ) ? $attachment['mime_type'] : '';
+	if( strncmp( $mimeType, 'image/', 6 ) === 0 && !$gBitSystem->isFeatureActive( 'liberty_original_image' ) && !$gContent->isOwner( $attachment ) && !$gBitUser->isAdmin() && !$gBitUser->hasPermission( $gContent->mAdminContentPerm ) ) {
+		$gBitSystem->fatalPermission( $gContent->mViewContentPerm, tra( 'You cannot download the original file.' ) );
+	}
 	$gBitSmarty->assign( 'gContent', $gContent );
 
 	if( $download_function = $gLibertySystem->getPluginFunction( $attachment['attachment_plugin_guid'], 'download_function', 'mime' )) {

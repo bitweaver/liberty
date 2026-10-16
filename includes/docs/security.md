@@ -40,6 +40,7 @@ it proves that the server executed a directly requested implementation file.
 - Secrets and credentials must remain in protected configuration, never in
   templates, responses, logs, or these documents.
 - File operations must use validated storage helpers and must prevent traversal.
+- `download_file.php` inherits the parent object's view permission. An image original is sent only to the owner, an administrator, or any viewer when `liberty_original_image` is on. Other viewers keep thumbnails. `mime_default_download` reads `last_modified` when the load set it, and otherwise uses the source file's mtime. The bitfile storage load sets that key when the file is present.
 
 ## Package boundary
 

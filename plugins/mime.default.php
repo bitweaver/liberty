@@ -335,7 +335,19 @@ if( !function_exists( 'mime_default_download' )) {
 			header( "Expires: 0" );
 			header( "Accept-Ranges: bytes" );
 			header( "Pragma: public" );
-			header( "Last-Modified: ".gmdate( "D, d M Y H:i:s T", $pFileHash['last_modified'] ), TRUE, 200 );
+			// Storage loads such as bitfile set source_file without a mtime.
+			$lastModified = NULL;
+			if( isset( $pFileHash['last_modified'] ) && is_numeric( $pFileHash['last_modified'] ) ) {
+				$lastModified = (int)$pFileHash['last_modified'];
+			} else {
+				$mtime = filemtime( $pFileHash['source_file'] );
+				if( $mtime ) {
+					$lastModified = (int)$mtime;
+				}
+			}
+			if( $lastModified ) {
+				header( "Last-Modified: ".gmdate( "D, d M Y H:i:s T", $lastModified ), TRUE, 200 );
+			}
 			header( "Content-Disposition: attachment; filename*=UTF-8''".rawurlencode( $pFileHash['file_name'] ) );
 			header( "Content-type: ".$pFileHash['mime_type'] );
 			header( "Content-Description: File Transfer" );
