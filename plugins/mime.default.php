@@ -92,7 +92,7 @@ if( !function_exists( 'mime_default_verify' )) {
 			if( @BitBase::verifyId( $pStoreRow['upload']['attachment_id'] )) {
 				// if a new file has been uploaded, we need to get some information from the database for the file update
 				$fileInfo = $gBitSystem->mDb->getRow( "
-					SELECT la.`attachment_id`, lf.`file_id`, lf.`file_name`
+					SELECT la.`attachment_id`, lf.`file_id`, lf.`file_name`, lf.`mime_type`
 					FROM `".BIT_DB_PREFIX."liberty_attachments` la
 					INNER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON ( lf.`file_id` = la.`foreign_id` )
 					WHERE la.`attachment_id` = ?", array( $pStoreRow['upload']['attachment_id'] ));
