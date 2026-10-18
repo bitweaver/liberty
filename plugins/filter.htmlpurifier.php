@@ -242,7 +242,7 @@ function htmlpure_getDefaultConfig( &$htmlp_version, $pObject=NULL ){
 				class HTMLPurifier_AttrTransform_ForceValue extends HTMLPurifier_AttrTransform
 				{
 					var $name, $value;
-					function HTMLPurifier_AttrTransform_ForceValue($name, $value) {
+					function __construct($name, $value) {
 						$this->name  = $name;
 						$this->value = $value;
 					}
