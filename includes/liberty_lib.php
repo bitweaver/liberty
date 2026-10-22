@@ -442,6 +442,20 @@ function liberty_process_upload( &$pFileHash, $pMoveFile = TRUE ) {
 		//$pFile['type'] = $gBitSystem->verifyMimeType( $pFile['tmp_name'] );
 	}
 
+	// The sniff above can put a script suffix back on after the .txt rename.
+	$scriptMimes = array(
+		'text/x-php',
+		'application/x-httpd-php',
+		'application/x-php',
+		'application/x-phar',
+		'application/x-httpd-php-source',
+	);
+	if( preg_match( EVIL_EXTENSION_PATTERN, $pFileHash['name'] ) || in_array( strtolower( (string)$pFileHash['type'] ), $scriptMimes, TRUE ) ) {
+		$dot = strrpos( $pFileHash['name'], '.' );
+		$pFileHash['name'] = ( $dot === FALSE ? $pFileHash['name'] : substr( $pFileHash['name'], 0, $dot ) ).'.bin';
+		$pFileHash['type'] = 'application/octet-stream';
+	}
+
 	$ext = strrpos( $pFileHash['name'], '.' );
 
 	// clean out crap that can make life difficult in server maintenance

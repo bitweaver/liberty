@@ -1151,16 +1151,39 @@ if( !function_exists( 'liberty_mime_get_storage_path' )) {
 	}
 }
 
+if( !function_exists( 'liberty_mime_storage_part' )) {
+	function liberty_mime_storage_part( $pPart ) {
+		if( is_int( $pPart ) ) {
+			$pPart = (string)$pPart;
+		}
+		if( !is_string( $pPart ) || $pPart === '' || $pPart === '.' || $pPart === '..' ) {
+			return '';
+		}
+		if( strpbrk( $pPart, "/\\\0" ) !== FALSE ) {
+			return '';
+		}
+		return $pPart;
+	}
+}
+
 if( !function_exists( 'liberty_mime_get_storage_branch' )) {
 	function liberty_mime_get_storage_branch( $pParamHash ) {
 		global $gBitSystem;
 		$pathParts = array();
 
 		if( $pUserId = BitBase::getParameter( $pParamHash, 'user_id' ) ) {
+			if( !BitBase::verifyId( $pUserId ) ) {
+				return '';
+			}
+			$pUserId = (int)$pUserId;
 			$pathParts[] = 'users';
 			$pathParts[] = (int)($pUserId % 1000);
 			$pathParts[] = $pUserId;
 		} elseif( $pAttachmentId = BitBase::getParameter( $pParamHash, 'attachment_id' ) ) {
+			if( !BitBase::verifyId( $pAttachmentId ) ) {
+				return '';
+			}
+			$pAttachmentId = (int)$pAttachmentId;
 			$pathParts[] = 'attachments';
 			$pathParts[] = (int)($pAttachmentId % 1000);
 			$pathParts[] = $pAttachmentId;
@@ -1169,12 +1192,18 @@ if( !function_exists( 'liberty_mime_get_storage_branch' )) {
 		}
 
 		if( $pPackage = BitBase::getParameter( $pParamHash, 'package' ) ) {
+			if( liberty_mime_storage_part( $pPackage ) === '' ) {
+				return '';
+			}
 			$pathParts[] = $pPackage;
 		}
 		// In case $pSubDir is multiple levels deep we'll need to mkdir each directory if they don't exist
 		if( $pSubDir = BitBase::getParameter( $pParamHash, 'sub_dir' ) ){
 			$pSubDirParts = preg_split('#/#',$pSubDir);
 			foreach ($pSubDirParts as $subDir) {
+				if( liberty_mime_storage_part( $subDir ) === '' ) {
+					return '';
+				}
 				$pathParts[] = $subDir;
 			}
 		} else {
