@@ -430,6 +430,10 @@ function liberty_content_edit( $pObject ) {
 function liberty_process_upload( &$pFileHash, $pMoveFile = TRUE ) {
 	global $gBitSystem;
 
+	if( empty( $pFileHash['dest_branch'] ) ) {
+		return FALSE;
+	}
+
 	// Check for evil file extensions that could be execed on the server
 	if( preg_match( EVIL_EXTENSION_PATTERN, $pFileHash['name'] )) {
 		$pFileHash['type'] = 'text/plain';
@@ -586,6 +590,9 @@ function liberty_process_archive( &$pFileHash ) {
 function liberty_process_generic( &$pFileHash, $pMoveFile = TRUE ) {
 	global $gBitSystem;
 	$ret = NULL;
+	if( empty( $pFileHash['dest_file'] ) && empty( $pFileHash['dest_branch'] ) ) {
+		return $ret;
+	}
 	if( !empty( $pFileHash['dest_file'] ) ) {
 		$destFile = $pFileHash['dest_file'];
 	} else {

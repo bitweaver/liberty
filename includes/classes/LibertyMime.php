@@ -1176,6 +1176,9 @@ if( !function_exists( 'liberty_mime_get_storage_branch' )) {
 				return '';
 			}
 			$pUserId = (int)$pUserId;
+			if( defined( 'ANONYMOUS_USER_ID' ) && $pUserId <= ANONYMOUS_USER_ID ) {
+				return '';
+			}
 			$pathParts[] = 'users';
 			$pathParts[] = (int)($pUserId % 1000);
 			$pathParts[] = $pUserId;

@@ -242,7 +242,7 @@ if( !function_exists( 'mime_default_load' )) {
 		if( @BitBase::verifyId( $pFileHash['attachment_id'] )) {
 			$query = "
 				SELECT la.`attachment_id`, la.`content_id`, la.`attachment_plugin_guid`, la.`foreign_id`, la.`user_id`, la.`is_primary`, la.`pos`, la.`error_code`, la.`caption`, la.`hits` AS `downloads`,
-					lf.`file_id`, lf.`user_id`, lf.`file_name`, lf.`file_size`, lf.`mime_type`
+					lf.`file_id`, lf.`user_id` AS `file_user_id`, lf.`file_name`, lf.`file_size`, lf.`mime_type`
 				FROM `".BIT_DB_PREFIX."liberty_attachments` la
 				LEFT OUTER JOIN `".BIT_DB_PREFIX."liberty_files` lf ON( la.`foreign_id` = lf.`file_id` )
 				WHERE la.`attachment_id`=?";
@@ -252,10 +252,25 @@ if( !function_exists( 'mime_default_load' )) {
 				// compatibility with _FILES hash
 				$row['name'] = $storageName;
 				$defaultFileName = liberty_mime_get_default_file_name( $row['file_name'], $row['mime_type'] );
-				$storageBranchPath = liberty_mime_get_storage_branch( array( 'sub_dir' => $row['attachment_id'], 'user_id' =>$row['user_id'], 'package' => liberty_mime_get_storage_sub_dir_name( $row ) ) );
-				$storageBranch = $storageBranchPath.$defaultFileName;
-				if( !file_exists( STORAGE_PKG_PATH.$storageBranch ) ) {
-					$storageBranch = liberty_mime_get_storage_branch( array( 'sub_dir' => $row['attachment_id'], 'user_id' =>$row['user_id'], 'package' => liberty_mime_get_storage_sub_dir_name( $row ) ) ).$storageName;
+				$branchHash = array(
+					'sub_dir' => $row['attachment_id'],
+					'user_id' => $row['user_id'],
+					'package' => liberty_mime_get_storage_sub_dir_name( $row ),
+					'create_dir' => FALSE,
+				);
+				$storageBranchPath = liberty_mime_get_storage_branch( $branchHash );
+				$storageBranch = '';
+				if( $storageBranchPath !== '' ) {
+					$storageBranch = $storageBranchPath.$defaultFileName;
+					if( !file_exists( STORAGE_PKG_PATH.$storageBranch ) ) {
+						$storageBranch = $storageBranchPath.$storageName;
+					}
+				}
+				if( ( $storageBranch === '' || !file_exists( STORAGE_PKG_PATH.$storageBranch ) ) && strpos( $row['file_name'], '/' ) !== FALSE ) {
+					$legacyBranch = ltrim( $row['file_name'], '/' );
+					if( file_exists( STORAGE_PKG_PATH.$legacyBranch ) ) {
+						$storageBranch = $legacyBranch;
+					}
 				}
 
 				// this will fetch the correct thumbnails
