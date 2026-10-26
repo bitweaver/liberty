@@ -54,13 +54,14 @@ The common load path is:
 6. Preferences, permissions, attachments, or parsed data are loaded lazily
    when requested.
 
-`mime_default_load` keeps `liberty_attachments.user_id` as `user_id` (the
-file row is `file_user_id`) and passes `create_dir => FALSE` when resolving
-the storage branch. A load must not mkdir. `liberty_mime_get_storage_branch`
-returns no path for the guest (`user_id <= ANONYMOUS_USER_ID`), so nothing
-creates `users/-1/-1/`. Legacy `liberty_files.file_name` values that already
-include `users/<bucket>/<user_id>/…` are used only when the constructed path
-is missing.
+`mime_default_verify` refuses `user_id <= ANONYMOUS_USER_ID` (the guest).
+Root (`ROOT_USER_ID` = 1) may still store. `mime_default_load` keeps
+`liberty_attachments.user_id` as `user_id` (the file row is `file_user_id`)
+and passes `create_dir => FALSE` when resolving the storage branch. A load
+must not mkdir. `liberty_mime_get_storage_branch` returns no path for the
+guest, so nothing creates `users/-1/-1/`. Legacy `liberty_files.file_name`
+values that already include `users/<bucket>/<user_id>/…` are used only when
+the constructed path is missing.
 
 `LibertyBase::getLibertyObject()` may return cached objects. Code that mutates
 an object must account for cache invalidation and must not assume a fresh

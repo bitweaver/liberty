@@ -86,6 +86,10 @@ if( !function_exists( 'mime_default_verify' )) {
 				bit_error_log( 'The user_id for the upload was not set. Defaulted to user_id = '.$pStoreRow['user_id'].' where 1 = ROOT_USER_ID, -1 = ANONYMOUS_USER_ID, other values = big problem.' );
 			}
 		}
+		if( defined( 'ANONYMOUS_USER_ID' ) && (int)$pStoreRow['user_id'] <= ANONYMOUS_USER_ID ) {
+			$pStoreRow['errors']['upload'] = tra( 'Anonymous users may not store files.' );
+			return FALSE;
+		}
 
 		if( !empty( $pStoreRow['upload']['tmp_name'] ) && is_file( $pStoreRow['upload']['tmp_name'] )) {
 			// attachment_id is only set when we are updating the file
