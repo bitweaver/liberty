@@ -255,6 +255,7 @@ if( $gContent->hasUserPermission( 'p_liberty_read_comments' )) {
 	if( !empty( $_REQUEST['comment_page'] ) || !empty( $_REQUEST['post_comment_request'] ) ) {
 		$comments_at_top_of_page = 'y';
 	}
+	$maxComments = max( 1, (int)$maxComments );
 	$commentOffset = ($currentPage - 1) * $maxComments;
 
 	if( empty( $gComment )) {

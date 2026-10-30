@@ -331,7 +331,7 @@ class LibertyMime extends LibertyContent {
 	 * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
 	 */
 	public function verifyAttachment( $pFile ) {
-		if( !empty( $pFile['tmp_name'] ) && is_file( $pFile['tmp_name'] ) && empty( $pFile['error'] ) || !empty( $pFile['attachment_id'] )) {
+		if( ( !empty( $pFile['tmp_name'] ) && is_string( $pFile['tmp_name'] ) && is_file( $pFile['tmp_name'] ) && empty( $pFile['error'] ) ) || !empty( $pFile['attachment_id'] ) ) {
 			return $pFile;
 		}
 	}
