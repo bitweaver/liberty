@@ -70,7 +70,13 @@ function liberty_imagick_resize_image( &$pFileHash ) {
 				if( $gBitSystem->isFeatureActive( 'liberty_thumbnail_format' )) {
 					$mimeExt = $gBitSystem->getConfig( 'liberty_thumbnail_format' );
 				} else {
-					list( $type, $mimeExt ) = explode( '/', strtolower( $pFileHash['type'] ));
+					$mimeType = strtolower( (string)( $pFileHash['type'] ?? '' ) );
+					if( strpos( $mimeType, '/' ) !== FALSE ) {
+						list( $type, $mimeExt ) = explode( '/', $mimeType, 2 );
+					} else {
+						$type = $mimeType;
+						$mimeExt = $mimeType;
+					}
 				}
 
 				if( preg_match( "!(png|gif)!", $mimeExt )) {
