@@ -1993,16 +1993,24 @@ class LibertyContent extends LibertyBase implements BitCacheable {
 		global $gBitUser,$gBitSystem;
 		if( empty( $_REQUEST['post_comment_submit'] ) && empty( $_REQUEST['post_comment_request'] ) ) {
 			if( @BitBase::verifyId( $this->mContentId ) && (( $gBitUser->isRegistered() && !$this->isOwner() ) || ( $gBitUser->getField( 'user_id' ) == ANONYMOUS_USER_ID )) && ( $gBitSystem->isFeatureActive( 'users_count_admin_pageviews' ) || !$gBitUser->isAdmin() ) ) {
-				if( $this->mDb->getOne( "SELECT `content_id` FROM `".BIT_DB_PREFIX."liberty_content_hits` WHERE `content_id`=?", array( $this->mContentId ))) {
-					$query = "UPDATE `".BIT_DB_PREFIX."liberty_content_hits` SET `hits`=`hits`+1, `last_hit`= ? WHERE `content_id` = ?";
-				} else {
-					$query = "INSERT INTO `".BIT_DB_PREFIX."liberty_content_hits` ( `hits`, `last_hit`, `content_id` ) VALUES ( ?,?,? )";
-					$bindVars[] = 1;
-				}
-				$bindVars[] = $gBitSystem->getUTCTime();
-				$bindVars[] = $this->mContentId;
+				$now = $gBitSystem->getUTCTime();
+				$logUpdate = "UPDATE `".BIT_DB_PREFIX."liberty_content_hits` SET `hits`=`hits`+1, `last_hit`= ? WHERE `content_id` = ?";
+				$logBinds = array( $now, $this->mContentId );
 				$this->StartTrans();
-				$result = $this->mDb->query( $query, $bindVars );
+				$this->mDb->query( $logUpdate, $logBinds );
+				if( !$this->mDb->Affected_Rows() ) {
+					$savedRaise = $this->mDb->mDb->raiseErrorFn;
+					$this->mDb->mDb->raiseErrorFn = '';
+					$inserted = $this->mDb->query( "INSERT INTO `".BIT_DB_PREFIX."liberty_content_hits` ( `hits`, `last_hit`, `content_id` ) VALUES ( 1, ?, ? )", $logBinds );
+					$insertMeta = $this->mDb->mDb->MetaError();
+					$insertMsg = $this->mDb->mDb->ErrorMsg();
+					$this->mDb->mDb->raiseErrorFn = $savedRaise;
+					if( !$inserted && defined( 'DB_ERROR_ALREADY_EXISTS' ) && $insertMeta == DB_ERROR_ALREADY_EXISTS ) {
+						$this->mDb->query( $logUpdate, $logBinds );
+					} elseif( !$inserted && $savedRaise ) {
+						$savedRaise( $this->mDb->mDb->databaseType, 'EXECUTE', $insertMeta, $insertMsg, "INSERT INTO `".BIT_DB_PREFIX."liberty_content_hits` ( `hits`, `last_hit`, `content_id` ) VALUES ( 1, ?, ? )", $logBinds, $this->mDb->mDb );
+					}
+				}
 				$this->CompleteTrans();
 			}
 		}

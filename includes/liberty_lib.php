@@ -519,7 +519,12 @@ function liberty_process_archive( &$pFileHash ) {
 	if( ( is_dir( $baseDir ) || mkdir( $baseDir ) ) && @mkdir( $destDir ) ) {
 		// Some commands don't nicely support extracting to other directories
 		chdir( $destDir );
-		list( $mimeType, $mimeExt ) = explode( '/', strtolower( $pFileHash['type'] ) );
+		$mimeType = strtolower( (string)( $pFileHash['type'] ?? '' ) );
+		if( strpos( $mimeType, '/' ) !== FALSE ) {
+			list( $mimeType, $mimeExt ) = explode( '/', $mimeType, 2 );
+		} else {
+			$mimeExt = $mimeType;
+		}
 		switch( $mimeExt ) {
 			case 'x-rar-compressed':
 			case 'x-rar':
@@ -639,7 +644,6 @@ function liberty_process_image( &$pFileHash, $pMoveFile = TRUE ) {
 	global $gBitSystem;
 	$ret = NULL;
 
-	list($type, $ext) = explode( '/', strtolower( $pFileHash['type'] ) );
 	if( $resizePath = liberty_process_generic( $pFileHash, $pMoveFile )) {
 		$pFileHash['source_file'] = $resizePath;
 
