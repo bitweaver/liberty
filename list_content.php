@@ -99,7 +99,7 @@ if( !empty( $_REQUEST['output'] )) {
 		 * Recommend that this be standardized, but 
 		 * a package dependency somewhere is likely an issue
 		 */
-		require_once( UTIL_PKG_PATH.'javascript/suggest/suggest_lib.php' );
+		require_once( UTIL_PKG_CLASS_PATH.'SuggestLib.php' );
 		foreach( array_keys( $contentList ) as $row ) {
 			$xmlList[$contentList[$row]['content_id']] = $contentList[$row]['title'];
 		}
