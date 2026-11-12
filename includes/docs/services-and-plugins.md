@@ -52,6 +52,69 @@ Callbacks commonly receive the content object and a parameter hash by
 reference. They can add errors, data, SQL fragments, or presentation state.
 Changing a shared parameter key is an API change across packages.
 
+### Template locations
+
+A template location is a place in a page where every registered service may
+add markup. There is no registry of locations. A content template names one:
+
+```smarty
+{include file="bitpackage:liberty/services_inc.tpl" serviceLocation='icon' serviceHash=$gContent->mInfo}
+```
+
+`services_inc.tpl` builds the key `content_<location>_tpl`, asks
+`LibertySystem::getServiceValues()` for every service that registered that key,
+and includes each template in registration order with `$serviceHash`. A
+provider claims a location by registering the key:
+
+```php
+$gLibertySystem->registerService( MY_SERVICE_GUID, MY_PKG_NAME, array(
+	'content_icon_tpl' => 'bitpackage:mypkg/service_icon_inc.tpl',
+) );
+```
+
+Display locations in use:
+
+| Location | Key | Where content templates put it | Meant for |
+|---|---|---|---|
+| `icon` | `content_icon_tpl` | The row of small tools on a content page | One quiet icon or icon-and-label link per provider |
+| `action` | `content_action_tpl` | Beside the title, with the page's own buttons | A main action another package offers for this content, as one button |
+| `nav` | `content_nav_tpl` | Under the title, above the content | Navigation between related content |
+| `body` | `content_body_tpl` | With the content itself; also per row in some lists | Markup that belongs to the content |
+| `view` | `content_view_tpl` | After the content | Blocks that follow it, such as comments or related items |
+| `wrapper` | `content_wrapper_tpl` | `kernel/templates/html.tpl`, at the top of the centre column | Page-level markup above any content |
+| `row` | `content_row_tpl` | `kernel/templates/html.tpl`, before the layout columns | Page-level markup across the full width |
+| `comment` | `content_comment_tpl` | Each displayed comment | Per-comment tools |
+| `list` | `content_list_tpl` | Each row of a generic content list | Per-row markup |
+| `list_sort`, `list_options`, `list_actions` | `content_list_sort_tpl`, … | List headers and per-row action cells | Sort links, list options, row actions |
+
+Rules that follow from how `services_inc.tpl` works:
+
+- **Every provider's template is included on every page that offers the
+  location**, whatever the content type and whether or not the content uses
+  that service. The template must test what it was given (content type,
+  permission) and print nothing otherwise.
+- Only `nav` and `view` are wrapped, in `<div class="services-nav">` or
+  `<div class="services-view">`, and only when some template printed
+  something. The other locations are output bare, so the provider's markup
+  must fit the surrounding element (for `icon`, an inline link).
+- `$serviceHash` is the content's info hash on a content page and the row hash
+  in a list. `$gContent` is whatever the page assigned and may be absent in a
+  list.
+- A location nobody registered costs one lookup and prints nothing, so a
+  content template may offer a location before any provider exists.
+
+Edit and upload forms use a second include, `edit_services_inc.tpl`, with the
+key passed whole (`serviceFile="content_edit_mini_tpl"`). Unlike the display
+locations it skips a provider when the content does not use that service
+(`$gContent->hasService()`). Keys in use: `content_edit_mini_tpl`,
+`content_edit_tab_tpl`, `content_upload_mini_tpl`, `content_upload_tab_tpl`,
+`content_upload_form_tpl` and `content_upload_js_tpl`.
+
+Adding a location is a change to the content template only: choose a name that
+says what belongs there, include `services_inc.tpl` with it, and record it in
+the content package's documentation and in the table above. Do not reuse a
+location for markup it was not meant for; a button is not navigation.
+
 ### Services are not a command bus
 
 A service GUID is a **lifecycle and presentation slot**, not a general RPC
