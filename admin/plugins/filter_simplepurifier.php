@@ -1,6 +1,6 @@
 <?php
 require_once( '../../../kernel/includes/setup_inc.php' );
-include_once( KERNEL_PKG_PATH.'simple_form_functions_lib.php' );
+include_once( KERNEL_PKG_INCLUDE_PATH.'simple_form_functions_lib.php' );
 /* We need DEFAULT_ACCEPTABLE_TAGS from here. */
 include_once( LIBERTY_PKG_PATH.'plugins/filter.simplepurifier.php');
 $gBitSystem->verifyPermission( 'p_admin' );
