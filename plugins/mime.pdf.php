@@ -33,12 +33,10 @@ $pluginParams = array (
 	//'help_function'       => 'mime_pdf_help',
 	// Brief description of what the plugin does
 	'title'               => 'Browsable PDFs',
-	'description'         => 'Convert PDFs to flash files that can be browsed online.',
+	'description'         => 'Show uploaded PDFs in the browser\'s built-in PDF viewer.',
 	// Templates to display the files
 	'view_tpl'            => 'bitpackage:liberty/mime/pdf/view.tpl',
 	//'attachment_tpl'      => 'bitpackage:liberty/mime/image/attachment.tpl',
-	// url to page with options for this plugin
-	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/plugins/mime_pdf.php',
 	// This should be the same for all mime plugins
 	'plugin_type'         => MIME_PLUGIN,
 	// Set this to TRUE if you want the plugin active right after installation
@@ -65,13 +63,7 @@ function mime_pdf_store( &$pStoreRow ) {
 	$pStoreRow['log'] = array();
 
 	// if storing works, we process the image
-	if( $ret = mime_default_store( $pStoreRow )) {
-		if( !mime_pdf_convert_pdf2swf( $pStoreRow )) {
-			// if it all goes tits up, we'll know why
-			$pStoreRow['errors'] = $pStoreRow['log'];
-			$ret = FALSE;
-		}
-	}
+	$ret = mime_default_store( $pStoreRow );
 	return $ret;
 }
 
@@ -111,67 +103,13 @@ function mime_pdf_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 	// don't load a mime image if we don't have an image for this file
 	if( $ret = mime_default_load( $pFileHash, $pPrefs, $pParams )) {
 		if( !empty( $ret['source_file'] )) {
-			$source_path = dirname( $ret['source_file'] ).'/';
-			// if the swf file exists, we pass it back that it can be viewed.
-			if( is_file( $source_path.'pdf.swf' )) {
-				$ret['media_url'] = storage_path_to_url( dirname( $ret['source_url'] ).'/pdf.swf' );
+			// browsers display the PDF itself
+			if( !empty( $ret['source_url'] )) {
+				$ret['media_url'] = $ret['source_url'];
 			}
 		}
 	}
 	return $ret;
-}
-
-/**
- * mime_pdf_convert_pdf2swf Convert a PDF to a SWF video
- *
- * @param array $pFileHash file details.
- * @param array $pFileHash[upload] should contain a complete hash from $_FILES
- * @access public
- * @return TRUE on success, FALSE on failure
- */
-function mime_pdf_convert_pdf2swf( $pFileHash ) {
-	global $gBitSystem;
-	if( !empty( $pFileHash['upload'] ) && @BitBase::verifyId( $pFileHash['attachment_id'] )) {
-		// get file paths
-		$pdf2swf    = trim( $gBitSystem->getConfig( 'swf2pdf_path', shell_exec( 'which pdf2swf' )));
-		$swfcombine = trim( $gBitSystem->getConfig( 'swfcombine_path', shell_exec( 'which swfcombine' )));
-
-		if( is_executable( $pdf2swf ) && is_executable( $swfcombine )) {
-			$source    = STORAGE_PKG_PATH.$pFileHash['upload']['dest_branch'];
-			if ( $gBitSystem->isFeatureActive( 'liberty_jpeg_originals' ) ) {
-				$source .= 'original.jpg';
-			} else {
-				$source .= $pFileHash['upload']['name'];
-			}
-			$destPath = dirname( $source );
-
-			$tmp_file  = "$destPath/tmp.swf";
-			$swf_file  = "$destPath/pdf.swf";
-
-			$pdfviewer = UTIL_PKG_PATH."javascript/pdfviewer/fdviewer.swf";
-			$swfloader = UTIL_PKG_PATH."javascript/pdfviewer/loader.swf";
-
-			$pdf2swfcommand = "$pdf2swf -s insertstop -s jpegquality=".$gBitSystem->getConfig( 'liberty_thumbnail_quality', 85 )." '$source' -o '$tmp_file'";
-			$combinecommand = "$swfcombine '$pdfviewer' loader='$swfloader' '#1'='$tmp_file' -o '$swf_file'";
-
-			shell_exec( $pdf2swfcommand );
-			if( is_file( $tmp_file ) && filesize( $tmp_file ) > 0 ) {
-				shell_exec( $combinecommand );
-				if( !is_file( $swf_file ) || filesize( $swf_file ) == 0 ) {
-					// combination went wrong. remove swf file
-					$pFileHash['log']['swfcombine'] = "There was a problem combining the PDF SWF with the viewer.";
-					@unlink( $swf_file );
-				}
-			} else {
-				$pFileHash['log']['pdf2swf'] = "There was a problem converting the PDF to SWF.";
-			}
-
-			// remove temp file
-			@unlink( $tmp_file );
-		}
-	}
-
-	return( empty( $pFileHash['log'] ));
 }
 
 /**

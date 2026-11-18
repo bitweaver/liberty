@@ -24,7 +24,6 @@ define( 'PLUGIN_MIME_GUID_AUDIO', 'mimeaudio' );
 $pluginParams = array (
 	// Set of functions and what they are called in this paricular plugin
 	// Use the GUID as your namespace
-	'preload_function'    => 'mime_audio_preload',
 	'verify_function'     => 'mime_default_verify',
 	'store_function'      => 'mime_audio_store',
 	'update_function'     => 'mime_audio_update',
@@ -54,17 +53,6 @@ $pluginParams = array (
 	),
 );
 $gLibertySystem->registerPlugin( PLUGIN_MIME_GUID_AUDIO, $pluginParams );
-
-/**
- * mime_audio_preload This function is loaded on every page load before anything happens and is used to load required scripts.
- * 
- * @access public
- * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
- */
-function mime_audio_preload() {
-	global $gBitThemes;
-	$gBitThemes->loadJavascript( UTIL_PKG_PATH."javascript/flv_player/swfobject.js", FALSE, 25 );
-}
 
 /**
  * Store the data in the database

@@ -199,8 +199,10 @@ change the result and must be tested with active plugin configuration.
 ### MIME
 
 MIME plugins select templates and behavior for application, audio, image, PDF,
-video, Flash, and fallback files. `lookupMimeHandler()` chooses a handler;
-`getMimeTemplate()` resolves presentation.
+video, and fallback files. `lookupMimeHandler()` chooses a handler;
+`getMimeTemplate()` resolves presentation. Audio, video and PDF attachments
+play in the browser's own `<audio>`, `<video>` and PDF viewer; there is no
+plugin-based (Flash) player.
 
 MIME strings and filename extensions are attacker-controlled hints. Verify file
 content where the processor supports it and never rely on the browser-supplied

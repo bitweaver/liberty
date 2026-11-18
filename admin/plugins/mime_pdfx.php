@@ -7,16 +7,6 @@ $gBitSystem->verifyPermission( 'p_admin' );
 $feedback = array();
 
 $pdfSettings = array(
-	'pdf2swf_path' => array(
-		'label'   => 'Path to pdf2swf',
-		'note'    => 'Path to the pdf2swf executable.',
-		'type'    => 'text',
-	),
-	'swfcombine_path' => array(
-		'label'   => 'Path to swfcombine',
-		'note'    => 'Path to the swfcombine executable.',
-		'type'    => 'text',
-	),
 	'mwconvert_path' => array(
 		'label'   => 'Path to ImageMagick convert',
 		'note'    => 'Path to the ImageMagick convert executable.',
@@ -30,8 +20,6 @@ $pdfSettings = array(
 );
 
 if( function_exists( 'shell_exec' )) {
-	$pdfSettings['pdf2swf_path']['default']    =  shell_exec( 'which pdf2swf' );
-	$pdfSettings['swfcombine_path']['default'] =  shell_exec( 'which swfcombine' );
 	$pdfSettings['mwconvert_path']['default'] =  shell_exec( 'which convert' );
 } else {
 	$feedback['error'] = "You can not execute binaries on your server. You can not make use of this plugin.";
@@ -54,5 +42,5 @@ if( !empty( $_REQUEST['plugin_settings'] )) {
 }
 
 $gBitSmarty->assign( 'feedback', $feedback );
-$gBitSystem->display( 'bitpackage:liberty/mime/pdf/adminx.tpl', tra( 'PDF Plugin Settings' ), array( 'display_mode' => 'admin' ));
+$gBitSystem->display( 'bitpackage:liberty/mime/pdf/admin.tpl', tra( 'PDF Plugin Settings' ), array( 'display_mode' => 'admin' ));
 ?>

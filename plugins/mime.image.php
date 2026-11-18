@@ -35,10 +35,6 @@ $pluginParams = array (
 	'title'               => 'Advanced Image Processing',
 	'description'         => 'Extract image meta data and display relevant information to the user and pick individual display options for images.',
 	// Templates to display the files
-	'view_tpl'            => 'bitpackage:liberty/mime/image/view.tpl',
-	'attachment_tpl'      => 'bitpackage:liberty/mime/image/attachment.tpl',
-	// url to page with options for this plugin
-	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/plugins/mime_image.php',
 	// This needs to be specified by plugins that are included by other plugins
 	'file_name'          => 'mime.image.php',
 	// This should be the same for all mime plugins
@@ -52,10 +48,6 @@ $pluginParams = array (
 		'#image/.*#i',
 	),
 );
-// currently, there's only one option in the image edit file - panorama image setting
-if( $gBitSystem->isFeatureActive( 'mime_image_panoramas' )) {
-	$pluginParams['edit_tpl'] =  'bitpackage:liberty/mime/image/edit.tpl';
-}
 $gLibertySystem->registerPlugin( PLUGIN_MIME_GUID_IMAGE, $pluginParams );
 
 /**
@@ -101,10 +93,6 @@ function mime_image_update( &$pStoreRow, $pParams = NULL ) {
 		if( !mime_image_store_exif_data( $pStoreRow )) {
 			// if it all goes tits up, we'll know why
 			$pStoreRow['errors'] = $pStoreRow['log'];
-			$ret = FALSE;
-		}
-	} elseif( $gBitSystem->isFeatureActive( 'mime_image_panoramas' ) && !empty( $pParams['preference']['is_panorama'] ) && empty( $pStoreRow['thumbnail_url']['panorama'] )) {
-		if( !mime_image_create_panorama( $pStoreRow )) {
 			$ret = FALSE;
 		}
 	}
@@ -157,20 +145,6 @@ function mime_image_load( &$pFileHash, &$pPrefs, $pParams = NULL ) {
 			}
 		}
 
-		// check for panorama image
-		if( isset( $ret['source_file'] ) && is_file( dirname( $ret['source_file'] )."/thumbs/panorama.jpg" )) {
-			// if the panorama doesn't have 180⁰ vertical field of view we will restrict up / down movement
-			if(( $ret['pano'] = LibertyMime::getMetaData( $ret['attachment_id'], "PANO" )) && !empty( $ret['pano']['aspect'] )) {
-				// calculation based on logarythmic regression curve
-				$ret['pano']['pa'] = round( 40 - 31 * log( $ret['pano']['aspect'] - 1.4 ));
-				if( $ret['pano']['pa'] > 49 ) {
-					$ret['pano']['pa'] = 90;
-				} elseif( $ret['pano']['pa'] < 0 ) {
-					$ret['pano']['pa'] = 0;
-				}
-			}
-			$ret['thumbnail_url']['panorama'] = storage_path_to_url( dirname( $ret['source_file'] )."/thumbs/panorama.jpg" );
-		}
 	}
 	return $ret;
 }
@@ -298,106 +272,12 @@ function mime_image_convert_exifgps( $pParams ) {
 }
 
 /**
- * mime_image_create_panorama
- *
- * @param array $pStoreRow
- * @access public
- * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
- */
-function mime_image_create_panorama( &$pStoreRow ) {
-	global $gBitSystem, $gThumbSizes;
-	// we know the panorama image will be a jpeg, so we don't need the canThumbFunc check here
-	if(( $panoramaFunc = liberty_get_function( 'panorama' )) && !empty( $pStoreRow['source_file'] ) && is_file( $pStoreRow['source_file'] )) {
-		// the panorama has to be a jpg
-		$gBitSystem->setConfig( 'liberty_thumbnail_format', 'jpg' );
-		$width = $gBitSystem->getConfig( 'mime_image_panorama_width', 3000 );
-		$gThumbSizes['panorama'] = array( $width, $width / 2 );
-
-		// for the panorama, we will force a quality lower than 75 to reduce image size
-		if( $gBitSystem->getConfig( 'liberty_thumbnail_quality', 85 ) > 75 ) {
-			$gBitSystem->setConfig( 'liberty_thumbnail_quality', 75 );
-		}
-
-		$genHash = array(
-			'attachment_id'   => $pStoreRow['attachment_id'],
-			'dest_branch'	  => liberty_mime_get_storage_branch( array( 'sub_dir' => $pStoreRow['attachment_id'], 'user_id' =>$pStoreRow['user_id'], 'package' => liberty_mime_get_storage_sub_dir_name( $pStoreRow ) ) ),
-			'file_name'       => dirname( $pStoreRow['file_name'] )."/",
-			'source_file'     => $pStoreRow['source_file'],
-			'type'            => $pStoreRow['mime_type'],
-			'thumbnail_sizes' => array( 'panorama' ),
-		);
-		if( liberty_generate_thumbnails( $genHash )) {
-			// we want to modify the panorama
-			$genHash['source_file'] = $genHash['icon_thumb_path'];
-			if( !$panoramaFunc( $genHash )) {
-				$pStoreRow['errors']['panorama'] = $genHash['error'];
-			}
-		}
-
-		return( empty( $pStoreRow['errors'] ));
-	}
-}
-
-/**
- * liberty_magickwand_panorama_image - strictly speaking, this belongs in one of the image processing plugin files, but we'll leave it here for the moment
- *
- * @param array $pFileHash File hash - souce_file is required
- * @param array $pOptions
- * @access public
- * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
- */
-function liberty_magickwand_panorama_image( &$pFileHash, $pOptions = array() ) {
-	$magickWand = NewMagickWand();
-	$pFileHash['error'] = NULL;
-	if( !empty( $pFileHash['source_file'] ) && is_file( $pFileHash['source_file'] )) {
-		if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickReadImage( $magickWand, $pFileHash['source_file'] ), $magickWand )) {
-			// calculate border width
-			$iwidth  = round( MagickGetImageWidth( $magickWand ));
-			$iheight = round( MagickGetImageHeight( $magickWand ));
-			$aspect  = $iwidth / $iheight;
-			$metaHash = array(
-				'width'  => $iwidth,
-				'height' => $iheight,
-				'aspect' => $aspect,
-			);
-			// store original file information that we can adjust the viewer
-			LibertyMime::storeMetaData( $pFileHash['attachment_id'], 'PANO', $metaHash );
-			// we need to pad the image if the aspect ratio is not 2:1 (give it a wee bit of leeway that we don't add annoying borders if not really needed)
-			if( $aspect > 2.1 || $aspect < 1.9 ) {
-				$bwidth = $bheight = 0;
-				if( $aspect > 2 ) {
-					$bheight = round((( $iwidth / 2 ) - $iheight ) / 2 );
-				} else {
-					$bwidth = round((( $iheight / 2 ) - $iwidth ) / 2 );
-				}
-				// if the ratio has nothing to do with a panorama image - i.e. gives us a negative number here, we won't generate a panorama image
-				if( $bheight > 0 ) {
-					$pixelWand = NewPixelWand();
-					PixelSetColor( $pixelWand, ( !empty( $pOptions['background'] ) ? $pOptions['background'] : 'black' ));
-					if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickBorderImage( $magickWand, $pixelWand, $bwidth, $bheight ), $magickWand )) {
-						if( !$pFileHash['error'] = liberty_magickwand_check_error( MagickWriteImage( $magickWand, $pFileHash['source_file'] ), $magickWand )) {
-							// yay!
-						}
-					}
-					DestroyPixelWand( $pixelWand );
-				}
-			}
-		}
-	}
-	DestroyMagickWand( $magickWand );
-	return( empty( $pFileHash['error'] ));
-}
-
-/**
  * mime_image_help
  *
  * @access public
  * @return string
  */
 function mime_image_help() {
-	$help =
-		tra( "If you have a panoramic image and you are using <strong>{attachment}</strong> to insert it, you can use <strong>panosize</strong> as you would with the size parameter to specify the size." )."<br />"
-		.tra( "Example:" ).' '."{attachment id='13' panosize='small'}";
-	return $help;
+	return '';
 }
 ?>

@@ -62,12 +62,6 @@ if( !empty( $_REQUEST['plugin_settings'] )) {
 		'mime_audio_lame_options' => array(
 			'type'  => 'text',
 		),
-		'mime_audio_backcolor' => array(
-			'type'  => 'text',
-		),
-		'mime_audio_frontcolor' => array(
-			'type'  => 'text',
-		),
 		'mime_audio_force_encode' => array(
 			'type'  => 'checkbox',
 		),

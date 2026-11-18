@@ -2,22 +2,23 @@
 {if $attachment.media_url}
 	{assign var=id value="video_`$caller``$attachment.attachment_id`"}
 	{if $uploadTab}{assign var=id value="`$id`_tab"}{/if}
-	<div id="{$id}"><a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see this video.</div>
-	<script>/* <![CDATA[ */
-		{if $thumbsize eq "small"}
-			{assign var=width value=160}
-			{math width=$width scrollbar=20 original_width=$attachment.meta.width original_height=$attachment.meta.height equation="original_height / original_width * width + scrollbar" assign=height}
-			var so = new SWFObject('{$smarty.const.UTIL_PKG_URL}javascript/flv_player/mediaplayer.swf','player','{$width}','{$height}','7');
-		{else}
-			var so = new SWFObject('{$smarty.const.UTIL_PKG_URL}javascript/flv_player/mediaplayer.swf','player','{$attachment.meta.width}','{$attachment.meta.height+20}','7');
-		{/if}
-		so.addVariable("file","{$attachment.media_url}");
-		so.addVariable("image","{$attachment.thumbnail_url.$thumbsize|default:$attachment.thumbnail_url.large}");
-		so.addVariable("overstretch","fit");
-		so.addVariable("usefullscreen","false");
-		so.addVariable("frontcolor","0x{$gBitSystem->getConfig('mime_video_frontcolor','FFFFFF')}");
-		so.addVariable("backcolor","0x{$gBitSystem->getConfig('mime_video_backcolor','000000')}");
-		so.write('{$id}');
-	/* ]]> */</script>
+	{if $thumbsize eq "small"}
+		{assign var=width value=160}
+		{math width=$width original_width=$attachment.meta.width original_height=$attachment.meta.height equation="original_height / original_width * width" assign=height}
+	{else}
+		{assign var=width value=$attachment.meta.width}
+		{assign var=height value=$attachment.meta.height}
+	{/if}
+	{if $attachment.media_url|regex_replace:'/\?.*$/':''|substr:-4|lower eq '.flv'}
+		{* Flash video: no browser can play it any more *}
+		<a href="{$attachment.media_url|escape}">{$attachment.filename|default:"{tr}Download video{/tr}"|escape}</a>
+	{else}
+		<video id="{$id}" class="mime-video" controls preload="metadata" playsinline style="max-width:100%;height:auto"
+			{if $width} width="{$width|escape}"{/if}{if $height} height="{$height|escape}"{/if}
+			{if $attachment.thumbnail_url.$thumbsize|default:$attachment.thumbnail_url.large} poster="{$attachment.thumbnail_url.$thumbsize|default:$attachment.thumbnail_url.large|escape}"{/if}>
+			<source src="{$attachment.media_url|escape}" type="video/mp4" />
+			<a href="{$attachment.media_url|escape}">{tr}Download video{/tr}</a>
+		</video>
+	{/if}
 {/if}
 {/strip}

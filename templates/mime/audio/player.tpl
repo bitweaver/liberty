@@ -2,27 +2,19 @@
 {if $attachment.media_url}
 	{assign var=id value="audio_`$caller``$attachment.attachment_id`"}
 	{if $uploadTab}{assign var=id value="`$id`_tab"}{/if}
-
-	{* album covers are usually square - scrollbar is 20px high *}
 	{if $thumbsize eq "small"}
 		{assign var=width value=160}
-		{assign var=height value=180}
 	{else}
 		{assign var=width value=400}
-		{assign var=height value=420}
 	{/if}
-	<div id="{$id}"><a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see this video.</div>
-	<script>/* <![CDATA[ */
+	<div class="mime-audio" style="width:{$width}px;max-width:100%">
 		{if !$attachment.thumbnail_is_mime && $attachment.thumbnail_url.medium}
-			var so = new SWFObject('{$smarty.const.UTIL_PKG_URL}javascript/flv_player/mediaplayer.swf','mpl','{$width}','{$height}','7');
-			so.addVariable("image","{$attachment.thumbnail_url.medium}");
-		{else}
-			var so = new SWFObject('{$smarty.const.UTIL_PKG_URL}javascript/flv_player/mediaplayer.swf','mpl','{$width}','20','7');
+			<img src="{$attachment.thumbnail_url.medium|escape}" alt="" style="width:100%;height:auto;display:block" />
 		{/if}
-		so.addVariable("file","{$attachment.media_url}");
-		so.addVariable("frontcolor","0x{$gBitSystem->getConfig('mime_audio_frontcolor','FFFFFF')}");
-		so.addVariable("backcolor","0x{$gBitSystem->getConfig('mime_audio_backcolor','000000')}");
-		so.write('{$id}');
-	/* ]]> */</script>
+		<audio id="{$id}" controls preload="none" style="width:100%">
+			<source src="{$attachment.media_url|escape}" type="{if $attachment.media_url|substr:-4|lower eq '.m4a'}audio/mp4{else}audio/mpeg{/if}" />
+			<a href="{$attachment.media_url|escape}">{tr}Download audio{/tr}</a>
+		</audio>
+	</div>
 {/if}
 {/strip}

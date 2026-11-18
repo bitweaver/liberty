@@ -1,12 +1,8 @@
 {strip}
 {if $attachment.media_url}
-	<div class="form-group aligncenter">
-		<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,0,0" width="800" height="600" id="viewer" align="middle">
-			<param name="allowScriptAccess" value="sameDomain" />
-			<param name="movie" value="{$attachment.media_url}" />
-			<param name="quality" value="high" />
-			<param name="bgcolor" value="#ffffff" />
-			<embed src="{$attachment.media_url}" quality="high" bgcolor="#ffffff" width="800" height="600" name="myviewer" align="middle" allowScriptAccess="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
+	<div class="form-group">
+		<object class="mime-pdf" data="{$attachment.media_url|escape}" type="application/pdf" width="100%" height="800">
+			<a href="{$attachment.media_url|escape}">{tr}Download PDF{/tr}</a>
 		</object>
 	</div>
 

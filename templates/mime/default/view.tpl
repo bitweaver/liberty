@@ -1,17 +1,7 @@
 {if $attachment}{strip}
 <div class="form-group aligncenter">
 	{assign var=size value=$smarty.request.size|default:medium}
-	{if $gBitSystem->isFeatureActive( 'site_fancy_zoom' )}
-		{if $attachment.original}
-			<a href="{$attachment.source_url|escape}">
-		{else}
-			<a href="{$attachment.thumbnail_url.large}">
-		{/if}
-	{/if}
 	<img title="" alt="" src="{$attachment.thumbnail_url.$size}" class="img-responsive"/>
-	{if $gBitSystem->isFeatureActive( 'site_fancy_zoom' )}
-		</a>
-	{/if}
 </div>
 
 {if !$attachment.thumbnail_is_mime}

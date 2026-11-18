@@ -60,11 +60,6 @@ function data_youtube_help() {
 				.'<td>' . tra( "string" ) . '<br />' . tra("(optional)") . '</td>'
 				.'<td>' . tra( "Alternate language of the Youtube interface, default is 'en'" ).'</td>'
 			.'</tr>'
-			.'<tr class="odd">'
-				.'<td>format</td>'
-				.'<td>' . tra( "numeric" ) . '<br />' . tra("(optional)") . '</td>'
-				.'<td>' . tra( "Fetch different video format instead of the default one. Format 6 and Format 18 seem to work quite well for some videos. Please note that this might be buggy and is not available for all videos." ).'</td>'
-			.'</tr>'
 		.'</table>'
 		. tra( "Example: " ) . '{youtube id=XXXXX width=425 height=355 lang=en}';
 }
@@ -78,16 +73,14 @@ function data_youtube_help() {
  * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
  */
 function data_youtube( $pData, $pParams ) {
-	extract( $pParams );
-	$width   = ( !empty( $width )  ? $width  : "425" );
-	$height  = ( !empty( $height ) ? $height : "355" );
-	$lang    = "&amp;hl=".( !empty( $lang ) ? $lang : "en" );
-	$format  = ( !empty( $format )  ? "&amp;ap=%2526fmt%3D".$format  : "" );
+	$id     = trim( (string)( $pParams['id'] ?? '' ));
+	$width  = ( !empty( $pParams['width'] )  && is_numeric( $pParams['width'] )  ? (int)$pParams['width']  : 425 );
+	$height = ( !empty( $pParams['height'] ) && is_numeric( $pParams['height'] ) ? (int)$pParams['height'] : 355 );
+	$lang   = ( !empty( $pParams['lang'] ) && preg_match( '/^[a-z]{2}(-[A-Za-z]{2})?$/', $pParams['lang'] ) ? $pParams['lang'] : 'en' );
 
-	if( !empty( $id )) {
-		return '<!--~np~--><object width="'.$width.'" height="'.$height.'"><param name="movie" value="http://www.youtube.com/v/'.$id.$lang.$format.'"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/'.$id.$lang.$format.'" type="application/x-shockwave-flash" wmode="transparent" width="'.$width.'" height="'.$height.'""></embed></object><!--~/np~-->';
-	} else {
+	if( !preg_match( '/^[A-Za-z0-9_-]{6,20}$/', $id )) {
 		return tra( 'No ID given' );
 	}
+	return '<!--~np~--><iframe class="youtube-plugin" width="'.$width.'" height="'.$height.'" style="max-width:100%" src="https://www.youtube-nocookie.com/embed/'.$id.'?hl='.$lang.'" title="YouTube video" loading="lazy" frameborder="0" allow="encrypted-media; picture-in-picture; fullscreen"></iframe><!--~/np~-->';
 }
 ?>

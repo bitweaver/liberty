@@ -7,7 +7,7 @@
 
 | Artifact | Count |
 |---|---:|
-| PHP files | 126 |
+| PHP files | 122 |
 | Smarty templates | 104 |
 | JavaScript files | 2 |
 | CSS files | 0 |
@@ -172,13 +172,6 @@
 - `templates/mime/default/storage.tpl`
 - `templates/mime/default/upload.tpl`
 - `templates/mime/default/view.tpl`
-- `templates/mime/flash/inline.tpl`
-- `templates/mime/flash/view.tpl`
-- `templates/mime/image/admin.tpl`
-- `templates/mime/image/attachment.tpl`
-- `templates/mime/image/edit.tpl`
-- `templates/mime/image/player.tpl`
-- `templates/mime/image/view.tpl`
 - `templates/mime/pbase/upload.tpl`
 - `templates/mime/pdf/admin.tpl`
 - `templates/mime/pdf/view.tpl`

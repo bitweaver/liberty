@@ -24,7 +24,6 @@ define( 'PLUGIN_MIME_GUID_VIDEO', 'mimevideo' );
 $pluginParams = array (
 	// Set of functions and what they are called in this paricular plugin
 	// Use the GUID as your namespace
-	'preload_function'    => 'mime_video_preload',
 	'verify_function'     => 'mime_default_verify',
 	'store_function'      => 'mime_video_store',
 	'update_function'     => 'mime_video_update',
@@ -32,8 +31,8 @@ $pluginParams = array (
 	'download_function'   => 'mime_default_download',
 	'expunge_function'    => 'mime_default_expunge',
 	// Brief description of what the plugin does
-	'title'               => 'Convert Video to Flash Video',
-	'description'         => 'This plugin will use ffmpeg to convert any compatible uploaded video to flash video. It will also make the video available for viewing if you have flash installed. Please consult the README on how to use this plugin.',
+	'title'               => 'Video',
+	'description'         => 'Uses ffmpeg to convert uploaded videos to MP4 (H.264) and plays them with the browser\'s built-in video player.',
 	// Templates to display the files
 	'view_tpl'            => 'bitpackage:liberty/mime/video/view.tpl',
 	'inline_tpl'          => 'bitpackage:liberty/mime/video/inline.tpl',
@@ -54,17 +53,6 @@ $pluginParams = array (
 	),
 );
 $gLibertySystem->registerPlugin( PLUGIN_MIME_GUID_VIDEO, $pluginParams );
-
-/**
- * mime_video_preload This function is loaded on every page load before anything happens and is used to load required scripts.
- *
- * @access public
- * @return TRUE on success, FALSE on failure - mErrors will contain reason for failure
- */
-function mime_video_preload() {
-	global $gBitThemes;
-	$gBitThemes->loadJavascript( UTIL_PKG_PATH."javascript/flv_player/swfobject.js", FALSE, 25 );
-}
 
 /**
  * Store the data in the database
@@ -201,7 +189,7 @@ function mime_video_add_process( $pStoreRow ) {
 }
 
 /**
- * Convert a stored video file to flashvideo
+ * Convert a stored video file to a streamable video
  *
  * @param array $pParamHash
  * @access public
@@ -232,7 +220,7 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 			$actionLog['log_message'] = "ERROR: ffmpeg does not seem to be available on your system at: '$ffmpeg' Please set the path to ffmpeg in the liberty plugin administration screen.";
 		} else {
 			// this is the codec we'll use - currently this might be: flv, h264, h264-2pass
-			$codec = $gBitSystem->getConfig( "mime_video_video_codec", "flv" );
+			$codec = $gBitSystem->getConfig( "mime_video_video_codec", "h264" );
 			$source = STORAGE_PKG_PATH.$pParamHash['upload']['dest_branch'].$pParamHash['upload']['name'];
 			$destPath = dirname( $source );
 
@@ -275,7 +263,7 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 				}
 			}
 
-			// our player supports flv and h264 so we might as well use the default
+			// browsers play h264 + aac directly, so use the upload as is
 			if( !$gBitSystem->isFeatureActive( 'mime_video_force_encode' ) && !empty( $info )
 				&& (
 					// accepted video + audio combinations that can be played by the video player directly
@@ -304,7 +292,7 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 				}
 				mime_video_fix_streaming( $dest_file );
 
-				$log['message'] = 'SUCCESS: Converted to flash video';
+				$log['message'] = 'SUCCESS: Video ready for streaming';
 				$actionLog['log_message'] = "Video file was successfully uploaded and thumbnails extracted.";
 				$ret = TRUE;
 			} else {
@@ -452,14 +440,14 @@ function mime_video_converter( &$pParamHash, $pOnlyGetParameters = FALSE ) {
 					// since the flv conversion worked, we will create a preview screenshots to show.
 					mime_video_create_thumbnail( $dest_file, $info['offset'] );
 
-					$log['message'] = 'SUCCESS: Converted to flash video';
-					$actionLog['log_message'] = "Converted to flashvideo in ".( date( 'U' ) - $begin )." seconds";
+					$log['message'] = 'SUCCESS: Converted video';
+					$actionLog['log_message'] = "Converted video in ".( date( 'U' ) - $begin )." seconds";
 					$ret = TRUE;
 				} else {
 					// remove unsuccessfully converted file
 					@unlink( $dest_file );
 					$log['message'] = "ERROR: The video you uploaded could not be converted by ffmpeg.\nDEBUG OUTPUT:\n\n".$debug;
-					$actionLog['log_message'] = "Video could not be converted to flashvideo. An error dump was saved to: ".$destPath.'/error';
+					$actionLog['log_message'] = "Video could not be converted. An error dump was saved to: ".$destPath.'/error';
 
 					// write error message to error file
 					$h = fopen( $destPath."/error", 'w' );

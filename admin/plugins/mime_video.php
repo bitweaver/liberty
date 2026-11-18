@@ -25,7 +25,7 @@ $options = array(
 		'mp3'        => 'mp3',
 	),
 	'video_codec' => array(
-		'flv'        => 'Flashvideo using flv codec',
+		'flv'        => 'FLV (download only, browsers cannot play it)',
 		'h264'       => 'MP4/AVC using h264 codec',
 		'h264-2pass' => 'MP4/AVC using h264 codec - 2 passes',
 	),
@@ -94,12 +94,6 @@ if( !empty( $_REQUEST['plugin_settings'] )) {
 		'mime_video_default_size' => array(
 			'type'  => 'text',
 		),
-		'mime_video_backcolor' => array(
-			'type'  => 'text',
-		),
-		'mime_video_frontcolor' => array(
-			'type'  => 'text',
-		),
 	);
 
 	foreach( $videoSettings as $item => $data ) {
@@ -116,5 +110,5 @@ if( !empty( $_REQUEST['plugin_settings'] )) {
 }
 
 $gBitSmarty->assign( 'feedback', $feedback );
-$gBitSystem->display( 'bitpackage:liberty/mime/video/admin.tpl', tra( 'Flashvideo Plugin Settings' ), array( 'display_mode' => 'admin' ));
+$gBitSystem->display( 'bitpackage:liberty/mime/video/admin.tpl', tra( 'Video Plugin Settings' ), array( 'display_mode' => 'admin' ));
 ?>
