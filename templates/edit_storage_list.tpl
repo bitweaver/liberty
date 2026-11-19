@@ -66,18 +66,10 @@ window.attachmentUrls["{$storage.attachment_id}"]["original"] = "{$storage.sourc
 					<div class="col-xs-1">
 						{if $gBitUser->isAdmin() || ($storage.user_id == $gBitUser->mUserId) }
 							{capture name=urlArgs}{$attachmentBaseArgs}content_id={$gContent->mContentId}{if empty($gContent->mContentId)}{foreach from=$gContent->mStorage key=key item=val}&amp;STORAGE[existing][{$val.attachment_id}]={$val.attachment_id}{/foreach}{/if}{/capture}
-							{if $libertyUploader || $gBitSystem->getConfig('liberty_attachment_style') == 'ajax'}
-								<a href="javascript:void(0);" onclick="
-									BitAjax.updater('edit_storage_list_tab_{$form_id}', '{$smarty.const.LIBERTY_PKG_URL}ajax_edit_storage.php', '{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}&amp;form_id={$form_id}');
-									BitAjax.updater('edit_storage_list_{$form_id}', '{$smarty.const.LIBERTY_PKG_URL}ajax_edit_storage.php', '{$smarty.capture.urlArgs}&amp;form_id={$form_id}');">
-										{booticon iname="fa-trash" iexplain="delete"}
-								</a>
-							{else}
-								{if $storage.is_mime}
-									<a href="{$storage.display_url}">{booticon iname="fa-folder-open" iexplain="View"}</a>
-								{/if}
-								<a href="{$smarty.server.SCRIPT_NAME}?{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}">{booticon iname="fa-trash" iexplain="Delete"}</a>
+							{if $storage.is_mime}
+								<a href="{$storage.display_url}">{booticon iname="fa-folder-open" iexplain="View"}</a>
 							{/if}
+							<a href="{$smarty.server.SCRIPT_NAME}?{$smarty.capture.urlArgs}&amp;deleteAttachment={$attachmentId}">{booticon iname="fa-trash" iexplain="Delete"}</a>
 						{/if}
 					</div>
 				</div>

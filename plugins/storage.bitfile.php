@@ -28,23 +28,8 @@ $pluginParams = array (
 if( isset( $gBitSystem )) {
 	if ($gBitSystem->getConfig("liberty_attachment_style") == "multiple") {
 		$pluginParams['edit_label'] = 'Upload File(s)';
-		$pluginParams['edit_help'] =  'The file(s) will be uploaded to your personal storage area.<br />After selecting the file(s) you want to upload, please return to the edit area and click the save button.';
-		$pluginParams['edit_field'] = '<div id="upload_div"></div><input type="file" name="upload" size="40" id="uploads" />'.
-			'<!-- Multiselect javascript. -->'.
-			'<script type="text/javascript" src="'.UTIL_PKG_URL.'javascript/multifile.js"></script>'.
-			'<script type="text/javascript">'.
-				'var upload_files = document.getElementById( \'upload_div\' );'.
-				'var upload_element = document.getElementById( \'uploads\' );'.
-				'var multi_selector = new MultiSelector( upload_files, '.$gBitSystem->getConfig('liberty_max_multiple_attachments', 10).' );'.
-				'multi_selector.addNamedElement( upload_element , \'uploads\');'.
-			'</script>';
-		$gBitSmarty->assign( 'loadMultiFile', TRUE );
-	} elseif( $gBitSystem->getConfig( 'liberty_attachment_style' ) == "ajax" ) {
-		$pluginParams['edit_help_new'] = $pluginParams['edit_help'];
-		$pluginParams['edit_field_new'] = $pluginParams['edit_field'];
-		$pluginParams['edit_help'] =  'The file(s) will be uploaded to your personal storage area.<br />After selecting the file you want to upload an attachment ID will be displayed for you to use in your content.';
-		$pluginParams['edit_field'] = '<input type="file" name="upload" size="40" id="upload" onchange="javascript:LibertyAttachment.uploader(this, \'{$smarty.const.LIBERTY_PKG_URL}attachment_uploader.php\',\'{tr}Please wait for the current upload to finish.{/tr}\', \'liberty_upload_frame\', \'editpageform\');" />'.
-			'{include file="bitpackage:liberty/attachment_uploader_inc.tpl"}';
+		$pluginParams['edit_help'] =  'The file(s) will be uploaded to your personal storage area. You can select several files at once.<br />After selecting the file(s) you want to upload, please return to the edit area and click the save button.';
+		$pluginParams['edit_field'] = '<input type="file" name="uploads[]" multiple />';
 	}
 }
 //$gLibertySystem->registerPlugin( STORAGE_TYPE_BIT_FILES, $pluginParams );

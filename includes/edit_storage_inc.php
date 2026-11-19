@@ -47,9 +47,4 @@ if( !empty( $_REQUEST['deleteAttachment'] )) {
 	$gBitSmarty->clearAssign( 'gContent' );
 	$gBitSmarty->assign( 'gContent', $gContent );
 }
-
-// make sure js is being loaded
-if( $gBitSystem->getConfig( 'liberty_attachment_style' ) == 'ajax' ) {
-	$gBitThemes->loadJavascript( LIBERTY_PKG_PATH.'scripts/LibertyAttachment.js', TRUE );
-}
 ?>

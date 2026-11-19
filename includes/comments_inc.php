@@ -43,11 +43,6 @@ $postComment = array();
 $formfeedback = array( 'error' => array() );
 $gBitSmarty->assignByRef( 'formfeedback', $formfeedback );
 
-// make sure that we don't feed ajax comments if we don't have javascript enabled
-if( !$gBitThemes->isJavascriptEnabled() ) {
-	$gBitSystem->setConfig( 'comments_ajax', 'n' );
-}
-
 if( BitBase::verifyIdParameter( $_REQUEST, 'delete_comment_id' )) {
 	$deleteComment = new LibertyComment($_REQUEST['delete_comment_id']);
 	// make sure we're loaded up before we delete
@@ -61,12 +56,6 @@ if( BitBase::verifyIdParameter( $_REQUEST, 'delete_comment_id' )) {
 if( BitBase::verifyIdParameter( $_REQUEST, 'post_comment_id' ) && $gContent->hasUserPermission( 'p_liberty_post_comments' )) {
 	$post_comment_id = $_REQUEST['post_comment_id'];
 	$editComment = new LibertyComment( $post_comment_id );
-	//if we are passed a comment id but not going to store it then turn off ajax
-	if( !isset( $_REQUEST['post_comment_submit'] ) && !isset( $_REQUEST['post_comment_cancel'] )){
-		//even if ajax is on - we force it off in this case
-		$gBitSmarty->assign( 'comments_ajax', FALSE );
-	}
-
 	if( $editComment->mInfo['content_id'] ) {
 		if( $editComment->userCanUpdate( $gContent )) {
 			$postComment['data'] = $editComment->mInfo['data'];
@@ -143,10 +132,6 @@ if( empty( $_REQUEST['post_comment_request'] ) && !$gBitSystem->isFeatureActive(
 	$post_comment_request = NULL;
 } elseif( $gContent->hasUserPermission( 'p_liberty_post_comments' ) ) {
 	$post_comment_request = TRUE;
-	// force off ajax attachments which does not work for comments attachments
-	if( $gBitSystem->isFeatureActive( 'comments_allow_attachments' ) && $gBitSystem->getConfig( 'liberty_attachment_style') == 'ajax' ){
-		$gBitSystem->setConfig( 'liberty_attachment_style', 'standard' );
-	}
 }
 
 // in anticipation of mainlining LCConfig package - enable comment format configuration
@@ -169,9 +154,6 @@ if( !empty( $_REQUEST['post_comment_cancel'] ) ) {
 if( !empty( $_REQUEST['post_comment_preview'] )) {
 	if( isset( $_REQUEST['no_js_preview'] ) && $_REQUEST['no_js_preview']=="y" ) {
 		$no_js_preview = $_REQUEST['no_js_preview'];
-
-		//even if ajax is on - we force it off in this case
-		$gBitSmarty->assign( 'comments_ajax', FALSE );
 	} else {
 		$no_js_preview = "n";
 	}

@@ -7,9 +7,9 @@
 
 | Artifact | Count |
 |---|---:|
-| PHP files | 122 |
-| Smarty templates | 104 |
-| JavaScript files | 2 |
+| PHP files | 119 |
+| Smarty templates | 95 |
+| JavaScript files | 0 |
 | CSS files | 0 |
 
 ## Bootstrap and schema artifacts
@@ -51,10 +51,7 @@
 - `admin/upgrades/2.1.4.php`
 - `admin/upgrades/3.0.0.php`
 - `ajax_attachment_browser.php`
-- `ajax_comments.php`
-- `ajax_edit_storage.php`
 - `attachment_browser.php`
-- `attachment_uploader.php`
 - `attachments.php`
 - `content_permissions.php`
 - `content_role_permissions.php`
@@ -126,8 +123,6 @@
 - `templates/attachhelp.tpl`
 - `templates/attachment_browser.tpl`
 - `templates/attachment_browser_json.tpl`
-- `templates/attachment_uploader.tpl`
-- `templates/attachment_uploader_inc.tpl`
 - `templates/attachments.tpl`
 - `templates/center_list_generic.tpl`
 - `templates/center_recent_comments.tpl`

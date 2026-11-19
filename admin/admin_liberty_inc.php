@@ -62,7 +62,6 @@ $gBitSmarty->assign( 'formLibertyTextareaFeatures', $formLibertyTextareaFeatures
 $attachmentStyleOptions = array(
 	"standard" => tra( 'Standard attachment system<br /><small>Allows a single upload when content is saved.</small>' ),
 	"multiple" => tra( 'Multiple attachments<br /><small>Allow multiple attachments in a single upload.</small>' ),
-	"ajax"     => tra( 'Ajax attachments<br /><small>Allow Ajax attachments where attachment is made before save so attachment id can be used in current edit.</small>' ),
 );
 $gBitSmarty->assign( 'attachmentStyleOptions', $attachmentStyleOptions );
 

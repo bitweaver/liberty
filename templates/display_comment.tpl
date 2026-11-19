@@ -7,11 +7,7 @@
 	<div class="post" id="comment_{$comment.content_id}">
 		<div class="floaticon">
 			{if $gBitUser->hasPermission( 'p_liberty_post_comments' )}
-				{if $gBitSystem->isFeatureActive('comments_ajax') }
-					<a href="javascript:void(0);" onclick="LibertyComment.attachForm('comment_{$comment.content_id}', '{$comment.content_id}', '{$comment.root_id}')">{booticon iname="fa-comment" iexplain="Reply to this comment"}</a>
-				{else}
-					<a href="#">{booticon iname="fa-comment" class="icon" onclick="window.location='`$comments_return_url`&amp;post_comment_reply_id=`$comment.content_id`&amp;post_comment_request=1#editcomments';" iexplain="Reply to this comment" }</a>
-				{/if}
+				<a href="#">{booticon iname="fa-comment" class="icon" onclick="window.location='`$comments_return_url`&amp;post_comment_reply_id=`$comment.content_id`&amp;post_comment_request=1#editcomments';" iexplain="Reply to this comment" }</a>
 			{/if}
 			{if $comment.is_editable}
 				<a href="{$comments_return_url}&amp;post_comment_id={$comment.comment_id}&amp;post_comment_request=1#editcomments" rel="nofollow">{booticon iname="fa-pen-to-square" ipackage="icons" iexplain="Edit"}</a>

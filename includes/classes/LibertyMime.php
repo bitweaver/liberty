@@ -210,7 +210,7 @@ class LibertyMime extends LibertyContent {
 	 * @todo If one of the uploaded files is an update, place the attachment_id with the upload hash in $_FILES or in _files_override
 	 */
 	public function verify( &$pParamHash ) {
-		global $gBitUser, $gLibertySystem;
+		global $gBitUser, $gLibertySystem, $gBitSystem;
 
 		// check to see if we have any files to upload
 		if( isset( $pParamHash['_files_override'] )) {
@@ -221,7 +221,24 @@ class LibertyMime extends LibertyContent {
 			// we have some _FILES hanging around we will gobble up. This is inherently dagnerous chewing up a _FILES like this as
 			// it can cause premature storing of a _FILE if you are trying to store multiple pieces of content at once.
 			foreach( $_FILES as $key => $file ) {
-				if( !empty( $file['name'] ) || !empty( $file['attachment_id'] )) {
+				if( isset( $file['name'] ) && is_array( $file['name'] )) {
+					// <input type="file" name="<key>[]" multiple> posts one hash of
+					// arrays; split it into one upload per file, keyed <key>_<n>
+					$maxFiles = (int)$gBitSystem->getConfig( 'liberty_max_multiple_attachments', 10 );
+					if( $maxFiles > 0 && count( array_filter( $file['name'] )) > $maxFiles ) {
+						$this->mErrors['upload'] = tra( 'Too many files were selected at once. The maximum is' ).' '.$maxFiles.'.';
+						continue;
+					}
+					foreach( array_keys( $file['name'] ) as $i ) {
+						if( !empty( $file['name'][$i] ) && is_string( $file['name'][$i] )) {
+							$one = array();
+							foreach( $file as $field => $values ) {
+								$one[$field] = is_array( $values ) && isset( $values[$i] ) ? $values[$i] : NULL;
+							}
+							$uploads[$key.'_'.$i] = $one;
+						}
+					}
+				} elseif( !empty( $file['name'] ) || !empty( $file['attachment_id'] )) {
 					$uploads[$key] = $file;
 				}
 			}
