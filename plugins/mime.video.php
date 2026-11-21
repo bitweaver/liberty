@@ -40,7 +40,7 @@ $pluginParams = array (
 	'attachment_tpl'      => 'bitpackage:liberty/mime/video/attachment.tpl',
 	'edit_tpl'            => 'bitpackage:liberty/mime/video/edit.tpl',
 	// url to page with options for this plugin
-	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/plugins/mime_video.php',
+	'plugin_settings_inc' => 'liberty/admin/plugins/mime_video_inc.php',
 	// This should be the same for all mime plugins
 	'plugin_type'         => MIME_PLUGIN,
 	// Set this to TRUE if you want the plugin active right after installation

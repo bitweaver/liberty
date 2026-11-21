@@ -1,11 +1,18 @@
 <?php
-require_once( '../../../kernel/includes/setup_inc.php' );
-include_once( KERNEL_PKG_INCLUDE_PATH.'simple_form_functions_lib.php' );
+/**
+ * Simple HTML Purifier filter settings form, included by liberty/admin/plugins.php?settings=filtersimplepure
+ * (the plugin declares it as 'plugin_settings_inc'). The dispatcher has
+ * checked p_admin, and the ticket when 'plugin_settings' is posted.
+ *
+ * @package liberty
+ * @subpackage plugins
+ */
+global $gBitSystem, $gBitSmarty, $gLibertySystem;
+
 /* We need DEFAULT_ACCEPTABLE_TAGS from here. */
 include_once( LIBERTY_PKG_PATH.'plugins/filter.simplepurifier.php');
-$gBitSystem->verifyPermission( 'p_admin' );
 
-if( !empty( $_REQUEST['apply'] )) {
+if( !empty( $_REQUEST['plugin_settings'] )) {
 	$errors = array();
 	if( $_REQUEST['approved_html_tags'] != DEFAULT_ACCEPTABLE_TAGS ) {
 		$tags = preg_replace( '/\s/', '', $_REQUEST['approved_html_tags'] );
@@ -33,5 +40,5 @@ $tags = $gBitSystem->getConfig( 'approved_html_tags', DEFAULT_ACCEPTABLE_TAGS );
 
 $gBitSmarty->assign( 'approved_html_tags', $tags );
 
-$gBitSystem->display( 'bitpackage:liberty/plugins/filter_simplepurifier_admin.tpl', 'Simple HTML Purifier' , array( 'display_mode' => 'admin' ));
-?>
+$pluginSettingsTemplate = 'bitpackage:liberty/plugins/filter_simplepurifier_admin.tpl';
+$pluginSettingsTitle = 'Simple HTML Purifier';

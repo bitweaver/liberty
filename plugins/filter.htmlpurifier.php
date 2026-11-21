@@ -24,7 +24,7 @@ $pluginParams = array (
 	// type of plugin
 	'plugin_type'              => FILTER_PLUGIN,
 	// url to page with options for this plugin
-	'plugin_settings_url'      => LIBERTY_PKG_URL.'admin/plugins/filter_htmlpurifier.php',
+	'plugin_settings_inc'      => 'liberty/admin/plugins/filter_htmlpurifier_inc.php',
 
 	// various filter functions and when they are called
 	// called before the data is parsed

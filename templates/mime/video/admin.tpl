@@ -6,6 +6,8 @@
 
 	<div class="body">
 		{form legend="Video settings"}
+			<input type="hidden" name="settings" value="{$pluginSettingsGuid|escape}" />
+			<input type="hidden" name="tk" value="{$gBitUser->mTicket}" />
 			<p class="formhelp">
 				You can find some information relating to this plugin on the <a class="external" href="http://www.bitweaver.org/wiki/LibertyMime+Flv+Plugin">LibertyMime Flv Plugin page</a> at bitweaver.org.
 			</p>
@@ -75,7 +77,7 @@
 						values=$options.video_bitrate
 						name=mime_video_video_bitrate
 						id=mime_video_video_bitrate
-						selected=$gBitSystem->getConfig('mime_video_video_bitrate')|default:200000} kbits/s
+						selected=$gBitSystem->getConfig('mime_video_video_bitrate')|default:160000} kbits/s
 					{formhelp note="Set the video bitrate. The higher the bitrate the higher the quality but also the larger the file."}
 				{/forminput}
 			</div>

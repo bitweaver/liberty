@@ -5,6 +5,8 @@
 
 	<div class="body">
 		{form legend="HTMLPurifier Features"}
+			<input type="hidden" name="settings" value="{$pluginSettingsGuid|escape}" />
+			<input type="hidden" name="tk" value="{$gBitUser->mTicket}" />
 			{formfeedback error=$errorMsg}
 
 			<div class="form-group">
@@ -26,7 +28,7 @@
 			{/foreach}
 
 			<div class="form-group submit">
-				<input type="submit" class="btn btn-default" name="apply" value="{tr}Save Plugin Settings{/tr}" />
+				<input type="submit" class="btn btn-default" name="plugin_settings" value="{tr}Save Plugin Settings{/tr}" />
 			</div>
 		{/form}
 	</div><!-- end .body -->

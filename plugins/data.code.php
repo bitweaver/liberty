@@ -35,7 +35,7 @@ $pluginParams = array (
 	'help_function'       => 'data_code_help',
 	'syntax'              => "{code source= num= }". tra( "Sorce Code Snippet" ) . "{/code}",
 	'plugin_type'         => DATA_PLUGIN,
-	'plugin_settings_url' => LIBERTY_PKG_URL.'admin/plugins/data_code.php',
+	'plugin_settings_inc' => 'liberty/admin/plugins/data_code_inc.php',
 );
 $gLibertySystem->registerPlugin( PLUGIN_GUID_DATACODE, $pluginParams );
 $gLibertySystem->registerDataTag( $pluginParams['tag'], PLUGIN_GUID_DATACODE );
@@ -165,7 +165,7 @@ function data_code( $pData, $pParams ) { // Pre-Clyde Changes
 		$source = $in;
 	}
 
-	$source = isset( $source ) ? strtolower( $source ) : $gBitSystem->getConfig( 'liberty_plugin_code_default_source', 'php' );
+	$source = strtolower( isset( $source ) ? $source : $gBitSystem->getConfig( 'liberty_plugin_code_default_source', 'php' ));
 
 	if( !empty( $num ) && !is_numeric( $num )) {
 		switch( strtoupper( $num )) {

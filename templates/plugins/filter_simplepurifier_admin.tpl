@@ -5,6 +5,8 @@
 
 	<div class="body">
 		{form legend="Simple HTML Purifier Features"}
+			<input type="hidden" name="settings" value="{$pluginSettingsGuid|escape}" />
+			<input type="hidden" name="tk" value="{$gBitUser->mTicket}" />
 			{formfeedback error=$errorMsg}
 
 			<div class="form-group">
@@ -17,7 +19,7 @@
 			</div>
 
 			<div class="form-group submit">
-				<input type="submit" name="apply" value="{tr}Save Plugin Settings{/tr}" />
+				<input type="submit" name="plugin_settings" value="{tr}Save Plugin Settings{/tr}" />
 			</div>
 		{/form}
 	</div><!-- end .body -->

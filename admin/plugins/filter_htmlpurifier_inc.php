@@ -1,8 +1,13 @@
 <?php
-require_once( '../../../kernel/includes/setup_inc.php' );
-include_once( KERNEL_PKG_INCLUDE_PATH.'simple_form_functions_lib.php' );
-
-$gBitSystem->verifyPermission( 'p_admin' );
+/**
+ * HTML Purifier filter settings form, included by liberty/admin/plugins.php?settings=filterhtmlpure
+ * (the plugin declares it as 'plugin_settings_inc'). The dispatcher has
+ * checked p_admin, and the ticket when 'plugin_settings' is posted.
+ *
+ * @package liberty
+ * @subpackage plugins
+ */
+global $gBitSystem, $gBitSmarty, $gLibertySystem;
 
 $htmlPurifier = array(
 	'htmlpure_escape_bad' => array(
@@ -65,7 +70,7 @@ $htmlPurifier = array(
 );
 $gBitSmarty->assign( 'htmlPurifier', $htmlPurifier );
 
-if( !empty( $_REQUEST['apply'] )) {
+if( !empty( $_REQUEST['plugin_settings'] )) {
 	$formFeatures = array_merge( $htmlPurifier );
 	foreach( $formFeatures as $item => $data ) {
 		simple_set_toggle( $item, LIBERTY_PKG_NAME );
@@ -82,5 +87,5 @@ if( !empty( $_REQUEST['apply'] )) {
 	$gBitSmarty->assign($errors);
 }
 
-$gBitSystem->display( 'bitpackage:liberty/plugins/filter_htmlpurifier_admin.tpl', 'HTML Purifier' , array( 'display_mode' => 'admin' ));
-?>
+$pluginSettingsTemplate = 'bitpackage:liberty/plugins/filter_htmlpurifier_admin.tpl';
+$pluginSettingsTitle = 'HTML Purifier';

@@ -1,8 +1,13 @@
 <?php
-require_once( '../../../kernel/includes/setup_inc.php' );
-include_once( KERNEL_PKG_INCLUDE_PATH.'simple_form_functions_lib.php' );
-
-$gBitSystem->verifyPermission( 'p_admin' );
+/**
+ * PDF mime plugin settings form, included by liberty/admin/plugins.php?settings=mimepdfx
+ * (the plugin declares it as 'plugin_settings_inc'). The dispatcher has
+ * checked p_admin, and the ticket when 'plugin_settings' is posted.
+ *
+ * @package liberty
+ * @subpackage plugins
+ */
+global $gBitSystem, $gBitSmarty, $gLibertySystem;
 
 $feedback = array();
 
@@ -16,6 +21,7 @@ $pdfSettings = array(
 		'label'   => 'PDF Upload Thumbnails',
 		'note'    => 'Create thumbnails for PDF uploads.',
 		'type'    => 'checkbox',
+		'default' => 'y',
 	),
 );
 
@@ -42,5 +48,5 @@ if( !empty( $_REQUEST['plugin_settings'] )) {
 }
 
 $gBitSmarty->assign( 'feedback', $feedback );
-$gBitSystem->display( 'bitpackage:liberty/mime/pdf/admin.tpl', tra( 'PDF Plugin Settings' ), array( 'display_mode' => 'admin' ));
-?>
+$pluginSettingsTemplate = 'bitpackage:liberty/mime/pdf/admin.tpl';
+$pluginSettingsTitle = tra( 'PDF Plugin Settings' );

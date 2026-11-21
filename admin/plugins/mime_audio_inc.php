@@ -1,8 +1,13 @@
 <?php
-require_once( '../../../kernel/includes/setup_inc.php' );
-include_once( KERNEL_PKG_INCLUDE_PATH.'simple_form_functions_lib.php' );
-
-$gBitSystem->verifyPermission( 'p_admin' );
+/**
+ * Audio mime plugin settings form, included by liberty/admin/plugins.php?settings=mimeaudio
+ * (the plugin declares it as 'plugin_settings_inc'). The dispatcher has
+ * checked p_admin, and the ticket when 'plugin_settings' is posted.
+ *
+ * @package liberty
+ * @subpackage plugins
+ */
+global $gBitSystem, $gBitSmarty, $gLibertySystem;
 
 if( function_exists( 'shell_exec' )) {
 	$gBitSmarty->assign( 'ffmpeg_path', shell_exec( 'which ffmpeg' ));
@@ -47,17 +52,11 @@ if( !empty( $_REQUEST['plugin_settings'] )) {
 		'lame_path' => array(
 			'type'  => 'text',
 		),
-		'mime_audio_ffmpeg_use' => array(
-			'type'  => 'checkbox',
-		),
 		'mime_audio_samplerate' => array(
 			'type'  => 'numeric',
 		),
 		'mime_audio_bitrate' => array(
 			'type'  => 'numeric',
-		),
-		'mime_audio_lame_options' => array(
-			'type'  => 'text',
 		),
 		'mime_audio_lame_options' => array(
 			'type'  => 'text',
@@ -81,5 +80,5 @@ if( !empty( $_REQUEST['plugin_settings'] )) {
 }
 
 $gBitSmarty->assign( 'feedback', $feedback );
-$gBitSystem->display( 'bitpackage:liberty/mime/audio/admin.tpl', tra( 'Audio Plugin Settings' ), array( 'display_mode' => 'admin' ));
-?>
+$pluginSettingsTemplate = 'bitpackage:liberty/mime/audio/admin.tpl';
+$pluginSettingsTitle = tra( 'Audio Plugin Settings' );

@@ -1,7 +1,13 @@
 <?php
-require_once( '../../../kernel/includes/setup_inc.php' );
-require_once( KERNEL_PKG_PATH.'/simple_form_functions_lib.php' );
-$gBitSystem->verifyPermission( 'p_admin' );
+/**
+ * Data Code plugin settings form, included by liberty/admin/plugins.php?settings=datacode
+ * (the plugin declares it as 'plugin_settings_inc'). The dispatcher has
+ * checked p_admin, and the ticket when 'plugin_settings' is posted.
+ *
+ * @package liberty
+ * @subpackage plugins
+ */
+global $gBitSystem, $gBitSmarty, $gLibertySystem;
 
 $feedback = array();
 
@@ -69,5 +75,5 @@ if( !empty( $_REQUEST['plugin_settings'] )) {
 }
 
 $gBitSmarty->assign( 'feedback', $feedback );
-$gBitSystem->display( 'bitpackage:liberty/plugins/data_code_admin.tpl', tra( 'Data Code Plugin Settings' ), array( 'display_mode' => 'admin' ));
-?>
+$pluginSettingsTemplate = 'bitpackage:liberty/plugins/data_code_admin.tpl';
+$pluginSettingsTitle = tra( 'Data Code Plugin Settings' );

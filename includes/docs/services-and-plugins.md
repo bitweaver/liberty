@@ -245,6 +245,25 @@ and `validateStoragePath()`.
 5. Test discovery, activation, deactivation, and cache invalidation.
 6. Test alongside other active filters/plugins because order matters.
 
+### Plugin settings pages
+
+A plugin with administrator settings declares
+`'plugin_settings_inc' => '<package>/admin/<path>_inc.php'` (Liberty's own:
+`liberty/admin/plugins/<name>_inc.php`). `admin/plugins.php?settings=<guid>`
+checks `p_admin`, resolves the file inside that package's `admin/` directory,
+includes it, and displays the template it names in `$pluginSettingsTemplate`
+(title in `$pluginSettingsTitle`). The Plugins admin page links there.
+
+- The include file is not an entry point: it does not load the kernel, check
+  permissions, or call `display()`. A direct HTTP request fails before it
+  reads input, because nothing is loaded; deny `admin/plugins/` PHP in the
+  web server as well.
+- It saves only when `plugin_settings` is submitted. The dispatcher verifies
+  the ticket first, so the form carries hidden `settings` (the GUID) and `tk`
+  inputs and posts to `admin/plugins.php`.
+- A plugin that still declares `plugin_settings_url` keeps that link; new
+  plugins should use `plugin_settings_inc`.
+
 ## References
 
 - `includes/classes/LibertySystem.php`

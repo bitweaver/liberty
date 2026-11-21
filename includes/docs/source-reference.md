@@ -99,7 +99,7 @@
 
 ## Plugin and module directories
 
-- `admin/plugins/`
+- `admin/plugins/` (plugin settings includes, `*_inc.php`; served by `admin/plugins.php?settings=<guid>`)
 - `modules/`
 - `plugins/`
 - `templates/plugins/`

@@ -40,6 +40,7 @@ it proves that the server executed a directly requested implementation file.
 - Secrets and credentials must remain in protected configuration, never in
   templates, responses, logs, or these documents.
 - File operations must use validated storage helpers and must prevent traversal.
+- The Plugins page (activate, reset) and plugin settings (`admin/plugins.php?settings=<guid>`) save only with a valid ticket. Several of them (`ffmpeg_path`, `mp4box_path`, `lame_path`, `mplayer_path`, `mwconvert_path`, lame options) are passed to `shell_exec()`, so a forged admin form post would otherwise become command execution.
 - `download_file.php` inherits the parent object's view permission. An image original is sent only to the owner, an administrator, or any viewer when `liberty_original_image` is on. Other viewers keep thumbnails. `mime_default_download` reads `last_modified` when the load set it, and otherwise uses the source file's mtime. The bitfile storage load sets that key when the file is present.
 
 ## Package boundary

@@ -6,6 +6,8 @@
 
 	<div class="body">
 		{form legend="Code specific settings"}
+			<input type="hidden" name="settings" value="{$pluginSettingsGuid|escape}" />
+			<input type="hidden" name="tk" value="{$gBitUser->mTicket}" />
 			{formfeedback hash=$feedback}
 			<div class="form-group">
 				{formlabel label="Default Source" for="liberty_plugin_code_default_source"}
@@ -15,7 +17,7 @@
 						values=$sources
 						name=liberty_plugin_code_default_source
 						id=liberty_plugin_code_default_source
-						selected=$gBitSystem->getConfig('liberty_plugin_code_default_source')|default:php}
+						selected=$gBitSystem->getConfig('liberty_plugin_code_default_source')|default:'Php'}
 						{formhelp note="The default source for the code data plugin."}
 				{/forminput}
 			</div>
