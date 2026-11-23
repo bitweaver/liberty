@@ -36,7 +36,7 @@ if( !empty( $_REQUEST['content_type_guid'] )) {
 	}
 }
 
-// get_content_list_inc doesn't use $_REQUEST parameters as it might not be the only list in the page that needs sorting and limiting
+// Only form filters belong in the request hash. Callers can supply additional list options in code.
 if( empty( $contentListHash ) ) {
 	$contentListHash = array(
 		'content_type_guid' => $contentSelect = empty( $_REQUEST['content_type_guid'] ) ? NULL : $contentTypeGuids,
@@ -45,7 +45,8 @@ if( empty( $contentListHash ) ) {
 		// maximum number of records displayed on a page
 		'max_records'       => !empty( $max_content ) ? $max_content : ( !empty( $_REQUEST['max_records'] ) ? $_REQUEST['max_records'] : 100 ),
 		// sort by this: <table column>_asc (or _desc)
-		'sort_mode'         => !empty( $content_sort_mode ) ? $content_sort_mode : 'title_asc',
+		'sort_mode'         => !empty( $content_sort_mode ) && is_string( $content_sort_mode ) ? $content_sort_mode : 'title_asc',
+		'content_status_id' => isset( $_REQUEST['content_status_id'] ) && is_string( $_REQUEST['content_status_id'] ) ? $_REQUEST['content_status_id'] : NULL,
 		// limit the result to this set
 		'find'              => !empty( $_REQUEST["find"] ) ? $_REQUEST["find"] : NULL,
 		// display this page number - replaces antiquated offset
@@ -59,18 +60,6 @@ if( empty( $contentListHash ) ) {
 		// get a thumbnail - off by default because it is expensive
 		'thumbnail_size'    => !empty( $_REQUEST["thumbnail_size"] ) ? $_REQUEST["thumbnail_size"] : NULL,
 	);
-
-	if( !empty( $_REQUEST['output'] ) && ( $_REQUEST['output'] == 'json' || $_REQUEST['output'] == 'ajax' ) ) {	
-		foreach( $_REQUEST as $key => $value ) {
-			if ( !is_array($value) ){
-				if( strstr( $value, ',' ) ) {
-					$_REQUEST[$key] = explode( ",", $value );
-				}
-			}
-		}
-	}
-
-	$contentListHash = array_merge( $_REQUEST, $contentListHash );
 }
 
 // Finally we're ready to get some content

@@ -33,6 +33,7 @@ it proves that the server executed a directly requested implementation file.
 ## Application trust boundaries
 
 - Request, cookie, header, upload, webhook, and API data are untrusted.
+- The content-list include constructs its public filters explicitly. Query structure and service options belong in caller-supplied list hashes.
 - Authentication does not imply authorization.
 - Content-level access can be stricter than a global package permission.
 - Identifiers must be validated before use in SQL, paths, redirects, or object
