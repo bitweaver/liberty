@@ -23,6 +23,9 @@
 - Reuse registered package paths and URLs instead of hard-coded deployment
   paths.
 - Treat request parameters as untrusted even when a controller is admin-only.
+- `mime_default_verify()` refuses anonymous uploads (`user_id` at or below
+  `ANONYMOUS_USER_ID`) without `bit_error_log`. A root-owned store with no
+  upload `user_id` still logs.
 
 ## Schema changes
 
